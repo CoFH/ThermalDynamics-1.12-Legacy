@@ -11,3 +11,8 @@
 /bin
 /build
 
+/config
+
+/crash-reports
+
+/logs

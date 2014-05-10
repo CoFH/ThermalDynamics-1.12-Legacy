@@ -1,5 +1,6 @@
 package thermalducts;
 
+import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.mod.BaseMod;
 import cofh.updater.UpdateManager;
@@ -14,12 +15,14 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 
+import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import thermalducts.block.BlockDuct;
 import thermalducts.core.Proxy;
 import thermalfoundation.gui.TFCreativeTab;
 
@@ -56,6 +59,9 @@ public class ThermalDucts extends BaseMod {
 
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDucts.cfg")));
 
+		blockDuct = new BlockDuct();
+		((IInitializer) blockDuct).preInit();
+
 		config.save();
 	}
 
@@ -91,5 +97,7 @@ public class ThermalDucts extends BaseMod {
 
 		return version;
 	}
+
+	public static Block blockDuct;
 
 }
