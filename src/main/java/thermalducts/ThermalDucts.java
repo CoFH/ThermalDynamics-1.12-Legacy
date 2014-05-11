@@ -24,16 +24,16 @@ import org.apache.logging.log4j.Logger;
 
 import thermalducts.block.BlockDuct;
 import thermalducts.core.Proxy;
-import thermalfoundation.gui.TFCreativeTab;
+import thermalducts.gui.TDCreativeTab;
 
 @Mod(modid = ThermalDucts.modId, name = ThermalDucts.modName, version = ThermalDucts.version, dependencies = ThermalDucts.dependencies, canBeDeactivated = false)
 public class ThermalDucts extends BaseMod {
 
-	public static final String modId = "ThermalFoundation";
-	public static final String modName = "Thermal Foundation";
+	public static final String modId = "ThermalDucts";
+	public static final String modName = "Thermal Ducts";
 	public static final String version = "1.7.2R1.0.0B1";
 	public static final String dependencies = "required-after:CoFHCore@[" + CoFHProps.VERSION + ",)";
-	public static final String releaseURL = "http://teamcofh.com/thermalfoundation/version/version.txt";
+	public static final String releaseURL = "http://teamcofh.com/thermalducts/version/version.txt";
 
 	@Instance(modId)
 	public static ThermalDucts instance;
@@ -44,7 +44,7 @@ public class ThermalDucts extends BaseMod {
 	public static final ConfigHandler config = new ConfigHandler(version);
 	public static final Logger log = LogManager.getLogger(modId);
 
-	public static final CreativeTabs tab = new TFCreativeTab();
+	public static final CreativeTabs tab = new TDCreativeTab();
 
 	/* INIT SEQUENCE */
 	public ThermalDucts() {

@@ -38,4 +38,14 @@ public class MultiBlockGrid {
 
 		return true;
 	}
+
+	public void resetMultiBlocks() {
+
+		for (IMultiBlock aBlock : nodeSet) {
+			aBlock.setValidForForming();
+		}
+		for (IMultiBlock aBlock : idleSet) {
+			aBlock.setValidForForming();
+		}
+	}
 }

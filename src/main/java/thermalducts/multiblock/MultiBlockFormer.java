@@ -8,6 +8,9 @@ public class MultiBlockFormer {
 
 		theMultiBlock.setInvalidForForming();
 		theMultiBlock.setGrid(theMultiBlock.getNewGrid());
+		doStep(theMultiBlock.getGrid(), theMultiBlock);
+
+		theMultiBlock.getGrid().resetMultiBlocks();
 	}
 
 	public void doStep(MultiBlockGrid theGrid, IMultiBlock currentMultiBlock) {
