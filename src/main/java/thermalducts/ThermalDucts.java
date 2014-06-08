@@ -17,6 +17,7 @@ import java.io.File;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
@@ -68,6 +69,7 @@ public class ThermalDucts extends BaseMod {
 	@EventHandler
 	public void initialize(FMLInitializationEvent event) {
 
+		MinecraftForge.EVENT_BUS.register(proxy);
 		proxy.registerEntities();
 	}
 

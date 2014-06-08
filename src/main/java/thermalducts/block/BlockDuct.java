@@ -2,14 +2,12 @@ package thermalducts.block;
 
 import cofh.api.core.IInitializer;
 import cofh.render.IconRegistry;
-import cofh.util.StringHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -17,9 +15,9 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -28,7 +26,7 @@ import thermalducts.core.TDProps;
 import thermalducts.multiblock.IMultiBlock;
 import thermalducts.multiblock.MultiBlockFormer;
 
-public class BlockDuct extends Block implements IInitializer {
+public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
 	public BlockDuct() {
 
@@ -74,18 +72,8 @@ public class BlockDuct extends Block implements IInitializer {
 	}
 
 	@Override
-	public IIcon getIcon(int side, int metadata) {
-
-		return IconRegistry.getIcon("Duct", metadata);
-	}
-
-	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister ir) {
-
-		for (int i = 0; i < NAMES.length; i++) {
-			IconRegistry.addIcon("Duct" + i, "redstonearsenal:storage/Block_" + StringHelper.titleCase(NAMES[i]), ir);
-		}
 
 		IconRegistry.addIcon("ConduitEnergy00", "thermalducts:conduit/energy/ConduitEnergy00", ir);
 		IconRegistry.addIcon("ConduitEnergy10", "thermalducts:conduit/energy/ConduitEnergy10", ir);
@@ -159,6 +147,19 @@ public class BlockDuct extends Block implements IInitializer {
 	}
 
 	@Override
+	public boolean canRenderInPass(int pass) {
+
+		renderPass = pass;
+		return pass < 2;
+	}
+
+	@Override
+	public int getRenderBlockPass() {
+
+		return 1;
+	}
+
+	@Override
 	public void onBlockClicked(World p_149699_1_, int p_149699_2_, int p_149699_3_, int p_149699_4_, EntityPlayer p_149699_5_) {
 
 		p_149699_5_.addChatMessage(new ChatComponentText("Forming Grid..."));
@@ -199,6 +200,12 @@ public class BlockDuct extends Block implements IInitializer {
 
 			return renderConduit;
 		}
+	}
+
+	@Override
+	public ItemStack dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnBlock, boolean simulate) {
+
+		return null;
 	}
 
 }

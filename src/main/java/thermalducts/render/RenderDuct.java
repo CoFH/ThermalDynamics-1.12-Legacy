@@ -16,7 +16,6 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -66,23 +65,6 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		generateFluidModels();
 		generateModels();
-
-		travelingItemRender = new RenderItem() {
-
-			@Override
-			public boolean shouldBob() {
-
-				return false;
-			};
-
-			@Override
-			public boolean shouldSpreadItems() {
-
-				return false;
-			};
-		};
-		travelingItemRender.setRenderManager(RenderManager.instance);
-		travelingEntityItem.hoverStart = 0;
 	}
 
 	public static void initialize() {
@@ -194,10 +176,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		for (int s = 0; s < 6; s++) {
 			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
 				if (!invRender) {
-					modelConnection[0][s].render(0, 4, trans, RenderUtils.getIconTransformation(textureConduit[renderType]), null);
-					modelConnection[0][s].render(8, 16, trans, RenderUtils.getIconTransformation(textureConduit[renderType]), null);
-					modelConnection[0][s].render(24, 4, trans, RenderUtils.getIconTransformation(textureConduit[renderType]), null);
-					modelConnection[0][s].render(32, 16, trans, RenderUtils.getIconTransformation(textureConduit[renderType]), null);
+					modelConnection[0][s].render(0, 4, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
+					modelConnection[0][s].render(8, 24, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
+					modelConnection[0][s].render(24, 28, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
+					modelConnection[0][s].render(32, 48, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
 				} else {
 					modelConnection[0][s].render(trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
 				}
@@ -215,7 +197,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		}
 	}
 
-	public void renderWorldExtra(TileMultiBlock tile, int renderType, int[] connection, double x, double y, double z) {
+	public boolean renderWorldExtra(TileMultiBlock tile, int renderType, int[] connection, double x, double y, double z) {
 
 		IIcon texture = null;
 
@@ -230,7 +212,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 				texture = textureFluidGlowstone;
 				opacity = 128;
 			} else {
-				return;
+				return false;
 			}
 			CCRenderState.draw();
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -247,7 +229,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 			models[6].render(x, y, z, RenderUtils.getIconTransformation(texture));
 			CCRenderState.draw();
 			CCRenderState.startDrawing();
-			return;
+			return true;
 		}
 		if (texture != null) {
 			for (int s = 0; s < 6; s++) {
@@ -256,51 +238,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 				}
 			}
 			modelFluid[5][6].render(x, y, z, RenderUtils.getIconTransformation(texture));
+			return true;
 		}
-	}
-
-	public void renderWorldExtraPart(TileMultiBlock tile, int renderType, int[] connection, double x, double y, double z) {
-
-		IIcon texture = null;
-
-		if (renderType == RenderTypes.ENERGY_BASIC.ordinal() || renderType == RenderTypes.ENERGY_HARDENED.ordinal()) {
-			texture = textureSolidRedstone;
-		} else {
-			int opacity = 192;
-
-			if (renderType == RenderTypes.ENERGY_REINFORCED.ordinal()) {
-				texture = textureFluidRedstone;
-			} else if (renderType == RenderTypes.ITEM_FAST_TRANS.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_LONG.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()) {
-				texture = textureFluidGlowstone;
-				opacity = 128;
-			} else {
-				return;
-			}
-			CCRenderState.draw();
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-			CCRenderState.startDrawing();
-			CCRenderState.setColour(0xFFFFFF20 + opacity);
-			CCModel[] models = modelFluid[5];
-
-			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
-					models[s].render(x, y, z, RenderUtils.getIconTransformation(texture));
-				}
-			}
-			models[6].render(x, y, z, RenderUtils.getIconTransformation(texture));
-			CCRenderState.draw();
-			CCRenderState.startDrawing();
-			return;
-		}
-		if (texture != null) {
-			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
-					modelFluid[5][s].render(x, y, z, RenderUtils.getIconTransformation(texture));
-				}
-			}
-			modelFluid[5][6].render(x, y, z, RenderUtils.getIconTransformation(texture));
-		}
+		return false;
 	}
 
 	public void renderFluid(FluidStack stack, int[] connection, int level, double x, double y, double z) {
@@ -378,7 +318,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		if (BlockCoFHBase.renderPass == 0) {
 			renderFrame(false, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
 		} else {
-			renderWorldExtra(theTile, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
+			return renderWorldExtra(theTile, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
 		}
 		RenderUtils.afterWorldRender(world, x, y, z);
 
@@ -413,40 +353,40 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
 
-		int metadata = 2;
-		boolean renderExtra = false;
-
-		GL11.glPushMatrix();
-		double offset = -0.5;
-		if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-			offset = 0;
-		} else if (type == ItemRenderType.ENTITY) {
-			GL11.glScaled(0.5, 0.5, 0.5);
-		}
-		RenderHelper.setBlockTextureSheet();
-		RenderUtils.preRender();
-
-		CCRenderState.startDrawing();
-		instance.renderFrame(true, metadata, INV_CONNECTIONS, offset, offset, offset);
-		CCRenderState.draw();
-
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-		if (renderExtra) {
-			CCRenderState.startDrawing();
-			renderWorldExtraPart(null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
-			CCRenderState.draw();
-		}
-
-		GL11.glEnable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_BLEND);
-
-		CCRenderState.useNormals = false;
-		RenderHelper.setItemTextureSheet();
-
-		GL11.glPopMatrix();
+		// int metadata = 2;
+		// boolean renderExtra = false;
+		//
+		// GL11.glPushMatrix();
+		// double offset = -0.5;
+		// if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+		// offset = 0;
+		// } else if (type == ItemRenderType.ENTITY) {
+		// GL11.glScaled(0.5, 0.5, 0.5);
+		// }
+		// RenderHelper.setBlockTextureSheet();
+		// RenderUtils.preRender();
+		//
+		// CCRenderState.startDrawing();
+		// instance.renderFrame(true, metadata, INV_CONNECTIONS, offset, offset, offset);
+		// CCRenderState.draw();
+		//
+		// GL11.glDisable(GL11.GL_LIGHTING);
+		// GL11.glEnable(GL11.GL_BLEND);
+		// GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		//
+		// if (renderExtra) {
+		// CCRenderState.startDrawing();
+		// renderWorldExtra(null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+		// CCRenderState.draw();
+		// }
+		//
+		// GL11.glEnable(GL11.GL_LIGHTING);
+		// GL11.glDisable(GL11.GL_BLEND);
+		//
+		// CCRenderState.useNormals = false;
+		// RenderHelper.setItemTextureSheet();
+		//
+		// GL11.glPopMatrix();
 	}
 
 	public IIcon getFrameTexture(TileMultiBlock conduit) {

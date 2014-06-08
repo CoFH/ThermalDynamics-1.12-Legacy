@@ -32,6 +32,7 @@ public class ProxyClient extends Proxy {
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
 
+		RenderDuct.initialize();
 	}
 
 	public static void registerFluidIcons(Fluid fluid, IIconRegister ir) {
