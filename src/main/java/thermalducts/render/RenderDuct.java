@@ -283,7 +283,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
 
-		RenderUtils.preRender();
+		// RenderUtils.preRender();
 
 		CCRenderState.startDrawing();
 		renderFrame(true, metadata, INV_CONNECTIONS, -0.5, -0.5, -0.5);
@@ -312,7 +312,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		}
 		TileMultiBlock theTile = (TileMultiBlock) tile;
 
-		RenderUtils.beforeWorldRender(world, x, y, z);
+		// RenderUtils.beforeWorldRender(world, x, y, z);
 		getConduitConnections(theTile);
 
 		if (BlockCoFHBase.renderPass == 0) {
@@ -320,7 +320,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		} else {
 			return renderWorldExtra(theTile, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
 		}
-		RenderUtils.afterWorldRender(world, x, y, z);
+		// RenderUtils.afterWorldRender(world, x, y, z);
 
 		return true;
 	}
