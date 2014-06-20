@@ -203,6 +203,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		if (renderType == RenderTypes.ENERGY_BASIC.ordinal() || renderType == RenderTypes.ENERGY_HARDENED.ordinal()) {
 			texture = textureSolidRedstone;
+			return false;
 		} else {
 			int opacity = 192;
 
@@ -231,16 +232,16 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 			CCRenderState.startDrawing();
 			return true;
 		}
-		if (texture != null) {
-			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
-					modelFluid[5][s].render(x, y, z, RenderUtils.getIconTransformation(texture));
-				}
-			}
-			modelFluid[5][6].render(x, y, z, RenderUtils.getIconTransformation(texture));
-			return true;
-		}
-		return false;
+		// if (texture != null) {
+		// for (int s = 0; s < 6; s++) {
+		// if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
+		// modelFluid[5][s].render(x, y, z, RenderUtils.getIconTransformation(texture));
+		// }
+		// }
+		// modelFluid[5][6].render(x, y, z, RenderUtils.getIconTransformation(texture));
+		// return true;
+		// }
+		// return false;
 	}
 
 	public void renderFluid(FluidStack stack, int[] connection, int level, double x, double y, double z) {

@@ -5,6 +5,7 @@ import cofh.core.CoFHProps;
 import cofh.mod.BaseMod;
 import cofh.updater.UpdateManager;
 import cofh.util.ConfigHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -25,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import thermalducts.block.BlockDuct;
 import thermalducts.core.Proxy;
+import thermalducts.core.TickHandler;
 import thermalducts.gui.TDCreativeTab;
 
 @Mod(modid = ThermalDucts.modId, name = ThermalDucts.modName, version = ThermalDucts.version, dependencies = ThermalDucts.dependencies, canBeDeactivated = false)
@@ -70,6 +72,10 @@ public class ThermalDucts extends BaseMod {
 	public void initialize(FMLInitializationEvent event) {
 
 		MinecraftForge.EVENT_BUS.register(proxy);
+
+		((IInitializer) blockDuct).initialize();
+
+		FMLCommonHandler.instance().bus().register(TickHandler.INSTANCE);
 		proxy.registerEntities();
 	}
 

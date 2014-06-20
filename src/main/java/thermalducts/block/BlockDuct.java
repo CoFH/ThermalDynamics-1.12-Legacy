@@ -1,7 +1,11 @@
 package thermalducts.block;
 
+import codechicken.lib.raytracer.RayTracer;
 import cofh.api.core.IInitializer;
 import cofh.render.IconRegistry;
+import cofh.render.hitbox.ICustomHitBox;
+import cofh.render.hitbox.RenderHitbox;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -16,13 +20,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 import thermalducts.ThermalDucts;
 import thermalducts.core.TDProps;
+import thermalducts.ducts.energy.TileEnergyDuct;
 import thermalducts.multiblock.IMultiBlock;
 import thermalducts.multiblock.MultiBlockFormer;
 
@@ -47,6 +55,16 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	}
 
 	@Override
+	public TileEntity createNewTileEntity(World var1, int var2) {
+
+		switch (var2) {
+		case 1:
+			return new TileEnergyDuct();
+		}
+		return new TileMultiBlock();
+	}
+
+	@Override
 	public int damageDropped(int i) {
 
 		return i;
@@ -58,11 +76,19 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 		return false;
 	}
 
-	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onBlockHighlight(DrawBlockHighlightEvent event) {
 
-		final float f = 0.0625F;
-		return AxisAlignedBB.getAABBPool().getAABB(x + f, y, z + f, x + 1 - f, y + 1 - f, z + 1 - f);
+		if (event.target.typeOfHit == MovingObjectType.BLOCK && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName().equals(getUnlocalizedName())) {
+			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
+
+			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
+			if (theTile.shouldRenderCustomHitBox(event.target.subHit)) {
+				event.setCanceled(true);
+				RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, theTile.getCustomHitBox(event.target.subHit));
+			}
+		}
 	}
 
 	@Override
@@ -131,6 +157,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	@Override
 	public boolean initialize() {
 
+		MinecraftForge.EVENT_BUS.register(ThermalDucts.blockDuct);
 		return true;
 	}
 
@@ -169,7 +196,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 		p_149699_5_.addChatMessage(new ChatComponentText("Conduits Found: " + theTile.getGrid().idleSet.size()));
 	}
 
-	public static final String[] NAMES = { "testDuct" };
+	public static final String[] NAMES = { "testDuct", "energyDuct" };
 
 	public static ItemStack blockDuct;
 
