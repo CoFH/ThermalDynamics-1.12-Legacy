@@ -1,8 +1,10 @@
 package thermalducts.ducts.energy;
 
+import thermalducts.block.TileMultiBlock.ConnectionTypes;
+import thermalducts.block.TileMultiBlock.NeighborTypes;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-
+import cofh.util.BlockHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -57,6 +59,45 @@ public class EnergyDuct implements IEnergyHandler {
 	}
 
 	public void tickPass(int pass) {
-
+		int power = parentTile.internalGrid.getSendableEnergy();
+		int usedPower=0;
+		
+		for (int i=parentTile.internalSideCounter; i<parentTile.neighborTypes.length && usedPower < power; i++) {
+			if (parentTile.neighborTypes[i] == NeighborTypes.TILE && parentTile.connectionTypes[i] == ConnectionTypes.NORMAL) {
+				TileEntity theTile = BlockHelper.getAdjacentTileEntity(parentTile, i);
+				if (theTile instanceof IEnergyHandler) {
+					IEnergyHandler theTileE = (IEnergyHandler) theTile;
+					if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i^1])) {
+						usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i^1], power-usedPower, false);
+					}
+					if (usedPower >= power) {
+						parentTile.tickInternalSideCounter(i+1);
+						break;
+					}
+				}
+			}
+		}
+		
+		for (int i=0; i<parentTile.internalSideCounter && usedPower < power; i++) {
+			if (parentTile.neighborTypes[i] == NeighborTypes.TILE && parentTile.connectionTypes[i] == ConnectionTypes.NORMAL) {
+				TileEntity theTile = BlockHelper.getAdjacentTileEntity(parentTile, i);
+				if (theTile instanceof IEnergyHandler) {
+					IEnergyHandler theTileE = (IEnergyHandler) theTile;
+					if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i^1])) {
+						usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i^1], power-usedPower, false);
+					}
+					if (usedPower >= power) {
+						parentTile.tickInternalSideCounter(i+1);
+						break;
+					}
+				}
+			}
+		}
+		
+		
+		System.out.println("UsedPower: " + usedPower + " - PoweR: " + power);
+		parentTile.internalGrid.myStorage.extractEnergy(usedPower, false);
+			
+		
 	}
 }

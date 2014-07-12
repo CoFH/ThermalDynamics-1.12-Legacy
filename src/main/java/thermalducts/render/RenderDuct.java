@@ -12,7 +12,6 @@ import cofh.render.RenderHelper;
 import cofh.render.RenderUtils;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -30,6 +29,8 @@ import org.lwjgl.opengl.GL11;
 import thermalducts.block.BlockDuct;
 import thermalducts.block.BlockDuct.ConduitTypes;
 import thermalducts.block.BlockDuct.RenderTypes;
+import thermalducts.block.TileMultiBlock.ConnectionTypes;
+import thermalducts.block.TileMultiBlock.NeighborTypes;
 import thermalducts.block.TileMultiBlock;
 import thermalducts.core.TDProps;
 
@@ -276,7 +277,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public void getConduitConnections(TileMultiBlock tile) {
 
 		for (int i = 0; i < 6; i++) {
-			connections[i] = tile.neighborTypes[i].ordinal(); // tile.getConnectionType(i);
+			if (tile.connectionTypes[i] == ConnectionTypes.BLOCKED)
+				connections[i] = NeighborTypes.NONE.ordinal();
+			else
+				connections[i] = tile.neighborTypes[i].ordinal(); // tile.getConnectionType(i);
 		}
 	}
 

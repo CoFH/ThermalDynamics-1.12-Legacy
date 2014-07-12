@@ -13,6 +13,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 import java.io.File;
 
@@ -27,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import thermalducts.block.BlockDuct;
 import thermalducts.core.Proxy;
 import thermalducts.core.TickHandler;
+import thermalducts.ducts.energy.TileEnergyDuct;
 import thermalducts.gui.TDCreativeTab;
 
 @Mod(modid = ThermalDucts.modId, name = ThermalDucts.modName, version = ThermalDucts.version, dependencies = ThermalDucts.dependencies, canBeDeactivated = false)
@@ -77,6 +79,8 @@ public class ThermalDucts extends BaseMod {
 
 		FMLCommonHandler.instance().bus().register(TickHandler.INSTANCE);
 		proxy.registerEntities();
+		
+		
 	}
 
 	@EventHandler

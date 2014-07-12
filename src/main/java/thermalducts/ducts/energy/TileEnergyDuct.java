@@ -14,10 +14,6 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 	EnergyDuct internalDuct;
 	EnergyGrid internalGrid;
 
-	static {
-		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
-	}
-
 	public TileEnergyDuct() {
 
 		internalDuct = new EnergyDuct(this);

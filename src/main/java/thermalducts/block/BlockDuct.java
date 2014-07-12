@@ -84,9 +84,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
 
 			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
-			if (theTile.shouldRenderCustomHitBox(event.target.subHit)) {
+			if (theTile.shouldRenderCustomHitBox(event.target.subHit, event.player)) {
 				event.setCanceled(true);
-				RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, theTile.getCustomHitBox(event.target.subHit));
+				RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, theTile.getCustomHitBox(event.target.subHit, event.player));
 			}
 		}
 	}
@@ -158,6 +158,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	public boolean initialize() {
 
 		MinecraftForge.EVENT_BUS.register(ThermalDucts.blockDuct);
+		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
 		return true;
 	}
 

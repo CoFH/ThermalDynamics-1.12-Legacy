@@ -1,6 +1,7 @@
 package thermalducts.block;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.api.tileentity.IPlacedTile;
@@ -27,6 +28,7 @@ import thermalducts.core.TickHandler;
 import thermalducts.multiblock.IMultiBlock;
 import thermalducts.multiblock.MultiBlockFormer;
 import thermalducts.multiblock.MultiBlockGrid;
+import thermalexpansion.util.Utils;
 
 public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox {
 
@@ -38,6 +40,8 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 	public MultiBlockGrid myGrid;
 	public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
 	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE };
+	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL };
+	public int internalSideCounter = 0;
 
 	@Override
 	public void setInvalidForForming() {
@@ -84,12 +88,14 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 	@Override
 	public boolean isSideConnected(byte side) {
 
-		return BlockHelper.getAdjacentTileEntity(this, side) instanceof TileMultiBlock; // neighborTypes[side] == NeighborTypes.MULTIBLOCK; //
+		return connectionTypes[side] != ConnectionTypes.BLOCKED && BlockHelper.getAdjacentTileEntity(this, side) instanceof TileMultiBlock;
 	}
 
 	@Override
 	public void setNotConnected(byte side) {
 
+		connectionTypes[side] = ConnectionTypes.BLOCKED;
+		neighborTypes[side] = NeighborTypes.NONE;
 	}
 
 	@Override
@@ -126,14 +132,14 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 		if (wasNode != isNode && myGrid != null) {
 			myGrid.addBlock(this);
 		}
-		// worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
 	public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
 
 		int side = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
+
 		TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
 		if (isConnectable(theTile, side)) {
 			neighborMultiBlocks[side] = (IMultiBlock) theTile;
@@ -162,6 +168,22 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 			}
 		}
 	}
+	
+	public void tickInternalSideCounter(int start) {
+		for (int a=start; a<neighborTypes.length; a++) {
+			if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
+				internalSideCounter = a;
+				return;
+			}
+		}
+		for (int a=0; a<start; a++) {
+			if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
+				internalSideCounter = a;
+				return;
+			}
+		}
+	}
+	
 
 	/*
 	 * Should return true if theTile is an instance of this multiblock.
@@ -197,7 +219,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
 	@Override
 	public void tickMultiBlock() {
-
+		System.out.println("Tick Multiblock");
 		onNeighborBlockChange();
 		formGrid();
 	}
@@ -223,16 +245,45 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound p_145839_1_) {
+	public void readFromNBT(NBTTagCompound nbt) {
 
-		super.readFromNBT(p_145839_1_);
+		super.readFromNBT(nbt);
+		// for (int i = 0; i < neighborTypes.length; i++) {
+		// neighborTypes[i] = NeighborTypes.values()[nbt.getByte("neTypes" + i)];
+		// }
+		for (int i = 0; i < connectionTypes.length; i++) {
+			connectionTypes[i] = ConnectionTypes.values()[nbt.getByte("conTypes" + i)];
+		}
 		synchronized (TickHandler.INSTANCE.multiBlocksToCalculate) {
 			TickHandler.INSTANCE.multiBlocksToCalculate.add(this);
 		}
 	}
 
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+
+		super.writeToNBT(nbt);
+		// for (int i = 0; i < neighborTypes.length; i++) {
+		// nbt.setByte("neTypes" + i, (byte) neighborTypes[i].ordinal());
+		// }
+		for (int i = 0; i < connectionTypes.length; i++) {
+			nbt.setByte("conTypes" + i, (byte) connectionTypes[i].ordinal());
+		}
+	}
+
 	public static enum NeighborTypes {
 		NONE, MULTIBLOCK, TILE
+	}
+
+	public static enum ConnectionTypes {
+		NORMAL, BLOCKED;
+		
+		
+		public ConnectionTypes next() {
+			if (this == NORMAL)
+				return BLOCKED;
+			return NORMAL;
+		}
 	}
 
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
@@ -243,60 +294,30 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 		maxX = maxY = maxZ = 0.7;
 
 		Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
+
+		// Add TILE sides
 		for (int i = 0; i < 6; i++) {
 			if (neighborTypes[i] == NeighborTypes.TILE) {
 				cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
 			}
 		}
-		if (neighborTypes[0] == NeighborTypes.MULTIBLOCK) {
-			minY = 0;
+		// Add MULTIBLOCK sides
+		for (int i = 6; i < 12; i++) {
+			if (neighborTypes[i - 6] == NeighborTypes.MULTIBLOCK) {
+				cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
+			}
 		}
-		if (neighborTypes[1] == NeighborTypes.MULTIBLOCK) {
-			maxY = 1;
-		}
-		if (neighborTypes[2] == NeighborTypes.MULTIBLOCK) {
-			minZ = 0;
-		}
-		if (neighborTypes[3] == NeighborTypes.MULTIBLOCK) {
-			maxZ = 1;
-		}
-		if (neighborTypes[4] == NeighborTypes.MULTIBLOCK) {
-			minX = 0;
-		}
-		if (neighborTypes[5] == NeighborTypes.MULTIBLOCK) {
-			maxX = 1;
-		}
-		cuboids.add(new IndexedCuboid6(6, new Cuboid6(minX, minY, minZ, maxX, maxY, maxZ).add(pos)));
-
-		// if (neighborTypes[0] == NeighborTypes.MULTIBLOCK) {
-		// minY = 0;
-		// }
-		// if (neighborTypes[1] == NeighborTypes.MULTIBLOCK) {
-		// maxY = 1;
-		// }
-		// if (neighborTypes[2] == NeighborTypes.MULTIBLOCK) {
-		// minZ = 0;
-		// }
-		// if (neighborTypes[3] == NeighborTypes.MULTIBLOCK) {
-		// maxZ = 1;
-		// }
-		// if (neighborTypes[4] == NeighborTypes.MULTIBLOCK) {
-		// minX = 0;
-		// }
-		// if (neighborTypes[5] == NeighborTypes.MULTIBLOCK) {
-		// maxX = 1;
-		// }
-		// cuboids.add(new IndexedCuboid6(6, new Cuboid6(minX, minY, minZ, maxX, maxY, maxZ).add(pos)));
+		cuboids.add(new IndexedCuboid6(13, new Cuboid6(minX, minY, minZ, maxX, maxY, maxZ).add(pos)));
 	}
 
 	@Override
-	public boolean shouldRenderCustomHitBox(int subHit) {
+	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
 
-		return subHit == 6;
+		return subHit == 13 || (subHit > 5 && !Utils.isHoldingUsableWrench(thePlayer));
 	}
 
 	@Override
-	public CustomHitBox getCustomHitBox(int subHit) {
+	public CustomHitBox getCustomHitBox(int subHit, EntityPlayer thePlayer) {
 
 		CustomHitBox hb = new CustomHitBox(.4, .4, .4, xCoord + .3, yCoord + .3, zCoord + .3);
 
@@ -313,12 +334,11 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 		return hb;
 	}
 
-	public static Cuboid6[] subSelection = new Cuboid6[6];
+	public static Cuboid6[] subSelection = new Cuboid6[12];
 
 	static {
 
 		double min = 0.25;
-		double max = 0.75;
 		double min2 = 0.2;
 		double max2 = 0.8;
 
@@ -328,6 +348,28 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 		subSelection[3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
 		subSelection[4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
 		subSelection[5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
+
+		min = 0.3;
+		min2 = 0.3;
+		max2 = 0.7;
+
+		subSelection[6] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
+		subSelection[7] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
+		subSelection[8] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
+		subSelection[9] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
+		subSelection[10] = new Cuboid6(0.0, min2, min2, min, max2, max2);
+		subSelection[11] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
+	}
+	
+	public boolean onWrench(EntityPlayer player, int hitSide) {
+		if (Utils.isHoldingUsableWrench(player)) {
+			int subHit = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord).subHit;
+			if (subHit > 5 && subHit < 13) {
+				connectionTypes[subHit-6] = connectionTypes[subHit-6].next(); 
+				player.addChatMessage(new ChatComponentText("ConType " + (subHit-6) + " : " + connectionTypes[subHit-6] + ":" + connectionTypes[subHit-6].next()));
+			}
+		}
+		return false;
 	}
 
 	public void doDebug(EntityPlayer thePlayer) {
