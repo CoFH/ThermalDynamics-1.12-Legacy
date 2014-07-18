@@ -1,12 +1,14 @@
-package thermalducts.ducts.energy;
+package thermaldynamics.ducts.energy;
 
-import thermalducts.block.TileMultiBlock.ConnectionTypes;
-import thermalducts.block.TileMultiBlock.NeighborTypes;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.util.BlockHelper;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
+import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 
 public class EnergyDuct implements IEnergyHandler {
 
@@ -26,7 +28,12 @@ public class EnergyDuct implements IEnergyHandler {
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
 
-		System.out.println("Energy In Possible: " + maxReceive + " - Sim: " + simulate + (parentTile.internalGrid != null ? " - EnergyHeld: " + parentTile.internalGrid.myStorage.getEnergyStored() + " - EnergyMax: " + parentTile.internalGrid.myStorage.getMaxEnergyStored() : ""));
+		System.out.println("Energy In Possible: "
+				+ maxReceive
+				+ " - Sim: "
+				+ simulate
+				+ (parentTile.internalGrid != null ? " - EnergyHeld: " + parentTile.internalGrid.myStorage.getEnergyStored() + " - EnergyMax: "
+						+ parentTile.internalGrid.myStorage.getMaxEnergyStored() : ""));
 		return parentTile.internalGrid != null ? parentTile.internalGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
 	}
 
@@ -59,45 +66,44 @@ public class EnergyDuct implements IEnergyHandler {
 	}
 
 	public void tickPass(int pass) {
+
 		int power = parentTile.internalGrid.getSendableEnergy();
-		int usedPower=0;
-		
-		for (int i=parentTile.internalSideCounter; i<parentTile.neighborTypes.length && usedPower < power; i++) {
+		int usedPower = 0;
+
+		for (int i = parentTile.internalSideCounter; i < parentTile.neighborTypes.length && usedPower < power; i++) {
 			if (parentTile.neighborTypes[i] == NeighborTypes.TILE && parentTile.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				TileEntity theTile = BlockHelper.getAdjacentTileEntity(parentTile, i);
 				if (theTile instanceof IEnergyHandler) {
 					IEnergyHandler theTileE = (IEnergyHandler) theTile;
-					if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i^1])) {
-						usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i^1], power-usedPower, false);
+					if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+						usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
 					}
 					if (usedPower >= power) {
-						parentTile.tickInternalSideCounter(i+1);
+						parentTile.tickInternalSideCounter(i + 1);
 						break;
 					}
 				}
 			}
 		}
-		
-		for (int i=0; i<parentTile.internalSideCounter && usedPower < power; i++) {
+
+		for (int i = 0; i < parentTile.internalSideCounter && usedPower < power; i++) {
 			if (parentTile.neighborTypes[i] == NeighborTypes.TILE && parentTile.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				TileEntity theTile = BlockHelper.getAdjacentTileEntity(parentTile, i);
 				if (theTile instanceof IEnergyHandler) {
 					IEnergyHandler theTileE = (IEnergyHandler) theTile;
-					if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i^1])) {
-						usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i^1], power-usedPower, false);
+					if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+						usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
 					}
 					if (usedPower >= power) {
-						parentTile.tickInternalSideCounter(i+1);
+						parentTile.tickInternalSideCounter(i + 1);
 						break;
 					}
 				}
 			}
 		}
-		
-		
+
 		System.out.println("UsedPower: " + usedPower + " - PoweR: " + power);
 		parentTile.internalGrid.myStorage.extractEnergy(usedPower, false);
-			
-		
+
 	}
 }

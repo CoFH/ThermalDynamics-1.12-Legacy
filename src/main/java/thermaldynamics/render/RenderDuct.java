@@ -1,4 +1,4 @@
-package thermalducts.render;
+package thermaldynamics.render;
 
 import codechicken.lib.lighting.LightModel;
 import codechicken.lib.render.CCModel;
@@ -12,6 +12,7 @@ import cofh.render.RenderHelper;
 import cofh.render.RenderUtils;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -26,19 +27,19 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
-import thermalducts.block.BlockDuct;
-import thermalducts.block.BlockDuct.ConduitTypes;
-import thermalducts.block.BlockDuct.RenderTypes;
-import thermalducts.block.TileMultiBlock.ConnectionTypes;
-import thermalducts.block.TileMultiBlock.NeighborTypes;
-import thermalducts.block.TileMultiBlock;
-import thermalducts.core.TDProps;
+import thermaldynamics.block.BlockDuct;
+import thermaldynamics.block.BlockDuct.ConduitTypes;
+import thermaldynamics.block.BlockDuct.RenderTypes;
+import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
+import thermaldynamics.block.TileMultiBlock.NeighborTypes;
+import thermaldynamics.core.TDProps;
 
 public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	public static final RenderDuct instance = new RenderDuct();
 
-	public static final int ITEMS_TO_RENDER_PER_CONDUIT = 16;
+	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
 
 	static RenderItem travelingItemRender;
 	static EntityItem travelingEntityItem = new EntityItem(null);
@@ -46,7 +47,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	static final float ITEM_RENDER_SCALE = 0.6F;
 
-	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionTypes.CONDUIT.ordinal(), BlockDuct.ConnectionTypes.CONDUIT.ordinal(), 0, 0, 0, 0 };
+	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionTypes.DUCT.ordinal(), BlockDuct.ConnectionTypes.DUCT.ordinal(), 0, 0, 0, 0 };
 	static int[] connections = new int[6];
 
 	static IIcon[] textureConduit = new IIcon[RenderTypes.values().length];
@@ -61,7 +62,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	static CCModel modelCenter;
 
 	static {
-		TDProps.renderDuctID = RenderingRegistry.getNextAvailableRenderId();
+		TDProps.renderDuctId = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(instance);
 
 		generateFluidModels();
@@ -130,10 +131,12 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 			double d3 = 0.32 + 0.06 * i;
 			double c1 = 0.32;
 			double c2 = 0.68;
-			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 }, { 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 }, { c1, c1, c1, c2, d3, c2 } };
+			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 },
+					{ 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 }, { c1, c1, c1, c2, d3, c2 } };
 
 			for (int s = 0; s < 7; s++) {
-				modelFluid[i - 1][s] = CCModel.quadModel(24).generateBlock(0, boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]).computeNormals();
+				modelFluid[i - 1][s] = CCModel.quadModel(24).generateBlock(0, boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5])
+						.computeNormals();
 			}
 		}
 	}
@@ -184,7 +187,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 				} else {
 					modelConnection[0][s].render(trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
 				}
-				if (connection[s] != BlockDuct.ConnectionTypes.CONDUIT.ordinal()) {
+				if (connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
 					if (connection[s] % 2 == 0) {
 						modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(textureConnection[connection[s]]));
 					} else {
@@ -210,7 +213,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 			if (renderType == RenderTypes.ENERGY_REINFORCED.ordinal()) {
 				texture = textureFluidRedstone;
-			} else if (renderType == RenderTypes.ITEM_FAST_TRANS.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_LONG.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()) {
+			} else if (renderType == RenderTypes.ITEM_FAST_TRANS.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal()
+					|| renderType == RenderTypes.ITEM_FAST_TRANS_LONG.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()) {
 				texture = textureFluidGlowstone;
 				opacity = 128;
 			} else {
@@ -277,10 +281,11 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public void getConduitConnections(TileMultiBlock tile) {
 
 		for (int i = 0; i < 6; i++) {
-			if (tile.connectionTypes[i] == ConnectionTypes.BLOCKED)
+			if (tile.connectionTypes[i] == ConnectionTypes.BLOCKED) {
 				connections[i] = NeighborTypes.NONE.ordinal();
-			else
+			} else {
 				connections[i] = tile.neighborTypes[i].ordinal(); // tile.getConnectionType(i);
+			}
 		}
 	}
 
@@ -339,7 +344,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	@Override
 	public int getRenderId() {
 
-		return TDProps.renderDuctID;
+		return TDProps.renderDuctId;
 	}
 
 	/* IItemRenderer */

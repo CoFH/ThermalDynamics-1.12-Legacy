@@ -1,4 +1,4 @@
-package thermalducts.core;
+package thermaldynamics.core;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
@@ -6,8 +6,8 @@ import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 import java.util.LinkedHashSet;
 
-import thermalducts.multiblock.IMultiBlock;
-import thermalducts.multiblock.MultiBlockGrid;
+import thermaldynamics.multiblock.IMultiBlock;
+import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class TickHandler {
 
@@ -24,10 +24,11 @@ public class TickHandler {
 	public void tick(ServerTickEvent evt) {
 
 		// TODO: this needs split up into groups per-world when worlds are threaded
-		if (evt.phase == Phase.START)
+		if (evt.phase == Phase.START) {
 			tickStart();
-		else
+		} else {
 			tickEnd();
+		}
 	}
 
 	public void tickStart() {
@@ -66,4 +67,5 @@ public class TickHandler {
 			tickingBlocks.clear();
 		}
 	}
+
 }

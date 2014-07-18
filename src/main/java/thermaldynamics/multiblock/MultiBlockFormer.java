@@ -1,4 +1,4 @@
-package thermalducts.multiblock;
+package thermaldynamics.multiblock;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -17,8 +17,9 @@ public class MultiBlockFormer {
 
 		blocksToCheck.add(theMultiBlock);
 
-		while (!blocksToCheck.isEmpty())
+		while (!blocksToCheck.isEmpty()) {
 			checkMutliBlock(blocksToCheck.remove());
+		}
 
 		// doStep(theMultiBlock.getGrid(), theMultiBlock);
 
@@ -28,8 +29,9 @@ public class MultiBlockFormer {
 
 	private void checkMutliBlock(IMultiBlock currentMultiBlock) {
 
-		if (!currentMultiBlock.isValidForForming())
+		if (!currentMultiBlock.isValidForForming()) {
 			return;
+		}
 
 		currentMultiBlock.setInvalidForForming();
 

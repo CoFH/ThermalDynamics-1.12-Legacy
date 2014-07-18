@@ -1,10 +1,10 @@
-package thermalducts.ducts.energy;
+package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.EnergyStorage;
 
-import thermalducts.core.TDProps;
-import thermalducts.multiblock.IMultiBlock;
-import thermalducts.multiblock.MultiBlockGrid;
+import thermaldynamics.core.TDProps;
+import thermaldynamics.multiblock.IMultiBlock;
+import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class EnergyGrid extends MultiBlockGrid {
 
@@ -12,6 +12,7 @@ public class EnergyGrid extends MultiBlockGrid {
 	private int currentEnergy = 0;
 	private int extraEnergy = 0;
 	private boolean first = false;
+
 	@Override
 	public void balanceGrid() {
 
@@ -22,21 +23,24 @@ public class EnergyGrid extends MultiBlockGrid {
 	@Override
 	public void tickGrid() {
 
-		if (!nodeSet.isEmpty() && myStorage.getEnergyStored() > 0)
+		if (!nodeSet.isEmpty() && myStorage.getEnergyStored() > 0) {
 			synchronized (nodeSet) {
 				currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
 				extraEnergy = myStorage.getEnergyStored() % nodeSet.size();
-					for (IMultiBlock m : nodeSet) {
-						m.tickPass(0);
-					}
+				for (IMultiBlock m : nodeSet) {
+					m.tickPass(0);
+				}
 			}
+		}
 	}
 
 	public int getSendableEnergy() {
+
 		return currentEnergy + extraEnergy;
 	}
-	
+
 	public void useEnergy(int energyUsed) {
+
 		myStorage.modifyEnergyStored(-energyUsed);
 		if (energyUsed > currentEnergy) {
 			extraEnergy -= (energyUsed - currentEnergy);

@@ -1,6 +1,7 @@
-package thermalducts.block;
+package thermaldynamics.block;
 
 import buildcraft.api.tools.IToolWrench;
+
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.BlockCoord;
@@ -21,19 +22,19 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import thermalducts.block.TileMultiBlock.NeighborTypes;
-import thermalexpansion.block.TileTEBase;
+
+import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 import thermalexpansion.util.Utils;
 
 public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEntityProvider {
 
-	protected BlockMultiBlock(Material p_i45394_1_) {
+	protected BlockMultiBlock(Material material) {
 
-		super(p_i45394_1_);
+		super(material);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 
 		return new TileMultiBlock();
 	}
@@ -86,16 +87,15 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
 		return RayTracer.instance().rayTraceCuboids(new Vector3(start), new Vector3(end), cuboids, new BlockCoord(x, y, z), this);
 	}
 
-	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int hitSide, float hitX, float hitY, float hitZ) {
-		
+
 		if (Utils.isHoldingDebugger(player)) {
 			try {
 				((TileMultiBlock) world.getTileEntity(x, y, z)).doDebug(player);
 				return true;
-			} catch (Exception _) {
-				_.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		if (Utils.isHoldingMultimeter(player, x, y, z)) {

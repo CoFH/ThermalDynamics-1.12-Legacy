@@ -1,13 +1,12 @@
-package thermalducts.ducts.energy;
+package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.IEnergyHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import thermalducts.block.TileMultiBlock;
-import thermalducts.multiblock.MultiBlockGrid;
+import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
@@ -87,7 +86,8 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 	@Override
 	public void tickPass(int pass) {
 
-		if (internalDuct != null)
+		if (internalDuct != null) {
 			internalDuct.tickPass(pass);
+		}
 	}
 }

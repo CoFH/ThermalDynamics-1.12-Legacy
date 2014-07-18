@@ -1,5 +1,4 @@
-package thermalducts.multiblock;
-
+package thermaldynamics.multiblock;
 
 public interface IMultiBlock {
 

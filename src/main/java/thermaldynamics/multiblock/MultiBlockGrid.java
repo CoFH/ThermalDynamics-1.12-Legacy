@@ -1,8 +1,8 @@
-package thermalducts.multiblock;
+package thermaldynamics.multiblock;
 
 import java.util.HashSet;
 
-import thermalducts.core.TickHandler;
+import thermaldynamics.core.TickHandler;
 
 public class MultiBlockGrid {
 

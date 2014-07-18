@@ -1,4 +1,4 @@
-package thermalducts.block;
+package thermaldynamics.block;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
@@ -24,10 +24,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.commons.lang3.StringUtils;
 
-import thermalducts.core.TickHandler;
-import thermalducts.multiblock.IMultiBlock;
-import thermalducts.multiblock.MultiBlockFormer;
-import thermalducts.multiblock.MultiBlockGrid;
+import thermaldynamics.core.TickHandler;
+import thermaldynamics.multiblock.IMultiBlock;
+import thermaldynamics.multiblock.MultiBlockFormer;
+import thermaldynamics.multiblock.MultiBlockGrid;
 import thermalexpansion.util.Utils;
 
 public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox {
@@ -39,8 +39,10 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 	public boolean isNode = false;
 	public MultiBlockGrid myGrid;
 	public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
-	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE };
-	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL };
+	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
+			NeighborTypes.NONE };
+	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
+			ConnectionTypes.NORMAL, ConnectionTypes.NORMAL };
 	public int internalSideCounter = 0;
 
 	@Override
@@ -168,22 +170,22 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 			}
 		}
 	}
-	
+
 	public void tickInternalSideCounter(int start) {
-		for (int a=start; a<neighborTypes.length; a++) {
+
+		for (int a = start; a < neighborTypes.length; a++) {
 			if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
 				internalSideCounter = a;
 				return;
 			}
 		}
-		for (int a=0; a<start; a++) {
+		for (int a = 0; a < start; a++) {
 			if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
 				internalSideCounter = a;
 				return;
 			}
 		}
 	}
-	
 
 	/*
 	 * Should return true if theTile is an instance of this multiblock.
@@ -219,6 +221,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
 	@Override
 	public void tickMultiBlock() {
+
 		System.out.println("Tick Multiblock");
 		onNeighborBlockChange();
 		formGrid();
@@ -277,11 +280,12 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
 	public static enum ConnectionTypes {
 		NORMAL, BLOCKED;
-		
-		
+
 		public ConnectionTypes next() {
-			if (this == NORMAL)
+
+			if (this == NORMAL) {
 				return BLOCKED;
+			}
 			return NORMAL;
 		}
 	}
@@ -360,13 +364,16 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 		subSelection[10] = new Cuboid6(0.0, min2, min2, min, max2, max2);
 		subSelection[11] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
 	}
-	
+
+	@Override
 	public boolean onWrench(EntityPlayer player, int hitSide) {
+
 		if (Utils.isHoldingUsableWrench(player)) {
 			int subHit = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord).subHit;
 			if (subHit > 5 && subHit < 13) {
-				connectionTypes[subHit-6] = connectionTypes[subHit-6].next(); 
-				player.addChatMessage(new ChatComponentText("ConType " + (subHit-6) + " : " + connectionTypes[subHit-6] + ":" + connectionTypes[subHit-6].next()));
+				connectionTypes[subHit - 6] = connectionTypes[subHit - 6].next();
+				player.addChatMessage(new ChatComponentText("ConType " + (subHit - 6) + " : " + connectionTypes[subHit - 6] + ":"
+						+ connectionTypes[subHit - 6].next()));
 			}
 		}
 		return false;

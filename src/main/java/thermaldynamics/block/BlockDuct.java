@@ -1,4 +1,4 @@
-package thermalducts.block;
+package thermaldynamics.block;
 
 import codechicken.lib.raytracer.RayTracer;
 import cofh.api.core.IInitializer;
@@ -10,6 +10,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
@@ -28,11 +29,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-import thermalducts.ThermalDucts;
-import thermalducts.core.TDProps;
-import thermalducts.ducts.energy.TileEnergyDuct;
-import thermalducts.multiblock.IMultiBlock;
-import thermalducts.multiblock.MultiBlockFormer;
+import thermaldynamics.ThermalDynamics;
+import thermaldynamics.core.TDProps;
+import thermaldynamics.ducts.energy.TileEnergyDuct;
+import thermaldynamics.multiblock.IMultiBlock;
+import thermaldynamics.multiblock.MultiBlockFormer;
 
 public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
@@ -43,7 +44,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 		setResistance(120.0F);
 		setStepSound(soundTypeMetal);
 		setBlockName("thermalducts.duct");
-		setCreativeTab(ThermalDucts.tab);
+		setCreativeTab(ThermalDynamics.tab);
 	}
 
 	@Override
@@ -80,7 +81,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	@SubscribeEvent
 	public void onBlockHighlight(DrawBlockHighlightEvent event) {
 
-		if (event.target.typeOfHit == MovingObjectType.BLOCK && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName().equals(getUnlocalizedName())) {
+		if (event.target.typeOfHit == MovingObjectType.BLOCK
+				&& event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
+						.equals(getUnlocalizedName())) {
 			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
 
 			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
@@ -157,7 +160,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	@Override
 	public boolean initialize() {
 
-		MinecraftForge.EVENT_BUS.register(ThermalDucts.blockDuct);
+		MinecraftForge.EVENT_BUS.register(ThermalDynamics.blockDuct);
 		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
 		return true;
 	}
@@ -171,7 +174,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	@Override
 	public int getRenderType() {
 
-		return TDProps.renderDuctID;
+		return TDProps.renderDuctId;
 	}
 
 	@Override
@@ -210,7 +213,8 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	}
 
 	public static enum ConnectionTypes {
-		NONE(false), CONDUIT, ENERGY_BASIC, ENERGY_BASIC_BLOCKED(false), ENERGY_HARDENED, ENERGY_HARDENED_BLOCKED(false), ENERGY_REINFORCED, ENERGY_REINFORCED_BLOCKED(false), FLUID_NORMAL, FLUID_BLOCKED(false), FLUID_INPUT_ON, FLUID_INPUT_OFF, ITEM_NORMAL, ITEM_BLOCKED(false), ITEM_INPUT_ON, ITEM_INPUT_OFF, ITEM_STUFFED_ON, ITEM_STUFFED_OFF;
+		NONE(false), DUCT, ENERGY_BASIC, ENERGY_BASIC_BLOCKED(false), ENERGY_HARDENED, ENERGY_HARDENED_BLOCKED(false), ENERGY_REINFORCED, ENERGY_REINFORCED_BLOCKED(
+				false), FLUID_NORMAL, FLUID_BLOCKED(false), FLUID_INPUT_ON, FLUID_INPUT_OFF, ITEM_NORMAL, ITEM_BLOCKED(false), ITEM_INPUT_ON, ITEM_INPUT_OFF, ITEM_STUFFED_ON, ITEM_STUFFED_OFF;
 
 		private final boolean renderConduit;
 
@@ -231,7 +235,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	}
 
 	@Override
-	public ItemStack dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnBlock, boolean simulate) {
+	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
 
 		return null;
 	}
