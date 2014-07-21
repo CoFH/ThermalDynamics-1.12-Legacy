@@ -317,7 +317,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 	@Override
 	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
 
-		return subHit == 13 || (subHit > 5 && !Utils.isHoldingUsableWrench(thePlayer));
+		return subHit == 13 || (subHit > 5 && !Utils.isHoldingUsableWrench(thePlayer, xCoord, yCoord, zCoord));
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 	@Override
 	public boolean onWrench(EntityPlayer player, int hitSide) {
 
-		if (Utils.isHoldingUsableWrench(player)) {
+		if (Utils.isHoldingUsableWrench(player, xCoord, yCoord, zCoord)) {
 			int subHit = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord).subHit;
 			if (subHit > 5 && subHit < 13) {
 				connectionTypes[subHit - 6] = connectionTypes[subHit - 6].next();
