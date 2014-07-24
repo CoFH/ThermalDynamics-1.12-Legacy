@@ -6,8 +6,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.api.tileentity.IPlacedTile;
 import cofh.block.TileCoFHBase;
-import cofh.network.CoFHPacket;
 import cofh.network.ITilePacketHandler;
+import cofh.network.PacketCoFHBase;
 import cofh.render.hitbox.CustomHitBox;
 import cofh.render.hitbox.ICustomHitBox;
 import cofh.util.BlockHelper;
@@ -388,9 +388,9 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
 	/* NETWORK METHODS */
 	@Override
-	public CoFHPacket getPacket() {
+	public PacketCoFHBase getPacket() {
 
-		CoFHPacket payload = super.getPacket();
+		PacketCoFHBase payload = super.getPacket();
 
 		for (byte i = 0; i < neighborTypes.length; i++) {
 			payload.addByte(neighborTypes[i].ordinal());
@@ -402,7 +402,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
 	/* ITilePacketHandler */
 	@Override
-	public void handleTilePacket(CoFHPacket payload, boolean isServer) {
+	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
 
 		if (ServerHelper.isClientWorld(worldObj)) {
 			for (byte i = 0; i < neighborTypes.length; i++) {
