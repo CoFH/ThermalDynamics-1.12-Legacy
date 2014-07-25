@@ -98,7 +98,7 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
 				e.printStackTrace();
 			}
 		}
-		if (Utils.isHoldingMultimeter(player, x, y, z)) {
+		if (Utils.isHoldingMultimeter(player)) {
 			return true;
 		}
 		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
