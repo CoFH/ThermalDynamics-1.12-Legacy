@@ -1,10 +1,10 @@
 package thermaldynamics.block;
 
-import codechicken.lib.raytracer.RayTracer;
 import cofh.api.core.IInitializer;
 import cofh.render.IconRegistry;
 import cofh.render.hitbox.ICustomHitBox;
 import cofh.render.hitbox.RenderHitbox;
+import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
