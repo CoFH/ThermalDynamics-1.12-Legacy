@@ -2,12 +2,12 @@ package thermaldynamics.block;
 
 import buildcraft.api.tools.IToolWrench;
 
-import cofh.block.BlockCoFHBase;
+import cofh.core.block.BlockCoFHBase;
+import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.repack.codechicken.lib.vec.Vector3;
-import cofh.util.ServerHelper;
 
 import java.util.LinkedList;
 import java.util.List;

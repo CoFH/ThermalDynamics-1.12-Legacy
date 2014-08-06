@@ -1,6 +1,6 @@
 package thermaldynamics.core;
 
-import cofh.render.ItemRenderRegistry;
+import cofh.core.render.ItemRenderRegistry;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

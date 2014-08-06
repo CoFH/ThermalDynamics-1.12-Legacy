@@ -1,6 +1,6 @@
 package thermaldynamics.block;
 
-import cofh.item.ItemBlockBase;
+import cofh.core.item.ItemBlockBase;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.EnumRarity;

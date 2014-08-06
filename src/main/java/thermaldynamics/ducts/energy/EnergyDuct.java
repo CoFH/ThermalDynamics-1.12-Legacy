@@ -2,7 +2,7 @@ package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-import cofh.util.BlockHelper;
+import cofh.lib.util.helpers.BlockHelper;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;

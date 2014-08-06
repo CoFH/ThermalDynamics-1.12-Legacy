@@ -1,17 +1,17 @@
 package thermaldynamics.block;
 
 import cofh.api.tileentity.IPlacedTile;
-import cofh.block.TileCoFHBase;
-import cofh.network.ITilePacketHandler;
-import cofh.network.PacketCoFHBase;
-import cofh.render.hitbox.CustomHitBox;
-import cofh.render.hitbox.ICustomHitBox;
+import cofh.core.block.TileCoFHBase;
+import cofh.core.network.ITilePacketHandler;
+import cofh.core.network.PacketCoFHBase;
+import cofh.core.render.hitbox.CustomHitBox;
+import cofh.core.render.hitbox.ICustomHitBox;
+import cofh.lib.util.helpers.BlockHelper;
+import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
-import cofh.util.BlockHelper;
-import cofh.util.ServerHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 import java.util.List;
