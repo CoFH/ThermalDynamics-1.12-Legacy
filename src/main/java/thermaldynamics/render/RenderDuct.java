@@ -28,7 +28,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
 import thermaldynamics.block.BlockDuct;
-import thermaldynamics.block.BlockDuct.ConduitTypes;
+import thermaldynamics.block.BlockDuct.DuctTypes;
 import thermaldynamics.block.BlockDuct.RenderTypes;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
@@ -50,7 +50,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionTypes.DUCT.ordinal(), BlockDuct.ConnectionTypes.DUCT.ordinal(), 0, 0, 0, 0 };
 	static int[] connections = new int[6];
 
-	static IIcon[] textureConduit = new IIcon[RenderTypes.values().length];
+	static IIcon[] textureDuct = new IIcon[RenderTypes.values().length];
 	static IIcon[] textureConnection = new IIcon[BlockDuct.ConnectionTypes.values().length];
 
 	static IIcon textureSolidRedstone;
@@ -71,33 +71,33 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	public static void initialize() {
 
-		textureConduit[RenderTypes.ENERGY_BASIC.ordinal()] = IconRegistry.getIcon("ConduitEnergy00");
-		textureConduit[RenderTypes.ENERGY_HARDENED.ordinal()] = IconRegistry.getIcon("ConduitEnergy10");
-		textureConduit[RenderTypes.ENERGY_REINFORCED.ordinal()] = IconRegistry.getIcon("ConduitEnergy20");
+		textureDuct[RenderTypes.ENERGY_BASIC.ordinal()] = IconRegistry.getIcon("DuctEnergy00");
+		textureDuct[RenderTypes.ENERGY_HARDENED.ordinal()] = IconRegistry.getIcon("DuctEnergy10");
+		textureDuct[RenderTypes.ENERGY_REINFORCED.ordinal()] = IconRegistry.getIcon("DuctEnergy20");
 
-		textureConduit[RenderTypes.FLUID_TRANS.ordinal()] = IconRegistry.getIcon("ConduitFluid00");
-		textureConduit[RenderTypes.FLUID_OPAQUE.ordinal()] = IconRegistry.getIcon("ConduitFluid10");
+		textureDuct[RenderTypes.FLUID_TRANS.ordinal()] = IconRegistry.getIcon("DuctFluid00");
+		textureDuct[RenderTypes.FLUID_OPAQUE.ordinal()] = IconRegistry.getIcon("DuctFluid10");
 
-		textureConduit[RenderTypes.ITEM_TRANS.ordinal()] = IconRegistry.getIcon("ConduitItem00");
-		textureConduit[RenderTypes.ITEM_OPAQUE.ordinal()] = IconRegistry.getIcon("ConduitItem10");
-		textureConduit[RenderTypes.ITEM_FAST_TRANS.ordinal()] = IconRegistry.getIcon("ConduitItem20");
-		textureConduit[RenderTypes.ITEM_FAST_OPAQUE.ordinal()] = IconRegistry.getIcon("ConduitItem30");
+		textureDuct[RenderTypes.ITEM_TRANS.ordinal()] = IconRegistry.getIcon("DuctItem00");
+		textureDuct[RenderTypes.ITEM_OPAQUE.ordinal()] = IconRegistry.getIcon("DuctItem10");
+		textureDuct[RenderTypes.ITEM_FAST_TRANS.ordinal()] = IconRegistry.getIcon("DuctItem20");
+		textureDuct[RenderTypes.ITEM_FAST_OPAQUE.ordinal()] = IconRegistry.getIcon("DuctItem30");
 
-		textureConduit[RenderTypes.ITEM_TRANS_SHORT.ordinal()] = IconRegistry.getIcon("ConduitItem01");
-		textureConduit[RenderTypes.ITEM_TRANS_LONG.ordinal()] = IconRegistry.getIcon("ConduitItem02");
-		textureConduit[RenderTypes.ITEM_TRANS_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("ConduitItem03");
+		textureDuct[RenderTypes.ITEM_TRANS_SHORT.ordinal()] = IconRegistry.getIcon("DuctItem01");
+		textureDuct[RenderTypes.ITEM_TRANS_LONG.ordinal()] = IconRegistry.getIcon("DuctItem02");
+		textureDuct[RenderTypes.ITEM_TRANS_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("DuctItem03");
 
-		textureConduit[RenderTypes.ITEM_OPAQUE_SHORT.ordinal()] = IconRegistry.getIcon("ConduitItem11");
-		textureConduit[RenderTypes.ITEM_OPAQUE_LONG.ordinal()] = IconRegistry.getIcon("ConduitItem12");
-		textureConduit[RenderTypes.ITEM_OPAQUE_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("ConduitItem13");
+		textureDuct[RenderTypes.ITEM_OPAQUE_SHORT.ordinal()] = IconRegistry.getIcon("DuctItem11");
+		textureDuct[RenderTypes.ITEM_OPAQUE_LONG.ordinal()] = IconRegistry.getIcon("DuctItem12");
+		textureDuct[RenderTypes.ITEM_OPAQUE_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("DuctItem13");
 
-		textureConduit[RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal()] = IconRegistry.getIcon("ConduitItem21");
-		textureConduit[RenderTypes.ITEM_FAST_TRANS_LONG.ordinal()] = IconRegistry.getIcon("ConduitItem22");
-		textureConduit[RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("ConduitItem23");
+		textureDuct[RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal()] = IconRegistry.getIcon("DuctItem21");
+		textureDuct[RenderTypes.ITEM_FAST_TRANS_LONG.ordinal()] = IconRegistry.getIcon("DuctItem22");
+		textureDuct[RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("DuctItem23");
 
-		textureConduit[RenderTypes.ITEM_FAST_OPAQUE_SHORT.ordinal()] = IconRegistry.getIcon("ConduitItem31");
-		textureConduit[RenderTypes.ITEM_FAST_OPAQUE_LONG.ordinal()] = IconRegistry.getIcon("ConduitItem32");
-		textureConduit[RenderTypes.ITEM_FAST_OPAQUE_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("ConduitItem33");
+		textureDuct[RenderTypes.ITEM_FAST_OPAQUE_SHORT.ordinal()] = IconRegistry.getIcon("DuctItem31");
+		textureDuct[RenderTypes.ITEM_FAST_OPAQUE_LONG.ordinal()] = IconRegistry.getIcon("DuctItem32");
+		textureDuct[RenderTypes.ITEM_FAST_OPAQUE_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("DuctItem33");
 
 		textureConnection[BlockDuct.ConnectionTypes.ENERGY_BASIC.ordinal()] = IconRegistry.getIcon("Connection2");
 		textureConnection[BlockDuct.ConnectionTypes.ENERGY_BASIC_BLOCKED.ordinal()] = IconRegistry.getIcon("Connection2");
@@ -178,14 +178,14 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		Translation trans = RenderUtils.getRenderVector(x, y, z).translation();
 
 		for (int s = 0; s < 6; s++) {
-			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
+			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
 				if (!invRender) {
-					modelConnection[0][s].render(0, 4, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
-					modelConnection[0][s].render(8, 24, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
-					modelConnection[0][s].render(24, 28, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
-					modelConnection[0][s].render(32, 48, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
+					modelConnection[0][s].render(0, 4, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
+					modelConnection[0][s].render(8, 24, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
+					modelConnection[0][s].render(24, 28, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
+					modelConnection[0][s].render(32, 48, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
 				} else {
-					modelConnection[0][s].render(trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
+					modelConnection[0][s].render(trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
 				}
 				if (connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
 					if (connection[s] % 2 == 0) {
@@ -195,8 +195,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 					}
 				}
 			} else {
-				modelCenter.render(s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
-				modelCenter.render(24 + s * 4, 28 + s * 4, trans, RenderUtils.getIconTransformation(textureConduit[renderType]));
+				modelCenter.render(s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
+				modelCenter.render(24 + s * 4, 28 + s * 4, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
 			}
 		}
 	}
@@ -228,7 +228,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 			CCModel[] models = modelFluid[5];
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
+				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
 					models[s].render(x, y, z, RenderUtils.getIconTransformation(texture));
 				}
 			}
@@ -239,7 +239,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		}
 		// if (texture != null) {
 		// for (int s = 0; s < 6; s++) {
-		// if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
+		// if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
 		// modelFluid[5][s].render(x, y, z, RenderUtils.getIconTransformation(texture));
 		// }
 		// }
@@ -270,7 +270,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		CCModel[] models = modelFluid[level - 1];
 
 		for (int s = 0; s < 6; s++) {
-			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderConduit()) {
+			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
 				models[s].render(x, y, z, RenderUtils.getIconTransformation(fluidTex));
 			}
 		}
@@ -278,7 +278,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		CCRenderState.draw();
 	}
 
-	public void getConduitConnections(TileMultiBlock tile) {
+	public void getDuctConnections(TileMultiBlock tile) {
 
 		for (int i = 0; i < 6; i++) {
 			if (tile.connectionTypes[i] == ConnectionTypes.BLOCKED) {
@@ -323,7 +323,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		TileMultiBlock theTile = (TileMultiBlock) tile;
 
 		// RenderUtils.beforeWorldRender(world, x, y, z);
-		getConduitConnections(theTile);
+		getDuctConnections(theTile);
 
 		if (BlockCoFHBase.renderPass == 0) {
 			renderFrame(false, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
@@ -399,9 +399,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		// GL11.glPopMatrix();
 	}
 
-	public IIcon getFrameTexture(TileMultiBlock conduit) {
+	public IIcon getFrameTexture(TileMultiBlock duct) {
 
-		return textureConduit[ConduitTypes.ENERGY_REINFORCED.ordinal()];// conduit.getRenderType()];
+		return textureDuct[DuctTypes.ENERGY_REINFORCED.ordinal()];// duct.getRenderType()];
 	}
 
 }

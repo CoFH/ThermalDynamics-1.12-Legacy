@@ -61,8 +61,8 @@ public class TickHandler {
 			grid.tickGrid();
 		}
 		if (!tickingBlocks.isEmpty()) {
-			for (IMultiBlock conduit : tickingBlocks) {
-				conduit.tickMultiBlock();
+			for (IMultiBlock block : tickingBlocks) {
+				block.tickMultiBlock();
 			}
 			tickingBlocks.clear();
 		}

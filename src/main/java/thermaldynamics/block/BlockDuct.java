@@ -104,71 +104,44 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister ir) {
 
-		IconRegistry.addIcon("ConduitEnergy00", "thermalducts:conduit/energy/ConduitEnergy00", ir);
-		IconRegistry.addIcon("ConduitEnergy10", "thermalducts:conduit/energy/ConduitEnergy10", ir);
-		IconRegistry.addIcon("ConduitEnergy20", "thermalducts:conduit/energy/ConduitEnergy20", ir);
+		IconRegistry.addIcon("DuctEnergy00", "thermaldynamics:duct/energy/DuctEnergy00", ir);
+		IconRegistry.addIcon("DuctEnergy10", "thermaldynamics:duct/energy/DuctEnergy10", ir);
+		IconRegistry.addIcon("DuctEnergy20", "thermaldynamics:duct/energy/DuctEnergy20", ir);
 
-		IconRegistry.addIcon("ConduitFluid00", "thermalducts:conduit/fluid/ConduitFluid00", ir);
-		IconRegistry.addIcon("ConduitFluid10", "thermalducts:conduit/fluid/ConduitFluid10", ir);
+		IconRegistry.addIcon("DuctFluid00", "thermaldynamics:duct/fluid/DuctFluid00", ir);
+		IconRegistry.addIcon("DuctFluid10", "thermaldynamics:duct/fluid/DuctFluid10", ir);
 
-		IconRegistry.addIcon("ConduitItem00", "thermalducts:conduit/item/ConduitItem00", ir);
-		IconRegistry.addIcon("ConduitItem10", "thermalducts:conduit/item/ConduitItem10", ir);
-		IconRegistry.addIcon("ConduitItem20", "thermalducts:conduit/item/ConduitItem20", ir);
-		IconRegistry.addIcon("ConduitItem30", "thermalducts:conduit/item/ConduitItem30", ir);
+		IconRegistry.addIcon("DuctItem00", "thermaldynamics:duct/item/DuctItem00", ir);
+		IconRegistry.addIcon("DuctItem10", "thermaldynamics:duct/item/DuctItem10", ir);
+		IconRegistry.addIcon("DuctItem20", "thermaldynamics:duct/item/DuctItem20", ir);
+		IconRegistry.addIcon("DuctItem30", "thermaldynamics:duct/item/DuctItem30", ir);
 
-		IconRegistry.addIcon("ConduitItem01", "thermalducts:conduit/item/ConduitItem01", ir);
-		IconRegistry.addIcon("ConduitItem02", "thermalducts:conduit/item/ConduitItem02", ir);
-		IconRegistry.addIcon("ConduitItem03", "thermalducts:conduit/item/ConduitItem03", ir);
+		IconRegistry.addIcon("DuctItem01", "thermaldynamics:duct/item/DuctItem01", ir);
+		IconRegistry.addIcon("DuctItem02", "thermaldynamics:duct/item/DuctItem02", ir);
+		IconRegistry.addIcon("DuctItem03", "thermaldynamics:duct/item/DuctItem03", ir);
 
-		IconRegistry.addIcon("ConduitItem11", "thermalducts:conduit/item/ConduitItem11", ir);
-		IconRegistry.addIcon("ConduitItem12", "thermalducts:conduit/item/ConduitItem12", ir);
-		IconRegistry.addIcon("ConduitItem13", "thermalducts:conduit/item/ConduitItem13", ir);
+		IconRegistry.addIcon("DuctItem11", "thermaldynamics:duct/item/DuctItem11", ir);
+		IconRegistry.addIcon("DuctItem12", "thermaldynamics:duct/item/DuctItem12", ir);
+		IconRegistry.addIcon("DuctItem13", "thermaldynamics:duct/item/DuctItem13", ir);
 
-		IconRegistry.addIcon("ConduitItem21", "thermalducts:conduit/item/ConduitItem21", ir);
-		IconRegistry.addIcon("ConduitItem22", "thermalducts:conduit/item/ConduitItem22", ir);
-		IconRegistry.addIcon("ConduitItem23", "thermalducts:conduit/item/ConduitItem23", ir);
+		IconRegistry.addIcon("DuctItem21", "thermaldynamics:duct/item/DuctItem21", ir);
+		IconRegistry.addIcon("DuctItem22", "thermaldynamics:duct/item/DuctItem22", ir);
+		IconRegistry.addIcon("DuctItem23", "thermaldynamics:duct/item/DuctItem23", ir);
 
-		IconRegistry.addIcon("ConduitItem31", "thermalducts:conduit/item/ConduitItem31", ir);
-		IconRegistry.addIcon("ConduitItem32", "thermalducts:conduit/item/ConduitItem32", ir);
-		IconRegistry.addIcon("ConduitItem33", "thermalducts:conduit/item/ConduitItem33", ir);
+		IconRegistry.addIcon("DuctItem31", "thermaldynamics:duct/item/DuctItem31", ir);
+		IconRegistry.addIcon("DuctItem32", "thermaldynamics:duct/item/DuctItem32", ir);
+		IconRegistry.addIcon("DuctItem33", "thermaldynamics:duct/item/DuctItem33", ir);
 
-		IconRegistry.addIcon("Connection" + ConnectionTypes.ENERGY_BASIC.ordinal(), "thermalducts:conduit/energy/ConnectionEnergy00", ir);
-		IconRegistry.addIcon("Connection" + ConnectionTypes.ENERGY_HARDENED.ordinal(), "thermalducts:conduit/energy/ConnectionEnergy10", ir);
-		IconRegistry.addIcon("Connection" + ConnectionTypes.ENERGY_REINFORCED.ordinal(), "thermalducts:conduit/energy/ConnectionEnergy20", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.ENERGY_BASIC.ordinal(), "thermaldynamics:duct/energy/ConnectionEnergy00", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.ENERGY_HARDENED.ordinal(), "thermaldynamics:duct/energy/ConnectionEnergy10", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.ENERGY_REINFORCED.ordinal(), "thermaldynamics:duct/energy/ConnectionEnergy20", ir);
 
-		IconRegistry.addIcon("Connection" + ConnectionTypes.FLUID_NORMAL.ordinal(), "thermalducts:conduit/fluid/ConnectionFluid00", ir);
-		IconRegistry.addIcon("Connection" + ConnectionTypes.FLUID_INPUT_ON.ordinal(), "thermalducts:conduit/fluid/ConnectionFluid01", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.FLUID_NORMAL.ordinal(), "thermaldynamics:duct/fluid/ConnectionFluid00", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.FLUID_INPUT_ON.ordinal(), "thermaldynamics:duct/fluid/ConnectionFluid01", ir);
 
-		IconRegistry.addIcon("Connection" + ConnectionTypes.ITEM_NORMAL.ordinal(), "thermalducts:conduit/item/ConnectionItem00", ir);
-		IconRegistry.addIcon("Connection" + ConnectionTypes.ITEM_INPUT_ON.ordinal(), "thermalducts:conduit/item/ConnectionItem01", ir);
-		IconRegistry.addIcon("Connection" + ConnectionTypes.ITEM_STUFFED_ON.ordinal(), "thermalducts:conduit/item/ConnectionItem02", ir);
-	}
-
-	/* IInitializer */
-	@Override
-	public boolean preInit() {
-
-		GameRegistry.registerBlock(this, ItemBlockDuct.class, "TestDuct");
-
-		blockDuct = new ItemStack(this, 1, 0);
-
-		// ItemHelper.registerWithHandlers("testDuct", blockDuct);
-
-		return true;
-	}
-
-	@Override
-	public boolean initialize() {
-
-		MinecraftForge.EVENT_BUS.register(ThermalDynamics.blockDuct);
-		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
-		return true;
-	}
-
-	@Override
-	public boolean postInit() {
-
-		return true;
+		IconRegistry.addIcon("Connection" + ConnectionTypes.ITEM_NORMAL.ordinal(), "thermaldynamics:duct/item/ConnectionItem00", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.ITEM_INPUT_ON.ordinal(), "thermaldynamics:duct/item/ConnectionItem01", ir);
+		IconRegistry.addIcon("Connection" + ConnectionTypes.ITEM_STUFFED_ON.ordinal(), "thermaldynamics:duct/item/ConnectionItem02", ir);
 	}
 
 	@Override
@@ -197,14 +170,14 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 		MultiBlockFormer theFormer = new MultiBlockFormer();
 		IMultiBlock theTile = (IMultiBlock) p_149699_1_.getTileEntity(p_149699_2_, p_149699_3_, p_149699_4_);
 		theFormer.formGrid(theTile);
-		p_149699_5_.addChatMessage(new ChatComponentText("Conduits Found: " + theTile.getGrid().idleSet.size()));
+		p_149699_5_.addChatMessage(new ChatComponentText("Ducts Found: " + theTile.getGrid().idleSet.size()));
 	}
 
 	public static final String[] NAMES = { "testDuct", "energyDuct" };
 
 	public static ItemStack blockDuct;
 
-	public static enum ConduitTypes {
+	public static enum DuctTypes {
 		ENERGY_BASIC, ENERGY_HARDENED, ENERGY_REINFORCED, FLUID_TRANS, FLUID_OPAQUE, ITEM_TRANS, ITEM_OPAQUE, ITEM_FAST_TRANS, ITEM_FAST_OPAQUE
 	}
 
@@ -216,21 +189,21 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 		NONE(false), DUCT, ENERGY_BASIC, ENERGY_BASIC_BLOCKED(false), ENERGY_HARDENED, ENERGY_HARDENED_BLOCKED(false), ENERGY_REINFORCED, ENERGY_REINFORCED_BLOCKED(
 				false), FLUID_NORMAL, FLUID_BLOCKED(false), FLUID_INPUT_ON, FLUID_INPUT_OFF, ITEM_NORMAL, ITEM_BLOCKED(false), ITEM_INPUT_ON, ITEM_INPUT_OFF, ITEM_STUFFED_ON, ITEM_STUFFED_OFF;
 
-		private final boolean renderConduit;
+		private final boolean renderDuct;
 
 		private ConnectionTypes() {
 
-			renderConduit = true;
+			renderDuct = true;
 		}
 
-		private ConnectionTypes(boolean renderConduit) {
+		private ConnectionTypes(boolean renderDuct) {
 
-			this.renderConduit = renderConduit;
+			this.renderDuct = renderDuct;
 		}
 
-		public boolean renderConduit() {
+		public boolean renderDuct() {
 
-			return renderConduit;
+			return renderDuct;
 		}
 	}
 
@@ -238,6 +211,33 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
 
 		return null;
+	}
+
+	/* IInitializer */
+	@Override
+	public boolean preInit() {
+
+		GameRegistry.registerBlock(this, ItemBlockDuct.class, "TestDuct");
+
+		blockDuct = new ItemStack(this, 1, 0);
+
+		// ItemHelper.registerWithHandlers("testDuct", blockDuct);
+
+		return true;
+	}
+
+	@Override
+	public boolean initialize() {
+
+		MinecraftForge.EVENT_BUS.register(ThermalDynamics.blockDuct);
+		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
+		return true;
+	}
+
+	@Override
+	public boolean postInit() {
+
+		return true;
 	}
 
 }
