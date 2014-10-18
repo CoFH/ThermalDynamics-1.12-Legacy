@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import thermaldynamics.block.BlockDuct;
 import thermaldynamics.core.Proxy;
 import thermaldynamics.core.TickHandler;
+import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.gui.TDCreativeTab;
 import thermalfoundation.ThermalFoundation;
 
@@ -79,6 +80,8 @@ public class ThermalDynamics extends BaseMod {
 		((IInitializer) blockDuct).initialize();
 
 		FMLCommonHandler.instance().bus().register(TickHandler.INSTANCE);
+
+        DebugHelper.init();
 
 	}
 
