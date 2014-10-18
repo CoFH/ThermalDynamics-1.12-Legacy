@@ -12,7 +12,7 @@ import java.util.WeakHashMap;
 public class TickHandler {
 
     public static TickHandler INSTANCE = new TickHandler();
-    public final static WeakHashMap<World, WorldTickHandler> handlers = new WeakHashMap<World, WorldTickHandler>();
+    public final static WeakHashMap<World, WorldGridList> handlers = new WeakHashMap<World, WorldGridList>();
     public final static LinkedHashSet<IMultiBlock> multiBlocksToCalculate = new LinkedHashSet<IMultiBlock>();
 
     public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
@@ -39,29 +39,29 @@ public class TickHandler {
     }
 
 
-    public static WorldTickHandler getTickHandler(World world) {
+    public static WorldGridList getTickHandler(World world) {
         synchronized (handlers) {
-            WorldTickHandler worldTickHandler = handlers.get(world);
-            if (worldTickHandler != null)
-                return worldTickHandler;
+            WorldGridList worldGridList = handlers.get(world);
+            if (worldGridList != null)
+                return worldGridList;
 
-            worldTickHandler = new WorldTickHandler();
-            handlers.put(world, worldTickHandler);
-            return worldTickHandler;
+            worldGridList = new WorldGridList();
+            handlers.put(world, worldGridList);
+            return worldGridList;
         }
     }
 
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent evt) {
         synchronized (handlers) {
-            WorldTickHandler worldTickHandler = handlers.get(evt.world);
-            if (worldTickHandler == null)
+            WorldGridList worldGridList = handlers.get(evt.world);
+            if (worldGridList == null)
                 return;
 
             if (evt.phase == TickEvent.Phase.START) {
-                worldTickHandler.tickStart();
+                worldGridList.tickStart();
             } else {
-                worldTickHandler.tickEnd();
+                worldGridList.tickEnd();
             }
         }
     }

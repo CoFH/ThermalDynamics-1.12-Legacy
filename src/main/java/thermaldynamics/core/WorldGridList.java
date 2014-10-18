@@ -5,7 +5,7 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 
 import java.util.LinkedHashSet;
 
-public class WorldTickHandler {
+public class WorldGridList {
     public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<MultiBlockGrid>();
     public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<IMultiBlock>();
 
@@ -24,9 +24,6 @@ public class WorldTickHandler {
             tickingGrids.addAll(newGrids);
             newGrids.clear();
         }
-
-
-
     }
 
     public void tickEnd() {
