@@ -6,89 +6,66 @@ import thermaldynamics.core.TickHandler;
 import java.util.HashSet;
 
 public class MultiBlockGrid {
-
     public HashSet<IMultiBlock> nodeSet = new HashSet<IMultiBlock>();
     public HashSet<IMultiBlock> idleSet = new HashSet<IMultiBlock>();
     public World world;
 
     public MultiBlockGrid(World world) {
         this.world = world;
-        TickHandler.INSTANCE.getTickHandler(world).newGrids.add(this);
+        TickHandler.getTickHandler(world).newGrids.add(this);
     }
 
     public void addIdle(IMultiBlock aMultiBlock) {
+        idleSet.add(aMultiBlock);
 
-        synchronized (idleSet) {
-            idleSet.add(aMultiBlock);
+        if (nodeSet.contains(aMultiBlock)) {
+            nodeSet.remove(aMultiBlock);
         }
-        synchronized (nodeSet) {
-            if (nodeSet.contains(aMultiBlock)) {
-                nodeSet.remove(aMultiBlock);
-            }
-        }
+
 
         balanceGrid();
     }
 
     public void addNode(IMultiBlock aMultiBlock) {
-
-        synchronized (nodeSet) {
-            nodeSet.add(aMultiBlock);
-        }
-        synchronized (idleSet) {
-            if (idleSet.contains(aMultiBlock)) {
-                idleSet.remove(aMultiBlock);
-            }
+        nodeSet.add(aMultiBlock);
+        if (idleSet.contains(aMultiBlock)) {
+            idleSet.remove(aMultiBlock);
         }
 
         balanceGrid();
     }
 
     public void mergeGrids(MultiBlockGrid theGrid) {
+        for (IMultiBlock aBlock : theGrid.nodeSet) {
+            aBlock.setGrid(this);
+        }
+        nodeSet.addAll(theGrid.nodeSet);
 
-        synchronized (nodeSet) {
-            for (IMultiBlock aBlock : theGrid.nodeSet) {
-                aBlock.setGrid(this);
-            }
-            nodeSet.addAll(theGrid.nodeSet);
+        for (IMultiBlock aBlock : theGrid.idleSet) {
+            aBlock.setGrid(this);
         }
-        synchronized (idleSet) {
-            for (IMultiBlock aBlock : theGrid.idleSet) {
-                aBlock.setGrid(this);
-            }
-            idleSet.addAll(theGrid.idleSet);
-        }
+        idleSet.addAll(theGrid.idleSet);
+
         theGrid.destory();
     }
 
     public void destory() {
+        nodeSet.clear();
+        idleSet.clear();
 
-        synchronized (nodeSet) {
-            synchronized (idleSet) {
-                nodeSet.clear();
-                idleSet.clear();
-            }
-        }
-
-        TickHandler.INSTANCE.getTickHandler(world).oldGrids.add(this);
+        TickHandler.getTickHandler(world).oldGrids.add(this);
     }
 
     public boolean canGridsMerge(MultiBlockGrid grid) {
-
         return true;
     }
 
     public void resetMultiBlocks() {
-
-        synchronized (nodeSet) {
-            for (IMultiBlock aBlock : nodeSet) {
-                aBlock.setValidForForming();
-            }
+        for (IMultiBlock aBlock : nodeSet) {
+            aBlock.setValidForForming();
         }
-        synchronized (idleSet) {
-            for (IMultiBlock aBlock : idleSet) {
-                aBlock.setValidForForming();
-            }
+        for (IMultiBlock aBlock : idleSet) {
+            aBlock.setValidForForming();
         }
     }
 
@@ -106,13 +83,11 @@ public class MultiBlockGrid {
 
     }
 
-    public void addBlock(IMultiBlock aBlock) {
-
+    public  void addBlock(IMultiBlock aBlock) {
         if (aBlock.isNode()) {
             addNode(aBlock);
         } else {
             addIdle(aBlock);
         }
-
     }
 }
