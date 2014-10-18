@@ -1,6 +1,10 @@
 package thermaldynamics.multiblock;
 
+import net.minecraft.world.World;
+
 public interface IMultiBlock {
+
+    public World getWorldObj();
 
 	public void setInvalidForForming();
 

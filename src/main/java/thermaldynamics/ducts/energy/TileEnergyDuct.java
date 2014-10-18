@@ -80,7 +80,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		return new EnergyGrid();
+		return new EnergyGrid(worldObj);
 	}
 
 	@Override

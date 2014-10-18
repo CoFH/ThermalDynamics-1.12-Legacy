@@ -2,6 +2,7 @@ package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.EnergyStorage;
 
+import net.minecraft.world.World;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -13,7 +14,11 @@ public class EnergyGrid extends MultiBlockGrid {
 	private int extraEnergy = 0;
 	private boolean first = false;
 
-	@Override
+    public EnergyGrid(World world) {
+        super(world);
+    }
+
+    @Override
 	public void balanceGrid() {
 
 		myStorage.setCapacity(nodeSet.size() * TDProps.ENERGY_PER_NODE);
