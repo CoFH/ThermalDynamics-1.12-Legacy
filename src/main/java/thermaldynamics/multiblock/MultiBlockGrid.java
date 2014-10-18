@@ -83,11 +83,30 @@ public class MultiBlockGrid {
 
     }
 
-    public  void addBlock(IMultiBlock aBlock) {
+    public void addBlock(IMultiBlock aBlock) {
         if (aBlock.isNode()) {
             addNode(aBlock);
         } else {
             addIdle(aBlock);
         }
+    }
+
+    public void removeBlock(IMultiBlock oldBlock) {
+        if (oldBlock.isNode()) {
+            nodeSet.remove(oldBlock);
+        } else {
+            idleSet.remove(oldBlock);
+        }
+
+        byte s = 0;
+        for (byte i = 0; i < 6; i++) {
+            if (oldBlock.isSideConnected(i)) s++;
+        }
+
+        if (s <= 1)
+            return;
+
+
+        TickHandler.getTickHandler(world).gridsToRecreate.add(this);
     }
 }

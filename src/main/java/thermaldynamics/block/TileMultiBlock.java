@@ -33,10 +33,23 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         GameRegistry.registerTileEntity(TileMultiBlock.class, "thermalducts.multiblock");
     }
 
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        if (myGrid != null) myGrid.removeBlock(this);
+    }
+
     public boolean isValid = true;
     public boolean isNode = false;
     public MultiBlockGrid myGrid;
     public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (myGrid != null) myGrid.removeBlock(this);
+    }
+
     public NeighborTypes neighborTypes[] = {NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
             NeighborTypes.NONE};
     public ConnectionTypes connectionTypes[] = {ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
