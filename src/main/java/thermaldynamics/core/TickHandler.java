@@ -2,7 +2,10 @@ package thermaldynamics.core;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.world.World;
+import net.minecraftforge.event.world.WorldEvent;
 import thermaldynamics.multiblock.IMultiBlock;
 
 import java.util.Iterator;
@@ -10,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.WeakHashMap;
 
 public class TickHandler {
-
     public static TickHandler INSTANCE = new TickHandler();
     public final static WeakHashMap<World, WorldGridList> handlers = new WeakHashMap<World, WorldGridList>();
     public final static LinkedHashSet<IMultiBlock> multiBlocksToCalculate = new LinkedHashSet<IMultiBlock>();
@@ -24,6 +26,9 @@ public class TickHandler {
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END)
+            return;
+
         synchronized (multiBlocksToCalculate) {
             if (!multiBlocksToCalculate.isEmpty()) {
                 Iterator<IMultiBlock> iterator = multiBlocksToCalculate.iterator();
@@ -66,4 +71,33 @@ public class TickHandler {
         }
     }
 
+    @SubscribeEvent
+    public void worldUnload(WorldEvent.Unload evt) {
+        synchronized (handlers) {
+            handlers.remove(evt.world);
+        }
+    }
+
+
+    boolean needsMenu = false;
+
+    @SubscribeEvent
+    public void tickEnd(TickEvent.ClientTickEvent evt) {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        if (evt.phase == TickEvent.Phase.END) {
+            if (mc.currentScreen instanceof GuiMainMenu) {
+                if (needsMenu) {
+                    onMainMenu();
+                    needsMenu = false;
+                }
+            } else if (mc.inGameHasFocus) {
+                needsMenu = true;
+            }
+        }
+    }
+
+    public void onMainMenu() {
+        handlers.clear();
+    }
 }
