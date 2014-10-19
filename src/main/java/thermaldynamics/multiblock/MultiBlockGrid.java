@@ -1,6 +1,7 @@
 package thermaldynamics.multiblock;
 
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.core.TickHandler;
 
 import java.util.HashSet;
@@ -20,8 +21,19 @@ public class MultiBlockGrid {
 
         if (nodeSet.contains(aMultiBlock)) {
             nodeSet.remove(aMultiBlock);
+            onMajorGridChange();
+        } else {
+            boolean flag = false;
+            for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++)
+                if (aMultiBlock.isSideConnected(s)) {
+                    if (flag) {
+                        onMajorGridChange();
+                        break;
+                    } else {
+                        flag = true;
+                    }
+                }
         }
-
 
         balanceGrid();
     }
@@ -32,6 +44,7 @@ public class MultiBlockGrid {
             idleSet.remove(aMultiBlock);
         }
 
+        onMajorGridChange();
         balanceGrid();
     }
 
@@ -57,7 +70,7 @@ public class MultiBlockGrid {
     }
 
     public boolean canGridsMerge(MultiBlockGrid grid) {
-        return true;
+        return grid.getClass() == this.getClass();
     }
 
     public void resetMultiBlocks() {
@@ -103,10 +116,16 @@ public class MultiBlockGrid {
             if (oldBlock.isSideConnected(i)) s++;
         }
 
-        if (s <= 1)
+        if (s <= 1) {
+            balanceGrid();
             return;
-
+        }
 
         TickHandler.getTickHandler(world).gridsToRecreate.add(this);
     }
+
+    public void onMajorGridChange() {
+
+    }
+
 }
