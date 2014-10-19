@@ -1,9 +1,6 @@
 Ideas
 ====================================
 
-Mechanics
-======================
-
 Okay I've looked over the code and I think there's possibilities for expanding the whole duct system.
 
 ==Facades/Hiding ducts==
@@ -37,17 +34,16 @@ The more advanced version that extracts stacks at a time and has a bigger range 
 Basically this tier is the equivelant of the old output-mode with a pneumatic servo with all the fancy trimmings. You can specify 'nearest-inventory', 'random' or 'round-robin'.
 
 * Resonant Extractor
-Instantly moves items to their destination, and acts basically as a tesseract. Visually, you could have a 'green line' that renders through the pipes along the route for a second.
 
+
+- Ender Pipes -
+Items moving through these pipes do so instantly. Visually use a 'green line' that flashes for a moment to show something moved through.
 
 - Seperate Restriction/Vacuum pipes -
 Simillar to how vacuum pipes were in RP2. Fairly simple change and we could have some interesting recipes. A nice but tricky goal would be to have new pipe types addable by API. Round-robin will be handled by extractors.
 
 - One way Routing -
 This is a very simple one that should be fairly easy to implement, basically wrenching a pipe's connection to another pipe to specify that that direction is 'non-output'. This means items can't be routed in that direction (although it can accept from the other pipe). If both pipes have 'non-output' specified for their connections, then they will not physically connect.
-
-- Mid-route Filtering -
-Currently filtering is done at input and output. We could allow filters on pipes (either on the pipe center or on the connections between pipes), and track any encountered 'filters' when building the route. A downside is that filters would only apply to the direct path (i.e. we won't detect if there's a more round-about way that isn't filtered) using our current routing method (however this downside is shared by existing vacuum/restriction pipes so I don't know if you would consider it a big deal).
 
 - Colored pipes -
 Following on from mid-route filtering is to have RP2 style colors on the pipes. Basically at output, you specify that a color on an item and those items can only go down that particular color ducts (or any non-colored ducts). The big disadvantage is that this would complicate routeing as the current method of 'only consider shortest route' would not be sufficient for an RP2-style sorting system. We could simply have seperate caching of 'colored routes', and there's optimizations that could be made to mitigate the impact that would have.
