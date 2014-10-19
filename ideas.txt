@@ -1,0 +1,59 @@
+Ideas
+====================================
+
+Mechanics
+======================
+
+Okay I've looked over the code and I think there's possibilities for expanding the whole duct system.
+
+==Facades/Hiding ducts==
+I don't have any strong idea about thi, just some vague ones.
+We could do our facade system I guess (and as long as we don't put them in NEI people won't care). We could either hook into FMP's 'material rendering' system (which is fairly stable) or we could simply render the blocks 'meta,direction IIcon' on a side (and only have full blocks be valid). 
+
+If I'm being honest, I don't think facades are something we should break our backs worrying about at the moment.
+
+
+==Energy Conduits==
+I think energy conduits are fine as they are. I don't think there's any real reason to change them. Only change is to wrench connections between conduits to prevent them from connecting.
+
+
+==Fluiducts==
+With fluiducts, those also work great and my only thought is that it might be interesting to have a second tier of invar-based fluiducts for extremely hot/cold fluids i.e. regular copper pipes would break due to thermal expansion (heh heh heh). I did think about adding some kind of routing to fluiducts but I don't think that's necessary. It could be good to have fluid filtering of some kind but... hey.
+
+
+==Itemducts==
+Itemducts are obviously where the biggest potential for changes are.
+
+- Extractors (think of a better name) -
+This is my proposed 'big change' to the system. Instead of having a simple 'wrench the pipe to have it output', actually have a physical device that is responsible for pulling out items and routing them. The idea being that you can have tiered versions of these. It's basically the same concept as transfer nodes just with more emphasis on tiers.
+
+* 'Basic' Extractor / No Extractor (when machines auto-output and no extractor is placed)
+The basic extractor is incredibly cheap but has dumb routing logic. They will output to a random inventory within 4-8 blocks. They require an external redstone signal (such as a lever) to operate, don't have a filter, are slow and only pulls a max of maybe 8 items at a time.
+
+* 'Hardened' Extractor.
+The more advanced version that extracts stacks at a time and has a bigger range (say 32 blocks). It transfers to the nearest valid inventory. This one still requires external redstone.
+
+* 'Reinforced' Extractor
+Basically this tier is the equivelant of the old output-mode with a pneumatic servo with all the fancy trimmings. You can specify 'nearest-inventory', 'random' or 'round-robin'.
+
+* Resonant Extractor
+Instantly moves items to their destination, and acts basically as a tesseract. Visually, you could have a 'green line' that renders through the pipes along the route for a second.
+
+
+- Seperate Restriction/Vacuum pipes -
+Simillar to how vacuum pipes were in RP2. Fairly simple change and we could have some interesting recipes. A nice but tricky goal would be to have new pipe types addable by API. Round-robin will be handled by extractors.
+
+- One way Routing -
+This is a very simple one that should be fairly easy to implement, basically wrenching a pipe's connection to another pipe to specify that that direction is 'non-output'. This means items can't be routed in that direction (although it can accept from the other pipe). If both pipes have 'non-output' specified for their connections, then they will not physically connect.
+
+- Mid-route Filtering -
+Currently filtering is done at input and output. We could allow filters on pipes (either on the pipe center or on the connections between pipes), and track any encountered 'filters' when building the route. A downside is that filters would only apply to the direct path (i.e. we won't detect if there's a more round-about way that isn't filtered) using our current routing method (however this downside is shared by existing vacuum/restriction pipes so I don't know if you would consider it a big deal).
+
+- Colored pipes -
+Following on from mid-route filtering is to have RP2 style colors on the pipes. Basically at output, you specify that a color on an item and those items can only go down that particular color ducts (or any non-colored ducts). The big disadvantage is that this would complicate routeing as the current method of 'only consider shortest route' would not be sufficient for an RP2-style sorting system. We could simply have seperate caching of 'colored routes', and there's optimizations that could be made to mitigate the impact that would have.
+
+- Advanced Item Insertion/Extraction Filter Modules -
+Basic idea would be to have a module system of some kind to control whether/how many items enter/exit an inventory, that is aware of the contents of the inventory. That way we can have 'keep one stack in the inventory', 'don't overfill inventory' type stuff. We could also allow specific slot-ranges to be specified. This could opened up to an API.
+
+- Return backstuffed items -
+Extractors will attempt to place back-stuffed items into the inventory that they came from (configurable).
