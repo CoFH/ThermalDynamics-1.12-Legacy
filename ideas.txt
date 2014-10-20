@@ -17,6 +17,9 @@ I think energy conduits are fine as they are. I don't think there's any real rea
 ==Fluiducts==
 With fluiducts, those also work great and my only thought is that it might be interesting to have a second tier of invar-based fluiducts for extremely hot/cold fluids i.e. regular copper pipes would break due to thermal expansion (heh heh heh). I did think about adding some kind of routing to fluiducts but I don't think that's necessary. It could be good to have fluid filtering of some kind but... hey.
 
+- Powered Fluiducts -
+Fluiducts that require RF power and have a much higher throughput
+
 
 ==Itemducts==
 Itemducts are obviously where the biggest potential for changes are.
@@ -34,7 +37,7 @@ The more advanced version that extracts stacks at a time and has a bigger range 
 Basically this tier is the equivelant of the old output-mode with a pneumatic servo with all the fancy trimmings. You can specify 'nearest-inventory', 'random' or 'round-robin'.
 
 * Resonant Extractor
-
+Does something. Maybe huge item throughput. Maybe takes power.
 
 - Ender Pipes -
 Items moving through these pipes do so instantly. Visually use a 'green line' that flashes for a moment to show something moved through.
@@ -53,3 +56,6 @@ Basic idea would be to have a module system of some kind to control whether/how 
 
 - Return backstuffed items -
 Extractors will attempt to place back-stuffed items into the inventory that they came from (configurable).
+
+- Filter Pipes -
+Pipes with filters are seperate blocks
