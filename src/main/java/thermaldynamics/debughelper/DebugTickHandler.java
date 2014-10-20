@@ -22,6 +22,9 @@ public class DebugTickHandler {
                 || Minecraft.getMinecraft().theWorld.provider.dimensionId != evt.world.provider.dimensionId)
             return;
 
+//        if (evt.phase == TickEvent.Phase.END)
+//            return;
+
 
         for (MultiBlockGrid grid : TickHandler.getTickHandler(evt.world).tickingGrids) {
             rand.setSeed(grid.hashCode());

@@ -32,6 +32,7 @@ import net.minecraftforge.common.MinecraftForge;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.energy.TileEnergyDuct;
+import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 
@@ -62,7 +63,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 		case 1:
 			return new TileEnergyDuct();
 		}
-		return new TileMultiBlock();
+		return new TileItemDuct();
 	}
 
 	@Override
@@ -231,6 +232,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
 		MinecraftForge.EVENT_BUS.register(ThermalDynamics.blockDuct);
 		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
+        GameRegistry.registerTileEntity(TileItemDuct.class, "thermalducts.ducts.energy.TileItemDuct");
 		return true;
 	}
 

@@ -21,7 +21,6 @@ public class ItemBlockDuct extends ItemBlockBase {
 
 	@Override
 	public EnumRarity getRarity(ItemStack stack) {
-
 		return EnumRarity.uncommon;
 	}
 

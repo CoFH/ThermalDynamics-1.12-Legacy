@@ -49,15 +49,28 @@ public class MultiBlockGrid {
     }
 
     public void mergeGrids(MultiBlockGrid theGrid) {
-        for (IMultiBlock aBlock : theGrid.nodeSet) {
-            aBlock.setGrid(this);
-        }
-        nodeSet.addAll(theGrid.nodeSet);
+        if (!nodeSet.isEmpty()) {
+            for (IMultiBlock aBlock : theGrid.nodeSet) {
+                aBlock.setGrid(this);
 
-        for (IMultiBlock aBlock : theGrid.idleSet) {
-            aBlock.setGrid(this);
+            }
+
+            nodeSet.addAll(theGrid.nodeSet);
+            onMajorGridChange();
         }
-        idleSet.addAll(theGrid.idleSet);
+
+        if (theGrid.idleSet.size() == 1) {
+            IMultiBlock aBlock = theGrid.idleSet.iterator().next();
+            aBlock.setGrid(this);
+            addIdle(aBlock);
+        } else {
+            for (IMultiBlock aBlock : theGrid.idleSet) {
+                aBlock.setGrid(this);
+            }
+            idleSet.addAll(theGrid.idleSet);
+            onMajorGridChange();
+        }
+
 
         theGrid.destory();
     }
@@ -107,6 +120,7 @@ public class MultiBlockGrid {
     public void removeBlock(IMultiBlock oldBlock) {
         if (oldBlock.isNode()) {
             nodeSet.remove(oldBlock);
+            onMajorGridChange();
         } else {
             idleSet.remove(oldBlock);
         }
@@ -128,4 +142,7 @@ public class MultiBlockGrid {
 
     }
 
+    public int size() {
+        return nodeSet.size() + idleSet.size();
+    }
 }

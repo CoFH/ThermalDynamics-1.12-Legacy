@@ -3,18 +3,17 @@ package thermaldynamics.multiblock;
 import java.util.LinkedList;
 
 public class Route implements Comparable<Route> {
-    LinkedList<Byte> pathDirections = new LinkedList<Byte>();
-    int pathPos = 0;
-    IMultiBlockRoute endPoint;
-    IMultiBlockRoute startPoint;
-    int pathWeight = 0;
-    boolean routeFinished = false;
+    public LinkedList<Byte> pathDirections = new LinkedList<Byte>();
+    public int pathPos = 0;
+    public IMultiBlockRoute endPoint;
+    public IMultiBlockRoute startPoint;
+    public int pathWeight = 0;
+    public boolean routeFinished = false;
 
     public Route(IMultiBlockRoute myParent) {
 
         startPoint = myParent;
         endPoint = myParent;
-        myParent.setVisited(true);
     }
 
     public Route(Route prevRoute, IMultiBlockRoute newPlace, byte direction, boolean isFinished) {

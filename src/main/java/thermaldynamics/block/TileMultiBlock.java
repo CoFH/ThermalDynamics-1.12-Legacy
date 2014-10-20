@@ -20,6 +20,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.commons.lang3.StringUtils;
 import thermaldynamics.core.TickHandler;
+import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -94,13 +95,12 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
     @Override
     public IMultiBlock getConnectedSide(byte side) {
-
         return (IMultiBlock) BlockHelper.getAdjacentTileEntity(this, side);
+
     }
 
     @Override
     public boolean isSideConnected(byte side) {
-
         return connectionTypes[side] != ConnectionTypes.BLOCKED && BlockHelper.getAdjacentTileEntity(this, side) instanceof TileMultiBlock;
     }
 
@@ -233,7 +233,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     @Override
     public void tickMultiBlock() {
 
-        System.out.println("Tick Multiblock");
+//        System.out.println("Tick Multiblock");
         onNeighborBlockChange();
         formGrid();
     }
@@ -241,8 +241,10 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     public void formGrid() {
 
         if (myGrid == null && ServerHelper.isServerWorld(worldObj)) {
+            DebugHelper.startTimer();
             new MultiBlockFormer().formGrid(this);
             // DEBUG CODE
+            DebugHelper.stopTimer("Grid");
             System.out.println("Grid Formed: " + (myGrid != null ? myGrid.nodeSet.size() + myGrid.idleSet.size() : "Failed"));
         }
     }
