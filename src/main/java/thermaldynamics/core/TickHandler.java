@@ -2,6 +2,8 @@ package thermaldynamics.core;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.world.World;
@@ -79,25 +81,5 @@ public class TickHandler {
     }
 
 
-    boolean needsMenu = false;
 
-    @SubscribeEvent
-    public void tickEnd(TickEvent.ClientTickEvent evt) {
-        Minecraft mc = Minecraft.getMinecraft();
-
-        if (evt.phase == TickEvent.Phase.END) {
-            if (mc.currentScreen instanceof GuiMainMenu) {
-                if (needsMenu) {
-                    onMainMenu();
-                    needsMenu = false;
-                }
-            } else if (mc.inGameHasFocus) {
-                needsMenu = true;
-            }
-        }
-    }
-
-    public void onMainMenu() {
-        handlers.clear();
-    }
 }

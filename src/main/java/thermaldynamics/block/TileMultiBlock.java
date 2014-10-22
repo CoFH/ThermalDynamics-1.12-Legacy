@@ -77,7 +77,6 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
     @Override
     public MultiBlockGrid getNewGrid() {
-
         return new MultiBlockGrid(worldObj);
     }
 
@@ -118,7 +117,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
         TickHandler.addMultiBlockToCalculate(this);
 
-        System.out.println("tilePlaced");
+
     }
 
     @Override
@@ -285,6 +284,10 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         for (int i = 0; i < connectionTypes.length; i++) {
             nbt.setByte("conTypes" + i, (byte) connectionTypes[i].ordinal());
         }
+    }
+
+    public static enum CacheTypes {
+        NOT_SET, IMPORTANT, IMPORTANT2
     }
 
     public static enum NeighborTypes {

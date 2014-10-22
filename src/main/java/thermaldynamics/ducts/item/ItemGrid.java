@@ -14,6 +14,10 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
         for (IMultiBlock m : nodeSet) {
             m.tickPass(0);
         }
+        for (IMultiBlock m : idleSet) {
+            m.tickPass(0);
+        }
+
         super.tickGrid();
     }
 }

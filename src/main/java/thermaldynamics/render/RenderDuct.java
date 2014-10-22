@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,8 +33,11 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 import thermaldynamics.core.TDProps;
+import thermaldynamics.debughelper.DebugHelper;
+import thermaldynamics.ducts.item.TileItemDuct;
+import thermaldynamics.ducts.item.TravelingItem;
 
-public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
+public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler, IItemRenderer {
 
     public static final RenderDuct instance = new RenderDuct();
 
@@ -402,4 +406,17 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         return textureDuct[DuctTypes.ENERGY_REINFORCED.ordinal()];// duct.getRenderType()];
     }
 
+    @Override
+    public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
+        for (TravelingItem item : ((TileItemDuct) tile).myItems) {
+            DebugHelper.showParticle(tile.getWorldObj(), item.x, item.y, item.z, item.hashCode());
+        }
+
+//        CCRenderState.reset();
+//        CCRenderState.pullLightmap();
+//        CCRenderState.useNormals = true;
+//        RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+//        //renderTravelingItems(myItems, tile.getWorldObj(), x, y, z, frame);
+//        CCRenderState.useNormals = false;
+    }
 }
