@@ -15,6 +15,7 @@ public class DebugTickHandler {
     public static DebugTickHandler INSTANCE = new DebugTickHandler();
 
     public final Random rand = new Random();
+    public static boolean showParticles;
 
     @SubscribeEvent
     public void showParticles(TickEvent.WorldTickEvent evt) {
@@ -22,8 +23,8 @@ public class DebugTickHandler {
                 || Minecraft.getMinecraft().theWorld.provider.dimensionId != evt.world.provider.dimensionId)
             return;
 
-//        if (evt.phase == TickEvent.Phase.END)
-//            return;
+        if (!showParticles)
+            return;
 
 
         for (MultiBlockGrid grid : TickHandler.getTickHandler(evt.world).tickingGrids) {

@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 import thermaldynamics.block.BlockDuct;
 import thermaldynamics.core.Proxy;
 import thermaldynamics.core.TickHandler;
-import thermaldynamics.debughelper.DebugCommand;
+import thermaldynamics.debughelper.CommandThermalDebug;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.gui.TDCreativeTab;
 import thermalfoundation.ThermalFoundation;
@@ -95,7 +95,7 @@ public class ThermalDynamics extends BaseMod {
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-        if (DebugHelper.debug) event.registerServerCommand(new DebugCommand());
+        if (DebugHelper.debug) event.registerServerCommand(new CommandThermalDebug());
     }
 
     /* BaseMod */

@@ -1,9 +1,12 @@
 package thermaldynamics.debughelper;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Random;
 
 public class DebugHelper {
     public static boolean debug;
@@ -39,6 +42,20 @@ public class DebugHelper {
             double v = (System.nanoTime() - time) * (1.0E-6);
             log.info(cause + ": " + v + " ms");
         }
+    }
+
+    private static Random rand = new Random();
+
+    public static void showParticle(World world, double x, double y, double z, int seed) {
+        rand.setSeed(seed);
+        double r = rand.nextDouble(), g = rand.nextDouble(), b = rand.nextDouble();
+        double m = 1 / (r > g ? (b > r ? b : r) : (b > g ? b : g));
+
+        r *= m;
+        g *= m;
+        b *= m;
+        if (world == null) world = Minecraft.getMinecraft().theWorld;
+        world.spawnParticle("reddust", x, y, z, r, g, b);
     }
 
 }
