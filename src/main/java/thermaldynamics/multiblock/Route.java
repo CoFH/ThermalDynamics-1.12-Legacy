@@ -62,7 +62,7 @@ public class Route implements Comparable<Route> {
         return new Route(this);
     }
 
-    public int getNextDirection() {
+    public byte getNextDirection() {
 
         return pathDirections.get(pathPos++);
     }

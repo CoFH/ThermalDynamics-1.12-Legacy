@@ -5,14 +5,18 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.debughelper.DebugHelper;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class RouteCache {
     public final IMultiBlockRoute origin;
     public LinkedList<Route> outputRoutes;
     public LinkedList<Route> stuffableRoutes;
-    public LinkedList<IMultiBlockRoute> toClear = new LinkedList<IMultiBlockRoute>();
+    public HashSet<IMultiBlockRoute> visited;
+    public HashSet<IMultiBlockRoute> outputvisited;
+    private LinkedList<Route> validRoutes;
     public final int maxPathLength;
+    private boolean isFinishedGenerating;
 
     public RouteCache(IMultiBlockRoute origin) {
         this(origin, origin.getMaxRange());
@@ -21,52 +25,54 @@ public class RouteCache {
     public RouteCache(IMultiBlockRoute origin, int maxPathLength) {
         this.origin = origin;
         this.maxPathLength = maxPathLength;
+        init();
+    }
+
+    public void init() {
+        outputRoutes = new LinkedList<Route>();
+        stuffableRoutes = new LinkedList<Route>();
+        validRoutes = new LinkedList<Route>();
+        validRoutes.add(new Route(origin));
+        visited = new HashSet<IMultiBlockRoute>();
+        visited.add(origin);
+        outputvisited = new HashSet<IMultiBlockRoute>();
+        if (origin.isOutput()) outputvisited.add(origin);
     }
 
     public void generateCache() {
         DebugHelper.startTimer();
-        outputRoutes = new LinkedList<Route>();
-        stuffableRoutes = new LinkedList<Route>();
-        LinkedList<Route> validRoutes = new LinkedList<Route>();
-        validRoutes.add(new Route(origin));
-        generateCacheDo(validRoutes);
-        DebugHelper.stopTimer("Generating Cache");
+        while (processStep()) ;
+        DebugHelper.stopTimer("Caches Generated");
+    }
+
+    public boolean processStep() {
+        boolean continueLoop = false;
+
+        LinkedList<Route> newRoutes = new LinkedList<Route>();
+        for (Route curRoute : validRoutes) {
+            moveForwards(curRoute, newRoutes);
+            if (!curRoute.routeFinished) {
+                continueLoop = true;
+            }
+        }
+        validRoutes.addAll(newRoutes);
+
+        if (!continueLoop)
+            finished();
+
+        return continueLoop;
     }
 
 
-    private void generateCacheDo(LinkedList<Route> validRoutes) {
-        toClear.clear();
-        origin.setVisited(true);
-        if (origin.isOutput())
-            origin.setOutputFound(true);
-        toClear.add(origin);
-
-        LinkedList<Route> newRoutes;
-        boolean continueLoop = true;
-        while (continueLoop) {
-            newRoutes = new LinkedList<Route>();
-            continueLoop = false;
-            for (Route curRoute : validRoutes) {
-                moveForwards(curRoute, newRoutes);
-                if (!curRoute.routeFinished) {
-                    continueLoop = true;
-                }
-            }
-            validRoutes.addAll(newRoutes);
-        }
-
+    private void finished() {
         if (origin.isOutput()) {
             Route singleOutput = new Route(origin);
+
             singleOutput.routeFinished = true;
             outputRoutes.add(singleOutput);
         }
 
-
-        for (IMultiBlockRoute multiBlockRoute : toClear) {
-            multiBlockRoute.setVisited(false);
-            multiBlockRoute.setOutputFound(false);
-        }
-
+        isFinishedGenerating = true;
 
         Collections.sort(outputRoutes);
     }
@@ -90,9 +96,8 @@ public class RouteCache {
                 IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
 
                 if (validTile != null) {
-                    if (!validTile.wasVisited()) {
-                        validTile.setVisited(true);
-                        toClear.add(validTile);
+                    if (!visited.contains(validTile)) {
+                        visited.add(validTile);
 
                         if (validTile.canStuffItem())
                             stuffableRoutes.add(new Route(route, validTile, i, true));
@@ -106,23 +111,18 @@ public class RouteCache {
                         }
                     }
 
-                    if (validTile.isOutput() && !validTile.wasOutputFound()) {
+                    if (validTile.isOutput() && !outputvisited.contains(validTile)) {
                         outputRoutes.add(new Route(route, validTile, i, true));
-                        validTile.setOutputFound(true);
-                        toClear.add(validTile);
+                        outputvisited.add(validTile);
                     }
                 }
             }
         }
 
 
-        if (!foundRoute)
-
-        {
+        if (!foundRoute) {
             route.routeFinished = true;
-        } else
-
-        {
+        } else {
             route.pathDirections.add(foundDir);
             route.pathWeight += foundPath.getWeight();
             route.endPoint = foundPath;
@@ -130,4 +130,13 @@ public class RouteCache {
     }
 
 
+    public synchronized boolean isFinishedGenerating() {
+        return isFinishedGenerating;
+    }
+
+
+    public void reset() {
+        isFinishedGenerating = false;
+        init();
+    }
 }

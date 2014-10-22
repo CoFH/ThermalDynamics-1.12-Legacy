@@ -3,17 +3,23 @@ package thermaldynamics.multiblock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.core.TickHandler;
+import thermaldynamics.core.WorldGridList;
 
 import java.util.HashSet;
 
 public class MultiBlockGrid {
     public HashSet<IMultiBlock> nodeSet = new HashSet<IMultiBlock>();
     public HashSet<IMultiBlock> idleSet = new HashSet<IMultiBlock>();
-    public World world;
+    public WorldGridList worldGrid;
 
-    public MultiBlockGrid(World world) {
-        this.world = world;
-        TickHandler.getTickHandler(world).newGrids.add(this);
+
+    public MultiBlockGrid(WorldGridList worldGrid) {
+        this.worldGrid = worldGrid;
+        worldGrid.newGrids.add(this);
+    }
+
+    public MultiBlockGrid(World worldObj) {
+        this(TickHandler.getTickHandler(worldObj));
     }
 
     public void addIdle(IMultiBlock aMultiBlock) {
@@ -52,7 +58,6 @@ public class MultiBlockGrid {
         if (!nodeSet.isEmpty()) {
             for (IMultiBlock aBlock : theGrid.nodeSet) {
                 aBlock.setGrid(this);
-
             }
 
             nodeSet.addAll(theGrid.nodeSet);
@@ -63,6 +68,7 @@ public class MultiBlockGrid {
             IMultiBlock aBlock = theGrid.idleSet.iterator().next();
             aBlock.setGrid(this);
             addIdle(aBlock);
+            onMinorGridChange();
         } else {
             for (IMultiBlock aBlock : theGrid.idleSet) {
                 aBlock.setGrid(this);
@@ -79,7 +85,7 @@ public class MultiBlockGrid {
         nodeSet.clear();
         idleSet.clear();
 
-        TickHandler.getTickHandler(world).oldGrids.add(this);
+        worldGrid.oldGrids.add(this);
     }
 
     public boolean canGridsMerge(MultiBlockGrid grid) {
@@ -132,10 +138,15 @@ public class MultiBlockGrid {
 
         if (s <= 1) {
             balanceGrid();
+            onMinorGridChange();
             return;
         }
 
-        TickHandler.getTickHandler(world).gridsToRecreate.add(this);
+        worldGrid.gridsToRecreate.add(this);
+    }
+
+    public void onMinorGridChange() {
+
     }
 
     public void onMajorGridChange() {
@@ -144,5 +155,13 @@ public class MultiBlockGrid {
 
     public int size() {
         return nodeSet.size() + idleSet.size();
+    }
+
+    public void doTickProcessing(long deadline) {
+
+    }
+
+    public boolean isTickProcessing() {
+        return false;
     }
 }

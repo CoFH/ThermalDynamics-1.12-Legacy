@@ -1,9 +1,12 @@
 package thermaldynamics.core;
 
+import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 public class WorldGridList {
     public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<MultiBlockGrid>();
@@ -24,6 +27,8 @@ public class WorldGridList {
             tickingGrids.addAll(newGrids);
             newGrids.clear();
         }
+
+
     }
 
     public void tickEnd() {
@@ -34,7 +39,7 @@ public class WorldGridList {
                     tickingBlocks.add(multiBlock);
                     multiBlock.setGrid(null);
                 }
-                
+
                 for (IMultiBlock multiBlock : grid.nodeSet) {
                     tickingBlocks.add(multiBlock);
                     multiBlock.setGrid(null);
@@ -43,8 +48,21 @@ public class WorldGridList {
             gridsToRecreate.clear();
         }
 
+        LinkedList<MultiBlockGrid> mtickinggrids = new LinkedList<MultiBlockGrid>();
+
         for (MultiBlockGrid grid : tickingGrids) {
             grid.tickGrid();
+            if (grid.isTickProcessing()) mtickinggrids.add(grid);
+        }
+
+        if (!mtickinggrids.isEmpty()) {
+            DebugHelper.startTimer();
+            long deadline = System.nanoTime() + 100000L;
+            Iterator<MultiBlockGrid> iterator = mtickinggrids.iterator();
+            while (System.nanoTime() < deadline && iterator.hasNext()) {
+                iterator.next().doTickProcessing(deadline);
+            }
+            DebugHelper.stopTimer("DebugTick");
         }
 
 

@@ -1,5 +1,6 @@
 package thermaldynamics.multiblock;
 
+import net.minecraft.world.World;
 import thermaldynamics.block.TileMultiBlock;
 
 public interface IMultiBlockRoute extends IMultiBlock {
@@ -7,19 +8,20 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public abstract boolean canStuffItem();
 
-    public boolean wasVisited();
-
-    public void setVisited(boolean wasVisited);
 
     public boolean isOutput();
-
-    public boolean wasOutputFound();
-
-    public void setOutputFound(boolean outputFound);
 
     public int getMaxRange();
 
     public TileMultiBlock.NeighborTypes getCachedSideType(byte side);
 
     public IMultiBlock getCachedTile(byte side);
+
+    public int x();
+
+    public int y();
+
+    public int z();
+
+
 }
