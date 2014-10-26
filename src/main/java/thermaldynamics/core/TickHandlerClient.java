@@ -24,12 +24,14 @@ public class TickHandlerClient {
     public void tick(TickEvent.ClientTickEvent evt) {
         Minecraft mc = Minecraft.getMinecraft();
 
+
         if (evt.phase == TickEvent.Phase.END) {
+
             if (!tickBlocksToAdd.isEmpty()) {
                 tickBlocks.addAll(tickBlocksToAdd);
                 tickBlocksToAdd.clear();
             }
-            if (!tickBlocks.isEmpty()) {
+            if (!mc.isGamePaused() && !tickBlocks.isEmpty()) {
                 for (TileItemDuct aCond : tickBlocks) {
                     aCond.tickItemsClient();
                 }
