@@ -70,59 +70,63 @@ public class TravelingItem {
         if (myPath == null) {
             bounceItem(homeTile);
         } else if (progress == 0) {
-            if (homeTile.neighborTypes[direction] == NeighborTypes.MULTIBLOCK) {
-                TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
-                if (newHome != null) {
-                    if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-                        homeTile.itemsToRemove.add(this);
-                        if (myPath.pathPos == 0 && goingToStuff) {
-                            if (newHome.canStuffItem()) {
-                                goingToStuff = false;
-                                newHome.stuffItem(this);
-                            } else {
-                                bounceItem(newHome);
-                            }
-                            return;
-                        }
-                        newHome.insertItem(this);
-                        if (myPath.hasNextDirection()) {
-                            oldDirection = direction;
-                            direction = myPath.getNextDirection();
-                        } else {
-                            reRoute = true;
-                        }
-                    }
-                }
-            } else if (homeTile.neighborTypes[direction] == NeighborTypes.TILE && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
-                if (myPath.pathPos >= myPath.pathWeight && goingToStuff) {
-                    if (homeTile.canStuffItem()) {
-                        goingToStuff = false;
-                        homeTile.stuffItem(this);
-                        homeTile.itemsToRemove.add(this);
-                    } else {
-                        goingToStuff = false;
-                        bounceItem(homeTile);
-                    }
-                    return;
-                }
-                if (homeTile.cacheType[direction] != TileMultiBlock.CacheTypes.NOT_SET) {
-                    stack.stackSize = Utils.addToInventory(homeTile.getCachedTileEntity(direction), direction, stack);
-
-                    if (stack.stackSize > 0) {
-                        bounceItem(homeTile);
-                        return;
-                    }
-                    homeTile.itemsToRemove.add(this);
-                } else {
-                    bounceItem(homeTile);
-                }
-            } else {
-                bounceItem(homeTile);
-            }
+            advanceTile(homeTile);
         } else if (progress % homeTile.getPipeHalfLength() == 0) {
             if (reRoute || homeTile.neighborTypes[direction] == NeighborTypes.NONE) {
                 bounceItem(homeTile);
             }
+        }
+    }
+
+    public void advanceTile(TileItemDuct homeTile) {
+        if (homeTile.neighborTypes[direction] == NeighborTypes.MULTIBLOCK) {
+            TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
+            if (newHome != null) {
+                if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+                    homeTile.itemsToRemove.add(this);
+                    if (myPath.pathPos == 0 && goingToStuff) {
+                        if (newHome.canStuffItem()) {
+                            goingToStuff = false;
+                            newHome.stuffItem(this);
+                        } else {
+                            bounceItem(newHome);
+                        }
+                        return;
+                    }
+                    newHome.insertItem(this);
+                    if (myPath.hasNextDirection()) {
+                        oldDirection = direction;
+                        direction = myPath.getNextDirection();
+                    } else {
+                        reRoute = true;
+                    }
+                }
+            }
+        } else if (homeTile.neighborTypes[direction] == NeighborTypes.TILE && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
+            if (myPath.pathPos >= myPath.pathWeight && goingToStuff) {
+                if (homeTile.canStuffItem()) {
+                    goingToStuff = false;
+                    homeTile.stuffItem(this);
+                    homeTile.itemsToRemove.add(this);
+                } else {
+                    goingToStuff = false;
+                    bounceItem(homeTile);
+                }
+                return;
+            }
+            if (homeTile.cacheType[direction] != TileMultiBlock.CacheTypes.NOT_SET) {
+                stack.stackSize = Utils.addToInventory(homeTile.getCachedTileEntity(direction), direction, stack);
+
+                if (stack.stackSize > 0) {
+                    bounceItem(homeTile);
+                    return;
+                }
+                homeTile.itemsToRemove.add(this);
+            } else {
+                bounceItem(homeTile);
+            }
+        } else {
+            bounceItem(homeTile);
         }
     }
 
@@ -189,11 +193,10 @@ public class TravelingItem {
 //    }
 
     public void tickClientForward(TileItemDuct homeTile) {
-
         progress++;
         progress %= homeTile.getPipeLength();
 
-        if (!shouldDie || (shouldDie && progress <= homeTile.getPipeHalfLength())) {
+        if (!shouldDie || (progress <= homeTile.getPipeHalfLength())) {
             moveCoordsByProgress(progress, this, homeTile);
         }
         if (progress == 0) {

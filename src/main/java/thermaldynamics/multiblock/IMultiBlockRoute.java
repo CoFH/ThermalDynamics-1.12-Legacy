@@ -1,6 +1,5 @@
 package thermaldynamics.multiblock;
 
-import net.minecraft.world.World;
 import thermaldynamics.block.TileMultiBlock;
 
 public interface IMultiBlockRoute extends IMultiBlock {
@@ -23,5 +22,5 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public int z();
 
-
+    public byte getColor();
 }

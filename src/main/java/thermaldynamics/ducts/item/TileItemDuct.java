@@ -1,29 +1,26 @@
 package thermaldynamics.ducts.item;
 
+import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
-import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.multiblock.*;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
+public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, ITileInfoPacketHandler {
     final ItemDuct internalDuct;
     ItemGrid internalGrid;
-    private boolean wasOutputFound;
-    private int pipeHalfLength;
-    private float[][] sideCoordsModifier;
 
     public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
     public List<TravelingItem> itemsToRemove = new LinkedList<TravelingItem>();
@@ -84,7 +81,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
     @Override
     public void tickPass(int pass) {
-
         tickItems();
     }
 
@@ -136,10 +132,15 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         return zCoord;
     }
 
+    @Override
+    public byte getColor() {
+        return 0;
+    }
+
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return pass == 0 && !myItems.isEmpty();
+        return pass == 0 ? !myItems.isEmpty() : centerLine > 0;
     }
 
     @Override
@@ -148,46 +149,71 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
             return true;
 
         LinkedList<Route> routes = internalGrid.getRoutesFromOutput(this);
-        if (routes.size() <= 1)
-            return true;
+//        if (routes.size() <= 1)
+//            return true;
 
         Collections.shuffle(routes);
         for (Route route : routes) {
-            if (route.pathDirections.size() == 0)
-                continue;
+
             Route itemRoute = route.copy();
             itemRoute.pathDirections.add((byte) 0);
-            final TravelingItem travelingItem = new TravelingItem(new ItemStack(Items.stick), x(), y(), z(), itemRoute, (byte) 1);
+            final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, (byte) 1);
             travelingItem.goingToStuff = true;
             insertItem(travelingItem);
+
+            route = route.copy();
+            route.pathDirections.add((byte) 0);
+
+            TileItemDuct duct = this;
+            byte direction = route.getNextDirection();
+            byte oldDirection = 1;
+
+            while (true) {
+                duct.pulseLine(direction, (byte) (oldDirection ^ 1));
+                if (duct.neighborTypes[direction] == NeighborTypes.MULTIBLOCK) {
+                    TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(direction);
+                    if (newHome != null) {
+                        if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+                            duct = newHome;
+                            if (route.hasNextDirection()) {
+                                oldDirection = direction;
+                                direction = route.getNextDirection();
+                            } else break;
+                        } else break;
+                    } else
+                        break;
+                } else
+                    break;
+            }
+
             break;
-//            double r = player.worldObj.rand.nextDouble(),
-//                    g = player.worldObj.rand.nextDouble(),
-//                    b = player.worldObj.rand.nextDouble();
-//
-//            double m = r > g ? b > r ? b : r : b > g ? b : g;
-//            r = r / m;
-//            g = g / m;
-//            b = b / m;
-//
-//            double dx = player.worldObj.rand.nextDouble() * 0.5 + 0.25,
-//                    dy = player.worldObj.rand.nextDouble() * 0.5 + 0.25,
-//                    dz = player.worldObj.rand.nextDouble() * 0.5 + 0.25;
-//
-//            route = route.copy();
-//            BlockPosition pos = new BlockPosition(xCoord, yCoord, zCoord);
-//
-//            while (route.hasNextDirection()) {
-//                ForgeDirection dir = ForgeDirection.getOrientation(route.getNextDirection());
-//                for (float f = 0; f < 1; f += 0.2)
-//                    Minecraft.getMinecraft().theWorld.spawnParticle("reddust", pos.x + dx + dir.offsetX * f, pos.y + dy + dir.offsetY * f, pos.z + dz + dir.offsetZ * f, r, g, b);
-//                pos.step(dir);
-//
-//            }
         }
         player.addChatComponentMessage(new ChatComponentText("Routes: " + routes.size()));
 
         return true;
+    }
+
+    public void pulseLineDo(int dir) {
+        if (_RENDERS_ITEMS[conduitType]) {
+            PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
+
+            myPayload.addByte(TileInfoPackets.PULSE_LINE);
+            myPayload.addByte(dir);
+
+            PacketHandler.sendToAllAround(myPayload, this);
+        }
+    }
+
+    public void pulseLine(byte dir) {
+        pulseLineDo(1 << dir);
+    }
+
+    public void pulseLine(byte dir1, byte dir2) {
+        pulseLineDo((1 << dir1) | (1 << dir2));
+    }
+
+    public void pulseLine() {
+        pulseLineDo(63);
     }
 
     public int getPipeLength() {
@@ -224,6 +250,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         if (itemsToAdd.size() > 0) {
             myItems.addAll(itemsToAdd);
             itemsToAdd.clear();
+            hasChanged = true;
         }
         if (myItems.size() > 0) {
             for (TravelingItem item : myItems) {
@@ -234,15 +261,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
                 itemsToRemove.clear();
                 hasChanged = true;
             }
-
-            for (TravelingItem item : myItems) {
-                DebugHelper.showParticle(null, x() + item.x, y() + item.y, z() + item.z, item.hashCode());
-            }
         }
 
 
         if (hasChanged) {
-            //sendTravelingItemsPacket();
+            sendTravelingItemsPacket();
             hasChanged = false;
         }
     }
@@ -263,6 +286,31 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         }
     }
 
+    @Override
+    public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+        myItems.clear();
+        int b = payload.getByte();
+        if (b == TileInfoPackets.PULSE_LINE) {
+            if (centerLine == 0) centerLineMask = 0;
+            centerLineMask = centerLineMask | payload.getByte();
+            centerLine = maxCenterLine;
+            if (!TickHandlerClient.tickBlocks.contains(this) && !TickHandlerClient.tickBlocksToAdd.contains(this)) {
+                TickHandlerClient.tickBlocksToAdd.add(this);
+            }
+        } else if (b == TileInfoPackets.TRAVELING_ITEMS) {
+            byte n = payload.getByte();
+            if (n > 0) {
+                for (byte i = 0; i < n; i++) {
+                    myItems.add(TravelingItem.fromPacket(payload, this));
+                }
+
+                if (!TickHandlerClient.tickBlocks.contains(this) && !TickHandlerClient.tickBlocksToAdd.contains(this)) {
+                    TickHandlerClient.tickBlocksToAdd.add(this);
+                }
+            }
+        }
+    }
+
     public class TileInfoPackets {
 
         public static final byte GUI_BUTTON = 0;
@@ -270,6 +318,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         public static final byte TRAVELING_ITEMS = 2;
         public static final byte STUFFED_ITEMS = 3;
         public static final byte REQUEST_STUFFED_ITEMS = 4;
+        public static final byte PULSE_LINE = 5;
     }
 
 
@@ -279,6 +328,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
     }
 
     public void tickItemsClient() {
+        if (centerLine > 0) {
+            centerLine--;
+        }
 
         if (itemsToAdd.size() > 0) {
             myItems.clear();
@@ -293,8 +345,12 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
                 myItems.removeAll(itemsToRemove);
                 itemsToRemove.clear();
             }
-        } else {
+        } else if (centerLine == 0) {
             TickHandlerClient.tickBlocksToRemove.add(this);
         }
     }
+
+    public static final int maxCenterLine = 10;
+    public int centerLine = 0;
+    public int centerLineMask = 0;
 }

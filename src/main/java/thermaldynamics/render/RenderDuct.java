@@ -4,7 +4,6 @@ import cofh.core.block.BlockCoFHBase;
 import cofh.core.render.IconRegistry;
 import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
-import cofh.repack.codechicken.lib.lighting.LightModel;
 import cofh.repack.codechicken.lib.render.CCModel;
 import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.repack.codechicken.lib.vec.Scale;
@@ -16,12 +15,14 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -33,15 +34,17 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 import thermaldynamics.core.TDProps;
-import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
+
+import java.util.List;
 
 public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler, IItemRenderer {
 
     public static final RenderDuct instance = new RenderDuct();
 
     public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
+
 
     static RenderItem travelingItemRender;
     static EntityItem travelingEntityItem = new EntityItem(null);
@@ -54,6 +57,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
     static IIcon[] textureDuct = new IIcon[RenderTypes.values().length];
     static IIcon[] textureConnection = new IIcon[BlockDuct.ConnectionTypes.values().length];
+    static IIcon textureCenterLine;
 
     static IIcon textureSolidRedstone;
     static IIcon textureFluidRedstone;
@@ -62,14 +66,36 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     static CCModel[][] modelFluid = new CCModel[6][7];
     static CCModel[][] modelConnection = new CCModel[3][6];
     static CCModel modelCenter;
+    static CCModel[] modelLine = new CCModel[6];
 
     static {
         TDProps.renderDuctId = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(instance);
 
+        travelingItemRender = new RenderItem() {
+
+            @Override
+            public boolean shouldBob() {
+                return false;
+            }
+
+            ;
+
+            @Override
+            public boolean shouldSpreadItems() {
+                return false;
+            }
+
+            ;
+        };
+
+        travelingItemRender.setRenderManager(RenderManager.instance);
+        travelingEntityItem.hoverStart = 0;
+
         generateFluidModels();
         generateModels();
     }
+
 
     public static void initialize() {
 
@@ -123,6 +149,8 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         textureConnection[BlockDuct.ConnectionTypes.ITEM_STUFFED_OFF.ordinal()] = IconRegistry.getIcon("Connection16");
 
         textureSolidRedstone = IconRegistry.getIcon("StorageRedstone");
+
+        textureCenterLine = IconRegistry.getIcon("CenterLine");
     }
 
     private static void generateFluidModels() {
@@ -143,6 +171,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         }
     }
 
+
     private static void generateModels() {
 
         modelCenter = CCModel.quadModel(48).generateBox(0, -3, -3, -3, 6, 6, 6, 0, 0, 32, 32, 16);
@@ -150,10 +179,14 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         modelConnection[1][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 0, 32, 32, 16).computeNormals();
         modelConnection[2][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 16, 32, 32, 16).computeNormals();
 
+        modelLine[1] = CCModel.quadModel(24).generateBlock(0, 0.45, 0.5, 0.45, 0.55, 1.0, 0.55).computeNormals();
+        CCModel.generateSidedModels(modelLine, 1, Vector3.center);
+
+
         CCModel.generateBackface(modelCenter, 0, modelCenter, 24, 24);
         CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
 
-        modelCenter.computeNormals().computeLighting(LightModel.standardLightModel);
+        modelCenter.computeNormals();//.computeLighting(LightModel.standardLightModel);
         modelConnection[0][1].computeNormals();
 
         for (int i = 0; i < modelConnection.length; i++) {
@@ -222,11 +255,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
             } else {
                 return false;
             }
-//            CCRenderState.draw();
-//            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//
-//            CCRenderState.startDrawing();
-//            CCRenderState.setColour(0xFFFFFF20 + opacity);
+
             CCModel[] models = modelFluid[5];
 
             for (int s = 0; s < 6; s++) {
@@ -406,17 +435,82 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         return textureDuct[DuctTypes.ENERGY_REINFORCED.ordinal()];// duct.getRenderType()];
     }
 
-    @Override
-    public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
-        for (TravelingItem item : ((TileItemDuct) tile).myItems) {
-            DebugHelper.showParticle(tile.getWorldObj(), item.x, item.y, item.z, item.hashCode());
+    public void renderTravelingItems(List<TravelingItem> items, World world, double x, double y, double z, float frame) {
+
+        if (items == null || items.size() <= 0) {
+            return;
         }
 
-//        CCRenderState.reset();
-//        CCRenderState.pullLightmap();
-//        CCRenderState.useNormals = true;
-//        RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
-//        //renderTravelingItems(myItems, tile.getWorldObj(), x, y, z, frame);
-//        CCRenderState.useNormals = false;
+
+        GL11.glPushMatrix();
+
+        travelingItemSpin += .001;
+        travelingItemSpin %= 180;
+        travelingEntityItem.hoverStart = travelingItemSpin;
+
+        TravelingItem renderItem;
+
+        for (int i = 0; i < items.size() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
+            renderItem = items.get(i);
+            if (renderItem == null || renderItem.stack == null) {
+                continue;
+            }
+            GL11.glPushMatrix();
+
+            GL11.glTranslated(x + renderItem.x, y + renderItem.y, z + renderItem.z);
+            GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
+
+            travelingEntityItem.setEntityItemStack(renderItem.stack);
+            travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
+            GL11.glPopMatrix();
+        }
+        GL11.glPopMatrix();
+    }
+
+    @Override
+    public void func_147496_a(World p_147496_1_) {
+        super.func_147496_a(p_147496_1_);
+    }
+
+    int pass = 0;
+
+    @Override
+    public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
+
+        TileItemDuct duct = (TileItemDuct) tile;
+
+        RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        CCRenderState.useNormals = true;
+        renderTravelingItems(duct.myItems, tile.getWorldObj(), x, y, z, frame);
+        CCRenderState.reset();
+//        } else {
+        if (duct.centerLine > 0) {
+            GL11.glPushMatrix();
+
+
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
+            RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+            CCRenderState.setColour(-1);
+            CCRenderState.alphaOverride = (int) ((duct.centerLine * 255.0) / TileItemDuct.maxCenterLine) & 0xFF;
+            getDuctConnections(duct);
+            CCRenderState.startDrawing();
+            for (int s = 0; s < 6; s++) {
+                if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && (duct.centerLineMask & (1 << s)) != 0) {
+                    modelLine[s].render(x, y, z, RenderUtils.getIconTransformation(textureCenterLine));
+                }
+            }
+            CCRenderState.draw();
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_BLEND);
+
+            CCRenderState.useNormals = false;
+            GL11.glPopMatrix();
+
+        }
+        //CCRenderState.setBrightness();
+
     }
 }
