@@ -33,6 +33,40 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     static {
         GameRegistry.registerTileEntity(TileMultiBlock.class, "thermalducts.multiblock");
     }
+    public static Cuboid6[] subSelection = new Cuboid6[12];
+    static {
+
+        double min = 0.25;
+        double min2 = 0.2;
+        double max2 = 0.8;
+
+        subSelection[0] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
+        subSelection[1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
+        subSelection[2] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
+        subSelection[3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
+        subSelection[4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
+        subSelection[5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
+
+        min = 0.3;
+        min2 = 0.3;
+        max2 = 0.7;
+
+        subSelection[6] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
+        subSelection[7] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
+        subSelection[8] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
+        subSelection[9] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
+        subSelection[10] = new Cuboid6(0.0, min2, min2, min, max2, max2);
+        subSelection[11] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
+    }
+    public boolean isValid = true;
+    public boolean isNode = false;
+    public MultiBlockGrid myGrid;
+    public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
+    public NeighborTypes neighborTypes[] = {NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
+            NeighborTypes.NONE};
+    public ConnectionTypes connectionTypes[] = {ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
+            ConnectionTypes.NORMAL, ConnectionTypes.NORMAL};
+    public int internalSideCounter = 0;
 
     @Override
     public void onChunkUnload() {
@@ -40,22 +74,11 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         if (myGrid != null) myGrid.removeBlock(this);
     }
 
-    public boolean isValid = true;
-    public boolean isNode = false;
-    public MultiBlockGrid myGrid;
-    public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
-
     @Override
     public void invalidate() {
         super.invalidate();
         if (myGrid != null) myGrid.removeBlock(this);
     }
-
-    public NeighborTypes neighborTypes[] = {NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
-            NeighborTypes.NONE};
-    public ConnectionTypes connectionTypes[] = {ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
-            ConnectionTypes.NORMAL, ConnectionTypes.NORMAL};
-    public int internalSideCounter = 0;
 
     @Override
     public void setInvalidForForming() {
@@ -81,15 +104,15 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     }
 
     @Override
-    public void setGrid(MultiBlockGrid newGrid) {
-
-        myGrid = newGrid;
-    }
-
-    @Override
     public MultiBlockGrid getGrid() {
 
         return myGrid;
+    }
+
+    @Override
+    public void setGrid(MultiBlockGrid newGrid) {
+
+        myGrid = newGrid;
     }
 
     @Override
@@ -286,26 +309,6 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         }
     }
 
-    public static enum CacheTypes {
-        NOT_SET, IMPORTANT, IMPORTANT2
-    }
-
-    public static enum NeighborTypes {
-        NONE, MULTIBLOCK, TILE
-    }
-
-    public static enum ConnectionTypes {
-        NORMAL, BLOCKED;
-
-        public ConnectionTypes next() {
-
-            if (this == NORMAL) {
-                return BLOCKED;
-            }
-            return NORMAL;
-        }
-    }
-
     public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
 
         double minX, minY, minZ;
@@ -354,33 +357,6 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         return hb;
     }
 
-    public static Cuboid6[] subSelection = new Cuboid6[12];
-
-    static {
-
-        double min = 0.25;
-        double min2 = 0.2;
-        double max2 = 0.8;
-
-        subSelection[0] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
-        subSelection[1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
-        subSelection[2] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
-        subSelection[3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
-        subSelection[4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
-        subSelection[5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
-
-        min = 0.3;
-        min2 = 0.3;
-        max2 = 0.7;
-
-        subSelection[6] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
-        subSelection[7] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
-        subSelection[8] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
-        subSelection[9] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
-        subSelection[10] = new Cuboid6(0.0, min2, min2, min, max2, max2);
-        subSelection[11] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
-    }
-
     @Override
     public boolean onWrench(EntityPlayer player, int hitSide) {
 
@@ -424,6 +400,26 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
             for (byte i = 0; i < neighborTypes.length; i++) {
                 neighborTypes[i] = NeighborTypes.values()[payload.getByte()];
             }
+        }
+    }
+
+    public static enum CacheTypes {
+        NOT_SET, IMPORTANT, IMPORTANT2
+    }
+
+    public static enum NeighborTypes {
+        NONE, MULTIBLOCK, TILE
+    }
+
+    public static enum ConnectionTypes {
+        NORMAL, BLOCKED;
+
+        public ConnectionTypes next() {
+
+            if (this == NORMAL) {
+                return BLOCKED;
+            }
+            return NORMAL;
         }
     }
 
