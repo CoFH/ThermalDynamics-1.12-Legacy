@@ -31,6 +31,7 @@ import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.render.TextureOverlay;
+import thermaldynamics.render.TextureTransparent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,10 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
 //        IconRegistry.addIcon("DuctEnergy00", "thermaldynamics:duct/energy/DuctEnergy00", ir);
         IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
+
+        IconRegistry.addIcon("Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
+        IconRegistry.addIcon("Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 192));
+
 
         IconRegistry.addIcon("DuctEnergy00", TextureOverlay.generateTexture(ir, false, 0, 1, 0));
 

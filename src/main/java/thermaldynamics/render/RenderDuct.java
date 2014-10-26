@@ -151,6 +151,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         textureConnection[BlockDuct.ConnectionTypes.ITEM_STUFFED_OFF.ordinal()] = IconRegistry.getIcon("Connection16");
 
         textureSolidRedstone = IconRegistry.getIcon("StorageRedstone");
+        textureFluidRedstone = IconRegistry.getIcon("Fluid_Redstone_Still");
+        textureFluidGlowstone = IconRegistry.getIcon("Fluid_Glowstone_Still");
+
 
         textureCenterLine = IconRegistry.getIcon("CenterLine");
     }
@@ -246,32 +249,26 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
         if (renderType == RenderTypes.ENERGY_BASIC.ordinal() || renderType == RenderTypes.ENERGY_HARDENED.ordinal()) {
             texture = textureSolidRedstone;
-            return false;
+        } else if (renderType == RenderTypes.ENERGY_REINFORCED.ordinal()) {
+            texture = textureFluidRedstone;
+        } else if (renderType == RenderTypes.ITEM_FAST_TRANS.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal()
+                || renderType == RenderTypes.ITEM_FAST_TRANS_LONG.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()) {
+            texture = textureFluidGlowstone;
         } else {
-            int opacity = 192;
-
-            if (renderType == RenderTypes.ENERGY_REINFORCED.ordinal()) {
-                texture = textureSolidRedstone;
-            } else if (renderType == RenderTypes.ITEM_FAST_TRANS.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_SHORT.ordinal()
-                    || renderType == RenderTypes.ITEM_FAST_TRANS_LONG.ordinal() || renderType == RenderTypes.ITEM_FAST_TRANS_ROUNDROBIN.ordinal()) {
-                texture = textureFluidGlowstone;
-                opacity = 128;
-            } else {
-                return false;
-            }
-
-            CCModel[] models = modelFluid[5];
-
-            for (int s = 0; s < 6; s++) {
-                if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
-                    models[s].render(x, y, z, RenderUtils.getIconTransformation(texture));
-                }
-            }
-            models[6].render(x, y, z, RenderUtils.getIconTransformation(texture));
-//            CCRenderState.draw();
-//            CCRenderState.startDrawing();
-            return true;
+            return false;
         }
+
+        CCModel[] models = modelFluid[5];
+
+        for (int s = 0; s < 6; s++) {
+            if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
+                models[s].render(x, y, z, RenderUtils.getIconTransformation(texture));
+            }
+        }
+        models[6].render(x, y, z, RenderUtils.getIconTransformation(texture));
+
+        return true;
+
         // if (texture != null) {
         // for (int s = 0; s < 6; s++) {
         // if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
@@ -363,7 +360,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         if (BlockCoFHBase.renderPass == 0) {
             renderFrame(false, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
         } else {
-            return renderWorldExtra(theTile, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
+            return renderWorldExtra(theTile, RenderTypes.ENERGY_REINFORCED.ordinal(), connections, x, y, z);
         }
         //RenderUtils.postWorldRender(world, x, y, z);
 
@@ -434,9 +431,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         // GL11.glPopMatrix();
     }
 
-    public IIcon getFrameTexture(TileMultiBlock duct) {
+    public IIcon getFrameTexture(TileMultiBlock duct, byte side) {
 
-        return textureDuct[DuctTypes.ENERGY_REINFORCED.ordinal()];// duct.getRenderType()];
+        return textureDuct[DuctTypes.ENERGY_REINFORCED.ordinal()];
     }
 
     public void renderTravelingItems(List<TravelingItem> items, World world, double x, double y, double z, float frame) {
