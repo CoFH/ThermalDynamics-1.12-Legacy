@@ -97,7 +97,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
     @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
 
-        return 7;
+        return 0;
     }
 
 
