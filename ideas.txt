@@ -10,8 +10,15 @@ We could do our facade system I guess (and as long as we don't put them in NEI p
 If I'm being honest, I don't think facades are something we should break our backs worrying about at the moment.
 
 
+
+
 ==Energy Conduits==
 I think energy conduits are fine as they are. I don't think there's any real reason to change them. Only change is to wrench connections between conduits to prevent them from connecting.
+
+- Super Conductors -
+Endgame energy conduits that transfer large amounts of power but require liquid coolant to be pumped in. The better the coolant, the higher the power throughput, and the longer the cable the more coolant is required. Using cryrotheum allows infinite power transfer.
+
+
 
 
 ==Fluiducts==
@@ -24,19 +31,19 @@ Fluiducts that require RF power and have a much higher throughput
 ==Itemducts==
 Itemducts are obviously where the biggest potential for changes are.
 
-- Extractors (think of a better name) -
+- Servos -
 This is my proposed 'big change' to the system. Instead of having a simple 'wrench the pipe to have it output', actually have a physical device that is responsible for pulling out items and routing them. The idea being that you can have tiered versions of these. It's basically the same concept as transfer nodes just with more emphasis on tiers.
 
-* 'Basic' Extractor / No Extractor (when machines auto-output and no extractor is placed)
-The basic extractor is incredibly cheap but has dumb routing logic. They will output to a random inventory within 4-8 blocks. They require an external redstone signal (such as a lever) to operate, don't have a filter, are slow and only pulls a max of maybe 8 items at a time.
+* 'Basic' Servo / No servo (when machines auto-output and no extractor is placed)
+The basic servo is incredibly cheap but has dumb routing logic. They will output to a random inventory within 4-8 blocks. They require an external redstone signal (such as a lever) to operate, don't have a filter, are slow and only pulls a max of maybe 8 items at a time.
 
-* 'Hardened' Extractor.
+* 'Hardened' Servo
 The more advanced version that extracts stacks at a time and has a bigger range (say 32 blocks). It transfers to the nearest valid inventory. This one still requires external redstone.
 
-* 'Reinforced' Extractor
+* 'Reinforced' Servo
 Basically this tier is the equivelant of the old output-mode with a pneumatic servo with all the fancy trimmings. You can specify 'nearest-inventory', 'random' or 'round-robin'.
 
-* Resonant Extractor
+* Resonant Servo
 Does something. Maybe huge item throughput. Maybe takes power.
 
 - Ender Pipes -
@@ -48,9 +55,6 @@ Simillar to how vacuum pipes were in RP2. Fairly simple change and we could have
 - One way Routing -
 This is a very simple one that should be fairly easy to implement, basically wrenching a pipe's connection to another pipe to specify that that direction is 'non-output'. This means items can't be routed in that direction (although it can accept from the other pipe). If both pipes have 'non-output' specified for their connections, then they will not physically connect.
 
-- Colored pipes -
-Following on from mid-route filtering is to have RP2 style colors on the pipes. Basically at output, you specify that a color on an item and those items can only go down that particular color ducts (or any non-colored ducts). The big disadvantage is that this would complicate routeing as the current method of 'only consider shortest route' would not be sufficient for an RP2-style sorting system. We could simply have seperate caching of 'colored routes', and there's optimizations that could be made to mitigate the impact that would have.
-
 - Advanced Item Insertion/Extraction Filter Modules -
 Basic idea would be to have a module system of some kind to control whether/how many items enter/exit an inventory, that is aware of the contents of the inventory. That way we can have 'keep one stack in the inventory', 'don't overfill inventory' type stuff. We could also allow specific slot-ranges to be specified. This could opened up to an API.
 
@@ -59,6 +63,7 @@ Extractors will attempt to place back-stuffed items into the inventory that they
 
 - Filter Pipes -
 Pipes with filters are seperate blocks
+
 
 
 == PlayerDucts ==
