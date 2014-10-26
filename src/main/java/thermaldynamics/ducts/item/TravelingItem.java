@@ -2,7 +2,6 @@ package thermaldynamics.ducts.item;
 
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -65,7 +64,7 @@ public class TravelingItem {
         progress++;
         progress %= homeTile.getPipeLength();
 
-        calcCoordsFromProgress(this,homeTile);
+        calcCoordsFromProgress(this, homeTile);
 
         if (myPath == null) {
             bounceItem(homeTile);
@@ -79,7 +78,7 @@ public class TravelingItem {
     }
 
     public void advanceTile(TileItemDuct homeTile) {
-        if (homeTile.neighborTypes[direction] == NeighborTypes.MULTIBLOCK) {
+        if (homeTile.neighborTypes[direction] == NeighborTypes.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
             TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
             if (newHome != null) {
                 if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {

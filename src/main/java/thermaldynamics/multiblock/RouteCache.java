@@ -52,7 +52,7 @@ public class RouteCache {
     }
 
     public boolean processStep() {
-        if(isFinishedGenerating)
+        if (isFinishedGenerating)
             return false;
 
         boolean continueLoop = false;
@@ -94,7 +94,7 @@ public class RouteCache {
 
         byte foundDir = -1;
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            if (route.endPoint.getCachedSideType(i) == TileMultiBlock.NeighborTypes.MULTIBLOCK) {
+            if (route.endPoint.getCachedSideType(i) == TileMultiBlock.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i) == TileMultiBlock.ConnectionTypes.NORMAL) {
                 IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
 
                 if (validTile != null) {

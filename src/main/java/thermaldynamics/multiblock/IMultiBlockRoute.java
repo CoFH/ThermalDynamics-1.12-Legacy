@@ -14,6 +14,8 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public TileMultiBlock.NeighborTypes getCachedSideType(byte side);
 
+    public TileMultiBlock.ConnectionTypes getConnectionType(byte side);
+
     public IMultiBlock getCachedTile(byte side);
 
     public int x();
@@ -22,5 +24,5 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public int z();
 
-    public byte getColor();
+
 }
