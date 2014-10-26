@@ -15,7 +15,7 @@ public class RouteCache {
     public HashSet<IMultiBlockRoute> visited;
     public HashSet<IMultiBlockRoute> outputvisited;
     private LinkedList<Route> validRoutes;
-    public final int maxPathLength;
+    public int maxPathLength;
     private boolean isFinishedGenerating;
 
     public RouteCache(IMultiBlockRoute origin) {
@@ -30,6 +30,12 @@ public class RouteCache {
 
     public void init() {
         outputRoutes = new LinkedList<Route>();
+        if (origin.isOutput()) {
+            Route singleOutput = new Route(origin);
+
+            singleOutput.routeFinished = true;
+            outputRoutes.add(singleOutput);
+        }
         stuffableRoutes = new LinkedList<Route>();
         validRoutes = new LinkedList<Route>();
         validRoutes.add(new Route(origin));
@@ -46,6 +52,9 @@ public class RouteCache {
     }
 
     public boolean processStep() {
+        if(isFinishedGenerating)
+            return false;
+
         boolean continueLoop = false;
 
         LinkedList<Route> newRoutes = new LinkedList<Route>();
@@ -65,15 +74,7 @@ public class RouteCache {
 
 
     private void finished() {
-        if (origin.isOutput()) {
-            Route singleOutput = new Route(origin);
-
-            singleOutput.routeFinished = true;
-            outputRoutes.add(singleOutput);
-        }
-
         isFinishedGenerating = true;
-
         Collections.sort(outputRoutes);
     }
 
@@ -89,6 +90,7 @@ public class RouteCache {
             route.routeFinished = true;
             return;
         }
+
 
         byte foundDir = -1;
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {

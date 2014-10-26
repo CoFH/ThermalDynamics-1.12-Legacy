@@ -13,7 +13,7 @@ public class MultiBlockGridWithRoutes extends MultiBlockGrid {
 
     @Override
     public void doTickProcessing(long deadline) {
-        Iterator<RouteCache> iterator = calculatingRoutes.values().iterator();
+        Iterator<RouteCache> iterator = calculatingRoutes.iterator();
         RouteCache routeCache = iterator.next();
         while (System.nanoTime() < deadline) {
             if (!routeCache.processStep()) {
@@ -34,12 +34,12 @@ public class MultiBlockGridWithRoutes extends MultiBlockGrid {
     }
 
     public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<IMultiBlockRoute, RouteCache>();
-    public HashMap<IMultiBlockRoute, RouteCache> calculatingRoutes = new HashMap<IMultiBlockRoute, RouteCache>();
+    public LinkedList<RouteCache> calculatingRoutes = new LinkedList<RouteCache>();
 
     @Override
     public void onMinorGridChange() {
         if (!calculatingRoutes.isEmpty()) {
-            for (RouteCache routeCache : calculatingRoutes.values()) {
+            for (RouteCache routeCache : calculatingRoutes) {
                 routeCache.reset();
             }
         }
@@ -57,27 +57,26 @@ public class MultiBlockGridWithRoutes extends MultiBlockGrid {
     public RouteCache getRoutesFromOutputNonUrgent(IMultiBlockRoute start) {
         RouteCache cache;
         cache = routeCacheMap.get(start);
-        if (cache != null && cache.maxPathLength == Integer.MAX_VALUE) {
+        if (cache != null) {
             return cache;
         }
 
-        cache = calculatingRoutes.get(start);
-
-        if (cache != null)
-            return cache;
-
         cache = new RouteCache(start);
-        calculatingRoutes.put(start, cache);
+        calculatingRoutes.add(cache);
+        routeCacheMap.put(start, cache);
         return cache;
     }
 
 
     public RouteCache getRoutesFromOutputRange(IMultiBlockRoute start, int maxRange) {
         RouteCache cache = routeCacheMap.get(start);
-        if (cache == null || cache.maxPathLength < maxRange) {
-            cache = new RouteCache(start);
+        if (cache == null) {
+            cache = new RouteCache(start, maxRange);
             cache.generateCache();
             routeCacheMap.put(start, cache);
+        } else if (cache.maxPathLength < maxRange) {
+            cache.maxPathLength = maxRange;
+            cache.generateCache();
         }
 
         return cache;
@@ -86,14 +85,12 @@ public class MultiBlockGridWithRoutes extends MultiBlockGrid {
     public LinkedList<Route> getRoutesFromOutput(IMultiBlockRoute start) {
         RouteCache cache = routeCacheMap.get(start);
         if (cache == null) {
-            cache = calculatingRoutes.get(start);
-            if (cache == null)
-                cache = new RouteCache(start);
-            else
-                calculatingRoutes.remove(start);
+            cache = new RouteCache(start);
             cache.generateCache();
             routeCacheMap.put(start, cache);
-
+        } else if (!cache.isFinishedGenerating() || cache.maxPathLength < Integer.MAX_VALUE) {
+            cache.maxPathLength = Integer.MAX_VALUE;
+            cache.generateCache();
         }
 
         return cache.outputRoutes;
