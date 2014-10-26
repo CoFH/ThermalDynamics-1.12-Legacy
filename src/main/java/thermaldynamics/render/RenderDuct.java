@@ -66,7 +66,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     static CCModel[][] modelFluid = new CCModel[6][7];
     static CCModel[][] modelConnection = new CCModel[3][6];
     static CCModel modelCenter;
+
     static CCModel[] modelLine = new CCModel[6];
+    static CCModel modelLineCenter;
 
     static {
         TDProps.renderDuctId = RenderingRegistry.getNextAvailableRenderId();
@@ -172,14 +174,16 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     }
 
 
-    private static void generateModels() {
+    public static void generateModels() {
 
         modelCenter = CCModel.quadModel(48).generateBox(0, -3, -3, -3, 6, 6, 6, 0, 0, 32, 32, 16);
         modelConnection[0][1] = CCModel.quadModel(48).generateBox(0, -3, 3, -3, 6, 5, 6, 0, 16, 32, 32, 16);
         modelConnection[1][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 0, 32, 32, 16).computeNormals();
         modelConnection[2][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 16, 32, 32, 16).computeNormals();
 
-        modelLine[1] = CCModel.quadModel(24).generateBlock(0, 0.45, 0.5, 0.45, 0.55, 1.0, 0.55).computeNormals();
+        double h = 0.4;
+        modelLineCenter = CCModel.quadModel(24).generateBlock(0, h, h, h, 1 - h, 1 - h, 1 - h).computeNormals();
+        modelLine[1] = CCModel.quadModel(16).generateBlock(0, h, 1 - h, h, 1 - h, 1.0, 1 - h, 3).computeNormals();
         CCModel.generateSidedModels(modelLine, 1, Vector3.center);
 
 
@@ -482,28 +486,35 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
         CCRenderState.useNormals = true;
         renderTravelingItems(duct.myItems, tile.getWorldObj(), x, y, z, frame);
+        CCRenderState.useNormals = false;
         CCRenderState.reset();
-//        } else {
+
         if (duct.centerLine > 0) {
             GL11.glPushMatrix();
 
+            Translation trans = (new Vector3(x, y, z)).translation();
 
-            GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glEnable(GL11.GL_CULL_FACE);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
             RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
             CCRenderState.setColour(-1);
-            CCRenderState.alphaOverride = (int) ((duct.centerLine * 255.0) / TileItemDuct.maxCenterLine) & 0xFF;
+            CCRenderState.setBrightness(15728880);
+            CCRenderState.alphaOverride = (int) (((duct.centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine)) & 0xFF;
             getDuctConnections(duct);
             CCRenderState.startDrawing();
             for (int s = 0; s < 6; s++) {
                 if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && (duct.centerLineMask & (1 << s)) != 0) {
-                    modelLine[s].render(x, y, z, RenderUtils.getIconTransformation(textureCenterLine));
+                    modelLine[s].render(trans, RenderUtils.getIconTransformation(textureCenterLine));
+                } else {
+                    modelLineCenter.render(s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(textureCenterLine));
                 }
             }
             CCRenderState.draw();
-            GL11.glEnable(GL11.GL_LIGHTING);
+            CCRenderState.alphaOverride = -1;
+            CCRenderState.reset();
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glDisable(GL11.GL_BLEND);
 
             CCRenderState.useNormals = false;

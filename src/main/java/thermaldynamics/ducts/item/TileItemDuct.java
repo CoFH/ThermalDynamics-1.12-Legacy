@@ -7,9 +7,9 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.multiblock.*;
@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, ITileInfoPacketHandler {
-    final ItemDuct internalDuct;
     ItemGrid internalGrid;
 
     public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
@@ -53,7 +52,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
 
 
     public TileItemDuct() {
-        internalDuct = new ItemDuct(this);
+
     }
 
     /*
@@ -63,7 +62,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
      */
     @Override
     public boolean isSignificantTile(TileEntity theTile, int side) {
-        return internalDuct.isSignificantTile(theTile, side);
+        return theTile instanceof IInventory;
     }
 
     @Override
@@ -113,6 +112,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
     }
 
     @Override
+    public ConnectionTypes getConnectionType(byte side) {
+        return connectionTypes[side];
+    }
+
+    @Override
     public IMultiBlock getCachedTile(byte side) {
         return neighborMultiBlocks[side];
     }
@@ -132,41 +136,48 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
         return zCoord;
     }
 
-    @Override
-    public byte getColor() {
-        return 0;
-    }
-
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return pass == 0 ? !myItems.isEmpty() : centerLine > 0;
+        return pass == 0 && (!myItems.isEmpty() || centerLine > 0);
     }
 
     @Override
     public boolean openGui(EntityPlayer player) {
+        if (!isOutput())
+            return false;
+
         if (ServerHelper.isClientWorld(worldObj) || !isOutput())
             return true;
 
         LinkedList<Route> routes = internalGrid.getRoutesFromOutput(this);
-//        if (routes.size() <= 1)
-//            return true;
+
+        if (routes.size() <= 1)
+            return true;
 
         Collections.shuffle(routes);
         for (Route route : routes) {
+            if (route.pathDirections.size() < 1)
+                continue;
+
+            byte input;
+            for (input = 0; input < 6 && neighborTypes[input ^ 1] != NeighborTypes.TILE; ) input++;
+            byte output;
+            for (output = 0; output < 6 && ((TileItemDuct) route.endPoint).neighborTypes[output] != NeighborTypes.TILE; )
+                output++;
 
             Route itemRoute = route.copy();
-            itemRoute.pathDirections.add((byte) 0);
-            final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, (byte) 1);
+            itemRoute.pathDirections.add(output);
+            final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, input);
             travelingItem.goingToStuff = true;
             insertItem(travelingItem);
 
             route = route.copy();
-            route.pathDirections.add((byte) 0);
+            route.pathDirections.add((byte) output);
 
             TileItemDuct duct = this;
             byte direction = route.getNextDirection();
-            byte oldDirection = 1;
+            byte oldDirection = input;
 
             while (true) {
                 duct.pulseLine(direction, (byte) (oldDirection ^ 1));
@@ -188,7 +199,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
 
             break;
         }
-        player.addChatComponentMessage(new ChatComponentText("Routes: " + routes.size()));
+//        player.addChatComponentMessage(new ChatComponentText("Routes: " + routes.size()));
 
         return true;
     }
