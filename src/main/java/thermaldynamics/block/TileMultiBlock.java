@@ -33,7 +33,9 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     static {
         GameRegistry.registerTileEntity(TileMultiBlock.class, "thermalducts.multiblock");
     }
+
     public static Cuboid6[] subSelection = new Cuboid6[12];
+
     static {
 
         double min = 0.25;
@@ -58,6 +60,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         subSelection[10] = new Cuboid6(0.0, min2, min2, min, max2, max2);
         subSelection[11] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
     }
+
     public boolean isValid = true;
     public boolean isNode = false;
     public MultiBlockGrid myGrid;
@@ -67,6 +70,10 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     public ConnectionTypes connectionTypes[] = {ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
             ConnectionTypes.NORMAL, ConnectionTypes.NORMAL};
     public int internalSideCounter = 0;
+
+    public Attachment attachments[] = new Attachment[]{
+            null, null, null, null, null, null
+    };
 
     @Override
     public void onChunkUnload() {
@@ -137,10 +144,11 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     public void tilePlaced() {
 
         onNeighborBlockChange();
-
         TickHandler.addMultiBlockToCalculate(this);
+    }
 
-
+    public boolean isStructureTile(TileEntity tile, byte side) {
+        return false;
     }
 
     @Override
@@ -150,6 +158,18 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         boolean wasNode = isNode;
         isNode = false;
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+            if (attachments[i] != null) {
+                neighborTypes[i] = attachments[i].getNeighbourType();
+                if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
+                    theTile = BlockHelper.getAdjacentTileEntity(this, i);
+                    neighborMultiBlocks[i] = isConnectable(theTile, i) ? (IMultiBlock) theTile : null;
+                } else {
+                    neighborMultiBlocks[i] = null;
+                }
+                isNode = attachments[i].isNode();
+                continue;
+            }
+
             theTile = BlockHelper.getAdjacentTileEntity(this, i);
             if (isConnectable(theTile, i)) {
                 neighborMultiBlocks[i] = (IMultiBlock) theTile;
@@ -158,6 +178,9 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.TILE;
                 isNode = true;
+            } else if (isStructureTile(theTile, i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.STRUCTURE;
             } else {
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.NONE;
@@ -175,16 +198,28 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
         int side = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
-        TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-        if (isConnectable(theTile, side)) {
-            neighborMultiBlocks[side] = (IMultiBlock) theTile;
-            neighborTypes[side] = NeighborTypes.MULTIBLOCK;
-        } else if (isSignificantTile(theTile, side)) {
-            neighborMultiBlocks[side] = null;
-            neighborTypes[side] = NeighborTypes.TILE;
+        if (attachments[side] != null) {
+            neighborTypes[side] = attachments[side].getNeighbourType();
+            if (neighborTypes[side] == NeighborTypes.MULTIBLOCK) {
+                TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
+                neighborMultiBlocks[side] = isConnectable(theTile, side) ? (IMultiBlock) theTile : null;
+            } else {
+                neighborMultiBlocks[side] = null;
+            }
+            isNode = attachments[side].isNode();
+
         } else {
-            neighborMultiBlocks[side] = null;
-            neighborTypes[side] = NeighborTypes.NONE;
+            TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
+            if (isConnectable(theTile, side)) {
+                neighborMultiBlocks[side] = (IMultiBlock) theTile;
+                neighborTypes[side] = NeighborTypes.MULTIBLOCK;
+            } else if (isSignificantTile(theTile, side)) {
+                neighborMultiBlocks[side] = null;
+                neighborTypes[side] = NeighborTypes.TILE;
+            } else {
+                neighborMultiBlocks[side] = null;
+                neighborTypes[side] = NeighborTypes.NONE;
+            }
         }
         boolean wasNode = isNode;
         checkIsNode();
@@ -205,7 +240,6 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     }
 
     public void tickInternalSideCounter(int start) {
-
         for (int a = start; a < neighborTypes.length; a++) {
             if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
                 internalSideCounter = a;
@@ -248,14 +282,11 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
     @Override
     public int getType() {
-
         return 0;
     }
 
     @Override
     public void tickMultiBlock() {
-
-//        System.out.println("Tick Multiblock");
         onNeighborBlockChange();
         formGrid();
     }
@@ -318,25 +349,37 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
         Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
 
-        // Add TILE sides
+
         for (int i = 0; i < 6; i++) {
-            if (neighborTypes[i] == NeighborTypes.TILE) {
-                cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
+            // Add ATTACHMENT sides
+            if (attachments[i] != null) {
+                cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid().add(pos)));
+
+                if (neighborTypes[i] != NeighborTypes.NONE)
+                    cuboids.add(new IndexedCuboid6(i + 14, subSelection[i].copy().add(pos)));
+            } else {
+                // Add TILE sides
+                if (neighborTypes[i] == NeighborTypes.TILE)
+                    cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
+
+                    // Add MULTIBLOCK sides
+                else if (neighborTypes[i] == NeighborTypes.MULTIBLOCK)
+                    cuboids.add(new IndexedCuboid6(i + 6, subSelection[i].copy().add(pos)));
+
+                    // Add STRUCTURE sides
+                else if (neighborTypes[i] == NeighborTypes.STRUCTURE)
+                    cuboids.add(new IndexedCuboid6(i + 20, subSelection[i].copy().add(pos)));
+
             }
         }
-        // Add MULTIBLOCK sides
-        for (int i = 6; i < 12; i++) {
-            if (neighborTypes[i - 6] == NeighborTypes.MULTIBLOCK) {
-                cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
-            }
-        }
+
         cuboids.add(new IndexedCuboid6(13, new Cuboid6(minX, minY, minZ, maxX, maxY, maxZ).add(pos)));
     }
 
     @Override
     public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
 
-        return subHit == 13 || (subHit > 5 && !Utils.isHoldingUsableWrench(thePlayer, xCoord, yCoord, zCoord));
+        return subHit == 13 || (subHit > 5 && subHit < 13 && !Utils.isHoldingUsableWrench(thePlayer, xCoord, yCoord, zCoord));
     }
 
     @Override
@@ -348,7 +391,7 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
             if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
                 hb.drawSide(i, true);
                 hb.setSideLength(i, .3);
-            } else if (neighborTypes[i] == NeighborTypes.TILE) {
+            } else if (neighborTypes[i] != NeighborTypes.NONE) {
                 hb.drawSide(i, true);
                 hb.setSideLength(i, .04);
             }
@@ -366,6 +409,10 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
                 connectionTypes[subHit - 6] = connectionTypes[subHit - 6].next();
                 player.addChatMessage(new ChatComponentText("ConType " + (subHit - 6) + " : " + connectionTypes[subHit - 6] + ":"
                         + connectionTypes[subHit - 6].next()));
+                return true;
+            }
+            if (subHit > 13 && subHit < 20) {
+                return attachments[subHit - 14].onWrenched();
             }
         }
         return false;
@@ -384,10 +431,23 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
 
         PacketCoFHBase payload = super.getPacket();
 
+        int attachmentMask = 0;
         for (byte i = 0; i < neighborTypes.length; i++) {
             payload.addByte(neighborTypes[i].ordinal());
+            payload.addByte(connectionTypes[i].ordinal());
+            if (attachments[i] != null)
+                attachmentMask = attachmentMask | (1 << i);
         }
-        // payload.addBool(isNode);
+
+        payload.addBool(isNode);
+
+        payload.addByte(attachmentMask);
+        for (byte i = 0; i < 6; i++) {
+            if (attachments[i] != null) {
+                payload.addByte(attachments[i].getID());
+                attachments[i].addDescriptionToPacket(payload);
+            }
+        }
 
         return payload;
     }
@@ -399,8 +459,30 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
         if (ServerHelper.isClientWorld(worldObj)) {
             for (byte i = 0; i < neighborTypes.length; i++) {
                 neighborTypes[i] = NeighborTypes.values()[payload.getByte()];
+                connectionTypes[i] = ConnectionTypes.values()[payload.getByte()];
             }
+
+
+            isNode = payload.getBool();
+
+            int attachmentMask = payload.getByte();
+            for (byte i = 0; i < 6; i++) {
+                if ((attachmentMask & (1 << i)) != 0) {
+                    attachments[i] = AttachmentRegistry.createAttachment(this, i, payload.getByte());
+                    attachments[i].getDescriptionFromPacket(payload);
+                }
+            }
+
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
+    }
+
+    public BlockDuct.ConnectionTypes getConnectionType(int i) {
+        if (neighborTypes[i] == NeighborTypes.NONE)
+            return BlockDuct.ConnectionTypes.NONE;
+        else if (neighborTypes[i] == NeighborTypes.STRUCTURE)
+            return BlockDuct.ConnectionTypes.STRUCTURE;
+        else return BlockDuct.ConnectionTypes.DUCT;
     }
 
     public static enum CacheTypes {
@@ -408,14 +490,13 @@ public class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlaced
     }
 
     public static enum NeighborTypes {
-        NONE, MULTIBLOCK, TILE
+        NONE, MULTIBLOCK, TILE, ATTACHMENT, STRUCTURE
     }
 
     public static enum ConnectionTypes {
-        NORMAL, BLOCKED;
+        NORMAL, ONEWAY, BLOCKED;
 
         public ConnectionTypes next() {
-
             if (this == NORMAL) {
                 return BLOCKED;
             }

@@ -112,6 +112,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         IconRegistry.addIcon("Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
         IconRegistry.addIcon("Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 192));
 
+        IconRegistry.addIcon("DuctStructure", "thermaldynamics:duct/structure", ir);
 
         IconRegistry.addIcon("DuctEnergy00", TextureOverlay.generateTexture(ir, false, 0, 1, 0));
 
@@ -193,12 +194,12 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
     }
 
     public static enum RenderTypes {
-        ENERGY_BASIC, ENERGY_HARDENED, ENERGY_REINFORCED, FLUID_TRANS, FLUID_OPAQUE, ITEM_TRANS, ITEM_OPAQUE, ITEM_FAST_TRANS, ITEM_FAST_OPAQUE, ITEM_TRANS_SHORT, ITEM_TRANS_LONG, ITEM_TRANS_ROUNDROBIN, ITEM_OPAQUE_SHORT, ITEM_OPAQUE_LONG, ITEM_OPAQUE_ROUNDROBIN, ITEM_FAST_TRANS_SHORT, ITEM_FAST_TRANS_LONG, ITEM_FAST_TRANS_ROUNDROBIN, ITEM_FAST_OPAQUE_SHORT, ITEM_FAST_OPAQUE_LONG, ITEM_FAST_OPAQUE_ROUNDROBIN;
+        ENERGY_BASIC, ENERGY_HARDENED, ENERGY_REINFORCED, FLUID_TRANS, FLUID_OPAQUE, ITEM_TRANS, ITEM_OPAQUE, ITEM_FAST_TRANS, ITEM_FAST_OPAQUE, ITEM_TRANS_SHORT, ITEM_TRANS_LONG, ITEM_TRANS_ROUNDROBIN, ITEM_OPAQUE_SHORT, ITEM_OPAQUE_LONG, ITEM_OPAQUE_ROUNDROBIN, ITEM_FAST_TRANS_SHORT, ITEM_FAST_TRANS_LONG, ITEM_FAST_TRANS_ROUNDROBIN, ITEM_FAST_OPAQUE_SHORT, ITEM_FAST_OPAQUE_LONG, ITEM_FAST_OPAQUE_ROUNDROBIN, STRUCTURE;
     }
 
     public static enum ConnectionTypes {
         NONE(false), DUCT, ENERGY_BASIC, ENERGY_BASIC_BLOCKED(false), ENERGY_HARDENED, ENERGY_HARDENED_BLOCKED(false), ENERGY_REINFORCED, ENERGY_REINFORCED_BLOCKED(
-                false), FLUID_NORMAL, FLUID_BLOCKED(false), FLUID_INPUT_ON, FLUID_INPUT_OFF, ITEM_NORMAL, ITEM_BLOCKED(false), ITEM_INPUT_ON, ITEM_INPUT_OFF, ITEM_STUFFED_ON, ITEM_STUFFED_OFF;
+                false), FLUID_NORMAL, FLUID_BLOCKED(false), FLUID_INPUT_ON, FLUID_INPUT_OFF, ITEM_NORMAL, ITEM_ONEWAY, ITEM_BLOCKED(false), ITEM_INPUT_ON, ITEM_INPUT_OFF, ITEM_STUFFED_ON, ITEM_STUFFED_OFF, STRUCTURE;
 
         private final boolean renderDuct;
 

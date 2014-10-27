@@ -4,8 +4,6 @@ import net.minecraft.world.World;
 
 public interface IMultiBlock {
 
-
-
     public World getWorldObj();
 
 	public void setInvalidForForming();
@@ -34,5 +32,4 @@ public interface IMultiBlock {
 	public void tickPass(int pass);
 
 	public boolean isNode();
-
 }

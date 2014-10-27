@@ -27,12 +27,12 @@ import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
+import thermaldynamics.block.Attachment;
 import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.BlockDuct.DuctTypes;
 import thermaldynamics.block.BlockDuct.RenderTypes;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
-import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
@@ -128,6 +128,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         textureDuct[RenderTypes.ITEM_FAST_OPAQUE_SHORT.ordinal()] = IconRegistry.getIcon("DuctItem31");
         textureDuct[RenderTypes.ITEM_FAST_OPAQUE_LONG.ordinal()] = IconRegistry.getIcon("DuctItem32");
         textureDuct[RenderTypes.ITEM_FAST_OPAQUE_ROUNDROBIN.ordinal()] = IconRegistry.getIcon("DuctItem33");
+        textureDuct[RenderTypes.STRUCTURE.ordinal()] = IconRegistry.getIcon("DuctStructure");
 
         textureConnection[BlockDuct.ConnectionTypes.ENERGY_BASIC.ordinal()] = IconRegistry.getIcon("Connection2");
         textureConnection[BlockDuct.ConnectionTypes.ENERGY_BASIC_BLOCKED.ordinal()] = IconRegistry.getIcon("Connection2");
@@ -211,7 +212,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         }
     }
 
-    public void renderFrame(boolean invRender, int renderType, int[] connection, double x, double y, double z) {
+    public boolean renderFrame(boolean invRender, int renderType, int[] connection, double x, double y, double z) {
 
         x += 0.5;
         y += 0.5;
@@ -220,20 +221,35 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         Translation trans = RenderUtils.getRenderVector(x, y, z).translation();
 
         for (int s = 0; s < 6; s++) {
+
             if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
-                if (!invRender) {
-                    modelConnection[0][s].render(0, 4, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
-                    modelConnection[0][s].render(8, 24, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
-                    modelConnection[0][s].render(24, 28, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
-                    modelConnection[0][s].render(32, 48, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
+                RenderUtils.ScaledIconTransformation icon;
+
+                if (BlockDuct.ConnectionTypes.values()[connection[s]] == BlockDuct.ConnectionTypes.STRUCTURE) {
+                    icon = RenderUtils.getIconTransformation(textureDuct[RenderTypes.STRUCTURE.ordinal()]);
+                    modelConnection[0][s].render(0, 4, trans, icon);
+                    modelConnection[0][s].render(8, 24, trans, icon);
+                    modelConnection[0][s].render(24, 28, trans, icon);
+                    modelConnection[0][s].render(32, 48, trans, icon);
                 } else {
-                    modelConnection[0][s].render(trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
-                }
-                if (connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
-                    if (connection[s] % 2 == 0) {
-                        modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(textureConnection[connection[s]]));
+                    icon = RenderUtils.getIconTransformation(textureDuct[renderType]);
+                    if (!invRender) {
+                        modelConnection[0][s].render(0, 4, trans, icon);
+                        modelConnection[0][s].render(8, 24, trans, icon);
+                        modelConnection[0][s].render(24, 28, trans, icon);
+                        modelConnection[0][s].render(32, 48, trans, icon);
                     } else {
-                        modelConnection[2][s].render(trans, RenderUtils.getIconTransformation(textureConnection[connection[s]]));
+                        modelConnection[0][s].render(trans, icon);
+                    }
+
+                    if (connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()
+                            && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()
+                            ) {
+                        if (connection[s] % 2 == 0) {
+                            modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(textureConnection[connection[s]]));
+                        } else {
+                            modelConnection[2][s].render(trans, RenderUtils.getIconTransformation(textureConnection[connection[s]]));
+                        }
                     }
                 }
             } else {
@@ -241,6 +257,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
                 modelCenter.render(24 + s * 4, 28 + s * 4, trans, RenderUtils.getIconTransformation(textureDuct[renderType]));
             }
         }
+        return true;
     }
 
     public boolean renderWorldExtra(TileMultiBlock tile, int renderType, int[] connection, double x, double y, double z) {
@@ -261,7 +278,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         CCModel[] models = modelFluid[5];
 
         for (int s = 0; s < 6; s++) {
-            if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
+            if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
                 models[s].render(x, y, z, RenderUtils.getIconTransformation(texture));
             }
         }
@@ -302,7 +319,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         CCModel[] models = modelFluid[level - 1];
 
         for (int s = 0; s < 6; s++) {
-            if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
+            if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()
+                    && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()
+                    ) {
                 models[s].render(x, y, z, RenderUtils.getIconTransformation(fluidTex));
             }
         }
@@ -311,12 +330,11 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     }
 
     public void getDuctConnections(TileMultiBlock tile) {
-
         for (int i = 0; i < 6; i++) {
             if (tile.connectionTypes[i] == ConnectionTypes.BLOCKED) {
-                connections[i] = NeighborTypes.NONE.ordinal();
+                connections[i] = BlockDuct.ConnectionTypes.NONE.ordinal();
             } else {
-                connections[i] = tile.neighborTypes[i].ordinal(); // tile.getConnectionType(i);
+                connections[i] = tile.getConnectionType(i).ordinal();
             }
         }
     }
@@ -357,14 +375,24 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         RenderUtils.preWorldRender(world, x, y, z);
         getDuctConnections(theTile);
 
+        boolean flag = false;
+
+
+        for (Attachment attachment : theTile.attachments) {
+            if (attachment != null) {
+                flag = attachment.render(BlockCoFHBase.renderPass, renderer) || flag;
+            }
+        }
+
         if (BlockCoFHBase.renderPass == 0) {
             renderFrame(false, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
+            flag = true;
         } else {
-            return renderWorldExtra(theTile, RenderTypes.ENERGY_REINFORCED.ordinal(), connections, x, y, z);
+            flag = renderWorldExtra(theTile, RenderTypes.ITEM_OPAQUE.ordinal(), connections, x, y, z) || flag;
         }
-        //RenderUtils.postWorldRender(world, x, y, z);
 
-        return true;
+
+        return flag;
     }
 
     @Override
