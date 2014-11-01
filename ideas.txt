@@ -34,7 +34,7 @@ Itemducts are obviously where the biggest potential for changes are.
 - Servos -
 This is my proposed 'big change' to the system. Instead of having a simple 'wrench the pipe to have it output', actually have a physical device that is responsible for pulling out items and routing them. The idea being that you can have tiered versions of these. It's basically the same concept as transfer nodes just with more emphasis on tiers.
 
-* 'Basic' Servo / No servo (when machines auto-output and no extractor is placed)
+* 'Basic' Servo / No servo (when machines auto-output and no servois placed)
 The basic servo is incredibly cheap but has dumb routing logic. They will output to a random inventory within 4-8 blocks. They require an external redstone signal (such as a lever) to operate, don't have a filter, are slow and only pulls a max of maybe 8 items at a time.
 
 * 'Hardened' Servo
