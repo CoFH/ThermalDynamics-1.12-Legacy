@@ -197,7 +197,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborTypes[i] = attachments[i].getNeighbourType();
                 if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
                     theTile = BlockHelper.getAdjacentTileEntity(this, i);
-                    if (isConnectable(theTile, i)) {
+                    if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
                         neighborMultiBlocks[i] = (IMultiBlock) theTile;
                     } else {
                         neighborMultiBlocks[i] = null;
@@ -212,7 +212,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             }
 
             theTile = BlockHelper.getAdjacentTileEntity(this, i);
-            if (isConnectable(theTile, i)) {
+            if (theTile == null) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.NONE;
+                connectionTypes[i] = ConnectionTypes.NORMAL;
+            } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
                 neighborMultiBlocks[i] = (IMultiBlock) theTile;
                 neighborTypes[i] = NeighborTypes.MULTIBLOCK;
             } else if (isSignificantTile(theTile, i)) {
@@ -244,7 +248,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             neighborTypes[side] = attachments[side].getNeighbourType();
             if (neighborTypes[side] == NeighborTypes.MULTIBLOCK) {
                 TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-                neighborMultiBlocks[side] = isConnectable(theTile, side) ? (IMultiBlock) theTile : null;
+                neighborMultiBlocks[side] = isConnectable(theTile, side) && isUnblocked(theTile, side) ? (IMultiBlock) theTile : null;
             } else {
                 neighborMultiBlocks[side] = null;
             }
@@ -252,7 +256,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         } else {
             TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-            if (isConnectable(theTile, side)) {
+            if (isConnectable(theTile, side) && isUnblocked(theTile, side)) {
                 neighborMultiBlocks[side] = (IMultiBlock) theTile;
                 neighborTypes[side] = NeighborTypes.MULTIBLOCK;
             } else if (isSignificantTile(theTile, side)) {
@@ -302,7 +306,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
      * This must also be an instance of IMultiBlock
      */
     public boolean isConnectable(TileEntity theTile, int side) {
-        return theTile instanceof TileMultiBlock && !isBlockedSide(side) && !((TileMultiBlock) theTile).isBlockedSide(side ^ 1);
+        return theTile instanceof TileMultiBlock;
+    }
+
+    public boolean isUnblocked(TileEntity tile, int side) {
+        return !isBlockedSide(side) && !((TileMultiBlock) tile).isBlockedSide(side ^ 1);
     }
 
     /*
@@ -467,11 +475,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             if (subHit > 5 && subHit <= 13) {
                 int i = subHit == 13 ? hitSide : subHit - 6;
 
+                onNeighborBlockChange();
 
                 connectionTypes[i] = connectionTypes[i].next();
-                player.addChatMessage(new ChatComponentText("ConType " + i + " : " + connectionTypes[i] + ":"
-                        + connectionTypes[i].next()));
 
+                TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
+                if (isConnectable(tile, i)) {
+                    ((TileMultiBlock) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+                }
 
                 worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
 
