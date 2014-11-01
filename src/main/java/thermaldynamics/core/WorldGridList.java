@@ -1,5 +1,6 @@
 package thermaldynamics.core;
 
+import net.minecraft.world.World;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -9,6 +10,13 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 public class WorldGridList {
+
+    public World worldObj;
+
+    public WorldGridList(World world) {
+        this.worldObj = world;
+    }
+
     public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<MultiBlockGrid>();
     public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<IMultiBlock>();
 
@@ -18,16 +26,16 @@ public class WorldGridList {
 
 
     public void tickStart() {
-        if (!oldGrids.isEmpty()) {
-            tickingGrids.removeAll(oldGrids);
-            oldGrids.clear();
-        }
 
         if (!newGrids.isEmpty()) {
             tickingGrids.addAll(newGrids);
             newGrids.clear();
         }
 
+        if (!oldGrids.isEmpty()) {
+            tickingGrids.removeAll(oldGrids);
+            oldGrids.clear();
+        }
 
     }
 
@@ -37,12 +45,12 @@ public class WorldGridList {
             for (MultiBlockGrid grid : gridsToRecreate) {
                 for (IMultiBlock multiBlock : grid.idleSet) {
                     tickingBlocks.add(multiBlock);
-                    multiBlock.setGrid(null);
+                    grid.destroyNode(multiBlock);
                 }
 
                 for (IMultiBlock multiBlock : grid.nodeSet) {
                     tickingBlocks.add(multiBlock);
-                    multiBlock.setGrid(null);
+                    grid.destroyNode(multiBlock);
                 }
             }
             gridsToRecreate.clear();
@@ -65,12 +73,15 @@ public class WorldGridList {
             DebugHelper.stopTimer("DebugTick");
         }
 
-
         if (!tickingBlocks.isEmpty()) {
-            for (IMultiBlock block : tickingBlocks) {
-                block.tickMultiBlock();
+            Iterator<IMultiBlock> iter = tickingBlocks.iterator();
+            while (iter.hasNext()) {
+                IMultiBlock block = iter.next();
+                if (block.existsYet()) {
+                    block.tickMultiBlock();
+                    iter.remove();
+                }
             }
-            tickingBlocks.clear();
         }
     }
 }

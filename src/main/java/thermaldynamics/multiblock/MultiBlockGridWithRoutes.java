@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class MultiBlockGridWithRoutes extends MultiBlockGrid {
+public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
     public MultiBlockGridWithRoutes(World world) {
         super(world);
     }

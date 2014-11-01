@@ -14,7 +14,7 @@ public class MultiBlockFormer {
 
         theGrid = theMultiBlock.getNewGrid();
         theMultiBlock.setGrid(theGrid);
-        theMultiBlock.getGrid().addBlock(theMultiBlock);
+        theGrid.addBlock(theMultiBlock);
 
         blocksToCheck.add(theMultiBlock);
 
@@ -41,23 +41,22 @@ public class MultiBlockFormer {
             if (currentMultiBlock.isSideConnected(i)) {
                 aBlock = currentMultiBlock.getConnectedSide(i);
                 if (aBlock != null && aBlock.isValidForForming()) {
-                    if (aBlock.getGrid() != null) {
-                        if (theGrid.canGridsMerge(aBlock.getGrid())) {
-                            if (theGrid != aBlock.getGrid()) {
-                                if (theGrid.size() > aBlock.getGrid().size()) {
-                                    theGrid.mergeGrids(aBlock.getGrid());
-                                } else {
-                                    aBlock.getGrid().mergeGrids(theGrid);
-                                    theGrid = aBlock.getGrid();
-                                }
-                            }
-                        } else {
-                            currentMultiBlock.setNotConnected(i);
-                        }
-                    } else {
+                    if (aBlock.getGrid() == null && theGrid.canAddBlock(aBlock)) {
                         aBlock.setGrid(theGrid);
                         theGrid.addBlock(aBlock);
                         blocksToCheck.add(aBlock);
+                    } else if (theGrid.canAddBlock(aBlock) && aBlock.getGrid() != null && theGrid.canGridsMerge(aBlock.getGrid())) {
+                        if (theGrid != aBlock.getGrid()) {
+                            if (theGrid.size() >= aBlock.getGrid().size()) {
+                                theGrid.mergeGrids(aBlock.getGrid());
+                            } else {
+                                aBlock.getGrid().mergeGrids(theGrid);
+                                theGrid = aBlock.getGrid();
+                            }
+                        }
+                    } else {
+                        currentMultiBlock.setNotConnected(i);
+                        aBlock.setNotConnected((byte) (i ^ 1));
                     }
                 }
             }

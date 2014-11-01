@@ -2,10 +2,6 @@ package thermaldynamics.core;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import thermaldynamics.multiblock.IMultiBlock;
@@ -20,9 +16,12 @@ public class TickHandler {
     public final static LinkedHashSet<IMultiBlock> multiBlocksToCalculate = new LinkedHashSet<IMultiBlock>();
 
     public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
-        synchronized (multiBlocksToCalculate) {
-            multiBlocksToCalculate.add(multiBlock);
-        }
+        if (multiBlock.getWorldObj() != null)
+            getTickHandler(multiBlock.getWorldObj()).tickingBlocks.add(multiBlock);
+        else
+            synchronized (multiBlocksToCalculate) {
+                multiBlocksToCalculate.add(multiBlock);
+            }
     }
 
 
@@ -52,7 +51,7 @@ public class TickHandler {
             if (worldGridList != null)
                 return worldGridList;
 
-            worldGridList = new WorldGridList();
+            worldGridList = new WorldGridList(world);
             handlers.put(world, worldGridList);
             return worldGridList;
         }
@@ -79,7 +78,6 @@ public class TickHandler {
             handlers.remove(evt.world);
         }
     }
-
 
 
 }

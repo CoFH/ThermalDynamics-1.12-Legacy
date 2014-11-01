@@ -2,31 +2,38 @@ package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.EnergyStorage;
 import net.minecraft.world.World;
-import thermaldynamics.core.TDProps;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class EnergyGrid extends MultiBlockGrid {
 
-    public EnergyStorage myStorage = new EnergyStorage(0, TDProps.ENERGY_PER_NODE);
+    public EnergyStorage myStorage;
     private int currentEnergy = 0;
     private int extraEnergy = 0;
     private boolean first = false;
+    private int type;
 
-    public EnergyGrid(World world) {
+    public static final int NODE_STORAGE[] = {480, 2400, 60000};
+    public static final int NODE_TRANSFER[] = {80, 400, 10000};
+
+    public EnergyGrid(World world, int type) {
         super(world);
+        this.type = type;
+        myStorage = new EnergyStorage(NODE_STORAGE[type], NODE_TRANSFER[type]);
     }
 
     @Override
     public void balanceGrid() {
+        myStorage.setCapacity(nodeSet.size() * NODE_STORAGE[type]);
+    }
 
-        myStorage.setCapacity(nodeSet.size() * TDProps.ENERGY_PER_NODE);
-        System.out.println("Nodes: " + nodeSet.size());
+    @Override
+    public boolean canAddBlock(IMultiBlock aBlock) {
+        return aBlock instanceof TileEnergyDuct && ((TileEnergyDuct) aBlock).type == this.type;
     }
 
     @Override
     public void tickGrid() {
-
         if (!nodeSet.isEmpty() && myStorage.getEnergyStored() > 0) {
             currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
             extraEnergy = myStorage.getEnergyStored() % nodeSet.size();
@@ -38,8 +45,7 @@ public class EnergyGrid extends MultiBlockGrid {
     }
 
     public int getSendableEnergy() {
-
-        return currentEnergy + extraEnergy;
+        return Math.min(myStorage.getMaxExtract(), currentEnergy + extraEnergy);
     }
 
     public void useEnergy(int energyUsed) {
@@ -50,4 +56,11 @@ public class EnergyGrid extends MultiBlockGrid {
             extraEnergy = Math.max(0, extraEnergy);
         }
     }
+
+    @Override
+    public boolean canGridsMerge(MultiBlockGrid grid) {
+        return super.canGridsMerge(grid) && ((EnergyGrid) grid).type == this.type;
+    }
+
+
 }

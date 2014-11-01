@@ -7,13 +7,11 @@ import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.repack.codechicken.lib.vec.Vector3;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
@@ -22,7 +20,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
-import thermaldynamics.ducts.facades.Facade;
+import thermaldynamics.ducts.servo.ServoBase;
+import thermalexpansion.item.TEItems;
 import thermalexpansion.util.Utils;
 
 import java.util.LinkedList;
@@ -37,8 +36,7 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
 
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
-
-        return new TileMultiBlock();
+        return null;
     }
 
     @Override
@@ -139,9 +137,8 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
             return true;
         }
 
-        if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemBlock) {
-            Block block = ((ItemBlock) player.getHeldItem().getItem()).field_150939_a;
-            int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
+        if (player.getHeldItem() != null && player.getHeldItem().getItem() == TEItems.pneumaticServo.getItem()
+                && player.getHeldItem().getItemDamage() == TEItems.pneumaticServo.getItemDamage()) {
             int side = -1;
             int subHit = RayTracer.retraceBlock(world, player, x, y, z).subHit;
             if (subHit < 6)
@@ -152,14 +149,34 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
                 side = hitSide;
             if (side != -1) {
                 if (!world.isRemote) {
-                    tile.attachments[side] = new Facade(tile, (byte) side, block, meta);
-                    tile.onNeighborBlockChange();
+                    tile.addAttachment(new ServoBase(tile, (byte) side));
                 }
                 return true;
             }
 
 
         }
+
+//        if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemBlock) {
+//            Block block = ((ItemBlock) player.getHeldItem().getItem()).field_150939_a;
+//            int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
+//            int side = -1;
+//            int subHit = RayTracer.retraceBlock(world, player, x, y, z).subHit;
+//            if (subHit < 6)
+//                side = subHit;
+//            else if (subHit < 12)
+//                side = subHit - 6;
+//            else if (subHit == 13)
+//                side = hitSide;
+//            if (side != -1) {
+//                if (!world.isRemote) {
+//                    tile.addAttachment(new Facade(tile, (byte) side, block, meta));
+//                }
+//                return true;
+//            }
+//
+//
+//        }
 
         return tile.openGui(player);
     }

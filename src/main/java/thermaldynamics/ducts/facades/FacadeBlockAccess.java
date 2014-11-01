@@ -51,13 +51,6 @@ public class FacadeBlockAccess implements IBlockAccess {
         if (x == blockX && y == blockY && z == blockZ)
             return BASE;
 
-        if (enclosingBedrock && ((side == 0 && y >= blockY) ||
-                (side == 1 && y <= blockY) ||
-                (side == 2 && z >= blockZ) ||
-                (side == 3 && z <= blockZ) ||
-                (side == 4 && x >= blockX) ||
-                (side == 5 && x <= blockX)))
-            return BEDROCK;
 
         if (world.getBlock(x, y, z) == block && world.getBlockMetadata(x, y, z) == meta)
             return BEDROCK;
@@ -75,6 +68,15 @@ public class FacadeBlockAccess implements IBlockAccess {
             }
             return AIR;
         }
+
+        if (enclosingBedrock && ((side == 0 && y >= blockY) ||
+                (side == 1 && y <= blockY) ||
+                (side == 2 && z >= blockZ) ||
+                (side == 3 && z <= blockZ) ||
+                (side == 4 && x >= blockX) ||
+                (side == 5 && x <= blockX)))
+            return BEDROCK;
+
 
 
         return ORIGINAL;

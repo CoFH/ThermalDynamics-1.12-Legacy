@@ -27,7 +27,7 @@ public class DebugHelper {
         FMLCommonHandler.instance().bus().register(DebugTickHandler.INSTANCE);
     }
 
-    public static void log(Object string) {
+    public static void info(Object string) {
         if (debug) log.info(string);
     }
 

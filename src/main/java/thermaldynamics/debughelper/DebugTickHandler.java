@@ -1,5 +1,6 @@
 package thermaldynamics.debughelper;
 
+import cofh.lib.util.helpers.ServerHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.client.Minecraft;
@@ -20,7 +21,11 @@ public class DebugTickHandler {
     @SubscribeEvent
     public void showParticles(TickEvent.WorldTickEvent evt) {
         if (evt.phase == TickEvent.Phase.START || Minecraft.getMinecraft().theWorld == null
-                || Minecraft.getMinecraft().theWorld.provider.dimensionId != evt.world.provider.dimensionId)
+                || Minecraft.getMinecraft().theWorld.provider.dimensionId != evt.world.provider.dimensionId
+                )
+            return;
+
+        if (ServerHelper.isClientWorld(evt.world))
             return;
 
         if (!showParticles)
@@ -39,7 +44,7 @@ public class DebugTickHandler {
 
             for (IMultiBlock node : grid.nodeSet) {
                 TileMultiBlock tile = ((TileMultiBlock) node);
-                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, r, g, b);
+                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", tile.xCoord + 0.5, tile.yCoord + 0.75, tile.zCoord + 0.5, r, g, b);
             }
 
             r *= 0.8;
@@ -48,7 +53,7 @@ public class DebugTickHandler {
 
             for (IMultiBlock node : grid.idleSet) {
                 TileMultiBlock tile = ((TileMultiBlock) node);
-                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, r, g, b);
+                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", tile.xCoord + 0.5, tile.yCoord + 0.75, tile.zCoord + 0.5, r, g, b);
             }
         }
 

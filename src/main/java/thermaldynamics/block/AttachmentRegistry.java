@@ -1,8 +1,7 @@
 package thermaldynamics.block;
 
-import com.google.common.collect.HashBiMap;
-import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.ducts.facades.Facade;
+import thermaldynamics.ducts.servo.ServoBase;
 
 import java.util.HashMap;
 
@@ -12,8 +11,10 @@ public class AttachmentRegistry {
 
 
     public static Attachment createAttachment(TileMultiBlock tile, byte side, int id) {
-        if(id == 0){
-            return new Facade(tile,side);
+        if (id == 0) {
+            return new Facade(tile, side);
+        } else if (id == 1) {
+            return new ServoBase(tile, side);
         }
 
         return null;

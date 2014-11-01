@@ -69,4 +69,12 @@ public abstract class Attachment {
     public boolean makesSideSolid() {
         return false;
     }
+
+    public void onNeighbourChange() {
+
+    }
+
+    public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
+        return true;
+    }
 }

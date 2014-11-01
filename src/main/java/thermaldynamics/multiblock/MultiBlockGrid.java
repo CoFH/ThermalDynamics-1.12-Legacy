@@ -7,7 +7,7 @@ import thermaldynamics.core.WorldGridList;
 
 import java.util.HashSet;
 
-public class MultiBlockGrid {
+public abstract class MultiBlockGrid {
     public HashSet<IMultiBlock> nodeSet = new HashSet<IMultiBlock>();
     public HashSet<IMultiBlock> idleSet = new HashSet<IMultiBlock>();
     public WorldGridList worldGrid;
@@ -55,28 +55,23 @@ public class MultiBlockGrid {
     }
 
     public void mergeGrids(MultiBlockGrid theGrid) {
-        if (!nodeSet.isEmpty()) {
+        if (!theGrid.nodeSet.isEmpty()) {
             for (IMultiBlock aBlock : theGrid.nodeSet) {
                 aBlock.setGrid(this);
+                addBlock(aBlock);
             }
 
-            nodeSet.addAll(theGrid.nodeSet);
             onMajorGridChange();
         }
 
-        if (theGrid.idleSet.size() == 1) {
-            IMultiBlock aBlock = theGrid.idleSet.iterator().next();
-            aBlock.setGrid(this);
-            addIdle(aBlock);
-            onMinorGridChange();
-        } else {
+        if (!theGrid.idleSet.isEmpty()) {
             for (IMultiBlock aBlock : theGrid.idleSet) {
                 aBlock.setGrid(this);
+                addBlock(aBlock);
             }
-            idleSet.addAll(theGrid.idleSet);
+
             onMajorGridChange();
         }
-
 
         theGrid.destory();
     }
@@ -123,12 +118,23 @@ public class MultiBlockGrid {
         }
     }
 
+    public void destroyAndRecreate() {
+        worldGrid.gridsToRecreate.add(this);
+    }
+
     public void removeBlock(IMultiBlock oldBlock) {
         if (oldBlock.isNode()) {
             nodeSet.remove(oldBlock);
             onMajorGridChange();
         } else {
             idleSet.remove(oldBlock);
+        }
+
+        destroyNode(oldBlock);
+
+        if (nodeSet.isEmpty() && idleSet.isEmpty()) {
+            worldGrid.oldGrids.add(this);
+            return;
         }
 
         byte s = 0;
@@ -141,6 +147,8 @@ public class MultiBlockGrid {
             onMinorGridChange();
             return;
         }
+
+        onMajorGridChange();
 
         worldGrid.gridsToRecreate.add(this);
     }
@@ -164,4 +172,15 @@ public class MultiBlockGrid {
     public boolean isTickProcessing() {
         return false;
     }
+
+    public void destroyNode(IMultiBlock node) {
+        node.setGrid(null);
+    }
+
+    public boolean isFirstMultiblock(IMultiBlock block) {
+        return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block :
+                !idleSet.isEmpty() && idleSet.iterator().next() == block;
+    }
+
+    public abstract boolean canAddBlock(IMultiBlock aBlock);
 }

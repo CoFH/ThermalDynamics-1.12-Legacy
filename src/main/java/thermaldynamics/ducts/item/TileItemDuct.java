@@ -10,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.multiblock.*;
@@ -52,7 +53,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
 
 
     public TileItemDuct() {
+        this(0);
+    }
 
+    public TileItemDuct(int i) {
+        conduitType = i;
     }
 
     /*
@@ -297,6 +302,12 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
         }
     }
 
+
+
+    protected BlockDuct.ConnectionTypes getDefaultConnection() {
+        return BlockDuct.ConnectionTypes.ITEM_NORMAL;
+    }
+
     @Override
     public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
         myItems.clear();
@@ -320,6 +331,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
                 }
             }
         }
+    }
+
+    public void removeItem(TravelingItem travelingItem) {
+        itemsToRemove.add(travelingItem);
     }
 
     public class TileInfoPackets {

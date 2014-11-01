@@ -20,4 +20,10 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
         super.tickGrid();
     }
+
+    @Override
+    public boolean canAddBlock(IMultiBlock aBlock) {
+
+        return aBlock instanceof TileItemDuct;
+    }
 }

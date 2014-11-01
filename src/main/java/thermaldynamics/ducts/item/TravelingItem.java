@@ -82,7 +82,7 @@ public class TravelingItem {
             TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
             if (newHome != null) {
                 if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-                    homeTile.itemsToRemove.add(this);
+                    homeTile.removeItem(this);
                     if (myPath.pathPos == 0 && goingToStuff) {
                         if (newHome.canStuffItem()) {
                             goingToStuff = false;
@@ -106,7 +106,7 @@ public class TravelingItem {
                 if (homeTile.canStuffItem()) {
                     goingToStuff = false;
                     homeTile.stuffItem(this);
-                    homeTile.itemsToRemove.add(this);
+                    homeTile.removeItem(this);
                 } else {
                     goingToStuff = false;
                     bounceItem(homeTile);
@@ -120,7 +120,7 @@ public class TravelingItem {
                     bounceItem(homeTile);
                     return;
                 }
-                homeTile.itemsToRemove.add(this);
+                homeTile.removeItem(this);
             } else {
                 bounceItem(homeTile);
             }
@@ -166,7 +166,7 @@ public class TravelingItem {
 //            }
 //        }
 //        if (homeTile.isInput) {
-//            homeTile.itemsToRemove.add(this);
+//            homeTile.removeItem(this);
 //            homeTile.stuffItem(this);
 //        } else if (!homeTile.validStuffable.isEmpty()) {
 //            goingToStuff = true;
@@ -177,7 +177,7 @@ public class TravelingItem {
 //            homeTile.hasChanged = true;
 //        } else {
         //CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
-        homeTile.itemsToRemove.add(this);
+        homeTile.removeItem(this);
 //        }
 
     }
@@ -200,9 +200,9 @@ public class TravelingItem {
         }
         if (progress == 0) {
             if (shouldDie) {
-                homeTile.itemsToRemove.add(this);
+                homeTile.removeItem(this);
             } else {
-                homeTile.itemsToRemove.add(this);
+                homeTile.removeItem(this);
                 shouldDie = true;
                 TileEntity newTile = BlockHelper.getAdjacentTileEntity(homeTile, direction);
                 if (newTile instanceof TileItemDuct) {

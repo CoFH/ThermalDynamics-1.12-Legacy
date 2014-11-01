@@ -32,7 +32,6 @@ import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.BlockDuct.DuctTypes;
 import thermaldynamics.block.BlockDuct.RenderTypes;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.block.TileMultiBlock.ConnectionTypes;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
@@ -59,12 +58,14 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     static IIcon[] textureConnection = new IIcon[BlockDuct.ConnectionTypes.values().length];
     static IIcon textureCenterLine;
 
+    public static IIcon[] servoTexture = new IIcon[8];
+
     static IIcon textureSolidRedstone;
     static IIcon textureFluidRedstone;
     static IIcon textureFluidGlowstone;
 
     static CCModel[][] modelFluid = new CCModel[6][7];
-    static CCModel[][] modelConnection = new CCModel[3][6];
+    public static CCModel[][] modelConnection = new CCModel[3][6];
     static CCModel modelCenter;
 
     static CCModel[] modelLine = new CCModel[6];
@@ -100,6 +101,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
 
     public static void initialize() {
+
+        for (int i = 0; i < 8; i++)
+            servoTexture[i] = IconRegistry.getIcon("ServoBase" + i);
 
         textureDuct[RenderTypes.ENERGY_BASIC.ordinal()] = IconRegistry.getIcon("DuctEnergy00");
         textureDuct[RenderTypes.ENERGY_HARDENED.ordinal()] = IconRegistry.getIcon("DuctEnergy10");
@@ -151,7 +155,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         textureConnection[BlockDuct.ConnectionTypes.ITEM_STUFFED_ON.ordinal()] = IconRegistry.getIcon("Connection16");
         textureConnection[BlockDuct.ConnectionTypes.ITEM_STUFFED_OFF.ordinal()] = IconRegistry.getIcon("Connection16");
 
-        textureSolidRedstone = IconRegistry.getIcon("StorageRedstone");
+        textureSolidRedstone = IconRegistry.getIcon("RedstoneNoise");
         textureFluidRedstone = IconRegistry.getIcon("Fluid_Redstone_Still");
         textureFluidGlowstone = IconRegistry.getIcon("Fluid_Glowstone_Still");
 
@@ -331,11 +335,7 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
     public void getDuctConnections(TileMultiBlock tile) {
         for (int i = 0; i < 6; i++) {
-            if (tile.connectionTypes[i] == ConnectionTypes.BLOCKED) {
-                connections[i] = BlockDuct.ConnectionTypes.NONE.ordinal();
-            } else {
-                connections[i] = tile.getConnectionType(i).ordinal();
-            }
+            connections[i] = tile.getConnectionType(i).ordinal();
         }
     }
 
@@ -343,24 +343,6 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
 
-        // RenderUtils.preRender();
-
-        CCRenderState.startDrawing();
-        renderFrame(true, metadata, INV_CONNECTIONS, -0.5, -0.5, -0.5);
-        CCRenderState.draw();
-
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        CCRenderState.startDrawing();
-        renderWorldExtra(null, metadata, INV_CONNECTIONS, -0.5, -0.5 - RenderHelper.RENDER_OFFSET, -0.5);
-        CCRenderState.draw();
-
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_BLEND);
-
-        CCRenderState.useNormals = false;
     }
 
     @Override
@@ -384,11 +366,13 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
             }
         }
 
+        int metadata = world.getBlockMetadata(x, y, z);
+
         if (BlockCoFHBase.renderPass == 0) {
-            renderFrame(false, RenderTypes.ENERGY_BASIC.ordinal(), connections, x, y, z);
+            renderFrame(false, metadata, connections, x, y, z);
             flag = true;
         } else {
-            flag = renderWorldExtra(theTile, RenderTypes.ITEM_OPAQUE.ordinal(), connections, x, y, z) || flag;
+            flag = renderWorldExtra(theTile, metadata, connections, x, y, z) || flag;
         }
 
 
@@ -403,7 +387,6 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
     @Override
     public int getRenderId() {
-
         return TDProps.renderDuctId;
     }
 
@@ -422,41 +405,41 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+        int metadata = item.getItemDamage() % RenderTypes.values().length;
+        boolean renderExtra = false;
 
-        // int metadata = 2;
-        // boolean renderExtra = false;
-        //
-        // GL11.glPushMatrix();
-        // double offset = -0.5;
-        // if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-        // offset = 0;
-        // } else if (type == ItemRenderType.ENTITY) {
-        // GL11.glScaled(0.5, 0.5, 0.5);
-        // }
-        // RenderHelper.setBlockTextureSheet();
-        // RenderUtils.preRender();
-        //
-        // CCRenderState.startDrawing();
-        // instance.renderFrame(true, metadata, INV_CONNECTIONS, offset, offset, offset);
-        // CCRenderState.draw();
-        //
-        // GL11.glDisable(GL11.GL_LIGHTING);
-        // GL11.glEnable(GL11.GL_BLEND);
-        // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        //
-        // if (renderExtra) {
-        // CCRenderState.startDrawing();
-        // renderWorldExtra(null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
-        // CCRenderState.draw();
-        // }
-        //
-        // GL11.glEnable(GL11.GL_LIGHTING);
-        // GL11.glDisable(GL11.GL_BLEND);
-        //
-        // CCRenderState.useNormals = false;
-        // RenderHelper.setItemTextureSheet();
-        //
-        // GL11.glPopMatrix();
+        GL11.glPushMatrix();
+        double offset = -0.5;
+        if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+            offset = 0;
+        } else if (type == ItemRenderType.ENTITY) {
+            GL11.glScaled(0.5, 0.5, 0.5);
+        }
+        RenderHelper.setBlockTextureSheet();
+        RenderUtils.preItemRender();
+
+        CCRenderState.startDrawing();
+        instance.renderFrame(true, metadata, INV_CONNECTIONS, offset, offset, offset);
+        CCRenderState.draw();
+
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+//        if (renderExtra) {
+        CCRenderState.startDrawing();
+        renderWorldExtra(null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+        CCRenderState.draw();
+//        }
+
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_BLEND);
+
+        CCRenderState.useNormals = false;
+        RenderHelper.setItemTextureSheet();
+        RenderUtils.postItemRender();
+
+        GL11.glPopMatrix();
     }
 
     public IIcon getFrameTexture(TileMultiBlock duct, byte side) {
