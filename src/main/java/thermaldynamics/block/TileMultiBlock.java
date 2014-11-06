@@ -240,7 +240,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
-
         int side = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
         if (attachments[side] != null) {
@@ -528,8 +527,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             }
         }
 
+        payload.addInt(myGrid == null ? 0 : myGrid.hashCode());
+
         return payload;
     }
+
+    int hashCode = 0;
 
     /* ITilePacketHandler */
     @Override
@@ -551,6 +554,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                     attachments[i].getDescriptionFromPacket(payload);
                 }
             }
+
+            hashCode = payload.getInt();
 
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }
