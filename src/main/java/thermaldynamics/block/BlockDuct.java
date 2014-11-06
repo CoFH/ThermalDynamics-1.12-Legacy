@@ -137,8 +137,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         IconRegistry.addIcon("DuctEnergy00", "thermaldynamics:duct/energy/DuctEnergy00", ir);
         IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
 
-        IconRegistry.addIcon("Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
-        IconRegistry.addIcon("Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still", (byte) 192));
+        IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 64));
+        IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
+        IconRegistry.addIcon("Trans_Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still", (byte) 192));
 
         IconRegistry.addIcon("DuctStructure", "thermaldynamics:duct/structure", ir);
 
@@ -148,6 +149,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 2; j++)
                 IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/servo/ServoBase" + i + "" + j, ir);
+
+
+        IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);
 
         IconRegistry.addIcon("DuctEnergy10", "thermaldynamics:duct/energy/DuctEnergy10", ir);
         IconRegistry.addIcon("DuctEnergy20", "thermaldynamics:duct/energy/DuctEnergy20", ir);

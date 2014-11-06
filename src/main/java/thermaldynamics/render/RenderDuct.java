@@ -63,6 +63,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
     static IIcon textureSolidRedstone;
     static IIcon textureFluidRedstone;
     static IIcon textureFluidGlowstone;
+    static IIcon textureFluidEnder;
+
+    static IIcon overDuctTexture;
 
     static CCModel[][] modelFluid = new CCModel[6][7];
     public static CCModel[][] modelConnection = new CCModel[3][6];
@@ -70,6 +73,10 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
 
     static CCModel[] modelLine = new CCModel[6];
     static CCModel modelLineCenter;
+
+
+    static CCModel[] modelLargeDucts1 = new CCModel[64];
+    static CCModel[] modelLargeDucts2 = new CCModel[64];
 
     static {
         TDProps.renderDuctId = RenderingRegistry.getNextAvailableRenderId();
@@ -155,9 +162,12 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         textureConnection[BlockDuct.ConnectionTypes.ITEM_STUFFED_ON.ordinal()] = IconRegistry.getIcon("Connection16");
         textureConnection[BlockDuct.ConnectionTypes.ITEM_STUFFED_OFF.ordinal()] = IconRegistry.getIcon("Connection16");
 
+        overDuctTexture = IconRegistry.getIcon("OverDuctBase");
+
         textureSolidRedstone = IconRegistry.getIcon("RedstoneNoise");
-        textureFluidRedstone = IconRegistry.getIcon("Fluid_Redstone_Still");
-        textureFluidGlowstone = IconRegistry.getIcon("Fluid_Glowstone_Still");
+        textureFluidRedstone = IconRegistry.getIcon("Trans_Fluid_Redstone_Still");
+        textureFluidGlowstone = IconRegistry.getIcon("Trans_Fluid_Glowstone_Still");
+        textureFluidEnder = IconRegistry.getIcon("Trans_Fluid_Ender_Still");
 
 
         textureCenterLine = IconRegistry.getIcon("CenterLine");
@@ -194,6 +204,9 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         modelLine[1] = CCModel.quadModel(16).generateBlock(0, h, 1 - h, h, 1 - h, 1.0, 1 - h, 3).computeNormals();
         CCModel.generateSidedModels(modelLine, 1, Vector3.center);
 
+        modelLargeDucts1 = (new ModelHelper.OctagonalTubeGen(0.5 * 0.95, 0.3125, true)).generateModels();
+
+        modelLargeDucts2 = (new ModelHelper.OctagonalTubeGen(0.5 * 0.95 * 0.99, 0.3125, false)).generateModels();
 
         CCModel.generateBackface(modelCenter, 0, modelCenter, 24, 24);
         CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
@@ -214,6 +227,15 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
                 sideModels[s] = sideModels[s - 1].backfacedCopy().apply(mirrors[s / 2]);
             }
         }
+
+        modelCenter = ModelHelper.expandModel(modelCenter);
+
+        for (int i = 0; i < modelConnection.length; i++) {
+            for (int j = 0; j < modelConnection[i].length; j++) {
+                modelConnection[i][j] = ModelHelper.expandModel(modelConnection[i][j]);
+            }
+        }
+
     }
 
     public boolean renderFrame(boolean invRender, int renderType, int[] connection, double x, double y, double z) {
@@ -264,9 +286,13 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
         return true;
     }
 
+    boolean debug = true;
+
+
     public boolean renderWorldExtra(TileMultiBlock tile, int renderType, int[] connection, double x, double y, double z) {
         Tessellator.instance.setColorOpaque_F(1, 1, 1);
         IIcon texture = null;
+
 
         if (renderType == RenderTypes.ENERGY_BASIC.ordinal() || renderType == RenderTypes.ENERGY_HARDENED.ordinal()) {
             texture = textureSolidRedstone;
@@ -373,6 +399,27 @@ public class RenderDuct extends TileEntitySpecialRenderer implements ISimpleBloc
             flag = true;
         } else {
             flag = renderWorldExtra(theTile, metadata, connections, x, y, z) || flag;
+        }
+
+        if (debug) {
+            int c = 0;
+            for (int s = 0; s < 6; s++) {
+                if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+                    c = c | (1 << s);
+                }
+            }
+//            if (BlockCoFHBase.renderPass == 0) {
+//                if (modelLargeDucts1[c].verts.length != 0) {
+//                    modelLargeDucts1[c].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(overDuctTexture));
+//                    flag = true;
+//                }
+//            } else {
+//                if (modelLargeDucts2[c].verts.length != 0) {
+//                    modelLargeDucts2[c].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(textureFluidEnder));
+//                    flag = true;
+//                }
+//            }
+
         }
 
 
