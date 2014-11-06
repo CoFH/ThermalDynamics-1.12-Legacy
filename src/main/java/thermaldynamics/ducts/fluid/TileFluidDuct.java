@@ -14,12 +14,14 @@ public class TileFluidDuct extends TileMultiBlock {
         //guiId = ThermalDynamics.proxy.registerGui("FluidFilter", "conduit", "TEBase", null, true);
     }
 
+    int type = 0;
+
     public TileFluidDuct() {
 
     }
 
     public TileFluidDuct(int type, boolean opaque) {
-
+        this.type = type;
     }
 
     @Override
@@ -59,8 +61,7 @@ public class TileFluidDuct extends TileMultiBlock {
 
     }
 
-    @Override
     public boolean isConnectable(TileEntity theTile, int side) {
-        return super.isConnectable(theTile, side);
+        return theTile instanceof TileFluidDuct && ((TileFluidDuct) theTile).type == type;
     }
 }

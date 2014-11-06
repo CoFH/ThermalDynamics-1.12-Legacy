@@ -303,7 +303,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
     }
 
 
-
     protected BlockDuct.ConnectionTypes getDefaultConnection() {
         return BlockDuct.ConnectionTypes.ITEM_NORMAL;
     }
@@ -375,6 +374,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
             TickHandlerClient.tickBlocksToRemove.add(this);
         }
     }
+
+    public boolean isConnectable(TileEntity theTile, int side) {
+        return theTile instanceof TileItemDuct;
+    }
+
 
     public static final int maxCenterLine = 10;
     public int centerLine = 0;
