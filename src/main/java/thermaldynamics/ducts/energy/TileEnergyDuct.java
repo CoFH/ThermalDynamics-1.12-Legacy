@@ -12,7 +12,8 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
-
+    public int energyForGrid = 0;
+    public int lastStoredValue = 0;
     EnergyGrid internalGrid;
     public int type = 0;
 
@@ -77,8 +78,14 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     }
 
     public boolean isSignificantTile(TileEntity theTile, int side) {
-
         return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side]);
+    }
+
+    @Override
+    public void tileUnloading() {
+        if (isNode) {
+            internalGrid.myStorage.extractEnergy(lastStoredValue, false);
+        }
     }
 
     public void tickPass(int pass) {
@@ -125,11 +132,25 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         type = nbt.getByte("type");
+        energyForGrid = nbt.getInteger("Energy");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setByte("type", (byte) type);
+
+        if (internalGrid != null) {
+            if (isNode) {
+                lastStoredValue = internalGrid.getNodeShare(this);
+                nbt.setInteger("Energy", lastStoredValue);
+            }
+        } else if (energyForGrid > 0) {
+            nbt.setInteger("Energy", energyForGrid);
+        } else {
+            energyForGrid = 0;
+        }
     }
+
+
 }

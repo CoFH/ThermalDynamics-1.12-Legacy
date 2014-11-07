@@ -62,5 +62,26 @@ public class EnergyGrid extends MultiBlockGrid {
         return super.canGridsMerge(grid) && ((EnergyGrid) grid).type == this.type;
     }
 
+    @Override
+    public void addNode(IMultiBlock aMultiBlock) {
+        super.addNode(aMultiBlock);
+
+        TileEnergyDuct theCondE = (TileEnergyDuct) aMultiBlock;
+        if (theCondE.energyForGrid > 0) {
+            myStorage.modifyEnergyStored(theCondE.energyForGrid);
+        }
+    }
+
+    @Override
+    public void removeBlock(IMultiBlock oldBlock) {
+        if (oldBlock.isNode()) ((TileEnergyDuct) oldBlock).energyForGrid = getNodeShare(oldBlock);
+        super.removeBlock(oldBlock);
+    }
+
+    public int getNodeShare(IMultiBlock conduitEnergy) {
+        return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(conduitEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
+                + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
+    }
+
 
 }
