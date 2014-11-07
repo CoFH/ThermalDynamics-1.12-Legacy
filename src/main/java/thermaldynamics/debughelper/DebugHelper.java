@@ -1,6 +1,8 @@
 package thermaldynamics.debughelper;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +48,7 @@ public class DebugHelper {
 
     private static Random rand = new Random();
 
+    @SideOnly(Side.CLIENT)
     public static void showParticle(World world, double x, double y, double z, int seed) {
         rand.setSeed(seed);
         double r = rand.nextDouble(), g = rand.nextDouble(), b = rand.nextDouble();
@@ -54,6 +57,7 @@ public class DebugHelper {
         r *= m;
         g *= m;
         b *= m;
+
         if (world == null) world = Minecraft.getMinecraft().theWorld;
         world.spawnParticle("reddust", x, y, z, r, g, b);
     }

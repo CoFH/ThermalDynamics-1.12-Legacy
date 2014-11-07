@@ -37,9 +37,7 @@ public class CommandThermalDebug extends CommandBase {
         if (args.length == 0)
             return;
 
-        if ("reloadModels".equals(args[0])) {
-            RenderDuct.generateModels();
-        } else if ("grids".equals(args[0])) {
+        if ("grids".equals(args[0])) {
             DebugTickHandler.showParticles = !DebugTickHandler.showParticles;
         } else if ("generate".equals(args[0]) && args.length == 1) {
             if (!(p_71515_1_ instanceof EntityPlayerMP))

@@ -4,7 +4,7 @@ import net.minecraft.world.World;
 
 public interface IMultiBlock {
 
-    public World getWorldObj();
+    public World world();
 
     public void setInvalidForForming();
 

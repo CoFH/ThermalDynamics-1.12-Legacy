@@ -16,8 +16,8 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
     }
 
     @Override
-    public World getWorldObj() {
-        return parent.getWorldObj();
+    public World world() {
+        return parent.world();
     }
 
 
@@ -88,7 +88,7 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
     }
 
     public void formGrid() {
-        if (grid == null && ServerHelper.isServerWorld(parent.getWorldObj())) {
+        if (grid == null && ServerHelper.isServerWorld(parent.world())) {
             new MultiBlockFormer().formGrid(this);
         }
     }

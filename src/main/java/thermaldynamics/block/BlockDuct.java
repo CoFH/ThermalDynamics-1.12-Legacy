@@ -54,7 +54,6 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-
         for (int i = 0; i < Ducts.values().length; i++) {
             if (Ducts.isValid(i))
                 list.add(new ItemStack(item, 1, i));

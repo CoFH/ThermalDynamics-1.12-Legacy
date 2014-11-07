@@ -3,6 +3,8 @@ package thermaldynamics.debughelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandler;
@@ -19,6 +21,7 @@ public class DebugTickHandler {
     public static boolean showParticles;
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void showParticles(TickEvent.WorldTickEvent evt) {
         if (evt.phase == TickEvent.Phase.START || Minecraft.getMinecraft().theWorld == null
                 || Minecraft.getMinecraft().theWorld.provider.dimensionId != evt.world.provider.dimensionId

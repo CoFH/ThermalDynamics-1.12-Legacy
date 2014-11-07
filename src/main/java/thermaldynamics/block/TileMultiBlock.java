@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.commons.lang3.StringUtils;
 import thermaldynamics.core.TickHandler;
@@ -88,6 +89,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     public void tileUnloading() {
 
+    }
+
+    public World world(){
+        return getWorldObj();
     }
 
     @Override
