@@ -26,6 +26,8 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.core.TDProps;
+import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.TileStructuralDuct;
 import thermaldynamics.ducts.energy.TileEnergyDuct;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
@@ -38,60 +40,54 @@ import java.util.List;
 
 public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
+    int offset;
 
-    public BlockDuct() {
-
+    public BlockDuct(int offset) {
         super(Material.iron);
         setHardness(25.0F);
         setResistance(120.0F);
         setStepSound(soundTypeMetal);
         setBlockName("thermalducts.duct");
         setCreativeTab(ThermalDynamics.tab);
+        this.offset = offset;
     }
 
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 
-        for (int i = 0; i < NAMES.length; i++) {
-            list.add(new ItemStack(item, 1, i));
+        for (int i = 0; i < Ducts.values().length; i++) {
+            if (Ducts.isValid(i))
+                list.add(new ItemStack(item, 1, i));
         }
     }
 
     @Override
     public TileEntity createNewTileEntity(World var1, int var2) {
-//        ENERGY_BASIC, // 0
-//                ENERGY_HARDENED, // 1
-//                ENERGY_REINFORCED, // 2
-//                FLUID_TRANS, // 3
-//                FLUID_OPAQUE, // 4
-//                ITEM_TRANS, // 5
-//                ITEM_OPAQUE, // 6
-//                ITEM_FAST_TRANS, // 7
-//                ITEM_FAST_OPAQUE, // 8
-
-        switch (var2) {
-            case 0:
-                return new TileEnergyDuct(0);
-            case 1:
-                return new TileEnergyDuct(1);
-            case 2:
-                return new TileEnergyDuct(2);
-            case 3:
-                return new TileFluidDuct(0, false);
-            case 4:
-                return new TileFluidDuct(0, true);
-            case 5:
-                return new TileItemDuct(0);
-            case 6:
-                return new TileItemDuct(1);
-            case 7:
-                return new TileItemDuct(2);
-            case 8:
-                return new TileItemDuct(3);
-
+        if (var2 == Ducts.ENERGY_BASIC.id) {
+            return new TileEnergyDuct(0);
+        } else if (var2 == Ducts.ENERGY_HARDENED.id) {
+            return new TileEnergyDuct(1);
+        } else if (var2 == Ducts.ENERGY_REINFORCED.id) {
+            return new TileEnergyDuct(2);
+        } else if (var2 == Ducts.FLUID_TRANS.id) {
+            return new TileFluidDuct(0, false);
+        } else if (var2 == Ducts.FLUID_OPAQUE.id) {
+            return new TileFluidDuct(0, true);
+        } else if (var2 == Ducts.ITEM_TRANS.id) {
+            return new TileItemDuct(0);
+        } else if (var2 == Ducts.ITEM_OPAQUE.id) {
+            return new TileItemDuct(1);
+        } else if (var2 == Ducts.ITEM_FAST_TRANS.id) {
+            return new TileItemDuct(2);
+        } else if (var2 == Ducts.ITEM_FAST_OPAQUE.id) {
+            return new TileItemDuct(3);
+        } else if (var2 == Ducts.ENERGY_REINFORCED_EMPTY.id) {
+            return new TileStructuralDuct();
+        } else if (var2 == Ducts.STRUCTURE.id) {
+            return new TileStructuralDuct();
         }
 
-        return new TileItemDuct();
+        return new TileStructuralDuct();
     }
 
     @Override
@@ -222,44 +218,8 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         p_149699_5_.addChatMessage(new ChatComponentText("Ducts Found: " + theTile.getGrid().idleSet.size()));
     }
 
-    public static final String[] NAMES = {
-            "energyBasicDuct",
-            "energyHardenedDuct",
-            "energyReinforcedDuct",
-            "fluidTransDuct",
-            "fluidOpaqueDuct",
-            "itemTransDuct",
-            "itemOpaqueDuct",
-            "itemFastTransDuct",
-            "itemFastOpaqueDuct"
-    };
 
     public static ItemStack blockDuct;
-
-    public static enum DuctTypes {
-        ENERGY_BASIC, // 0
-        ENERGY_HARDENED, // 1
-        ENERGY_REINFORCED, // 2
-        FLUID_TRANS, // 3
-        FLUID_OPAQUE, // 4
-        ITEM_TRANS, // 5
-        ITEM_OPAQUE, // 6
-        ITEM_FAST_TRANS, // 7
-        ITEM_FAST_OPAQUE, // 8
-        /*
-        ENERGY_SUPERCONDUCTOR // 9
-        FLUID_WEAK_TRANS // 10
-        FLUID_WEAK_OPAQUE // 11
-        FLUID_POWER_TRANS // 12
-        FLUID_POWER_OPAQUE // 13
-        ITEM_ENDER_TRANS // 14
-        ITEM_ENDER_OPAQUE // 15
-         */
-    }
-
-    public static enum RenderTypes {
-        ENERGY_BASIC, ENERGY_HARDENED, ENERGY_REINFORCED, FLUID_TRANS, FLUID_OPAQUE, ITEM_TRANS, ITEM_OPAQUE, ITEM_FAST_TRANS, ITEM_FAST_OPAQUE, ITEM_TRANS_SHORT, ITEM_TRANS_LONG, ITEM_TRANS_ROUNDROBIN, ITEM_OPAQUE_SHORT, ITEM_OPAQUE_LONG, ITEM_OPAQUE_ROUNDROBIN, ITEM_FAST_TRANS_SHORT, ITEM_FAST_TRANS_LONG, ITEM_FAST_TRANS_ROUNDROBIN, ITEM_FAST_OPAQUE_SHORT, ITEM_FAST_OPAQUE_LONG, ITEM_FAST_OPAQUE_ROUNDROBIN, STRUCTURE;
-    }
 
     public static enum ConnectionTypes {
         NONE(false), DUCT, ENERGY_BASIC, ENERGY_BASIC_BLOCKED(false), ENERGY_HARDENED, ENERGY_HARDENED_BLOCKED(false), ENERGY_REINFORCED, ENERGY_REINFORCED_BLOCKED(
@@ -297,7 +257,11 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
         blockDuct = new ItemStack(this, 1, 0);
 
-        //ItemHelper.registerWithHandlers("testDuct", blockDuct);
+        for (int i = offset; i < offset + 16; i++) {
+            if (Ducts.isValid(i)) {
+                Ducts.getType(i).itemStack = new ItemStack(this, 1, i);
+            }
+        }
 
         return true;
     }
@@ -309,6 +273,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         GameRegistry.registerTileEntity(TileFluidDuct.class, "thermalducts.ducts.energy.TileFluidDuct");
         GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
         GameRegistry.registerTileEntity(TileItemDuct.class, "thermalducts.ducts.energy.TileItemDuct");
+        GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermalducts.ducts.TileStructuralDuct");
         return true;
     }
 

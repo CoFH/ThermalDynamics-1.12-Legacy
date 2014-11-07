@@ -80,13 +80,21 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        if (myGrid != null) myGrid.removeBlock(this);
+        if (ServerHelper.isServerWorld(worldObj) && myGrid != null) {
+            tileUnloading();
+            myGrid.removeBlock(this);
+        }
+    }
+
+    public void tileUnloading() {
+
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
-        if (myGrid != null) myGrid.removeBlock(this);
+
+        if (ServerHelper.isServerWorld(worldObj) && myGrid != null) myGrid.removeBlock(this);
     }
 
     @Override
@@ -118,7 +126,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public void setGrid(MultiBlockGrid newGrid) {
-
         myGrid = newGrid;
     }
 
@@ -181,7 +188,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         connectionTypes[attachment.side] = ConnectionTypes.BLOCKED;
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
-        myGrid.destroyAndRecreate();
+        if (myGrid != null) myGrid.destroyAndRecreate();
         return true;
     }
 
@@ -485,7 +492,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
                 worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
 
-                myGrid.destroyAndRecreate();
+                if (myGrid != null) myGrid.destroyAndRecreate();
                 worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
                 return true;
             }

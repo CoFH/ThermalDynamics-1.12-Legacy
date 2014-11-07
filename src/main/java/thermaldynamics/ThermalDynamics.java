@@ -10,12 +10,8 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import net.minecraft.block.Block;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -24,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import thermaldynamics.block.BlockDuct;
 import thermaldynamics.core.Proxy;
 import thermaldynamics.core.TickHandler;
+import thermaldynamics.crafting.TDCrafting;
 import thermaldynamics.debughelper.CommandThermalDebug;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.gui.TDCreativeTab;
@@ -66,7 +63,7 @@ public class ThermalDynamics extends BaseMod {
 
         config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDynamics.cfg")));
 
-        blockDuct = new BlockDuct();
+        blockDuct = new BlockDuct(0);
         ((IInitializer) blockDuct).preInit();
 
         config.save();
@@ -87,11 +84,18 @@ public class ThermalDynamics extends BaseMod {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-
+        ((IInitializer) blockDuct).postInit();
         proxy.registerRenderInformation();
+        TDCrafting.loadRecipes();
 
         config.cleanUp(false, true);
     }
+
+    @EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event) {
+
+    }
+
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
