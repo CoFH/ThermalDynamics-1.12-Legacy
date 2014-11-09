@@ -11,8 +11,10 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.LogManager;
@@ -24,9 +26,11 @@ import thermaldynamics.crafting.TDCrafting;
 import thermaldynamics.debughelper.CommandThermalDebug;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.gui.TDCreativeTab;
+import thermaldynamics.item.ItemServo;
 import thermalfoundation.ThermalFoundation;
 
 import java.io.File;
+import java.util.LinkedList;
 
 @Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies)
 public class ThermalDynamics extends BaseMod {
@@ -56,6 +60,18 @@ public class ThermalDynamics extends BaseMod {
         super(log);
     }
 
+    LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();
+
+    public Block addBlock(Block a) {
+        initializerList.add((IInitializer) a);
+        return a;
+    }
+
+    public Item addItem(Item a) {
+        initializerList.add((IInitializer) a);
+        return a;
+    }
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
@@ -63,8 +79,11 @@ public class ThermalDynamics extends BaseMod {
 
         config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDynamics.cfg")));
 
-        blockDuct = new BlockDuct(0);
-        ((IInitializer) blockDuct).preInit();
+        blockDuct = addBlock(new BlockDuct(0));
+        itemServo = addItem(new ItemServo());
+
+        for (IInitializer initializer : initializerList)
+            initializer.preInit();
 
         config.save();
     }
@@ -74,7 +93,8 @@ public class ThermalDynamics extends BaseMod {
 
         MinecraftForge.EVENT_BUS.register(proxy);
 
-        ((IInitializer) blockDuct).initialize();
+        for (IInitializer initializer : initializerList)
+            initializer.initialize();
 
         FMLCommonHandler.instance().bus().register(TickHandler.INSTANCE);
 
@@ -84,7 +104,8 @@ public class ThermalDynamics extends BaseMod {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        ((IInitializer) blockDuct).postInit();
+        for (IInitializer initializer : initializerList)
+            initializer.postInit();
         proxy.registerRenderInformation();
         TDCrafting.loadRecipes();
 
@@ -122,5 +143,19 @@ public class ThermalDynamics extends BaseMod {
     }
 
     public static Block blockDuct;
+    public static Item itemServo;
+
+
+    @EventHandler
+    public void checkMappings(FMLMissingMappingsEvent event) {
+        for (FMLMissingMappingsEvent.MissingMapping map : event.get()) {
+            if ((modId + ":TestDuct").equals(map.name)) {
+                if (map.type == GameRegistry.Type.BLOCK)
+                    map.remap(blockDuct);
+                else
+                    map.remap(Item.getItemFromBlock(blockDuct));
+            }
+        }
+    }
 
 }
