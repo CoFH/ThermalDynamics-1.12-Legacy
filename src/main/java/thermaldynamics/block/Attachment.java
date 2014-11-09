@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 
@@ -51,7 +52,7 @@ public abstract class Attachment {
         return false;
     }
 
-    public void tick() {
+    public void tick(int pass) {
 
     }
 
@@ -77,4 +78,6 @@ public abstract class Attachment {
     public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
         return true;
     }
+
+    public abstract List<ItemStack> getDrops();
 }

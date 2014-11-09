@@ -1,7 +1,9 @@
 package thermaldynamics.block;
 
 import cofh.lib.util.helpers.ServerHelper;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import thermaldynamics.core.TickHandler;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -94,8 +96,8 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
     }
 
     @Override
-    public void tickPass(int pass) {
-
+    public boolean tickPass(int pass) {
+        return true;
     }
 
     @Override
@@ -107,4 +109,14 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
     public boolean existsYet() {
         return parent.existsYet();
     }
+
+    public void readFromNBT(NBTTagCompound tag) {
+        TickHandler.addMultiBlockToCalculate(this);
+    }
+
+    public void writeToNBT(NBTTagCompound tag) {
+
+    }
+
+
 }

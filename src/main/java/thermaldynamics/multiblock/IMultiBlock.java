@@ -31,7 +31,8 @@ public interface IMultiBlock {
     public void tickMultiBlock();
 
     // Used to do multiblock steps passed off by the grid. IE: Distribute liquids.
-    public void tickPass(int pass);
+    // return false if the grid has altered
+    public boolean tickPass(int pass);
 
     public boolean isNode();
 

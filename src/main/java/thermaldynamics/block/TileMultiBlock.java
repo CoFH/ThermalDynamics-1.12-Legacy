@@ -14,6 +14,7 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
@@ -27,6 +28,7 @@ import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
 import thermalexpansion.util.Utils;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox {
@@ -76,7 +78,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             null, null, null, null, null, null
     };
 
-    public IMultiBlock[] subTiles = {};
+    LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
+
+    public SubTileMultiBlock[] subTiles = null;
+    public long lastUpdateTime = -1;
+    public int hashCode = 0;
 
     @Override
     public void onChunkUnload() {
@@ -91,7 +97,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     }
 
-    public World world(){
+    public World world() {
         return getWorldObj();
     }
 
@@ -182,6 +188,18 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return false;
     }
 
+    public List<ItemStack> removeAttachment(Attachment attachment) {
+        if (attachment == null) return new LinkedList<ItemStack>();
+
+        attachments[attachment.side] = null;
+        tickingAttachments.remove(attachment);
+        connectionTypes[attachment.side] = ConnectionTypes.NORMAL;
+        worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+        onNeighborBlockChange();
+        if (myGrid != null) myGrid.destroyAndRecreate();
+        return attachment.getDrops();
+    }
+
     public boolean addAttachment(Attachment attachment) {
         if (attachments[attachment.side] != null || !attachment.canAddToTile(this))
             return false;
@@ -190,6 +208,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             return true;
 
         attachments[attachment.side] = attachment;
+        if (attachment.doesTick()) tickingAttachments.add(attachment);
         connectionTypes[attachment.side] = ConnectionTypes.BLOCKED;
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
@@ -199,6 +218,9 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public void onNeighborBlockChange() {
+        if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime())
+            return;
+
         TileEntity theTile;
         boolean wasNode = isNode;
         isNode = false;
@@ -252,6 +274,9 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
+        if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime())
+            return;
+
         int side = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
         if (attachments[side] != null) {
@@ -298,13 +323,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     public void tickInternalSideCounter(int start) {
         for (int a = start; a < neighborTypes.length; a++) {
-            if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
+            if (neighborTypes[a] == NeighborTypes.TILE && connectionTypes[a] == ConnectionTypes.NORMAL) {
                 internalSideCounter = a;
                 return;
             }
         }
         for (int a = 0; a < start; a++) {
-            if (neighborTypes[a] == NeighborTypes.MULTIBLOCK && connectionTypes[a] == ConnectionTypes.NORMAL) {
+            if (neighborTypes[a] == NeighborTypes.TILE && connectionTypes[a] == ConnectionTypes.NORMAL) {
                 internalSideCounter = a;
                 return;
             }
@@ -362,8 +387,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     }
 
     @Override
-    public void tickPass(int pass) {
+    public boolean tickPass(int pass) {
+        if (!tickingAttachments.isEmpty())
+            for (Attachment attachment : tickingAttachments) {
+                attachment.tick(pass);
+            }
 
+        return true;
     }
 
     @Override
@@ -377,7 +407,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public IMultiBlock[] getSubTiles() {
-        subTiles = new IMultiBlock[0];
         return subTiles;
     }
 
@@ -392,12 +421,18 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 attachments[i] = AttachmentRegistry.createAttachment(this, i, id);
                 if (attachments[i] != null) {
                     attachments[i].readFromNBT(tag);
+                    if (attachments[i].doesTick()) tickingAttachments.add(attachments[i]);
                 }
             } else
                 attachments[i] = null;
 
             connectionTypes[i] = ConnectionTypes.values()[nbt.getByte("conTypes" + i)];
         }
+
+        if (subTiles != null)
+            for (int i = 0; i < this.subTiles.length; i++) {
+                this.subTiles[i].readFromNBT(nbt.getCompoundTag("subTile" + i));
+            }
 
         TickHandler.addMultiBlockToCalculate(this);
     }
@@ -416,6 +451,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
             nbt.setByte("conTypes" + i, (byte) connectionTypes[i].ordinal());
         }
+
+        if (subTiles != null)
+            for (int i = 0; i < this.subTiles.length; i++) {
+                SubTileMultiBlock a = this.subTiles[i];
+                NBTTagCompound tag = new NBTTagCompound();
+                a.writeToNBT(tag);
+                nbt.setTag("subTile" + i, tag);
+            }
     }
 
     public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
@@ -544,13 +587,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return payload;
     }
 
-    int hashCode = 0;
-
     /* ITilePacketHandler */
     @Override
     public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
 
-        if (ServerHelper.isClientWorld(worldObj)) {
+        if (!isServer) {
             for (byte i = 0; i < neighborTypes.length; i++) {
                 neighborTypes[i] = NeighborTypes.values()[payload.getByte()];
                 connectionTypes[i] = ConnectionTypes.values()[payload.getByte()];
@@ -570,6 +611,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             hashCode = payload.getInt();
 
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+
+            lastUpdateTime = worldObj.getTotalWorldTime();
         }
     }
 
@@ -584,13 +627,20 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             return BlockDuct.ConnectionTypes.NONE;
 
         if (neighborTypes[side] == NeighborTypes.TILE)
-            return getDefaultConnection();
+            return BlockDuct.ConnectionTypes.TILECONNECTION;
         else
             return BlockDuct.ConnectionTypes.DUCT;
     }
 
-    protected BlockDuct.ConnectionTypes getDefaultConnection() {
-        return BlockDuct.ConnectionTypes.ENERGY_BASIC;
+
+
+    public void randomDisplayTick() {
+
+    }
+
+    @Override
+    public boolean canUpdate() {
+        return false;
     }
 
     public static enum CacheTypes {

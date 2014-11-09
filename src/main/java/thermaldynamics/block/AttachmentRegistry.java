@@ -2,6 +2,7 @@ package thermaldynamics.block;
 
 import thermaldynamics.ducts.facades.Facade;
 import thermaldynamics.ducts.servo.ServoBase;
+import thermaldynamics.ducts.servo.ServoFluid;
 
 import java.util.HashMap;
 
@@ -14,7 +15,7 @@ public class AttachmentRegistry {
         if (id == 0) {
             return new Facade(tile, side);
         } else if (id == 1) {
-            return new ServoBase(tile, side);
+            return new ServoFluid(tile, side);
         }
 
         return null;

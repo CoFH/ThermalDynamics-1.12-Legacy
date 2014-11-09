@@ -46,14 +46,15 @@ public class FluidTankGrid extends FluidTankAdv {
 
         if (fluid != null) {
             viscosity = FluidRegistry.getFluid(fluid.fluidID).getViscosity();
+            fluidThroughput = MathHelper.clampI(120000 / viscosity, 80, 400);
+
+            if (fluidFlowrate.containsKey(fluid.getFluid().getName()))
+                fluidThroughput = fluidFlowrate.get(fluid.getFluid().getName());
+
+            fluidThroughput *= myMaster.getThroughPutModifier();
+
+            fluidPerConduit = Math.min(25 * fluidThroughput, myMaster.getMaxFluidPerConduit());
         }
-        fluidThroughput = MathHelper.clampI(120000 / viscosity, 80, 400);
-
-        if (fluidFlowrate.containsKey(fluid.getFluid().getName()))
-            fluidThroughput = fluidFlowrate.get(fluid.getFluid().getName());
-
-
-        fluidPerConduit = 25 * fluidThroughput;
 
         myMaster.fluidChanged();
     }

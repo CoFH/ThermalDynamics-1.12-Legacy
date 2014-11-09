@@ -12,10 +12,12 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
     @Override
     public void tickGrid() {
         for (IMultiBlock m : nodeSet) {
-            m.tickPass(0);
+            if (!m.tickPass(0))
+                break;
         }
         for (IMultiBlock m : idleSet) {
-            m.tickPass(0);
+            if (!m.tickPass(0))
+                break;
         }
 
         super.tickGrid();

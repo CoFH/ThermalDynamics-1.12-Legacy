@@ -123,14 +123,14 @@ public abstract class MultiBlockGrid {
     }
 
     public void removeBlock(IMultiBlock oldBlock) {
+        destroyNode(oldBlock);
+
         if (oldBlock.isNode()) {
             nodeSet.remove(oldBlock);
             onMajorGridChange();
         } else {
             idleSet.remove(oldBlock);
         }
-
-        destroyNode(oldBlock);
 
         if (nodeSet.isEmpty() && idleSet.isEmpty()) {
             worldGrid.oldGrids.add(this);

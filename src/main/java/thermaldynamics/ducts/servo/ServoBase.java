@@ -7,12 +7,17 @@ import cofh.repack.codechicken.lib.vec.Translation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.render.RenderDuct;
 
-public class ServoBase extends Attachment {
+import java.util.LinkedList;
+import java.util.List;
+
+public abstract class ServoBase extends Attachment {
     public ServoBase(TileMultiBlock tile, byte side) {
         super(tile, side);
     }
@@ -50,11 +55,17 @@ public class ServoBase extends Attachment {
     }
 
     @Override
+    public List<ItemStack> getDrops() {
+        LinkedList<ItemStack> drops = new LinkedList<ItemStack>();
+        drops.add(new ItemStack(ThermalDynamics.itemServo, 1, type));
+        return drops;
+    }
+
+    @Override
     public void addDescriptionToPacket(PacketCoFHBase packet) {
         packet.addBool(isPowered);
         packet.addBool(stuffed);
         packet.addByte(type);
-
     }
 
     @Override
@@ -76,9 +87,6 @@ public class ServoBase extends Attachment {
 
     @Override
     public boolean onWrenched() {
-        type += 1;
-        if (type == 4)
-            type = 0;
         tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
         return true;
     }

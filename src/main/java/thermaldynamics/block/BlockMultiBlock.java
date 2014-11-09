@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 import thermaldynamics.ducts.servo.ServoBase;
+import thermaldynamics.ducts.servo.ServoFluid;
 import thermalexpansion.item.TEItems;
 import thermalexpansion.util.Utils;
 
@@ -137,25 +138,6 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
             return true;
         }
 
-        if (player.getHeldItem() != null && player.getHeldItem().getItem() == TEItems.pneumaticServo.getItem()
-                && player.getHeldItem().getItemDamage() == TEItems.pneumaticServo.getItemDamage()) {
-            int side = -1;
-            int subHit = RayTracer.retraceBlock(world, player, x, y, z).subHit;
-            if (subHit < 6)
-                side = subHit;
-            else if (subHit < 12)
-                side = subHit - 6;
-            else if (subHit == 13)
-                side = hitSide;
-            if (side != -1) {
-                if (!world.isRemote) {
-                    tile.addAttachment(new ServoBase(tile, (byte) side));
-                }
-                return true;
-            }
-
-
-        }
 
 //        if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemBlock) {
 //            Block block = ((ItemBlock) player.getHeldItem().getItem()).field_150939_a;

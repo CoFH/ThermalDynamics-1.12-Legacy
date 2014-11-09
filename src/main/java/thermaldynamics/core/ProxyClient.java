@@ -9,8 +9,11 @@ import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import thermaldynamics.ThermalDynamics;
+import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.render.RenderDuct;
+import thermaldynamics.render.RenderDuctFluids;
+import thermaldynamics.render.RenderDuctItems;
 
 public class ProxyClient extends Proxy {
 
@@ -18,7 +21,8 @@ public class ProxyClient extends Proxy {
     public void registerRenderInformation() {
         FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct), RenderDuct.instance);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuct.instance);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
     }
 
     @Override

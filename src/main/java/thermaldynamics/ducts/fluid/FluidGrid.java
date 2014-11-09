@@ -9,9 +9,7 @@ import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class FluidGrid extends MultiBlockGrid {
-
-
-    public FluidTankGrid myTank = new FluidTankGrid(1000, this);
+    public final FluidTankGrid myTank = new FluidTankGrid(1000, this);
     public int toDistribute = 0;
 
     /* Render Stuff */
@@ -25,12 +23,14 @@ public class FluidGrid extends MultiBlockGrid {
 
     public FluidGrid(World world, int type) {
         super(world);
-        myTank = new FluidTankGrid(1000, this);
+
         this.type = type;
     }
 
     @Override
-    public void addNode(IMultiBlock aMultiBlock) {
+    public void addBlock(IMultiBlock aMultiBlock) {
+        super.addBlock(aMultiBlock);
+
         TileFluidDuct theCondF = (TileFluidDuct) aMultiBlock;
         if (theCondF.fluidForGrid != null) {
             if (myTank.getFluid() == null) {
@@ -40,17 +40,24 @@ public class FluidGrid extends MultiBlockGrid {
             }
             theCondF.fluidForGrid = null;
         }
-        super.addNode(aMultiBlock);
     }
 
     @Override
     public void balanceGrid() {
-        myTank.setCapacity(nodeSet.size() * myTank.fluidPerConduit);
+        myTank.setCapacity(size() * myTank.fluidPerConduit);
+    }
+
+    public float getThroughPutModifier() {
+        return type == 0 ? 0.5F : 1F;
+    }
+
+    public int getMaxFluidPerConduit() {
+        return type == 0 ? 1000 : 3000;
     }
 
     @Override
     public void destroyNode(IMultiBlock node) {
-        if (node.isNode() && hasValidFluid()) {
+        if (hasValidFluid()) {
             ((TileFluidDuct) node).fluidForGrid = getNodeShare((TileFluidDuct) node);
         }
         super.destroyNode(node);
@@ -58,7 +65,8 @@ public class FluidGrid extends MultiBlockGrid {
 
     @Override
     public boolean canAddBlock(IMultiBlock aBlock) {
-        return aBlock instanceof TileFluidDuct;
+        return aBlock instanceof TileFluidDuct && ((TileFluidDuct) aBlock).type == type
+                && FluidHelper.isFluidEqualOrNull(((TileFluidDuct) aBlock).getConnectionFluid(), myTank.getFluid());
     }
 
     @Override
@@ -68,13 +76,35 @@ public class FluidGrid extends MultiBlockGrid {
             updateAllRenders();
         }
         if (myTank.getFluid() != null && nodeSet.size() > 0) {
-            toDistribute = Math.min(myTank.getFluidAmount() / nodeSet.size(), getFluidThroughput());
+            toDistribute = Math.min(myTank.getFluidAmount() / size(), getFluidThroughput());
 
             if (toDistribute <= 0) {
-                toDistribute = Math.min(myTank.getFluidAmount() % nodeSet.size(), getFluidThroughput());
+                toDistribute = Math.min(myTank.getFluidAmount() % size(), getFluidThroughput());
+            }
+
+            if (toDistribute > 0) {
+                for (IMultiBlock node : nodeSet) {
+                    if (!node.tickPass(0))
+                        break;
+                }
             }
         }
-        super.tickGrid();
+        if (!nodeSet.isEmpty())
+            for (IMultiBlock node : nodeSet)
+                if (!node.tickPass(1))
+                    break;
+
+        if (!nodeSet.isEmpty())
+            for (IMultiBlock node : nodeSet)
+                if (!node.tickPass(2))
+                    break;
+
+        if (!idleSet.isEmpty())
+            for (IMultiBlock node : idleSet) {
+                if (!node.tickPass(2))
+                    break;
+            }
+
     }
 
     @Override
@@ -113,16 +143,15 @@ public class FluidGrid extends MultiBlockGrid {
     }
 
     public FluidStack getNodeShare(TileFluidDuct theCond) {
-
         FluidStack toReturn = myTank.getFluid().copy();
         toReturn.amount = getNodeAmount(theCond);
         return toReturn;
     }
 
     public int getNodeAmount(TileFluidDuct theCond) {
-        return nodeSet.size() == 1 ? myTank.getFluidAmount() :
-                isFirstMultiblock(theCond) ? myTank.getFluidAmount() / nodeSet.size() + myTank.getFluidAmount() % nodeSet.size() :
-                        myTank.getFluidAmount() / nodeSet.size();
+        return size() == 1 ? myTank.getFluidAmount() :
+                isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size() + myTank.getFluidAmount() % size() :
+                        myTank.getFluidAmount() / size();
     }
 
 
@@ -202,6 +231,7 @@ public class FluidGrid extends MultiBlockGrid {
 
         return myRenderFluid;
     }
+
 
     /* FLUID RENDER TYPE */
     public static final class FluidRenderType {

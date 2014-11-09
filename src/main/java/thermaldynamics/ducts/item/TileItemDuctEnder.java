@@ -1,12 +1,13 @@
 package thermaldynamics.ducts.item;
 
+import thermaldynamics.block.SubTileMultiBlock;
 import thermaldynamics.multiblock.IMultiBlock;
 
 public class TileItemDuctEnder extends TileItemDuct {
 
     public TileItemDuctEnder() {
         super();
-        this.subTiles = new IMultiBlock[]{};
+        this.subTiles = new SubTileMultiBlock[]{};
     }
 
 

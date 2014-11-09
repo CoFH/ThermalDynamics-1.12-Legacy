@@ -6,7 +6,6 @@ import cofh.lib.util.helpers.BlockHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
@@ -22,11 +21,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
     }
 
-    static BlockDuct.ConnectionTypes[] types = {BlockDuct.ConnectionTypes.ENERGY_BASIC, BlockDuct.ConnectionTypes.ENERGY_HARDENED, BlockDuct.ConnectionTypes.ENERGY_REINFORCED};
 
-    protected BlockDuct.ConnectionTypes getDefaultConnection() {
-        return types[type];
-    }
 
     public TileEnergyDuct(int type) {
         this.type = type;
@@ -88,7 +83,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         }
     }
 
-    public void tickPass(int pass) {
+    public boolean tickPass(int pass) {
 
         int power = this.internalGrid.getSendableEnergy();
         int usedPower = 0;
@@ -126,6 +121,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         }
 
         this.internalGrid.useEnergy(usedPower);
+        return super.tickPass(pass);
     }
 
     @Override

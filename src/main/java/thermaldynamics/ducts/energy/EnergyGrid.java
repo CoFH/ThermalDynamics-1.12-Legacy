@@ -38,7 +38,8 @@ public class EnergyGrid extends MultiBlockGrid {
             currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
             extraEnergy = myStorage.getEnergyStored() % nodeSet.size();
             for (IMultiBlock m : nodeSet) {
-                m.tickPass(0);
+                if (!m.tickPass(0))
+                    break;
             }
 
         }

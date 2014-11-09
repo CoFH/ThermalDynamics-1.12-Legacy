@@ -10,7 +10,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.multiblock.*;
@@ -84,8 +83,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
     public RouteCache cache;
 
     @Override
-    public void tickPass(int pass) {
-        tickItems();
+    public boolean tickPass(int pass) {
+        if (pass == 0) {
+            tickItems();
+        }
+        return super.tickPass(pass);
     }
 
     @Override
@@ -303,13 +305,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
     }
 
 
-    protected BlockDuct.ConnectionTypes getDefaultConnection() {
-        return BlockDuct.ConnectionTypes.ITEM_NORMAL;
-    }
-
     @Override
     public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
-        myItems.clear();
+
         int b = payload.getByte();
         if (b == TileInfoPackets.PULSE_LINE) {
             if (centerLine == 0) centerLineMask = 0;
@@ -319,6 +317,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
                 TickHandlerClient.tickBlocksToAdd.add(this);
             }
         } else if (b == TileInfoPackets.TRAVELING_ITEMS) {
+            myItems.clear();
             byte n = payload.getByte();
             if (n > 0) {
                 for (byte i = 0; i < n; i++) {
