@@ -1,0 +1,22 @@
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+
+tile.thermalducts.duct.energyBasicDuct.name=Basic Fluxduct
+tile.thermalducts.duct.energyHardenedDuct.name=Hardened Fluxduct
+tile.thermalducts.duct.energyReinforcedDuct.name=Reinforced Fluxduct
+tile.thermalducts.duct.energyEmptyReinforcedDuct.name=Reinforced Fluxduct (Empty)
+
+
+tile.thermalducts.duct.fluidWeakTransDuct.name=Copper Fluiduct (Transparent)
+tile.thermalducts.duct.fluidWeakOpaqueDuct.name=Copper Fluiduct (Opaque)
+tile.thermalducts.duct.fluidTransDuct.name=Invar Fluiduct (Transparent)
+tile.thermalducts.duct.fluidOpaqueDuct.name=Invar Fluiduct (Opaque)
+
+
+tile.thermalducts.duct.structureDuct.name=Structural Ducts
+
+
+item.thermalducts.servo.0.name=Basic External Servo
+item.thermalducts.servo.1.name=Hardened External Servo
+item.thermalducts.servo.2.name=Reinforced External Servo
+item.thermalducts.servo.3.name=Signalum External Servo
+item.thermalducts.servo.4.name=Resonant External Servo
