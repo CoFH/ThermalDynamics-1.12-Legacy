@@ -1,6 +1,5 @@
 package thermaldynamics.ducts.fluid;
 
-import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
@@ -20,7 +19,7 @@ import thermaldynamics.core.TDProps;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
-public class TileFluidDuct extends TileMultiBlock implements IFluidHandler, ITileInfoPacketHandler {
+public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
     public static void initialize() {
         //guiId = ThermalDynamics.proxy.registerGui("FluidFilter", "conduit", "TEBase", null, true);
     }
@@ -160,7 +159,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler, ITil
     }
 
     @Override
-    public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+    public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
         if (ServerHelper.isClientWorld(worldObj)) {
             byte b = payload.getByte();
             handleTileInfoPacketType(payload, b);
@@ -214,6 +213,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler, ITil
             return;
         if (!opaque) {
             PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
+            myPayload.addByte(0);
             myPayload.addByte(TileFluidPackets.UPDATE_RENDER);
             myPayload.addFluidStack(fluidGrid.getRenderFluid());
             PacketHandler.sendToAllAround(myPayload, this);

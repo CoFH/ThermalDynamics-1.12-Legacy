@@ -1,5 +1,6 @@
 package thermaldynamics.ducts.servo;
 
+import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.render.RenderUtils;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
@@ -7,6 +8,9 @@ import cofh.repack.codechicken.lib.vec.Translation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import thermaldynamics.ThermalDynamics;
@@ -17,7 +21,7 @@ import thermaldynamics.render.RenderDuct;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class ServoBase extends Attachment {
+public abstract class ServoBase extends Attachment implements IRedstoneControl {
     public ServoBase(TileMultiBlock tile, byte side) {
         super(tile, side);
     }
@@ -30,6 +34,8 @@ public abstract class ServoBase extends Attachment {
     boolean isPowered = false;
     boolean stuffed = false;
 
+    ControlMode rsMode = ControlMode.LOW;
+
     int type = 0;
 
     @Override
@@ -41,14 +47,15 @@ public abstract class ServoBase extends Attachment {
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         isPowered = tag.getBoolean("power");
-        type = tag.getByte("type") % 4;
+        type = tag.getByte("type") % 5;
     }
 
     @Override
     public void onNeighbourChange() {
         super.onNeighbourChange();
         boolean wasPowered = isPowered;
-        isPowered = tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
+
+        isPowered = rsMode.isDisabled() || rsMode.getState() == tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
 
         if (wasPowered != isPowered)
             tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
@@ -87,7 +94,16 @@ public abstract class ServoBase extends Attachment {
 
     @Override
     public boolean onWrenched() {
-        tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+        tile.removeAttachment(this);
+        for (ItemStack stack : getDrops()) {
+            float f = 0.3F;
+            double x2 = tile.getWorldObj().rand.nextFloat() * f + (1.0F - f) * 0.5D;
+            double y2 = tile.getWorldObj().rand.nextFloat() * f + (1.0F - f) * 0.5D;
+            double z2 = tile.getWorldObj().rand.nextFloat() * f + (1.0F - f) * 0.5D;
+            EntityItem item = new EntityItem(tile.getWorldObj(), tile.xCoord + x2, tile.yCoord + y2, tile.zCoord + z2, stack);
+            item.delayBeforeCanPickup = 10;
+            tile.getWorldObj().spawnEntityInWorld(item);
+        }
         return true;
     }
 
@@ -112,5 +128,41 @@ public abstract class ServoBase extends Attachment {
         RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(trans, RenderUtils.getIconTransformation(RenderDuct.servoTexture[type * 2 + (stuffed ? 1 : 0)]));
 
         return true;
+    }
+
+    @Override
+    public void setControl(ControlMode control) {
+        rsMode = control;
+    }
+
+    @Override
+    public ControlMode getControl() {
+
+        return rsMode;
+    }
+
+    @Override
+    public void setPowered(boolean isPowered) {
+        this.isPowered = isPowered;
+    }
+
+    @Override
+    public boolean isPowered() {
+        return isPowered;
+    }
+
+    @Override
+    public void sendGuiNetworkData(Container container, ICrafting player) {
+        super.sendGuiNetworkData(container, player);
+    }
+
+    @Override
+    public void receiveGuiNetworkData(int i, int j) {
+        super.receiveGuiNetworkData(i, j);
+    }
+
+    public static class NETWORK_ID {
+        public final static int GUI = 0;
+        public final static int RSCONTROL = 1;
     }
 }

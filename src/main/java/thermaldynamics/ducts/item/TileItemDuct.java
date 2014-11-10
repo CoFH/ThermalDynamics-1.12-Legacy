@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, ITileInfoPacketHandler {
+public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
     ItemGrid internalGrid;
 
     public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
@@ -306,7 +306,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IT
 
 
     @Override
-    public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+    public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
         int b = payload.getByte();
         if (b == TileInfoPackets.PULSE_LINE) {

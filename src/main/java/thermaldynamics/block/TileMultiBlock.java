@@ -2,6 +2,7 @@ package thermaldynamics.block;
 
 import cofh.api.tileentity.IPlacedTile;
 import cofh.core.block.TileCoFHBase;
+import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.render.hitbox.CustomHitBox;
@@ -14,7 +15,6 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
@@ -31,7 +31,7 @@ import thermalexpansion.util.Utils;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox {
+public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler {
 
     static {
         GameRegistry.registerTileEntity(TileMultiBlock.class, "thermalducts.multiblock");
@@ -188,8 +188,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return false;
     }
 
-    public List<ItemStack> removeAttachment(Attachment attachment) {
-        if (attachment == null) return new LinkedList<ItemStack>();
+    public boolean removeAttachment(Attachment attachment) {
+        if (attachment == null) return false;
 
         attachments[attachment.side] = null;
         tickingAttachments.remove(attachment);
@@ -197,7 +197,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
         if (myGrid != null) myGrid.destroyAndRecreate();
-        return attachment.getDrops();
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        return true;
     }
 
     public boolean addAttachment(Attachment attachment) {
@@ -461,6 +462,16 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             }
     }
 
+    @Override
+    public boolean openGui(EntityPlayer player) {
+        int subHit = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord).subHit;
+
+        if (subHit > 13 && subHit < 20) {
+            return attachments[subHit - 14].openGui(player);
+        }
+        return super.openGui(player);
+    }
+
     public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
 
         double minX, minY, minZ;
@@ -587,6 +598,19 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return payload;
     }
 
+    public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+        byte b = payload.getByte();
+        if (b == 0) {
+            handleInfoPacket(payload, isServer, thePlayer);
+        } else if (b >= 1 && b <= 6) {
+            attachments[b-1].handleInfoPacket(payload, isServer, thePlayer);
+        }
+    }
+
+    public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+
+    }
+
     /* ITilePacketHandler */
     @Override
     public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
@@ -605,7 +629,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 if ((attachmentMask & (1 << i)) != 0) {
                     attachments[i] = AttachmentRegistry.createAttachment(this, i, payload.getByte());
                     attachments[i].getDescriptionFromPacket(payload);
-                }
+                } else
+                    attachments[i] = null;
             }
 
             hashCode = payload.getInt();
@@ -631,7 +656,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         else
             return BlockDuct.ConnectionTypes.DUCT;
     }
-
 
 
     public void randomDisplayTick() {

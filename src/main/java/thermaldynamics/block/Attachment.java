@@ -7,6 +7,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -80,4 +84,37 @@ public abstract class Attachment {
     }
 
     public abstract List<ItemStack> getDrops();
+
+    @SideOnly(Side.CLIENT)
+    public Object getGuiClient(InventoryPlayer inventory) {
+        return null;
+    }
+
+    public Object getGuiServer(InventoryPlayer inventory) {
+        return null;
+    }
+
+    public boolean isUseable(EntityPlayer player) {
+        return tile.isUseable(player);
+    }
+
+    public void receiveGuiNetworkData(int i, int j) {
+
+    }
+
+    public void sendGuiNetworkData(Container container, ICrafting player) {
+
+    }
+
+    public int getInvSlotCount() {
+        return 0;
+    }
+
+    public boolean openGui(EntityPlayer player) {
+        return false;
+    }
+
+    public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+
+    }
 }
