@@ -11,6 +11,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,6 +26,7 @@ import thermaldynamics.core.TickHandler;
 import thermaldynamics.crafting.TDCrafting;
 import thermaldynamics.debughelper.CommandThermalDebug;
 import thermaldynamics.debughelper.DebugHelper;
+import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.gui.TDCreativeTab;
 import thermaldynamics.item.ItemServo;
 import thermalfoundation.ThermalFoundation;
@@ -50,7 +52,7 @@ public class ThermalDynamics extends BaseMod {
     public static final Logger log = LogManager.getLogger(modId);
 
     public static final ConfigHandler config = new ConfigHandler(version);
-    // public static final GuiHandler guiHandler = new GuiHandler();
+    public static final GuiHandler guiHandler = new GuiHandler();
 
     public static final CreativeTabs tab = new TDCreativeTab();
 
@@ -79,7 +81,9 @@ public class ThermalDynamics extends BaseMod {
 
         config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDynamics.cfg")));
 
-        blockDuct = addBlock(new BlockDuct(0));
+
+        blockDuct[0] = addBlock(new BlockDuct(0));
+        blockDuct[1] = addBlock(new BlockDuct(1));
         itemServo = addItem(new ItemServo());
 
         for (IInitializer initializer : initializerList)
@@ -90,7 +94,7 @@ public class ThermalDynamics extends BaseMod {
 
     @EventHandler
     public void initialize(FMLInitializationEvent event) {
-
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, guiHandler);
         MinecraftForge.EVENT_BUS.register(proxy);
 
         for (IInitializer initializer : initializerList)
@@ -142,7 +146,7 @@ public class ThermalDynamics extends BaseMod {
         return version;
     }
 
-    public static Block blockDuct;
+    public static Block[] blockDuct = new Block[2];
     public static Item itemServo;
 
 
@@ -151,9 +155,9 @@ public class ThermalDynamics extends BaseMod {
         for (FMLMissingMappingsEvent.MissingMapping map : event.get()) {
             if ((modId + ":TestDuct").equals(map.name)) {
                 if (map.type == GameRegistry.Type.BLOCK)
-                    map.remap(blockDuct);
+                    map.remap(blockDuct[0]);
                 else
-                    map.remap(Item.getItemFromBlock(blockDuct));
+                    map.remap(Item.getItemFromBlock(blockDuct[0]));
             }
         }
     }

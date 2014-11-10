@@ -42,7 +42,7 @@ import java.util.Random;
 
 public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
-    int offset;
+    public int offset;
 
     public BlockDuct(int offset) {
         super(Material.glass);
@@ -51,14 +51,14 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         setStepSound(soundTypeMetal);
         setBlockName("thermalducts.duct");
         setCreativeTab(ThermalDynamics.tab);
-        this.offset = offset;
+        this.offset = offset * 16;
     }
 
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for (int i = 0; i < Ducts.values().length; i++) {
-            if (Ducts.isValid(i))
-                list.add(new ItemStack(item, 1, i));
+        for (int i = 0; i < 16; i++) {
+            if (Ducts.isValid(i + offset))
+                list.add(Ducts.getDuct(i + offset).itemStack.copy());
         }
     }
 
@@ -74,13 +74,11 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
     @Override
     public int damageDropped(int i) {
-
         return i;
     }
 
     @Override
     public boolean canCreatureSpawn(EnumCreatureType type, IBlockAccess world, int x, int y, int z) {
-
         return false;
     }
 
@@ -102,92 +100,52 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-
-        return 0;
-    }
-
-
-    @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister ir) {
+        if (offset != 0)
+            return;
 
-        IconRegistry.addIcon("DuctEnergy00", "thermaldynamics:duct/energy/DuctEnergy00", ir);
         IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
 
-        IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 64));
-        IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
-        IconRegistry.addIcon("Trans_Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still", (byte) 192));
+//        IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 64));
+//        IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
+//        IconRegistry.addIcon("Trans_Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still", (byte) 192));
 
-        IconRegistry.addIcon("DuctStructure", "thermaldynamics:duct/structure", ir);
-
-        IconRegistry.addIcon("RedstoneNoise", "thermaldynamics:duct/energy/redstone_noise", ir);
-
-//        IconRegistry.addIcon("DuctEnergy00", TextureOverlay.generateTexture(ir, false, 0, 1, 0));
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
             for (int j = 0; j < 2; j++)
                 IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/servo/ServoBase" + i + "" + j, ir);
 
 
         IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);
 
-        IconRegistry.addIcon("DuctEnergy10", "thermaldynamics:duct/energy/DuctEnergy10", ir);
-        IconRegistry.addIcon("DuctEnergy20", "thermaldynamics:duct/energy/DuctEnergy20", ir);
+        for (int i = 0; i < Ducts.values().length; i++) {
+            Ducts ducts = Ducts.values()[i];
 
-        IconRegistry.addIcon("DuctFluid00", "thermaldynamics:duct/fluid/DuctFluid00", ir);
-        IconRegistry.addIcon("DuctFluid10", "thermaldynamics:duct/fluid/DuctFluid10", ir);
-        IconRegistry.addIcon("DuctFluid20", "thermaldynamics:duct/fluid/DuctFluid20", ir);
-        IconRegistry.addIcon("DuctFluid30", "thermaldynamics:duct/fluid/DuctFluid30", ir);
+            ducts.iconBaseTexture = ir.registerIcon(ducts.baseTexture);
+            if (ducts.connectionTexture != null)
+                ducts.iconConnectionTexture = ir.registerIcon(ducts.connectionTexture);
+            if (ducts.fluidTexture != null)
+                ducts.iconFluidTexture = TextureTransparent.registerTransparentIcon(ir, ducts.fluidTexture, ducts.fluidTransparency);
+        }
 
-        IconRegistry.addIcon("DuctItem00", "thermaldynamics:duct/item/DuctItem00", ir);
-        IconRegistry.addIcon("DuctItem10", "thermaldynamics:duct/item/DuctItem10", ir);
-        IconRegistry.addIcon("DuctItem20", "thermaldynamics:duct/item/DuctItem20", ir);
-        IconRegistry.addIcon("DuctItem30", "thermaldynamics:duct/item/DuctItem30", ir);
 
-        IconRegistry.addIcon("DuctItem01", "thermaldynamics:duct/item/DuctItem01", ir);
-        IconRegistry.addIcon("DuctItem02", "thermaldynamics:duct/item/DuctItem02", ir);
-        IconRegistry.addIcon("DuctItem03", "thermaldynamics:duct/item/DuctItem03", ir);
-
-        IconRegistry.addIcon("DuctItem11", "thermaldynamics:duct/item/DuctItem11", ir);
-        IconRegistry.addIcon("DuctItem12", "thermaldynamics:duct/item/DuctItem12", ir);
-        IconRegistry.addIcon("DuctItem13", "thermaldynamics:duct/item/DuctItem13", ir);
-
-        IconRegistry.addIcon("DuctItem21", "thermaldynamics:duct/item/DuctItem21", ir);
-        IconRegistry.addIcon("DuctItem22", "thermaldynamics:duct/item/DuctItem22", ir);
-        IconRegistry.addIcon("DuctItem23", "thermaldynamics:duct/item/DuctItem23", ir);
-
-        IconRegistry.addIcon("DuctItem31", "thermaldynamics:duct/item/DuctItem31", ir);
-        IconRegistry.addIcon("DuctItem32", "thermaldynamics:duct/item/DuctItem32", ir);
-        IconRegistry.addIcon("DuctItem33", "thermaldynamics:duct/item/DuctItem33", ir);
-
-        IconRegistry.addIcon("ConnectionEnergy0", "thermaldynamics:duct/energy/ConnectionEnergy00", ir);
-        IconRegistry.addIcon("ConnectionEnergy1", "thermaldynamics:duct/energy/ConnectionEnergy10", ir);
-        IconRegistry.addIcon("ConnectionEnergy2", "thermaldynamics:duct/energy/ConnectionEnergy20", ir);
-        IconRegistry.addIcon("ConnectionFluid0", "thermaldynamics:duct/fluid/ConnectionFluid00", ir);
-        IconRegistry.addIcon("ConnectionFluid1", "thermaldynamics:duct/fluid/ConnectionFluid10", ir);
-        IconRegistry.addIcon("ConnectionItem0", "thermaldynamics:duct/item/ConnectionItem00", ir);
     }
 
     @Override
     public int getRenderType() {
-
         return TDProps.renderDuctId;
     }
 
     @Override
     public boolean canRenderInPass(int pass) {
-
         renderPass = pass;
         return pass < 2;
     }
 
     @Override
     public int getRenderBlockPass() {
-
         return 1;
     }
-
-    public ItemStack blockDuct;
 
     public static enum ConnectionTypes {
         NONE(false), DUCT, ONEWAY, TILECONNECTION, STRUCTURE;
@@ -267,14 +225,11 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
     /* IInitializer */
     @Override
     public boolean preInit() {
-
         GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDucts_" + offset);
 
-        blockDuct = new ItemStack(this, 1, 0);
-
-        for (int i = offset; i < offset + 16; i++) {
-            if (Ducts.isValid(i)) {
-                Ducts.getType(i).itemStack = new ItemStack(this, 1, i);
+        for (int i = 0; i < 16; i++) {
+            if (Ducts.isValid(offset + i)) {
+                Ducts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
             }
         }
 
@@ -283,7 +238,8 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
     @Override
     public boolean initialize() {
-
+        if (offset != 0)
+            return true;
         MinecraftForge.EVENT_BUS.register(ThermalDynamics.blockDuct);
         GameRegistry.registerTileEntity(TileFluidDuct.class, "thermalducts.ducts.energy.TileFluidDuct");
         GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermalducts.ducts.energy.TileFragileFluidDuct");
@@ -295,7 +251,6 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
 
     @Override
     public boolean postInit() {
-
         return true;
     }
 

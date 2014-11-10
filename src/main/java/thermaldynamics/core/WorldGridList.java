@@ -64,13 +64,13 @@ public class WorldGridList {
         }
 
         if (!mtickinggrids.isEmpty()) {
-            DebugHelper.startTimer();
+
             long deadline = System.nanoTime() + 100000L;
             Iterator<MultiBlockGrid> iterator = mtickinggrids.iterator();
             while (System.nanoTime() < deadline && iterator.hasNext()) {
                 iterator.next().doTickProcessing(deadline);
             }
-            DebugHelper.stopTimer("DebugTick");
+
         }
 
         if (!tickingBlocks.isEmpty()) {

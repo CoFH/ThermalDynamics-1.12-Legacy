@@ -20,7 +20,8 @@ public class ProxyClient extends Proxy {
     @Override
     public void registerRenderInformation() {
         FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
-        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct), RenderDuct.instance);
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct[0]), RenderDuct.instance);
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct[1]), RenderDuct.instance);
         ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
         ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
     }

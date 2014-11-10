@@ -21,6 +21,9 @@ public class TextureTransparent extends TextureAtlasSprite {
     ResourceLocation location;
 
     public static IIcon registerTransparentIcon(IIconRegister register, String name, byte transparency) {
+        if (transparency == (byte) 255)
+            return register.registerIcon(name);
+
         TextureMap map = (TextureMap) register;
 
         TextureAtlasSprite icon = map.getTextureExtry(transformedName(name, transparency));
