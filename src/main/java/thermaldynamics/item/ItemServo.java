@@ -1,38 +1,31 @@
 package thermaldynamics.item;
 
-import cofh.api.core.IInitializer;
-import cofh.lib.util.helpers.BlockHelper;
-import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
-import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.ducts.fluid.TileFluidDuct;
+import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.servo.ServoFluid;
+import thermaldynamics.ducts.servo.ServoItem;
 
 import java.util.List;
 
-public class ItemServo extends Item implements IInitializer {
+public class ItemServo extends ItemAttachment {
     public ItemServo() {
         super();
-        setHasSubtypes(true);
         this.setUnlocalizedName("thermalducts.servo");
-        this.setCreativeTab(ThermalDynamics.tab);
-
     }
 
     @Override
     public String getUnlocalizedName(ItemStack item) {
         return super.getUnlocalizedName(item) + "." + item.getItemDamage();
     }
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -58,48 +51,13 @@ public class ItemServo extends Item implements IInitializer {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
         int type = stack.getItemDamage() % 5;
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileMultiBlock) {
-            int s = -1;
-            MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(world, player, x, y, z);
-            if (movingObjectPosition != null) {
-                int subHit = movingObjectPosition.subHit;
-                if (subHit < 6)
-                    s = subHit;
-                else if (subHit < 12)
-                    s = (subHit - 6);
-                else if (subHit == 13)
-                    s = side;
-
-                if (s != -1) {
-                    Attachment servo = getServoType(s^1, type, (TileMultiBlock) tile);
-                    if (((TileMultiBlock) tile).addAttachment(servo)) {
-                        stack.stackSize--;
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        tile = BlockHelper.getAdjacentTileEntity(world, x, y, z, side);
-        if (tile instanceof TileMultiBlock) {
-            Attachment servo = getServoType(side, type, (TileMultiBlock) tile);
-            if (((TileMultiBlock) tile).addAttachment(servo)) {
-                stack.stackSize--;
-                return true;
-            }
-        }
-
-
-        return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
-    }
-
-    public ServoFluid getServoType(int side, int type, TileMultiBlock tile) {
-        return new ServoFluid((TileMultiBlock) tile, (byte) (side ^ 1), type);
+        if (tile instanceof TileFluidDuct)
+            return new ServoFluid(tile, (byte) (side ^ 1), type);
+        if (tile instanceof TileItemDuct)
+            return new ServoItem(tile, (byte) (side ^ 1), type);
+        return null;
     }
 
 
@@ -118,13 +76,4 @@ public class ItemServo extends Item implements IInitializer {
         return true;
     }
 
-    @Override
-    public boolean initialize() {
-        return true;
-    }
-
-    @Override
-    public boolean postInit() {
-        return true;
-    }
 }
