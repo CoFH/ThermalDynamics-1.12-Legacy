@@ -7,14 +7,14 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class EnergyGrid extends MultiBlockGrid {
 
-    public EnergyStorage myStorage;
+    public final EnergyStorage myStorage;
     private int currentEnergy = 0;
     private int extraEnergy = 0;
-    private boolean first = false;
+
     private int type;
 
-    public static final int NODE_STORAGE[] = {480, 2400, 60000};
-    public static final int NODE_TRANSFER[] = {80, 400, 10000};
+    public static final int NODE_STORAGE[] = {480, 2400, 60000, 60000};
+    public static final int NODE_TRANSFER[] = {80, 400, 10000, 10000};
 
     public EnergyGrid(World world, int type) {
         super(world);
@@ -29,7 +29,7 @@ public class EnergyGrid extends MultiBlockGrid {
 
     @Override
     public boolean canAddBlock(IMultiBlock aBlock) {
-        return aBlock instanceof TileEnergyDuct && ((TileEnergyDuct) aBlock).type == this.type;
+        return aBlock instanceof TileEnergyDuct && ((TileEnergyDuct) aBlock).getDuctType().type == this.type;
     }
 
     @Override
@@ -50,7 +50,6 @@ public class EnergyGrid extends MultiBlockGrid {
     }
 
     public void useEnergy(int energyUsed) {
-
         myStorage.modifyEnergyStored(-energyUsed);
         if (energyUsed > currentEnergy) {
             extraEnergy -= (energyUsed - currentEnergy);

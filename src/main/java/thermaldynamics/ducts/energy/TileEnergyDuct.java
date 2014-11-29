@@ -2,7 +2,6 @@ package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-import cofh.lib.util.helpers.BlockHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -14,19 +13,13 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     public int energyForGrid = 0;
     public int lastStoredValue = 0;
     EnergyGrid internalGrid;
-    public int type = 0;
+
+
 
     public TileEnergyDuct() {
 
 
     }
-
-
-
-    public TileEnergyDuct(int type) {
-        this.type = type;
-    }
-
 
     @Override
     public void setGrid(MultiBlockGrid newGrid) {
@@ -35,30 +28,32 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         internalGrid = (EnergyGrid) newGrid;
     }
 
+
+
     @Override
     public MultiBlockGrid getNewGrid() {
 
-        return new EnergyGrid(worldObj, type);
+        return new EnergyGrid(worldObj, getDuctType().type);
     }
 
     @Override
     public boolean canConnectEnergy(ForgeDirection from) {
-        return true;
+        return //neighborTypes[from.ordinal()] == NeighborTypes.TILE &&
+                connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
     }
 
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return this.internalGrid != null ? this.internalGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
+        return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
     }
 
     @Override
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        return this.internalGrid != null ? this.internalGrid.myStorage.extractEnergy(maxExtract, simulate) : 0;
+        return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.extractEnergy(maxExtract, simulate) : 0;
     }
 
     @Override
     public int getEnergyStored(ForgeDirection from) {
-
         return this.internalGrid != null ? this.internalGrid.myStorage.getEnergyStored() : 0;
     }
 
@@ -69,11 +64,12 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     }
 
     public boolean isConnectable(TileEntity theTile, int side) {
-        return theTile instanceof TileEnergyDuct && ((TileEnergyDuct) theTile).type == type;
+        return theTile instanceof TileEnergyDuct && ((TileEnergyDuct) theTile).getDuctType().type == getDuctType().type;
     }
 
     public boolean isSignificantTile(TileEntity theTile, int side) {
-        return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side]);
+        return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side ^ 1])
+        ;
     }
 
     @Override
@@ -84,57 +80,59 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     }
 
     public boolean tickPass(int pass) {
-
         int power = this.internalGrid.getSendableEnergy();
-        int usedPower = 0;
 
-        for (int i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
-            if (this.neighborTypes[i] == NeighborTypes.TILE && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-                TileEntity theTile = BlockHelper.getAdjacentTileEntity(this, i);
-                if (theTile instanceof IEnergyHandler) {
-                    IEnergyHandler theTileE = (IEnergyHandler) theTile;
-                    if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-                        usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-                    }
-                    if (usedPower >= power) {
-                        this.tickInternalSideCounter(i + 1);
-                        break;
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < this.internalSideCounter && usedPower < power; i++) {
-            if (this.neighborTypes[i] == NeighborTypes.TILE && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-                TileEntity theTile = BlockHelper.getAdjacentTileEntity(this, i);
-                if (theTile instanceof IEnergyHandler) {
-                    IEnergyHandler theTileE = (IEnergyHandler) theTile;
-                    if (theTileE.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-                        usedPower += theTileE.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-                    }
-                    if (usedPower >= power) {
-                        this.tickInternalSideCounter(i + 1);
-                        break;
-                    }
-                }
-            }
-        }
+        int usedPower = transmitEnergy(power);
 
         this.internalGrid.useEnergy(usedPower);
         return super.tickPass(pass);
     }
 
+    public int transmitEnergy(int power) {
+        int usedPower = 0;
+
+        for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
+            if (this.neighborTypes[i] == NeighborTypes.TILE && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+
+                if (cache[i] != null) {
+
+                    if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+                        usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+                    }
+                    if (usedPower >= power) {
+                        this.tickInternalSideCounter(i + 1);
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
+            if (this.neighborTypes[i] == NeighborTypes.TILE && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+                if (cache[i] != null) {
+                    if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+                        usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+                    }
+                    if (usedPower >= power) {
+                        this.tickInternalSideCounter(i + 1);
+                        break;
+                    }
+                }
+            }
+        }
+        return usedPower;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        type = nbt.getByte("type");
+
         energyForGrid = nbt.getInteger("Energy");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setByte("type", (byte) type);
 
         if (internalGrid != null) {
             if (isNode) {
@@ -146,6 +144,18 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         } else {
             energyForGrid = 0;
         }
+    }
+
+    IEnergyHandler[] cache = new IEnergyHandler[6];
+
+    @Override
+    public void cacheImportant(TileEntity tile, int side) {
+        cache[side] = (IEnergyHandler) tile;
+    }
+
+    @Override
+    public void clearCache(int side) {
+        cache[side] = null;
     }
 
 
