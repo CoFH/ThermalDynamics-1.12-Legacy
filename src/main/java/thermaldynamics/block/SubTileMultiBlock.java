@@ -8,12 +8,12 @@ import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
-public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMultiBlock {
-    public T grid;
-    private boolean isValid;
-    public IMultiBlock parent;
+public abstract class SubTileMultiBlock implements IMultiBlock {
+    public MultiBlockGrid grid;
+    private boolean isValid = true;
+    public TileMultiBlock parent;
 
-    public SubTileMultiBlock(IMultiBlock parent) {
+    public SubTileMultiBlock(TileMultiBlock parent) {
         this.parent = parent;
     }
 
@@ -22,6 +22,20 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
         return parent.world();
     }
 
+    @Override
+    public int x() {
+        return parent.xCoord;
+    }
+
+    @Override
+    public int y() {
+        return parent.yCoord + 1;
+    }
+
+    @Override
+    public int z() {
+        return parent.zCoord;
+    }
 
     @Override
     public void setInvalidForForming() {
@@ -30,13 +44,11 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
 
     @Override
     public void setValidForForming() {
-
         isValid = true;
     }
 
     @Override
     public boolean isValidForForming() {
-
         return isValid;
     }
 
@@ -45,11 +57,11 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
 
     @Override
     public void setGrid(MultiBlockGrid newGrid) {
-        grid = (T) newGrid;
+        grid = newGrid;
     }
 
     @Override
-    public T getGrid() {
+    public MultiBlockGrid getGrid() {
         return grid;
     }
 
@@ -57,10 +69,15 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
     public IMultiBlock getConnectedSide(byte side) {
         IMultiBlock connectedSide = parent.getConnectedSide(side);
 
-        for (IMultiBlock block : connectedSide.getSubTiles()) {
-            if (sameType(block))
-                return block;
-        }
+        if (connectedSide.getClass() != parent.getClass())
+            return null;
+
+        IMultiBlock[] subTiles = connectedSide.getSubTiles();
+        if (subTiles != null)
+            for (IMultiBlock block : subTiles) {
+                if (sameType(block))
+                    return block;
+            }
 
         return null;
     }
@@ -86,7 +103,10 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
 
     @Override
     public void tickMultiBlock() {
-
+        if (grid == null && ServerHelper.isServerWorld(parent.world())) {
+            onNeighbourChange();
+            formGrid();
+        }
     }
 
     public void formGrid() {
@@ -97,12 +117,17 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
 
     @Override
     public boolean tickPass(int pass) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isNode() {
         return false;
+    }
+
+
+    public void tileUnloading() {
+
     }
 
     @Override
@@ -119,4 +144,29 @@ public abstract class SubTileMultiBlock<T extends MultiBlockGrid> implements IMu
     }
 
 
+    public final static IMultiBlock[] BLANK = new IMultiBlock[0];
+
+    public final IMultiBlock[] getSubTiles() {
+        return BLANK;
+    }
+
+
+    public void onChunkUnload() {
+        if (grid != null) {
+            grid.removeBlock(this);
+            tileUnloading();
+        }
+    }
+
+    public void invalidate() {
+        if (grid != null) grid.removeBlock(this);
+    }
+
+    public void onNeighbourChange() {
+
+    }
+
+    public void destroyAndRecreate() {
+        if (grid != null) grid.destroyAndRecreate();
+    }
 }
