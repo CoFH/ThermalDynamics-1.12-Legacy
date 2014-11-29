@@ -2,13 +2,17 @@ package thermaldynamics.ducts.servo;
 
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketHandler;
+import cofh.core.network.PacketTileInfo;
 import cofh.core.render.RenderUtils;
+import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
@@ -34,20 +38,29 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
     boolean isPowered = false;
     boolean stuffed = false;
 
-    ControlMode rsMode = ControlMode.LOW;
+    ControlMode rsMode = ControlMode.HIGH;
 
     int type = 0;
 
+
     @Override
     public void writeToNBT(NBTTagCompound tag) {
+
         tag.setBoolean("power", isPowered);
         tag.setByte("type", (byte) type);
+        if (canAlterRS())
+            tag.setByte("rsMode", (byte) rsMode.ordinal());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         isPowered = tag.getBoolean("power");
         type = tag.getByte("type") % 5;
+        if (canAlterRS())
+            rsMode = ControlMode.values()[tag.getByte("rsMode")];
+
+
+
     }
 
     @Override
@@ -73,6 +86,8 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
         packet.addBool(isPowered);
         packet.addBool(stuffed);
         packet.addByte(type);
+        if (canAlterRS())
+            packet.addByte(rsMode.ordinal());
     }
 
     @Override
@@ -80,16 +95,13 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
         isPowered = packet.getBool();
         stuffed = packet.getBool();
         type = packet.getByte();
-    }
-
-    @Override
-    public int getID() {
-        return 1;
+        if (canAlterRS())
+            rsMode = ControlMode.values()[packet.getByte()];
     }
 
     @Override
     public Cuboid6 getCuboid() {
-        return TileMultiBlock.subSelection[side];
+        return TileMultiBlock.subSelection[side].copy();
     }
 
     @Override
@@ -109,7 +121,7 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
 
     @Override
     public TileMultiBlock.NeighborTypes getNeighbourType() {
-        return TileMultiBlock.NeighborTypes.DUCT_ATTACHMENT;
+        return TileMultiBlock.NeighborTypes.SERVO;
     }
 
     @Override
@@ -132,12 +144,22 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
 
     @Override
     public void setControl(ControlMode control) {
+        if (!canAlterRS())
+            return;
         rsMode = control;
+        if (ServerHelper.isClientWorld(tile.world())) {
+            PacketTileInfo packet = PacketTileInfo.newPacket(tile);
+            packet.addByte(1 + side);
+            packet.addByte(NETWORK_ID.RSCONTROL);
+            packet.addByte(rsMode.ordinal());
+            PacketHandler.sendToServer(packet);
+        } else {
+            onNeighbourChange();
+        }
     }
 
     @Override
     public ControlMode getControl() {
-
         return rsMode;
     }
 
@@ -159,6 +181,23 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
     @Override
     public void receiveGuiNetworkData(int i, int j) {
         super.receiveGuiNetworkData(i, j);
+    }
+
+    @Override
+    public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+        super.handleInfoPacket(payload, isServer, thePlayer);
+        byte a = payload.getByte();
+        switch (a) {
+            case NETWORK_ID.RSCONTROL:
+                if (canAlterRS()) {
+                    setControl( ControlMode.values()[payload.getByte()]);
+                }
+                break;
+        }
+    }
+
+    public boolean canAlterRS() {
+        return type >= 2;
     }
 
     public static class NETWORK_ID {

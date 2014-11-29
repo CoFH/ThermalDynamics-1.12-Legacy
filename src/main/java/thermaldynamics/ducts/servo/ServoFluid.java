@@ -10,6 +10,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 import thermaldynamics.ThermalDynamics;
+import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.gui.GuiHandler;
@@ -22,6 +23,11 @@ public class ServoFluid extends ServoBase {
 
     int[] maxthroughput = {50, 100, 200, 400, 10000};
     float[] throttle = {0.2F, 0.5F, 1F, 1F, 10F};
+
+    @Override
+    public int getID() {
+        return AttachmentRegistry.SERVO_FLUID;
+    }
 
     public ServoFluid(TileMultiBlock tile, byte side) {
         super(tile, side);
@@ -98,6 +104,6 @@ public class ServoFluid extends ServoBase {
 
     @Override
     public Object getGuiClient(InventoryPlayer inventory) {
-        return new GuiServo(inventory,this);
+        return new GuiServo(inventory, this);
     }
 }
