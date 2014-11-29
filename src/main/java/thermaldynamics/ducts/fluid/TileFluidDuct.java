@@ -93,7 +93,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     protected int transfer(int bSide, int available) {
 
-        if (neighborTypes[bSide] == NeighborTypes.TILE && connectionTypes[bSide] != ConnectionTypes.BLOCKED) {
+        if (neighborTypes[bSide] == NeighborTypes.OUTPUT && connectionTypes[bSide] != ConnectionTypes.BLOCKED) {
 
             if (cache[bSide] != null && fluidGrid.myTank.getFluid() != null) {
                 FluidStack tempFluid = fluidGrid.myTank.getFluid().copy();
@@ -233,7 +233,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.TILE && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
+        if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
             return fluidGrid.myTank.fill(resource, doFill);
         }
         return 0;
@@ -241,7 +241,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.TILE && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
+        if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
             return fluidGrid.myTank.drain(resource, doDrain);
         }
         return null;
@@ -249,7 +249,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.TILE && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
+        if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
             return fluidGrid.myTank.drain(maxDrain, doDrain);
         }
         return null;
@@ -257,12 +257,12 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        return neighborTypes[from.ordinal()] == NeighborTypes.TILE && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+        return neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
     }
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        return neighborTypes[from.ordinal()] == NeighborTypes.TILE && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+        return neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public IMultiBlock getCachedTile(byte side);
 
-    TileItemDuct.routeInfo canRouteItem(ItemStack stack, boolean b, int i);
+    TileItemDuct.RouteInfo canRouteItem(ItemStack stack);
 
     byte getStuffedSide();
 }

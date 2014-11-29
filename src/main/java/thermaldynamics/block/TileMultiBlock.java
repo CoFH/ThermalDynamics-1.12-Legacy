@@ -182,7 +182,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         if (isSignificantTile(tileEntity, side)) {
             neighborMultiBlocks[side] = null;
-            neighborTypes[side] = NeighborTypes.TILE;
+            neighborTypes[side] = NeighborTypes.OUTPUT;
             if (!isNode) {
                 isNode = true;
                 if (myGrid != null) myGrid.addBlock(this);
@@ -273,8 +273,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                     neighborMultiBlocks[i] = null;
                 connectionTypes[i] = ConnectionTypes.BLOCKED;
                 isNode = attachments[i].isNode();
-                isInput = neighborTypes[i] == NeighborTypes.SERVO;
-                isOutput = neighborTypes[i] == NeighborTypes.TILE;
+                isInput = neighborTypes[i] == NeighborTypes.INPUT;
+                isOutput = neighborTypes[i] == NeighborTypes.OUTPUT;
                 continue;
             }
 
@@ -288,7 +288,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborTypes[i] = NeighborTypes.MULTIBLOCK;
             } else if (isSignificantTile(theTile, i)) {
                 neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.TILE;
+                neighborTypes[i] = NeighborTypes.OUTPUT;
                 cacheImportant(theTile, i);
                 isNode = true;
                 isOutput = true;
@@ -336,8 +336,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborMultiBlocks[i] = null;
             }
             connectionTypes[i] = ConnectionTypes.BLOCKED;
-            isInput = neighborTypes[i] == NeighborTypes.SERVO;
-            isOutput = neighborTypes[i] == NeighborTypes.TILE;
+            isInput = neighborTypes[i] == NeighborTypes.INPUT;
+            isOutput = neighborTypes[i] == NeighborTypes.OUTPUT;
         } else {
             TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
             if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
@@ -345,7 +345,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborTypes[i] = NeighborTypes.MULTIBLOCK;
             } else if (isSignificantTile(theTile, i)) {
                 neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.TILE;
+                neighborTypes[i] = NeighborTypes.OUTPUT;
                 cacheImportant(theTile, i);
                 isOutput = true;
             } else if (isStructureTile(theTile, (byte) i)) {
@@ -371,7 +371,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         isNode = false;
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            if ((attachments[i] != null && attachments[i].isNode()) || neighborTypes[i] == NeighborTypes.TILE) {
+            if ((attachments[i] != null && attachments[i].isNode()) || neighborTypes[i] == NeighborTypes.OUTPUT) {
                 isNode = true;
                 return;
             }
@@ -380,13 +380,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     public void tickInternalSideCounter(int start) {
         for (int a = start; a < neighborTypes.length; a++) {
-            if (neighborTypes[a] == NeighborTypes.TILE && connectionTypes[a] == ConnectionTypes.NORMAL) {
+            if (neighborTypes[a] == NeighborTypes.OUTPUT && connectionTypes[a] == ConnectionTypes.NORMAL) {
                 internalSideCounter = (byte) a;
                 return;
             }
         }
         for (int a = 0; a < start; a++) {
-            if (neighborTypes[a] == NeighborTypes.TILE && connectionTypes[a] == ConnectionTypes.NORMAL) {
+            if (neighborTypes[a] == NeighborTypes.OUTPUT && connectionTypes[a] == ConnectionTypes.NORMAL) {
                 internalSideCounter = (byte) a;
                 return;
             }
@@ -556,7 +556,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                     cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
             } else {
                 // Add TILE sides
-                if (neighborTypes[i] == NeighborTypes.TILE)
+                if (neighborTypes[i] == NeighborTypes.OUTPUT)
                     cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
 
                     // Add MULTIBLOCK sides
@@ -721,13 +721,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         if (neighborTypes[side] == NeighborTypes.STRUCTURE)
             return BlockDuct.ConnectionTypes.STRUCTURE;
 
-        if (neighborTypes[side] == NeighborTypes.SERVO)
+        if (neighborTypes[side] == NeighborTypes.INPUT)
             return BlockDuct.ConnectionTypes.DUCT;
 
         if (neighborTypes[side] == NeighborTypes.NONE || connectionTypes[side] == ConnectionTypes.BLOCKED || connectionTypes[side] == ConnectionTypes.REJECTED)
             return BlockDuct.ConnectionTypes.NONE;
 
-        if (neighborTypes[side] == NeighborTypes.TILE)
+        if (neighborTypes[side] == NeighborTypes.OUTPUT)
             return BlockDuct.ConnectionTypes.TILECONNECTION;
         else
             return BlockDuct.ConnectionTypes.DUCT;
@@ -752,7 +752,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     }
 
     public static enum NeighborTypes {
-        NONE, MULTIBLOCK, TILE, SERVO, STRUCTURE, DUCT_ATTACHMENT
+        NONE, MULTIBLOCK, OUTPUT, INPUT, STRUCTURE, DUCT_ATTACHMENT
     }
 
     public static enum ConnectionTypes {

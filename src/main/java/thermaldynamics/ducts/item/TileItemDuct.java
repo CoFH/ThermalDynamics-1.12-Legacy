@@ -6,11 +6,14 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
+import com.google.common.collect.Iterables;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock;
@@ -18,7 +21,6 @@ import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.multiblock.*;
 import thermalexpansion.util.Utils;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,19 +53,22 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
     public IInventory[] cache = new IInventory[6];
     public ISidedInventory[] cache2 = new ISidedInventory[6];
-//    public CacheTypes[] cacheType = new CacheTypes[]{CacheTypes.IMPORTANT, CacheTypes.IMPORTANT, CacheTypes.IMPORTANT,
-//            CacheTypes.IMPORTANT, CacheTypes.IMPORTANT, CacheTypes.IMPORTANT};
+    public CacheType[] cacheType = {CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE,};
 
-    public static class routeInfo {
+    public static enum CacheType {
+        NONE, IINV, ISIDEDINV
+    }
 
-        public routeInfo(int stackSizeLeft, byte i) {
+    public static class RouteInfo {
+
+        public RouteInfo(int stackSizeLeft, byte i) {
 
             canRoute = true;
             stackSize = stackSizeLeft;
             side = i;
         }
 
-        public routeInfo() {
+        public RouteInfo() {
 
         }
 
@@ -72,9 +77,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         public byte side = -1;
     }
 
-    public static final routeInfo noRoute = new routeInfo();
-
-    public byte moveStackSize[] = {64, 64, 64, 64, 64, 64};
+    public static final RouteInfo noRoute = new RouteInfo();
 
 
     /*
@@ -190,15 +193,15 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         if (routes.size() <= 1)
             return true;
 
-        Collections.shuffle(routes);
+
         for (Route route : routes) {
             if (route.pathDirections.size() < 1)
                 continue;
 
             byte input;
-            for (input = 0; input < 6 && neighborTypes[input ^ 1] != NeighborTypes.TILE; ) input++;
+            for (input = 0; input < 6 && neighborTypes[input ^ 1] != NeighborTypes.OUTPUT; ) input++;
             byte output;
-            for (output = 0; output < 6 && ((TileItemDuct) route.endPoint).neighborTypes[output] != NeighborTypes.TILE; )
+            for (output = 0; output < 6 && ((TileItemDuct) route.endPoint).neighborTypes[output] != NeighborTypes.OUTPUT; )
                 output++;
 
             Route itemRoute = route.copy();
@@ -206,31 +209,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
             final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, input);
             travelingItem.goingToStuff = true;
             insertItem(travelingItem);
-
-//            route = route.copy();
-//            route.pathDirections.add((byte) output);
-//
-//            TileItemDuct duct = this;
-//            byte direction = route.getNextDirection();
-//            byte oldDirection = input;
-//
-//            while (true) {
-//                duct.pulseLine(direction, (byte) (oldDirection ^ 1));
-//                if (duct.neighborTypes[direction] == NeighborTypes.MULTIBLOCK) {
-//                    TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(direction);
-//                    if (newHome != null) {
-//                        if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-//                            duct = newHome;
-//                            if (route.hasNextDirection()) {
-//                                oldDirection = direction;
-//                                direction = route.getNextDirection();
-//                            } else break;
-//                        } else break;
-//                    } else
-//                        break;
-//                } else
-//                    break;
-//            }
 
             break;
         }
@@ -315,6 +293,34 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         }
     }
 
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+
+        itemsToAdd.clear();
+        myItems.clear();
+        NBTTagList list = nbt.getTagList("StuffedInv", 10);
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound compound = list.getCompoundTagAt(i);
+            itemsToAdd.add(new TravelingItem(compound));
+        }
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+
+        NBTTagList items = new NBTTagList();
+        for (TravelingItem travelingItem : Iterables.concat(itemsToAdd, myItems)) {
+            NBTTagCompound tag = new NBTTagCompound();
+            travelingItem.toNBT(tag);
+            items.appendTag(tag);
+        }
+
+        nbt.setTag("TravellingItems", items);
+    }
+
+
     public void sendTravelingItemsPacket() {
         if (!getDuctType().opaque) {
             PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
@@ -370,11 +376,18 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
     @Override
     public void cacheImportant(TileEntity tile, int side) {
         cache[side] = (IInventory) tile;
+        if (tile instanceof ISidedInventory) {
+            cache2[side] = ((ISidedInventory) tile);
+            cacheType[side] = CacheType.ISIDEDINV;
+        } else {
+            cacheType[side] = CacheType.IINV;
+        }
     }
 
     @Override
     public void clearCache(int side) {
         cache[side] = null;
+        cacheType[side] = CacheType.NONE;
     }
 
     public void
@@ -435,37 +448,37 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
     public int[] centerLineSub = new int[6];
 
 
-    public routeInfo canRouteItem(ItemStack anItem, boolean isSelf, int maxTransferSize) {
-
-        if (stuffed() && !isSelf) {
-            return noRoute;
-        }
+    public RouteInfo canRouteItem(ItemStack anItem) {
         int[] coords;
         int stackSizeLeft;
         ItemStack curItem;
         for (byte i = internalSideCounter; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            if (neighborTypes[i] == NeighborTypes.TILE && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
+            if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
                 coords = BlockHelper.getAdjacentCoordinatesForSide(x(), y(), z(), i);
                 curItem = anItem.copy();
-                curItem.stackSize = Math.min(Math.min(maxTransferSize, moveStackSize[i]), curItem.stackSize);
-                stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
-                stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
-                if (stackSizeLeft < anItem.stackSize) {
-                    tickInternalSideCounter(i + 1);
-                    return new routeInfo(stackSizeLeft, i);
+                curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
+                if (curItem.stackSize == 0) {
+                    stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
+                    stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
+                    if (stackSizeLeft < anItem.stackSize) {
+                        tickInternalSideCounter(i + 1);
+                        return new RouteInfo(stackSizeLeft, i);
+                    }
                 }
             }
         }
         for (byte i = 0; i < internalSideCounter; i++) {
-            if (neighborTypes[i] == NeighborTypes.TILE && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
+            if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
                 coords = BlockHelper.getAdjacentCoordinatesForSide(x(), y(), z(), i);
                 curItem = anItem.copy();
-                curItem.stackSize = Math.min(Math.min(maxTransferSize, moveStackSize[i]), curItem.stackSize);
-                stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, anItem.copy());
-                stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
-                if (stackSizeLeft < anItem.stackSize) {
-                    tickInternalSideCounter(i + 1);
-                    return new routeInfo(stackSizeLeft, i);
+                curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
+                if (curItem.stackSize == 0) {
+                    stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
+                    stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
+                    if (stackSizeLeft < anItem.stackSize) {
+                        tickInternalSideCounter(i + 1);
+                        return new RouteInfo(stackSizeLeft, i);
+                    }
                 }
             }
         }
@@ -483,5 +496,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
     private boolean itemPassesFiltering(byte i, ItemStack anItem) {
         return true;
+    }
+
+    public int getMoveStackSize(byte side) {
+        return 64;
     }
 }

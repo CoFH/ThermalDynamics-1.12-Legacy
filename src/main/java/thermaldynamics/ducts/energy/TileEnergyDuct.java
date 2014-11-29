@@ -92,7 +92,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         int usedPower = 0;
 
         for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
-            if (this.neighborTypes[i] == NeighborTypes.TILE && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+            if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 
                 if (cache[i] != null) {
 
@@ -108,7 +108,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         }
 
         for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
-            if (this.neighborTypes[i] == NeighborTypes.TILE && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+            if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
                 if (cache[i] != null) {
                     if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
                         usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);

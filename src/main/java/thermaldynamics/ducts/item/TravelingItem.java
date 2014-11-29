@@ -8,13 +8,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.core.TickHandlerClient;
+import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
 import thermalexpansion.util.Utils;
 
 import static thermaldynamics.block.TileMultiBlock.ConnectionTypes;
 import static thermaldynamics.block.TileMultiBlock.NeighborTypes;
-import static thermaldynamics.ducts.item.TileItemDuct.routeInfo;
 
 public class TravelingItem {
 
@@ -38,6 +38,10 @@ public class TravelingItem {
     public boolean reRoute = false;
 
     public boolean shouldDie = false;
+
+    public TravelingItem(ItemStack theItem, IMultiBlock start, Route itemPath, byte oldDirection) {
+        this(theItem, start.x(), start.y(), start.z(), itemPath, oldDirection);
+    }
 
     public TravelingItem(ItemStack theItem, int xCoord, int yCoord, int zCoord, Route itemPath, byte oldDirection) {
         progress = 0;
@@ -94,7 +98,7 @@ public class TravelingItem {
                     }
                 }
             }
-        } else if (homeTile.neighborTypes[direction] == NeighborTypes.TILE && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
+        } else if (homeTile.neighborTypes[direction] == NeighborTypes.OUTPUT && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
 
             if (homeTile.cache[direction] != null) {
                 stack.stackSize = Utils.addToInventory(homeTile.getCachedTileEntity(direction), direction, stack);
@@ -107,7 +111,7 @@ public class TravelingItem {
             } else {
                 bounceItem(homeTile);
             }
-        } else if (homeTile.neighborTypes[direction] == NeighborTypes.SERVO) {
+        } else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT) {
             if (myPath.pathPos >= myPath.pathWeight && goingToStuff) {
                 if (homeTile.canStuffItem()) {
                     goingToStuff = false;
@@ -127,12 +131,12 @@ public class TravelingItem {
 
         RouteCache routes = homeTile.getCache();
 
-        routeInfo curInfo;
+        TileItemDuct.RouteInfo curInfo;
 
         if (hasDest) {
             for (Route aRoute : routes.outputRoutes) {
                 if (aRoute.endPoint.isNode() && aRoute.endPoint.x() == destX && aRoute.endPoint.y() == destY && aRoute.endPoint.z() == destZ) {
-                    curInfo = aRoute.endPoint.canRouteItem(stack, aRoute.pathWeight == 0, 64);
+                    curInfo = aRoute.endPoint.canRouteItem(stack);
 
                     if (curInfo.canRoute) {
                         myPath = aRoute.copy();
@@ -148,9 +152,7 @@ public class TravelingItem {
         if (!hasDest || (!mustGoToDest && hasDest)) {
             for (Route aRoute : routes.outputRoutes) {
                 if (aRoute.endPoint.isNode()) {
-                    curInfo = aRoute.endPoint.canRouteItem(stack, aRoute.pathWeight == 0, 64
-                            //        aRoute.endPoint.moveStackSize[aRoute.getLastSide()]
-                    );
+                    curInfo = aRoute.endPoint.canRouteItem(stack);
                     if (curInfo.canRoute) {
                         myPath = aRoute.copy();
                         myPath.pathDirections.add(curInfo.side);

@@ -31,7 +31,7 @@ public class FilterBase extends Attachment {
 
     @Override
     public TileMultiBlock.NeighborTypes getNeighbourType() {
-        return TileMultiBlock.NeighborTypes.TILE;
+        return TileMultiBlock.NeighborTypes.OUTPUT;
     }
 
     @Override

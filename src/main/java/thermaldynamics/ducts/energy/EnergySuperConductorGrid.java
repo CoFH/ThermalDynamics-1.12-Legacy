@@ -78,7 +78,7 @@ public class EnergySuperConductorGrid extends EnergyGrid {
     public int sendEnergytoTile(TileEnergyDuct dest, int curSent, int maxSent, int toDistribute) {
 
         for (int i = 0; i < 6 && curSent < maxSent; i++) {
-            if (dest.neighborTypes[i] == TileMultiBlock.NeighborTypes.TILE) {
+            if (dest.neighborTypes[i] == TileMultiBlock.NeighborTypes.OUTPUT) {
                 if (dest.cache[i] != null) {
                     curSent += dest.cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], Math.min(toDistribute, maxSent - curSent), false);
                 }
