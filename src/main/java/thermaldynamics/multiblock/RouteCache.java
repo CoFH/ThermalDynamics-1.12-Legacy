@@ -2,14 +2,13 @@ package thermaldynamics.multiblock;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.debughelper.DebugHelper;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 public class RouteCache {
-    public final IMultiBlockRoute origin;
+    public IMultiBlockRoute origin;
     public LinkedList<Route> outputRoutes;
     public LinkedList<Route> stuffableRoutes;
     public HashSet<IMultiBlockRoute> visited;
@@ -17,6 +16,7 @@ public class RouteCache {
     private LinkedList<Route> validRoutes;
     public int maxPathLength;
     private boolean isFinishedGenerating;
+    public boolean invalid = false;
 
     public RouteCache(IMultiBlockRoute origin) {
         this(origin, origin.getMaxRange());
@@ -45,10 +45,10 @@ public class RouteCache {
         if (origin.isOutput()) outputvisited.add(origin);
     }
 
-    public void generateCache() {
-        DebugHelper.startTimer();
+    public synchronized void generateCache() {
+
         while (processStep()) ;
-        DebugHelper.stopTimer("Caches Generated");
+
     }
 
     public boolean processStep() {
@@ -74,6 +74,9 @@ public class RouteCache {
 
 
     private void finished() {
+        visited.clear();
+        outputvisited.clear();
+        validRoutes.clear();
         isFinishedGenerating = true;
         Collections.sort(outputRoutes);
     }
@@ -140,5 +143,12 @@ public class RouteCache {
     public void reset() {
         isFinishedGenerating = false;
         init();
+    }
+
+    public void invalidate() {
+        invalid = true;
+        outputRoutes.clear();
+        stuffableRoutes.clear();
+        origin = null;
     }
 }

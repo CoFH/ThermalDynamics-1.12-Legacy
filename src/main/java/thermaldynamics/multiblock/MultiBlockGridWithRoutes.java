@@ -47,8 +47,11 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 
     @Override
     public void onMajorGridChange() {
-        if (!routeCacheMap.isEmpty())
+        if (!routeCacheMap.isEmpty()) {
+            for (RouteCache routeCache : routeCacheMap.values())
+                routeCache.invalidate();
             routeCacheMap.clear();
+        }
 
         if (!calculatingRoutes.isEmpty())
             calculatingRoutes.clear();
@@ -82,7 +85,7 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
         return cache;
     }
 
-    public LinkedList<Route> getRoutesFromOutput(IMultiBlockRoute start) {
+    public RouteCache getRoutesFromOutput(IMultiBlockRoute start) {
         RouteCache cache = routeCacheMap.get(start);
         if (cache == null) {
             cache = new RouteCache(start);
@@ -93,7 +96,7 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
             cache.generateCache();
         }
 
-        return cache.outputRoutes;
+        return cache;
     }
 
 }
