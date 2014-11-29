@@ -39,7 +39,7 @@ public class CommandThermalDebug extends CommandBase {
 
         if ("grids".equals(args[0])) {
             DebugTickHandler.showParticles = !DebugTickHandler.showParticles;
-        } else if ("generate".equals(args[0]) && args.length == 1) {
+        } else if ("generate".equals(args[0]) && args.length == 2) {
             if (!(p_71515_1_ instanceof EntityPlayerMP))
                 return;
 
@@ -63,7 +63,7 @@ public class CommandThermalDebug extends CommandBase {
                 if (rand.nextInt(20) == 0)
                     positions.add(pos.copy());
 
-                world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct, 0, 3);
+                world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[0], 0, 3);
 
                 pos.getTileEntity(world, TileMultiBlock.class).tilePlaced();
 
@@ -74,7 +74,7 @@ public class CommandThermalDebug extends CommandBase {
             }
 
             for (BlockPosition p : positions) {
-                world.setBlock(p.x, p.y + 1, p.z, Blocks.chest, 0, 3);
+//                world.setBlock(p.x, p.y + 1, p.z, Blocks.chest, 0, 3);
             }
         }
     }
