@@ -18,9 +18,10 @@ public class TDCrafting {
 
 
     public static void loadRecipes() {
-        GameRegistry.addRecipe(new ShapedOreRecipe(Ducts.ENERGY_BASIC.itemStack, "RRR", "IGI", "RRR", 'I', "ingotLead", 'G', "blockGlass", 'R', "dustRedstone"));
+        //Energy
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ENERGY_BASIC.itemStack, 6), "RRR", "IGI", "RRR", 'I', "ingotLead", 'G', "blockGlass", 'R', "dustRedstone"));
 
-        PulverizerManager.addRecipe(1600, ItemHelper.cloneStack(Ducts.ENERGY_BASIC.itemStack, 6), new ItemStack(Items.redstone), ItemHelper.cloneStack(TFItems.nuggetLead, 3), 100);
+        PulverizerManager.addRecipe(1600, Ducts.ENERGY_BASIC.itemStack, new ItemStack(Items.redstone), ItemHelper.cloneStack(TFItems.nuggetLead, 3), 100);
 
         GameRegistry.addRecipe(new ShapelessOreRecipe(Ducts.ENERGY_HARDENED.itemStack, Ducts.ENERGY_BASIC.itemStack, "dustRedstone", "nuggetInvar", "nuggetInvar", "nuggetInvar"));
         GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ENERGY_HARDENED.itemStack, 3), Ducts.ENERGY_BASIC.itemStack, Ducts.ENERGY_BASIC.itemStack, Ducts.ENERGY_BASIC.itemStack, "dustRedstone", "dustRedstone", "dustRedstone", "ingotInvar"));
@@ -42,7 +43,6 @@ public class TDCrafting {
 
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_HARDENED_OPAQUE.itemStack, 6), " I ", "IGI", " I ", 'I', "ingotInvar", 'G', "ingotLead"));
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_HARDENED_TRANS.itemStack, 6), " I ", "IGI", " I ", 'I', "ingotInvar", 'G', "blockGlassHardened"));
-
 
         // Servo
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.iron, "iPi", 'P', "pneumaticServo", 'i', "nuggetIron"));
