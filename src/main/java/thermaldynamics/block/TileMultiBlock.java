@@ -14,15 +14,20 @@ import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.commons.lang3.StringUtils;
 import thermaldynamics.core.TickHandler;
 import thermaldynamics.debughelper.DebugHelper;
+import thermaldynamics.ducts.Ducts;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -38,30 +43,22 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     }
 
     public static Cuboid6[] subSelection = new Cuboid6[12];
+    public static Cuboid6 selection;
 
     static {
+        genSelectionBoxes(subSelection, 0, 0.25, 0.2, 0.8);
+        genSelectionBoxes(subSelection, 6, 0.3, 0.3, 0.7);
+        selection = new Cuboid6(0.3, 0.3, 0.3, 0.7, 0.7, 0.7);
+    }
 
-        double min = 0.25;
-        double min2 = 0.2;
-        double max2 = 0.8;
 
-        subSelection[0] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
-        subSelection[1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
-        subSelection[2] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
-        subSelection[3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
-        subSelection[4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
-        subSelection[5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
-
-        min = 0.3;
-        min2 = 0.3;
-        max2 = 0.7;
-
-        subSelection[6] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
-        subSelection[7] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
-        subSelection[8] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
-        subSelection[9] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
-        subSelection[10] = new Cuboid6(0.0, min2, min2, min, max2, max2);
-        subSelection[11] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
+    private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
+        subSelection[i] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
+        subSelection[i + 1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
+        subSelection[i + 2] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
+        subSelection[i + 3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
+        subSelection[i + 4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
+        subSelection[i + 5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
     }
 
     public boolean isValid = true;
@@ -72,7 +69,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             NeighborTypes.NONE};
     public ConnectionTypes connectionTypes[] = {ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
             ConnectionTypes.NORMAL, ConnectionTypes.NORMAL};
-    public int internalSideCounter = 0;
+    public byte internalSideCounter = 0;
 
     public Attachment attachments[] = new Attachment[]{
             null, null, null, null, null, null
@@ -80,16 +77,22 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
 
-    public SubTileMultiBlock[] subTiles = null;
+    public static final SubTileMultiBlock[] blankSubTiles = {};
+    public SubTileMultiBlock[] subTiles = blankSubTiles;
     public long lastUpdateTime = -1;
     public int hashCode = 0;
 
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        if (ServerHelper.isServerWorld(worldObj) && myGrid != null) {
-            tileUnloading();
-            myGrid.removeBlock(this);
+        if (ServerHelper.isServerWorld(worldObj)) {
+            for (SubTileMultiBlock subTile : subTiles) subTile.onChunkUnload();
+
+
+            if (myGrid != null) {
+                tileUnloading();
+                myGrid.removeBlock(this);
+            }
         }
     }
 
@@ -97,26 +100,43 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     }
 
+    @Override
     public World world() {
         return getWorldObj();
+    }
+
+    @Override
+    public int x() {
+        return xCoord;
+    }
+
+    @Override
+    public int y() {
+        return yCoord;
+    }
+
+    @Override
+    public int z() {
+        return zCoord;
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
 
-        if (ServerHelper.isServerWorld(worldObj) && myGrid != null) myGrid.removeBlock(this);
+        if (ServerHelper.isServerWorld(worldObj)) {
+            for (SubTileMultiBlock subTile : subTiles) subTile.invalidate();
+            if (myGrid != null) myGrid.removeBlock(this);
+        }
     }
 
     @Override
     public void setInvalidForForming() {
-
         isValid = false;
     }
 
     @Override
     public void setValidForForming() {
-
         isValid = true;
     }
 
@@ -131,7 +151,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public MultiBlockGrid getGrid() {
-
         return myGrid;
     }
 
@@ -175,13 +194,17 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             neighborTypes[side] = NeighborTypes.NONE;
             neighborMultiBlocks[side] = null;
         }
+
+        for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
     }
 
     @Override
     public void tilePlaced() {
         onNeighborBlockChange();
-        if (ServerHelper.isServerWorld(worldObj))
+
+        if (ServerHelper.isServerWorld(worldObj)) {
             TickHandler.addMultiBlockToCalculate(this);
+        }
     }
 
     public boolean isStructureTile(TileEntity tile, byte side) {
@@ -197,6 +220,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
         if (myGrid != null) myGrid.destroyAndRecreate();
+        for (SubTileMultiBlock subTile : subTiles) subTile.destroyAndRecreate();
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         return true;
     }
@@ -214,6 +238,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
         if (myGrid != null) myGrid.destroyAndRecreate();
+        for (SubTileMultiBlock subTile : subTiles) subTile.destroyAndRecreate();
         return true;
     }
 
@@ -225,7 +250,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         TileEntity theTile;
         boolean wasNode = isNode;
         isNode = false;
+        boolean wasInput = isInput;
+        isInput = false;
+        boolean wasOutput = isOutput;
+        isOutput = false;
+
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+            clearCache(i);
             if (attachments[i] != null) {
                 attachments[i].onNeighbourChange();
 
@@ -242,7 +273,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                     neighborMultiBlocks[i] = null;
                 connectionTypes[i] = ConnectionTypes.BLOCKED;
                 isNode = attachments[i].isNode();
-
+                isInput = neighborTypes[i] == NeighborTypes.SERVO;
+                isOutput = neighborTypes[i] == NeighborTypes.TILE;
                 continue;
             }
 
@@ -257,10 +289,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             } else if (isSignificantTile(theTile, i)) {
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.TILE;
+                cacheImportant(theTile, i);
                 isNode = true;
+                isOutput = true;
             } else if (isStructureTile(theTile, i)) {
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.STRUCTURE;
+                cacheStructural(theTile, i);
             } else {
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.NONE;
@@ -269,8 +304,17 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         if (wasNode != isNode && myGrid != null) {
             myGrid.addBlock(this);
+        } else if ((isOutput != wasOutput || isInput != wasInput) && myGrid != null) {
+            myGrid.onMajorGridChange();
         }
+
+        for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
+
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void cacheStructural(TileEntity theTile, int i) {
+
     }
 
     @Override
@@ -278,32 +322,44 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime())
             return;
 
-        int side = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
+        int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
-        if (attachments[side] != null) {
-            attachments[side].onNeighbourChange();
-            neighborTypes[side] = attachments[side].getNeighbourType();
-            if (neighborTypes[side] == NeighborTypes.MULTIBLOCK) {
+        clearCache(i);
+
+        if (attachments[i] != null) {
+            attachments[i].onNeighbourChange();
+            neighborTypes[i] = attachments[i].getNeighbourType();
+            if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
                 TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-                neighborMultiBlocks[side] = isConnectable(theTile, side) && isUnblocked(theTile, side) ? (IMultiBlock) theTile : null;
+                neighborMultiBlocks[i] = isConnectable(theTile, i) && isUnblocked(theTile, i) ? (IMultiBlock) theTile : null;
             } else {
-                neighborMultiBlocks[side] = null;
+                neighborMultiBlocks[i] = null;
             }
-            connectionTypes[side] = ConnectionTypes.BLOCKED;
-
+            connectionTypes[i] = ConnectionTypes.BLOCKED;
+            isInput = neighborTypes[i] == NeighborTypes.SERVO;
+            isOutput = neighborTypes[i] == NeighborTypes.TILE;
         } else {
             TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-            if (isConnectable(theTile, side) && isUnblocked(theTile, side)) {
-                neighborMultiBlocks[side] = (IMultiBlock) theTile;
-                neighborTypes[side] = NeighborTypes.MULTIBLOCK;
-            } else if (isSignificantTile(theTile, side)) {
-                neighborMultiBlocks[side] = null;
-                neighborTypes[side] = NeighborTypes.TILE;
+            if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+                neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+            } else if (isSignificantTile(theTile, i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.TILE;
+                cacheImportant(theTile, i);
+                isOutput = true;
+            } else if (isStructureTile(theTile, (byte) i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.STRUCTURE;
+                cacheStructural(theTile, i);
             } else {
-                neighborMultiBlocks[side] = null;
-                neighborTypes[side] = NeighborTypes.NONE;
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.NONE;
             }
         }
+
+        for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
+
         boolean wasNode = isNode;
         checkIsNode();
         if (wasNode != isNode && myGrid != null) {
@@ -325,13 +381,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public void tickInternalSideCounter(int start) {
         for (int a = start; a < neighborTypes.length; a++) {
             if (neighborTypes[a] == NeighborTypes.TILE && connectionTypes[a] == ConnectionTypes.NORMAL) {
-                internalSideCounter = a;
+                internalSideCounter = (byte) a;
                 return;
             }
         }
         for (int a = 0; a < start; a++) {
             if (neighborTypes[a] == NeighborTypes.TILE && connectionTypes[a] == ConnectionTypes.NORMAL) {
-                internalSideCounter = a;
+                internalSideCounter = (byte) a;
                 return;
             }
         }
@@ -375,6 +431,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public void tickMultiBlock() {
         onNeighborBlockChange();
         formGrid();
+
+        for (SubTileMultiBlock subTile : subTiles) {
+            subTile.onNeighbourChange();
+            subTile.formGrid();
+        }
     }
 
     public void formGrid() {
@@ -430,10 +491,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             connectionTypes[i] = ConnectionTypes.values()[nbt.getByte("conTypes" + i)];
         }
 
-        if (subTiles != null)
-            for (int i = 0; i < this.subTiles.length; i++) {
-                this.subTiles[i].readFromNBT(nbt.getCompoundTag("subTile" + i));
-            }
+
+        for (int i = 0; i < this.subTiles.length; i++) {
+            this.subTiles[i].readFromNBT(nbt.getCompoundTag("subTile" + i));
+        }
 
         TickHandler.addMultiBlockToCalculate(this);
     }
@@ -453,18 +514,21 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             nbt.setByte("conTypes" + i, (byte) connectionTypes[i].ordinal());
         }
 
-        if (subTiles != null)
-            for (int i = 0; i < this.subTiles.length; i++) {
-                SubTileMultiBlock a = this.subTiles[i];
-                NBTTagCompound tag = new NBTTagCompound();
-                a.writeToNBT(tag);
-                nbt.setTag("subTile" + i, tag);
-            }
+        for (int i = 0; i < this.subTiles.length; i++) {
+            SubTileMultiBlock a = this.subTiles[i];
+            NBTTagCompound tag = new NBTTagCompound();
+            a.writeToNBT(tag);
+            nbt.setTag("subTile" + i, tag);
+        }
     }
 
     @Override
     public boolean openGui(EntityPlayer player) {
-        int subHit = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord).subHit;
+        MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+        if (movingObjectPosition == null)
+            return false;
+
+        int subHit = movingObjectPosition.subHit;
 
         if (subHit > 13 && subHit < 20) {
             return attachments[subHit - 14].openGui(player);
@@ -472,13 +536,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return super.openGui(player);
     }
 
+    Ducts duct = null;
+
+    public Ducts getDuctType() {
+        if (duct == null) duct = Ducts.getDuct(((BlockDuct) getBlockType()).offset + getBlockMetadata());
+        return duct;
+    }
+
     public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
-
-        double minX, minY, minZ;
-        double maxX, maxY, maxZ;
-        minX = minY = minZ = 0.3;
-        maxX = maxY = maxZ = 0.7;
-
         Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
 
 
@@ -500,12 +565,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
                     // Add STRUCTURE sides
                 else if (neighborTypes[i] == NeighborTypes.STRUCTURE)
-                    cuboids.add(new IndexedCuboid6(i + 20, subSelection[i + 6].copy().add(pos)));
+                    cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy().add(pos)));
 
             }
         }
 
-        cuboids.add(new IndexedCuboid6(13, new Cuboid6(minX, minY, minZ, maxX, maxY, maxZ).add(pos)));
+        cuboids.add(new IndexedCuboid6(13, selection.copy().add(pos)));
     }
 
     @Override
@@ -536,9 +601,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public boolean onWrench(EntityPlayer player, int hitSide) {
 
         if (Utils.isHoldingUsableWrench(player, xCoord, yCoord, zCoord)) {
-            int subHit = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord).subHit;
-            if (subHit > 5 && subHit <= 13) {
-                int i = subHit == 13 ? hitSide : subHit - 6;
+            MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+            if (rayTrace == null)
+                return false;
+
+            int subHit = rayTrace.subHit;
+            if (subHit > 0 && subHit <= 13) {
+                int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
 
                 onNeighborBlockChange();
 
@@ -603,13 +672,17 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         if (b == 0) {
             handleInfoPacket(payload, isServer, thePlayer);
         } else if (b >= 1 && b <= 6) {
-            attachments[b-1].handleInfoPacket(payload, isServer, thePlayer);
+            attachments[b - 1].handleInfoPacket(payload, isServer, thePlayer);
         }
     }
 
     public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
     }
+
+    public abstract void cacheImportant(TileEntity tile, int side);
+
+    public abstract void clearCache(int side);
 
     /* ITilePacketHandler */
     @Override
@@ -641,11 +714,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         }
     }
 
+    public boolean isOutput = false;
+    public boolean isInput = false;
+
     public BlockDuct.ConnectionTypes getConnectionType(int side) {
         if (neighborTypes[side] == NeighborTypes.STRUCTURE)
             return BlockDuct.ConnectionTypes.STRUCTURE;
 
-        if (neighborTypes[side] == NeighborTypes.DUCT_ATTACHMENT)
+        if (neighborTypes[side] == NeighborTypes.SERVO)
             return BlockDuct.ConnectionTypes.DUCT;
 
         if (neighborTypes[side] == NeighborTypes.NONE || connectionTypes[side] == ConnectionTypes.BLOCKED || connectionTypes[side] == ConnectionTypes.REJECTED)
@@ -667,16 +743,26 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return false;
     }
 
-    public static enum CacheTypes {
-        NOT_SET, IMPORTANT, IMPORTANT2
+    public boolean renderAdditional(int renderType, int[] connections, int pass) {
+        return false;
+    }
+
+    public boolean isSubNode() {
+        return false;
     }
 
     public static enum NeighborTypes {
-        NONE, MULTIBLOCK, TILE, DUCT_ATTACHMENT, STRUCTURE
+        NONE, MULTIBLOCK, TILE, SERVO, STRUCTURE, DUCT_ATTACHMENT
     }
 
     public static enum ConnectionTypes {
-        NORMAL, ONEWAY, REJECTED, BLOCKED;
+        NORMAL(true), ONEWAY(true), REJECTED(false), BLOCKED(false);
+
+        ConnectionTypes(boolean allowTransfer) {
+            this.allowTransfer = allowTransfer;
+        }
+
+        public final boolean allowTransfer;
 
         public ConnectionTypes next() {
             if (this == NORMAL) {
@@ -686,4 +772,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+    }
 }

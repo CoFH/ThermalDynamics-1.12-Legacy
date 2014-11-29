@@ -23,6 +23,16 @@ public class TileStructuralDuct extends TileMultiBlock {
     }
 
     @Override
+    public void cacheImportant(TileEntity tile, int side) {
+
+    }
+
+    @Override
+    public void clearCache(int side) {
+
+    }
+
+    @Override
     public MultiBlockGrid getNewGrid() {
         return null;
     }
