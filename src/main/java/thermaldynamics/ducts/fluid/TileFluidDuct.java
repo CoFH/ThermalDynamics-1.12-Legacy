@@ -3,7 +3,6 @@ package thermaldynamics.ducts.fluid;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,21 +23,17 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
         //guiId = ThermalDynamics.proxy.registerGui("FluidFilter", "conduit", "TEBase", null, true);
     }
 
-    int type = 0;
-    boolean opaque;
+
+    IFluidHandler[] cache = new IFluidHandler[6];
 
     public TileFluidDuct() {
 
     }
 
-    public TileFluidDuct(int type, boolean opaque) {
-        this.type = type;
-        this.opaque = opaque;
-    }
 
     @Override
     public MultiBlockGrid getNewGrid() {
-        return new FluidGrid(worldObj, type);
+        return new FluidGrid(worldObj, getDuctType().type);
     }
 
 
@@ -100,15 +95,13 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
         if (neighborTypes[bSide] == NeighborTypes.TILE && connectionTypes[bSide] != ConnectionTypes.BLOCKED) {
 
-            TileEntity theTile = BlockHelper.getAdjacentTileEntity(this, bSide);
-
-            if (theTile != null && theTile instanceof IFluidHandler && fluidGrid.myTank.getFluid() != null) {
+            if (cache[bSide] != null && fluidGrid.myTank.getFluid() != null) {
                 FluidStack tempFluid = fluidGrid.myTank.getFluid().copy();
                 tempFluid.amount = available;
-                int amountSent = ((IFluidHandler) theTile).fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, false);
+                int amountSent = cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, false);
 
                 if (amountSent > 0) {
-                    return ((IFluidHandler) theTile).fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], fluidGrid.myTank.drain(amountSent, true), true);
+                    return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], fluidGrid.myTank.drain(amountSent, true), true);
                 }
             }
         }
@@ -117,7 +110,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     @Override
     public int getLightValue() {
-        if (opaque) {
+        if (getDuctType().opaque) {
             return 0;
         }
         if (ServerHelper.isClientWorld(world())) {
@@ -131,18 +124,18 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
     }
 
     public void updateFluid() {
-        if (!opaque) {
+        if (!getDuctType().opaque) {
             sendRenderPacket();
         }
     }
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return !opaque && myRenderFluid != null && super.shouldRenderInPass(pass);
+        return !getDuctType().opaque && myRenderFluid != null && super.shouldRenderInPass(pass);
     }
 
     public boolean isConnectable(TileEntity theTile, int side) {
-        return theTile instanceof TileFluidDuct && ((TileFluidDuct) theTile).type == type
+        return theTile instanceof TileFluidDuct && ((TileFluidDuct) theTile).getDuctType().type == getDuctType().type
                 && FluidHelper.isFluidEqualOrNull(((TileFluidDuct) theTile).getConnectionFluid(), this.getConnectionFluid());
     }
 
@@ -164,6 +157,16 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
             byte b = payload.getByte();
             handleTileInfoPacketType(payload, b);
         }
+    }
+
+    @Override
+    public void cacheImportant(TileEntity tile, int side) {
+        cache[side] = (IFluidHandler) tile;
+    }
+
+    @Override
+    public void clearCache(int side) {
+        cache[side] = null;
     }
 
     public void handleTileInfoPacketType(PacketCoFHBase payload, byte b) {
@@ -211,7 +214,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
     public void sendRenderPacket() {
         if (fluidGrid == null)
             return;
-        if (!opaque) {
+        if (!getDuctType().opaque) {
             PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
             myPayload.addByte(0);
             myPayload.addByte(TileFluidPackets.UPDATE_RENDER);
@@ -270,8 +273,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setByte("type", (byte) type);
-        nbt.setBoolean("opaque", opaque);
+
         if (fluidGrid != null && fluidGrid.hasValidFluid()) {
 
             mySavedFluid = fluidGrid.getNodeShare(this);
@@ -289,8 +291,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        type = nbt.getByte("type");
-        opaque = nbt.getBoolean("opaque");
+
         fluidForGrid = FluidStack.loadFluidStackFromNBT(nbt);
         if (nbt.hasKey("ConnFluid")) {
             myConnectionFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("ConnFluid"));

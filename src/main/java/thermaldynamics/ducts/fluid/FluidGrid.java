@@ -19,7 +19,7 @@ public class FluidGrid extends MultiBlockGrid {
     FluidStack myRenderFluid;
 
 
-    private int type;
+    public int type;
 
     public FluidGrid(World world, int type) {
         super(world);
@@ -48,11 +48,11 @@ public class FluidGrid extends MultiBlockGrid {
     }
 
     public float getThroughPutModifier() {
-        return type == 0 ? 0.5F : 1F;
+        return 1F;
     }
 
     public int getMaxFluidPerConduit() {
-        return type == 0 ? 1000 : 3000;
+        return 1000;
     }
 
     @Override
@@ -65,9 +65,11 @@ public class FluidGrid extends MultiBlockGrid {
 
     @Override
     public boolean canAddBlock(IMultiBlock aBlock) {
-        return aBlock instanceof TileFluidDuct && ((TileFluidDuct) aBlock).type == type
+        return aBlock instanceof TileFluidDuct && ((TileFluidDuct) aBlock).getDuctType().type == type
                 && FluidHelper.isFluidEqualOrNull(((TileFluidDuct) aBlock).getConnectionFluid(), myTank.getFluid());
     }
+
+    public boolean doesPassiveTicking = false;
 
     @Override
     public void tickGrid() {
@@ -94,17 +96,18 @@ public class FluidGrid extends MultiBlockGrid {
                 if (!node.tickPass(1))
                     break;
 
-        if (!nodeSet.isEmpty())
-            for (IMultiBlock node : nodeSet)
-                if (!node.tickPass(2))
-                    break;
+        if (doesPassiveTicking) {
+            if (!nodeSet.isEmpty())
+                for (IMultiBlock node : nodeSet)
+                    if (!node.tickPass(2))
+                        break;
 
-        if (!idleSet.isEmpty())
-            for (IMultiBlock node : idleSet) {
-                if (!node.tickPass(2))
-                    break;
-            }
-
+            if (!idleSet.isEmpty())
+                for (IMultiBlock node : idleSet) {
+                    if (!node.tickPass(2))
+                        break;
+                }
+        }
     }
 
     @Override

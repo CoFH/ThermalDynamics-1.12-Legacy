@@ -1,6 +1,8 @@
 package thermaldynamics.ducts.fluid;
 
 import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketHandler;
+import cofh.core.network.PacketTileInfo;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
@@ -13,15 +15,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.*;
 import thermaldynamics.block.Attachment;
+import thermaldynamics.multiblock.MultiBlockGrid;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class TileFluidDuctFragile extends TileFluidDuct {
-    public float internalTemperature = 295;
-    final int freezingTemperature = 274;
-    final int meltingTemperature = 800;
+    public static final int roomTemperature = FluidRegistry.WATER.getTemperature();
+    public static final int freezingTemperature = 274;
+    public static final int meltingTemperature = 800;
+
+    public float internalTemperature = roomTemperature;
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
@@ -35,10 +40,35 @@ public class TileFluidDuctFragile extends TileFluidDuct {
         internalTemperature = nbt.getFloat("temp");
     }
 
+    public void updateFluid() {
+        if (!getDuctType().opaque) {
+            sendRenderPacket();
+        } else
+            sendOpaqueTempPacket();
+    }
+
+    int prevTemperature = 0;
+
+    public void sendOpaqueTempPacket() {
+        if (fluidGrid == null)
+            return;
+
+        int temp = getTemperature(fluidGrid.getRenderFluid());
+        if (temp != prevTemperature) {
+            temp = prevTemperature;
+            PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
+            myPayload.addByte(0);
+            myPayload.addByte(TileFluidPackets.TEMPERATURE);
+
+            myPayload.addInt(temp);
+            PacketHandler.sendToAllAround(myPayload, this);
+        }
+    }
+
     @Override
     public void handleTileInfoPacketType(PacketCoFHBase payload, byte b) {
         if (b == TileFluidPackets.TEMPERATURE) {
-            internalTemperature = payload.getFloat();
+            internalTemperature = payload.getInt();
         } else
             super.handleTileInfoPacketType(payload, b);
     }
@@ -47,24 +77,29 @@ public class TileFluidDuctFragile extends TileFluidDuct {
         super();
     }
 
-    public TileFluidDuctFragile(int type, boolean opaque) {
-        super(type, opaque);
+
+    @Override
+    public MultiBlockGrid getNewGrid() {
+        FluidGrid grid = new FluidGrid(worldObj, getDuctType().type);
+        grid.doesPassiveTicking = true;
+        return grid;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick() {
-        if (myRenderFluid != null && myRenderFluid.amount > 0) {
-            if (getTemperature(myRenderFluid) > meltingTemperature) {
-                List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
-                addTraceableCuboids(cuboids);
-                if (cuboids.size() == 0)
-                    return;
-                Random rand = worldObj.rand;
-                Cuboid6 box = cuboids.get(rand.nextInt(cuboids.size()));
-                Vector3 vec = (box.max.sub(box.min)).multiply(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()).add(box.min);
-                worldObj.spawnParticle("smoke", vec.x, vec.y, vec.z, 0, 0, 0);
-            }
+        if ((((myRenderFluid != null && myRenderFluid.amount > 0)) || getTemperature(myRenderFluid) > meltingTemperature)
+                || internalTemperature > meltingTemperature
+                ) {
+            List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
+            addTraceableCuboids(cuboids);
+            if (cuboids.size() == 0)
+                return;
+            Random rand = worldObj.rand;
+            Cuboid6 box = cuboids.get(rand.nextInt(cuboids.size()));
+            Vector3 vec = (box.max.sub(box.min)).multiply(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()).add(box.min);
+            worldObj.spawnParticle("smoke", vec.x, vec.y, vec.z, 0, 0, 0);
+
         }
         super.randomDisplayTick();
     }
@@ -78,7 +113,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
             int fluidTemp;
             fluidTemp = getTemperature(fluid);
 
-            internalTemperature = internalTemperature + (fluidTemp - internalTemperature) * 0.001F;
+            internalTemperature = internalTemperature + (fluidTemp - internalTemperature) * 0.01F;
 
             if (internalTemperature < freezingTemperature || internalTemperature > meltingTemperature) {
                 if (worldObj.rand.nextInt(20) == 0) {
@@ -86,10 +121,10 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
                     if (fluid != null && fluid.amount > 0) {
                         fluid = fluid.copy();
-                        if (fluid.amount < 100 || worldObj.rand.nextInt(20) == 0)
+                        if (fluid.amount < 100 || worldObj.rand.nextInt(5) == 0)
                             fluidGrid.myTank.setFluid(null);
                         else
-                            fluidGrid.myTank.drain(worldObj.rand.nextInt(fluid.amount), true);
+                            fluidGrid.myTank.drain(worldObj.rand.nextInt(fluid.amount), false);
                     }
 
                     breakAndSpill(fluid);
@@ -108,7 +143,8 @@ public class TileFluidDuctFragile extends TileFluidDuct {
                 return f.getTemperature(fluid);
         }
 
-        return 295;
+
+        return roomTemperature;
     }
 
     public void breakAndSpill(FluidStack fluidStack) {
@@ -135,7 +171,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
             Fluid fluid = fluidStack.getFluid();
             Block block = fluid.getBlock();
 
-            boolean fullBucket = fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
+            boolean fullBucket = fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME && worldObj.rand.nextInt(6) == 0;
 
             if ("water".equals(fluid.getName())) {
                 block = Blocks.flowing_water;
@@ -145,12 +181,12 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
             if (!"water".equals(fluid.getName()) || !worldObj.getBiomeGenForCoords(xCoord / 16, zCoord / 16).biomeName.toLowerCase().equals("hell")) {
                 if (block == Blocks.flowing_water || block == Blocks.flowing_lava) {
-                    worldObj.setBlock(xCoord, yCoord, zCoord, block, fullBucket ? 0 : 6, 3);
+                    worldObj.setBlock(xCoord, yCoord, zCoord, block, fullBucket ? 0 : (worldObj.rand.nextInt(6) + 1), 3);
                     worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, block, worldObj.rand.nextInt(30) + 10);
                 } else if (block instanceof BlockFluidClassic) {
                     worldObj.setBlock(xCoord, yCoord, zCoord, block, fullBucket ? 0 : 1, 3);
                     worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, block, worldObj.rand.nextInt(30) + 10);
-                    //block.updateTick(worldObj, xCoord, yCoord, zCoord, worldObj.rand);
+                    //block.updateTick(world    Obj, xCoord, yCoord, zCoord, worldObj.rand);
                 } else if (block instanceof BlockFluidFinite && fullBucket) {
                     worldObj.setBlock(xCoord, yCoord, zCoord, block, 0, 3);
                     worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, block, worldObj.rand.nextInt(30) + 10);
