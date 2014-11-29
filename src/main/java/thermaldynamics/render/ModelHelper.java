@@ -1,5 +1,7 @@
 package thermaldynamics.render;
 
+import cofh.lib.render.RenderHelper;
+import cofh.repack.codechicken.lib.lighting.LightModel;
 import cofh.repack.codechicken.lib.render.BlockRenderer;
 import cofh.repack.codechicken.lib.render.CCModel;
 import cofh.repack.codechicken.lib.render.Vertex5;
@@ -46,22 +48,18 @@ public class ModelHelper {
 
     static int[] sideMasks = {3, 3, 12, 12, 48, 48};
 
-    public static LinkedList<Vertex5> addSideFaces(Cuboid6 bounds, int sideMask) {
-        LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
-
-        for (int side = 0; side < sideMask; side++) {
-            if ((sideMask & (1 << side)) == 0)
-                vecs.addAll(addSideFace(bounds, side));
+    public static void addSideFaces(LinkedList<Vertex5> vecs, Cuboid6 bounds, int sideMask) {
+        for (int s = 0; s < 6; s++) {
+            if ((sideMask & (1 << s)) == 0)
+                addSideFace(vecs, bounds, s);
         }
-        return vecs;
     }
 
-    public static LinkedList<Vertex5> addSideFace(Cuboid6 bounds, int side) {
-        LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
+    public static LinkedList<Vertex5> addSideFace(LinkedList<Vertex5> vecs, Cuboid6 bounds, int side) {
+
         face.loadCuboidFace(bounds.copy().add(Vector3.center), side);
         for (Vertex5 v : face.getVertices())
             vecs.add(new Vertex5(v.vec.copy().sub(Vector3.center), v.uv.copy()));
-
         return vecs;
     }
 
@@ -183,6 +181,7 @@ public class ModelHelper {
         }
     }
 
+
     public static class OctagonalTubeGen {
         double size;
         double innerSize;
@@ -243,13 +242,59 @@ public class ModelHelper {
             octoFace[5] = new Vector3(t, -0.5, s);
             octoFace[6] = new Vector3(-t, -0.5, s);
             octoFace[7] = new Vector3(-s, -0.5, t);
+        }
 
+        public CCModel generateSideFace() {
+            CCModel model = CCModel.newModel(7, 24);
 
+            model.verts[0] = toVertex5(octoFace[0].copy(), 0);
+            model.verts[1] = toVertex5(octoFace[1].copy(), 0);
+            model.verts[2] = toVertex5(octoFace[2].copy(), 0);
+            model.verts[3] = toVertex5(octoFace[3].copy(), 0);
+
+            model.verts[4] = toVertex5(octoFace[4].copy(), 0);
+            model.verts[5] = toVertex5(octoFace[5].copy(), 0);
+            model.verts[6] = toVertex5(octoFace[6].copy(), 0);
+            model.verts[7] = toVertex5(octoFace[7].copy(), 0);
+
+            model.verts[8] = toVertex5(octoFace[0].copy(), 0);
+            model.verts[9] = toVertex5(octoFace[3].copy(), 0);
+            model.verts[10] = toVertex5(octoFace[4].copy(), 0);
+            model.verts[11] = toVertex5(octoFace[7].copy(), 0);
+
+            for (int i = 0; i < 12; i++)
+                model.verts[i].vec.y = -0.5 * 0.99;
+
+            model.computeNormals(0, 12);
+
+            CCModel.generateBackface(model, 0, model, 12, 12);
+
+            return model;
+        }
+
+        public CCModel generateConnection() {
+            CCModel model = CCModel.newModel(7, 64);
+            double v = (size);
+
+            double o = 1.05;
+
+            for (int k = 0; k < 8; k++) {
+                model.verts[k * 4] = new Vertex5(octoFace[k].copy().multiply(o, 1, o), 0.5 - innerSize, 0);
+                model.verts[k * 4 + 1] = new Vertex5(octoFace[k].copy().multiply(o, 1, o).setSide(0, -v), 0.5 - innerSize, 0.5 - v);
+                model.verts[k * 4 + 2] = new Vertex5(octoFace[(k + 1) % 8].copy().multiply(o, 1, o).setSide(0, -v), 0.5 + innerSize, 0.5 - v);
+                model.verts[k * 4 + 3] = new Vertex5(octoFace[(k + 1) % 8].copy().multiply(o, 1, o), 0.5 + innerSize, 0);
+            }
+
+            model.computeNormals(0, 32);
+
+            CCModel.generateBackface(model, 0, model, 32, 32);
+
+            return model;
         }
 
 
         public CCModel[] generateModels() {
-            CCModel[] models = new CCModel[64];
+            CCModel[] models = new CCModel[64 + 12];
             for (int i = 0; i < 64; i++) {
                 LinkedList<Vertex5> v = generateIntersections(i);
                 v = simplifyModel(v);
@@ -263,8 +308,23 @@ public class ModelHelper {
 
                 CCModel.generateBackface(models[i], 0, models[i], n, n);
 
-                models[i].computeNormals();
+                models[i].computeNormals().shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
             }
+
+            models[64] = generateConnection();
+            for (int s = 0; s < 6; s++) {
+                if (s != 0)
+                    models[64 + s] = models[64].sidedCopy(0, s, Vector3.zero);
+                models[64 + s].shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+            }
+
+            models[70] = generateSideFace();
+            for (int s = 0; s < 6; s++) {
+                if (s != 0)
+                    models[70 + s] = models[70].sidedCopy(0, s, Vector3.zero);
+                models[70 + s].shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+            }
+
             return models;
         }
 
@@ -272,7 +332,7 @@ public class ModelHelper {
         public LinkedList<Vertex5> generateIntersections(int connections) {
             LinkedList<Vertex5> v = new LinkedList<Vertex5>();
 
-            LinkedList<Vertex5> center = addSideFace(new Cuboid6(-innerSize, -size, -innerSize, innerSize, size, innerSize), 0);
+            LinkedList<Vertex5> center = addSideFace(new LinkedList<Vertex5>(), new Cuboid6(-innerSize, -size, -innerSize, innerSize, size, innerSize), 0);
             LinkedList<Vertex5> arm = new LinkedList<Vertex5>();
 
             for (int k = 0; k < 8; k++) {
@@ -346,9 +406,9 @@ public class ModelHelper {
                                 Vector3 a3 = v1.copy().multiply(innerSize).add(v2.copy().multiply(size).add(v3.copy().multiply(size)));
 
                                 v.add(toVertex5(a1, i));
-                                v.add(toVertex5(a1, i));
                                 v.add(toVertex5(a3, i));
                                 v.add(toVertex5(a2, i));
+                                v.add(toVertex5(a1, i));
 
                             } else if (s == 0) {
                                 Vector3 a1 = v1.copy().multiply(size).add(v2.copy().multiply(innerSize).add(v3.copy().multiply(innerSize)));
@@ -356,9 +416,9 @@ public class ModelHelper {
                                 Vector3 a3 = v1.copy().multiply(innerSize).add(v2.copy().multiply(size).add(v3.copy().multiply(innerSize)));
 
                                 v.add(toVertex5(a1, 0));
-                                v.add(toVertex5(a1, 0));
                                 v.add(toVertex5(a3, 0));
                                 v.add(toVertex5(a2, 0));
+                                v.add(toVertex5(a1, 0));
                             } else if (s == 1) {
                                 Vector3 a1;
                                 Vector3 a2;
@@ -381,9 +441,7 @@ public class ModelHelper {
                                 v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(size).add(a3.copy().multiply(innerSize))), 0));
                                 v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(innerSize)).add(a3.copy().multiply(size)), 0));
                                 v.add(toVertex5(a1.copy().multiply(innerSize).add(a2.copy().multiply(innerSize)).add(a3.copy().multiply(size)), 0));
-                            }
-
-                            if (s == 2) {
+                            } else if (s == 2) {
                                 int dir;
                                 Vector3 a1;
                                 Vector3 a2;
@@ -410,8 +468,6 @@ public class ModelHelper {
                                 v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(size)).add(a3.copy().multiply(innerSize)), dir));
                                 v.add(toVertex5(a1.copy().multiply(innerSize).add(a2.copy().multiply(size)).add(a3.copy().multiply(size)), dir));
                                 v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(innerSize)).add(a3.copy().multiply(size)), dir));
-
-
                             }
                         }
                     }
@@ -419,6 +475,192 @@ public class ModelHelper {
             }
 
             return v;
+        }
+    }
+
+    static int[][] orthogonals = {
+            {6, 6, 4, 5, 2, 3},
+            {6, 6, 4, 5, 2, 3},
+            {4, 5, 6, 6, 0, 1},
+            {5, 4, 6, 6, 1, 0},
+            {2, 3, 0, 1, 6, 6},
+            {3, 2, 1, 0, 6, 6},
+    };
+
+    static int[][] edgePairs = {
+            {0, 2},
+            {0, 3},
+            {0, 4},
+            {0, 5},
+            {1, 2},
+            {1, 3},
+            {1, 4},
+            {1, 5},
+            {2, 4},
+            {2, 5},
+            {3, 4},
+            {3, 5},
+    };
+
+    static int[][] cornerTriplets = {
+            {0, 2, 4},
+            {0, 2, 5},
+            {0, 3, 4},
+            {0, 3, 5},
+            {1, 2, 4},
+            {1, 2, 5},
+            {1, 3, 4},
+            {1, 3, 5},
+    };
+
+    static int[][] orthogAxes = {
+            {2, 4},
+            {2, 4},
+            {0, 4},
+            {0, 4},
+            {0, 2},
+            {0, 2},
+    };
+
+
+    public static class SideTubeGen {
+        public double s;
+        public double s2;
+        public double h = 1;
+
+        public static CCModel[] standardTubes = new SideTubeGen(0.1875 + 1e-4).generateModels();
+        public static CCModel[] standardTubesInner = new SideTubeGen(0.1875 + 1e-4).contract(0.999).generateModels();
+
+
+        public SideTubeGen(double s) {
+            this(s, s + 0.125 / 2 * 1.5);
+        }
+
+        public SideTubeGen(double s, double s2) {
+            this.s = s;
+            this.s2 = s2;
+        }
+
+        public SideTubeGen contract(double h) {
+            this.h = h;
+            return this;
+        }
+
+        public Cuboid6 newCube(Vector3 min, Vector3 max) {
+            double temp;
+            if (min.x > max.x) {
+                temp = min.x;
+                min.x = max.x;
+                max.x = temp;
+            }
+            if (min.y > max.y) {
+                temp = min.y;
+                min.y = max.y;
+                max.y = temp;
+            }
+            if (min.z > max.z) {
+                temp = min.z;
+                min.z = max.z;
+                max.z = temp;
+            }
+
+            if (h < 1) {
+                Vector3 mid = min.copy().add(max).multiply(0.5);
+
+                min.x = min.x <= -0.5 || min.x >= 0.5 ? min.x : (min.x - mid.x) * h + mid.x;
+                min.y = min.y <= -0.5 || min.y >= 0.5 ? min.y : (min.y - mid.y) * h + mid.y;
+                min.z = min.z <= -0.5 || min.z >= 0.5 ? min.z : (min.z - mid.z) * h + mid.z;
+                max.x = max.x <= -0.5 || max.x >= 0.5 ? max.x : (max.x - mid.x) * h + mid.x;
+                max.y = max.y <= -0.5 || max.y >= 0.5 ? max.y : (max.y - mid.y) * h + mid.y;
+                max.z = max.z <= -0.5 || max.z >= 0.5 ? max.z : (max.z - mid.z) * h + mid.z;
+            }
+
+            return new Cuboid6(min, max);
+        }
+
+        private LinkedList<Vertex5> generateIntersections(int connections) {
+            LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
+            Vector3 a, b, c;
+            Cuboid6 cube;
+
+            boolean cullSides = true;
+
+            for (int i = 0; i < 6; i++) {
+                if ((connections & (1 << i)) != 0) {
+                    a = axes[i];
+                    b = axes[orthogAxes[i][0]];
+                    c = axes[orthogAxes[i][1]];
+
+                    for (int x = -1; x <= 1; x += 2) {
+                        for (int y = -1; y <= 1; y += 2) {
+                            cube = newCube(
+                                    a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)),
+                                    a.copy().multiply(0.5).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
+                            addSideFaces(vecs, cube, (1 << i) | (1 << (i ^ 1)));
+                        }
+                    }
+                }
+            }
+
+
+            for (int[] pair : edgePairs) {
+                if (cullSides || ((connections & (1 << pair[0])) != 0) == ((connections & (1 << pair[1])) != 0)) {
+                    a = axes[pair[0]];
+                    b = axes[pair[1]];
+                    int orthog = orthogonals[pair[0]][pair[1]];
+                    c = axes[orthog];
+                    cube = newCube(
+                            a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)),
+                            a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
+
+                    addSideFaces(vecs, cube, (1 << orthog) | (1 << (orthog ^ 1)));
+                }
+            }
+
+            for (int[] cr : cornerTriplets) {
+                a = axes[cr[0]];
+                b = axes[cr[1]];
+                c = axes[cr[2]];
+                cube = newCube(
+                        a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)),
+                        a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(s2)));
+
+                int m = ((1 << cr[0]) & connections) |
+                        ((1 << cr[1]) & connections) |
+                        ((1 << cr[2]) & connections);
+
+                if (cullSides || ((connections & (1 << cr[1])) != 0) == ((connections & (1 << cr[2])) != 0))
+                    m = m | (1 << (cr[0] ^ 1));
+                if (cullSides || ((connections & (1 << cr[0])) != 0) == ((connections & (1 << cr[2])) != 0))
+                    m = m | (1 << (cr[1] ^ 1));
+                if (cullSides || ((connections & (1 << cr[0])) != 0) == ((connections & (1 << cr[1])) != 0))
+                    m = m | (1 << (cr[2] ^ 1));
+
+                addSideFaces(vecs, cube, m);
+            }
+
+            return vecs;
+        }
+
+
+        public CCModel[] generateModels() {
+            CCModel[] models = new CCModel[64];
+            for (int i = 0; i < 64; i++) {
+                LinkedList<Vertex5> v = generateIntersections(i);
+//                v = simplifyModel(v);
+                int n = v.size();
+                models[i] = CCModel.newModel(7, n * 2);
+
+                for (int j = 0; j < n; j++) {
+                    Vertex5 nv = v.get(j);
+                    models[i].verts[j] = nv;
+                }
+
+                CCModel.generateBackface(models[i], 0, models[i], n, n);
+
+                models[i].computeNormals().shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+            }
+            return models;
         }
 
 
