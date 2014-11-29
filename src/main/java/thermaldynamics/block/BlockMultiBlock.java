@@ -20,9 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
-import thermaldynamics.ducts.servo.ServoBase;
-import thermaldynamics.ducts.servo.ServoFluid;
-import thermalexpansion.item.TEItems;
 import thermalexpansion.util.Utils;
 
 import java.util.LinkedList;
@@ -46,10 +43,16 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
         return (theTile != null && theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid()) || super.isSideSolid(world, x, y, z, side);
     }
 
+    public float getSize(World world, int x, int y, int z) {
+        return 0.3F;
+    }
+
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity) {
+        float min = getSize(world, x, y, z);
+        float max = 1 - min;
 
-        this.setBlockBounds(0.30F, 0.30F, 0.30F, 0.70F, 0.70F, 0.70F);
+        this.setBlockBounds(min, min, min, max, max, max);
         super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
         TileMultiBlock theTile = (TileMultiBlock) world.getTileEntity(x, y, z);
 
@@ -60,31 +63,31 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
             }
 
             if (theTile.neighborTypes[0] != NeighborTypes.NONE) {
-                this.setBlockBounds(0.30F, 0.0F, 0.30F, 0.70F, 0.70F, 0.70F);
+                this.setBlockBounds(min, 0.0F, min, max, max, max);
                 super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
             }
             if (theTile.neighborTypes[1] != NeighborTypes.NONE) {
-                this.setBlockBounds(0.30F, 0.30F, 0.30F, 0.70F, 1.0F, 0.70F);
+                this.setBlockBounds(min, min, min, max, 1.0F, max);
                 super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
             }
             if (theTile.neighborTypes[2] != NeighborTypes.NONE) {
-                this.setBlockBounds(0.30F, 0.30F, 0.0F, 0.70F, 0.70F, 0.70F);
+                this.setBlockBounds(min, min, 0.0F, max, max, max);
                 super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
             }
             if (theTile.neighborTypes[3] != NeighborTypes.NONE) {
-                this.setBlockBounds(0.30F, 0.30F, 0.30F, 0.70F, 0.70F, 1.0F);
+                this.setBlockBounds(min, min, min, max, max, 1.0F);
                 super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
             }
             if (theTile.neighborTypes[4] != NeighborTypes.NONE) {
-                this.setBlockBounds(0.0F, 0.30F, 0.30F, 0.70F, 0.70F, 0.70F);
+                this.setBlockBounds(0.0F, min, min, max, max, max);
                 super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
             }
             if (theTile.neighborTypes[5] != NeighborTypes.NONE) {
-                this.setBlockBounds(0.30F, 0.30F, 0.30F, 1.0F, 0.70F, 0.70F);
+                this.setBlockBounds(min, min, min, 1.0F, max, max);
                 super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
             }
         }
-        // this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        this.setBlockBounds(min, min, min, max, max, max);
     }
 
     @Override

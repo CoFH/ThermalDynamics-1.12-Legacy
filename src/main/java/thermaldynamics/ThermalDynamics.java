@@ -26,9 +26,11 @@ import thermaldynamics.core.TickHandler;
 import thermaldynamics.crafting.TDCrafting;
 import thermaldynamics.debughelper.CommandThermalDebug;
 import thermaldynamics.debughelper.DebugHelper;
+import thermaldynamics.ducts.Ducts;
 import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.gui.TDCreativeTab;
 import thermaldynamics.item.ItemServo;
+import thermaldynamics.util.ShaderHelper;
 import thermalfoundation.ThermalFoundation;
 
 import java.io.File;
@@ -82,12 +84,17 @@ public class ThermalDynamics extends BaseMod {
         config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDynamics.cfg")));
 
 
-        blockDuct[0] = addBlock(new BlockDuct(0));
-        blockDuct[1] = addBlock(new BlockDuct(1));
+        int numBlocks = (int) Math.ceil(Ducts.ductList.length / 16.0);
+        blockDuct = new BlockDuct[numBlocks];
+        for (int i = 0; i < numBlocks; i++) {
+            blockDuct[i] = addBlock(new BlockDuct(i));
+        }
         itemServo = addItem(new ItemServo());
 
         for (IInitializer initializer : initializerList)
             initializer.preInit();
+
+
 
         config.save();
     }
@@ -146,7 +153,7 @@ public class ThermalDynamics extends BaseMod {
         return version;
     }
 
-    public static Block[] blockDuct = new Block[2];
+    public static Block[] blockDuct;
     public static Item itemServo;
 
 
