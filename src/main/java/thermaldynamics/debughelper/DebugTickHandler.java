@@ -46,8 +46,7 @@ public class DebugTickHandler {
 
 
             for (IMultiBlock node : grid.nodeSet) {
-                TileMultiBlock tile = ((TileMultiBlock) node);
-                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", tile.xCoord + 0.5, tile.yCoord + 0.75, tile.zCoord + 0.5, r, g, b);
+                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", node.x() + 0.5, node.y() + 0.75, node.z() + 0.5, r, g, b);
             }
 
             r *= 0.8;
@@ -55,8 +54,7 @@ public class DebugTickHandler {
             b *= 0.8;
 
             for (IMultiBlock node : grid.idleSet) {
-                TileMultiBlock tile = ((TileMultiBlock) node);
-                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", tile.xCoord + 0.5, tile.yCoord + 0.75, tile.zCoord + 0.5, r, g, b);
+                Minecraft.getMinecraft().theWorld.spawnParticle("reddust", node.x() + 0.5, node.y() + 0.75, node.z() + 0.5, r, g, b);
             }
         }
 

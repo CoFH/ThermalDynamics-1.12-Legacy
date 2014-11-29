@@ -1,6 +1,8 @@
 package thermaldynamics.multiblock;
 
+import net.minecraft.item.ItemStack;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.ducts.item.TileItemDuct;
 
 public interface IMultiBlockRoute extends IMultiBlock {
     public abstract int getWeight();
@@ -18,11 +20,7 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public IMultiBlock getCachedTile(byte side);
 
-    public int x();
+    TileItemDuct.routeInfo canRouteItem(ItemStack stack, boolean b, int i);
 
-    public int y();
-
-    public int z();
-
-
+    byte getStuffedSide();
 }

@@ -6,6 +6,12 @@ public interface IMultiBlock {
 
     public World world();
 
+    public int x();
+
+    public int y();
+
+    public int z();
+
     public void setInvalidForForming();
 
     public void setValidForForming();
