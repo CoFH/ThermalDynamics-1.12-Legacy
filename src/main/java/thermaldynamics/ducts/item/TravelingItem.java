@@ -2,17 +2,19 @@ package thermaldynamics.ducts.item;
 
 
 import cofh.core.network.PacketCoFHBase;
+import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.multiblock.Route;
+import thermaldynamics.multiblock.RouteCache;
 import thermalexpansion.util.Utils;
 
 import static thermaldynamics.block.TileMultiBlock.ConnectionTypes;
 import static thermaldynamics.block.TileMultiBlock.NeighborTypes;
+import static thermaldynamics.ducts.item.TileItemDuct.routeInfo;
 
 public class TravelingItem {
 
@@ -83,15 +85,6 @@ public class TravelingItem {
             if (newHome != null) {
                 if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
                     homeTile.removeItem(this);
-                    if (myPath.pathPos == 0 && goingToStuff) {
-                        if (newHome.canStuffItem()) {
-                            goingToStuff = false;
-                            newHome.stuffItem(this);
-                        } else {
-                            bounceItem(newHome);
-                        }
-                        return;
-                    }
                     newHome.insertItem(this);
                     if (myPath.hasNextDirection()) {
                         oldDirection = direction;
@@ -102,18 +95,8 @@ public class TravelingItem {
                 }
             }
         } else if (homeTile.neighborTypes[direction] == NeighborTypes.TILE && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
-            if (myPath.pathPos >= myPath.pathWeight && goingToStuff) {
-                if (homeTile.canStuffItem()) {
-                    goingToStuff = false;
-                    homeTile.stuffItem(this);
-                    homeTile.removeItem(this);
-                } else {
-                    goingToStuff = false;
-                    bounceItem(homeTile);
-                }
-                return;
-            }
-            if (homeTile.cacheType[direction] != TileMultiBlock.CacheTypes.NOT_SET) {
+
+            if (homeTile.cache[direction] != null) {
                 stack.stackSize = Utils.addToInventory(homeTile.getCachedTileEntity(direction), direction, stack);
 
                 if (stack.stackSize > 0) {
@@ -124,72 +107,88 @@ public class TravelingItem {
             } else {
                 bounceItem(homeTile);
             }
+        } else if (homeTile.neighborTypes[direction] == NeighborTypes.SERVO) {
+            if (myPath.pathPos >= myPath.pathWeight && goingToStuff) {
+                if (homeTile.canStuffItem()) {
+                    goingToStuff = false;
+                    homeTile.stuffItem(this);
+                    homeTile.removeItem(this);
+                } else {
+                    goingToStuff = false;
+                    bounceItem(homeTile);
+                }
+            }
         } else {
             bounceItem(homeTile);
         }
     }
 
     public void bounceItem(TileItemDuct homeTile) {
-//
-//        homeTile.cacheRoutes();
-//        routeInfo curInfo;
-//
-//        if (hasDest) {
-//            for (Route aRoute : homeTile.validOutputs) {
-//                if (aRoute.endPoint.isNode && aRoute.endPoint.x() == destX && aRoute.endPoint.y() == destY && aRoute.endPoint.z() == destZ) {
-//                    curInfo = aRoute.endPoint.canRouteItem(stack, aRoute.pathWeight == 0, aRoute.endPoint.moveStackSize[aRoute.getLastSide()]);
-//
-//                    if (curInfo.canRoute) {
-//                        myPath = aRoute.copy();
-//                        myPath.pathDirections.add(curInfo.side);
-//                        oldDirection = direction ^ 1;
-//                        direction = myPath.getNextDirection();
-//                        homeTile.hasChanged = true;
-//                        return;
-//                    }
-//                }
-//            }
-//        }
-//        if (!hasDest || !mustGoToDest && hasDest) {
-//            for (Route aRoute : homeTile.validOutputs) {
-//                if (aRoute.endPoint.isNode) {
-//                    curInfo = aRoute.endPoint.canRouteItem(stack, aRoute.pathWeight == 0, aRoute.endPoint.moveStackSize[aRoute.getLastSide()]);
-//                    if (curInfo.canRoute) {
-//                        myPath = aRoute.copy();
-//                        myPath.pathDirections.add(curInfo.side);
-//                        oldDirection = direction ^ 1;
-//                        direction = myPath.getNextDirection();
-//                        homeTile.hasChanged = true;
-//                        return;
-//                    }
-//                }
-//            }
-//        }
-//        if (homeTile.isInput) {
-//            homeTile.removeItem(this);
-//            homeTile.stuffItem(this);
-//        } else if (!homeTile.validStuffable.isEmpty()) {
-//            goingToStuff = true;
-//            myPath = getStuffedRoute(homeTile);
-//            myPath.pathDirections.add(myPath.endPoint.getStuffedSide());
-//            oldDirection = direction ^ 1;
-//            direction = myPath.getNextDirection();
-//            homeTile.hasChanged = true;
-//        } else {
-        //CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
-        homeTile.removeItem(this);
-//        }
+
+        RouteCache routes = homeTile.getCache();
+
+        routeInfo curInfo;
+
+        if (hasDest) {
+            for (Route aRoute : routes.outputRoutes) {
+                if (aRoute.endPoint.isNode() && aRoute.endPoint.x() == destX && aRoute.endPoint.y() == destY && aRoute.endPoint.z() == destZ) {
+                    curInfo = aRoute.endPoint.canRouteItem(stack, aRoute.pathWeight == 0, 64);
+
+                    if (curInfo.canRoute) {
+                        myPath = aRoute.copy();
+                        myPath.pathDirections.add(curInfo.side);
+                        oldDirection = (byte) (direction ^ 1);
+                        direction = myPath.getNextDirection();
+                        homeTile.hasChanged = true;
+                        return;
+                    }
+                }
+            }
+        }
+        if (!hasDest || (!mustGoToDest && hasDest)) {
+            for (Route aRoute : routes.outputRoutes) {
+                if (aRoute.endPoint.isNode()) {
+                    curInfo = aRoute.endPoint.canRouteItem(stack, aRoute.pathWeight == 0, 64
+                            //        aRoute.endPoint.moveStackSize[aRoute.getLastSide()]
+                    );
+                    if (curInfo.canRoute) {
+                        myPath = aRoute.copy();
+                        myPath.pathDirections.add(curInfo.side);
+                        oldDirection = (byte) (direction ^ 1);
+                        direction = myPath.getNextDirection();
+                        homeTile.hasChanged = true;
+                        return;
+                    }
+                }
+            }
+        }
+
+        //Failed to find an exit
+        if (homeTile.canStuffItem()) {
+            homeTile.removeItem(this);
+            homeTile.stuffItem(this);
+        } else if (!routes.stuffableRoutes.isEmpty()) {
+            goingToStuff = true;
+            myPath = getStuffedRoute(routes);
+            myPath.pathDirections.add(myPath.endPoint.getStuffedSide());
+            oldDirection = (byte) (direction ^ 1);
+            direction = myPath.getNextDirection();
+            homeTile.hasChanged = true;
+        } else {
+            CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
+            homeTile.removeItem(this);
+        }
 
     }
 
-//    public Route getStuffedRoute(TileItemDuct homeTile) {
-//        for (Route aRoute : homeTile.validStuffable) {
-//            if (aRoute.endPoint.x() == startX && aRoute.endPoint.y() == startY && aRoute.endPoint.z() == startZ) {
-//                return aRoute.copy();
-//            }
-//        }
-//        return homeTile.validStuffable.getFirst().copy();
-//    }
+    public Route getStuffedRoute(RouteCache homeTile) {
+        for (Route aRoute : homeTile.stuffableRoutes) {
+            if (aRoute.endPoint.x() == startX && aRoute.endPoint.y() == startY && aRoute.endPoint.z() == startZ) {
+                return aRoute.copy();
+            }
+        }
+        return homeTile.stuffableRoutes.getFirst().copy();
+    }
 
     public void tickClientForward(TileItemDuct homeTile) {
         progress++;
