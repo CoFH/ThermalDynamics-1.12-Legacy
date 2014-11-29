@@ -18,8 +18,8 @@ import net.minecraft.util.AxisAlignedBB;
 import java.util.List;
 
 public abstract class Attachment {
-    public TileMultiBlock tile;
-    public byte side;
+    public final TileMultiBlock tile;
+    public final byte side;
 
     public Attachment(TileMultiBlock tile, byte side) {
         this.tile = tile;
@@ -63,7 +63,7 @@ public abstract class Attachment {
     @SideOnly(Side.CLIENT)
     public abstract boolean render(int pass, RenderBlocks renderBlocks);
 
-
+    @SuppressWarnings("unchecked")
     public void addCollisionBoxesToList(AxisAlignedBB axis, List list, Entity entity) {
         Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.xCoord, tile.yCoord, tile.zCoord));
         if (cuboid6.intersects(new Cuboid6(axis))) {

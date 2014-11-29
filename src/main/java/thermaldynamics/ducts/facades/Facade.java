@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import thermaldynamics.block.Attachment;
+import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 
 import java.util.LinkedList;
@@ -40,7 +41,7 @@ public class Facade extends Attachment {
 
     @Override
     public int getID() {
-        return 0;
+        return AttachmentRegistry.FACADE;
     }
 
     @Override
