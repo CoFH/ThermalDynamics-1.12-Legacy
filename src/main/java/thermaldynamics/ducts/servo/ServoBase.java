@@ -73,11 +73,16 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
         boolean wasValidInput = isValidInput;
         isValidInput = isValidTile(adjacentTileEntity);
 
+
         if (wasPowered != isPowered || isValidInput != wasValidInput)
             tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
     }
 
     boolean isValidInput;
+
+    public abstract void clearCache();
+
+    public abstract void cacheTile(TileEntity tile);
 
     @Override
     public TileMultiBlock.NeighborTypes getNeighbourType() {

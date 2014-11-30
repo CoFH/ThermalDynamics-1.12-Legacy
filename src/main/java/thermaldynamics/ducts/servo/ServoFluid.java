@@ -18,7 +18,8 @@ import thermaldynamics.gui.containers.ContainerServo;
 import thermaldynamics.gui.gui.GuiServo;
 
 
-public class ServoFluid extends ServoBase {
+public
+class ServoFluid extends ServoBase {
     TileFluidDuct fluidDuct;
 
     int[] maxthroughput = {50, 100, 200, 400, 10000};
@@ -39,6 +40,17 @@ public class ServoFluid extends ServoBase {
         fluidDuct = (TileFluidDuct) tile;
     }
 
+    IFluidHandler theTile;
+
+    @Override
+    public void clearCache() {
+        theTile = null;
+    }
+
+    @Override
+    public void cacheTile(TileEntity tile) {
+        theTile = (IFluidHandler) tile;
+    }
 
     @Override
     public boolean isValidTile(TileEntity tile) {
@@ -61,11 +73,6 @@ public class ServoFluid extends ServoBase {
         if (maxInput == 0)
             return;
 
-        TileEntity adjTile = BlockHelper.getAdjacentTileEntity(tile, side);
-        if (!(adjTile instanceof IFluidHandler))
-            return;
-
-        IFluidHandler theTile = (IFluidHandler) adjTile;
         FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false);
 
         if (fluidPassesFiltering(returned)) {

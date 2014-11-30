@@ -696,13 +696,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     /* ITilePacketHandler */
     @Override
     public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-
         if (!isServer) {
             for (byte i = 0; i < neighborTypes.length; i++) {
                 neighborTypes[i] = NeighborTypes.values()[payload.getByte()];
                 connectionTypes[i] = ConnectionTypes.values()[payload.getByte()];
             }
-
 
             isNode = payload.getBool();
 

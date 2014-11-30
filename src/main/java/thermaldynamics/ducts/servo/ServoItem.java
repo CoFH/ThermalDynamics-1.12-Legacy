@@ -1,6 +1,5 @@
 package thermaldynamics.ducts.servo;
 
-import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -94,7 +93,7 @@ public class ServoItem extends ServoBase implements IStuffable {
     public void tick(int pass) {
         super.tick(pass);
 
-        if (!isPowered())
+        if (!isPowered)
             return;
 
         if (cache == null || cache.invalid)
@@ -133,19 +132,13 @@ public class ServoItem extends ServoBase implements IStuffable {
         if (!isValidInput)
             return;
 
-        TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(tile, side);
-        if (!(tileEntity instanceof IInventory))
-            return;
-
-
-        if (tileEntity instanceof ISidedInventory) {
-            ISidedInventory cachedSidedInv = (ISidedInventory) tileEntity;
+        if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
             for (int slot : cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1)) {
                 ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
                 if (itemStack == null)
                     continue;
 
-                itemStack = limitOutput(itemStack.copy(), cachedSidedInv, slot, side);
+                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
 
                 if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1))
                     continue;
@@ -163,8 +156,7 @@ public class ServoItem extends ServoBase implements IStuffable {
                 itemDuct.insertItem(travelingItem);
                 return;
             }
-        } else {
-            IInventory cachedInv = (IInventory) tileEntity;
+        } else if (cacheType == TileItemDuct.CacheType.IINV) {
             for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
                 ItemStack itemStack = cachedInv.getStackInSlot(slot);
                 if (itemStack == null) continue;
@@ -239,4 +231,24 @@ public class ServoItem extends ServoBase implements IStuffable {
         return tile instanceof IInventory;
     }
 
+    @Override
+    public void clearCache() {
+        cacheType = TileItemDuct.CacheType.NONE;
+        cachedInv = null;
+        cachedSidedInv = null;
+    }
+
+    @Override
+    public void cacheTile(TileEntity tile) {
+        cachedInv = (IInventory) tile;
+        if (tile instanceof ISidedInventory) {
+            cacheType = TileItemDuct.CacheType.ISIDEDINV;
+            cachedSidedInv = (ISidedInventory) tile;
+        } else
+            cacheType = TileItemDuct.CacheType.IINV;
+    }
+
+    IInventory cachedInv;
+    ISidedInventory cachedSidedInv;
+    TileItemDuct.CacheType cacheType;
 }
