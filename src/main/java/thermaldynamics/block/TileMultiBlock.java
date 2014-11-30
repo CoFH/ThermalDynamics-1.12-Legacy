@@ -273,8 +273,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                     neighborMultiBlocks[i] = null;
                 connectionTypes[i] = ConnectionTypes.BLOCKED;
                 isNode = attachments[i].isNode();
-                isInput = neighborTypes[i] == NeighborTypes.INPUT;
-                isOutput = neighborTypes[i] == NeighborTypes.OUTPUT;
+                isInput = isInput || neighborTypes[i] == NeighborTypes.INPUT;
+                isOutput = isOutput || neighborTypes[i] == NeighborTypes.OUTPUT;
                 continue;
             }
 
@@ -304,7 +304,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         if (wasNode != isNode && myGrid != null) {
             myGrid.addBlock(this);
-        } else if ((isOutput != wasOutput || isInput != wasInput) && myGrid != null) {
+        } else if (myGrid != null && (isOutput != wasOutput || isInput != wasInput)) {
             myGrid.onMajorGridChange();
         }
 
@@ -336,8 +336,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborMultiBlocks[i] = null;
             }
             connectionTypes[i] = ConnectionTypes.BLOCKED;
-            isInput = neighborTypes[i] == NeighborTypes.INPUT;
-            isOutput = neighborTypes[i] == NeighborTypes.OUTPUT;
         } else {
             TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
             if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
@@ -347,7 +345,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.OUTPUT;
                 cacheImportant(theTile, i);
-                isOutput = true;
             } else if (isStructureTile(theTile, (byte) i)) {
                 neighborMultiBlocks[i] = null;
                 neighborTypes[i] = NeighborTypes.STRUCTURE;
@@ -361,9 +358,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
 
         boolean wasNode = isNode;
+        boolean wasInput = isInput;
+        boolean wasOutput = isOutput;
         checkIsNode();
         if (wasNode != isNode && myGrid != null) {
             myGrid.addBlock(this);
+        } else if (myGrid != null && (isOutput != wasOutput || isInput != wasInput)) {
+            myGrid.onMajorGridChange();
         }
     }
 
@@ -371,10 +372,18 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         isNode = false;
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            if ((attachments[i] != null && attachments[i].isNode()) || neighborTypes[i] == NeighborTypes.OUTPUT) {
+            if (neighborTypes[i] == NeighborTypes.OUTPUT || (attachments[i] != null && attachments[i].isNode())) {
                 isNode = true;
                 return;
             }
+            if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+                isOutput = true;
+            }
+
+            if (neighborTypes[i] == NeighborTypes.INPUT) {
+                isInput = true;
+            }
+
         }
     }
 
