@@ -23,4 +23,6 @@ public interface IMultiBlockRoute extends IMultiBlock {
     TileItemDuct.RouteInfo canRouteItem(ItemStack stack);
 
     byte getStuffedSide();
+
+    boolean acceptingStuff();
 }

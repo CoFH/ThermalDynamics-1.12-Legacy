@@ -5,6 +5,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.render.RenderUtils;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Translation;
@@ -17,6 +18,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
@@ -45,7 +47,6 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
-
         tag.setBoolean("power", isPowered);
         tag.setByte("type", (byte) type);
         if (canAlterRS())
@@ -58,9 +59,6 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
         type = tag.getByte("type") % 5;
         if (canAlterRS())
             rsMode = ControlMode.values()[tag.getByte("rsMode")];
-
-
-
     }
 
     @Override
@@ -70,9 +68,23 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
 
         isPowered = rsMode.isDisabled() || rsMode.getState() == tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
 
-        if (wasPowered != isPowered)
+        TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(tile, side);
+
+        boolean wasValidInput = isValidInput;
+        isValidInput = isValidTile(adjacentTileEntity);
+
+        if (wasPowered != isPowered || isValidInput != wasValidInput)
             tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
     }
+
+    boolean isValidInput;
+
+    @Override
+    public TileMultiBlock.NeighborTypes getNeighbourType() {
+        return isValidInput ? TileMultiBlock.NeighborTypes.INPUT : TileMultiBlock.NeighborTypes.DUCT_ATTACHMENT;
+    }
+
+    public abstract boolean isValidTile(TileEntity tile);
 
     @Override
     public List<ItemStack> getDrops() {
@@ -119,10 +131,6 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
         return true;
     }
 
-    @Override
-    public TileMultiBlock.NeighborTypes getNeighbourType() {
-        return TileMultiBlock.NeighborTypes.SERVO;
-    }
 
     @Override
     public boolean isNode() {
@@ -184,13 +192,18 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
     }
 
     @Override
+    public boolean doesTick() {
+        return true;
+    }
+
+    @Override
     public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
         super.handleInfoPacket(payload, isServer, thePlayer);
         byte a = payload.getByte();
         switch (a) {
             case NETWORK_ID.RSCONTROL:
                 if (canAlterRS()) {
-                    setControl( ControlMode.values()[payload.getByte()]);
+                    setControl(ControlMode.values()[payload.getByte()]);
                 }
                 break;
         }

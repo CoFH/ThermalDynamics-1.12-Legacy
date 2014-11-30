@@ -1,5 +1,7 @@
 package thermaldynamics.multiblock;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.LinkedList;
 
 public class Route implements Comparable<Route> {
@@ -16,6 +18,7 @@ public class Route implements Comparable<Route> {
         endPoint = myParent;
     }
 
+    @SuppressWarnings("unchecked")
     public Route(Route prevRoute, IMultiBlockRoute newPlace, byte direction, boolean isFinished) {
 
         pathDirections = (LinkedList<Byte>) prevRoute.pathDirections.clone();
@@ -27,6 +30,7 @@ public class Route implements Comparable<Route> {
     }
 
     // Used to set as a node
+    @SuppressWarnings("unchecked")
     public Route(Route prevRoute, boolean endPath) {
 
         pathDirections = (LinkedList<Byte>) prevRoute.pathDirections.clone();
@@ -36,6 +40,7 @@ public class Route implements Comparable<Route> {
         routeFinished = true;
     }
 
+    @SuppressWarnings("unchecked")
     public Route(Route prevRoute) {
 
         pathDirections = (LinkedList<Byte>) prevRoute.pathDirections.clone();
@@ -45,6 +50,7 @@ public class Route implements Comparable<Route> {
         routeFinished = prevRoute.routeFinished;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(Route otherRoute) {
 
@@ -86,4 +92,6 @@ public class Route implements Comparable<Route> {
 
         return pathDirections.size() > 0 ? pathDirections.get(pathDirections.size() - 1) : 0;
     }
+
+
 }

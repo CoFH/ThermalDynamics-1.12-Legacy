@@ -16,8 +16,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
+import thermaldynamics.ducts.servo.IStuffable;
 import thermaldynamics.multiblock.*;
 import thermalexpansion.util.Utils;
 
@@ -254,7 +256,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
     }
 
     public void stuffItem(TravelingItem travelingItem) {
-
+        Attachment attachment = attachments[travelingItem.direction];
+        if (attachment instanceof IStuffable) {
+            ((IStuffable) attachment).stuffItem(travelingItem.stack);
+        }
     }
 
     public void insertItem(TravelingItem travelingItem) {
@@ -457,7 +462,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
                 coords = BlockHelper.getAdjacentCoordinatesForSide(x(), y(), z(), i);
                 curItem = anItem.copy();
                 curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
-                if (curItem.stackSize == 0) {
+                if (curItem.stackSize > 0) {
                     stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
                     stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
                     if (stackSizeLeft < anItem.stackSize) {
@@ -472,7 +477,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
                 coords = BlockHelper.getAdjacentCoordinatesForSide(x(), y(), z(), i);
                 curItem = anItem.copy();
                 curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
-                if (curItem.stackSize == 0) {
+                if (curItem.stackSize > 0) {
                     stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
                     stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
                     if (stackSizeLeft < anItem.stackSize) {
@@ -487,7 +492,31 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
     @Override
     public byte getStuffedSide() {
-        return 0;
+
+        for (byte i = 0; i < 6; i++) {
+            if (attachments[i] instanceof IStuffable) {
+                if (((IStuffable) attachments[i]).canStuff())
+                    return i;
+
+            }
+        }
+
+        for (byte i = 0; i < 6; i++) {
+            if (attachments[i] instanceof IStuffable) {
+                return i;
+            }
+        }
+
+        throw new RuntimeException("IStuffable disapeared during calculation");
+    }
+
+    @Override
+    public boolean acceptingStuff() {
+        for (byte i = 0; i < 6; i++) {
+            if (attachments[i] instanceof IStuffable)
+                return ((IStuffable) attachments[i]).canStuff();
+        }
+        return false;
     }
 
     private boolean stuffed() {

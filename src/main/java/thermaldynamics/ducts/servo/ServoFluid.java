@@ -39,32 +39,33 @@ public class ServoFluid extends ServoBase {
         fluidDuct = (TileFluidDuct) tile;
     }
 
+
+    @Override
+    public boolean isValidTile(TileEntity tile) {
+        return tile instanceof IFluidHandler;
+    }
+
     @Override
     public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
         return tileMultiBlock instanceof TileFluidDuct;
     }
 
     @Override
-    public boolean doesTick() {
-        return true;
-    }
-
-    @Override
     public void tick(int pass) {
         super.tick(pass);
-        if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered) {
+        if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
             return;
         }
-
-        TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(fluidDuct, side);
-        if (!(adjacentTileEntity instanceof IFluidHandler))
-            return;
-        IFluidHandler theTile = (IFluidHandler) adjacentTileEntity;
 
         int maxInput = Math.min(Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type])), maxthroughput[type]);
         if (maxInput == 0)
             return;
 
+        TileEntity adjTile = BlockHelper.getAdjacentTileEntity(tile, side);
+        if (!(adjTile instanceof IFluidHandler))
+            return;
+
+        IFluidHandler theTile = (IFluidHandler) adjTile;
         FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false);
 
         if (fluidPassesFiltering(returned)) {

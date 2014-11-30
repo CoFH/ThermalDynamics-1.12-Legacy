@@ -111,16 +111,14 @@ public class TravelingItem {
             } else {
                 bounceItem(homeTile);
             }
-        } else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT) {
-            if (myPath.pathPos >= myPath.pathWeight && goingToStuff) {
-                if (homeTile.canStuffItem()) {
-                    goingToStuff = false;
-                    homeTile.stuffItem(this);
-                    homeTile.removeItem(this);
-                } else {
-                    goingToStuff = false;
-                    bounceItem(homeTile);
-                }
+        } else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT && goingToStuff && myPath.pathPos >= myPath.pathWeight) {
+            if (homeTile.canStuffItem()) {
+                goingToStuff = false;
+                homeTile.stuffItem(this);
+                homeTile.removeItem(this);
+            } else {
+                goingToStuff = false;
+                bounceItem(homeTile);
             }
         } else {
             bounceItem(homeTile);
@@ -165,31 +163,52 @@ public class TravelingItem {
             }
         }
 
-        //Failed to find an exit
-        if (homeTile.canStuffItem()) {
-            homeTile.removeItem(this);
-            homeTile.stuffItem(this);
-        } else if (!routes.stuffableRoutes.isEmpty()) {
-            goingToStuff = true;
-            myPath = getStuffedRoute(routes);
-            myPath.pathDirections.add(myPath.endPoint.getStuffedSide());
-            oldDirection = (byte) (direction ^ 1);
-            direction = myPath.getNextDirection();
-            homeTile.hasChanged = true;
+        // Failed to find an exit
+        if (homeTile.acceptingStuff()) {
+            byte d = homeTile.getStuffedSide();
+            if (d == direction) {
+                homeTile.stuffItem(this);
+                homeTile.removeItem(this);
+            } else {
+                myPath = new Route(homeTile);
+                myPath.pathDirections.add(myPath.endPoint.getStuffedSide());
+                oldDirection = (byte) (direction ^ 1);
+                direction = myPath.getNextDirection();
+                homeTile.hasChanged = true;
+            }
         } else {
-            CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
-            homeTile.removeItem(this);
+            Route stuffedRoute = getStuffedRoute(routes);
+            if (stuffedRoute != null) {
+                goingToStuff = true;
+                myPath = stuffedRoute;
+                myPath.pathDirections.add(myPath.endPoint.getStuffedSide());
+                oldDirection = (byte) (direction ^ 1);
+                direction = myPath.getNextDirection();
+                homeTile.hasChanged = true;
+            } else {
+                CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
+                homeTile.removeItem(this);
+            }
         }
-
     }
 
     public Route getStuffedRoute(RouteCache homeTile) {
+        if (homeTile.stuffableRoutes.isEmpty())
+            return null;
+
+        Route backup = null;
         for (Route aRoute : homeTile.stuffableRoutes) {
-            if (aRoute.endPoint.x() == startX && aRoute.endPoint.y() == startY && aRoute.endPoint.z() == startZ) {
-                return aRoute.copy();
+            if (aRoute.endPoint.acceptingStuff()) {
+                if (backup == null) backup = aRoute.copy();
+
+                if (aRoute.endPoint.x() == startX && aRoute.endPoint.y() == startY && aRoute.endPoint.z() == startZ) {
+                    return aRoute.copy();
+                }
             }
         }
-        return homeTile.stuffableRoutes.getFirst().copy();
+
+
+        return backup;
     }
 
     public void tickClientForward(TileItemDuct homeTile) {

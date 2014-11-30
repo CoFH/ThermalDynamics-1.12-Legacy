@@ -42,7 +42,9 @@ public class RouteCache {
         visited = new HashSet<IMultiBlockRoute>();
         visited.add(origin);
         outputvisited = new HashSet<IMultiBlockRoute>();
-        if (origin.isOutput()) outputvisited.add(origin);
+        if (origin.isOutput()) {
+            outputvisited.add(origin);
+        }
     }
 
     public synchronized void generateCache() {
