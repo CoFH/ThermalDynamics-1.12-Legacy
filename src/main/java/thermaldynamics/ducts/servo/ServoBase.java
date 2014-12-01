@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.render.RenderDuct;
 
 import java.util.LinkedList;
@@ -70,12 +71,22 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
 
         TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(tile, side);
 
+        clearCache();
         boolean wasValidInput = isValidInput;
         isValidInput = isValidTile(adjacentTileEntity);
+        if(isValidInput){
+            cacheTile(adjacentTileEntity);
+        }
 
 
         if (wasPowered != isPowered || isValidInput != wasValidInput)
             tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+    }
+
+    @Override
+    public boolean openGui(EntityPlayer player) {
+        player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        return true;
     }
 
     boolean isValidInput;

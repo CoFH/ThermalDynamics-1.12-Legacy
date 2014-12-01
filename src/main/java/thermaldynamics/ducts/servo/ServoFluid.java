@@ -1,6 +1,8 @@
 package thermaldynamics.ducts.servo;
 
 import cofh.lib.util.helpers.BlockHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -99,11 +101,7 @@ class ServoFluid extends ServoBase {
         super.receiveGuiNetworkData(i, j);
     }
 
-    @Override
-    public boolean openGui(EntityPlayer player) {
-        player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
-        return true;
-    }
+
 
     @Override
     public Object getGuiServer(InventoryPlayer inventory) {
@@ -111,6 +109,7 @@ class ServoFluid extends ServoBase {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Object getGuiClient(InventoryPlayer inventory) {
         return new GuiServo(inventory, this);
     }

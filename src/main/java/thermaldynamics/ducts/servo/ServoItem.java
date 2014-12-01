@@ -1,6 +1,11 @@
 package thermaldynamics.ducts.servo;
 
 import cofh.lib.util.helpers.ItemHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -9,13 +14,17 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.ducts.item.PropsConduit;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
+import thermaldynamics.gui.containers.ContainerServo;
+import thermaldynamics.gui.gui.GuiServo;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ServoItem extends ServoBase implements IStuffable {
     LinkedList<ItemStack> stuffedItems = new LinkedList<ItemStack>();
@@ -85,8 +94,29 @@ public class ServoItem extends ServoBase implements IStuffable {
 
     RouteCache cache = null;
 
+    @Override
+    public List<ItemStack> getDrops() {
+        List<ItemStack> drops = super.getDrops();
+
+        if (!stuffedItems.isEmpty())
+            for (ItemStack stuffedItem : stuffedItems) {
+                ItemStack stack = stuffedItem.copy();
+                int m = stuffedItem.getMaxStackSize();
+                for (int i = 0; stack.stackSize > 0 && i < PropsConduit.MAX_STUFFED_ITEMSTACKS_DROP; i++) {
+                    if (m < stack.stackSize) m = stack.stackSize;
+                    drops.add(ItemHelper.cloneStack(stack, m));
+                    stack.stackSize -= m;
+                }
+            }
+
+        return drops;
+    }
+
+    public int[] tickDelays = {60, 40, 20, 20, 20};
+    public byte[] speedBoost = {1, 1, 1, 1, 2};
+
     public int tickDelay() {
-        return 10;
+        return tickDelays[type];
     }
 
     @Override
@@ -112,7 +142,7 @@ public class ServoItem extends ServoBase implements IStuffable {
                 ItemStack stuffedItem = iterator.next();
                 ItemStack send = stuffedItem.copy();
                 send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
-                TravelingItem travelingItem = findRouteForItem(send, false);
+                TravelingItem travelingItem = getRouteForItem(send);
 
                 if (travelingItem == null) continue;
 
@@ -143,7 +173,7 @@ public class ServoItem extends ServoBase implements IStuffable {
                 if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1))
                     continue;
 
-                TravelingItem travelingItem = findRouteForItem(itemStack, false);
+                TravelingItem travelingItem = getRouteForItem(itemStack);
 
                 if (travelingItem == null) continue;
 
@@ -165,7 +195,7 @@ public class ServoItem extends ServoBase implements IStuffable {
 
                 if (itemStack == null || itemStack.stackSize == 0) continue;
 
-                TravelingItem travelingItem = findRouteForItem(itemStack, false);
+                TravelingItem travelingItem = getRouteForItem(itemStack);
 
                 if (travelingItem == null) continue;
 
@@ -181,20 +211,23 @@ public class ServoItem extends ServoBase implements IStuffable {
         }
     }
 
+    public byte getSpeed() {
+        return speedBoost[type];
+    }
 
-    public TravelingItem findRouteForItem(ItemStack item, boolean infiniteRange) {
-        if (!cache.isFinishedGenerating())
-            cache.generateCache();
 
-        for (Route outputRoute : cache.outputRoutes) {
-            if (infiniteRange || outputRoute.pathDirections.size() <= getMaxRange()) {
+    public static TravelingItem findRouteForItem(ItemStack item, TileItemDuct duct, int side, int maxRange, byte speed) {
+        RouteCache routeCache = duct.getCache(true);
+
+        for (Route outputRoute : routeCache.outputRoutes) {
+            if (outputRoute.pathDirections.size() <= maxRange) {
                 TileItemDuct.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
                 if (routeInfo.canRoute) {
                     Route itemRoute = outputRoute.copy();
                     itemRoute.pathDirections.add(routeInfo.side);
                     item = item.copy();
                     item.stackSize -= routeInfo.stackSize;
-                    return new TravelingItem(item, itemDuct, itemRoute, (byte) (side ^ 1));
+                    return new TravelingItem(item, duct, itemRoute, (byte) (side ^ 1), speed);
                 }
             }
         }
@@ -251,4 +284,41 @@ public class ServoItem extends ServoBase implements IStuffable {
     IInventory cachedInv;
     ISidedInventory cachedSidedInv;
     TileItemDuct.CacheType cacheType;
+
+
+    @Override
+    public void sendGuiNetworkData(Container container, ICrafting player) {
+        super.sendGuiNetworkData(container, player);
+    }
+
+    @Override
+    public void receiveGuiNetworkData(int i, int j) {
+        super.receiveGuiNetworkData(i, j);
+    }
+
+
+    @Override
+    public Object getGuiServer(InventoryPlayer inventory) {
+        return new ContainerServo(inventory, this);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Object getGuiClient(InventoryPlayer inventory) {
+        return new GuiServo(inventory, this);
+    }
+
+    public ItemStack insertItem(ItemStack item) {
+        TravelingItem routeForItem = getRouteForItem(item);
+        if (routeForItem == null)
+            return item;
+
+        itemDuct.insertItem(routeForItem);
+        item.stackSize -= routeForItem.stack.stackSize;
+        return item.stackSize > 0 ? item : null;
+    }
+
+    public TravelingItem getRouteForItem(ItemStack item) {
+        return ServoItem.findRouteForItem(item, itemDuct, side, getMaxRange(), getSpeed());
+    }
 }
