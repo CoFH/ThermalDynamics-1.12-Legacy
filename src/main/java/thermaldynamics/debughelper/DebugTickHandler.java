@@ -6,7 +6,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import thermaldynamics.block.TileMultiBlock;
+import net.minecraftforge.event.world.ChunkEvent;
 import thermaldynamics.core.TickHandler;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -19,6 +19,23 @@ public class DebugTickHandler {
 
     public final Random rand = new Random();
     public static boolean showParticles;
+
+    public static boolean showLoading;
+
+    @SubscribeEvent
+    public void chunkLoad(ChunkEvent.Load event) {
+        printChunkEvent(event);
+    }
+
+    @SubscribeEvent
+    public void chunkLoad(ChunkEvent.Unload event) {
+        printChunkEvent(event);
+    }
+
+    public void printChunkEvent(ChunkEvent event) {
+        if (!showLoading) return;
+        DebugHelper.info("[" + event.getChunk().xPosition + "," + event.getChunk().zPosition + "]_" + (event.getChunk().worldObj.isRemote ? "Client" : "Server"));
+    }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)

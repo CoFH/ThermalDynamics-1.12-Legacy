@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +28,7 @@ public class DebugHelper {
     public static void init() {
         if (!debug) return;
         FMLCommonHandler.instance().bus().register(DebugTickHandler.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(DebugTickHandler.INSTANCE);
     }
 
     public static void info(Object string) {

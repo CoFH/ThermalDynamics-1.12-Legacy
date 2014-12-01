@@ -1,18 +1,26 @@
 package thermaldynamics.debughelper;
 
 import cofh.lib.util.position.BlockPosition;
+import cofh.repack.codechicken.lib.raytracer.RayTracer;
+import com.google.common.base.Throwables;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.render.RenderDuct;
 
+import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Set;
 
 public class CommandThermalDebug extends CommandBase {
     @Override
@@ -32,12 +40,36 @@ public class CommandThermalDebug extends CommandBase {
 
     Random rand = new Random();
 
+    Field chunksToUnload;
+
     @Override
     public void processCommand(ICommandSender p_71515_1_, String[] args) {
         if (args.length == 0)
             return;
 
-        if ("grids".equals(args[0])) {
+        if ("showLoading".equals(args[0])) {
+            DebugTickHandler.showLoading = !DebugTickHandler.showLoading;
+        } else if ("unload".equals(args[0])) {
+            if (!(p_71515_1_ instanceof EntityPlayerMP))
+                return;
+
+            if (chunksToUnload == null) {
+                chunksToUnload = ReflectionHelper.findField(ChunkProviderServer.class, "chunksToUnload");
+            }
+
+            EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
+            MovingObjectPosition trace = RayTracer.reTrace(player.worldObj, player, 100);
+            Chunk chunk = player.worldObj.getChunkFromBlockCoords(trace.blockX, trace.blockZ);
+            Set<Long> o;
+            try {
+                //noinspection unchecked
+                o = (Set<Long>) chunksToUnload.get(player.getServerForPlayer().theChunkProviderServer);
+            } catch (IllegalAccessException e) {
+                throw Throwables.propagate(e);
+            }
+
+            o.add(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition));
+        } else if ("grids".equals(args[0])) {
             DebugTickHandler.showParticles = !DebugTickHandler.showParticles;
         } else if ("generate".equals(args[0]) && args.length == 2) {
             if (!(p_71515_1_ instanceof EntityPlayerMP))
