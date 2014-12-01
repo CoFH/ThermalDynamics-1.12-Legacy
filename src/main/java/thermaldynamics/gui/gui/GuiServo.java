@@ -16,12 +16,14 @@ public class GuiServo extends GuiBaseAdv {
         super(new ContainerServo(inventory, servoBase), texture);
         this.servoBase = servoBase;
         this.inventory = inventory;
-        this.ySize = 204;
+
+        this.ySize = 205;
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        addTab(new TabRedstone(this, servoBase));
+        if (servoBase.canAlterRS())
+            addTab(new TabRedstone(this, servoBase));
     }
 }
