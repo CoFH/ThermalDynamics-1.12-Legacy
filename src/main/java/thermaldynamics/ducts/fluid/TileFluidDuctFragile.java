@@ -106,6 +106,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
     @Override
     public boolean tickPass(int pass) {
+        if (!super.tickPass(pass)) return false;
 
         if (pass == 2) {
 
@@ -132,7 +133,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
                 }
             }
         }
-        return super.tickPass(pass);
+        return true;
     }
 
     public static int getTemperature(FluidStack fluid) {

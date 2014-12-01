@@ -51,11 +51,12 @@ public class TileItemDuctRedstone extends TileItemDuctPower {
 
     @Override
     public boolean tickPass(int pass) {
+        if (!super.tickPass(pass)) return false;
         if (pass == 0 && isSubNode) {
             int maxSend = redstoneEnergy.internalGrid.toDistribute;
             redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
         }
-        return super.tickPass(pass);
+        return true;
     }
 
     public int transmitEnergy(int power) {
@@ -110,5 +111,6 @@ public class TileItemDuctRedstone extends TileItemDuctPower {
     @Override
     public void cacheStructural(TileEntity tile, int side) {
         energyCache[side] = (IEnergyHandler) tile;
+        isOutput = true;
     }
 }

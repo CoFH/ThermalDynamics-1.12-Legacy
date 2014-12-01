@@ -109,10 +109,12 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
     @Override
     public boolean tickPass(int pass) {
+        if (!super.tickPass(pass)) return false;
+
         if (pass == 0) {
             tickItems();
         }
-        return super.tickPass(pass);
+        return true;
     }
 
     @Override

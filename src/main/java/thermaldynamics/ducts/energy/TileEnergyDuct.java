@@ -80,12 +80,13 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     }
 
     public boolean tickPass(int pass) {
+        if (!super.tickPass(pass)) return false;
         int power = this.internalGrid.getSendableEnergy();
 
         int usedPower = transmitEnergy(power);
 
         this.internalGrid.useEnergy(usedPower);
-        return super.tickPass(pass);
+        return true;
     }
 
     public int transmitEnergy(int power) {

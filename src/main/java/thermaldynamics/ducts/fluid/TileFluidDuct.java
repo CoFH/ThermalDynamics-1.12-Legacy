@@ -58,6 +58,8 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
     @Override
     public boolean tickPass(int pass) {
+        if (!super.tickPass(pass)) return false;
+
         if (fluidGrid == null) {
             return true;
         }
@@ -87,7 +89,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
                 }
             }
         }
-        return super.tickPass(pass);
+        return true;
     }
 
 

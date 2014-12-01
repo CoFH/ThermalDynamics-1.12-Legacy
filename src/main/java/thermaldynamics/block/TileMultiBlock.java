@@ -21,8 +21,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Facing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.commons.lang3.StringUtils;
 import thermaldynamics.core.TickHandler;
@@ -81,6 +83,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public SubTileMultiBlock[] subTiles = blankSubTiles;
     public long lastUpdateTime = -1;
     public int hashCode = 0;
+
+    public LinkedList<Chunk> neighbourChunks = new LinkedList<Chunk>();
 
     @Override
     public void onChunkUnload() {
@@ -255,6 +259,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         boolean wasOutput = isOutput;
         isOutput = false;
 
+
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
             clearCache(i);
             if (attachments[i] != null) {
@@ -275,31 +280,33 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 isNode = attachments[i].isNode();
                 isInput = isInput || neighborTypes[i] == NeighborTypes.INPUT;
                 isOutput = isOutput || neighborTypes[i] == NeighborTypes.OUTPUT;
-                continue;
+
+            } else {
+                theTile = BlockHelper.getAdjacentTileEntity(this, i);
+                if (theTile == null) {
+                    neighborMultiBlocks[i] = null;
+                    neighborTypes[i] = NeighborTypes.NONE;
+                    connectionTypes[i] = ConnectionTypes.NORMAL;
+                } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+                    neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                    neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+                } else if (isSignificantTile(theTile, i)) {
+                    neighborMultiBlocks[i] = null;
+                    neighborTypes[i] = NeighborTypes.OUTPUT;
+                    cacheImportant(theTile, i);
+                    isNode = true;
+                    isOutput = true;
+                } else if (isStructureTile(theTile, i)) {
+                    neighborMultiBlocks[i] = null;
+                    neighborTypes[i] = NeighborTypes.STRUCTURE;
+                    cacheStructural(theTile, i);
+                } else {
+                    neighborMultiBlocks[i] = null;
+                    neighborTypes[i] = NeighborTypes.NONE;
+                }
             }
 
-            theTile = BlockHelper.getAdjacentTileEntity(this, i);
-            if (theTile == null) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.NONE;
-                connectionTypes[i] = ConnectionTypes.NORMAL;
-            } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-                neighborMultiBlocks[i] = (IMultiBlock) theTile;
-                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-            } else if (isSignificantTile(theTile, i)) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.OUTPUT;
-                cacheImportant(theTile, i);
-                isNode = true;
-                isOutput = true;
-            } else if (isStructureTile(theTile, i)) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.STRUCTURE;
-                cacheStructural(theTile, i);
-            } else {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.NONE;
-            }
+
         }
 
         if (wasNode != isNode && myGrid != null) {
@@ -310,7 +317,32 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
 
+        rebuildChunkCache();
+
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public boolean checkForChunkUnload() {
+        if (neighbourChunks.isEmpty()) return false;
+        for (Chunk neighbourChunk : neighbourChunks) {
+            if (!neighbourChunk.isChunkLoaded) {
+                onNeighborBlockChange();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void rebuildChunkCache() {
+        if (!neighbourChunks.isEmpty()) neighbourChunks.clear();
+        Chunk base = worldObj.getChunkFromBlockCoords(x(), y());
+
+        for (byte i = 0; i < 6; i++) {
+            if (neighborTypes[i] == NeighborTypes.INPUT || neighborTypes[i] == NeighborTypes.OUTPUT) {
+                Chunk chunk = worldObj.getChunkFromBlockCoords(x() + Facing.offsetsXForSide[i], z() + Facing.offsetsZForSide[i]);
+                if (chunk != base) neighbourChunks.add(chunk);
+            }
+        }
     }
 
     public void cacheStructural(TileEntity theTile, int i) {
@@ -366,6 +398,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         } else if (myGrid != null && (isOutput != wasOutput || isInput != wasInput)) {
             myGrid.onMajorGridChange();
         }
+
+        rebuildChunkCache();
     }
 
     private void checkIsNode() {
@@ -459,6 +493,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public boolean tickPass(int pass) {
+        if (checkForChunkUnload()) return false;
+
         if (!tickingAttachments.isEmpty())
             for (Attachment attachment : tickingAttachments) {
                 attachment.tick(pass);
@@ -759,7 +795,18 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     }
 
     public static enum NeighborTypes {
-        NONE, MULTIBLOCK, OUTPUT, INPUT, STRUCTURE, DUCT_ATTACHMENT
+        NONE, MULTIBLOCK, OUTPUT(true), INPUT(true), STRUCTURE(true), DUCT_ATTACHMENT;
+
+        NeighborTypes() {
+            this(false);
+        }
+
+        // Are we attached to a non-multiblock tile
+        public boolean attachedToNeightbour;
+
+        NeighborTypes(boolean b) {
+            this.attachedToNeightbour = b;
+        }
     }
 
     public static enum ConnectionTypes {
