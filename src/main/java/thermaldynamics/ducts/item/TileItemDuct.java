@@ -1,14 +1,13 @@
 package thermaldynamics.ducts.item;
 
 import cofh.api.inventory.IInventoryConnection;
+import cofh.api.transport.IItemDuct;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.lib.util.helpers.ServerHelper;
 import com.google.common.collect.Iterables;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -17,16 +16,21 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.Attachment;
+import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.ducts.servo.IStuffable;
-import thermaldynamics.multiblock.*;
+import thermaldynamics.ducts.servo.ServoItem;
+import thermaldynamics.multiblock.IMultiBlock;
+import thermaldynamics.multiblock.IMultiBlockRoute;
+import thermaldynamics.multiblock.MultiBlockGrid;
+import thermaldynamics.multiblock.RouteCache;
 import thermalexpansion.util.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
+public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IItemDuct {
     ItemGrid internalGrid;
 
     public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
@@ -56,6 +60,20 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
     public IInventory[] cache = new IInventory[6];
     public ISidedInventory[] cache2 = new ISidedInventory[6];
     public CacheType[] cacheType = {CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE,};
+
+    @Override
+    public ItemStack insertItem(ForgeDirection from, ItemStack item) {
+        if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()].allowTransfer)))
+            return item;
+
+
+        Attachment attachment = attachments[from.ordinal()];
+        if (attachment == null || attachment.getID() != AttachmentRegistry.SERVO_INV) {
+            return item;
+        }
+
+        return ((ServoItem) attachment).insertItem(item);
+    }
 
     public static enum CacheType {
         NONE, IINV, ISIDEDINV
@@ -173,7 +191,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return pass == 0 && (!myItems.isEmpty() || centerLine > 0);
+        return pass == 0 && (!myItems.isEmpty() || !itemsToAdd.isEmpty() || centerLine > 0);
     }
 
     public RouteCache getCache() {
