@@ -52,5 +52,36 @@ public class TDCrafting {
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.signalum, "IGI", 'G', ItemServo.electrum, 'I', "ingotSignalum"));
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.ender, "IGI", 'G', ItemServo.signalum, 'I', "ingotEnderium"));
 
+        // Items
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_TRANS.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "glassHardened"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_OPAQUE.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "ingotLead"));
+
+        TransposerManager.addFillRecipe(800, Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_FAST_TRANS.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false, false);
+        TransposerManager.addFillRecipe(800, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_FAST_OPAQUE.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false, false);
+
+        TransposerManager.addFillRecipe(800, Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_REDSTONE_TRANS.itemStack, new FluidStack(TFFluids.fluidRedstone, 50), false, false);
+        TransposerManager.addFillRecipe(800, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_REDSTONE_OPAQUE.itemStack, new FluidStack(TFFluids.fluidRedstone, 50), false, false);
+
+
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDERIUM_TRANS.itemStack, 3), Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_TRANS.itemStack, "dustEnderium"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDERIUM_OPAQUE.itemStack, 3), Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, "dustEnderium"));
+
+        // Conversions
+        for (Ducts[] d : convert) {
+            final ItemStack t = d[0].itemStack;
+            final ItemStack o = d[1].itemStack;
+            GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, "glassHardened"));
+            GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead"));
+        }
     }
+
+    public static final Ducts[][] convert = {
+            {Ducts.ITEM_TRANS, Ducts.ITEM_OPAQUE},
+            {Ducts.ITEM_FAST_TRANS, Ducts.ITEM_FAST_OPAQUE},
+            {Ducts.ITEM_REDSTONE_TRANS, Ducts.ITEM_REDSTONE_OPAQUE},
+            {Ducts.ITEM_ENDERIUM_TRANS, Ducts.ITEM_ENDERIUM_OPAQUE},
+            {Ducts.FLUID_TRANS, Ducts.FLUID_OPAQUE},
+            {Ducts.FLUID_HARDENED_TRANS, Ducts.FLUID_HARDENED_OPAQUE},
+    };
+
 }

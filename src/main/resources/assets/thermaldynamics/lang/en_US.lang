@@ -4,16 +4,33 @@ tile.thermalducts.duct.energyBasicDuct.name=Basic Fluxduct
 tile.thermalducts.duct.energyHardenedDuct.name=Hardened Fluxduct
 tile.thermalducts.duct.energyReinforcedDuct.name=Reinforced Fluxduct
 tile.thermalducts.duct.energyEmptyReinforcedDuct.name=Reinforced Fluxduct (Empty)
+tile.thermalducts.duct.energySuperconductorDuct.name=Magnetic-Enhanced Fluxduct
+tile.thermalducts.duct.energySuperconductorEmptyDuct.name=Magnetic-Enhanced Fluxduct (Empty)
+tile.thermalducts.duct.fluidWeakDuct.name=Copper Fluiduct
+tile.thermalducts.duct.fluidDuct.name=Invar Fluiduct
+tile.thermalducts.duct.itemDuct.name=Itemduct
+tile.thermalducts.duct.itemDuctFast.name=Impulse Itemduct
+tile.thermalducts.duct.itemDuctRedstone.name=Fluctuating Itemduct
+tile.thermalducts.duct.itemDuctEnder.name=Warp Itemduct
+tile.thermalducts.duct.structureDuct.name=Structuralduct
 
 
-tile.thermalducts.duct.fluidWeakTransDuct.name=Copper Fluiduct (Transparent)
-tile.thermalducts.duct.fluidWeakOpaqueDuct.name=Copper Fluiduct (Opaque)
-tile.thermalducts.duct.fluidTransDuct.name=Invar Fluiduct (Transparent)
-tile.thermalducts.duct.fluidOpaqueDuct.name=Invar Fluiduct (Opaque)
 
+tile.thermalducts.duct.energyBasicDuct.info=Transfers RF
+tile.thermalducts.duct.energyHardenedDuct.info=Transfers RF
+tile.thermalducts.duct.energyReinforcedDuct.info=Transfers RF
+tile.thermalducts.duct.energyEmptyReinforcedDuct.info=Crafting ingredient
+tile.thermalducts.duct.energySuperconductorDuct.info=Transfers RF with unlimited throughput
+tile.thermalducts.duct.energySuperconductorEmptyDuct.info=Crafting Ingredient
+tile.thermalducts.duct.fluidWeakDuct.info=Transfers fluids. Will break when filled with fluids at extreme temperatures.
+tile.thermalducts.duct.fluidDuct.info=Transfers fluids
+tile.thermalducts.duct.itemDuct.info=Transfers items
+tile.thermalducts.duct.itemDuctFast.info=Transfers items faster
+tile.thermalducts.duct.itemDuctRedstone.info=Transfers items and limited energy
+tile.thermalducts.duct.itemDuctEnder.info=Uses RF energy to transfer items instantly
+tile.thermalducts.duct.structureDuct.info=Provides Structure
 
-tile.thermalducts.duct.structureDuct.name=Structural Ducts
-
+tile.thermalducts.duct.opaque.name=(Opaque)
 
 item.thermalducts.servo.0.name=Basic External Servo
 item.thermalducts.servo.1.name=Hardened External Servo
