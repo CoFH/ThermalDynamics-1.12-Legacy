@@ -5,6 +5,7 @@ import cofh.lib.render.RenderHelper;
 import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import com.google.common.collect.Iterators;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -17,7 +18,7 @@ import thermaldynamics.block.BlockDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
 
-import java.util.List;
+import java.util.Iterator;
 
 public class RenderDuctItems extends TileEntitySpecialRenderer {
     public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
@@ -49,7 +50,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
     }
 
 
-
     @Override
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
         TileItemDuct duct = (TileItemDuct) tile;
@@ -57,12 +57,14 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
     }
 
     public void renderItemDuct(TileItemDuct duct, double x, double y, double z, float frame) {
-        RenderUtils.preWorldRender(duct.getWorldObj(), duct.xCoord, duct.yCoord, duct.zCoord);
-        CCRenderState.useNormals = true;
-        renderTravelingItems(duct.myItems, duct.getWorldObj(), x, y, z, frame);
-        CCRenderState.useNormals = false;
-        CCRenderState.reset();
+        if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
+            RenderUtils.preWorldRender(duct.getWorldObj(), duct.xCoord, duct.yCoord, duct.zCoord);
+            CCRenderState.useNormals = true;
 
+            renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, duct.getWorldObj(), x, y, z, frame);
+            CCRenderState.useNormals = false;
+            CCRenderState.reset();
+        }
 
         if (duct.centerLine > 0) {
             GL11.glPushMatrix();
@@ -110,16 +112,15 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
     }
 
     public static int getAlphaLevel(int centerLine, float frame) {
-        return (int) Math.min(255,1.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
+        return (int) Math.min(255, 1.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
     }
 
 
-    public void renderTravelingItems(List<TravelingItem> items, World world, double x, double y, double z, float frame) {
+    public void renderTravelingItems(Iterator<TravelingItem> items, TileItemDuct duct, World world, double x, double y, double z, float frame) {
 
-        if (items == null || items.size() <= 0) {
+        if (!items.hasNext()) {
             return;
         }
-
 
         GL11.glPushMatrix();
 
@@ -129,14 +130,25 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 
         TravelingItem renderItem;
 
-        for (int i = 0; i < items.size() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
-            renderItem = items.get(i);
+        for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
+            renderItem = items.next();
             if (renderItem == null || renderItem.stack == null) {
                 continue;
             }
             GL11.glPushMatrix();
 
             GL11.glTranslated(x + renderItem.x, y + renderItem.y, z + renderItem.z);
+
+            float[] vec;
+            for (int k = 0; k < renderItem.step - 1; k++) {
+                vec = TravelingItem.getVec(renderItem.progress + k, renderItem, duct);
+                GL11.glTranslated(vec[0], vec[1], vec[2]);
+            }
+
+            vec = TravelingItem.getVec(renderItem.progress + renderItem.step, renderItem, duct);
+            GL11.glTranslated(vec[0] * frame, vec[1] * frame, vec[2] * frame);
+
+
             GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
             travelingEntityItem.setEntityItemStack(renderItem.stack);

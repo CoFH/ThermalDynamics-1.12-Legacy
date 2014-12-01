@@ -395,10 +395,6 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
         CCRenderState.draw();
 
-        if (metadata == Ducts.ENDERIUM.ordinal()) {
-            RenderDuctItemsEnder.drawEnderStarfield(offset, offset - RenderHelper.RENDER_OFFSET, offset, INV_CONNECTIONS, 0, 0, null);
-        }
-
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_BLEND);
 
