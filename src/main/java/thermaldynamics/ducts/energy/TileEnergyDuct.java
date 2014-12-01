@@ -2,6 +2,7 @@ package thermaldynamics.ducts.energy;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -15,7 +16,6 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
     EnergyGrid internalGrid;
 
 
-
     public TileEnergyDuct() {
 
 
@@ -27,7 +27,6 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         super.setGrid(newGrid);
         internalGrid = (EnergyGrid) newGrid;
     }
-
 
 
     @Override
@@ -69,7 +68,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
     public boolean isSignificantTile(TileEntity theTile, int side) {
         return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side ^ 1])
-        ;
+                ;
     }
 
     @Override
@@ -147,11 +146,12 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
         }
     }
 
-    IEnergyHandler[] cache = new IEnergyHandler[6];
+    IEnergyReceiver[] cache = new IEnergyReceiver[6];
 
     @Override
     public void cacheImportant(TileEntity tile, int side) {
-        cache[side] = (IEnergyHandler) tile;
+        if (tile instanceof IEnergyReceiver)
+            cache[side] = (IEnergyReceiver) tile;
     }
 
     @Override

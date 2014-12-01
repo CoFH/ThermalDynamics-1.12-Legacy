@@ -184,42 +184,42 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         return urgent ? internalGrid.getRoutesFromOutput(this) : internalGrid.getRoutesFromOutputNonUrgent(this);
     }
 
-    @Override
-    public boolean openGui(EntityPlayer player) {
-        if (!isOutput())
-            return false;
-
-        if (ServerHelper.isClientWorld(worldObj) || !isOutput())
-            return true;
-
-        LinkedList<Route> routes = internalGrid.getRoutesFromOutput(this).outputRoutes;
-
-        if (routes.size() <= 1)
-            return true;
-
-
-        for (Route route : routes) {
-            if (route.pathDirections.size() < 1)
-                continue;
-
-            byte input;
-            for (input = 0; input < 6 && neighborTypes[input ^ 1] != NeighborTypes.OUTPUT; ) input++;
-            byte output;
-            for (output = 0; output < 6 && ((TileItemDuct) route.endPoint).neighborTypes[output] != NeighborTypes.OUTPUT; )
-                output++;
-
-            Route itemRoute = route.copy();
-            itemRoute.pathDirections.add(output);
-            final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, input);
-            travelingItem.goingToStuff = true;
-            insertItem(travelingItem);
-
-            break;
-        }
-//        player.addChatComponentMessage(new ChatComponentText("Routes: " + routes.size()));
-
-        return true;
-    }
+//    @Override
+//    public boolean openGui(EntityPlayer player) {
+//        if (!isOutput())
+//            return false;
+//
+//        if (ServerHelper.isClientWorld(worldObj) || !isOutput())
+//            return true;
+//
+//        LinkedList<Route> routes = internalGrid.getRoutesFromOutput(this).outputRoutes;
+//
+//        if (routes.size() <= 1)
+//            return true;
+//
+//
+//        for (Route route : routes) {
+//            if (route.pathDirections.size() < 1)
+//                continue;
+//
+//            byte input;
+//            for (input = 0; input < 6 && neighborTypes[input ^ 1] != NeighborTypes.OUTPUT; ) input++;
+//            byte output;
+//            for (output = 0; output < 6 && ((TileItemDuct) route.endPoint).neighborTypes[output] != NeighborTypes.OUTPUT; )
+//                output++;
+//
+//            Route itemRoute = route.copy();
+//            itemRoute.pathDirections.add(output);
+//            final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, input);
+//            travelingItem.goingToStuff = true;
+//            insertItem(travelingItem);
+//
+//            break;
+//        }
+////        player.addChatComponentMessage(new ChatComponentText("Routes: " + routes.size()));
+//
+//        return true;
+//    }
 
     public void pulseLineDo(int dir) {
         if (!getDuctType().opaque) {
@@ -306,10 +306,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
 
         itemsToAdd.clear();
         myItems.clear();
-        NBTTagList list = nbt.getTagList("StuffedInv", 10);
+        NBTTagList list = nbt.getTagList("TravellingItems", 10);
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound compound = list.getCompoundTagAt(i);
-            itemsToAdd.add(new TravelingItem(compound));
+            myItems.add(new TravelingItem(compound));
         }
     }
 
@@ -428,7 +428,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute {
         }
 
         if (itemsToAdd.size() > 0) {
-            myItems.clear();
             myItems.addAll(itemsToAdd);
             itemsToAdd.clear();
         }

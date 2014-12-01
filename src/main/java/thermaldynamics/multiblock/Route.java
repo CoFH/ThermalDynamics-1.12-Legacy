@@ -1,7 +1,5 @@
 package thermaldynamics.multiblock;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.LinkedList;
 
 public class Route implements Comparable<Route> {

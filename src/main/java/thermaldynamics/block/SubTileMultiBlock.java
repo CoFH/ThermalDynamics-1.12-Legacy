@@ -153,8 +153,8 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 
     public void onChunkUnload() {
         if (grid != null) {
-            grid.removeBlock(this);
             tileUnloading();
+            grid.removeBlock(this);
         }
     }
 

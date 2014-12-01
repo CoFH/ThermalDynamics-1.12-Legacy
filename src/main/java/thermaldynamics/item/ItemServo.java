@@ -1,6 +1,8 @@
 package thermaldynamics.item;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -38,6 +40,7 @@ public class ItemServo extends ItemAttachment {
     IIcon[] icons;
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister ir) {
         icons = new IIcon[5];
         for (int i = 0; i < 5; i++)

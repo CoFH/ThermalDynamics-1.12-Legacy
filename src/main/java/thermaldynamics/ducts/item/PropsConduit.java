@@ -8,4 +8,6 @@ public class PropsConduit {
     public static final byte ENDER_UPDATE_DELAY = 4;
     public static final int ENDER_TRANSMIT_COST = 500;
     public static final int STUFF_LIMIT = 10;
+    public static final int MAX_STUFFED_ITEMSTACKS_DROP = 30;
+    public static final int DEFAULT_UNSERVODRANGE = 8;
 }
