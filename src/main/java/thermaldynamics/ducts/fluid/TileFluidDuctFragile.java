@@ -88,8 +88,9 @@ public class TileFluidDuctFragile extends TileFluidDuct {
     @Override
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick() {
-        if ((((myRenderFluid != null && myRenderFluid.amount > 0)) || getTemperature(myRenderFluid) > meltingTemperature)
-                || internalTemperature > meltingTemperature
+        if (getDuctType().opaque ?
+                internalTemperature > meltingTemperature :
+                myRenderFluid != null && myRenderFluid.amount > 0 && getTemperature(myRenderFluid) > meltingTemperature
                 ) {
             List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
             addTraceableCuboids(cuboids);

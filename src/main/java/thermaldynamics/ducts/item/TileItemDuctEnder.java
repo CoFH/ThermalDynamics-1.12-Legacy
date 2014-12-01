@@ -3,7 +3,6 @@ package thermaldynamics.ducts.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import thermaldynamics.block.SubTileMultiBlock;
 import thermaldynamics.ducts.energy.subgrid.SubTileEnergyEnder;
 
 public class TileItemDuctEnder extends TileItemDuctPower {
@@ -40,7 +39,7 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 
     @Override
     public float[][] getSideCoordsModifier() {
-        return _SIDE_MODS[isPowered() ? 3  : 2];
+        return _SIDE_MODS[isPowered() ? 3 : 2];
     }
 
     @Override
@@ -150,6 +149,11 @@ public class TileItemDuctEnder extends TileItemDuctPower {
     public void handlePacketType(PacketCoFHBase payload, int b) {
         if (b == TileInfoPackets.ENDER_POWER) {
             powered = payload.getBool();
+
+            centerLine = 0;
+            for (int i = 0; i < centerLineSub.length; i++)
+                centerLineSub[i] = 0;
+
         } else
             super.handlePacketType(payload, b);
     }
