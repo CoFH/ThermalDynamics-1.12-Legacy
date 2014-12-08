@@ -1,6 +1,7 @@
 package thermaldynamics.ducts.servo;
 
 import cofh.lib.util.helpers.ItemHelper;
+import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -119,94 +120,109 @@ public class ServoItem extends ServoBase implements IStuffable {
         return tickDelays[type];
     }
 
+
+    @Override
+    public boolean onWrenched() {
+        Cuboid6 c = getCuboid();
+        if (!stuffedItems.isEmpty()) {
+            for (ItemStack stack : stuffedItems) {
+                while (stack.stackSize > 0)
+                    dropItemStack(stack.splitStack(Math.min(stack.stackSize, stack.getMaxStackSize())));
+            }
+            stuffedItems.clear();
+            onNeighbourChange();
+            return true;
+        } else
+            return super.onWrenched();
+    }
+
     @Override
     public void tick(int pass) {
-        super.tick(pass);
-
-        if (!isPowered)
-            return;
+        if (pass == 0 || !isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) return;
 
         if (cache == null || cache.invalid)
             cache = itemDuct.getCache(false);
-
-        if (itemDuct.world().getTotalWorldTime() % tickDelay() != 0)
-            return;
 
         cache = itemDuct.getCache(false);
 
         if (cache.isFinishedGenerating() && cache.outputRoutes.isEmpty())
             return;
 
-        if (!stuffedItems.isEmpty()) {
-            for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext(); ) {
-                ItemStack stuffedItem = iterator.next();
-                ItemStack send = stuffedItem.copy();
-                send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
-                TravelingItem travelingItem = getRouteForItem(send);
+        if (pass == 1) {
+            if (!stuffedItems.isEmpty()) {
+                for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext(); ) {
+                    ItemStack stuffedItem = iterator.next();
+                    ItemStack send = stuffedItem.copy();
+                    send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
+                    TravelingItem travelingItem = getRouteForItem(send);
 
-                if (travelingItem == null) continue;
+                    if (travelingItem == null) continue;
 
-                stuffedItem.stackSize -= travelingItem.stack.stackSize;
-                if (stuffedItem.stackSize <= 0)
-                    iterator.remove();
+                    stuffedItem.stackSize -= travelingItem.stack.stackSize;
+                    if (stuffedItem.stackSize <= 0)
+                        iterator.remove();
 
-                itemDuct.insertItem(travelingItem);
-                return;
+                    itemDuct.internalGrid.poll(travelingItem);
+                    itemDuct.insertItem(travelingItem);
+                    return;
+                }
+
+            } else if (stuffed) {
+                onNeighbourChange();
             }
+        } else if (pass == 2 && !stuffed) {
 
-            return;
-        } else if (stuffed) {
-            onNeighbourChange();
-        }
-
-        if (!isValidInput)
-            return;
-
-        if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
-            for (int slot : cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1)) {
-                ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
-                if (itemStack == null)
-                    continue;
-
-                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
-
-                if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1))
-                    continue;
-
-                TravelingItem travelingItem = getRouteForItem(itemStack);
-
-                if (travelingItem == null) continue;
-
-                travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-                cachedSidedInv.markDirty();
-
-                if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0)
-                    continue;
-
-                itemDuct.insertItem(travelingItem);
+            if (!isValidInput)
                 return;
-            }
-        } else if (cacheType == TileItemDuct.CacheType.IINV) {
-            for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
-                ItemStack itemStack = cachedInv.getStackInSlot(slot);
-                if (itemStack == null) continue;
 
-                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+            if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
+                for (int slot : cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1)) {
+                    ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
+                    if (itemStack == null)
+                        continue;
 
-                if (itemStack == null || itemStack.stackSize == 0) continue;
+                    itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
 
-                TravelingItem travelingItem = getRouteForItem(itemStack);
+                    if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1))
+                        continue;
 
-                if (travelingItem == null) continue;
+                    TravelingItem travelingItem = getRouteForItem(itemStack);
 
-                travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-                cachedInv.markDirty();
+                    if (travelingItem == null) continue;
 
-                if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0)
-                    continue;
+                    travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+                    cachedSidedInv.markDirty();
 
-                itemDuct.insertItem(travelingItem);
-                return;
+                    if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0)
+                        continue;
+
+                    itemDuct.internalGrid.poll(travelingItem);
+                    itemDuct.insertItem(travelingItem);
+                    return;
+                }
+            } else if (cacheType == TileItemDuct.CacheType.IINV) {
+                for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
+                    ItemStack itemStack = cachedInv.getStackInSlot(slot);
+                    if (itemStack == null) continue;
+
+                    itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+
+                    if (itemStack == null || itemStack.stackSize == 0) continue;
+
+                    TravelingItem travelingItem = getRouteForItem(itemStack);
+
+                    if (travelingItem == null) continue;
+
+                    travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+                    cachedInv.markDirty();
+
+                    if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0)
+                        continue;
+
+                    itemDuct.internalGrid.poll(travelingItem);
+                    itemDuct.insertItem(travelingItem);
+                    return;
+                }
             }
         }
     }
@@ -223,8 +239,15 @@ public class ServoItem extends ServoBase implements IStuffable {
             if (outputRoute.pathDirections.size() <= maxRange) {
                 TileItemDuct.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
                 if (routeInfo.canRoute) {
+                    int stackSize = item.stackSize - routeInfo.stackSize;
+
+
+                    if (stackSize <= 0)
+                        continue;
+
                     Route itemRoute = outputRoute.copy();
                     itemRoute.pathDirections.add(routeInfo.side);
+
                     item = item.copy();
                     item.stackSize -= routeInfo.stackSize;
                     return new TravelingItem(item, duct, itemRoute, (byte) (side ^ 1), speed);
@@ -313,6 +336,7 @@ public class ServoItem extends ServoBase implements IStuffable {
         if (routeForItem == null)
             return item;
 
+        itemDuct.internalGrid.poll(routeForItem);
         itemDuct.insertItem(routeForItem);
         item.stackSize -= routeForItem.stack.stackSize;
         return item.stackSize > 0 ? item : null;
