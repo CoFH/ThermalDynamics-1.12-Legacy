@@ -110,6 +110,11 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
     }
 
     @Override
+    public ItemStack getPickBlock() {
+        return new ItemStack(ThermalDynamics.itemServo, 1, type);
+    }
+
+    @Override
     public void addDescriptionToPacket(PacketCoFHBase packet) {
         packet.addBool(isPowered);
         packet.addBool(stuffed);
@@ -136,13 +141,7 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
     public boolean onWrenched() {
         tile.removeAttachment(this);
         for (ItemStack stack : getDrops()) {
-            float f = 0.3F;
-            double x2 = tile.getWorldObj().rand.nextFloat() * f + (1.0F - f) * 0.5D;
-            double y2 = tile.getWorldObj().rand.nextFloat() * f + (1.0F - f) * 0.5D;
-            double z2 = tile.getWorldObj().rand.nextFloat() * f + (1.0F - f) * 0.5D;
-            EntityItem item = new EntityItem(tile.getWorldObj(), tile.xCoord + x2, tile.yCoord + y2, tile.zCoord + z2, stack);
-            item.delayBeforeCanPickup = 10;
-            tile.getWorldObj().spawnEntityInWorld(item);
+            dropItemStack(stack);
         }
         return true;
     }

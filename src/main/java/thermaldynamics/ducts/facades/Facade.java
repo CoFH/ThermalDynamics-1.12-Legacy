@@ -78,6 +78,11 @@ public class Facade extends Attachment {
     }
 
     @Override
+    public ItemStack getPickBlock() {
+        return null;
+    }
+
+    @Override
     public List<ItemStack> getDrops() {
         return new LinkedList<ItemStack>();
     }

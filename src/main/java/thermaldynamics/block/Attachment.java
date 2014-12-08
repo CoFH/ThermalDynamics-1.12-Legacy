@@ -1,6 +1,7 @@
 package thermaldynamics.block;
 
 import cofh.core.network.PacketCoFHBase;
+import cofh.core.util.CoreUtils;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
@@ -60,6 +61,17 @@ public abstract class Attachment {
 
     }
 
+    public void dropItemStack(ItemStack item) {
+        Cuboid6 c = getCuboid();
+        CoreUtils.dropItemStackIntoWorldWithVelocity(item,
+                tile.getWorldObj(),
+                tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
+                tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y),
+                tile.z() + c.min.z + tile.world().rand.nextFloat() * (c.max.z - c.min.z)
+
+        );
+    }
+
     @SideOnly(Side.CLIENT)
     public abstract boolean render(int pass, RenderBlocks renderBlocks);
 
@@ -78,6 +90,8 @@ public abstract class Attachment {
     public void onNeighbourChange() {
 
     }
+
+    public abstract ItemStack getPickBlock();
 
     public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
         return true;

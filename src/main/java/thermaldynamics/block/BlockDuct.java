@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -129,6 +130,17 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         }
 
 
+    }
+
+    @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+        if (target.subHit >= 14 && target.subHit < 20) {
+            TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
+            ItemStack pickBlock = tileEntity.attachments[target.subHit - 14].getPickBlock();
+            if (pickBlock != null) return pickBlock;
+        }
+
+        return super.getPickBlock(target, world, x, y, z);
     }
 
     @Override

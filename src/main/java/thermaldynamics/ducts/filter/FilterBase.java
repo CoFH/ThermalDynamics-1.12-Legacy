@@ -45,6 +45,11 @@ public class FilterBase extends Attachment {
     }
 
     @Override
+    public ItemStack getPickBlock() {
+        return null;
+    }
+
+    @Override
     public List<ItemStack> getDrops() {
         return null;
     }
