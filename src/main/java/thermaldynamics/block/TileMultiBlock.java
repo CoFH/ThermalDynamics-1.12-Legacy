@@ -246,6 +246,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return true;
     }
 
+
     @Override
     public void onNeighborBlockChange() {
         if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime())
@@ -262,12 +263,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
             clearCache(i);
+
             if (attachments[i] != null) {
                 attachments[i].onNeighbourChange();
 
                 neighborTypes[i] = attachments[i].getNeighbourType();
                 if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-                    theTile = BlockHelper.getAdjacentTileEntity(this, i);
+                    theTile = getAdjTileEntitySafe(i);
                     if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
                         neighborMultiBlocks[i] = (IMultiBlock) theTile;
                     } else {
@@ -282,7 +284,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 isOutput = isOutput || neighborTypes[i] == NeighborTypes.OUTPUT;
 
             } else {
-                theTile = BlockHelper.getAdjacentTileEntity(this, i);
+                theTile = getAdjTileEntitySafe(i);
                 if (theTile == null) {
                     neighborMultiBlocks[i] = null;
                     neighborTypes[i] = NeighborTypes.NONE;
@@ -300,6 +302,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                     neighborMultiBlocks[i] = null;
                     neighborTypes[i] = NeighborTypes.STRUCTURE;
                     cacheStructural(theTile, i);
+                    isNode = true;
                 } else {
                     neighborMultiBlocks[i] = null;
                     neighborTypes[i] = NeighborTypes.NONE;
@@ -317,9 +320,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
 
-        rebuildChunkCache();
+        if (ServerHelper.isServerWorld(worldObj)) rebuildChunkCache();
 
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public TileEntity getAdjTileEntitySafe(byte i) {
+        return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper.getAdjacentTileEntity(this, i) : null);
     }
 
     public boolean checkForChunkUnload() {
@@ -327,7 +334,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         for (Chunk neighbourChunk : neighbourChunks) {
             if (!neighbourChunk.isChunkLoaded) {
                 onNeighborBlockChange();
-                return true;
+                return !isNode;
             }
         }
         return false;
@@ -335,6 +342,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     public void rebuildChunkCache() {
         if (!neighbourChunks.isEmpty()) neighbourChunks.clear();
+        if (!isNode) return;
         Chunk base = worldObj.getChunkFromBlockCoords(x(), y());
 
         for (byte i = 0; i < 6; i++) {
@@ -399,7 +407,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             myGrid.onMajorGridChange();
         }
 
-        rebuildChunkCache();
+        if (ServerHelper.isServerWorld(worldObj)) rebuildChunkCache();
     }
 
     private void checkIsNode() {
