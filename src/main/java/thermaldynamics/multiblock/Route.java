@@ -1,5 +1,7 @@
 package thermaldynamics.multiblock;
 
+import cofh.repack.codechicken.lib.vec.BlockCoord;
+
 import java.util.LinkedList;
 
 public class Route implements Comparable<Route> {
@@ -9,6 +11,7 @@ public class Route implements Comparable<Route> {
     public IMultiBlockRoute startPoint;
     public int pathWeight = 0;
     public boolean routeFinished = false;
+    public BlockCoord dest;
 
     public Route(IMultiBlockRoute myParent) {
 

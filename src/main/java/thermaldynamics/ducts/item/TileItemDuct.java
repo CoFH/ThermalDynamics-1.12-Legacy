@@ -5,7 +5,9 @@ import cofh.api.transport.IItemDuct;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.lib.util.helpers.BlockHelper;
+import cofh.lib.util.helpers.InventoryHelper;
+import cofh.lib.util.helpers.ItemHelper;
+import cofh.repack.codechicken.lib.vec.BlockCoord;
 import com.google.common.collect.Iterables;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -25,13 +27,13 @@ import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.IMultiBlockRoute;
 import thermaldynamics.multiblock.MultiBlockGrid;
 import thermaldynamics.multiblock.RouteCache;
-import thermalexpansion.util.Utils;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IItemDuct {
-    ItemGrid internalGrid;
+    public ItemGrid internalGrid;
 
     public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
     public List<TravelingItem> itemsToRemove = new LinkedList<TravelingItem>();
@@ -303,6 +305,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         if (myItems.size() > 0) {
             for (TravelingItem item : myItems) {
                 item.tickForward(this);
+                if (internalGrid.repoll) internalGrid.poll(item);
             }
             if (itemsToRemove.size() > 0) {
                 myItems.removeAll(itemsToRemove);
@@ -313,6 +316,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 
         if (hasChanged) {
+            internalGrid.shouldRepoll = true;
             sendTravelingItemsPacket();
             hasChanged = false;
         }
@@ -471,18 +475,33 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     public int centerLine = 0;
     public int[] centerLineSub = new int[6];
 
+//    public int getIncoming(ItemStack anItem, int side) {
+//        int stackSize = 0;
+//        HashSet<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
+//        if (travelingItems != null && !travelingItems.isEmpty()) {
+//            for (TravelingItem travelingItem : travelingItems) {
+//                if (ItemHelper.itemsEqualWithMetadata(anItem, travelingItem.stack, true)) {
+//                    stackSize += travelingItem.stack.stackSize;
+//                }
+//            }
+//        }
+//
+//        return stackSize;
+//    }
 
     public RouteInfo canRouteItem(ItemStack anItem) {
-        int[] coords;
+
         int stackSizeLeft;
         ItemStack curItem;
+
         for (byte i = internalSideCounter; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
             if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
-                coords = BlockHelper.getAdjacentCoordinatesForSide(x(), y(), z(), i);
                 curItem = anItem.copy();
                 curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
+
                 if (curItem.stackSize > 0) {
-                    stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
+
+                    stackSizeLeft = simTransferI(i, curItem.copy());
                     stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
                     if (stackSizeLeft < anItem.stackSize) {
                         tickInternalSideCounter(i + 1);
@@ -493,11 +512,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         }
         for (byte i = 0; i < internalSideCounter; i++) {
             if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
-                coords = BlockHelper.getAdjacentCoordinatesForSide(x(), y(), z(), i);
                 curItem = anItem.copy();
                 curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
                 if (curItem.stackSize > 0) {
-                    stackSizeLeft = Utils.canAddToInventory(coords[0], coords[1], coords[2], world(), i, curItem.copy());
+                    stackSizeLeft = simTransferI(i, curItem.copy());
                     stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
                     if (stackSizeLeft < anItem.stackSize) {
                         tickInternalSideCounter(i + 1);
@@ -507,6 +525,49 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             }
         }
         return noRoute;
+    }
+
+    public int simTransferI(int side, ItemStack insertingItem) {
+        ItemStack itemStack = simTransfer(side, insertingItem);
+        return itemStack == null ? 0 : itemStack.stackSize;
+    }
+
+    public ItemStack simTransfer(int side, ItemStack insertingItem) {
+        HashSet<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
+        if (travelingItems == null || travelingItems.isEmpty())
+            return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+
+        if (travelingItems.size() == 1) {
+            if (ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItems.iterator().next().stack)) {
+                insertingItem.stackSize += travelingItems.iterator().next().stack.stackSize;
+                return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+            }
+        } else {
+            int s = 0;
+            for (TravelingItem travelingItem : travelingItems) {
+                if (!ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack)) {
+                    s = -1;
+                    break;
+                } else {
+                    s += travelingItem.stack.stackSize;
+                }
+            }
+
+            if (s >= 0) {
+                insertingItem.stackSize += s;
+                return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+            }
+        }
+
+        // Super hacky - must optimize at some point
+        IInventory simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? new SimulatedInv(cache[side]) : new SimulatedInv.SimulatedInvSided(cache2[side]);
+
+        for (TravelingItem travelingItem : travelingItems) {
+            if (travelingItem.myPath != null && InventoryHelper.insertItemStackIntoInventory(simulatedInv, travelingItem.stack.copy(), travelingItem.myPath.getLastSide() ^ 1) != null && ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack))
+                return insertingItem;
+        }
+
+        return InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
     }
 
     @Override

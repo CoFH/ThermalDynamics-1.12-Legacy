@@ -4,6 +4,7 @@ package thermaldynamics.ducts.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
+import cofh.repack.codechicken.lib.vec.BlockCoord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -350,6 +351,17 @@ public class TravelingItem {
 
     public static final float[][] START_COORD = {{0.5F, 1, 0.5F}, {0.5F, 0, 0.5F}, {0.5F, 0.5F, 1}, {0.5F, 0.5F, 0}, {1, 0.5F, 0.5F},
             {0, 0.5F, 0.5F}};
+
+
     // DOWN, UP, NORTH, SOUTH, WEST, EAST
+
+    public BlockCoord getDest() {
+        if (myPath == null)
+            return null;
+
+        if (myPath.dest == null)
+            myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
+        return myPath.dest;
+    }
 
 }
