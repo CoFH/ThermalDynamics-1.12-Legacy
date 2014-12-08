@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
@@ -29,6 +30,7 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 import thermaldynamics.multiblock.RouteCache;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,6 +63,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
     public IInventory[] cache = new IInventory[6];
     public ISidedInventory[] cache2 = new ISidedInventory[6];
+    public IDeepStorageUnit[] cache3 = new IDeepStorageUnit[6];
     public CacheType[] cacheType = {CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE,};
 
     @Override
@@ -405,6 +408,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     @Override
     public void cacheImportant(TileEntity tile, int side) {
         cache[side] = (IInventory) tile;
+        if (tile instanceof IDeepStorageUnit) cache3[side] = (IDeepStorageUnit) tile;
         if (tile instanceof ISidedInventory) {
             cache2[side] = ((ISidedInventory) tile);
             cacheType[side] = CacheType.ISIDEDINV;
@@ -416,6 +420,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     @Override
     public void clearCache(int side) {
         cache[side] = null;
+        cache2[side] = null;
+        cache3[side] = null;
         cacheType[side] = CacheType.NONE;
     }
 
@@ -533,41 +539,71 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     }
 
     public ItemStack simTransfer(int side, ItemStack insertingItem) {
-        HashSet<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
-        if (travelingItems == null || travelingItems.isEmpty())
-            return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+        if (insertingItem == null) return null;
 
-        if (travelingItems.size() == 1) {
-            if (ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItems.iterator().next().stack)) {
-                insertingItem.stackSize += travelingItems.iterator().next().stack.stackSize;
-                return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+
+        if (cache3[side] != null) { // IDeepStorage
+            ItemStack cacheStack = cache3[side].getStoredItemType();
+            if (cacheStack != null && !ItemHelper.itemsEqualWithMetadata(cacheStack, insertingItem))
+                return insertingItem;
+
+            int s = cacheStack != null ? cacheStack.stackSize : 0;
+            int m = cache3[side].getMaxStoredCount();
+            if (s >= m) return insertingItem;
+
+            HashSet<TravelingItem> travelingItems = internalGrid != null ? internalGrid.travelingItems.get(new BlockCoord(this).offset(side)) : null;
+            if (travelingItems != null && !travelingItems.isEmpty()) {
+                for (Iterator<TravelingItem> iterator = travelingItems.iterator(); s < m && iterator.hasNext(); ) {
+                    TravelingItem travelingItem = iterator.next();
+                    boolean equalsItem = ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack);
+                    if (cacheStack == null && !equalsItem) return insertingItem;
+                    if (equalsItem) s += travelingItem.stack.stackSize;
+                }
+                if (s >= m) return insertingItem;
             }
+
+            insertingItem.stackSize -= (m - s);
+            if (insertingItem.stackSize <= 0)
+                return null;
+
+            return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
         } else {
-            int s = 0;
-            for (TravelingItem travelingItem : travelingItems) {
-                if (!ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack)) {
-                    s = -1;
-                    break;
-                } else {
-                    s += travelingItem.stack.stackSize;
+            HashSet<TravelingItem> travelingItems = internalGrid != null ? internalGrid.travelingItems.get(new BlockCoord(this).offset(side)) : null;
+            if (travelingItems == null || travelingItems.isEmpty())
+                return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+
+            if (travelingItems.size() == 1) {
+                if (ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItems.iterator().next().stack)) {
+                    insertingItem.stackSize += travelingItems.iterator().next().stack.stackSize;
+                    return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+                }
+            } else {
+                int s = 0;
+                for (TravelingItem travelingItem : travelingItems) {
+                    if (!ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack)) {
+                        s = -1;
+                        break;
+                    } else {
+                        s += travelingItem.stack.stackSize;
+                    }
+                }
+
+                if (s >= 0) {
+                    insertingItem.stackSize += s;
+                    return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
                 }
             }
 
-            if (s >= 0) {
-                insertingItem.stackSize += s;
-                return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+            // Super hacky - must optimize at some point
+            IInventory simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? new SimulatedInv.SimulatedInvSided(cache2[side]) : new SimulatedInv(cache[side]);
+
+            for (TravelingItem travelingItem : travelingItems) {
+                if (travelingItem.myPath != null && InventoryHelper.insertItemStackIntoInventory(simulatedInv, travelingItem.stack.copy(), travelingItem.myPath.getLastSide() ^ 1) != null && ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack))
+                    return insertingItem;
             }
+
+            return InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
         }
-
-        // Super hacky - must optimize at some point
-        IInventory simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? new SimulatedInv(cache[side]) : new SimulatedInv.SimulatedInvSided(cache2[side]);
-
-        for (TravelingItem travelingItem : travelingItems) {
-            if (travelingItem.myPath != null && InventoryHelper.insertItemStackIntoInventory(simulatedInv, travelingItem.stack.copy(), travelingItem.myPath.getLastSide() ^ 1) != null && ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack))
-                return insertingItem;
-        }
-
-        return InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
     }
 
     @Override
