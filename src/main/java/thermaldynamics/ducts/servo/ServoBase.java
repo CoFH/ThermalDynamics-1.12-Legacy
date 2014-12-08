@@ -5,14 +5,12 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.render.RenderUtils;
-import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -69,12 +67,13 @@ public abstract class ServoBase extends Attachment implements IRedstoneControl {
 
         isPowered = rsMode.isDisabled() || rsMode.getState() == tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
 
-        TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(tile, side);
+
+        TileEntity adjacentTileEntity = tile.getAdjTileEntitySafe(side);
 
         clearCache();
         boolean wasValidInput = isValidInput;
         isValidInput = isValidTile(adjacentTileEntity);
-        if(isValidInput){
+        if (isValidInput) {
             cacheTile(adjacentTileEntity);
         }
 
