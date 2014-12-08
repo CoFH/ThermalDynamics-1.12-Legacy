@@ -53,7 +53,7 @@ public class TDCrafting {
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.ender, "IGI", 'G', ItemServo.signalum, 'I', "ingotEnderium"));
 
         // Items
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_TRANS.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "glassHardened"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_TRANS.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "blockGlassHardened"));
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_OPAQUE.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "ingotLead"));
 
         TransposerManager.addFillRecipe(800, Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_FAST_TRANS.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false, false);
