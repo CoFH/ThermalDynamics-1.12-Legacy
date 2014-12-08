@@ -44,7 +44,7 @@ public enum Ducts {
 
     ITEM_FAST_OPAQUE(8, true, 1, "itemDuctFast", Type.Item, DuctFactory.item, "thermaldynamics:duct/item/DuctItem11", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
 
-    ENERGY_REINFORCED_EMPTY(9, true, -1, "energyEmptyReinforcedDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/energy/DuctEnergy20", "thermaldynamics:duct/energy/ConnectionEnergy20", null, 0, null, null, 0),
+    ENERGY_REINFORCED_EMPTY(9, false, -1, "energyEmptyReinforcedDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/energy/DuctEnergy20", "thermaldynamics:duct/energy/ConnectionEnergy20", null, 0, null, null, 0),
 
     STRUCTURE(10, false, -1, "structureDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/structure", null, null, 0, null, null, 0),
 
