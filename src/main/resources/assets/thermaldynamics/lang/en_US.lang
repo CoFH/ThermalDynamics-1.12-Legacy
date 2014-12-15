@@ -32,8 +32,15 @@ tile.thermalducts.duct.structureDuct.info=Provides Structure
 
 tile.thermalducts.duct.opaque.name=(Opaque)
 
-item.thermalducts.servo.0.name=Basic External Servo
-item.thermalducts.servo.1.name=Hardened External Servo
-item.thermalducts.servo.2.name=Reinforced External Servo
-item.thermalducts.servo.3.name=Signalum External Servo
-item.thermalducts.servo.4.name=Resonant External Servo
+item.thermalducts.servo.0.name=Basic Servo
+item.thermalducts.servo.1.name=Hardened Servo
+item.thermalducts.servo.2.name=Reinforced Servo
+item.thermalducts.servo.3.name=Signalum Servo
+item.thermalducts.servo.4.name=Resonant Servo
+
+
+item.thermalducts.filter.0.name=Basic Filter
+item.thermalducts.filter.1.name=Hardened Filter
+item.thermalducts.filter.2.name=Reinforced Filter
+item.thermalducts.filter.3.name=Signalum Filter
+item.thermalducts.filter.4.name=Resonant Filter
