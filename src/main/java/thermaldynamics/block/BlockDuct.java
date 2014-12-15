@@ -77,6 +77,12 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int metadata) {
+        return Ducts.getType(metadata + offset).iconBaseTexture;
+    }
+
+    @Override
     public int damageDropped(int i) {
         return i;
     }
