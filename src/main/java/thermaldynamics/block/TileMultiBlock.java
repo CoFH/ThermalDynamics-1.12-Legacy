@@ -88,10 +88,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public void onChunkUnload() {
-        super.onChunkUnload();
         if (ServerHelper.isServerWorld(worldObj)) {
             for (SubTileMultiBlock subTile : subTiles) subTile.onChunkUnload();
-
 
             if (myGrid != null) {
                 tileUnloading();
@@ -171,7 +169,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public boolean isBlockedSide(int side) {
-        return connectionTypes[side] == ConnectionTypes.BLOCKED;
+        return connectionTypes[side] == ConnectionTypes.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
     }
 
     @Override
@@ -211,7 +209,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         }
     }
 
-    public boolean isStructureTile(TileEntity tile, byte side) {
+    public boolean isStructureTile(TileEntity tile, int side) {
         return false;
     }
 
@@ -262,54 +260,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            clearCache(i);
-
-            if (attachments[i] != null) {
-                attachments[i].onNeighbourChange();
-
-                neighborTypes[i] = attachments[i].getNeighbourType();
-                if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-                    theTile = getAdjTileEntitySafe(i);
-                    if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-                        neighborMultiBlocks[i] = (IMultiBlock) theTile;
-                    } else {
-                        neighborMultiBlocks[i] = null;
-                        neighborTypes[i] = NeighborTypes.NONE;
-                    }
-                } else
-                    neighborMultiBlocks[i] = null;
-                connectionTypes[i] = ConnectionTypes.BLOCKED;
-                isNode = attachments[i].isNode();
-                isInput = isInput || neighborTypes[i] == NeighborTypes.INPUT;
-                isOutput = isOutput || neighborTypes[i] == NeighborTypes.OUTPUT;
-
-            } else {
-                theTile = getAdjTileEntitySafe(i);
-                if (theTile == null) {
-                    neighborMultiBlocks[i] = null;
-                    neighborTypes[i] = NeighborTypes.NONE;
-                    connectionTypes[i] = ConnectionTypes.NORMAL;
-                } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-                    neighborMultiBlocks[i] = (IMultiBlock) theTile;
-                    neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-                } else if (isSignificantTile(theTile, i)) {
-                    neighborMultiBlocks[i] = null;
-                    neighborTypes[i] = NeighborTypes.OUTPUT;
-                    cacheImportant(theTile, i);
-                    isNode = true;
-                    isOutput = true;
-                } else if (isStructureTile(theTile, i)) {
-                    neighborMultiBlocks[i] = null;
-                    neighborTypes[i] = NeighborTypes.STRUCTURE;
-                    cacheStructural(theTile, i);
-                    isNode = true;
-                } else {
-                    neighborMultiBlocks[i] = null;
-                    neighborTypes[i] = NeighborTypes.NONE;
-                }
-            }
-
-
+            handleSideUpdate(i);
         }
 
         if (wasNode != isNode && myGrid != null) {
@@ -325,7 +276,67 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-    public TileEntity getAdjTileEntitySafe(byte i) {
+    public void handleSideUpdate(int i) {
+        TileEntity theTile;
+        clearCache(i);
+
+        if (attachments[i] != null) {
+            attachments[i].onNeighbourChange();
+
+            neighborTypes[i] = attachments[i].getNeighbourType();
+            if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
+                theTile = getAdjTileEntitySafe(i);
+                if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+                    neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                } else {
+                    neighborMultiBlocks[i] = null;
+                    neighborTypes[i] = NeighborTypes.NONE;
+                }
+            } else if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+                theTile = getAdjTileEntitySafe(i);
+                if (isSignificantTile(theTile, i)) {
+                    neighborMultiBlocks[i] = null;
+                    neighborTypes[i] = NeighborTypes.OUTPUT;
+                    cacheImportant(theTile, i);
+                    isNode = true;
+                    isOutput = true;
+                }
+            } else
+                neighborMultiBlocks[i] = null;
+
+            connectionTypes[i] = ConnectionTypes.NORMAL;
+            isNode = attachments[i].isNode();
+            isInput = isInput || neighborTypes[i] == NeighborTypes.INPUT;
+            isOutput = isOutput || neighborTypes[i] == NeighborTypes.OUTPUT;
+
+        } else {
+            theTile = getAdjTileEntitySafe(i);
+            if (theTile == null) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.NONE;
+                connectionTypes[i] = ConnectionTypes.NORMAL;
+            } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+                neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+            } else if (isSignificantTile(theTile, i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.OUTPUT;
+                cacheImportant(theTile, i);
+                isNode = true;
+                isOutput = true;
+            } else if (isStructureTile(theTile, i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.STRUCTURE;
+                cacheStructural(theTile, i);
+                isNode = true;
+            } else {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.NONE;
+            }
+        }
+    }
+
+    public TileEntity getAdjTileEntitySafe(int i) {
         return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper.getAdjacentTileEntity(this, i) : null);
     }
 
@@ -364,42 +375,15 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
-        clearCache(i);
-
-        if (attachments[i] != null) {
-            attachments[i].onNeighbourChange();
-            neighborTypes[i] = attachments[i].getNeighbourType();
-            if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-                TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-                neighborMultiBlocks[i] = isConnectable(theTile, i) && isUnblocked(theTile, i) ? (IMultiBlock) theTile : null;
-            } else {
-                neighborMultiBlocks[i] = null;
-            }
-            connectionTypes[i] = ConnectionTypes.BLOCKED;
-        } else {
-            TileEntity theTile = worldObj.getTileEntity(tileX, tileY, tileZ);
-            if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-                neighborMultiBlocks[i] = (IMultiBlock) theTile;
-                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-            } else if (isSignificantTile(theTile, i)) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.OUTPUT;
-                cacheImportant(theTile, i);
-            } else if (isStructureTile(theTile, (byte) i)) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.STRUCTURE;
-                cacheStructural(theTile, i);
-            } else {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.NONE;
-            }
-        }
-
-        for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
 
         boolean wasNode = isNode;
         boolean wasInput = isInput;
         boolean wasOutput = isOutput;
+
+        handleSideUpdate(i);
+
+        for (SubTileMultiBlock subTile : subTiles) subTile.onNeighbourChange();
+
         checkIsNode();
         if (wasNode != isNode && myGrid != null) {
             myGrid.addBlock(this);
@@ -769,16 +753,20 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public boolean isInput = false;
 
     public BlockDuct.ConnectionTypes getConnectionType(int side) {
-        if (neighborTypes[side] == NeighborTypes.STRUCTURE)
+        if (attachments[side] != null) {
+            return attachments[side].getRenderConnectionType();
+        } else
+            return getDefaultConnectionType(neighborTypes[side], connectionTypes[side]);
+    }
+
+    public static BlockDuct.ConnectionTypes getDefaultConnectionType(NeighborTypes neighborType, ConnectionTypes connectionType) {
+        if (neighborType == NeighborTypes.STRUCTURE)
             return BlockDuct.ConnectionTypes.STRUCTURE;
-
-        if (neighborTypes[side] == NeighborTypes.INPUT)
+        else if (neighborType == NeighborTypes.INPUT)
             return BlockDuct.ConnectionTypes.DUCT;
-
-        if (neighborTypes[side] == NeighborTypes.NONE || connectionTypes[side] == ConnectionTypes.BLOCKED || connectionTypes[side] == ConnectionTypes.REJECTED)
+        else if (neighborType == NeighborTypes.NONE || connectionType == ConnectionTypes.BLOCKED || connectionType == ConnectionTypes.REJECTED)
             return BlockDuct.ConnectionTypes.NONE;
-
-        if (neighborTypes[side] == NeighborTypes.OUTPUT)
+        else if (neighborType == NeighborTypes.OUTPUT)
             return BlockDuct.ConnectionTypes.TILECONNECTION;
         else
             return BlockDuct.ConnectionTypes.DUCT;

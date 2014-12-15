@@ -1,4 +1,4 @@
-package thermaldynamics.ducts.servo;
+package thermaldynamics.ducts.attachments.servo;
 
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -15,11 +14,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.item.PropsConduit;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
-import thermaldynamics.gui.containers.ContainerServo;
-import thermaldynamics.gui.gui.GuiServo;
+import thermaldynamics.gui.containers.ContainerDuctConnection;
+import thermaldynamics.gui.gui.GuiDuctConnection;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
 
@@ -27,7 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ServoItem extends ServoBase implements IStuffable {
+public class ServoItem extends ServoBase {
     LinkedList<ItemStack> stuffedItems = new LinkedList<ItemStack>();
 
     TileItemDuct itemDuct;
@@ -35,6 +36,7 @@ public class ServoItem extends ServoBase implements IStuffable {
     public ServoItem(TileMultiBlock tile, byte side, int type) {
         super(tile, side, type);
         itemDuct = ((TileItemDuct) tile);
+
     }
 
     public ServoItem(TileMultiBlock tile, byte side) {
@@ -50,7 +52,7 @@ public class ServoItem extends ServoBase implements IStuffable {
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
-        if (!stuffedItems.isEmpty()) {
+        if (isStuffed()) {
             NBTTagList list = new NBTTagList();
             for (ItemStack item : stuffedItems) {
                 NBTTagCompound newTag = new NBTTagCompound();
@@ -73,7 +75,9 @@ public class ServoItem extends ServoBase implements IStuffable {
                     stuffedItems.add(item);
             }
         }
-        stuffed = !stuffedItems.isEmpty();
+        stuffed = isStuffed();
+
+
     }
 
     public boolean canStuff() {
@@ -99,7 +103,7 @@ public class ServoItem extends ServoBase implements IStuffable {
     public List<ItemStack> getDrops() {
         List<ItemStack> drops = super.getDrops();
 
-        if (!stuffedItems.isEmpty())
+        if (isStuffed())
             for (ItemStack stuffedItem : stuffedItems) {
                 ItemStack stack = stuffedItem.copy();
                 int m = stuffedItem.getMaxStackSize();
@@ -124,7 +128,7 @@ public class ServoItem extends ServoBase implements IStuffable {
     @Override
     public boolean onWrenched() {
         Cuboid6 c = getCuboid();
-        if (!stuffedItems.isEmpty()) {
+        if (isStuffed()) {
             for (ItemStack stack : stuffedItems) {
                 while (stack.stackSize > 0)
                     dropItemStack(stack.splitStack(Math.min(stack.stackSize, stack.getMaxStackSize())));
@@ -149,7 +153,7 @@ public class ServoItem extends ServoBase implements IStuffable {
             return;
 
         if (pass == 1) {
-            if (!stuffedItems.isEmpty()) {
+            if (isStuffed()) {
                 for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext(); ) {
                     ItemStack stuffedItem = iterator.next();
                     ItemStack send = stuffedItem.copy();
@@ -186,6 +190,8 @@ public class ServoItem extends ServoBase implements IStuffable {
                     if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1))
                         continue;
 
+                    if (!filter.matchesFilter(itemStack)) continue;
+
                     TravelingItem travelingItem = getRouteForItem(itemStack);
 
                     if (travelingItem == null) continue;
@@ -208,6 +214,7 @@ public class ServoItem extends ServoBase implements IStuffable {
                     itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
 
                     if (itemStack == null || itemStack.stackSize == 0) continue;
+                    if (!filter.matchesFilter(itemStack)) continue;
 
                     TravelingItem travelingItem = getRouteForItem(itemStack);
 
@@ -233,7 +240,13 @@ public class ServoItem extends ServoBase implements IStuffable {
 
 
     public static TravelingItem findRouteForItem(ItemStack item, TileItemDuct duct, int side, int maxRange, byte speed) {
+        if (item == null || item.stackSize == 0) return null;
         RouteCache routeCache = duct.getCache(true);
+
+        item = item.copy();
+
+        if (item.stackSize == 0)
+            return null;
 
         for (Route outputRoute : routeCache.outputRoutes) {
             if (outputRoute.pathDirections.size() <= maxRange) {
@@ -248,7 +261,6 @@ public class ServoItem extends ServoBase implements IStuffable {
                     Route itemRoute = outputRoute.copy();
                     itemRoute.pathDirections.add(routeInfo.side);
 
-                    item = item.copy();
                     item.stackSize -= routeInfo.stackSize;
                     return new TravelingItem(item, duct, itemRoute, (byte) (side ^ 1), speed);
                 }
@@ -267,20 +279,23 @@ public class ServoItem extends ServoBase implements IStuffable {
     public int[] maxSize = {1, 8, 64, 64, 64};
 
     public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
-        itemStack.stackSize = Math.min(itemStack.stackSize, maxSize[type]);
         return itemStack;
     }
-
 
     @Override
     public void onNeighbourChange() {
         if (stuffed != !stuffedItems.isEmpty()) {
-            stuffed = !stuffedItems.isEmpty();
+            stuffed = isStuffed();
             tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
         }
 
         super.onNeighbourChange();
     }
+
+    public boolean isStuffed() {
+        return !stuffedItems.isEmpty();
+    }
+
 
     @Override
     public boolean isValidTile(TileEntity tile) {
@@ -310,8 +325,8 @@ public class ServoItem extends ServoBase implements IStuffable {
 
 
     @Override
-    public void sendGuiNetworkData(Container container, ICrafting player) {
-        super.sendGuiNetworkData(container, player);
+    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+        super.sendGuiNetworkData(container, player, newGuy);
     }
 
     @Override
@@ -322,16 +337,17 @@ public class ServoItem extends ServoBase implements IStuffable {
 
     @Override
     public Object getGuiServer(InventoryPlayer inventory) {
-        return new ContainerServo(inventory, this);
+        return new ContainerDuctConnection(inventory, this);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public Object getGuiClient(InventoryPlayer inventory) {
-        return new GuiServo(inventory, this);
+        return new GuiDuctConnection(inventory, this);
     }
 
     public ItemStack insertItem(ItemStack item) {
+        if (!filter.matchesFilter(item)) return item;
         TravelingItem routeForItem = getRouteForItem(item);
         if (routeForItem == null)
             return item;
@@ -345,4 +361,11 @@ public class ServoItem extends ServoBase implements IStuffable {
     public TravelingItem getRouteForItem(ItemStack item) {
         return ServoItem.findRouteForItem(item, itemDuct, side, getMaxRange(), getSpeed());
     }
+
+
+    @Override
+    public FilterLogic createFilterLogic() {
+        return new FilterLogic(type, Ducts.Type.Item, this);
+    }
+
 }

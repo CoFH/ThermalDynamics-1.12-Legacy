@@ -1,4 +1,4 @@
-package thermaldynamics.ducts.facades;
+package thermaldynamics.ducts.attachments.facades;
 
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import net.minecraft.block.Block;

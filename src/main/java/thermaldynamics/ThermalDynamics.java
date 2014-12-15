@@ -29,8 +29,8 @@ import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.gui.TDCreativeTab;
+import thermaldynamics.item.ItemFilter;
 import thermaldynamics.item.ItemServo;
-import thermaldynamics.util.ShaderHelper;
 import thermalfoundation.ThermalFoundation;
 
 import java.io.File;
@@ -58,6 +58,7 @@ public class ThermalDynamics extends BaseMod {
 
     public static final CreativeTabs tab = new TDCreativeTab();
 
+
     /* INIT SEQUENCE */
     public ThermalDynamics() {
 
@@ -66,12 +67,12 @@ public class ThermalDynamics extends BaseMod {
 
     LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();
 
-    public Block addBlock(Block a) {
+    public <T extends Block> T addBlock(T a) {
         initializerList.add((IInitializer) a);
         return a;
     }
 
-    public Item addItem(Item a) {
+    public <T extends Item> T addItem(T a) {
         initializerList.add((IInitializer) a);
         return a;
     }
@@ -90,10 +91,10 @@ public class ThermalDynamics extends BaseMod {
             blockDuct[i] = addBlock(new BlockDuct(i));
         }
         itemServo = addItem(new ItemServo());
+        itemFilter = addItem(new ItemFilter());
 
         for (IInitializer initializer : initializerList)
             initializer.preInit();
-
 
 
         config.save();
@@ -153,8 +154,9 @@ public class ThermalDynamics extends BaseMod {
         return version;
     }
 
-    public static Block[] blockDuct;
-    public static Item itemServo;
+    public static BlockDuct[] blockDuct;
+    public static ItemServo itemServo;
+    public static ItemFilter itemFilter;
 
 
     @EventHandler

@@ -42,6 +42,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
     static IIcon textureCenterLine;
 
     public static IIcon[] servoTexture = new IIcon[10];
+    public static IIcon[] filterTexture = new IIcon[5];
 
     public static IIcon sideDucts;
 
@@ -71,6 +72,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         generateModels();
         for (int i = 0; i < 10; i++)
             servoTexture[i] = IconRegistry.getIcon("ServoBase" + i);
+
+        for (int i = 0; i < 5; i++)
+            filterTexture[i] = IconRegistry.getIcon("FilterBase" + i);
 
         sideDucts = IconRegistry.getIcon("SideDucts");
 

@@ -30,7 +30,7 @@ public class TileItemDuctPower extends TileItemDuct implements IEnergyHandler {
 
 
     @Override
-    public boolean isStructureTile(TileEntity theTile, byte side) {
+    public boolean isStructureTile(TileEntity theTile, int side) {
         return theTile instanceof IEnergyProvider && ((IEnergyProvider) theTile).canConnectEnergy(ForgeDirection.getOrientation(side ^ 1));
     }
 

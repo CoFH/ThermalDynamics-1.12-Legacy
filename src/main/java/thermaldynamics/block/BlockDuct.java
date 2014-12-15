@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.IBlockAccess;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Random;
 
 public class BlockDuct extends BlockMultiBlock implements IInitializer {
-
     public int offset;
 
     public BlockDuct(int offset) {
@@ -124,6 +124,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         for (int i = 0; i < 5; i++)
             for (int j = 0; j < 2; j++)
                 IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/servo/ServoBase" + i + "" + j, ir);
+
+        for (int i = 0; i < 5; i++)
+            IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/filter/Filter" + i + "0", ir);
 
 
         IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);

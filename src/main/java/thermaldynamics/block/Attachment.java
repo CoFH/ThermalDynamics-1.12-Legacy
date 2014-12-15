@@ -11,7 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -47,7 +46,14 @@ public abstract class Attachment {
 
     public abstract Cuboid6 getCuboid();
 
-    public abstract boolean onWrenched();
+    public boolean onWrenched() {
+        tile.removeAttachment(this);
+        for (ItemStack stack : getDrops()) {
+            dropItemStack(stack);
+        }
+        return true;
+    }
+
 
     public abstract TileMultiBlock.NeighborTypes getNeighbourType();
 
@@ -116,7 +122,7 @@ public abstract class Attachment {
 
     }
 
-    public void sendGuiNetworkData(Container container, ICrafting player) {
+    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
 
     }
 
@@ -130,5 +136,13 @@ public abstract class Attachment {
 
     public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
+    }
+
+    public BlockDuct.ConnectionTypes getRenderConnectionType() {
+        return TileMultiBlock.getDefaultConnectionType(getNeighbourType(), TileMultiBlock.ConnectionTypes.NORMAL);
+    }
+
+    public boolean allowPipeConnection() {
+        return false;
     }
 }

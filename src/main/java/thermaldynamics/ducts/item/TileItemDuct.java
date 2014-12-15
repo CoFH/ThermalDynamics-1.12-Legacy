@@ -22,8 +22,10 @@ import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TickHandlerClient;
-import thermaldynamics.ducts.servo.IStuffable;
-import thermaldynamics.ducts.servo.ServoItem;
+import thermaldynamics.ducts.attachments.IStuffable;
+import thermaldynamics.ducts.attachments.filter.IFilterAttachment;
+import thermaldynamics.ducts.attachments.filter.IFilterItems;
+import thermaldynamics.ducts.attachments.servo.ServoItem;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.IMultiBlockRoute;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -61,6 +63,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     }
 
 
+    public IFilterItems[] filterCache = {IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter};
     public IInventory[] cache = new IInventory[6];
     public ISidedInventory[] cache2 = new ISidedInventory[6];
     public IDeepStorageUnit[] cache3 = new IDeepStorageUnit[6];
@@ -70,7 +73,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     public ItemStack insertItem(ForgeDirection from, ItemStack item) {
         if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()].allowTransfer)))
             return item;
-
 
         Attachment attachment = attachments[from.ordinal()];
         if (attachment == null || attachment.getID() != AttachmentRegistry.SERVO_INV) {
@@ -415,10 +417,13 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         } else {
             cacheType[side] = CacheType.IINV;
         }
+        if (attachments[side] instanceof IFilterAttachment)
+            filterCache[side] = ((IFilterAttachment) attachments[side]).getItemFilter();
     }
 
     @Override
     public void clearCache(int side) {
+        filterCache[side] = IFilterItems.nullFilter;
         cache[side] = null;
         cache2[side] = null;
         cache3[side] = null;
@@ -568,6 +573,21 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
             return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
         } else {
+//            if (cache[side].getInventoryStackLimit() == 0)
+//                return insertingItem;
+//
+//            if (cache[side].getInventoryStackLimit() > 64) {
+//                int slot;
+//                for (slot = 0; slot < cache[side].getSizeInventory(); slot++) {
+//                    if ((cache[side].getStackInSlot(slot) == null && cache[side].isItemValidForSlot(slot, insertingItem)) || ItemHelper.itemsEqualWithMetadata(cache[side].getStackInSlot(slot), insertingItem)) {
+//                        if (cache2[side] == null || cache2[side].canInsertItem(slot, insertingItem, side))
+//                            break;
+//                    }
+//                }
+//
+//
+//            }
+
             HashSet<TravelingItem> travelingItems = internalGrid != null ? internalGrid.travelingItems.get(new BlockCoord(this).offset(side)) : null;
             if (travelingItems == null || travelingItems.isEmpty())
                 return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
@@ -640,10 +660,24 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     }
 
     private boolean itemPassesFiltering(byte i, ItemStack anItem) {
-        return true;
+        return filterCache[i].matchesFilter(anItem);
     }
 
     public int getMoveStackSize(byte side) {
         return 64;
+    }
+
+
+    public int insertIntoInventory(ItemStack stack, int direction) {
+        if (cache[direction] == null) return stack.stackSize;
+        if (!filterCache[direction].matchesFilter(stack))
+            return stack.stackSize;
+
+        return insertIntoInventory_do(stack, direction);
+    }
+
+    public int insertIntoInventory_do(ItemStack stack, int direction) {
+        stack = InventoryHelper.insertItemStackIntoInventory(cache[direction], stack, direction ^ 1);
+        return stack == null ? 0 : stack.stackSize;
     }
 }

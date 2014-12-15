@@ -12,7 +12,6 @@ import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
-import thermalexpansion.util.Utils;
 
 import static thermaldynamics.block.TileMultiBlock.ConnectionTypes;
 import static thermaldynamics.block.TileMultiBlock.NeighborTypes;
@@ -103,18 +102,13 @@ public class TravelingItem {
                 }
             }
         } else if (homeTile.neighborTypes[direction] == NeighborTypes.OUTPUT && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
+            stack.stackSize = homeTile.insertIntoInventory(stack, direction);
 
-            if (homeTile.cache[direction] != null) {
-                stack.stackSize = Utils.addToInventory(homeTile.getCachedTileEntity(direction), direction, stack);
-
-                if (stack.stackSize > 0) {
-                    bounceItem(homeTile);
-                    return;
-                }
-                homeTile.removeItem(this);
-            } else {
+            if (stack.stackSize > 0) {
                 bounceItem(homeTile);
+                return;
             }
+            homeTile.removeItem(this);
         } else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT && goingToStuff && myPath.pathPos >= myPath.pathWeight) {
             if (homeTile.canStuffItem()) {
                 goingToStuff = false;

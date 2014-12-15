@@ -1,4 +1,4 @@
-package thermaldynamics.ducts.facades;
+package thermaldynamics.ducts.attachments.facades;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
 
-import static thermaldynamics.ducts.facades.FacadeBlockAccess.Result.*;
+import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.*;
 
 public class FacadeBlockAccess implements IBlockAccess {
 

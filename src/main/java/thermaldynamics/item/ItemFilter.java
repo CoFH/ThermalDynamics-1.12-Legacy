@@ -10,17 +10,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.ducts.fluid.TileFluidDuct;
+import thermaldynamics.ducts.attachments.filter.FilterItem;
 import thermaldynamics.ducts.item.TileItemDuct;
-import thermaldynamics.ducts.attachments.servo.ServoFluid;
 import thermaldynamics.ducts.attachments.servo.ServoItem;
 
 import java.util.List;
 
-public class ItemServo extends ItemAttachment {
-    public ItemServo() {
+public class ItemFilter extends ItemAttachment {
+    public ItemFilter() {
         super();
-        this.setUnlocalizedName("thermalducts.servo");
+        this.setUnlocalizedName("thermalducts.filter");
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ItemServo extends ItemAttachment {
     public void registerIcons(IIconRegister ir) {
         icons = new IIcon[5];
         for (int i = 0; i < 5; i++)
-            icons[i] = ir.registerIcon("thermaldynamics:servo" + i);
+            icons[i] = ir.registerIcon("thermaldynamics:filter" + i);
         this.itemIcon = icons[0];
     }
 
@@ -56,10 +55,10 @@ public class ItemServo extends ItemAttachment {
     @Override
     public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
         int type = stack.getItemDamage() % 5;
-        if (tile instanceof TileFluidDuct)
-            return new ServoFluid(tile, (byte) (side ^ 1), type);
+//        if (tile instanceof TileFluidDuct)
+//            return new ServoFluid(tile, (byte) (side ^ 1), type);
         if (tile instanceof TileItemDuct)
-            return new ServoItem(tile, (byte) (side ^ 1), type);
+            return new FilterItem(tile, (byte) (side ^ 1), type);
         return null;
     }
 
@@ -68,7 +67,7 @@ public class ItemServo extends ItemAttachment {
 
     @Override
     public boolean preInit() {
-        GameRegistry.registerItem(this, "servo");
+        GameRegistry.registerItem(this, "filter");
 
         iron = new ItemStack(this, 1, 0);
         invar = new ItemStack(this, 1, 1);

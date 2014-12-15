@@ -1,4 +1,4 @@
-package thermaldynamics.ducts.facades;
+package thermaldynamics.ducts.attachments.facades;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.repack.codechicken.lib.vec.Cuboid6;

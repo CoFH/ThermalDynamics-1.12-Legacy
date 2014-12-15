@@ -1,8 +1,9 @@
 package thermaldynamics.block;
 
-import thermaldynamics.ducts.facades.Facade;
-import thermaldynamics.ducts.servo.ServoFluid;
-import thermaldynamics.ducts.servo.ServoItem;
+import thermaldynamics.ducts.attachments.facades.Facade;
+import thermaldynamics.ducts.attachments.filter.FilterItem;
+import thermaldynamics.ducts.attachments.servo.ServoFluid;
+import thermaldynamics.ducts.attachments.servo.ServoItem;
 
 import java.util.HashMap;
 
@@ -23,8 +24,10 @@ public class AttachmentRegistry {
             return new ServoFluid(tile, side);
         } else if (id == SERVO_INV) {
             return new ServoItem(tile, side);
+        } else if (id == FILTER_INV) {
+            return new FilterItem(tile, side);
         }
 
-        return null;
+        throw new RuntimeException("Illegal Attachment ID");
     }
 }
