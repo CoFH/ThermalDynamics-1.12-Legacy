@@ -13,19 +13,49 @@ public class SimulatedInv extends InventoryBasic {
             return new SimulatedInv(inventory);
     }
 
-    IInventory target;
-
     public SimulatedInv(IInventory target) {
         super(target.getInventoryName(), false, target.getSizeInventory());
         this.target = target;
-        for (int i = 0; i < target.getSizeInventory(); i++) {
-            this.setInventorySlotContents(i, target.getStackInSlot(i));
+    }
+
+
+    IInventory target;
+    int curReadSlot = -1;
+
+    public void ensureSlotRead(int newMax) {
+        for (curReadSlot++; curReadSlot <= newMax && curReadSlot < target.getSizeInventory(); curReadSlot++) {
+            this.setInventorySlotContents(curReadSlot, target.getStackInSlot(curReadSlot));
         }
     }
 
     @Override
-    public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
-        return target.isItemValidForSlot(p_94041_1_, p_94041_2_);
+    public ItemStack getStackInSlot(int slot) {
+        if (slot > curReadSlot) ensureSlotRead(slot);
+        return super.getStackInSlot(slot);
+    }
+
+    @Override
+    public ItemStack decrStackSize(int slot, int size) {
+        if (slot > curReadSlot) ensureSlotRead(slot);
+        return super.decrStackSize(slot, size);
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int slot) {
+        if (slot > curReadSlot) ensureSlotRead(slot);
+        return super.getStackInSlotOnClosing(slot);
+    }
+
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack stack) {
+        if (slot > curReadSlot) ensureSlotRead(slot);
+        super.setInventorySlotContents(slot, stack);
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+        if (slot > curReadSlot) ensureSlotRead(slot);
+        return slot < target.getSizeInventory() && target.isItemValidForSlot(slot, stack);
     }
 
     @Override
@@ -49,12 +79,13 @@ public class SimulatedInv extends InventoryBasic {
 
         @Override
         public boolean canInsertItem(int slot, ItemStack item, int side) {
-            return sided.canInsertItem(slot, item, side);
+            return slot < target.getSizeInventory() && sided.canInsertItem(slot, item, side);
         }
 
         @Override
         public boolean canExtractItem(int slot, ItemStack item, int side) {
-            return sided.canExtractItem(slot, item, side);
+            return slot < target.getSizeInventory() && sided.canExtractItem(slot, item, side);
         }
+
     }
 }
