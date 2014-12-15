@@ -3,7 +3,6 @@ package thermaldynamics.ducts.attachments.filter;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.TileEntity;
@@ -12,8 +11,6 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.gui.containers.ContainerDuctConnection;
 import thermaldynamics.gui.gui.GuiDuctConnection;
-
-import java.util.List;
 
 public class FilterItem extends FilterBase {
     public FilterItem(TileMultiBlock tile, byte side, int type) {
@@ -57,25 +54,5 @@ public class FilterItem extends FilterBase {
 
 
 
-    @Override
-    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
-        super.sendGuiNetworkData(container, player, newGuy);
-    }
 
-    @Override
-    public void receiveGuiNetworkData(int i, int j) {
-        super.receiveGuiNetworkData(i, j);
-    }
-
-
-    @Override
-    public Object getGuiServer(InventoryPlayer inventory) {
-        return new ContainerDuctConnection(inventory, this);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Object getGuiClient(InventoryPlayer inventory) {
-        return new GuiDuctConnection(inventory, this);
-    }
 }

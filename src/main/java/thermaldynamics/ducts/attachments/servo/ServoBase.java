@@ -2,21 +2,16 @@ package thermaldynamics.ducts.attachments.servo;
 
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
-import cofh.core.network.PacketHandler;
-import cofh.core.network.PacketTileInfo;
 import cofh.core.render.RenderUtils;
-import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.attachments.ConnectionBase;
-import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.render.RenderDuct;
 
 public abstract class ServoBase extends ConnectionBase {

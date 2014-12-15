@@ -6,7 +6,10 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
@@ -21,6 +24,8 @@ import thermaldynamics.ducts.attachments.filter.IFilterAttachment;
 import thermaldynamics.ducts.attachments.filter.IFilterFluid;
 import thermaldynamics.ducts.attachments.filter.IFilterItems;
 import thermaldynamics.gui.GuiHandler;
+import thermaldynamics.gui.containers.ContainerDuctConnection;
+import thermaldynamics.gui.gui.GuiDuctConnection;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -216,6 +221,18 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
     public void receiveGuiNetworkData(int i, int j) {
         super.receiveGuiNetworkData(i, j);
         if (i == 0) filter.handleFlagByte(j);
+    }
+
+
+    @Override
+    public Object getGuiServer(InventoryPlayer inventory) {
+        return new ContainerDuctConnection(inventory, this);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Object getGuiClient(InventoryPlayer inventory) {
+        return new GuiDuctConnection(inventory, this);
     }
 
 

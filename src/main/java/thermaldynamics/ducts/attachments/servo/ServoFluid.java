@@ -1,9 +1,5 @@
 package thermaldynamics.ducts.attachments.servo;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,10 +9,6 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
-import thermaldynamics.gui.containers.ContainerDuctConnection;
-import thermaldynamics.gui.gui.GuiDuctConnection;
-
-import java.util.List;
 
 
 public
@@ -91,29 +83,9 @@ class ServoFluid extends ServoBase {
 
 
     @Override
-    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
-        super.sendGuiNetworkData(container, player, newGuy);
-    }
-
-    @Override
-    public void receiveGuiNetworkData(int i, int j) {
-        super.receiveGuiNetworkData(i, j);
-    }
-
-    @Override
     public FilterLogic createFilterLogic() {
         return new FilterLogic(type, Ducts.Type.Fluid, this);
     }
 
 
-    @Override
-    public Object getGuiServer(InventoryPlayer inventory) {
-        return new ContainerDuctConnection(inventory, this);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Object getGuiClient(InventoryPlayer inventory) {
-        return new GuiDuctConnection(inventory, this);
-    }
 }

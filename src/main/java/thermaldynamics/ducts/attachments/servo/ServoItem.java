@@ -2,10 +2,6 @@ package thermaldynamics.ducts.attachments.servo;
 
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -19,8 +15,6 @@ import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.item.PropsConduit;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
-import thermaldynamics.gui.containers.ContainerDuctConnection;
-import thermaldynamics.gui.gui.GuiDuctConnection;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
 
@@ -323,28 +317,6 @@ public class ServoItem extends ServoBase {
     ISidedInventory cachedSidedInv;
     TileItemDuct.CacheType cacheType;
 
-
-    @Override
-    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
-        super.sendGuiNetworkData(container, player, newGuy);
-    }
-
-    @Override
-    public void receiveGuiNetworkData(int i, int j) {
-        super.receiveGuiNetworkData(i, j);
-    }
-
-
-    @Override
-    public Object getGuiServer(InventoryPlayer inventory) {
-        return new ContainerDuctConnection(inventory, this);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Object getGuiClient(InventoryPlayer inventory) {
-        return new GuiDuctConnection(inventory, this);
-    }
 
     public ItemStack insertItem(ItemStack item) {
         if (!filter.matchesFilter(item)) return item;
