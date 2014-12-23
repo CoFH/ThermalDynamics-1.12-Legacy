@@ -56,9 +56,9 @@ public enum Ducts {
 
     ITEM_ENDERIUM_OPAQUE(16, true, 2, "itemDuctEnder", Type.Item, DuctFactory.item_ender, "thermaldynamics:duct/item/DuctEnderium1", "thermaldynamics:duct/item/ConnectionItem20", null, 48, null, null, 0),
 
-    ITEM_REDSTONE_TRANS(17, false, 0, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:duct/item/DuctItem00", "thermaldynamics:duct/item/ConnectionItem00", "thermalfoundation:fluid/Fluid_Redstone_Still", 128, null, null, 0),
+    ITEM_REDSTONE_TRANS(17, false, 3, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:duct/item/DuctItem00", "thermaldynamics:duct/item/ConnectionItem00", "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0),
 
-    ITEM_REDSTONE_OPAQUE(18, true, 0, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:duct/item/DuctItem21", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
+    ITEM_REDSTONE_OPAQUE(18, true, 3, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:duct/item/DuctItem21", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
 
 
     //BRONZE(13, "test0", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/test/DuctBronze0", null, "thermalfoundation:fluid/Fluid_Pyrotheum_Still", 238),
