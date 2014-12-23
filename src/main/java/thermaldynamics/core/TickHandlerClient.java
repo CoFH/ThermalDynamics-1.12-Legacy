@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import thermaldynamics.ducts.item.TileItemDuct;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class TickHandlerClient {
     public static TickHandlerClient INSTANCE = new TickHandlerClient();
@@ -33,8 +34,12 @@ public class TickHandlerClient {
                 tickBlocksToAdd.clear();
             }
             if (!mc.isGamePaused() && !tickBlocks.isEmpty()) {
-                for (TileItemDuct aCond : tickBlocks) {
-                    aCond.tickItemsClient();
+                for (Iterator<TileItemDuct> iterator = tickBlocks.iterator(); iterator.hasNext(); ) {
+                    TileItemDuct aCond = iterator.next();
+                    if (aCond.isInvalid())
+                        iterator.remove();
+                    else
+                        aCond.tickItemsClient();
                 }
                 tickBlocks.removeAll(tickBlocksToRemove);
                 tickBlocksToRemove.clear();
