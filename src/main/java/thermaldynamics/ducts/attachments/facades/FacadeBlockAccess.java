@@ -56,28 +56,39 @@ public class FacadeBlockAccess implements IBlockAccess {
             return BEDROCK;
 
 
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileMultiBlock) {
-            Attachment attachment = ((TileMultiBlock) tile).attachments[side];
-            if (attachment != null && attachment.getID() == 0) {
-                Facade f = ((Facade) attachment);
-                if (f.block == block && f.meta == meta)
-                    return BASE;
-                else
-                    return BEDROCK;
+        if (((side == 0 && y == blockY) ||
+                (side == 1 && y == blockY) ||
+                (side == 2 && z == blockZ) ||
+                (side == 3 && z == blockZ) ||
+                (side == 4 && x == blockX) ||
+                (side == 5 && x == blockX))) {
+            if (enclosingBedrock)
+                return BEDROCK;
+
+            TileEntity tile = world.getTileEntity(x, y, z);
+            if (tile instanceof TileMultiBlock) {
+                Attachment attachment = ((TileMultiBlock) tile).attachments[side];
+                if (attachment != null && attachment.getID() == 0) {
+                    Facade f = ((Facade) attachment);
+                    if (f.block == block && f.meta == meta)
+                        return BASE;
+                    else
+                        return BEDROCK;
+                }
+                return AIR;
             }
-            return AIR;
+
         }
 
-        if (enclosingBedrock && ((side == 0 && y >= blockY) ||
+        if (((side == 0 && y >= blockY) ||
                 (side == 1 && y <= blockY) ||
                 (side == 2 && z >= blockZ) ||
                 (side == 3 && z <= blockZ) ||
                 (side == 4 && x >= blockX) ||
-                (side == 5 && x <= blockX)))
-            return BEDROCK;
-
-
+                (side == 5 && x <= blockX))) {
+            if (enclosingBedrock)
+                return BEDROCK;
+        }
 
         return ORIGINAL;
     }

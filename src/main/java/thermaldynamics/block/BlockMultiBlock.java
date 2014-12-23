@@ -142,24 +142,26 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
         }
 
 
-//        if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof ItemBlock) {
-//            Block block = ((ItemBlock) player.getHeldItem().getItem()).field_150939_a;
+//        if (equipped instanceof ItemBlock) {
+//            Block block = ((ItemBlock) equipped).field_150939_a;
 //            int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
 //            int side = -1;
-//            int subHit = RayTracer.retraceBlock(world, player, x, y, z).subHit;
-//            if (subHit < 6)
-//                side = subHit;
-//            else if (subHit < 12)
-//                side = subHit - 6;
-//            else if (subHit == 13)
-//                side = hitSide;
-//            if (side != -1) {
-//                if (!world.isRemote) {
-//                    tile.addAttachment(new Facade(tile, (byte) side, block, meta));
+//            MovingObjectPosition position = RayTracer.retraceBlock(world, player, x, y, z);
+//            if (position != null) {
+//                int subHit = position.subHit;
+//                if (subHit < 6)
+//                    side = subHit;
+//                else if (subHit < 12)
+//                    side = subHit - 6;
+//                else if (subHit == 13)
+//                    side = hitSide;
+//                if (side != -1) {
+//                    if (!world.isRemote) {
+//                        tile.addAttachment(new Facade(tile, (byte) side, block, meta));
+//                    }
+//                    return true;
 //                }
-//                return true;
 //            }
-//
 //
 //        }
 

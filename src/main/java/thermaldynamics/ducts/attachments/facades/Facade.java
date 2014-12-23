@@ -6,7 +6,9 @@ import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
@@ -56,7 +58,7 @@ public class Facade extends Attachment {
 
     @Override
     public TileMultiBlock.NeighborTypes getNeighbourType() {
-        return TileMultiBlock.NeighborTypes.STRUCTURE;
+        return TileMultiBlock.NeighborTypes.NONE;
     }
 
     @Override
@@ -97,5 +99,20 @@ public class Facade extends Attachment {
     public void getDescriptionFromPacket(PacketCoFHBase packet) {
         block = Block.getBlockById(packet.getShort());
         meta = packet.getByte();
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tag) {
+        super.writeToNBT(tag);
+        tag.setString("block", Block.blockRegistry.getNameForObject(block));
+        tag.setByte("meta", (byte) meta);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        block = Block.getBlockFromName(tag.getString("block"));
+        if (block == null) block = Blocks.air;
+        meta = tag.getByte("meta");
     }
 }
