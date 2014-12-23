@@ -1,4 +1,4 @@
-<project name="CoFHCore" default="install" basedir=".">
+<project name="ThermalDynamics" default="install" basedir=".">
 	<property environment="env"/>
 	
 	<!-- Basic directories -->
@@ -9,10 +9,10 @@
 	
 	<!-- Project information -->
 	<property name="build.name" value="${ant.project.name}"/>
-	<property name="class.pckg" value="cofh"/>
+	<property name="class.pckg" value="thermaldynamics"/>
 	<!-- Version file -->
-	<property name="verclass.dir" value="${src.dir}/${class.pckg}/core" />
-	<property name="verclass.name" value="CoFHProps.java"/>
+	<property name="verclass.dir" value="${src.dir}/${class.pckg}" />
+	<property name="verclass.name" value="ThermalDynamics.java"/>
 
 	<!-- Forge version -->
 	<property name="mc.version"  value="1.7.10"/>
@@ -78,6 +78,8 @@
 				<istrue value="${forge.exists}"/>
 				<available file="${lib.dir}/codechickenlib.jar" type="file"/>
 				<available file="${lib.dir}/CoFHLib.jar" type="file"/>
+				<available file="${lib.dir}/CoFHCore.jar" type="file"/>
+				<available file="${lib.dir}/ThermalFoundation.jar" type="file"/>
 			</and>
 		</condition>
 	</target>
@@ -85,6 +87,10 @@
 	<!-- Dependency downloading -->
 
 	<target name="download-core" depends="properties" unless="forge.exists">
+		<echo message="Downloading CoFHCore... "/>
+		<get src="https://github.com/CoFH/CoFHCore/archive/master.zip" dest="${download.dir}/CoFHCore.zip"/>
+		<delete dir="${download.dir}/CoFHCore-master" failonerror="false"/>
+		<unzip src="${download.dir}/CoFHCore.zip" dest="${download.dir}"/>
 	</target>
 
 	<target name="get-dependencies" depends="get-version" unless="have.libs">
@@ -110,18 +116,63 @@
 		<jar destfile="${download.dir}/CoFHLib.jar" compress="true" level="9" basedir="${compile.dir}"/>
 		<delete dir="${compile.dir}" failonerror="false"/>
 		<!-- End hack -->
+		
+		<echo message="Compiling CoFHCore... "/>
+		<!-- Begin hack -->
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<mkdir dir="${compile.dir}"/>
+		<javac srcdir="${download.dir}/CoFHCore-master/src/main/java" destdir="${compile.dir}"
+			target="1.6" source="1.6"
+			classpathref="mcp.classpath" debug="true" debuglevel="lines,source" includeAntRuntime="false">
+			<include name="**/*.java"/>
+		      <classpath>
+				<fileset file="${download.dir}/codechickenlib.jar"/>
+				<fileset file="${download.dir}/CoFHLib.jar"/>
+		      </classpath>
+		</javac>
+		<jar destfile="${download.dir}/CoFHCore.jar" compress="true" level="9" basedir="${compile.dir}"/>
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<!-- End hack -->
+		
+		<echo message="Downloading ThermalFoundation... "/>
+		<get src="https://github.com/CoFH/ThermalFoundation/archive/master.zip" dest="${download.dir}/ThermalFoundation.zip"/>
+		<!-- Begin hack -->
+		<unzip src="${download.dir}/ThermalFoundation.zip" dest="${download.dir}"/>
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<mkdir dir="${compile.dir}"/>
+		<javac srcdir="${download.dir}/ThermalFoundation-master/src/main/java" destdir="${compile.dir}"
+			target="1.6" source="1.6"
+			classpathref="mcp.classpath" debug="true" debuglevel="lines,source" includeAntRuntime="false">
+			<include name="**/*.java"/>
+		      <classpath>
+				<fileset file="${download.dir}/codechickenlib.jar"/>
+		      	<fileset file="${download.dir}/CoFHLib.jar"/>
+		      	<fileset file="${download.dir}/CoFHCore.jar"/>
+		      </classpath>
+		</javac>
+		<jar destfile="${download.dir}/ThermalFoundation.jar" compress="true" level="9" basedir="${compile.dir}"/>
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<delete dir="${download.dir}/ThermalFoundation-master"/>
+		<!-- End hack -->
 	</target>
 
 	<target name="extract-dependencies" depends="setup-forge,get-dependencies" unless="have.libs">
 		<echo message="Extracting CCL... " />
 		<copy file="${download.dir}/codechickenlib.jar" todir="${lib.dir}"/>
+		
 		<echo message="Extracting CoFHLib... " />
 		<copy file="${download.dir}/CoFHLib.jar" todir="${lib.dir}"/>
+		
+		<echo message="Extracting CoFHCore..."/>
+		<copy file="${download.dir}/CoFHCore.jar" todir="${lib.dir}"/>
+		
+		<echo message="Extracting ThermalFoundation..."/>
+		<copy file="${download.dir}/ThermalFoundation.jar" todir="${lib.dir}"/>
 	</target>
 	
 	<macrodef name="move-transformers"><sequential>
-
-		<copy file="${resources.dir}/CoFH_at.cfg" tofile="${transformers.dir}/z_CoFH_at.cfg"/>
+		
+		<copy file="${download.dir}/CoFHCore-master/src/main/resources/CoFH_at.cfg" tofile="${transformers.dir}/z_CoFH_at.cfg"/>
 		
 	</sequential></macrodef>
 	
