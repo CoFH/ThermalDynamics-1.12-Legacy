@@ -1,6 +1,7 @@
 package thermaldynamics.ducts.item;
 
-import cofh.api.energy.IEnergyHandler;
+
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
@@ -93,7 +94,7 @@ public class TileItemDuctRedstone extends TileItemDuctPower {
     }
 
 
-    IEnergyHandler[] energyCache = new IEnergyHandler[6];
+    IEnergyReceiver[] energyCache = new IEnergyReceiver[6];
 
     @Override
     public void clearCache(int side) {
@@ -104,13 +105,13 @@ public class TileItemDuctRedstone extends TileItemDuctPower {
     @Override
     public void cacheImportant(TileEntity tile, int side) {
         super.cacheImportant(tile, side);
-        if (tile instanceof IEnergyHandler)
-            energyCache[side] = (IEnergyHandler) tile;
+        if (tile instanceof IEnergyReceiver)
+            energyCache[side] = (IEnergyReceiver) tile;
     }
 
     @Override
     public void cacheStructural(TileEntity tile, int side) {
-        energyCache[side] = (IEnergyHandler) tile;
+        energyCache[side] = (IEnergyReceiver) tile;
         isOutput = true;
     }
 }
