@@ -3,11 +3,12 @@ package thermaldynamics.ducts.attachments.filter;
 import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ItemHelper;
+import cpw.mods.fml.common.registry.GameData;
 import gnu.trove.set.hash.TIntHashSet;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.ConnectionBase;
@@ -17,23 +18,30 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
-    public static final int[] maxFilterItems =     {1, 4, 9, 12, 16};
-    public static final int[] maxFilterItemWidth = {1, 2, 3, 4,  8};
-
-    private final ItemStack[] items;
-    boolean[] flags = {true, false, false, true};
-
+    public static final int[] maxFilterItems = {1, 4, 9, 12, 16};
+    public static final int[] maxFilterItemWidth = {1, 2, 3, 4, 8};
     private final static int flagBlackList = 0;
     private final static int flagIngoreMetadata = 1;
     private final static int flagIgnoreNBT = 2;
     private final static int flagIgnoreOreDictionary = 3;
+    private final static int flagIgnoreMod = 4;
+    private final static String[] flagTypes = {"whiteList", "metadata", "nbt", "oreDic", "modSorting"};
+
+    private final ItemStack[] items;
+
+    public boolean recalc = true;
+    public ConnectionBase duct;
+    public int type;
+    boolean[] flags = {true, false, false, true, true};
 
     TIntHashSet oreIds;
     LinkedList<ItemStack> quickItems;
-    HashSet<Fluid> fluidHashSet;
-    LinkedList<FluidStack> fluidsNBT;
-    public boolean recalc = true;
-    public ConnectionBase duct;
+
+    HashSet<String> modNames;
+    HashSet<FluidStack> fluidsNBT;
+
+    int[] options = {0, 1, 6, 6, 6};
+    private Ducts.Type transferType;
 
     public FilterLogic(int type, Ducts.Type transferType, ConnectionBase duct) {
         this.type = type;
@@ -42,23 +50,31 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         items = new ItemStack[maxFilterItems[type]];
 
         if (transferType == Ducts.Type.Item) {
-            oreIds = new TIntHashSet();
             quickItems = new LinkedList<ItemStack>();
         } else if (transferType == Ducts.Type.Fluid) {
-            fluidHashSet = new HashSet<Fluid>();
-            fluidsNBT = new LinkedList<FluidStack>();
+            fluidsNBT = new HashSet<FluidStack>();
         }
 
         this.duct = duct;
     }
 
-    public int type;
-    private Ducts.Type transferType;
-
     public void calcItems() {
         if (isItem()) {
-            oreIds.clear();
+
             quickItems.clear();
+
+
+            if (!flags[flagIgnoreOreDictionary]) {
+                if (oreIds == null) oreIds = new TIntHashSet();
+                else oreIds.clear();
+            } else oreIds = null;
+
+
+            if (!flags[flagIgnoreMod]) {
+                if (modNames == null) modNames = new HashSet<String>();
+                else modNames.clear();
+            } else modNames = null;
+
         } else if (isFluid()) {
             fluidsNBT.clear();
         }
@@ -68,6 +84,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
             for (ItemStack item : items) {
                 if (item != null) {
                     if (isItem()) {
+                        if (!flags[flagIgnoreMod]) {
+                            modNames.add(getModName(item.getItem()));
+                        }
+
                         if (!flags[flagIgnoreOreDictionary]) {
                             ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
                             if (allOreIDs != null)
@@ -93,18 +113,16 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
                         FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
                         if (fluidStack != null) {
-                            if (fluidStack.tag == null)
-                                fluidHashSet.add(fluidStack.getFluid());
-                            else {
-                                fluidStack.amount = 1;
-                                fluidsNBT.add(fluidStack);
-                            }
+                            fluidStack.amount = 1;
+                            fluidsNBT.add(fluidStack);
                         }
 
                     }
                 }
             }
+            recalc = false;
         }
+
     }
 
     public boolean isFluid() {
@@ -115,9 +133,13 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         return transferType == Ducts.Type.Item;
     }
 
-
     public boolean matchesFilter(ItemStack item) {
         if (recalc) calcItems();
+
+        if (!flags[flagIgnoreMod]) {
+            if (modNames.contains(getModName(item.getItem())))
+                return !flags[flagBlackList];
+        }
 
         if (!flags[flagIgnoreOreDictionary] && !oreIds.isEmpty()) {
             ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
@@ -142,7 +164,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         }
         return flags[flagBlackList];
     }
-
 
     @Override
     public ItemStack[] getFilterStacks() {
@@ -176,31 +197,22 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         } else duct.tile.markDirty();
 
         flags[flagType] = flag;
+        recalc = true;
     }
-
-    String[] flagTypes = {"whiteList", "metadata", "nbt", "oreDic"};
 
     @Override
     public String flagType(int flagType) {
         return flagTypes[flagType];
     }
 
-    boolean[][] options = {
-            {true, false, false, false},
-            {true, true, false, false},
-            {true, true, true, true},
-            {true, true, true, true},
-            {true, true, true, true},
-    };
-
     @Override
     public int numFlags() {
-        return 4;
+        return transferType == Ducts.Type.Item ? flags.length : 0;
     }
 
     @Override
     public boolean canAlterFlag(int flagType) {
-        return options[type][flagType];
+        return transferType == Ducts.Type.Item && options[type] >= flagType;
     }
 
     public void readFromNBT(NBTTagCompound tag) {
@@ -231,15 +243,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
     @Override
     public boolean allowFluid(FluidStack fluid) {
-        if (recalc) calcItems();
         if (fluid == null) return false;
-        else if (fluid.tag == null)
-            return fluidHashSet.contains(fluid.getFluid());
-        else {
-            for (FluidStack fluidStack : fluidsNBT)
-                if (fluidStack.isFluidEqual(fluid)) return true;
-            return false;
-        }
+        if (recalc) calcItems();
+        fluid = fluid.copy();
+        fluid.amount = 1;
+        return fluidsNBT.contains(fluid);
     }
 
     public int getFlagByte() {
@@ -254,5 +262,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         for (int i = 0; i < flags.length; i++) {
             flags[i] = (t & (1 << i)) != 0;
         }
+    }
+
+
+    public String getModName(Item item) {
+        String s = GameData.getItemRegistry().getNameForObject(item);
+        return s.substring(0, s.indexOf(':'));
     }
 }

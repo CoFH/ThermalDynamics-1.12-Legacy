@@ -223,7 +223,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
         if (i == 0) filter.handleFlagByte(j);
     }
 
-
     @Override
     public Object getGuiServer(InventoryPlayer inventory) {
         return new ContainerDuctConnection(inventory, this);
@@ -235,7 +234,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
         return new GuiDuctConnection(inventory, this);
     }
 
-
     public void stuffItem(ItemStack item) {
 
     }
@@ -246,7 +244,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
     @Override
     public BlockDuct.ConnectionTypes getRenderConnectionType() {
-        return BlockDuct.ConnectionTypes.DUCT;
+        return super.getRenderConnectionType();
     }
 
 

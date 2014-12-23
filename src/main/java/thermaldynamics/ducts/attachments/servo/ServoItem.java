@@ -17,6 +17,7 @@ import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
+import thermaldynamics.multiblock.listtypes.ListWrapper;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -92,6 +93,7 @@ public class ServoItem extends ServoBase {
     }
 
     RouteCache cache = null;
+    ListWrapper<Route> routeList = new ListWrapper<Route>();
 
     @Override
     public List<ItemStack> getDrops() {
@@ -138,10 +140,10 @@ public class ServoItem extends ServoBase {
     public void tick(int pass) {
         if (pass == 0 || !isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) return;
 
-        if (cache == null || cache.invalid)
+        if (cache == null || cache.invalid) {
             cache = itemDuct.getCache(false);
-
-        cache = itemDuct.getCache(false);
+            routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
+        }
 
         if (cache.isFinishedGenerating() && cache.outputRoutes.isEmpty())
             return;
@@ -233,16 +235,15 @@ public class ServoItem extends ServoBase {
     }
 
 
-    public static TravelingItem findRouteForItem(ItemStack item, TileItemDuct duct, int side, int maxRange, byte speed) {
+    public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route> routes, TileItemDuct duct, int side, int maxRange, byte speed) {
         if (item == null || item.stackSize == 0) return null;
-        RouteCache routeCache = duct.getCache(true);
 
         item = item.copy();
 
         if (item.stackSize == 0)
             return null;
 
-        for (Route outputRoute : routeCache.outputRoutes) {
+        for (Route outputRoute : routes) {
             if (outputRoute.pathDirections.size() <= maxRange) {
                 TileItemDuct.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
                 if (routeInfo.canRoute) {
@@ -331,7 +332,11 @@ public class ServoItem extends ServoBase {
     }
 
     public TravelingItem getRouteForItem(ItemStack item) {
-        return ServoItem.findRouteForItem(item, itemDuct, side, getMaxRange(), getSpeed());
+        if (cache == null || cache.invalid) {
+            cache = itemDuct.getCache(false);
+            routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
+        }
+        return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
     }
 
 

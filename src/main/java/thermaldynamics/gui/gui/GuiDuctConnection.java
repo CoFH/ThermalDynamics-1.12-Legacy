@@ -32,6 +32,10 @@ public class GuiDuctConnection extends GuiBaseAdv {
             {216, 0},
             {176, 60},
             {216, 60},
+            {176, 120},
+            {216, 120},
+            {176, 180},
+            {216, 180},
     };
 
     @Override
@@ -60,6 +64,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
                         TEX.toString()
                 );
 
+
                 addElement(elementButtons[i]);
 
                 if (!container.filter.canAlterFlag(i)) elementButtons[i].setDisabled();
@@ -75,6 +80,8 @@ public class GuiDuctConnection extends GuiBaseAdv {
             int x = buttons[i][0] + (b ? buttonSize : 0);
             elementButtons[i].setSheetX(x);
             elementButtons[i].setHoverX(x);
+            String s = "info.thermaldynamics.filter." + elementButtons[i].getName() + (b ? ".on" : ".off");
+            elementButtons[i].setToolTip("info.thermaldynamics.filter." + elementButtons[i].getName() + (b ? ".on" : ".off"));
         }
     }
 

@@ -37,7 +37,10 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 
         for (int i = 0; i < gridHeight; i++) {
             for (int j = 0; j < gridWidth; j++) {
-                filterSlots.add(((SlotFilter) addSlotToContainer(new SlotFilter(filter, j + i * gridWidth, gridX0 + j * 18, gridY0 + i * 18))));
+                if (filter.isItem())
+                    filterSlots.add(((SlotFilter) addSlotToContainer(new SlotFilter(filter, j + i * gridWidth, gridX0 + j * 18, gridY0 + i * 18))));
+                else
+                    filterSlots.add(((SlotFilter) addSlotToContainer(new SlotFilterFluid(filter, j + i * gridWidth, gridX0 + j * 18, gridY0 + i * 18))));
             }
         }
     }

@@ -44,3 +44,19 @@ item.thermalducts.filter.1.name=Hardened Filter
 item.thermalducts.filter.2.name=Reinforced Filter
 item.thermalducts.filter.3.name=Signalum Filter
 item.thermalducts.filter.4.name=Resonant Filter
+
+
+info.thermaldynamics.filter.whiteList.off=Whitelist
+info.thermaldynamics.filter.whiteList.on=Blacklist
+info.thermaldynamics.filter.metadata.off=Use Metadata
+info.thermaldynamics.filter.metadata.on=Ignore Metadata
+info.thermaldynamics.filter.nbt.off=Use NBT
+info.thermaldynamics.filter.nbt.on=Ignore NBT
+info.thermaldynamics.filter.oreDic.off=Use Ore Dictionary
+info.thermaldynamics.filter.oreDic.on=Ignore Ore Dictionary
+info.thermaldynamics.filter.modSorting.off=Use Mod Owner
+info.thermaldynamics.filter.modSorting.on=Ignore Mod Owner
+
+
+
+
