@@ -96,6 +96,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 myGrid.removeBlock(this);
             }
         }
+
+        super.invalidate();
     }
 
     public void tileUnloading() {
@@ -250,6 +252,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime())
             return;
 
+        if (isInvalid()) return;
+
         TileEntity theTile;
         boolean wasNode = isNode;
         isNode = false;
@@ -372,6 +376,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
         if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime())
             return;
+
+        if (isInvalid()) return;
 
         int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
