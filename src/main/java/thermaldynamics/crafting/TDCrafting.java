@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import thermaldynamics.ducts.Ducts;
+import thermaldynamics.item.ItemFilter;
 import thermaldynamics.item.ItemServo;
 import thermalexpansion.util.crafting.PulverizerManager;
 import thermalexpansion.util.crafting.TransposerManager;
@@ -32,7 +33,7 @@ public class TDCrafting {
         TransposerManager.addFillRecipe(800, Ducts.ENERGY_REINFORCED_EMPTY.itemStack, Ducts.ENERGY_REINFORCED.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false, false);
 
         GameRegistry.addRecipe(new ShapedOreRecipe(Ducts.ENERGY_SUPERCONDUCTOR_EMPTY.itemStack, "IGI", "GEG", "IGI", 'I', "ingotElectrum", 'G', "blockGlassHardened", 'E', Ducts.ENERGY_REINFORCED.itemStack));
-        TransposerManager.addFillRecipe(4000, Ducts.ENERGY_SUPERCONDUCTOR_EMPTY.itemStack, Ducts.ENERGY_SUPERCONDUCTOR.itemStack, new FluidStack(TFFluids.fluidCryotheum, 4000), false, false);
+        TransposerManager.addFillRecipe(4000, Ducts.ENERGY_SUPERCONDUCTOR_EMPTY.itemStack, Ducts.ENERGY_SUPERCONDUCTOR.itemStack, new FluidStack(TFFluids.fluidCryotheum, 750), false, false);
 
         //Structure
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.STRUCTURE.itemStack, 6), "iIi", 'i', "nuggetLead", 'I', "ingotLead"));
@@ -47,10 +48,17 @@ public class TDCrafting {
         // Servo
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.iron, "iPi", 'P', "pneumaticServo", 'i', "nuggetIron"));
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.iron, "iGi", "IRI", 'R', "dustRedstone", 'G', "blockGlass", 'I', "ingotIron", 'i', "nuggetIron"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.invar, "IGI", 'G', ItemServo.iron, 'I', "ingotInvar"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.electrum, "IGI", 'G', ItemServo.invar, 'I', "ingotElectrum"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.signalum, "IGI", 'G', ItemServo.electrum, 'I', "ingotSignalum"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.ender, "IGI", 'G', ItemServo.signalum, 'I', "ingotEnderium"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.invar, ItemServo.iron, "ingotInvar"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.electrum, ItemServo.invar, "ingotElectrum"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.signalum, ItemServo.electrum, "ingotSignalum"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.ender, ItemServo.signalum, "ingotEnderium"));
+
+        // Filter
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemFilter.iron, "iGi", "IRI", 'R', Items.paper, 'G', "blockGlass", 'I', "ingotIron", 'i', "nuggetIron"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.invar, ItemFilter.iron, "ingotInvar"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.electrum, ItemFilter.invar, "ingotElectrum"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.signalum, ItemFilter.electrum, "ingotSignalum"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.ender, ItemFilter.signalum, "ingotEnderium"));
 
         // Items
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_TRANS.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "blockGlassHardened"));
