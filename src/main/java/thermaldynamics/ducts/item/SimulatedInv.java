@@ -18,13 +18,14 @@ public class SimulatedInv extends InventoryBasic {
         this.target = target;
     }
 
-
     IInventory target;
     int curReadSlot = -1;
 
     public void ensureSlotRead(int newMax) {
+        ItemStack stackInSlot;
         for (curReadSlot++; curReadSlot <= newMax && curReadSlot < target.getSizeInventory(); curReadSlot++) {
-            this.setInventorySlotContents(curReadSlot, target.getStackInSlot(curReadSlot));
+            stackInSlot = target.getStackInSlot(curReadSlot);
+            this.setInventorySlotContents(curReadSlot, stackInSlot != null ? stackInSlot.copy() : null);
         }
     }
 
