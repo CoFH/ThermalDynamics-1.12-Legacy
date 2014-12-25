@@ -649,7 +649,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 return false;
 
             int subHit = rayTrace.subHit;
-            if (subHit > 0 && subHit <= 13) {
+            if (subHit >= 0 && subHit <= 13) {
                 int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
 
                 onNeighborBlockChange();
