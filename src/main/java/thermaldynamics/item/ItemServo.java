@@ -127,6 +127,11 @@ public class ItemServo extends ItemAttachment {
 
         addFiltering(list, type, tab);
 
+        if (ServoItem.multiStack[type])
+            list.add(tab + "Extracts over multiple slots");
+        else
+            list.add(tab + "Extracts from a single slot");
+
         if (ServoItem.speedBoost[type] != 1)
             list.add(tab + "Item Speed Boost: " + StringHelper.GRAY + ServoItem.speedBoost[type] + "x " + StringHelper.END);
 

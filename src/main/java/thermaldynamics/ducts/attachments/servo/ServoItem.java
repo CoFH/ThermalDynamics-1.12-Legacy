@@ -183,7 +183,9 @@ public class ServoItem extends ServoBase {
                 return;
 
             if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
-                for (int slot : cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1)) {
+                int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
+                for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
+                    int slot = accessibleSlotsFromSide[i];
                     ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
                     if (itemStack == null)
                         continue;
@@ -195,15 +197,34 @@ public class ServoItem extends ServoBase {
 
                     if (!filter.matchesFilter(itemStack)) continue;
 
+                    if (multiStack[type])
+                        itemStack.stackSize = itemStack.getMaxStackSize();
+
                     TravelingItem travelingItem = getRouteForItem(itemStack);
 
                     if (travelingItem == null) continue;
 
                     travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-                    cachedSidedInv.markDirty();
 
-                    if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0)
+
+                    if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
+                        cachedSidedInv.markDirty();
                         continue;
+                    }
+
+                    if (multiStack[type] && travelingItem.stack.stackSize < travelingItem.stack.getMaxStackSize()) {
+                        int maxStackSize = travelingItem.stack.getMaxStackSize();
+                        for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < maxStackSize; i++) {
+                            slot = accessibleSlotsFromSide[i];
+                            itemStack = cachedSidedInv.getStackInSlot(slot);
+                            if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true) && cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+                                itemStack = cachedSidedInv.decrStackSize(slot, maxStackSize - travelingItem.stack.stackSize);
+                                if (itemStack != null) travelingItem.stack.stackSize += itemStack.stackSize;
+                            }
+                        }
+                    }
+
+                    cachedSidedInv.markDirty();
 
                     itemDuct.internalGrid.poll(travelingItem);
                     itemDuct.insertItem(travelingItem);
@@ -219,15 +240,30 @@ public class ServoItem extends ServoBase {
                     if (itemStack == null || itemStack.stackSize == 0) continue;
                     if (!filter.matchesFilter(itemStack)) continue;
 
+                    if (multiStack[type]) itemStack.stackSize = itemStack.getMaxStackSize();
+
                     TravelingItem travelingItem = getRouteForItem(itemStack);
 
                     if (travelingItem == null) continue;
 
                     travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-                    cachedInv.markDirty();
 
-                    if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0)
+                    if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
+                        cachedInv.markDirty();
                         continue;
+                    }
+
+                    if (multiStack[type] && travelingItem.stack.stackSize < travelingItem.stack.getMaxStackSize()) {
+                        for (slot++; slot < cachedInv.getSizeInventory()&& travelingItem.stack.stackSize < travelingItem.stack.getMaxStackSize(); slot++) {
+                            itemStack = cachedInv.getStackInSlot(slot);
+                            if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
+                                itemStack = cachedInv.decrStackSize(slot, travelingItem.stack.getMaxStackSize() - travelingItem.stack.stackSize);
+                                if (itemStack != null) travelingItem.stack.stackSize += itemStack.stackSize;
+                            }
+                        }
+                    }
+
+                    cachedInv.markDirty();
 
                     itemDuct.internalGrid.poll(travelingItem);
                     itemDuct.insertItem(travelingItem);
@@ -273,6 +309,7 @@ public class ServoItem extends ServoBase {
     }
 
     public static int[] range = {4, 16, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+    public static boolean[] multiStack = {false, false, false, true, true};
 
     public int getMaxRange() {
         return range[type];
