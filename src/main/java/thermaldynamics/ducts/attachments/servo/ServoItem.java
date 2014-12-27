@@ -113,8 +113,8 @@ public class ServoItem extends ServoBase {
         return drops;
     }
 
-    public int[] tickDelays = {60, 40, 20, 20, 20};
-    public byte[] speedBoost = {1, 1, 1, 1, 2};
+    public static int[] tickDelays = {60, 40, 20, 10, 10};
+    public static byte[] speedBoost = {1, 1, 1, 1, 2};
 
     public int tickDelay() {
         return tickDelays[type];
@@ -265,13 +265,13 @@ public class ServoItem extends ServoBase {
         return null;
     }
 
-    public int[] range = {4, 16, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+    public static int[] range = {4, 16, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
 
     public int getMaxRange() {
         return range[type];
     }
 
-    public int[] maxSize = {1, 8, 64, 64, 64};
+    public static int[] maxSize = {1, 8, 64, 64, 64};
 
     public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
         return itemStack;

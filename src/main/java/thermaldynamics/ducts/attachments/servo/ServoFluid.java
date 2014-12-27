@@ -15,8 +15,8 @@ public
 class ServoFluid extends ServoBase {
     TileFluidDuct fluidDuct;
 
-    int[] maxthroughput = {50, 100, 200, 400, 10000};
-    float[] throttle = {0.2F, 0.5F, 1F, 1F, 10F};
+    public static int[] maxthroughput = {50, 100, 200, 400, 10000};
+    public static float[] throttle = {0.2F, 0.5F, 1F, 1F, 2F};
 
     @Override
     public int getID() {

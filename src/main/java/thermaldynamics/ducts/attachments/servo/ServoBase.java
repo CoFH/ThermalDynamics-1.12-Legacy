@@ -61,6 +61,10 @@ public abstract class ServoBase extends ConnectionBase {
 
     @Override
     public boolean canAlterRS() {
+        return canAlterRS(type);
+    }
+
+    public static boolean canAlterRS(int type) {
         return type >= 2;
     }
 

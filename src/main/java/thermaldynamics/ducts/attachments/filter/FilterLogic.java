@@ -25,13 +25,14 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     private final static int flagIgnoreNBT = 2;
     private final static int flagIgnoreOreDictionary = 3;
     private final static int flagIgnoreMod = 4;
-    private final static String[] flagTypes = {"whiteList", "metadata", "nbt", "oreDic", "modSorting"};
+    public final static String[] flagTypes = {"whiteList", "metadata", "nbt", "oreDic", "modSorting"};
 
     private final ItemStack[] items;
 
     public boolean recalc = true;
     public ConnectionBase duct;
     public int type;
+    public static final boolean[] defaultflags = {true, false, false, true, true};
     boolean[] flags = {true, false, false, true, true};
 
     TIntHashSet oreIds;
@@ -40,7 +41,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     HashSet<String> modNames;
     HashSet<FluidStack> fluidsNBT;
 
-    int[] options = {0, 1, 6, 6, 6};
+    public static int[] options = {0, 1, 6, 6, 6};
     private Ducts.Type transferType;
 
     public FilterLogic(int type, Ducts.Type transferType, ConnectionBase duct) {
@@ -188,7 +189,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
     @Override
     public void setFlag(int flagType, boolean flag) {
-        if (!canAlterFlag(flagType)) {
+        if (!canAlterFlag(transferType, type, flagType)) {
             return;
         }
 
@@ -212,6 +213,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
     @Override
     public boolean canAlterFlag(int flagType) {
+        return canAlterFlag(transferType, type, flagType);
+    }
+
+    public static boolean canAlterFlag(Ducts.Type transferType, int type, int flagType) {
         return transferType == Ducts.Type.Item && options[type] >= flagType;
     }
 
