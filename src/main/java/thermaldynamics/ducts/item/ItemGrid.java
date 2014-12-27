@@ -2,11 +2,12 @@ package thermaldynamics.ducts.item;
 
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import net.minecraft.world.World;
+import thermaldynamics.block.Attachment;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
@@ -15,7 +16,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
     }
 
     public int travelingItemsCount = 0;
-    public HashMap<BlockCoord, HashSet<TravelingItem>> travelingItems = new HashMap<BlockCoord, HashSet<TravelingItem>>();
+    public static ArrayList<Attachment> toTick = new ArrayList<Attachment>();
     public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
     public boolean shouldRepoll = true;
     public boolean repoll = false;
@@ -41,16 +42,16 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
                 break;
         }
 
-        if (worldGrid.worldObj.getTotalWorldTime() % 20 == 0) {
-            for (IMultiBlock m : nodeSet) { // Do Stuffed Items
-                if (!m.tickPass(1))
-                    break;
+        if (!toTick.isEmpty()) {
+            for (Attachment attachment : toTick) {
+                attachment.tick(1);
             }
 
-            for (IMultiBlock m : nodeSet) { // Do Extract Items
-                if (!m.tickPass(2))
-                    break;
+            for (Attachment attachment : toTick) {
+                attachment.tick(2);
             }
+
+            toTick.clear();
         }
 
         super.tickGrid();

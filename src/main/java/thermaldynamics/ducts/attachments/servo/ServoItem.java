@@ -12,6 +12,7 @@ import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
+import thermaldynamics.ducts.item.ItemGrid;
 import thermaldynamics.ducts.item.PropsConduit;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
@@ -138,13 +139,18 @@ public class ServoItem extends ServoBase {
 
     @Override
     public void tick(int pass) {
-        if (pass == 0 || !isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) return;
+        if (pass == 0) {
+            if (isPowered && (isValidInput || isStuffed()) && itemDuct.world().getTotalWorldTime() % tickDelay() == 0)
+                ItemGrid.toTick.add(this);
+            return;
+        } else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) return;
 
         RouteCache cache1 = itemDuct.getCache(false);
         if (cache1 != cache) {
             cache = cache1;
             routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
         }
+
 
         if (cache.isFinishedGenerating() && cache.outputRoutes.isEmpty())
             return;
