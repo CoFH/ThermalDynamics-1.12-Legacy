@@ -31,7 +31,6 @@ import thermaldynamics.multiblock.IMultiBlockRoute;
 import thermaldynamics.multiblock.MultiBlockGrid;
 import thermaldynamics.multiblock.RouteCache;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -501,7 +500,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 //    }
 
     public RouteInfo canRouteItem(ItemStack anItem) {
-
+        if (internalGrid == null)
+            return noRoute;
         int stackSizeLeft;
         ItemStack curItem;
 
@@ -545,6 +545,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
     public ItemStack simTransfer(int side, ItemStack insertingItem) {
         if (insertingItem == null) return null;
+        if (internalGrid == null) return insertingItem;
 
 
         if (cache3[side] != null) { // IDeepStorage
@@ -556,7 +557,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             int m = cache3[side].getMaxStoredCount();
             if (s >= m) return insertingItem;
 
-            HashSet<TravelingItem> travelingItems = internalGrid != null ? internalGrid.travelingItems.get(new BlockCoord(this).offset(side)) : null;
+
+            LinkedList<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
             if (travelingItems != null && !travelingItems.isEmpty()) {
                 for (Iterator<TravelingItem> iterator = travelingItems.iterator(); s < m && iterator.hasNext(); ) {
                     TravelingItem travelingItem = iterator.next();
@@ -573,9 +575,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
             return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
         } else {
-//            if (cache[side].getInventoryStackLimit() == 0)
-//                return insertingItem;
-//
 //            if (cache[side].getInventoryStackLimit() > 64) {
 //                int slot;
 //                for (slot = 0; slot < cache[side].getSizeInventory(); slot++) {
@@ -584,11 +583,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 //                            break;
 //                    }
 //                }
-//
-//
 //            }
 
-            HashSet<TravelingItem> travelingItems = internalGrid != null ? internalGrid.travelingItems.get(new BlockCoord(this).offset(side)) : null;
+            LinkedList<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
             if (travelingItems == null || travelingItems.isEmpty())
                 return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
 
@@ -615,14 +612,16 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             }
 
             // Super hacky - must optimize at some point
-            IInventory simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? new SimulatedInv.SimulatedInvSided(cache2[side]) : new SimulatedInv(cache[side]);
+            SimulatedInv simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cache2[side]) : SimulatedInv.wrapInv(cache[side]);
 
             for (TravelingItem travelingItem : travelingItems) {
                 if (travelingItem.myPath != null && InventoryHelper.insertItemStackIntoInventory(simulatedInv, travelingItem.stack.copy(), travelingItem.myPath.getLastSide() ^ 1) != null && ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack))
                     return insertingItem;
             }
 
-            return InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
+            insertingItem = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
+            simulatedInv.clear();
+            return insertingItem;
         }
     }
 

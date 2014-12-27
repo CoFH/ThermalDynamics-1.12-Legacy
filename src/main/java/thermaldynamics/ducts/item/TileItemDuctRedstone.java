@@ -110,6 +110,13 @@ public class TileItemDuctRedstone extends TileItemDuctPower {
     }
 
     @Override
+    public void cacheInputTile(TileEntity tile, int side) {
+        super.cacheInputTile(tile, side);
+        if (tile instanceof IEnergyReceiver)
+            energyCache[side] = (IEnergyReceiver) tile;
+    }
+
+    @Override
     public void cacheStructural(TileEntity tile, int side) {
         energyCache[side] = (IEnergyReceiver) tile;
         isOutput = true;
