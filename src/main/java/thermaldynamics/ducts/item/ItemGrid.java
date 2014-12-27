@@ -7,6 +7,7 @@ import thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
     public ItemGrid(World world) {
@@ -15,6 +16,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
     public int travelingItemsCount = 0;
     public HashMap<BlockCoord, HashSet<TravelingItem>> travelingItems = new HashMap<BlockCoord, HashSet<TravelingItem>>();
+    public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
     public boolean shouldRepoll = true;
     public boolean repoll = false;
 
@@ -62,13 +64,24 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
     public void poll(TravelingItem item) {
         BlockCoord dest = item.getDest();
-        HashSet<TravelingItem> list = travelingItems.get(dest);
+        LinkedList<TravelingItem> list = travelingItems.get(dest);
         if (list == null) {
-            list = new HashSet<TravelingItem>();
+            list = new LinkedList<TravelingItem>();
             travelingItems.put(dest, list);
         }
 
         if (list.add(item))
             travelingItemsCount++;
+    }
+
+    @Override
+    public void onMinorGridChange() {
+        super.onMinorGridChange();
+        shouldRepoll = true;
+    }
+
+    @Override
+    public void onMajorGridChange() {
+        shouldRepoll = true;
     }
 }

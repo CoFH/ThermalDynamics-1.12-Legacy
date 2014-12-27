@@ -38,11 +38,7 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 
     @Override
     public void onMinorGridChange() {
-        if (!calculatingRoutes.isEmpty()) {
-            for (RouteCache routeCache : calculatingRoutes) {
-                routeCache.reset();
-            }
-        }
+        onMajorGridChange();
     }
 
     @Override
