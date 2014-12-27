@@ -231,6 +231,8 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
             }
         }
         recalc = true;
+
+        handleFlagByte(tag.getByte("Flags"));
     }
 
     public void writeToNBT(NBTTagCompound tag) {
@@ -244,6 +246,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
             }
         }
         tag.setTag("Inventory", list);
+        tag.setByte("Flags", (byte) getFlagByte());
     }
 
     @Override
