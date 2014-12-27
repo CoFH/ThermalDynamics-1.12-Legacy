@@ -286,6 +286,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         if (attachments[i] != null) {
             attachments[i].onNeighbourChange();
+            neighborMultiBlocks[i] = null;
 
             neighborTypes[i] = attachments[i].getNeighbourType();
             if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
@@ -293,25 +294,25 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
                     neighborMultiBlocks[i] = (IMultiBlock) theTile;
                 } else {
-                    neighborMultiBlocks[i] = null;
                     neighborTypes[i] = NeighborTypes.NONE;
                 }
             } else if (neighborTypes[i] == NeighborTypes.OUTPUT) {
                 theTile = getAdjTileEntitySafe(i);
                 if (isSignificantTile(theTile, i)) {
-                    neighborMultiBlocks[i] = null;
-                    neighborTypes[i] = NeighborTypes.OUTPUT;
                     cacheImportant(theTile, i);
-                    isNode = true;
-                    isOutput = true;
                 }
+                isOutput = true;
+            } else if (neighborTypes[i] == NeighborTypes.INPUT) {
+                theTile = getAdjTileEntitySafe(i);
+                if (theTile != null) {
+                    cacheInputTile(theTile, i);
+                }
+                isInput = true;
             } else
                 neighborMultiBlocks[i] = null;
 
             connectionTypes[i] = ConnectionTypes.NORMAL;
             isNode = attachments[i].isNode();
-            isInput = isInput || neighborTypes[i] == NeighborTypes.INPUT;
-            isOutput = isOutput || neighborTypes[i] == NeighborTypes.OUTPUT;
 
         } else {
             theTile = getAdjTileEntitySafe(i);
@@ -338,6 +339,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 neighborTypes[i] = NeighborTypes.NONE;
             }
         }
+    }
+
+    public void cacheInputTile(TileEntity theTile, int side) {
+
     }
 
     public TileEntity getAdjTileEntitySafe(int i) {
