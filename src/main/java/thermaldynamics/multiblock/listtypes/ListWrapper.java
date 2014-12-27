@@ -127,14 +127,13 @@ public class ListWrapper<T> implements Iterable<T> {
         @SuppressWarnings("unchecked")
         @Override
         public T next() {
-
-            T t = (T) array[i];
+            Object t = array[i];
             int j = MathHelper.RANDOM.nextInt(array.length - i) + i;
             array[i] = array[j];
             array[j] = t;
 
             i++;
-            return t;
+            return (T) t;
         }
 
         @Override
