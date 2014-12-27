@@ -140,8 +140,9 @@ public class ServoItem extends ServoBase {
     public void tick(int pass) {
         if (pass == 0 || !isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) return;
 
-        if (cache == null || cache.invalid) {
-            cache = itemDuct.getCache(false);
+        RouteCache cache1 = itemDuct.getCache(false);
+        if (cache1 != cache) {
+            cache = cache1;
             routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
         }
 
@@ -335,10 +336,12 @@ public class ServoItem extends ServoBase {
     }
 
     public TravelingItem getRouteForItem(ItemStack item) {
-        if (cache == null || cache.invalid) {
-            cache = itemDuct.getCache(false);
+        RouteCache cache1 = itemDuct.getCache(false);
+        if (cache1 != cache) {
+            cache = cache1;
             routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
         }
+
         return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
     }
 
