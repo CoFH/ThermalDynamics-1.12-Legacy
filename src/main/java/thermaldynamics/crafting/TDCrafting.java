@@ -34,7 +34,7 @@ public class TDCrafting {
         ThermalExpansionHelper.addTransposerFill(800, Ducts.ENERGY_REINFORCED_EMPTY.itemStack, Ducts.ENERGY_REINFORCED.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
 
         GameRegistry.addRecipe(new ShapedOreRecipe(Ducts.ENERGY_SUPERCONDUCTOR_EMPTY.itemStack, "IGI", "GEG", "IGI", 'I', "ingotElectrum", 'G', "blockGlassHardened", 'E', Ducts.ENERGY_REINFORCED.itemStack));
-        ThermalExpansionHelper.addTransposerFill(4000, Ducts.ENERGY_SUPERCONDUCTOR_EMPTY.itemStack, Ducts.ENERGY_SUPERCONDUCTOR.itemStack, new FluidStack(TFFluids.fluidCryotheum, 750), false);
+        ThermalExpansionHelper.addTransposerFill(4000, Ducts.ENERGY_SUPERCONDUCTOR_EMPTY.itemStack, Ducts.ENERGY_SUPERCONDUCTOR.itemStack, new FluidStack(TFFluids.fluidCryotheum, 700), false);
 
         //Structure
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.STRUCTURE.itemStack, 6), "iIi", 'i', "nuggetLead", 'I', "ingotLead"));
