@@ -47,19 +47,35 @@ public class TDCrafting {
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_HARDENED_TRANS.itemStack, 6), " I ", "IGI", " I ", 'I', "ingotInvar", 'G', "blockGlassHardened"));
 
         // Servo
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.iron, "iPi", 'P', "pneumaticServo", 'i', "nuggetIron"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemServo.iron, "iGi", "IRI", 'R', "dustRedstone", 'G', "blockGlass", 'I', "ingotIron", 'i', "nuggetIron"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.invar, ItemServo.iron, "ingotInvar"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.electrum, ItemServo.invar, "ingotElectrum"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.signalum, ItemServo.electrum, "ingotSignalum"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemServo.ender, ItemServo.signalum, "ingotEnderium"));
 
-        // Filter
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemFilter.iron, "iGi", "IRI", 'R', Items.paper, 'G', "blockGlass", 'I', "ingotIron", 'i', "nuggetIron"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.invar, ItemFilter.iron, "ingotInvar"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.electrum, ItemFilter.invar, "ingotElectrum"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.signalum, ItemFilter.electrum, "ingotSignalum"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemFilter.ender, ItemFilter.signalum, "ingotEnderium"));
+        String[] materials = {"Iron", "Invar", "Electrum", "Signalum", "Enderium"};
+
+        for (int i = 0; i < materials.length; i++) {
+            GameRegistry.addRecipe(new ShapedOreRecipe(
+                    new ItemStack(ThermalDynamics.itemServo, 2, i),
+                    "iGi", "IRI", 'R', "dustRedstone", 'G', "blockGlass",
+                    'I', "ingot" + materials[i], 'i', "nuggetIron"));
+
+            GameRegistry.addRecipe(new ShapedOreRecipe(
+                    new ItemStack(ThermalDynamics.itemFilter, 2, i),
+                    "iGi", "IRI", 'R', Items.paper, 'G', "blockGlass", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
+
+            if (i > 0) {
+                GameRegistry.addRecipe(addInputMetaRange(
+                                new ShapelessOreRecipe(new ItemStack(ThermalDynamics.itemServo, 1, i),
+                                        "ingot" + materials[i])
+                                , new ItemStack(ThermalDynamics.itemServo, 1, i - 1), 0, i - 1
+                        )
+                );
+
+                GameRegistry.addRecipe(addInputMetaRange(
+                                new ShapelessOreRecipe(new ItemStack(ThermalDynamics.itemFilter, 1, i),
+                                        "ingot" + materials[i])
+                                , new ItemStack(ThermalDynamics.itemFilter, 1, i - 1), 0, i - 1
+                        )
+                );
+            }
+        }
 
         // Items
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_TRANS.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "blockGlassHardened"));
@@ -92,5 +108,25 @@ public class TDCrafting {
             {Ducts.FLUID_TRANS, Ducts.FLUID_OPAQUE},
             {Ducts.FLUID_HARDENED_TRANS, Ducts.FLUID_HARDENED_OPAQUE},
     };
+
+    public static ShapelessOreRecipe addInputMetaRange(ShapelessOreRecipe recipe, ItemStack input, int minMeta, int maxMeta) {
+        ArrayList<ItemStack> itemStacks = new ArrayList<ItemStack>(maxMeta - minMeta + 1);
+        for (int i = minMeta; i <= maxMeta; i++) {
+            input = input.copy();
+            input.setItemDamage(i);
+            itemStacks.add(input);
+        }
+        recipe.getInput().add(itemStacks);
+        return recipe;
+    }
+
+    public static ShapelessOreRecipe addInput(ShapelessOreRecipe recipe, ItemStack[]... inputs) {
+        for (ItemStack[] input : inputs) {
+            ArrayList<ItemStack> itemStacks = new ArrayList<ItemStack>(input.length);
+            Collections.addAll(itemStacks, input);
+            recipe.getInput().add(itemStacks);
+        }
+        return recipe;
+    }
 
 }
