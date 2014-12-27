@@ -42,6 +42,23 @@ public class CommandThermalDebug extends CommandBase {
 
     Field chunksToUnload;
 
+    private static final String[] trueWords = {"true", "t", "1", "yes"};
+    private static final String[] falseWords = {"false", "f", "0", "no", "cake"};
+
+    public static boolean toBoolean(String s) {
+        s = s.trim();
+        for (String trueWord : trueWords) {
+            if (trueWord.equalsIgnoreCase(s))
+                return true;
+        }
+        for (String falseWord : falseWords) {
+            if (falseWord.equalsIgnoreCase(s))
+                return false;
+        }
+
+        throw new RuntimeException("Unable to interpret word " + s + " as true/false");
+    }
+
     @Override
     public void processCommand(ICommandSender p_71515_1_, String[] args) {
         if (args.length == 0)
