@@ -274,6 +274,7 @@ public class ServoItem extends ServoBase {
     public static int[] maxSize = {1, 8, 64, 64, 64};
 
     public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
+        itemStack.stackSize = Math.min(itemStack.stackSize, maxSize[type]);
         return itemStack;
     }
 
@@ -321,7 +322,9 @@ public class ServoItem extends ServoBase {
 
     public ItemStack insertItem(ItemStack item) {
         if (!filter.matchesFilter(item)) return item;
-        TravelingItem routeForItem = getRouteForItem(item);
+
+        ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
+        TravelingItem routeForItem = getRouteForItem(sending);
         if (routeForItem == null)
             return item;
 
