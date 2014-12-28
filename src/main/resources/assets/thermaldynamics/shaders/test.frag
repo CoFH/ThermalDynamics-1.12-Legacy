@@ -12,8 +12,8 @@ void main() {
 	vec2 texcoord = vec2(gl_TexCoord[0]);
     vec4 color = texture2D(texture, texcoord / 2);
     
-    float ix = xpos * 1000.0;
-    float iy = zpos * 1000.0;
+    float ix = xpos;
+    float iy = zpos;
 
 
     float old_alpha = gl_TexCoord[0].a;
