@@ -3,18 +3,18 @@ package thermaldynamics.crafting;
 import cofh.api.modhelpers.ThermalExpansionHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-
+import thermaldynamics.ThermalDynamics;
 import thermaldynamics.ducts.Ducts;
-import thermaldynamics.item.ItemFilter;
-import thermaldynamics.item.ItemServo;
 import thermalfoundation.fluid.TFFluids;
 import thermalfoundation.item.TFItems;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class TDCrafting {
 

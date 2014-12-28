@@ -1,5 +1,6 @@
 package thermaldynamics.debughelper;
 
+import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.position.BlockPosition;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import com.google.common.base.Throwables;
@@ -42,10 +43,11 @@ public class CommandThermalDebug extends CommandBase {
 
     Field chunksToUnload;
 
-    private static final String[] trueWords = {"true", "t", "1", "yes"};
-    private static final String[] falseWords = {"false", "f", "0", "no", "cake"};
+    private static final String[] trueWords = {"true", "t", "1", "yes", "oui", "affirmative", "truth", "yarp", "uhuh", "yep", "doit", "yea", "tango", "heckyeah", "win"};
+    private static final String[] falseWords = {"false", "f", "0", "no", "non", "negative", "cake", "narp", "nuhuh", "nope", "dont", "nay", "foxtrot", "hellno", "fail"};
+    private static final String[] mixWords = {"random", "r", "0.5", "imfeelinglucky", "yesno", "supriseme", "whatever", "schrodinger"};
 
-    public static boolean toBoolean(String s) {
+    public static boolean textToBoolean(String s) {
         s = s.trim();
         for (String trueWord : trueWords) {
             if (trueWord.equalsIgnoreCase(s))
@@ -54,6 +56,11 @@ public class CommandThermalDebug extends CommandBase {
         for (String falseWord : falseWords) {
             if (falseWord.equalsIgnoreCase(s))
                 return false;
+        }
+
+        for (String mixWord : mixWords) {
+            if (mixWord.equalsIgnoreCase(s))
+                return MathHelper.RANDOM.nextBoolean();
         }
 
         throw new RuntimeException("Unable to interpret word " + s + " as true/false");

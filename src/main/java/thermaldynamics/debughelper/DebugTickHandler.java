@@ -6,16 +6,19 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.world.ChunkEvent;
 import thermaldynamics.core.TickHandler;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
+import java.util.HashSet;
 import java.util.Random;
 
 public class DebugTickHandler {
 
     public static DebugTickHandler INSTANCE = new DebugTickHandler();
+    public static HashSet<EntityPlayer> debugPlayers;
 
     public final Random rand = new Random();
     public static boolean showParticles;
@@ -75,6 +78,40 @@ public class DebugTickHandler {
             }
         }
 
+    }
+
+
+    public enum DebugEvents {
+        GRID_FORMED,
+        GRID_BROKEN,
+        NEIGHBOUR_CHANGE,
+        NEIGHBOUR_WEAK_CHANGE,;
+
+        static final int n = values().length;
+    }
+
+    int servertick = 0;
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+
+        int j = (servertick + 1) % values.length;
+        for (int i = 0; i < DebugEvents.n; i++) {
+            displayValue[i] -= values[servertick][i];
+            displayValue[i] += values[j][i];
+        }
+
+        servertick = j;
+    }
+
+
+    public int[] displayValue = new int[DebugEvents.values().length];
+
+    public int[][] values = new int[100][DebugEvents.values().length];
+
+    public void tickEvent(DebugEvents event) {
+        values[servertick][event.ordinal()]++;
     }
 
 
