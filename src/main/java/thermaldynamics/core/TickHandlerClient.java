@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiScreen;
 import thermaldynamics.ducts.item.TileItemDuct;
 
 import java.util.HashSet;
@@ -45,11 +44,6 @@ public class TickHandlerClient {
                 tickBlocksToRemove.clear();
             }
 
-            GuiScreen gui = Minecraft.getMinecraft().currentScreen;
-            if (gui == null || !gui.doesGuiPauseGame()) {
-                gameTicks++;
-            }
-
             if (mc.currentScreen instanceof GuiMainMenu) {
                 if (needsMenu) {
                     onMainMenu();
@@ -69,7 +63,7 @@ public class TickHandlerClient {
     }
 
 
-    public static int gameTicks = 0;
+
 
 
 }

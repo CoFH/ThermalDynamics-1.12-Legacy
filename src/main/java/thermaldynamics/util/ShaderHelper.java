@@ -1,13 +1,17 @@
 package thermaldynamics.util;
 
-import gnu.trove.map.hash.TIntIntHashMap;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import gnu.trove.map.hash.TIntFloatHashMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.ThermalDynamics;
-import thermaldynamics.core.TickHandlerClient;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -24,11 +28,31 @@ public final class ShaderHelper {
         if (!useShaders())
             return;
 
-        testShader = createProgram(null, "test.frag");
+        testShader = createProgram("test2.vert", "test2.frag");
+
+        FMLCommonHandler.instance().bus().register(new ShaderHelper());
+    }
+
+    public static int gameTicks = 0;
+    public static float midGameTick = 0;
+
+    @SubscribeEvent
+    public void clientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) return;
+        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+        if (gui == null || !gui.doesGuiPauseGame()) {
+            gameTicks++;
+        }
+    }
+
+    @SubscribeEvent
+    public void renderTick(TickEvent.RenderTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) return;
+        midGameTick = event.renderTickTime;
     }
 
 
-    static TIntIntHashMap prevTime = new TIntIntHashMap();
+    static TIntFloatHashMap prevTime = new TIntFloatHashMap();
 
     public static void useShader(int shader, ShaderCallback callback) {
         if (!useShaders())
@@ -37,12 +61,13 @@ public final class ShaderHelper {
         ARBShaderObjects.glUseProgramObjectARB(shader);
 
         if (shader != 0) {
-            boolean newFrame = TickHandlerClient.gameTicks != prevTime.get(shader);
+            float frameTime = gameTicks + midGameTick;
+            boolean newFrame = frameTime != prevTime.get(shader);
 
             if (newFrame) {
                 int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
-                ARBShaderObjects.glUniform1iARB(time, TickHandlerClient.gameTicks);
-                prevTime.put(shader, TickHandlerClient.gameTicks);
+                ARBShaderObjects.glUniform1fARB(time, frameTime);
+                prevTime.put(shader, frameTime);
             }
 
             if (callback != null)
@@ -62,7 +87,7 @@ public final class ShaderHelper {
         // TEMA: here's where you'd stick in any config option for enabling/disabling the shaders... don't know how it would interact with the shader mod, etc.
 
         //return ConfigHandler.useShaders && OpenGlHelper.shadersSupported;
-        return OpenGlHelper.shadersSupported && ThermalDynamics.config.get("Options","ShadersEnabled",true);
+        return OpenGlHelper.shadersSupported && ThermalDynamics.config.get("Options", "ShadersEnabled", true);
     }
 
     // Most of the code taken from the LWJGL wiki
@@ -85,14 +110,16 @@ public final class ShaderHelper {
 
         ARBShaderObjects.glLinkProgramARB(program);
         if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
-            ThermalDynamics.log.error(getLogInfo(program));
-            return 0;
+            //ThermalDynamics.log.error(getLogInfo(program));
+            throw new RuntimeException(getLogInfo(program));
+            //return 0;
         }
 
         ARBShaderObjects.glValidateProgramARB(program);
         if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
-            ThermalDynamics.log.error(getLogInfo(program));
-            return 0;
+            //ThermalDynamics.log.error(getLogInfo(program));
+            throw new RuntimeException(getLogInfo(program));
+            //return 0;
         }
 
         prevTime.put(program, -1);

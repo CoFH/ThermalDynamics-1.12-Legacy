@@ -3,13 +3,15 @@
 uniform sampler2D texture;
 uniform int time;
 
+// I don't use these anymore, they just didn't look right when used on a small non-contiguous surface like a pipes
 uniform float xpos;
 uniform float zpos;
 
+// this allows conduits to flash, normally set to 0
 uniform float t;
 
 void main() {
-	vec2 texcoord = vec2(gl_TexCoord[0]);
+    vec2 texcoord = vec2(gl_TexCoord[0]);
     vec4 color = texture2D(texture, texcoord / 2);
     
     float ix = xpos;
@@ -18,6 +20,7 @@ void main() {
 
     float old_alpha = gl_TexCoord[0].a;
 
+    //adds slight purple tint with random noise
     vec4 col = vec4(0.047, 0.035, 0.063, 1) + noise1(gl_FragCoord.xy) * vec4(0.0196, 0.0216, 0.0235, 0);
 
     for(int i=0; i<16; i++) {
@@ -47,9 +50,13 @@ void main() {
     	col = col*(1-a) + vec4(r,g,b,1)*a;
     }
 
+    // this controls the brightness and is determined by whether the conduit is flashing
+    // and also how far away it is
     float br = clamp(2.5*gl_FragCoord.w + t,0,1);
+    
     col = col * br + vec4(0.047, 0.035, 0.063, 1) * (1-br);
 
+    // increase the brightness of flashing conduits
     col.rgb = clamp(col.rgb * (1+t*4),0,1);
     
     col.a = 1;
