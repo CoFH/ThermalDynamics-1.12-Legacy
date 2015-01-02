@@ -33,7 +33,7 @@ import thermaldynamics.ducts.Ducts;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
-import thermalexpansion.util.Utils;
+
 
 import java.util.LinkedList;
 import java.util.List;

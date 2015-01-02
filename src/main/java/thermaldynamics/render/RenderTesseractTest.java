@@ -2,6 +2,8 @@ package thermaldynamics.render;
 
 import cofh.lib.render.RenderHelper;
 import cofh.repack.codechicken.lib.render.CCRenderState;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.Loader;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
@@ -10,10 +12,22 @@ import thermalexpansion.block.ender.TileTesseract;
 import thermalexpansion.render.RenderTesseract;
 
 public class RenderTesseractTest extends TileEntitySpecialRenderer {
-    public static TileEntitySpecialRenderer instance = new RenderTesseractTest();
+    public static RenderTesseractTest instance = new RenderTesseractTest();
+
+    public static void register() {
+        if (Loader.isModLoaded("ThermalExpansion")) register_do();
+    }
+
+    private static void register_do() {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileTesseract.class, RenderTesseractTest.instance);
+    }
 
     @Override
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float f) {
+        renderTileEntityAt_do(tile, x, y, z, f);
+    }
+
+    private static void renderTileEntityAt_do(TileEntity tile, double x, double y, double z, float f) {
         if (!((TileTesseract) tile).isActive || !ShaderHelper.useShaders())
             return;
 

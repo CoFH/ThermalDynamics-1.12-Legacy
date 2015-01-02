@@ -20,7 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
-import thermalexpansion.util.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
