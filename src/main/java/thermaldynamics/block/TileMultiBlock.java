@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.commons.lang3.StringUtils;
 import thermaldynamics.core.TickHandler;
 import thermaldynamics.debughelper.DebugHelper;
+import thermaldynamics.debughelper.DebugTickHandler;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
@@ -129,6 +130,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         super.invalidate();
 
         if (ServerHelper.isServerWorld(worldObj)) {
+            DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.TILE_INVALIDATED);
             for (SubTileMultiBlock subTile : subTiles) subTile.invalidate();
             if (myGrid != null) myGrid.removeBlock(this);
         }
@@ -253,6 +255,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             return;
 
         if (isInvalid()) return;
+
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_CHANGE);
 
         TileEntity theTile;
         boolean wasNode = isNode;
@@ -384,6 +388,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         if (isInvalid()) return;
 
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_WEAK_CHANGE);
+
         int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
 
@@ -486,6 +492,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     public void formGrid() {
         if (myGrid == null && ServerHelper.isServerWorld(worldObj)) {
+            DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.GRID_FORMED);
             DebugHelper.startTimer();
             new MultiBlockFormer().formGrid(this);
             // DEBUG CODE
@@ -496,7 +503,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
     @Override
     public boolean tickPass(int pass) {
-        if (checkForChunkUnload()) return false;
+        if (checkForChunkUnload()) {
+            DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_CHUNK_UNLOADED);
+            return false;
+        }
+
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.TILE_TICKED);
 
         if (!tickingAttachments.isEmpty())
             for (Attachment attachment : tickingAttachments) {
@@ -689,7 +701,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     /* NETWORK METHODS */
     @Override
     public PacketCoFHBase getPacket() {
-
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.PACKET_FORMED);
         PacketCoFHBase payload = super.getPacket();
 
         int attachmentMask = 0;

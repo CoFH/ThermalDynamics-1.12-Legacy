@@ -81,7 +81,7 @@ public class ThermalDynamics extends BaseMod {
     public void preInit(FMLPreInitializationEvent event) {
 
         UpdateManager.registerUpdater(new UpdateManager(this, releaseURL));
-
+        proxy.registerPackets();
         config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDynamics.cfg")));
 
 
@@ -95,7 +95,6 @@ public class ThermalDynamics extends BaseMod {
 
         for (IInitializer initializer : initializerList)
             initializer.preInit();
-
 
         config.save();
     }
