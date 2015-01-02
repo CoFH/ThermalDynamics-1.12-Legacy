@@ -7,9 +7,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import thermaldynamics.ThermalDynamics;
+import thermaldynamics.debughelper.CommandServerDebug;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TileItemDuctEnder;
@@ -20,6 +22,8 @@ public class ProxyClient extends Proxy {
 
     @Override
     public void registerRenderInformation() {
+
+
         FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct[0]), RenderDuct.instance);
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct[1]), RenderDuct.instance);
@@ -32,6 +36,8 @@ public class ProxyClient extends Proxy {
 
         if (ShaderHelper.useShaders() && Loader.isModLoaded("ThermalExpansion"))
             RenderTesseractTest.register();
+
+        ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
     }
 
     @Override

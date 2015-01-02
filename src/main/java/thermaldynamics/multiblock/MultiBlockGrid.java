@@ -4,6 +4,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.core.TickHandler;
 import thermaldynamics.core.WorldGridList;
+import thermaldynamics.debughelper.DebugTickHandler;
 
 import java.util.HashSet;
 
@@ -55,6 +56,7 @@ public abstract class MultiBlockGrid {
     }
 
     public void mergeGrids(MultiBlockGrid theGrid) {
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.GRID_MERGED);
         if (!theGrid.nodeSet.isEmpty()) {
             for (IMultiBlock aBlock : theGrid.nodeSet) {
                 aBlock.setGrid(this);
@@ -77,6 +79,7 @@ public abstract class MultiBlockGrid {
     }
 
     public void destory() {
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.GRID_DESTROYED);
         nodeSet.clear();
         idleSet.clear();
 

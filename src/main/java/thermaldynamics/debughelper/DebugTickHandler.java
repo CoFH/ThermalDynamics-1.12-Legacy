@@ -1,6 +1,8 @@
 package thermaldynamics.debughelper;
 
+import cofh.core.network.PacketHandler;
 import cofh.lib.util.helpers.ServerHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -18,7 +20,7 @@ import java.util.Random;
 public class DebugTickHandler {
 
     public static DebugTickHandler INSTANCE = new DebugTickHandler();
-    public static HashSet<EntityPlayer> debugPlayers;
+
 
     public final Random rand = new Random();
     public static boolean showParticles;
@@ -81,11 +83,11 @@ public class DebugTickHandler {
     }
 
 
-    public enum DebugEvents {
+    public enum DebugEvent {
         GRID_FORMED,
         GRID_BROKEN,
         NEIGHBOUR_CHANGE,
-        NEIGHBOUR_WEAK_CHANGE,;
+        NEIGHBOUR_WEAK_CHANGE, TILE_INVALIDATED, NEIGHBOUR_CHUNK_UNLOADED, TILE_TICKED, PACKET_FORMED, GRID_MERGED, GRID_DESTROYED, ROUTE_SEARCH, ROUTE_INVALIDATED, ROUTE_RESET, ITEM_POLL, ITEM_REPOLL;
 
         static final int n = values().length;
     }
@@ -96,22 +98,36 @@ public class DebugTickHandler {
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
 
-        int j = (servertick + 1) % values.length;
-        for (int i = 0; i < DebugEvents.n; i++) {
-            displayValue[i] -= values[servertick][i];
-            displayValue[i] += values[j][i];
+        int k = (servertick + 1) % values.length;
+        for (int i = 0; i < DebugEvent.n; i++) {
+
+            displayValue[i] = 0;
+            for (int[] value : values) {
+                displayValue[i] += value[i];
+            }
+
+            values[k][i] = 0;
         }
 
-        servertick = j;
+        servertick = k;
+
+
+        PacketDebug packetDebug = new PacketDebug(displayValue);
+        for (EntityPlayer player : debugPlayers) {
+            PacketHandler.sendTo(packetDebug, player);
+        }
+
     }
 
+    public static HashSet<EntityPlayer> debugPlayers = new HashSet<EntityPlayer>();
 
-    public int[] displayValue = new int[DebugEvents.values().length];
+    public int[] displayValue = new int[DebugEvent.values().length];
 
-    public int[][] values = new int[100][DebugEvents.values().length];
+    public int[][] values = new int[100][DebugEvent.values().length];
 
-    public void tickEvent(DebugEvents event) {
-        values[servertick][event.ordinal()]++;
+    public static void tickEvent(DebugEvent event) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+            INSTANCE.values[INSTANCE.servertick][event.ordinal()]++;
     }
 
 

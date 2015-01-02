@@ -2,6 +2,7 @@ package thermaldynamics.multiblock;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.debughelper.DebugTickHandler;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ public class RouteCache {
     }
 
     public void init() {
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ROUTE_SEARCH);
         outputRoutes = new LinkedList<Route>();
         if (origin.isOutput()) {
             Route singleOutput = new Route(origin);
@@ -143,11 +145,13 @@ public class RouteCache {
 
 
     public void reset() {
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ROUTE_RESET);
         isFinishedGenerating = false;
         init();
     }
 
     public void invalidate() {
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ROUTE_INVALIDATED);
         invalid = true;
         outputRoutes.clear();
         stuffableRoutes.clear();

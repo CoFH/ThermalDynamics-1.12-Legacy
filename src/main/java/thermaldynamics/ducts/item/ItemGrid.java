@@ -3,6 +3,7 @@ package thermaldynamics.ducts.item;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import net.minecraft.world.World;
 import thermaldynamics.block.Attachment;
+import thermaldynamics.debughelper.DebugTickHandler;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 
@@ -25,6 +26,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
     public void tickGrid() {
         if (shouldRepoll) {
             repoll = true;
+            DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ITEM_REPOLL);
             if (!travelingItems.isEmpty())
                 travelingItems.clear();
             travelingItemsCount = 0;
@@ -69,6 +71,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
     }
 
     public void poll(TravelingItem item) {
+        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ITEM_POLL);
         BlockCoord dest = item.getDest();
         LinkedList<TravelingItem> list = travelingItems.get(dest);
         if (list == null) {
