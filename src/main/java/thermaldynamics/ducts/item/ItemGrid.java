@@ -91,6 +91,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
     @Override
     public void onMajorGridChange() {
+        super.onMajorGridChange();
         shouldRepoll = true;
     }
 }
