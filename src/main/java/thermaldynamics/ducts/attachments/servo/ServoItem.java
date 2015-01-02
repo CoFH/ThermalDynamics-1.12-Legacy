@@ -169,8 +169,8 @@ public class ServoItem extends ServoBase {
                     if (stuffedItem.stackSize <= 0)
                         iterator.remove();
 
-                    itemDuct.internalGrid.poll(travelingItem);
-                    itemDuct.insertItem(travelingItem);
+
+                    itemDuct.insertNewItem(travelingItem);
                     return;
                 }
 
@@ -226,8 +226,8 @@ public class ServoItem extends ServoBase {
 
                     cachedSidedInv.markDirty();
 
-                    itemDuct.internalGrid.poll(travelingItem);
-                    itemDuct.insertItem(travelingItem);
+
+                    itemDuct.insertNewItem(travelingItem);
                     return;
                 }
             } else if (cacheType == TileItemDuct.CacheType.IINV) {
@@ -265,8 +265,8 @@ public class ServoItem extends ServoBase {
 
                     cachedInv.markDirty();
 
-                    itemDuct.internalGrid.poll(travelingItem);
-                    itemDuct.insertItem(travelingItem);
+
+                    itemDuct.insertNewItem(travelingItem);
                     return;
                 }
             }
@@ -372,8 +372,7 @@ public class ServoItem extends ServoBase {
         if (routeForItem == null)
             return item;
 
-        itemDuct.internalGrid.poll(routeForItem);
-        itemDuct.insertItem(routeForItem);
+        itemDuct.insertNewItem(routeForItem);
         item.stackSize -= routeForItem.stack.stackSize;
         return item.stackSize > 0 ? item : null;
     }
