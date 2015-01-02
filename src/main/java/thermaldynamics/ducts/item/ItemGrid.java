@@ -28,18 +28,23 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
             if (!travelingItems.isEmpty())
                 travelingItems.clear();
             travelingItemsCount = 0;
-        } else
+        } else {
             repoll = false;
+        }
 
         shouldRepoll = false;
+
 
         for (IMultiBlock m : nodeSet) {
             if (!m.tickPass(0))
                 break;
         }
-        for (IMultiBlock m : idleSet) {
-            if (!m.tickPass(0))
-                break;
+
+        if (repoll || travelingItemsCount > 0) {
+            for (IMultiBlock m : idleSet) {
+                if (!m.tickPass(0))
+                    break;
+            }
         }
 
         if (!toTick.isEmpty()) {
