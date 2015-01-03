@@ -64,54 +64,11 @@ public class TileItemDuctEnder extends TileItemDuctPower {
             for (TravelingItem travelingItem : myItems) {
                 if (travelingItem.reRoute || travelingItem.myPath == null) {
                     travelingItem.bounceItem(this);
-                } else if (energy.energyGrid != null && neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK &&
-                        energy.energyGrid.myStorage.getEnergyStored() >= PropsConduit.ENDER_TRANSMIT_COST &&
+                } else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= PropsConduit.ENDER_TRANSMIT_COST &&
                         energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, true) >= PropsConduit.ENDER_TRANSMIT_COST
                         ) {
                     energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, false);
-                    TileItemDuct duct = this;
-
-                    while (true) {
-                        duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
-                        if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK) {
-                            TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
-                            if (newHome != null) {
-                                if (newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-                                    duct = newHome;
-                                    if (travelingItem.myPath.hasNextDirection()) {
-                                        travelingItem.oldDirection = travelingItem.direction;
-                                        travelingItem.direction = travelingItem.myPath.getNextDirection();
-                                    } else {
-                                        travelingItem.reRoute = true;
-                                        duct.insertItem(travelingItem);
-                                        itemsToRemove.add(travelingItem);
-                                        break;
-                                    }
-
-                                    if (duct.getClass() != TileItemDuctEnder.class) {
-                                        duct.insertItem(travelingItem);
-                                        itemsToRemove.add(travelingItem);
-                                        break;
-                                    }
-
-                                } else {
-                                    travelingItem.reRoute = true;
-                                    duct.insertItem(travelingItem);
-                                    itemsToRemove.add(travelingItem);
-                                    break;
-                                }
-                            } else {
-                                travelingItem.reRoute = true;
-                                duct.insertItem(travelingItem);
-                                itemsToRemove.add(travelingItem);
-                                break;
-                            }
-                        } else {
-                            duct.insertItem(travelingItem);
-                            itemsToRemove.add(travelingItem);
-                            break;
-                        }
-                    }
+                    multiAdvance(travelingItem, false);
                 } else {
                     travelingItem.tickForward(this);
                 }
@@ -134,6 +91,82 @@ public class TileItemDuctEnder extends TileItemDuctPower {
         if (!powered && hasChanged) {
             hasChanged = false;
             sendTravelingItemsPacket();
+        }
+    }
+
+    @Override
+    public void insertNewItem(TravelingItem travelingItem) {
+
+        if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= PropsConduit.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, true) >= PropsConduit.ENDER_TRANSMIT_COST) {
+            energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, false);
+            multiAdvance(travelingItem, true);
+        } else
+            super.insertNewItem(travelingItem);
+    }
+
+    @Override
+    public int getWeight() {
+        return 0;
+    }
+
+    public void multiAdvance(TravelingItem travelingItem, boolean newInsert) {
+        TileItemDuct duct = this;
+
+        while (true) {
+            duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
+            if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK) {
+                TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
+                if (newHome != null) {
+                    if (newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+                        duct = newHome;
+                        if (travelingItem.myPath.hasNextDirection()) {
+                            travelingItem.oldDirection = travelingItem.direction;
+                            travelingItem.direction = travelingItem.myPath.getNextDirection();
+                        } else {
+                            travelingItem.reRoute = true;
+                            transferItem(travelingItem, duct, newInsert);
+                            return;
+                        }
+
+                        if (duct.getClass() != TileItemDuctEnder.class) {
+                            transferItem(travelingItem, duct, newInsert);
+                            return;
+                        }
+
+                    } else {
+                        travelingItem.reRoute = true;
+                        transferItem(travelingItem, duct, newInsert);
+                        return;
+                    }
+                } else {
+                    travelingItem.reRoute = true;
+                    transferItem(travelingItem, duct, newInsert);
+                    return;
+                }
+            } else if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.OUTPUT) {
+                travelingItem.stack.stackSize = duct.insertIntoInventory(travelingItem.stack, travelingItem.direction);
+
+                if (travelingItem.stack.stackSize > 0) {
+                    travelingItem.reRoute = true;
+                    transferItem(travelingItem, duct, newInsert);
+                } else
+                    itemsToRemove.add(travelingItem);
+                return;
+            } else {
+                travelingItem.reRoute = true;
+                transferItem(travelingItem, duct, newInsert);
+                return;
+            }
+        }
+    }
+
+    public void transferItem(TravelingItem travelingItem, TileItemDuct duct, boolean newInsert) {
+        if (newInsert) {
+            internalGrid.shouldRepoll = true;
+            duct.insertItem(travelingItem);
+        } else if (duct != this) {
+            duct.insertItem(travelingItem);
+            itemsToRemove.add(travelingItem);
         }
     }
 

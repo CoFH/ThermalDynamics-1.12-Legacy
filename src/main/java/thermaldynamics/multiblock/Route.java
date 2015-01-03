@@ -61,6 +61,13 @@ public class Route implements Comparable<Route> {
         if (this.pathWeight > otherRoute.pathWeight) {
             return 1;
         }
+
+        if(this.pathDirections.size() < otherRoute.pathDirections.size())
+            return  -1;
+
+        if(this.pathDirections.size() > otherRoute.pathDirections.size())
+            return  1;
+
         return 0;
     }
 
