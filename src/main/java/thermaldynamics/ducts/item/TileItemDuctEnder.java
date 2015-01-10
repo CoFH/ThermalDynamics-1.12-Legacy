@@ -9,7 +9,7 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 
     public boolean powered = false;
 
-    SubTileEnergyEnder enderEnergy;
+    final SubTileEnergyEnder enderEnergy;
 
     public TileItemDuctEnder() {
         super();
@@ -40,6 +40,11 @@ public class TileItemDuctEnder extends TileItemDuctPower {
     @Override
     public float[][] getSideCoordsModifier() {
         return _SIDE_MODS[isPowered() ? 3 : 2];
+    }
+
+    @Override
+    public boolean acceptingItems() {
+        return enderEnergy.internalGrid != null && enderEnergy.internalGrid.isPowered();
     }
 
     @Override
@@ -116,25 +121,18 @@ public class TileItemDuctEnder extends TileItemDuctPower {
             duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
             if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK) {
                 TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
-                if (newHome != null) {
-                    if (newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-                        duct = newHome;
-                        if (travelingItem.myPath.hasNextDirection()) {
-                            travelingItem.oldDirection = travelingItem.direction;
-                            travelingItem.direction = travelingItem.myPath.getNextDirection();
-                        } else {
-                            travelingItem.reRoute = true;
-                            transferItem(travelingItem, duct, newInsert);
-                            return;
-                        }
-
-                        if (duct.getClass() != TileItemDuctEnder.class) {
-                            transferItem(travelingItem, duct, newInsert);
-                            return;
-                        }
-
+                if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+                    duct = newHome;
+                    if (travelingItem.myPath.hasNextDirection()) {
+                        travelingItem.oldDirection = travelingItem.direction;
+                        travelingItem.direction = travelingItem.myPath.getNextDirection();
                     } else {
                         travelingItem.reRoute = true;
+                        transferItem(travelingItem, duct, newInsert);
+                        return;
+                    }
+
+                    if (duct.getClass() != TileItemDuctEnder.class) {
                         transferItem(travelingItem, duct, newInsert);
                         return;
                     }
