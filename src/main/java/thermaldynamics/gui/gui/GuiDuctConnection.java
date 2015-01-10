@@ -15,7 +15,8 @@ public class GuiDuctConnection extends GuiBaseAdv {
     public static ResourceLocation TEX = new ResourceLocation("thermaldynamics:textures/gui/guiServo.png");
 
     ContainerDuctConnection container;
-    public ElementButton[] elementButtons;
+    public ElementButton[] elementButtons = new ElementButton[0];
+    ;
     public int buttonSize;
 
     public GuiDuctConnection(InventoryPlayer inventory, ConnectionBase servoBase) {
@@ -45,8 +46,8 @@ public class GuiDuctConnection extends GuiBaseAdv {
             addTab(new TabRedstone(this, servoBase));
 
         int flagNo = container.filter.numFlags();
+        elementButtons = new ElementButton[flagNo];
         if (flagNo != 0) {
-            elementButtons = new ElementButton[flagNo];
             buttonSize = 20;
             int button_offset = buttonSize + 6;
             int x0 = xSize / 2 - flagNo * (button_offset / 2);
@@ -75,6 +76,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
     }
 
     private void setButtons() {
+
         for (int i = 0; i < elementButtons.length; i++) {
             boolean b = container.filter.getFlag(i);
             int x = buttons[i][0] + (b ? buttonSize : 0);
