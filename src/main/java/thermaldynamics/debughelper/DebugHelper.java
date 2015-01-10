@@ -64,4 +64,7 @@ public class DebugHelper {
         world.spawnParticle("reddust", x, y, z, r, g, b);
     }
 
+    public static void quit() {
+        FMLCommonHandler.instance().exitJava(0,true);
+    }
 }

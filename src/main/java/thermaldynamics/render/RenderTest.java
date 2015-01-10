@@ -2,13 +2,13 @@ package thermaldynamics.render;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import thermaldynamics.util.ShaderHelper;
+import cofh.core.render.ShaderHelper;
+import thermalfoundation.render.shader.ShaderStarfield;
 
 public class RenderTest {
     @SubscribeEvent
     public void renderStart(RenderLivingEvent.Pre event) {
-        ShaderHelper.useShader(ShaderHelper.testShader, null);
+        ShaderHelper.useShader(ShaderStarfield.starfieldShader, null);
     }
 
     @SubscribeEvent

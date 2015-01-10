@@ -12,8 +12,9 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.block.BlockDuct;
 import thermaldynamics.ducts.item.TileItemDuctEnder;
-import thermaldynamics.util.ShaderHelper;
+import cofh.core.render.ShaderHelper;
 import thermalfoundation.fluid.TFFluids;
+import thermalfoundation.render.shader.ShaderStarfield;
 
 public class RenderDuctItemsEnder extends RenderDuctItems {
     public static final TileEntitySpecialRenderer instance = new RenderDuctItemsEnder();
@@ -65,15 +66,15 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 
     public static void drawEnderStarfield(double x, double y, double z, int[] connections, float frame, int alpha, int[] alphaSub) {
         if (ShaderHelper.useShaders())
-            CCRenderState.changeTexture(RenderStarfield.starsTexture);
+            CCRenderState.changeTexture(ShaderStarfield.starsTexture);
         else
             CCRenderState.changeTexture(RenderHelper.MC_BLOCK_SHEET);
 
         CCModel[] models = RenderDuct.modelFluid[5];
 
         if (alpha == 0) {
-            RenderStarfield.alpha = 0;
-            ShaderHelper.useShader(ShaderHelper.testShader, RenderStarfield.callback);
+            ShaderStarfield.alpha = 0;
+            ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
             CCRenderState.startDrawing();
             for (int s = 0; s < 6; s++) {
                 if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
@@ -87,16 +88,16 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 
             for (int s = 0; s < 6; s++) {
                 if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
-                    RenderStarfield.alpha = getAlphaLevel(alphaSub[s], frame) / 255F;
-                    ShaderHelper.useShader(ShaderHelper.testShader, RenderStarfield.callback);
+                    ShaderStarfield.alpha = getAlphaLevel(alphaSub[s], frame) / 255F;
+                    ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
                     CCRenderState.startDrawing();
                     models[s].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
                     CCRenderState.draw();
                     ShaderHelper.releaseShader();
                 }
             }
-            RenderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
-            ShaderHelper.useShader(ShaderHelper.testShader, RenderStarfield.callback);
+            ShaderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
+            ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
             CCRenderState.startDrawing();
             models[6].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
             CCRenderState.draw();
