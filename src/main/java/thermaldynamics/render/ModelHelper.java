@@ -1,6 +1,7 @@
 package thermaldynamics.render;
 
 import cofh.lib.render.RenderHelper;
+import cofh.lib.util.helpers.MathHelper;
 import cofh.repack.codechicken.lib.lighting.LightModel;
 import cofh.repack.codechicken.lib.render.BlockRenderer;
 import cofh.repack.codechicken.lib.render.CCModel;
@@ -16,8 +17,112 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ModelHelper {
-    public static CCModel expandModel(CCModel model) {
-        return expandModel(model, new Cuboid6(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5), 1);
+    public static class StandardTubes {
+        public final boolean opaque;
+        public final float width;
+
+        final static int[][] orthogs = {
+                {2, 3, 4, 5},
+                {2, 3, 4, 5},
+                {0, 1, 4, 5},
+                {0, 1, 4, 5},
+                {0, 1, 2, 3},
+                {0, 1, 2, 3},
+        };
+
+        Cuboid6 center;
+        Cuboid6[] pipeWCenter = new Cuboid6[6];
+        Cuboid6[] pipe = new Cuboid6[6];
+        Cuboid6[] pipeFullLength = new Cuboid6[6];
+
+        public static Cuboid6[] rotateCuboids(Cuboid6 downCube) {
+            Cuboid6[] cuboid6s = new Cuboid6[6];
+            for (int i = 0; i < 6; i++) cuboid6s[i] = downCube.copy().apply(Rotation.sideRotations[i]);
+            return cuboid6s;
+        }
+
+        public static CCModel[] genModels(float w, boolean opaque) {
+            StandardTubes tubes = new StandardTubes(w, opaque);
+            CCModel[] models = new CCModel[64];
+            for (int i = 0; i < 64; i++) {
+                LinkedList<Vertex5> model = tubes.createModel(i);
+
+                int n = model.size();
+                models[i] = CCModel.newModel(7, n * (opaque ? 1 : 2));
+
+                for (int j = 0; j < n; j++) {
+                    models[i].verts[j] = model.get(j);
+                }
+                if (!opaque)
+                    CCModel.generateBackface(models[i], 0, models[i], n, n);
+
+                finalizeModel(models[i]);
+            }
+            return models;
+        }
+
+
+        public StandardTubes(float w, boolean opaque) {
+            this.width = w;
+            center = new Cuboid6(-w, -w, -w, w, w, w);
+            pipe = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, -w, w));
+            pipeWCenter = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, w, w));
+            pipeFullLength = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, 0.5, w));
+            this.opaque = opaque;
+        }
+
+        public LinkedList<Vertex5> createModel(int cMask) {
+            LinkedList<Vertex5> verts = new LinkedList<Vertex5>();
+
+            for (int side = 0; side < 6; side++) {
+                if (!opaque && MathHelper.isBitSet(cMask, side)) {
+                    for (int i : orthogs[side]) {
+                        if (MathHelper.isBitSet(cMask, i))
+                            addSideFace(verts, pipe[i], side);
+                    }
+                } else {
+                    int singlePipeIndex = -1, doublePipeIndex = -1;
+                    for (int i : orthogs[side]) {
+                        if (MathHelper.isBitSet(cMask, i)) {
+                            singlePipeIndex = i;
+                            if (MathHelper.isBitSet(cMask, i ^ 1)) {
+                                doublePipeIndex = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (doublePipeIndex != -1) {
+                        for (int i : orthogs[side]) {
+                            if (i == doublePipeIndex)
+                                addSideFace(verts, pipeFullLength[i], side);
+                            else if (i != (doublePipeIndex ^ 1) && MathHelper.isBitSet(cMask, i))
+                                addSideFace(verts, pipe[i], side);
+                        }
+                    } else if (singlePipeIndex != -1) {
+                        for (int i : orthogs[side]) {
+                            if (i == singlePipeIndex)
+                                addSideFace(verts, pipeWCenter[i], side);
+                            else if (MathHelper.isBitSet(cMask, i))
+                                addSideFace(verts, pipe[i], side);
+                        }
+                    } else if (!MathHelper.isBitSet(cMask, side)) {
+                        addSideFace(verts, center, side);
+                    }
+                }
+
+            }
+
+            return verts;
+        }
+    }
+
+    public static void finalizeModel(CCModel model1) {
+        model1.shrinkUVs(RenderHelper.RENDER_OFFSET).computeNormals().computeLighting(LightModel.standardLightModel);
+    }
+
+    public static CCModel expandModel(CCModel model, double size) {
+        return expandModel(model, new Cuboid6(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5), size);
     }
 
     public static CCModel expandModel(CCModel model, Cuboid6 bounds, double size) {
@@ -263,9 +368,7 @@ public class ModelHelper {
             model.verts[11] = toVertex5(octoFace[7].copy(), 0);
 
             for (int i = 0; i < 12; i++)
-                model.verts[i].vec.y = -0.5 * 0.99;
-
-            model.computeNormals(0, 12);
+                model.verts[i].vec.y = -0.5 * (frameOnly ? 0.75 : 0.99);
 
             CCModel.generateBackface(model, 0, model, 12, 12);
 
@@ -284,8 +387,6 @@ public class ModelHelper {
                 model.verts[k * 4 + 2] = new Vertex5(octoFace[(k + 1) % 8].copy().multiply(o, 1, o).setSide(0, -v), 0.5 + innerSize, 0.5 - v);
                 model.verts[k * 4 + 3] = new Vertex5(octoFace[(k + 1) % 8].copy().multiply(o, 1, o), 0.5 + innerSize, 0);
             }
-
-            model.computeNormals(0, 32);
 
             CCModel.generateBackface(model, 0, model, 32, 32);
 
@@ -308,21 +409,21 @@ public class ModelHelper {
 
                 CCModel.generateBackface(models[i], 0, models[i], n, n);
 
-                models[i].computeNormals().shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+                finalizeModel(models[i]);
             }
 
             models[64] = generateConnection();
             for (int s = 0; s < 6; s++) {
                 if (s != 0)
                     models[64 + s] = models[64].sidedCopy(0, s, Vector3.zero);
-                models[64 + s].shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+                finalizeModel(models[64 + s]);
             }
 
             models[70] = generateSideFace();
             for (int s = 0; s < 6; s++) {
                 if (s != 0)
                     models[70 + s] = models[70].sidedCopy(0, s, Vector3.zero);
-                models[70 + s].shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+                finalizeModel(models[70 + s]);
             }
 
             return models;
@@ -647,7 +748,7 @@ public class ModelHelper {
             CCModel[] models = new CCModel[64];
             for (int i = 0; i < 64; i++) {
                 LinkedList<Vertex5> v = generateIntersections(i);
-//                v = simplifyModel(v);
+                v = simplifyModel(v);
                 int n = v.size();
                 models[i] = CCModel.newModel(7, n * 2);
 
@@ -658,7 +759,7 @@ public class ModelHelper {
 
                 CCModel.generateBackface(models[i], 0, models[i], n, n);
 
-                models[i].computeNormals().shrinkUVs(RenderHelper.RENDER_OFFSET).computeLighting(LightModel.standardLightModel);
+                finalizeModel(models[i]);
             }
             return models;
         }

@@ -116,6 +116,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
             return;
 
         IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
+        IconRegistry.addIcon("TinDuct", "thermaldynamics:altDucts/tin_trans", ir);
 
 //        IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 64));
 //        IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));

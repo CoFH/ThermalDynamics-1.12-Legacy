@@ -66,6 +66,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         generateModels();
     }
 
+    public static CCModel[] opaqueTubes;
+    public static CCModel[] transTubes;
+    private static CCModel[] fluidTubes;
+
 
     public static void initialize() {
         generateFluidModels();
@@ -112,6 +116,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         modelLine[1] = CCModel.quadModel(16).generateBlock(0, h, 1 - h, h, 1 - h, 1.0, 1 - h, 3).computeNormals();
         CCModel.generateSidedModels(modelLine, 1, Vector3.center);
 
+        opaqueTubes = ModelHelper.StandardTubes.genModels(0.1875F, true);
+        transTubes = ModelHelper.StandardTubes.genModels(0.1875F, false);
+        fluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false);
+
         modelLargeDucts1 = (new ModelHelper.OctagonalTubeGen(0.4375, true)).generateModels();
         modelLargeDucts2 = (new ModelHelper.OctagonalTubeGen(0.4375 * 0.99, false)).generateModels();
 
@@ -150,8 +158,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
         Translation trans = RenderUtils.getRenderVector(x, y, z).translation();
 
-        for (int s = 0; s < 6; s++) {
 
+        for (int s = 0; s < 6; s++) {
             if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
                 RenderUtils.ScaledIconTransformation icon;
 
@@ -182,6 +190,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
             }
         }
 
+
         if (Ducts.values()[renderType].iconOverDuctTexture != null) {
             int c = 0;
             for (int s = 0; s < 6; s++) {
@@ -190,8 +199,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
                     if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
                         modelLargeDucts1[64 + s].render(x, y, z, RenderUtils.getIconTransformation(BlockStorage.TEXTURES[7]));
-                    }
-                    if (invRender) {
+//                    }
+//                    if (invRender) {
                         modelLargeDucts2[70 + s].render(x, y, z, RenderUtils.getIconTransformation(Ducts.values()[renderType].iconOverDuctTexture));
                     }
                 }
