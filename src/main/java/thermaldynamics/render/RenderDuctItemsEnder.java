@@ -65,7 +65,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 
 
     public static void drawEnderStarfield(double x, double y, double z, int[] connections, float frame, int alpha, int[] alphaSub) {
-        if (ShaderHelper.useShaders())
+        if (ShaderHelper.useShaders() || ShaderStarfield.starfieldShader == 0)
             CCRenderState.changeTexture(ShaderStarfield.starsTexture);
         else
             CCRenderState.changeTexture(RenderHelper.MC_BLOCK_SHEET);
