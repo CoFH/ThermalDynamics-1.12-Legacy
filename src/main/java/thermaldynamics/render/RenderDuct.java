@@ -68,9 +68,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         generateModels();
     }
 
-    public static CCModel[] opaqueTubes;
-    public static CCModel[] transTubes;
-    private static CCModel[] fluidTubes;
+    public static CCModel[] modelOpaqueTubes;
+    public static CCModel[] modelTransTubes;
+    private static CCModel[] modelFluidTubes;
 
 
     public static void initialize() {
@@ -109,24 +109,29 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
     public static void generateModels() {
 
         modelCenter = CCModel.quadModel(48).generateBox(0, -3, -3, -3, 6, 6, 6, 0, 0, 32, 32, 16);
-        modelConnection[0][1] = CCModel.quadModel(48).generateBox(0, -3, 3, -3, 6, 5, 6, 0, 16, 32, 32, 16);
+        //modelConnection[0][1] = CCModel.quadModel(48).generateBox(0, -3, 3, -3, 6, 5, 6, 0, 16, 32, 32, 16);
+
+
+        modelConnection[0][1] = CCModel.quadModel(48).generateBlock(0, (new Cuboid6(0.3125, 0.6875, 0.3125, 0.6875, 1, 0.6875)).expand(-1.0D / 1024.0D));
         modelConnection[1][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 0, 32, 32, 16).computeNormals();
         modelConnection[2][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 16, 32, 32, 16).computeNormals();
+
 
         double h = 0.4;
         modelLineCenter = CCModel.quadModel(24).generateBlock(0, h, h, h, 1 - h, 1 - h, 1 - h).computeNormals();
         modelLine[1] = CCModel.quadModel(16).generateBlock(0, h, 1 - h, h, 1 - h, 1.0, 1 - h, 3).computeNormals();
         CCModel.generateSidedModels(modelLine, 1, Vector3.center);
 
-        opaqueTubes = ModelHelper.StandardTubes.genModels(0.1875F, true);
-        transTubes = ModelHelper.StandardTubes.genModels(0.1875F, false);
-        fluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false);
+        modelOpaqueTubes = ModelHelper.StandardTubes.genModels(0.1875F, true);
+        modelTransTubes = ModelHelper.StandardTubes.genModels(0.1875F, false);
+        modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false);
 
         modelLargeDucts1 = (new ModelHelper.OctagonalTubeGen(0.4375, true)).generateModels();
         modelLargeDucts2 = (new ModelHelper.OctagonalTubeGen(0.4375 * 0.99, false)).generateModels();
 
         CCModel.generateBackface(modelCenter, 0, modelCenter, 24, 24);
         CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
+        modelConnection[0][1].apply(RenderUtils.getRenderVector(-0.5, -0.5, -0.5).translation());
 
         for (int i = 0; i < modelConnection.length; i++) {
             CCModel.generateSidedModels(modelConnection[i], 1, Vector3.zero);
@@ -160,49 +165,43 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
         Translation trans = RenderUtils.getRenderVector(x, y, z).translation();
 
-
+        int c = 0;
         for (int s = 0; s < 6; s++) {
             if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
                 RenderUtils.ScaledIconTransformation icon;
 
                 if (BlockDuct.ConnectionTypes.values()[connection[s]] == BlockDuct.ConnectionTypes.STRUCTURE) {
                     icon = RenderUtils.getIconTransformation(Ducts.STRUCTURE.iconBaseTexture);
-                    modelConnection[0][s].render(0, 4, trans, icon);
                     modelConnection[0][s].render(8, 24, trans, icon);
-                    modelConnection[0][s].render(24, 28, trans, icon);
                     modelConnection[0][s].render(32, 48, trans, icon);
                 } else {
-                    icon = RenderUtils.getIconTransformation(Ducts.values()[renderType].iconBaseTexture);
-                    if (!invRender) {
-                        modelConnection[0][s].render(0, 4, trans, icon);
-                        modelConnection[0][s].render(8, 24, trans, icon);
-                        modelConnection[0][s].render(24, 28, trans, icon);
-                        modelConnection[0][s].render(32, 48, trans, icon);
-                    } else {
-                        modelConnection[0][s].render(trans, icon);
+                    c = c | (1 << s);
+                    if(invRender){
+                        icon = RenderUtils.getIconTransformation(Ducts.STRUCTURE_TRANS.iconBaseTexture);
+                        modelConnection[0][s].render(4, 8, trans, icon);
                     }
 
                     if (connection[s] == BlockDuct.ConnectionTypes.TILECONNECTION.ordinal() && Ducts.values()[renderType].iconConnectionTexture != null) {
                         modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(Ducts.values()[renderType].iconConnectionTexture));
                     }
                 }
-            } else {
-                modelCenter.render(s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(Ducts.values()[renderType].iconBaseTexture));
-                modelCenter.render(24 + s * 4, 28 + s * 4, trans, RenderUtils.getIconTransformation(Ducts.values()[renderType].iconBaseTexture));
             }
         }
 
 
+        RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(Ducts.values()[renderType].iconBaseTexture);
+        (Ducts.values()[renderType].opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(trans, icon);
+
+
         if (Ducts.values()[renderType].iconOverDuctTexture != null) {
-            int c = 0;
+            c = 0;
             for (int s = 0; s < 6; s++) {
                 if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
                     c = c | (1 << s);
 
                     if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
                         modelLargeDucts1[64 + s].render(x, y, z, RenderUtils.getIconTransformation(BlockStorage.TEXTURES[7]));
-//                    }
-//                    if (invRender) {
+
                         modelLargeDucts2[70 + s].render(x, y, z, RenderUtils.getIconTransformation(Ducts.values()[renderType].iconOverDuctTexture));
                     }
                 }
@@ -243,14 +242,14 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         boolean flag = false;
 
         if (texture != null) {
-            CCModel[] models = modelFluid[5];
+            int c = 0;
 
             for (int s = 0; s < 6; s++) {
                 if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
-                    models[s].render(x, y, z, RenderUtils.getIconTransformation(texture));
+                    c = c | (1 << s);
                 }
             }
-            models[6].render(x, y, z, RenderUtils.getIconTransformation(texture));
+            modelFluidTubes[c].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(texture));
 
             flag = true;
         }
@@ -294,16 +293,29 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
             CCRenderState.setColour(RenderUtils.getFluidRenderColor(stack) << 8 | 32 + 36 * level);
             level = 6;
         }
-        CCModel[] models = modelFluid[level - 1];
+        if (level != 6) {
+            CCModel[] models = modelFluid[level - 1];
 
-        for (int s = 0; s < 6; s++) {
-            if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()
-                    && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()
-                    ) {
-                models[s].render(x, y, z, RenderUtils.getIconTransformation(fluidTex));
+            for (int s = 0; s < 6; s++) {
+                if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()
+                        && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()
+                        ) {
+                    models[s].render(x, y, z, RenderUtils.getIconTransformation(fluidTex));
+                }
             }
+            models[6].render(x, y, z, RenderUtils.getIconTransformation(fluidTex));
+        } else {
+            int c = 0;
+
+            for (int s = 0; s < 6; s++) {
+                if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()
+                        && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()
+                        ) {
+                    c = c | (1 << s);
+                }
+            }
+            modelFluidTubes[c].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(fluidTex));
         }
-        models[6].render(x, y, z, RenderUtils.getIconTransformation(fluidTex));
         CCRenderState.draw();
     }
 

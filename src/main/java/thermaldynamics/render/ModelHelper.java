@@ -48,12 +48,12 @@ public class ModelHelper {
                 LinkedList<Vertex5> model = tubes.createModel(i);
 
                 int n = model.size();
-                models[i] = CCModel.newModel(7, n * (opaque ? 1 : 2));
+                models[i] = CCModel.newModel(7, n * 2);
 
                 for (int j = 0; j < n; j++) {
                     models[i].verts[j] = model.get(j);
                 }
-                if (!opaque)
+
                     CCModel.generateBackface(models[i], 0, models[i], n, n);
 
                 finalizeModel(models[i]);

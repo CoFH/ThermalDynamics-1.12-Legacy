@@ -22,43 +22,45 @@ import java.util.List;
 
 public enum Ducts {
 
-    ENERGY_BASIC(0, false, 0, "energyBasicDuct", Type.Energy, DuctFactory.energy, "thermaldynamics:duct/energy/DuctEnergy00", "thermaldynamics:duct/energy/ConnectionEnergy00", Constants.redstone_block, 255, null, null, 255),
+    ENERGY_BASIC(0, false, 0, "energyBasicDuct", Type.Energy, DuctFactory.energy, "thermaldynamics:altDucts/lead_trans", "thermaldynamics:duct/energy/ConnectionEnergy00", Constants.redstone_block, 255, null, null, 255),
 
-    ENERGY_HARDENED(1, false, 1, "energyHardenedDuct", Type.Energy, DuctFactory.energy, "thermaldynamics:duct/energy/DuctEnergy10", "thermaldynamics:duct/energy/ConnectionEnergy10", Constants.redstone_block, 255, null, null, 0),
+    ENERGY_HARDENED(1, false, 1, "energyHardenedDuct", Type.Energy, DuctFactory.energy, "thermaldynamics:altDucts/invar_trans", "thermaldynamics:duct/energy/ConnectionEnergy10", Constants.redstone_block, 255, null, null, 0),
 
-    ENERGY_REINFORCED(2, false, 2, "energyReinforcedDuct", Type.Energy, DuctFactory.energy, "thermaldynamics:duct/energy/DuctEnergy20", "thermaldynamics:duct/energy/ConnectionEnergy20", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0),
+    ENERGY_REINFORCED(2, false, 2, "energyReinforcedDuct", Type.Energy, DuctFactory.energy, "thermaldynamics:altDucts/electrum_trans", "thermaldynamics:duct/energy/ConnectionEnergy20", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0),
 
-    FLUID_TRANS(3, false, 0, "fluidWeakDuct", Type.Fluid, DuctFactory.fluid_fragile, "thermaldynamics:duct/fluid/DuctFluid00", "thermaldynamics:duct/fluid/ConnectionFluid00", null, 0, null, null, 0),
+    FLUID_TRANS(3, false, 0, "fluidWeakDuct", Type.Fluid, DuctFactory.fluid_fragile, "thermaldynamics:altDucts/copper_trans", "thermaldynamics:duct/fluid/ConnectionFluid00", null, 0, null, null, 0),
 
-    FLUID_OPAQUE(4, true, 0, "fluidWeakDuct", Type.Fluid, DuctFactory.fluid_fragile, "thermaldynamics:duct/fluid/DuctFluid01", "thermaldynamics:duct/fluid/ConnectionFluid00", null, 0, null, null, 0),
+    FLUID_OPAQUE(4, true, 0, "fluidWeakDuct", Type.Fluid, DuctFactory.fluid_fragile, "thermaldynamics:altDucts/copper", "thermaldynamics:duct/fluid/ConnectionFluid00", null, 0, null, null, 0),
 
-    FLUID_HARDENED_TRANS(11, false, 1, "fluidDuct", Type.Fluid, DuctFactory.fluid, "thermaldynamics:duct/fluid/DuctFluid10", "thermaldynamics:duct/fluid/ConnectionFluid10", null, 0, null, null, 0),
+    FLUID_HARDENED_TRANS(11, false, 1, "fluidDuct", Type.Fluid, DuctFactory.fluid, "thermaldynamics:altDucts/invar_trans", "thermaldynamics:duct/fluid/ConnectionFluid10", null, 0, null, null, 0),
 
-    FLUID_HARDENED_OPAQUE(12, true, 1, "fluidDuct", Type.Fluid, DuctFactory.fluid, "thermaldynamics:duct/fluid/DuctFluid11", "thermaldynamics:duct/fluid/ConnectionFluid11", null, 0, null, null, 0),
+    FLUID_HARDENED_OPAQUE(12, true, 1, "fluidDuct", Type.Fluid, DuctFactory.fluid, "thermaldynamics:altDucts/invar", "thermaldynamics:duct/fluid/ConnectionFluid11", null, 0, null, null, 0),
 
-    ITEM_TRANS(5, false, 0, "itemDuct", Type.Item, DuctFactory.item, "thermaldynamics:duct/item/DuctItem00", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
+    ITEM_TRANS(5, false, 0, "itemDuct", Type.Item, DuctFactory.item, "thermaldynamics:altDucts/tin_trans", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
 
-    ITEM_OPAQUE(6, true, 0, "itemDuct", Type.Item, DuctFactory.item, "thermaldynamics:duct/item/DuctItem01", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
+    ITEM_OPAQUE(6, true, 0, "itemDuct", Type.Item, DuctFactory.item, "thermaldynamics:altDucts/tin", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
 
-    ITEM_FAST_TRANS(7, false, 1, "itemDuctFast", Type.Item, DuctFactory.item, "thermaldynamics:duct/item/DuctItem00", "thermaldynamics:duct/item/ConnectionItem00", "thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0),
+    ITEM_FAST_TRANS(7, false, 1, "itemDuctFast", Type.Item, DuctFactory.item, "thermaldynamics:altDucts/tin_trans", "thermaldynamics:duct/item/ConnectionItem00", "thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0),
 
-    ITEM_FAST_OPAQUE(8, true, 1, "itemDuctFast", Type.Item, DuctFactory.item, "thermaldynamics:duct/item/DuctItem11", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
+    ITEM_FAST_OPAQUE(8, true, 1, "itemDuctFast", Type.Item, DuctFactory.item, "thermaldynamics:altDucts/tin_1", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
 
-    ENERGY_REINFORCED_EMPTY(9, false, -1, "energyEmptyReinforcedDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/energy/DuctEnergy20", "thermaldynamics:duct/energy/ConnectionEnergy20", null, 0, null, null, 0),
+    ENERGY_REINFORCED_EMPTY(9, false, -1, "energyEmptyReinforcedDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:altDucts/electrum_trans", "thermaldynamics:duct/energy/ConnectionEnergy20", null, 0, null, null, 0),
 
-    STRUCTURE(10, false, -1, "structureDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/structure", null, null, 0, null, null, 0),
+    STRUCTURE(10, true, -1, "structureDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:altDucts/support", null, null, 0, null, null, 0),
 
-    ENERGY_SUPERCONDUCTOR(13, false, 3, "energySuperconductorDuct", Type.Energy, DuctFactory.energy_super, "thermaldynamics:duct/energy/DuctEnergy20", "thermaldynamics:duct/energy/ConnectionEnergy20", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "thermaldynamics:duct/overduct/OverDuctElectrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 72),
+    ENERGY_SUPERCONDUCTOR(13, false, 3, "energySuperconductorDuct", Type.Energy, DuctFactory.energy_super, "thermaldynamics:altDucts/electrum_trans", "thermaldynamics:duct/energy/ConnectionEnergy20", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "thermaldynamics:duct/overduct/OverDuctElectrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 72),
 
-    ENERGY_SUPERCONDUCTOR_EMPTY(14, false, -1, "energySuperconductorEmptyDuct", Type.Energy, DuctFactory.structural, "thermaldynamics:duct/energy/DuctEnergy20", "thermaldynamics:duct/energy/ConnectionEnergy20", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "thermaldynamics:duct/overduct/OverDuctElectrum", null, 0),
+    ENERGY_SUPERCONDUCTOR_EMPTY(14, false, -1, "energySuperconductorEmptyDuct", Type.Energy, DuctFactory.structural, "thermaldynamics:altDucts/electrum_trans", "thermaldynamics:duct/energy/ConnectionEnergy20", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "thermaldynamics:duct/overduct/OverDuctElectrum", null, 0),
 
-    ITEM_ENDERIUM_TRANS(15, false, 2, "itemDuctEnder", Type.Item, DuctFactory.item_ender, "thermaldynamics:duct/item/DuctEnderium0", "thermaldynamics:duct/item/ConnectionItem20", null, 48, null, null, 0),
+    ITEM_ENDERIUM_TRANS(15, false, 2, "itemDuctEnder", Type.Item, DuctFactory.item_ender, "thermaldynamics:altDucts/enderium_trans", "thermaldynamics:duct/item/ConnectionItem20", null, 48, null, null, 0),
 
-    ITEM_ENDERIUM_OPAQUE(16, true, 2, "itemDuctEnder", Type.Item, DuctFactory.item_ender, "thermaldynamics:duct/item/DuctEnderium1", "thermaldynamics:duct/item/ConnectionItem20", null, 48, null, null, 0),
+    ITEM_ENDERIUM_OPAQUE(16, true, 2, "itemDuctEnder", Type.Item, DuctFactory.item_ender, "thermaldynamics:altDucts/enderium", "thermaldynamics:duct/item/ConnectionItem20", null, 48, null, null, 0),
 
-    ITEM_REDSTONE_TRANS(17, false, 3, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:duct/item/DuctItem00", "thermaldynamics:duct/item/ConnectionItem00", "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0),
+    ITEM_REDSTONE_TRANS(17, false, 3, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:altDucts/tin_trans", "thermaldynamics:duct/item/ConnectionItem00", "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0),
 
-    ITEM_REDSTONE_OPAQUE(18, true, 3, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:duct/item/DuctItem21", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
+    ITEM_REDSTONE_OPAQUE(18, true, 3, "itemDuctRedstone", Type.Item, DuctFactory.item_redstone, "thermaldynamics:altDucts/tin_2", "thermaldynamics:duct/item/ConnectionItem00", null, 0, null, null, 0),
+
+    STRUCTURE_TRANS(19, false, -1, "structureDuct", Type.Structural, DuctFactory.structural, "thermaldynamics:altDucts/support_trans", null, null, 0, null, null, 0),
 
 
     //BRONZE(13, "test0", Type.Structural, DuctFactory.structural, "thermaldynamics:duct/test/DuctBronze0", null, "thermalfoundation:fluid/Fluid_Pyrotheum_Still", 238),

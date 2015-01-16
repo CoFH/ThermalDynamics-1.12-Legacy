@@ -8,18 +8,21 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.*;
-import thermaldynamics.block.Attachment;
+import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.BlockFluidFinite;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import thermaldynamics.multiblock.MultiBlockGrid;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 public class TileFluidDuctFragile extends TileFluidDuct {
     public static final int roomTemperature = FluidRegistry.WATER.getTemperature();
@@ -150,11 +153,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
     }
 
     public void breakAndSpill(FluidStack fluidStack) {
-        LinkedList<ItemStack> drops = new LinkedList<ItemStack>();
-        for (Attachment a : attachments) {
-            if (a != null)
-                drops.addAll(a.getDrops());
-        }
+        List<ItemStack> drops = getBlockType().getDrops(world(),xCoord,yCoord,zCoord,getBlockMetadata(),0);
 
         for (ItemStack stack : drops) {
             float f = 0.3F;
