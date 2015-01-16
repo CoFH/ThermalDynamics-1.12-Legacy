@@ -26,50 +26,44 @@ public class EnergySuperConductorGrid extends EnergyGrid {
             }
             overSent = new boolean[nodeList.length];
         }
-
-//        if (recentlySent && worldGrid.worldObj.getTotalWorldTime() % 4 == 0) {
-//            recentlySent = false;
-//        }
     }
 
     TileEnergyDuct[] nodeList = null;
-    boolean recentlySent = false;
+
     boolean[] overSent = null;
 
     public int sendEnergy(int maxSent, boolean simulate) {
-        if (nodeList == null || nodeList.length == 0 || maxSent <= 0)
+        TileEnergyDuct[] list = nodeList;
+        if (list == null || list.length == 0 || maxSent <= 0)
             return myStorage.receiveEnergy(maxSent, simulate);
 
         int curSent = 0;
-        int toDistribute = maxSent / nodeList.length;
+        int toDistribute = maxSent / list.length;
 
 
-        for (int i = 0; i < nodeList.length && curSent < maxSent; i++) {
-            int t = sendEnergytoTile(nodeList[i], 0, maxSent - curSent, toDistribute);
+        for (int i = 0; i < list.length && curSent < maxSent; i++) {
+            int t = sendEnergytoTile(list[i], 0, maxSent - curSent, toDistribute);
             overSent[i] = t >= toDistribute && toDistribute < maxSent;
             curSent += t;
         }
 
 
-        for (int i = 0; i < nodeList.length; i++) {
+        for (int i = 0; i < list.length; i++) {
             if (overSent[i] && curSent < maxSent) {
-                curSent = sendEnergytoTile(nodeList[i], curSent, maxSent, maxSent - toDistribute);
+                curSent = sendEnergytoTile(list[i], curSent, maxSent, maxSent - toDistribute);
             }
 
             if (!simulate && i > 0) {
                 int j = MathHelper.RANDOM.nextInt(i + 1);
                 if (i != j) {
-                    TileEnergyDuct t = nodeList[i];
-                    nodeList[i] = nodeList[j];
-                    nodeList[j] = t;
+                    TileEnergyDuct t = list[i];
+                    list[i] = list[j];
+                    list[j] = t;
                 }
             }
         }
 
-
         curSent += myStorage.receiveEnergy(maxSent - curSent, simulate);
-
-        recentlySent = true;
 
         return curSent;
     }
