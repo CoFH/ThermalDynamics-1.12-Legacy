@@ -7,6 +7,7 @@ import cofh.lib.render.RenderHelper;
 import cofh.repack.codechicken.lib.lighting.LightModel;
 import cofh.repack.codechicken.lib.render.CCModel;
 import cofh.repack.codechicken.lib.render.CCRenderState;
+import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Scale;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.repack.codechicken.lib.vec.Vector3;
@@ -28,6 +29,7 @@ import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.attachments.facades.Facade;
 import thermalfoundation.block.BlockStorage;
 import thermalfoundation.fluid.TFFluids;
 
@@ -336,6 +338,11 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
             if (attachment != null) {
                 flag = attachment.render(BlockCoFHBase.renderPass, renderer) || flag;
             }
+        }
+
+        for (Facade facade : theTile.facades) {
+            if(facade != null)
+                flag = facade.render(BlockCoFHBase.renderPass, renderer) || flag;
         }
 
         int renderType = Ducts.getDuct(((BlockDuct) block).offset + world.getBlockMetadata(x, y, z)).ordinal();

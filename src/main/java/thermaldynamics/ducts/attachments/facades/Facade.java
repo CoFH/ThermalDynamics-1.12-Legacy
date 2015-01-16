@@ -4,6 +4,8 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
@@ -12,9 +14,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class Facade extends Attachment {
     static Cuboid6 bound = new Cuboid6(0, 0, 0, 1, 0.1, 1);
@@ -53,7 +52,12 @@ public class Facade extends Attachment {
 
     @Override
     public boolean onWrenched() {
-        return false;
+        tile.removeFacade(this);
+
+        for (ItemStack stack : getDrops()) {
+            dropItemStack(stack);
+        }
+        return true;
     }
 
     @Override

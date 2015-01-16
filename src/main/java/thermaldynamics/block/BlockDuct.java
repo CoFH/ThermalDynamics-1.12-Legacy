@@ -32,6 +32,7 @@ import thermaldynamics.ThermalDynamics;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.TileStructuralDuct;
+import thermaldynamics.ducts.attachments.facades.Facade;
 import thermaldynamics.ducts.energy.TileEnergyDuct;
 import thermaldynamics.ducts.energy.TileEnergyDuctSuperConductor;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
@@ -202,10 +203,17 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
         ret.add(dropBlock);
 
         if (tile instanceof TileMultiBlock) {
-            for (Attachment a : ((TileMultiBlock) tile).attachments) {
+            TileMultiBlock multiBlock = (TileMultiBlock) tile;
+            for (Attachment a : multiBlock.attachments) {
                 if (a != null)
                     ret.addAll(a.getDrops());
             }
+            for (Facade facade : multiBlock.facades) {
+                if (facade != null)
+                    ret.addAll(facade.getDrops());
+            }
+
+
         }
 
         if (nbt != null) {

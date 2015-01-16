@@ -8,10 +8,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
-import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
-
-import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.*;
+import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.AIR;
+import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.BASE;
+import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.BEDROCK;
+import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.ORIGINAL;
 
 public class FacadeBlockAccess implements IBlockAccess {
 
@@ -67,17 +68,15 @@ public class FacadeBlockAccess implements IBlockAccess {
 
             TileEntity tile = world.getTileEntity(x, y, z);
             if (tile instanceof TileMultiBlock) {
-                Attachment attachment = ((TileMultiBlock) tile).attachments[side];
-                if (attachment != null && attachment.getID() == 0) {
-                    Facade f = ((Facade) attachment);
-                    if (f.block == block && f.meta == meta)
+                Facade facade = ((TileMultiBlock) tile).facades[side];
+                if (facade != null && facade.getID() == 0) {
+                    if (facade.block == block && facade.meta == meta)
                         return BASE;
                     else
                         return BEDROCK;
                 }
                 return AIR;
             }
-
         }
 
         if (((side == 0 && y >= blockY) ||
