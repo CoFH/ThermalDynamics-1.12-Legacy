@@ -16,6 +16,8 @@ import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -31,13 +33,10 @@ import thermaldynamics.core.TickHandler;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.debughelper.DebugTickHandler;
 import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.attachments.facades.Facade;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
-
-
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler {
 
@@ -53,6 +52,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         genSelectionBoxes(subSelection, 6, 0.3, 0.3, 0.7);
         selection = new Cuboid6(0.3, 0.3, 0.3, 0.7, 0.7, 0.7);
     }
+
+    public int facadeMask;
 
 
     private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
@@ -77,6 +78,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public Attachment attachments[] = new Attachment[]{
             null, null, null, null, null, null
     };
+
+    public Facade[] facades = new Facade[6];
 
     LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
 
@@ -548,8 +551,18 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             } else
                 attachments[i] = null;
 
+            if (nbt.hasKey("facade" + i, 10)) {
+                NBTTagCompound tag = nbt.getCompoundTag("facade" + i);
+                facades[i] = new Facade(this, i);
+                facades[i].readFromNBT(tag);
+            } else
+                facades[i] = null;
+
+
             connectionTypes[i] = ConnectionTypes.values()[nbt.getByte("conTypes" + i)];
         }
+
+        recalcFacadeMask();
 
 
         for (int i = 0; i < this.subTiles.length; i++) {
@@ -569,6 +582,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 tag.setShort("id", (short) attachments[i].getID());
                 attachments[i].writeToNBT(tag);
                 nbt.setTag("attachment" + i, tag);
+            }
+
+            if (facades[i] != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                facades[i].writeToNBT(tag);
+                nbt.setTag("facade" + i, tag);
             }
 
             nbt.setByte("conTypes" + i, (byte) connectionTypes[i].ordinal());
@@ -614,7 +633,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
                 if (neighborTypes[i] != NeighborTypes.NONE)
                     cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
-            } else {
+            }
+            if (facades[i] != null) {
+                cuboids.add(new IndexedCuboid6(i + 20, facades[i].getCuboid().add(pos)));
+            }
+
+            {
                 // Add TILE sides
                 if (neighborTypes[i] == NeighborTypes.OUTPUT)
                     cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
@@ -687,6 +711,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             if (subHit > 13 && subHit < 20) {
                 return attachments[subHit - 14].onWrenched();
             }
+
+            if (subHit >= 20 && subHit < 26) {
+                return facades[subHit - 20].onWrenched();
+            }
         }
         return false;
     }
@@ -698,6 +726,30 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         thePlayer.addChatMessage(new ChatComponentText("Grid Nodes: " + myGrid.nodeSet.size()));
     }
 
+    public void addFacade(Facade facade){
+        facades[facade.side] = facade;
+        recalcFacadeMask();
+        getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+        onNeighborBlockChange();
+        getWorldObj().markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+    
+    public void removeFacade(Facade facade){
+        facades[facade.side] = null;
+        recalcFacadeMask();
+        getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+        onNeighborBlockChange();
+        getWorldObj().markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    public void recalcFacadeMask() {
+        facadeMask = 0;
+        for (byte i = 0; i < 6; i++) {
+            if (facades[i] != null)
+                facadeMask = facadeMask | (1 << i);
+        }
+    }
+
     /* NETWORK METHODS */
     @Override
     public PacketCoFHBase getPacket() {
@@ -705,6 +757,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         PacketCoFHBase payload = super.getPacket();
 
         int attachmentMask = 0;
+        recalcFacadeMask();
         for (byte i = 0; i < neighborTypes.length; i++) {
             payload.addByte(neighborTypes[i].ordinal());
             payload.addByte(connectionTypes[i].ordinal());
@@ -719,6 +772,13 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             if (attachments[i] != null) {
                 payload.addByte(attachments[i].getID());
                 attachments[i].addDescriptionToPacket(payload);
+            }
+        }
+
+        payload.addByte(facadeMask);
+        for (byte i = 0; i < 6; i++) {
+            if (facades[i] != null) {
+                facades[i].addDescriptionToPacket(payload);
             }
         }
 
@@ -763,6 +823,16 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 } else
                     attachments[i] = null;
             }
+
+            facadeMask = payload.getByte();
+            for (byte i = 0; i < 6; i++) {
+                if ((facadeMask & (1 << i)) != 0) {
+                    facades[i] = new Facade(this, i);
+                    facades[i].getDescriptionFromPacket(payload);
+                } else
+                    facades[i] = null;
+            }
+            recalcFacadeMask();
 
             hashCode = payload.getInt();
 
