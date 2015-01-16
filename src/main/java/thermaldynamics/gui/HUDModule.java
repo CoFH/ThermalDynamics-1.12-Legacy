@@ -71,7 +71,7 @@ public class HUDModule implements IHUDModule {
         int width = 0;
         int absWidth = 0;
 
-        width = ProxyClient.fontRenderer.getStringWidth(fluidToRender.getFluid().getLocalizedName());
+        width = ProxyClient.fontRenderer.getStringWidth(fluidToRender.getFluid().getLocalizedName(fluidToRender));
 
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
