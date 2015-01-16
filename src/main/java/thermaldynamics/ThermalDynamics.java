@@ -10,9 +10,16 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import java.io.File;
+import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -29,12 +36,10 @@ import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.gui.TDCreativeTab;
+import thermaldynamics.item.ItemFacade;
 import thermaldynamics.item.ItemFilter;
 import thermaldynamics.item.ItemServo;
 import thermalfoundation.ThermalFoundation;
-
-import java.io.File;
-import java.util.LinkedList;
 
 @Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies)
 public class ThermalDynamics extends BaseMod {
@@ -57,6 +62,7 @@ public class ThermalDynamics extends BaseMod {
     public static final GuiHandler guiHandler = new GuiHandler();
 
     public static final CreativeTabs tab = new TDCreativeTab();
+
 
 
     /* INIT SEQUENCE */
@@ -92,6 +98,7 @@ public class ThermalDynamics extends BaseMod {
         }
         itemServo = addItem(new ItemServo());
         itemFilter = addItem(new ItemFilter());
+        itemFacade = addItem(new ItemFacade());
 
         for (IInitializer initializer : initializerList)
             initializer.preInit();
@@ -156,6 +163,7 @@ public class ThermalDynamics extends BaseMod {
     public static BlockDuct[] blockDuct;
     public static ItemServo itemServo;
     public static ItemFilter itemFilter;
+    public static ItemFacade itemFacade;
 
 
     @EventHandler

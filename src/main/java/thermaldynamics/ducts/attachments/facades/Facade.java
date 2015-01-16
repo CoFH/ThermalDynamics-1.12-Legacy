@@ -4,13 +4,19 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MovingObjectPosition;
+import org.lwjgl.opengl.GL11;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
@@ -39,6 +45,7 @@ public class Facade extends Attachment {
     public Facade(TileMultiBlock tile, byte side) {
         super(tile, side);
     }
+
 
     @Override
     public int getID() {
@@ -71,6 +78,7 @@ public class Facade extends Attachment {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean render(int pass, RenderBlocks renderBlocks) {
         if (!block.canRenderInPass(pass))
             return false;
@@ -91,6 +99,11 @@ public class Facade extends Attachment {
     @Override
     public List<ItemStack> getDrops() {
         return new LinkedList<ItemStack>();
+    }
+
+    @Override
+    public boolean addToTile() {
+        return tile.addFacade(this);
     }
 
     @Override
@@ -118,5 +131,33 @@ public class Facade extends Attachment {
         block = Block.getBlockFromName(tag.getString("block"));
         if (block == null) block = Blocks.air;
         meta = tag.getByte("meta");
+    }
+
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
+        super.drawSelectionExtra(player, target, partialTicks);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDepthMask(true);
+        double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+        double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+        double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+        GL11.glColor4f(1, 1, 1, 0.1F);
+        GL11.glPushMatrix();
+        {
+            GL11.glTranslated(-d0, -d1, -d2);
+            Tessellator tess = Tessellator.instance;
+            tess.startDrawingQuads();
+            RenderBlocks renderBlocks = FacadeRenderer.renderBlocks;
+            renderBlocks.blockAccess = player.getEntityWorld();
+            FacadeRenderer.renderFacade(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid());
+            tess.draw();
+        }
+        GL11.glPopMatrix();
+
+        GL11.glDisable(GL11.GL_BLEND);
     }
 }

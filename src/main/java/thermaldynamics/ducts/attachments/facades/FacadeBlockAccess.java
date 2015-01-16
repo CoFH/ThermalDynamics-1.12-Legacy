@@ -20,13 +20,6 @@ public class FacadeBlockAccess implements IBlockAccess {
 
     public static FacadeBlockAccess instance = new FacadeBlockAccess();
 
-    public static boolean enclosingBedrock = false;
-
-    public static FacadeBlockAccess setEnclosingBedrock(boolean enclosingBedrock) {
-        FacadeBlockAccess.enclosingBedrock = enclosingBedrock;
-        return instance;
-    }
-
     public static FacadeBlockAccess getInstance(IBlockAccess world, int blockX, int blockY, int blockZ, int side, Block block, int meta) {
         instance.world = world;
         instance.blockX = blockX;
@@ -63,13 +56,11 @@ public class FacadeBlockAccess implements IBlockAccess {
                 (side == 3 && z == blockZ) ||
                 (side == 4 && x == blockX) ||
                 (side == 5 && x == blockX))) {
-            if (enclosingBedrock)
-                return BEDROCK;
 
             TileEntity tile = world.getTileEntity(x, y, z);
             if (tile instanceof TileMultiBlock) {
                 Facade facade = ((TileMultiBlock) tile).facades[side];
-                if (facade != null && facade.getID() == 0) {
+                if (facade != null) {
                     if (facade.block == block && facade.meta == meta)
                         return BASE;
                     else
@@ -79,14 +70,13 @@ public class FacadeBlockAccess implements IBlockAccess {
             }
         }
 
-        if (((side == 0 && y >= blockY) ||
-                (side == 1 && y <= blockY) ||
-                (side == 2 && z >= blockZ) ||
-                (side == 3 && z <= blockZ) ||
-                (side == 4 && x >= blockX) ||
-                (side == 5 && x <= blockX))) {
-            if (enclosingBedrock)
-                return BEDROCK;
+        if (((side == 0 && y > blockY) ||
+                (side == 1 && y < blockY) ||
+                (side == 2 && z > blockZ) ||
+                (side == 3 && z < blockZ) ||
+                (side == 4 && x > blockX) ||
+                (side == 5 && x < blockX))) {
+            return AIR;
         }
 
         return ORIGINAL;

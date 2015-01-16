@@ -36,4 +36,9 @@ public class TileStructuralDuct extends TileMultiBlock {
     public MultiBlockGrid getNewGrid() {
         return null;
     }
+
+    @Override
+    public boolean isStructureTile(TileEntity tile, int side) {
+        return !isConnectable(tile,side) && tile instanceof TileMultiBlock;
+    }
 }

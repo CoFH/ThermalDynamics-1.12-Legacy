@@ -8,14 +8,13 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import com.google.common.base.Throwables;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import java.lang.reflect.Field;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import java.lang.reflect.Field;
 
 public class FacadeRenderer {
 
@@ -26,6 +25,8 @@ public class FacadeRenderer {
     final static Field zOffset = ReflectionHelper.findField(Tessellator.class, "zOffset");
 
     private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
+    public static RenderBlocks renderBlocks = new RenderBlocks();
+
     public static final float size = 1 / 512F;
 
     final static int[] sideOffsets = {1, 1, 2, 2, 0, 0};
@@ -33,6 +34,7 @@ public class FacadeRenderer {
     final static float[] sideBound2 = {size, 1, size, 1, size, 1};
 
     final static float[] sideSoftBounds = {0, 1, 0, 1, 0, 1};
+    final static float[] sideMult = {1, -1, 1, -1, 1, -1};
 
 
     private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
@@ -54,14 +56,13 @@ public class FacadeRenderer {
     }
 
 
-    public static boolean renderFacade(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 b) {
+    public static boolean renderFacade(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds) {
         try {
             facadeRenderBlocks.blockAccess = FacadeBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
-            facadeRenderBlocks.overrideBlockBounds(b.min.x, b.min.y, b.min.z, b.max.x, b.max.y, b.max.z);
+            facadeRenderBlocks.overrideBlockBounds(bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z);
 
             int rawBufferIndex = FacadeRenderer.rawBufferIndex.getInt(Tessellator.instance);
 
-            FacadeBlockAccess.setEnclosingBedrock(false);
             boolean rendered = facadeRenderBlocks.renderBlockByRenderType(block, x, y, z);
             boolean renderFacade = false;
 
@@ -89,15 +90,16 @@ public class FacadeRenderer {
 
                     flag = vec[sideOffsets[side]] != sideSoftBounds[side];
 
+                    float v = sideSoftBounds[side] + sideMult[side] * vec[sideOffsets[side]];
+                    if(v > 0.5)v=1-v;
+
                     for (int j = 0; j < 3; j++) {
                         if (j == sideOffsets[side]) {
-                            //vec[j] = clampF(vec[j], side);
-                            vec[j] = clampF(vec[j], b, j);
-
-
+                            vec[j] = clampF(vec[j], bounds, j);
                         } else {
                             if (flag) {
                                 vec[j] = MathHelper.clampF(vec[j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
+//                                vec[j] = MathHelper.clampF(vec[j], v, 1 - v);
                             } else {
                                 boundsL[j] = Math.min(boundsL[j], vec[j]);
                                 boundsU[j] = Math.max(boundsU[j], vec[j]);

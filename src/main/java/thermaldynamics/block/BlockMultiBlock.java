@@ -7,6 +7,8 @@ import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -20,9 +22,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEntityProvider {
 
@@ -142,7 +141,7 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
             return true;
         }
 
-
+//
 //        if (equipped instanceof ItemBlock) {
 //            Block block = ((ItemBlock) equipped).field_150939_a;
 //            int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
@@ -158,7 +157,7 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
 //                    side = hitSide;
 //                if (side != -1) {
 //                    if (!world.isRemote) {
-//                        tile.addAttachment(new Facade(tile, (byte) side, block, meta));
+//                        tile.addFacade(new Facade(tile, (byte) side, block, meta));
 //                    }
 //                    return true;
 //                }

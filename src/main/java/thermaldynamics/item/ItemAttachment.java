@@ -1,19 +1,15 @@
 package thermaldynamics.item;
 
 import cofh.api.core.IInitializer;
-import cofh.core.render.RenderUtils;
 import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
-import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,7 +18,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.GL11;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
@@ -39,7 +34,7 @@ public abstract class ItemAttachment extends Item implements IInitializer {
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         Attachment attachment = getAttachment(stack, player, world, x, y, z, side);
 
-        if (attachment != null && attachment.tile.addAttachment(attachment)) {
+        if (attachment != null && attachment.addToTile()) {
             if (!player.capabilities.isCreativeMode)
                 stack.stackSize--;
 
@@ -117,6 +112,8 @@ public abstract class ItemAttachment extends Item implements IInitializer {
         RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks,
                 new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.tile.x()+ c.min.x, attachment.tile.y()+ c.min.y, attachment.tile.z() + c.min.z)
         );
+
+        attachment.drawSelectionExtra(event.player, event.target, event.partialTicks);
 
 
         event.setCanceled(true);

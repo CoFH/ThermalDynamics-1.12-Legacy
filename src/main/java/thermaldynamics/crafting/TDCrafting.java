@@ -98,6 +98,8 @@ public class TDCrafting {
             GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, "glassHardened"));
             GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead"));
         }
+
+        GameRegistry.addRecipe(new RecipeFacade());
     }
 
     public static final Ducts[][] convert = {

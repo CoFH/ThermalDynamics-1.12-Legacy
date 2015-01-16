@@ -726,15 +726,19 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         thePlayer.addChatMessage(new ChatComponentText("Grid Nodes: " + myGrid.nodeSet.size()));
     }
 
-    public void addFacade(Facade facade){
+    public boolean addFacade(Facade facade) {
+        if (facades[facade.side] != null)
+            return false;
+
         facades[facade.side] = facade;
         recalcFacadeMask();
         getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
         getWorldObj().markBlockForUpdate(xCoord, yCoord, zCoord);
+        return true;
     }
-    
-    public void removeFacade(Facade facade){
+
+    public void removeFacade(Facade facade) {
         facades[facade.side] = null;
         recalcFacadeMask();
         getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());

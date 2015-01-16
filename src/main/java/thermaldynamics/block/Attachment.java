@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 
 import java.util.List;
+import net.minecraft.util.MovingObjectPosition;
 
 public abstract class Attachment {
     public final TileMultiBlock tile;
@@ -144,5 +145,13 @@ public abstract class Attachment {
 
     public boolean allowPipeConnection() {
         return false;
+    }
+
+    public boolean addToTile() {
+        return canAddToTile(tile) && tile.addAttachment(this);
+    }
+
+    public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
+
     }
 }

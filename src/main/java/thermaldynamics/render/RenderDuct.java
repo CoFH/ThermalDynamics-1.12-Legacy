@@ -113,8 +113,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 
         modelConnection[0][1] = CCModel.quadModel(48).generateBlock(0, (new Cuboid6(0.3125, 0.6875, 0.3125, 0.6875, 1, 0.6875)).expand(-1.0D / 1024.0D));
-        modelConnection[1][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 0, 32, 32, 16).computeNormals();
-        modelConnection[2][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4, 8, 0, 16, 32, 32, 16).computeNormals();
+        modelConnection[1][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4 - RenderHelper.RENDER_OFFSET, 8, 0, 0, 32, 32, 16).computeNormals();
+        modelConnection[2][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4 - RenderHelper.RENDER_OFFSET, 8, 0, 16, 32, 32, 16).computeNormals();
 
 
         double h = 0.4;
@@ -176,7 +176,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
                     modelConnection[0][s].render(32, 48, trans, icon);
                 } else {
                     c = c | (1 << s);
-                    if(invRender){
+                    if (invRender) {
                         icon = RenderUtils.getIconTransformation(Ducts.STRUCTURE_TRANS.iconBaseTexture);
                         modelConnection[0][s].render(4, 8, trans, icon);
                     }
@@ -353,7 +353,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
         }
 
         for (Facade facade : theTile.facades) {
-            if(facade != null)
+            if (facade != null)
                 flag = facade.render(BlockCoFHBase.renderPass, renderer) || flag;
         }
 
