@@ -39,6 +39,6 @@ public class TileStructuralDuct extends TileMultiBlock {
 
     @Override
     public boolean isStructureTile(TileEntity tile, int side) {
-        return !isConnectable(tile,side) && tile instanceof TileMultiBlock;
+        return false;
     }
 }
