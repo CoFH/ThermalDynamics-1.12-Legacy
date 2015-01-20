@@ -9,6 +9,9 @@ import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import com.google.common.collect.Iterables;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -30,10 +33,6 @@ import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.IMultiBlockRoute;
 import thermaldynamics.multiblock.MultiBlockGrid;
 import thermaldynamics.multiblock.RouteCache;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IItemDuct {
     public ItemGrid internalGrid;
@@ -143,7 +142,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
     @Override
     public int getWeight() {
-        return 1;
+        return getDuctType().pathWeight;
     }
 
     @Override
@@ -288,11 +287,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         }
     }
 
-    public boolean acceptingItems(){
+    public boolean acceptingItems() {
         return true;
     }
 
-    public void insertNewItem(TravelingItem travelingItem){
+    public void insertNewItem(TravelingItem travelingItem) {
         internalGrid.poll(travelingItem);
         insertItem(travelingItem);
     }

@@ -3,6 +3,8 @@ package thermaldynamics.crafting;
 import cofh.api.modhelpers.ThermalExpansionHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
+import java.util.ArrayList;
+import java.util.Collections;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -12,9 +14,6 @@ import thermaldynamics.ThermalDynamics;
 import thermaldynamics.ducts.Ducts;
 import thermalfoundation.fluid.TFFluids;
 import thermalfoundation.item.TFItems;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class TDCrafting {
 
@@ -92,7 +91,14 @@ public class TDCrafting {
         GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDERIUM_OPAQUE.itemStack, 3), Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, "dustEnderium"));
 
         // Conversions
-        for (Ducts[] d : convert) {
+        for (Ducts[] d : new Ducts[][]{
+                {Ducts.ITEM_TRANS, Ducts.ITEM_OPAQUE},
+                {Ducts.ITEM_FAST_TRANS, Ducts.ITEM_FAST_OPAQUE},
+                {Ducts.ITEM_REDSTONE_TRANS, Ducts.ITEM_REDSTONE_OPAQUE},
+                {Ducts.ITEM_ENDERIUM_TRANS, Ducts.ITEM_ENDERIUM_OPAQUE},
+                {Ducts.FLUID_TRANS, Ducts.FLUID_OPAQUE},
+                {Ducts.FLUID_HARDENED_TRANS, Ducts.FLUID_HARDENED_OPAQUE},
+        }) {
             final ItemStack t = d[0].itemStack;
             final ItemStack o = d[1].itemStack;
             GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, "glassHardened"));
@@ -100,16 +106,25 @@ public class TDCrafting {
         }
 
         GameRegistry.addRecipe(new RecipeFacade());
-    }
 
-    public static final Ducts[][] convert = {
-            {Ducts.ITEM_TRANS, Ducts.ITEM_OPAQUE},
-            {Ducts.ITEM_FAST_TRANS, Ducts.ITEM_FAST_OPAQUE},
-            {Ducts.ITEM_REDSTONE_TRANS, Ducts.ITEM_REDSTONE_OPAQUE},
-            {Ducts.ITEM_ENDERIUM_TRANS, Ducts.ITEM_ENDERIUM_OPAQUE},
-            {Ducts.FLUID_TRANS, Ducts.FLUID_OPAQUE},
-            {Ducts.FLUID_HARDENED_TRANS, Ducts.FLUID_HARDENED_OPAQUE},
-    };
+
+        for (Ducts[] duct : new Ducts[][]{
+                {Ducts.ITEM_TRANS, Ducts.ITEM_TRANS_DENSE, Ducts.ITEM_TRANS_VACUUM},
+                {Ducts.ITEM_OPAQUE, Ducts.ITEM_OPAQUE_DENSE, Ducts.ITEM_OPAQUE_VACUUM},
+
+                {Ducts.ITEM_FAST_TRANS, Ducts.ITEM_FAST_TRANS_DENSE, Ducts.ITEM_FAST_TRANS_VACUUM},
+                {Ducts.ITEM_FAST_OPAQUE, Ducts.ITEM_FAST_OPAQUE_DENSE, Ducts.ITEM_FAST_OPAQUE_VACUUM},
+
+                {Ducts.ITEM_REDSTONE_TRANS, Ducts.ITEM_REDSTONE_TRANS_DENSE, Ducts.ITEM_REDSTONE_TRANS_VACUUM},
+                {Ducts.ITEM_REDSTONE_OPAQUE, Ducts.ITEM_REDSTONE_OPAQUE_DENSE, Ducts.ITEM_REDSTONE_OPAQUE_VACUUM},
+
+                {Ducts.ITEM_ENDERIUM_TRANS, Ducts.ITEM_ENDERIUM_TRANS_DENSE, Ducts.ITEM_ENDERIUM_TRANS_VACUUM},
+                {Ducts.ITEM_ENDERIUM_OPAQUE, Ducts.ITEM_ENDERIUM_OPAQUE_DENSE, Ducts.ITEM_ENDERIUM_OPAQUE_VACUUM},
+        }) {
+            ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[1].itemStack, new FluidStack(TFFluids.fluidCoal, 100), true);
+            ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[2].itemStack, new FluidStack(TFFluids.fluidSteam, 1000), true);
+        }
+    }
 
     public static ShapelessOreRecipe addInputMetaRange(ShapelessOreRecipe recipe, ItemStack input, int minMeta, int maxMeta) {
         ArrayList<ItemStack> itemStacks = new ArrayList<ItemStack>(maxMeta - minMeta + 1);
