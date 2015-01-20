@@ -10,10 +10,12 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import thermaldynamics.ThermalDynamics;
+import thermaldynamics.block.BlockDuct;
 import thermaldynamics.debughelper.CommandServerDebug;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TileItemDuctEnder;
+import thermaldynamics.render.ItemCoverRenderer;
 import thermaldynamics.render.RenderDuct;
 import thermaldynamics.render.RenderDuctFluids;
 import thermaldynamics.render.RenderDuctItems;
@@ -24,8 +26,12 @@ public class ProxyClient extends Proxy {
     @Override
     public void registerRenderInformation() {
         FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
-        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct[0]), RenderDuct.instance);
-        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ThermalDynamics.blockDuct[1]), RenderDuct.instance);
+        for (BlockDuct duct : ThermalDynamics.blockDuct) {
+            MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
+        }
+
+        MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemFacade, ItemCoverRenderer.instance);
+
         ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);

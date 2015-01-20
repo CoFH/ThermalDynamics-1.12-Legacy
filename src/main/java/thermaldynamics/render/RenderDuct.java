@@ -29,7 +29,7 @@ import thermaldynamics.block.BlockDuct;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.Ducts;
-import thermaldynamics.ducts.attachments.facades.Facade;
+import thermaldynamics.ducts.attachments.facades.Cover;
 import thermalfoundation.block.BlockStorage;
 import thermalfoundation.fluid.TFFluids;
 
@@ -352,9 +352,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
             }
         }
 
-        for (Facade facade : theTile.facades) {
-            if (facade != null)
-                flag = facade.render(BlockCoFHBase.renderPass, renderer) || flag;
+        for (Cover cover : theTile.covers) {
+            if (cover != null)
+                flag = cover.render(BlockCoFHBase.renderPass, renderer) || flag;
         }
 
         int renderType = Ducts.getDuct(((BlockDuct) block).offset + world.getBlockMetadata(x, y, z)).ordinal();

@@ -6,11 +6,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.ducts.Ducts;
-import thermaldynamics.ducts.attachments.facades.FacadeHelper;
+import thermaldynamics.ducts.attachments.facades.CoverHelper;
 
 public class RecipeFacade implements IRecipe {
     @Override
@@ -30,7 +29,7 @@ public class RecipeFacade implements IRecipe {
                 if (!(stack.getItem() instanceof ItemBlock))
                     return false;
 
-                if (!FacadeHelper.isValid(
+                if (!CoverHelper.isValid(
                         ((ItemBlock) stack.getItem()).field_150939_a,
                         stack.getItem().getMetadata(stack.getItemDamage())))
                     return false;
@@ -42,7 +41,6 @@ public class RecipeFacade implements IRecipe {
 
             }
         }
-
 
         return a && b;
     }
@@ -59,13 +57,7 @@ public class RecipeFacade implements IRecipe {
                 block = ((ItemBlock) stack.getItem()).field_150939_a;
                 meta = stack.getItem().getMetadata(stack.getItemDamage());
 
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("Block", Block.blockRegistry.getNameForObject(block));
-                tag.setByte("Meta", ((byte) meta));
-
-                ItemStack itemStack = new ItemStack(ThermalDynamics.itemFacade, 6);
-                itemStack.setTagCompound(tag);
-                return itemStack;
+                return ItemHelper.cloneStack(CoverHelper.getFacadeItemStack(block, (byte) meta), 6);
             }
         }
         return null;

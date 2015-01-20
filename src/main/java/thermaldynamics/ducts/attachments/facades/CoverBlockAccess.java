@@ -1,5 +1,6 @@
 package thermaldynamics.ducts.attachments.facades;
 
+import cofh.api.block.IBlockAppearance;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -8,19 +9,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
-import thermaldynamics.block.TileMultiBlock;
-import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.AIR;
-import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.BASE;
-import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.BEDROCK;
-import static thermaldynamics.ducts.attachments.facades.FacadeBlockAccess.Result.ORIGINAL;
+import static thermaldynamics.ducts.attachments.facades.CoverBlockAccess.Result.AIR;
+import static thermaldynamics.ducts.attachments.facades.CoverBlockAccess.Result.BASE;
+import static thermaldynamics.ducts.attachments.facades.CoverBlockAccess.Result.BEDROCK;
+import static thermaldynamics.ducts.attachments.facades.CoverBlockAccess.Result.COVER;
+import static thermaldynamics.ducts.attachments.facades.CoverBlockAccess.Result.ORIGINAL;
 
-public class FacadeBlockAccess implements IBlockAccess {
+public class CoverBlockAccess implements IBlockAccess {
 
     IBlockAccess world;
 
-    public static FacadeBlockAccess instance = new FacadeBlockAccess();
+    public static CoverBlockAccess instance = new CoverBlockAccess();
 
-    public static FacadeBlockAccess getInstance(IBlockAccess world, int blockX, int blockY, int blockZ, int side, Block block, int meta) {
+    public static CoverBlockAccess getInstance(IBlockAccess world, int blockX, int blockY, int blockZ, int side, Block block, int meta) {
         instance.world = world;
         instance.blockX = blockX;
         instance.blockY = blockY;
@@ -38,37 +39,12 @@ public class FacadeBlockAccess implements IBlockAccess {
     public int meta;
 
     public enum Result {
-        ORIGINAL, AIR, BEDROCK, BASE
+        ORIGINAL, AIR, BASE, BEDROCK, COVER
     }
 
     public Result getAction(int x, int y, int z) {
         if (x == blockX && y == blockY && z == blockZ)
             return BASE;
-
-
-        if (world.getBlock(x, y, z) == block && world.getBlockMetadata(x, y, z) == meta)
-            return BEDROCK;
-
-
-        if (((side == 0 && y == blockY) ||
-                (side == 1 && y == blockY) ||
-                (side == 2 && z == blockZ) ||
-                (side == 3 && z == blockZ) ||
-                (side == 4 && x == blockX) ||
-                (side == 5 && x == blockX))) {
-
-            TileEntity tile = world.getTileEntity(x, y, z);
-            if (tile instanceof TileMultiBlock) {
-                Facade facade = ((TileMultiBlock) tile).facades[side];
-                if (facade != null) {
-                    if (facade.block == block && facade.meta == meta)
-                        return BASE;
-                    else
-                        return BEDROCK;
-                }
-                return AIR;
-            }
-        }
 
         if (((side == 0 && y > blockY) ||
                 (side == 1 && y < blockY) ||
@@ -79,13 +55,32 @@ public class FacadeBlockAccess implements IBlockAccess {
             return AIR;
         }
 
-        return ORIGINAL;
+        Block worldBlock = world.getBlock(x, y, z);
+
+        if (worldBlock instanceof IBlockAppearance) {
+            IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
+            if (blockAppearance.supportsVisualConnections())
+                return COVER;
+
+            if (blockAppearance.getVisualBlock(world, x, y, z, ForgeDirection.getOrientation(side)) == block && blockAppearance.getVisualMeta(world, x, y, z, ForgeDirection.getOrientation(side)) == meta) {
+                return block.isNormalCube() ? BEDROCK : AIR;
+            } else
+                return COVER;
+        } else {
+            if (worldBlock == block && world.getBlockMetadata(x, y, z) == meta)
+                return block.isNormalCube() ? BEDROCK : AIR;
+            else
+                return ORIGINAL;
+        }
     }
 
     @Override
     public Block getBlock(int x, int y, int z) {
         Result action = getAction(x, y, z);
-        return action == ORIGINAL ? world.getBlock(x, y, z) : action == AIR ? Blocks.air : action == BEDROCK ? Blocks.bedrock : block;
+        return action == ORIGINAL ? world.getBlock(x, y, z) :
+                action == AIR ? Blocks.air :
+                        action == BEDROCK ? Blocks.bedrock :
+                                action == COVER ? ((IBlockAppearance) world.getBlock(x, y, z)).getVisualBlock(world, x, y, z, ForgeDirection.getOrientation(side)) : block;
     }
 
     @Override
@@ -102,7 +97,10 @@ public class FacadeBlockAccess implements IBlockAccess {
     @Override
     public int getBlockMetadata(int x, int y, int z) {
         Result action = getAction(x, y, z);
-        return action == ORIGINAL ? world.getBlockMetadata(x, y, z) : action == AIR || action == BEDROCK ? 0 : meta;
+        return action == ORIGINAL ? world.getBlockMetadata(x, y, z) :
+                action == AIR || action == BEDROCK ? 0 :
+                        action == COVER ? ((IBlockAppearance) world.getBlock(x, y, z)).getVisualMeta(world, x, y, z, ForgeDirection.getOrientation(side)) :
+                                meta;
     }
 
     @Override
@@ -113,7 +111,8 @@ public class FacadeBlockAccess implements IBlockAccess {
     @Override
     public boolean isAirBlock(int x, int y, int z) {
         Result action = getAction(x, y, z);
-        return action == AIR || (action == ORIGINAL && world.isAirBlock(x, y, z));
+        return action == AIR || (action == ORIGINAL && world.isAirBlock(x, y, z))
+                || (action == COVER && getBlock(x, y, z).isAir(this, x, y, z));
     }
 
     @Override
@@ -136,7 +135,7 @@ public class FacadeBlockAccess implements IBlockAccess {
 
     @Override
     public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
-        Result action = getAction(x, y, z);
-        return action == BEDROCK || ((action == BASE || action == ORIGINAL) && world.isSideSolid(x, y, z, side, _default));
+        if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) return _default;
+        else return getBlock(x, y, z).isSideSolid(this, x, y, z, side);
     }
 }

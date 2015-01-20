@@ -33,7 +33,7 @@ import thermaldynamics.core.TickHandler;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.debughelper.DebugTickHandler;
 import thermaldynamics.ducts.Ducts;
-import thermaldynamics.ducts.attachments.facades.Facade;
+import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
@@ -79,7 +79,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             null, null, null, null, null, null
     };
 
-    public Facade[] facades = new Facade[6];
+    public Cover[] covers = new Cover[6];
 
     LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
 
@@ -553,10 +553,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
             if (nbt.hasKey("facade" + i, 10)) {
                 NBTTagCompound tag = nbt.getCompoundTag("facade" + i);
-                facades[i] = new Facade(this, i);
-                facades[i].readFromNBT(tag);
+                covers[i] = new Cover(this, i);
+                covers[i].readFromNBT(tag);
             } else
-                facades[i] = null;
+                covers[i] = null;
 
 
             connectionTypes[i] = ConnectionTypes.values()[nbt.getByte("conTypes" + i)];
@@ -584,9 +584,9 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 nbt.setTag("attachment" + i, tag);
             }
 
-            if (facades[i] != null) {
+            if (covers[i] != null) {
                 NBTTagCompound tag = new NBTTagCompound();
-                facades[i].writeToNBT(tag);
+                covers[i].writeToNBT(tag);
                 nbt.setTag("facade" + i, tag);
             }
 
@@ -634,8 +634,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
                 if (neighborTypes[i] != NeighborTypes.NONE)
                     cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
             }
-            if (facades[i] != null) {
-                cuboids.add(new IndexedCuboid6(i + 20, facades[i].getCuboid().add(pos)));
+            if (covers[i] != null) {
+                cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid().add(pos)));
             }
 
             {
@@ -713,7 +713,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             }
 
             if (subHit >= 20 && subHit < 26) {
-                return facades[subHit - 20].onWrenched();
+                return covers[subHit - 20].onWrenched();
             }
         }
         return false;
@@ -726,11 +726,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         thePlayer.addChatMessage(new ChatComponentText("Grid Nodes: " + myGrid.nodeSet.size()));
     }
 
-    public boolean addFacade(Facade facade) {
-        if (facades[facade.side] != null)
+    public boolean addFacade(Cover cover) {
+        if (covers[cover.side] != null)
             return false;
 
-        facades[facade.side] = facade;
+        covers[cover.side] = cover;
         recalcFacadeMask();
         getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
@@ -738,8 +738,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
         return true;
     }
 
-    public void removeFacade(Facade facade) {
-        facades[facade.side] = null;
+    public void removeFacade(Cover cover) {
+        covers[cover.side] = null;
         recalcFacadeMask();
         getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
         onNeighborBlockChange();
@@ -749,7 +749,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     public void recalcFacadeMask() {
         facadeMask = 0;
         for (byte i = 0; i < 6; i++) {
-            if (facades[i] != null)
+            if (covers[i] != null)
                 facadeMask = facadeMask | (1 << i);
         }
     }
@@ -781,8 +781,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
         payload.addByte(facadeMask);
         for (byte i = 0; i < 6; i++) {
-            if (facades[i] != null) {
-                facades[i].addDescriptionToPacket(payload);
+            if (covers[i] != null) {
+                covers[i].addDescriptionToPacket(payload);
             }
         }
 
@@ -831,10 +831,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
             facadeMask = payload.getByte();
             for (byte i = 0; i < 6; i++) {
                 if ((facadeMask & (1 << i)) != 0) {
-                    facades[i] = new Facade(this, i);
-                    facades[i].getDescriptionFromPacket(payload);
+                    covers[i] = new Cover(this, i);
+                    covers[i].getDescriptionFromPacket(payload);
                 } else
-                    facades[i] = null;
+                    covers[i] = null;
             }
             recalcFacadeMask();
 

@@ -6,6 +6,7 @@ import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import com.google.common.collect.Iterators;
+import java.util.Iterator;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -15,10 +16,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.block.BlockDuct;
+import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
-
-import java.util.Iterator;
 
 public class RenderDuctItems extends TileEntitySpecialRenderer {
     public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
@@ -54,6 +54,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
         TileItemDuct duct = (TileItemDuct) tile;
         renderItemDuct(duct, x, y, z, frame);
+
     }
 
     public void renderItemDuct(TileItemDuct duct, double x, double y, double z, float frame) {

@@ -1,6 +1,6 @@
 package thermaldynamics.block;
 
-import thermaldynamics.ducts.attachments.facades.Facade;
+import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.ducts.attachments.filter.FilterItem;
 import thermaldynamics.ducts.attachments.servo.ServoFluid;
 import thermaldynamics.ducts.attachments.servo.ServoItem;
@@ -19,7 +19,7 @@ public class AttachmentRegistry {
 
     public static Attachment createAttachment(TileMultiBlock tile, byte side, int id) {
         if (id == FACADE) {
-            return new Facade(tile, side);
+            return new Cover(tile, side);
         } else if (id == SERVO_FLUID) {
             return new ServoFluid(tile, side);
         } else if (id == SERVO_INV) {

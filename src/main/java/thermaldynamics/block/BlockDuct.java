@@ -11,6 +11,10 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,11 +32,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.TileStructuralDuct;
-import thermaldynamics.ducts.attachments.facades.Facade;
+import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.ducts.energy.TileEnergyDuct;
 import thermaldynamics.ducts.energy.TileEnergyDuctSuperConductor;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
@@ -151,6 +156,12 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
             if (pickBlock != null) return pickBlock;
         }
 
+        if (target.subHit >= 20 && target.subHit < 26) {
+            TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
+            ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
+            if (pickBlock != null) return pickBlock;
+        }
+
         return super.getPickBlock(target, world, x, y, z);
     }
 
@@ -208,9 +219,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
                 if (a != null)
                     ret.addAll(a.getDrops());
             }
-            for (Facade facade : multiBlock.facades) {
-                if (facade != null)
-                    ret.addAll(facade.getDrops());
+            for (Cover cover : multiBlock.covers) {
+                if (cover != null)
+                    ret.addAll(cover.getDrops());
             }
 
 

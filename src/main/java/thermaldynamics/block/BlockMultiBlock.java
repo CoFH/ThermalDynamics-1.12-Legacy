@@ -38,7 +38,7 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
     @Override
     public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
         TileMultiBlock theTile = (TileMultiBlock) world.getTileEntity(x, y, z);
-        return (theTile != null && ( theTile.facades[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid())) || super.isSideSolid(world, x, y, z, side);
+        return (theTile != null && ( theTile.covers[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid())) || super.isSideSolid(world, x, y, z, side);
     }
 
     public float getSize(World world, int x, int y, int z) {
@@ -58,8 +58,8 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
             for (byte i = 0; i < 6; i++) {
                 if (theTile.attachments[i] != null)
                     theTile.attachments[i].addCollisionBoxesToList(axis, list, entity);
-                if(theTile.facades[i] != null)
-                    theTile.facades[i].addCollisionBoxesToList(axis, list, entity);
+                if(theTile.covers[i] != null)
+                    theTile.covers[i].addCollisionBoxesToList(axis, list, entity);
             }
 
             if (theTile.neighborTypes[0] != NeighborTypes.NONE) {

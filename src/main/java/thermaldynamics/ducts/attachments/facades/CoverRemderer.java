@@ -2,27 +2,17 @@ package thermaldynamics.ducts.attachments.facades;
 
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.repack.codechicken.lib.lighting.LightModel;
-import cofh.repack.codechicken.lib.render.CCModel;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
-import com.google.common.base.Throwables;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import java.lang.reflect.Field;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import thermalfoundation.block.TFBlocks;
 
-public class FacadeRenderer {
-
-    final static Field rawBufferIndex = ReflectionHelper.findField(Tessellator.class, "rawBufferIndex");
-    final static Field rawBuffer = ReflectionHelper.findField(Tessellator.class, "rawBuffer");
-    final static Field xOffset = ReflectionHelper.findField(Tessellator.class, "xOffset");
-    final static Field yOffset = ReflectionHelper.findField(Tessellator.class, "yOffset");
-    final static Field zOffset = ReflectionHelper.findField(Tessellator.class, "zOffset");
+public class CoverRemderer {
 
     private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
     public static RenderBlocks renderBlocks = new RenderBlocks();
@@ -34,104 +24,147 @@ public class FacadeRenderer {
     final static float[] sideBound2 = {size, 1, size, 1, size, 1};
 
     final static float[] sideSoftBounds = {0, 1, 0, 1, 0, 1};
-    final static float[] sideMult = {1, -1, 1, -1, 1, -1};
-
 
     private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
     private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-    static final CCModel[] leadModels = new CCModel[6];
+    public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals) {
+        facadeRenderBlocks.blockAccess = CoverBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
 
-    static {
-        leadModels[0] = CCModel.quadModel(24);
-        leadModels[0].generateBlock(0, 0, size, 0, 1, 0.125f, 1, 62);
-        leadModels[0].generateBlock(4, RenderHelper.RENDER_OFFSET, size, RenderHelper.RENDER_OFFSET, 1 - RenderHelper.RENDER_OFFSET, 0.125f, 1 - RenderHelper.RENDER_OFFSET, 1);
-        //CCModel.generateBackface(leadModels[0], 0, leadModels[0], 24, 24);
-        CCModel.generateSidedModels(leadModels, 0, Vector3.center);
-        for (int i = 0; i < 6; i++) {
-            leadModels[i].computeNormals().computeLighting(LightModel.standardLightModel).shrinkUVs(RenderHelper.RENDER_OFFSET);
-        }
-//        leadModels[0] = CCModel.quadModel(40).generateBlock(0, RenderHelper.RENDER_OFFSET, 0, RenderHelper.RENDER_OFFSET, 1 - RenderHelper.RENDER_OFFSET, 0.0625F * (1 + RenderHelper.RENDER_OFFSET), 1 - RenderHelper.RENDER_OFFSET, 1);
-//        CCModel.generateBackface(leadModels[0], 0, leadModels[0], 20, 20);
-    }
+        Tessellator tess = Tessellator.instance;
+        int rawBufferIndex = tess.rawBufferIndex;
+
+        boolean rendered = facadeRenderBlocks.renderBlockByRenderType(block, x, y, z);
+
+        int rawBufferIndex2 = tess.rawBufferIndex;
+
+        if (rawBufferIndex != rawBufferIndex2) {
+            int[] rb = tess.rawBuffer;
+
+            boolean flag, flag2;
+
+            float dx = (float) tess.xOffset;
+            float dy = (float) tess.yOffset;
+            float dz = (float) tess.zOffset;
+
+            float quad[][] = new float[4][3];
+            float vec[] = new float[3];
+            boolean flat[] = new boolean[3];
+
+            Vector3 normal;
+            int intNormal = 0;
+
+            IIcon icon = TFBlocks.blockStorage.getIcon(0, 3);
+
+            for (int k = rawBufferIndex; k < rawBufferIndex2; k += 32) {
+                flag = flag2 = false;
+                for (int i = 0; i < 3; i++) {
+                    flat[i] = true;
+                }
+
+                for (int k2 = 0; k2 < 4; k2++) {
+                    int i = k + k2 * 8;
+                    quad[k2][0] = Float.intBitsToFloat(rb[i]) - dx - x;
+                    quad[k2][1] = Float.intBitsToFloat(rb[i + 1]) - dy - y;
+                    quad[k2][2] = Float.intBitsToFloat(rb[i + 2]) - dz - z;
+
+                    flag = flag || quad[k2][sideOffsets[side]] != sideSoftBounds[side];
+                    flag2 = flag2 || quad[k2][sideOffsets[side]] != (1 - sideSoftBounds[side]);
+
+                    if (k2 == 0) {
+                        System.arraycopy(quad[k2], 0, vec, 0, 3);
+                    } else {
+                        for (int vi = 0; vi < 3; vi++) {
+                            flat[vi] = flat[vi] && quad[k2][vi] == vec[vi];
+                        }
+                    }
+                }
 
 
-    public static boolean renderFacade(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds) {
-        try {
-            facadeRenderBlocks.blockAccess = FacadeBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
-            facadeRenderBlocks.overrideBlockBounds(bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z);
+                int s = -1;
 
-            int rawBufferIndex = FacadeRenderer.rawBufferIndex.getInt(Tessellator.instance);
-
-            boolean rendered = facadeRenderBlocks.renderBlockByRenderType(block, x, y, z);
-            boolean renderFacade = false;
-
-
-            int rawBufferIndex2 = FacadeRenderer.rawBufferIndex.getInt(Tessellator.instance);
-
-            if (rawBufferIndex != rawBufferIndex2) {
-                int[] rb = (int[]) FacadeRenderer.rawBuffer.get(Tessellator.instance);
-                float[] vec = new float[3];
-                boolean flag;
-                float[] boundsL = {0.5F, 0.5F, 0.5F};
-                float[] boundsU = {0.5F, 0.5F, 0.5F};
-
-
-                float dx = (float) xOffset.getDouble(Tessellator.instance);
-                float dy = (float) yOffset.getDouble(Tessellator.instance);
-                float dz = (float) zOffset.getDouble(Tessellator.instance);
-
-                for (int i = rawBufferIndex; i < rawBufferIndex2; i += 8) {
-
-
-                    vec[0] = Float.intBitsToFloat(rb[i]) - dx - x;
-                    vec[1] = Float.intBitsToFloat(rb[i + 1]) - dy - y;
-                    vec[2] = Float.intBitsToFloat(rb[i + 2]) - dz - z;
-
-                    flag = vec[sideOffsets[side]] != sideSoftBounds[side];
-
-                    float v = sideSoftBounds[side] + sideMult[side] * vec[sideOffsets[side]];
-                    if(v > 0.5)v=1-v;
-
-                    for (int j = 0; j < 3; j++) {
-                        if (j == sideOffsets[side]) {
-                            vec[j] = clampF(vec[j], bounds, j);
-                        } else {
-                            if (flag) {
-                                vec[j] = MathHelper.clampF(vec[j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
-//                                vec[j] = MathHelper.clampF(vec[j], v, 1 - v);
-                            } else {
-                                boundsL[j] = Math.min(boundsL[j], vec[j]);
-                                boundsU[j] = Math.max(boundsU[j], vec[j]);
+                if (flag && flag2)
+                    for (int vi = 0; vi < 3; vi++) {
+                        if (flat[vi]) {
+                            if (vi != sideOffsets[side]) {
+                                s = vi;
+                                break;
+                            }else{
+                                flag = false;
                             }
                         }
                     }
 
-                    rb[i] = Float.floatToRawIntBits(vec[0] + dx + x);
-                    rb[i + 1] = Float.floatToRawIntBits(vec[1] + dy + y);
-                    rb[i + 2] = Float.floatToRawIntBits(vec[2] + dz + z);
+                if (addNormals) {
+                    normal = (new Vector3(
+                            quad[1][0] - quad[0][0],
+                            quad[1][1] - quad[0][1],
+                            quad[1][2] - quad[0][2]));
+
+                    normal.crossProduct(new Vector3(
+                            quad[2][0] - quad[0][0],
+                            quad[2][1] - quad[0][1],
+                            quad[2][2] - quad[0][2]));
+
+                    normal.normalize();
+
+                    byte b0 = (byte) ((int) (normal.x * 127.0F));
+                    byte b1 = (byte) ((int) (normal.y * 127.0F));
+                    byte b2 = (byte) ((int) (normal.z * 127.0F));
+                    intNormal = (b0 & 255) | (b1 & 255) << 8 | (b2 & 255) << 16;
                 }
 
-                for (int j = 0; j < 3; j++) {
-                    if (j != sideOffsets[side]) {
-                        if (boundsL[j] > 0 || boundsU[j] < 1) {
-                            renderFacade = true;
-                            break;
+                for (int k2 = 0; k2 < 4; k2++) {
+                    boolean flag3 = quad[k2][sideOffsets[side]] != sideSoftBounds[side];
+                    for (int j = 0; j < 3; j++) {
+                        if (j == sideOffsets[side]) {
+                            quad[k2][j] = clampF(quad[k2][j], bounds, j);
+                        } else {
+                            if (flag && flag2 && flag3) {
+                                quad[k2][j] = MathHelper.clampF(quad[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
+                            }
                         }
                     }
-                }
-                if (!renderFacade) {
-                    renderFacade = false;
-                }
 
+                    int i = k + k2 * 8;
+                    rb[i] = Float.floatToRawIntBits(quad[k2][0] + dx + x);
+                    rb[i + 1] = Float.floatToRawIntBits(quad[k2][1] + dy + y);
+                    rb[i + 2] = Float.floatToRawIntBits(quad[k2][2] + dz + z);
+
+                    if (s != -1) {
+                        float u, v;
+
+                        if (s == 0) {
+                            u = quad[k2][1];
+                            v = quad[k2][2];
+                        } else if (s == 1) {
+                            u = quad[k2][0];
+                            v = quad[k2][2];
+                        } else {
+                            u = quad[k2][0];
+                            v = quad[k2][1];
+                        }
+
+                        u = MathHelper.clampF(u, 0, 1) * 16;
+                        v = MathHelper.clampF(v, 0, 1) * 16;
+
+                        u = icon.getInterpolatedU(u);
+                        v = icon.getInterpolatedV(v);
+
+                        rb[i + 3] = Float.floatToRawIntBits(u);
+                        rb[i + 4] = Float.floatToRawIntBits(v);
+                    }
+
+                    if (addNormals) rb[i + 6] = intNormal;
+                }
             }
 
-            facadeRenderBlocks.blockAccess = null;
-
-            return rendered;
-        } catch (IllegalAccessException e) {
-            throw Throwables.propagate(e);
         }
+
+        facadeRenderBlocks.blockAccess = null;
+
+        return rendered;
+
     }
 
     private final static int[][] sides = {

@@ -1,20 +1,60 @@
 package thermaldynamics.item;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.ducts.attachments.facades.Facade;
-import thermaldynamics.ducts.attachments.facades.FacadeHelper;
+import thermaldynamics.ducts.attachments.facades.Cover;
+import thermaldynamics.ducts.attachments.facades.CoverHelper;
 
 public class ItemFacade extends ItemAttachment {
     public ItemFacade() {
         this.setCreativeTab(null);
         this.setUnlocalizedName("thermalducts.cover");
         this.setTextureName("thermaldynamics:cover_test");
+    }
+
+    @Override
+    public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
+        super.getSubItems(p_150895_1_, p_150895_2_, p_150895_3_);
+
+        Iterator iterator = Item.itemRegistry.iterator();
+
+        ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+
+        while (iterator.hasNext()) {
+            Item item = (Item) iterator.next();
+
+            if (item != null && item.getCreativeTab() != null) {
+                item.getSubItems(item, null, stacks);
+            }
+        }
+
+        for (ItemStack stack : stacks) {
+            if (!(stack.getItem() instanceof ItemBlock))
+                continue;
+
+            if (!CoverHelper.isValid(
+                    ((ItemBlock) stack.getItem()).field_150939_a,
+                    stack.getItem().getMetadata(stack.getItemDamage())))
+                continue;
+
+            p_150895_3_.add(
+                    CoverHelper.getFacadeItemStack(((ItemBlock) stack.getItem()).field_150939_a,
+                            stack.getItem().getMetadata(stack.getItemDamage()))
+            );
+        }
+
 
     }
 
@@ -30,19 +70,39 @@ public class ItemFacade extends ItemAttachment {
         int meta = nbt.getByte("Meta");
         Block block = Block.getBlockFromName(nbt.getString("Block"));
 
-        if (block == Blocks.air || meta < 0 || meta >= 16 || !FacadeHelper.isValid(block, meta)) {
+        if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
             nbt.removeTag("Meta");
             nbt.removeTag("Block");
             if (nbt.hasNoTags()) stack.setTagCompound(null);
             return null;
         }
 
-        int meta2 = block.onBlockPlaced(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord, side, hitX[side], hitY[side], hitZ[side], meta);
-        if (meta2 >= 0 && meta2 < 16 && FacadeHelper.isValid(block, meta2)) {
-            meta = meta2;
+
+        return new Cover(tile, ((byte) (side ^ 1)), block, meta);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer p_77624_2_, List list, boolean p_77624_4_) {
+        super.addInformation(stack, p_77624_2_, list, p_77624_4_);
+        NBTTagCompound nbt = stack.getTagCompound();
+        if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
+            return;
         }
 
-        return new Facade(tile, ((byte) (side ^ 1)), block, meta);
+        int meta = nbt.getByte("Meta");
+        Block block = Block.getBlockFromName(nbt.getString("Block"));
+
+        if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
+            nbt.removeTag("Meta");
+            nbt.removeTag("Block");
+            if (nbt.hasNoTags()) stack.setTagCompound(null);
+        }
+
+        ItemStack b = new ItemStack(block, 1, meta);
+
+        list.add(b.getDisplayName());
     }
 
     @Override

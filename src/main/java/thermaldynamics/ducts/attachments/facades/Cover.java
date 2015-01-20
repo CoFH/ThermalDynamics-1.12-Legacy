@@ -1,6 +1,7 @@
 package thermaldynamics.ducts.attachments.facades;
 
 import cofh.core.network.PacketCoFHBase;
+import cofh.lib.render.RenderHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Vector3;
@@ -9,6 +10,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,10 +23,10 @@ import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 
-public class Facade extends Attachment {
-    static Cuboid6 bound = new Cuboid6(0, 0, 0, 1, 0.1, 1);
+public class Cover extends Attachment {
+    private static Cuboid6 bound = new Cuboid6(0, 0, 0, 1, 0.0625, 1);
 
-    static Cuboid6[] bounds = {
+    public static Cuboid6[] bounds = {
             bound,
             bound.copy().apply(Rotation.sideRotations[1].at(Vector3.center)),
             bound.copy().apply(Rotation.sideRotations[2].at(Vector3.center)),
@@ -33,16 +35,16 @@ public class Facade extends Attachment {
             bound.copy().apply(Rotation.sideRotations[5].at(Vector3.center))
     };
 
-    Block block;
-    int meta;
+    public Block block;
+    public int meta;
 
-    public Facade(TileMultiBlock tile, byte side, Block block, int meta) {
+    public Cover(TileMultiBlock tile, byte side, Block block, int meta) {
         super(tile, side);
         this.block = block;
         this.meta = meta;
     }
 
-    public Facade(TileMultiBlock tile, byte side) {
+    public Cover(TileMultiBlock tile, byte side) {
         super(tile, side);
     }
 
@@ -83,7 +85,7 @@ public class Facade extends Attachment {
         if (!block.canRenderInPass(pass))
             return false;
 
-        return FacadeRenderer.renderFacade(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid());
+        return CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false);
     }
 
     @Override
@@ -93,12 +95,14 @@ public class Facade extends Attachment {
 
     @Override
     public ItemStack getPickBlock() {
-        return null;
+        return CoverHelper.getFacadeItemStack(block, meta);
     }
 
     @Override
     public List<ItemStack> getDrops() {
-        return new LinkedList<ItemStack>();
+        LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
+        itemStacks.add(getPickBlock());
+        return itemStacks;
     }
 
     @Override
@@ -139,25 +143,38 @@ public class Facade extends Attachment {
     public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
         super.drawSelectionExtra(player, target, partialTicks);
 
+        RenderHelper.setBlockTextureSheet();
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDepthMask(true);
         double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
         double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-        GL11.glColor4f(1, 1, 1, 0.1F);
+        GL11.glColor4f(1, 1, 1, 0.5F);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+        GL11.glEnable(GL11.GL_BLEND);
+        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GL11.glPushMatrix();
         {
             GL11.glTranslated(-d0, -d1, -d2);
             Tessellator tess = Tessellator.instance;
             tess.startDrawingQuads();
-            RenderBlocks renderBlocks = FacadeRenderer.renderBlocks;
+            Tessellator.instance.setNormal(0, 1, 0);
+            tess.setColorRGBA_F(1, 1, 1, 0.5F);
+            tess.setBrightness(tile.getBlockType().getMixedBrightnessForBlock(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord));
+            RenderBlocks renderBlocks = CoverRemderer.renderBlocks;
             renderBlocks.blockAccess = player.getEntityWorld();
-            FacadeRenderer.renderFacade(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid());
+            CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false);
             tess.draw();
         }
         GL11.glPopMatrix();
-
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glDisable(GL11.GL_COLOR_MATERIAL);
+        GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_BLEND);
     }
 }
