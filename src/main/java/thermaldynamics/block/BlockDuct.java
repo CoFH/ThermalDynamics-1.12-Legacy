@@ -1,5 +1,6 @@
 package thermaldynamics.block;
 
+import cofh.api.block.IBlockAppearance;
 import cofh.api.core.IInitializer;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.render.IconRegistry;
@@ -46,11 +47,7 @@ import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TileItemDuctEnder;
 import thermaldynamics.ducts.item.TileItemDuctRedstone;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-public class BlockDuct extends BlockMultiBlock implements IInitializer {
+public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAppearance {
     public int offset;
 
     public BlockDuct(int offset) {
@@ -179,6 +176,32 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer {
     @Override
     public int getRenderBlockPass() {
         return 1;
+    }
+
+    @Override
+    public Block getVisualBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if (tileEntity instanceof TileMultiBlock) {
+            Cover cover = ((TileMultiBlock) tileEntity).covers[side.ordinal()];
+            if (cover != null) return cover.block;
+
+        }
+        return this;
+    }
+
+    @Override
+    public int getVisualMeta(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if (tileEntity instanceof TileMultiBlock) {
+            Cover cover = ((TileMultiBlock) tileEntity).covers[side.ordinal()];
+            if (cover != null) return cover.meta;
+        }
+        return world.getBlockMetadata(x, y, z);
+    }
+
+    @Override
+    public boolean supportsVisualConnections() {
+        return true;
     }
 
     public static enum ConnectionTypes {
