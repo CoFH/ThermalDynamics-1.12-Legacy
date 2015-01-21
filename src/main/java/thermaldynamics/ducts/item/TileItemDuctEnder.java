@@ -109,11 +109,6 @@ public class TileItemDuctEnder extends TileItemDuctPower {
             super.insertNewItem(travelingItem);
     }
 
-    @Override
-    public int getWeight() {
-        return 0;
-    }
-
     public void multiAdvance(TravelingItem travelingItem, boolean newInsert) {
         TileItemDuct duct = this;
 

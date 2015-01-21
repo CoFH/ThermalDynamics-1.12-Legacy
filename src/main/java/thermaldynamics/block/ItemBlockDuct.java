@@ -2,13 +2,12 @@ package thermaldynamics.block;
 
 import cofh.core.item.ItemBlockBase;
 import cofh.lib.util.helpers.StringHelper;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import thermaldynamics.ducts.Ducts;
-
-import java.util.List;
 
 public class ItemBlockDuct extends ItemBlockBase {
     int offset;
@@ -25,9 +24,24 @@ public class ItemBlockDuct extends ItemBlockBase {
 
     @Override
     public String getItemStackDisplayName(ItemStack item) {
-        if (Ducts.isValid(id(item)) && Ducts.getType(id(item)).opaque) {
-            return super.getItemStackDisplayName(item) + " " + StringHelper.localize("tile.thermalducts.duct.opaque.name");
-        } else return super.getItemStackDisplayName(item);
+        if (Ducts.isValid(id(item))) {
+            StringBuilder builder = new StringBuilder();
+            Ducts type = Ducts.getType(id(item));
+            if (type.pathWeight == 1000) {
+                builder.append(StringHelper.localize("tile.thermalducts.duct.dense.name")).append(" ");
+            } else if (type.pathWeight == -1000) {
+                builder.append(StringHelper.localize("tile.thermalducts.duct.vacuum.name")).append(" ");
+            }
+
+            builder.append(super.getItemStackDisplayName(item));
+
+            if (type.opaque) {
+                builder.append(" ").append(StringHelper.localize("tile.thermalducts.duct.opaque.name"));
+            }
+
+            return builder.toString();
+        } else
+            return super.getItemStackDisplayName(item);
     }
 
     public int id(ItemStack item) {

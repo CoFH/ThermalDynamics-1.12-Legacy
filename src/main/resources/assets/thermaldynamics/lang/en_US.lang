@@ -31,6 +31,9 @@ tile.thermalducts.duct.itemDuctEnder.info=Uses RF energy to transfer items insta
 tile.thermalducts.duct.structureDuct.info=Provides Structure
 
 tile.thermalducts.duct.opaque.name=(Opaque)
+tile.thermalducts.duct.dense.name=Dense
+tile.thermalducts.duct.vacuum.name=Vacuum
+
 item.thermalducts.cover.name=Cover
 
 item.thermalducts.servo.0.name=Basic Servo
