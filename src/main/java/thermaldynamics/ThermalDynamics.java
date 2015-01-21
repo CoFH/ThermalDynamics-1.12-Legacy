@@ -36,7 +36,7 @@ import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.gui.TDCreativeTab;
-import thermaldynamics.item.ItemFacade;
+import thermaldynamics.item.ItemCover;
 import thermaldynamics.item.ItemFilter;
 import thermaldynamics.item.ItemServo;
 import thermalfoundation.ThermalFoundation;
@@ -98,7 +98,7 @@ public class ThermalDynamics extends BaseMod {
         }
         itemServo = addItem(new ItemServo());
         itemFilter = addItem(new ItemFilter());
-        itemFacade = addItem(new ItemFacade());
+        itemCover = addItem(new ItemCover());
 
         for (IInitializer initializer : initializerList)
             initializer.preInit();
@@ -163,7 +163,7 @@ public class ThermalDynamics extends BaseMod {
     public static BlockDuct[] blockDuct;
     public static ItemServo itemServo;
     public static ItemFilter itemFilter;
-    public static ItemFacade itemFacade;
+    public static ItemCover itemCover;
 
 
     @EventHandler

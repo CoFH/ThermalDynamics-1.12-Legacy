@@ -168,7 +168,10 @@ public class Cover extends Attachment {
             tess.setBrightness(tile.getBlockType().getMixedBrightnessForBlock(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord));
             RenderBlocks renderBlocks = CoverRemderer.renderBlocks;
             renderBlocks.blockAccess = player.getEntityWorld();
-            CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false);
+            for (int i = 0; i < 2; i++) {
+                if (block.canRenderInPass(i))
+                    CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false);
+            }
             tess.draw();
         }
         GL11.glPopMatrix();

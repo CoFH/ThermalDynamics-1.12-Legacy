@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -17,11 +16,11 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.ducts.attachments.facades.CoverHelper;
 
-public class ItemFacade extends ItemAttachment {
-    public ItemFacade() {
+public class ItemCover extends ItemAttachment {
+    public ItemCover() {
         this.setCreativeTab(null);
         this.setUnlocalizedName("thermalducts.cover");
-        this.setTextureName("thermaldynamics:cover_test");
+        this.setTextureName("thermaldynamics:cover");
     }
 
     @Override
@@ -35,7 +34,7 @@ public class ItemFacade extends ItemAttachment {
         while (iterator.hasNext()) {
             Item item = (Item) iterator.next();
 
-            if (item != null && item.getCreativeTab() != null) {
+            if (item != null) {
                 item.getSubItems(item, null, stacks);
             }
         }
@@ -81,14 +80,32 @@ public class ItemFacade extends ItemAttachment {
         return new Cover(tile, ((byte) (side ^ 1)), block, meta);
     }
 
-
-    @SuppressWarnings("unchecked")
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer p_77624_2_, List list, boolean p_77624_4_) {
-        super.addInformation(stack, p_77624_2_, list, p_77624_4_);
+    public String getItemStackDisplayName(ItemStack item) {
+        StringBuilder builder = new StringBuilder();
+        ItemStack b = getCoverItemStack(item);
+        if (b != null) {
+            builder.append(b.getDisplayName());
+            builder.append(" ");
+        }
+        builder.append(super.getItemStackDisplayName(item));
+        return builder.toString();
+    }
+
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public void addInformation(ItemStack stack, EntityPlayer p_77624_2_, List list, boolean p_77624_4_) {
+//        super.addInformation(stack, p_77624_2_, list, p_77624_4_);
+//        ItemStack b = getFacadeItemStack(stack);
+//        if (b == null) return;
+//
+//        list.add(b.getDisplayName());
+//    }
+
+    public ItemStack getCoverItemStack(ItemStack stack) {
         NBTTagCompound nbt = stack.getTagCompound();
         if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
-            return;
+            return null;
         }
 
         int meta = nbt.getByte("Meta");
@@ -101,8 +118,7 @@ public class ItemFacade extends ItemAttachment {
         }
 
         ItemStack b = new ItemStack(block, 1, meta);
-
-        list.add(b.getDisplayName());
+        return b;
     }
 
     @Override

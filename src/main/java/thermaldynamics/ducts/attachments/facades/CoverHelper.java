@@ -23,7 +23,7 @@ public class CoverHelper {
         tag.setString("Block", Block.blockRegistry.getNameForObject(block));
         tag.setByte("Meta", ((byte) meta));
 
-        ItemStack itemStack = new ItemStack(ThermalDynamics.itemFacade, 1);
+        ItemStack itemStack = new ItemStack(ThermalDynamics.itemCover, 1);
         itemStack.setTagCompound(tag);
         return itemStack;
     }

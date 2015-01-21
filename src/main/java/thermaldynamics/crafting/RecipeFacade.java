@@ -70,6 +70,6 @@ public class RecipeFacade implements IRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return new ItemStack(ThermalDynamics.itemFacade, 6);
+        return new ItemStack(ThermalDynamics.itemCover, 6);
     }
 }

@@ -30,7 +30,7 @@ public class ProxyClient extends Proxy {
             MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
         }
 
-        MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemFacade, ItemCoverRenderer.instance);
+        MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, ItemCoverRenderer.instance);
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
 
