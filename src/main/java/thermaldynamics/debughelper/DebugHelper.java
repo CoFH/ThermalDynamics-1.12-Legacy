@@ -25,6 +25,7 @@ public class DebugHelper {
 
     public static final Logger log = LogManager.getLogger("ThermalDebug");
 
+
     public static void init() {
         if (!debug) return;
         FMLCommonHandler.instance().bus().register(DebugTickHandler.INSTANCE);
@@ -33,6 +34,11 @@ public class DebugHelper {
 
     public static void info(Object string) {
         if (debug) log.info(string);
+    }
+
+    public static <T> T logObject(T o) {
+        info(o);
+        return o;
     }
 
     public static long time = 0;

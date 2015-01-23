@@ -123,7 +123,7 @@ public class DebugTickHandler {
 
     public int[] displayValue = new int[DebugEvent.values().length];
 
-    public int[][] values = new int[100][DebugEvent.values().length];
+    public int[][] values = new int[20][DebugEvent.values().length];
 
     public static void tickEvent(DebugEvent event) {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
