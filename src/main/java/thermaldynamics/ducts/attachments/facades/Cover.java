@@ -95,7 +95,7 @@ public class Cover extends Attachment {
 
     @Override
     public ItemStack getPickBlock() {
-        return CoverHelper.getFacadeItemStack(block, meta);
+        return CoverHelper.getCoverStack(block, meta);
     }
 
     @Override

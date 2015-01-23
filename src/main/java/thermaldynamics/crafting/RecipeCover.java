@@ -11,7 +11,9 @@ import thermaldynamics.ThermalDynamics;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.facades.CoverHelper;
 
-public class RecipeFacade implements IRecipe {
+public class RecipeCover implements IRecipe {
+    public static final RecipeCover INSTANCE = new RecipeCover();
+
     @Override
     public boolean matches(InventoryCrafting craft, World p_77569_2_) {
         boolean a = false;
@@ -26,19 +28,13 @@ public class RecipeFacade implements IRecipe {
                 else
                     a = true;
             } else {
-                if (!(stack.getItem() instanceof ItemBlock))
-                    return false;
-
-                if (!CoverHelper.isValid(
-                        ((ItemBlock) stack.getItem()).field_150939_a,
-                        stack.getItem().getMetadata(stack.getItemDamage())))
+                if (!CoverHelper.isValid(stack))
                     return false;
 
                 if (b)
                     return false;
                 else
                     b = true;
-
             }
         }
 
@@ -57,7 +53,7 @@ public class RecipeFacade implements IRecipe {
                 block = ((ItemBlock) stack.getItem()).field_150939_a;
                 meta = stack.getItem().getMetadata(stack.getItemDamage());
 
-                return ItemHelper.cloneStack(CoverHelper.getFacadeItemStack(block, (byte) meta), 6);
+                return ItemHelper.cloneStack(CoverHelper.getCoverStack(block, (byte) meta), 6);
             }
         }
         return null;

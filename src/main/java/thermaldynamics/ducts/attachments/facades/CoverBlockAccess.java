@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Facing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -45,6 +46,12 @@ public class CoverBlockAccess implements IBlockAccess {
     public Result getAction(int x, int y, int z) {
         if (x == blockX && y == blockY && z == blockZ)
             return BASE;
+
+        if (x == blockX + Facing.offsetsXForSide[side] &&
+                y == blockY + Facing.offsetsYForSide[side] &&
+                z == blockZ + Facing.offsetsZForSide[side]) {
+            return ORIGINAL;
+        }
 
         if (((side == 0 && y > blockY) ||
                 (side == 1 && y < blockY) ||

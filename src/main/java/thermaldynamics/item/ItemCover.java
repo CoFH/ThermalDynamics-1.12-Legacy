@@ -34,7 +34,7 @@ public class ItemCover extends ItemAttachment {
         while (iterator.hasNext()) {
             Item item = (Item) iterator.next();
 
-            if (item != null) {
+            if (item != null && item != this) {
                 item.getSubItems(item, null, stacks);
             }
         }
@@ -49,7 +49,7 @@ public class ItemCover extends ItemAttachment {
                 continue;
 
             p_150895_3_.add(
-                    CoverHelper.getFacadeItemStack(((ItemBlock) stack.getItem()).field_150939_a,
+                    CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a,
                             stack.getItem().getMetadata(stack.getItemDamage()))
             );
         }
@@ -83,7 +83,7 @@ public class ItemCover extends ItemAttachment {
     @Override
     public String getItemStackDisplayName(ItemStack item) {
         StringBuilder builder = new StringBuilder();
-        ItemStack b = getCoverItemStack(item);
+        ItemStack b = CoverHelper.getCoverItemStack(item, true);
         if (b != null) {
             builder.append(b.getDisplayName());
             builder.append(" ");
@@ -102,29 +102,9 @@ public class ItemCover extends ItemAttachment {
 //        list.add(b.getDisplayName());
 //    }
 
-    public ItemStack getCoverItemStack(ItemStack stack) {
-        NBTTagCompound nbt = stack.getTagCompound();
-        if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
-            return null;
-        }
-
-        int meta = nbt.getByte("Meta");
-        Block block = Block.getBlockFromName(nbt.getString("Block"));
-
-        if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
-            nbt.removeTag("Meta");
-            nbt.removeTag("Block");
-            if (nbt.hasNoTags()) stack.setTagCompound(null);
-        }
-
-        ItemStack b = new ItemStack(block, 1, meta);
-        return b;
-    }
-
     @Override
     public boolean preInit() {
         GameRegistry.registerItem(this, "cover");
-
         return true;
     }
 }
