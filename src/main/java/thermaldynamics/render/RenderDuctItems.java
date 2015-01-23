@@ -6,7 +6,11 @@ import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import com.google.common.collect.Iterators;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import java.util.Iterator;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -16,7 +20,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.block.BlockDuct;
-import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
 
@@ -123,7 +126,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
             return;
         }
 
-        GL11.glPushMatrix();
 
         travelingItemSpin += .001;
         travelingItemSpin %= 180;
@@ -136,19 +138,29 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
             if (renderItem == null || renderItem.stack == null) {
                 continue;
             }
+
             GL11.glPushMatrix();
 
             GL11.glTranslated(x + renderItem.x, y + renderItem.y, z + renderItem.z);
 
             float[] vec;
-            for (int k = 0; k < renderItem.step - 1; k++) {
-                vec = TravelingItem.getVec(renderItem.progress + k, renderItem, duct);
-                GL11.glTranslated(vec[0], vec[1], vec[2]);
+
+            if (renderItem.step == 1) {
+                vec = TravelingItem.getVec(renderItem.progress + 1, renderItem, duct);
+                GL11.glTranslated(vec[0] * frame, vec[1] * frame, vec[2] * frame);
+            } else {
+                float v = renderItem.step * frame;
+                int s;
+                for (s = 0; s < v; s++) {
+                    vec = TravelingItem.getVec(renderItem.progress + s, renderItem, duct);
+                    GL11.glTranslated(vec[0], vec[1], vec[2]);
+                }
+                vec = TravelingItem.getVec(renderItem.progress + s, renderItem, duct);
+                s--;
+                GL11.glTranslated(vec[0] * (v - s), vec[1] * (v - s), vec[2] * (v - s));
+
+
             }
-
-            vec = TravelingItem.getVec(renderItem.progress + renderItem.step, renderItem, duct);
-            GL11.glTranslated(vec[0] * frame, vec[1] * frame, vec[2] * frame);
-
 
             GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
@@ -156,6 +168,5 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
             travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
             GL11.glPopMatrix();
         }
-        GL11.glPopMatrix();
     }
 }
