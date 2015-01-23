@@ -105,7 +105,7 @@ public class TDCrafting {
             GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead"));
         }
 
-        GameRegistry.addRecipe(new RecipeFacade());
+        GameRegistry.addRecipe(RecipeCover.INSTANCE);
 
 
         for (Ducts[] duct : new Ducts[][]{

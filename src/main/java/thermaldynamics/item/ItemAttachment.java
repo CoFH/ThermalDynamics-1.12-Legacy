@@ -59,6 +59,8 @@ public abstract class ItemAttachment extends Item implements IInitializer {
                     s = (subHit - 6);
                 else if (subHit == 13)
                     s = side;
+                else
+                    s = ((subHit - 14) % 6);
 
                 if (s != -1) {
                     attachment = getAttachment(s ^ 1, stack, (TileMultiBlock) tile);
@@ -110,7 +112,7 @@ public abstract class ItemAttachment extends Item implements IInitializer {
         c.max.sub(c.min);
 
         RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks,
-                new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.tile.x()+ c.min.x, attachment.tile.y()+ c.min.y, attachment.tile.z() + c.min.z)
+                new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.tile.x() + c.min.x, attachment.tile.y() + c.min.y, attachment.tile.z() + c.min.z)
         );
 
         attachment.drawSelectionExtra(event.player, event.target, event.partialTicks);
