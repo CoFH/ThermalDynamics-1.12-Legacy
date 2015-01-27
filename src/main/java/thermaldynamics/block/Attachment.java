@@ -101,7 +101,7 @@ public abstract class Attachment {
     public abstract ItemStack getPickBlock();
 
     public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
-        return true;
+        return tileMultiBlock.attachments[side] == null;
     }
 
     public abstract List<ItemStack> getDrops();

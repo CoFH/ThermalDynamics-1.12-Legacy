@@ -130,6 +130,11 @@ public class Cover extends Attachment {
     }
 
     @Override
+    public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
+        return tileMultiBlock.covers[side] == null;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         block = Block.getBlockFromName(tag.getString("block"));
