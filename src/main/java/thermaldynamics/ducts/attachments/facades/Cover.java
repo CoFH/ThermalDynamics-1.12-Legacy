@@ -85,7 +85,7 @@ public class Cover extends Attachment {
         if (!block.canRenderInPass(pass))
             return false;
 
-        return CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false);
+        return CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false);
     }
 
     @Override
@@ -149,12 +149,14 @@ public class Cover extends Attachment {
         super.drawSelectionExtra(player, target, partialTicks);
 
         RenderHelper.setBlockTextureSheet();
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        ;
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+
         GL11.glDepthMask(true);
         double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
@@ -165,7 +167,13 @@ public class Cover extends Attachment {
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GL11.glPushMatrix();
         {
+
             GL11.glTranslated(-d0, -d1, -d2);
+            GL11.glTranslated(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5);
+            GL11.glScaled(1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET);
+            GL11.glTranslated(-tile.xCoord - 0.5, -tile.yCoord - 0.5, -tile.zCoord - 0.5);
+
+
             Tessellator tess = Tessellator.instance;
             tess.startDrawingQuads();
             Tessellator.instance.setNormal(0, 1, 0);
@@ -175,14 +183,17 @@ public class Cover extends Attachment {
             renderBlocks.blockAccess = player.getEntityWorld();
             for (int i = 0; i < 2; i++) {
                 if (block.canRenderInPass(i))
-                    CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false);
+                    CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true);
             }
             tess.draw();
         }
         GL11.glPopMatrix();
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        GL11.glDepthMask(true);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glDisable(GL11.GL_COLOR_MATERIAL);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_BLEND);
+
     }
 }

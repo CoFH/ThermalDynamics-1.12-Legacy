@@ -48,6 +48,8 @@ public class ItemCoverRenderer implements IItemRenderer {
             if (nbt.hasNoTags()) stack.setTagCompound(null);
         }
 
+
+
         GL11.glPushMatrix();
         double offset = -0.5;
         if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
@@ -56,6 +58,7 @@ public class ItemCoverRenderer implements IItemRenderer {
             GL11.glScaled(0.5, 0.5, 0.5);
         }
         RenderHelper.setBlockTextureSheet();
+        //net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
         RenderUtils.preItemRender();
 
         CCRenderState.startDrawing();
@@ -71,12 +74,13 @@ public class ItemCoverRenderer implements IItemRenderer {
         GL11.glTranslated(-side.offsetX * 0.5, -side.offsetY * 0.5, -side.offsetZ * 0.5);
         for (int pass = 0; pass < 2; pass++) {
             if(block.canRenderInPass(pass)) {
-                CoverRemderer.renderCover(CoverRemderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true);
+                CoverRemderer.renderCover(CoverRemderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false);
             }
         }
         CCRenderState.draw();
 
         CCRenderState.useNormals = false;
+
         RenderHelper.setItemTextureSheet();
         RenderUtils.postItemRender();
 

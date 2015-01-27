@@ -4,6 +4,7 @@ import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import java.nio.ByteOrder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -28,7 +29,7 @@ public class CoverRemderer {
     private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
     private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-    public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals) {
+    public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals, boolean addTrans) {
         facadeRenderBlocks.blockAccess = CoverBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
 
         Tessellator tess = Tessellator.instance;
@@ -89,7 +90,7 @@ public class CoverRemderer {
                             if (vi != sideOffsets[side]) {
                                 s = vi;
                                 break;
-                            }else{
+                            } else {
                                 flag = false;
                             }
                         }
@@ -156,6 +157,13 @@ public class CoverRemderer {
                     }
 
                     if (addNormals) rb[i + 6] = intNormal;
+                    if (addTrans) {
+                        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+                            rb[i + 5] = rb[i + 5] & 0x00FFFFFF | 0x80000000;
+                        } else {
+                            rb[i + 5] = rb[i + 5] & 0xFFFFFF00 | 0x00000080;
+                        }
+                    }
                 }
             }
 
