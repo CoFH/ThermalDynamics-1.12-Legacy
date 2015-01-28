@@ -85,7 +85,7 @@ public class Cover extends Attachment {
         if (!block.canRenderInPass(pass))
             return false;
 
-        return CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false);
+        return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false);
     }
 
     @Override
@@ -179,11 +179,11 @@ public class Cover extends Attachment {
             Tessellator.instance.setNormal(0, 1, 0);
             tess.setColorRGBA_F(1, 1, 1, 0.5F);
             tess.setBrightness(tile.getBlockType().getMixedBrightnessForBlock(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord));
-            RenderBlocks renderBlocks = CoverRemderer.renderBlocks;
+            RenderBlocks renderBlocks = CoverRenderer.renderBlocks;
             renderBlocks.blockAccess = player.getEntityWorld();
             for (int i = 0; i < 2; i++) {
                 if (block.canRenderInPass(i))
-                    CoverRemderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true);
+                    CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true);
             }
             tess.draw();
         }

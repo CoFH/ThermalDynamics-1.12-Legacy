@@ -13,7 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import thermalfoundation.block.TFBlocks;
 
-public class CoverRemderer {
+public class CoverRenderer {
 
     private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
     public static RenderBlocks renderBlocks = new RenderBlocks();

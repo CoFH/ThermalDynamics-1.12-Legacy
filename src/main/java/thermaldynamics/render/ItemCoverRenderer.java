@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.ducts.attachments.facades.CoverHelper;
-import thermaldynamics.ducts.attachments.facades.CoverRemderer;
+import thermaldynamics.ducts.attachments.facades.CoverRenderer;
 
 public class ItemCoverRenderer implements IItemRenderer {
     public static IItemRenderer instance = new ItemCoverRenderer();
@@ -67,14 +67,14 @@ public class ItemCoverRenderer implements IItemRenderer {
 
         SingleBlockAccess.instance.block = block;
         SingleBlockAccess.instance.meta = meta;
-        CoverRemderer.renderBlocks.blockAccess = SingleBlockAccess.instance;
+        CoverRenderer.renderBlocks.blockAccess = SingleBlockAccess.instance;
         Tessellator.instance.setNormal(0.0F, 1.0F, 0.0F);
 
         ForgeDirection side = type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
         GL11.glTranslated(-side.offsetX * 0.5, -side.offsetY * 0.5, -side.offsetZ * 0.5);
         for (int pass = 0; pass < 2; pass++) {
             if(block.canRenderInPass(pass)) {
-                CoverRemderer.renderCover(CoverRemderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false);
+                CoverRenderer.renderCover(CoverRenderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false);
             }
         }
         CCRenderState.draw();
@@ -96,6 +96,15 @@ public class ItemCoverRenderer implements IItemRenderer {
 
         public boolean isLoc(int x, int y, int z) {
             return x == 0 && y == 128 && z == 0;
+        }
+
+        public SingleBlockAccess() {
+            super();
+        }
+
+        public SingleBlockAccess(Block block, int meta) {
+            this.block = block;
+            this.meta = meta;
         }
 
         @Override
@@ -135,7 +144,7 @@ public class ItemCoverRenderer implements IItemRenderer {
 
         @Override
         public int getHeight() {
-            return 128;
+            return 140;
         }
 
         @Override
