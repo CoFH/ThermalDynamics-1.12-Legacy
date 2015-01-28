@@ -2,6 +2,7 @@
 	<property environment="env"/>
 	
 	<!-- Basic directories -->
+	<property name="api.dir" value="src/api/java"/>
 	<property name="src.dir" value="src/main/java"/>
 	<property name="resources.dir" value="src/main/resources"/>
 	<property name="build.dir" value="build"/>
@@ -81,6 +82,8 @@
 				<available file="${lib.dir}/CoFHCore.jar" type="file"/>
 				<available file="${lib.dir}/ThermalFoundation.jar" type="file"/>
 				<available file="${lib.dir}/NEI.jar" type="file"/>
+				<available file="${lib.dir}/MineFactoryReloaded.jar" type="file"/>
+				<available file="${lib.dir}/Buildcraft.jar" type="file"/>
 			</and>
 		</condition>
 	</target>
@@ -159,6 +162,32 @@
 		<delete dir="${compile.dir}" failonerror="false"/>
 		<delete dir="${download.dir}/ThermalFoundation-master"/>
 		<!-- End hack -->
+		
+		<echo message="Downloading MFR API.. "/>
+		<!-- Begin hack -->
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<mkdir dir="${compile.dir}"/>
+		<javac srcdir="${api.dir}/" destdir="${compile.dir}"
+			target="1.6" source="1.6"
+			classpathref="mcp.classpath" debug="true" debuglevel="lines,source" includeAntRuntime="false">
+			<include name="powercrystals/minefactoryreloaded/api/**/*.java"/>
+		</javac>
+		<jar destfile="${download.dir}/MineFactoryReloaded.jar" compress="true" level="9" basedir="${compile.dir}"/>
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<!-- End hack -->
+		
+		<echo message="Downloading Buildcraft API.. "/>
+		<!-- Begin hack -->
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<mkdir dir="${compile.dir}"/>
+		<javac srcdir="${api.dir}/" destdir="${compile.dir}"
+			target="1.6" source="1.6"
+			classpathref="mcp.classpath" debug="true" debuglevel="lines,source" includeAntRuntime="false">
+			<include name="buildcraft/api/**/*.java"/>
+		</javac>
+		<jar destfile="${download.dir}/Buildcraft.jar" compress="true" level="9" basedir="${compile.dir}"/>
+		<delete dir="${compile.dir}" failonerror="false"/>
+		<!-- End hack -->
 	</target>
 
 	<target name="extract-dependencies" depends="setup-forge,get-dependencies" unless="have.libs">
@@ -176,6 +205,12 @@
 		
 		<echo message="Extracting ThermalFoundation..."/>
 		<copy file="${download.dir}/ThermalFoundation.jar" todir="${lib.dir}"/>
+		
+		<echo message="Extracting MineFactoryReloaded..."/>
+		<copy file="${download.dir}/MineFactoryReloaded.jar" todir="${lib.dir}"/>
+		
+		<echo message="Extracting BuildCraft API..."/>
+		<copy file="${download.dir}/Buildcraft.jar" todir="${lib.dir}"/>
 	</target>
 	
 	<macrodef name="move-transformers"><sequential>
@@ -209,15 +244,9 @@
 				<fileset dir="${resources.dir}"/>
 			</copy>
 			<update-languages/>
-			<manifest file="${classes.dir}/MANIFEST.MF">
-				<attribute name="FMLCorePlugin" value="cofh.asm.LoadingPlugin"/>
-				<attribute name="FMLCorePluginContainsFMLMod" value="true"/>
-			</manifest>
 			<jar destfile="${dist.dir}/${build.name}${build.full}@{build}.jar"
-				compress="true" level="9" basedir="${classes.dir}"
-				manifest="${classes.dir}/MANIFEST.MF">
-				<exclude name="MANIFEST.MF"/>
-				<zipfileset src="${lib.dir}/CoFHLib.jar"/>
+				compress="true" level="9" basedir="${classes.dir}">
+				<zipfileset src="${lib.dir}/MineFactoryReloaded.jar"/>
 			</jar>
 		</sequential>
 	</macrodef>
