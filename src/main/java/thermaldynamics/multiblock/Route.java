@@ -1,11 +1,10 @@
 package thermaldynamics.multiblock;
 
 import cofh.repack.codechicken.lib.vec.BlockCoord;
-
-import java.util.LinkedList;
+import gnu.trove.list.linked.TByteLinkedList;
 
 public class Route implements Comparable<Route> {
-    public LinkedList<Byte> pathDirections = new LinkedList<Byte>();
+    public TByteLinkedList pathDirections = new TByteLinkedList();
     public int pathPos = 0;
     public IMultiBlockRoute endPoint;
     public IMultiBlockRoute startPoint;
@@ -22,7 +21,7 @@ public class Route implements Comparable<Route> {
     @SuppressWarnings("unchecked")
     public Route(Route prevRoute, IMultiBlockRoute newPlace, byte direction, boolean isFinished) {
 
-        pathDirections = (LinkedList<Byte>) prevRoute.pathDirections.clone();
+        pathDirections = new TByteLinkedList( prevRoute.pathDirections);
         pathWeight = prevRoute.pathWeight + newPlace.getWeight();
         endPoint = newPlace;
         startPoint = prevRoute.startPoint;
@@ -34,7 +33,7 @@ public class Route implements Comparable<Route> {
     @SuppressWarnings("unchecked")
     public Route(Route prevRoute, boolean endPath) {
 
-        pathDirections = (LinkedList<Byte>) prevRoute.pathDirections.clone();
+        pathDirections = new TByteLinkedList( prevRoute.pathDirections);
         pathWeight = prevRoute.pathWeight;
         endPoint = prevRoute.endPoint;
         startPoint = prevRoute.startPoint;
@@ -44,7 +43,7 @@ public class Route implements Comparable<Route> {
     @SuppressWarnings("unchecked")
     public Route(Route prevRoute) {
 
-        pathDirections = (LinkedList<Byte>) prevRoute.pathDirections.clone();
+        pathDirections = new TByteLinkedList( prevRoute.pathDirections);
         pathWeight = prevRoute.pathWeight;
         endPoint = prevRoute.endPoint;
         startPoint = prevRoute.startPoint;
