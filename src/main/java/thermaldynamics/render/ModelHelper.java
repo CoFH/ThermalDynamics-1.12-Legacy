@@ -11,7 +11,6 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Transformation;
 import cofh.repack.codechicken.lib.vec.Vector3;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -54,11 +53,37 @@ public class ModelHelper {
                     models[i].verts[j] = model.get(j);
                 }
 
-                    CCModel.generateBackface(models[i], 0, models[i], n, n);
+                CCModel.generateBackface(models[i], 0, models[i], n, n);
 
                 finalizeModel(models[i]);
             }
             return models;
+        }
+
+        public StandardTubes(int i) {
+            this.width = 0.36f;
+            this.opaque=false;
+            double d1 = 0.47 - 0.025 * i;
+            double d2 = 0.53 + 0.025 * i;
+            double d3 = 0.32 + 0.06 * i;
+            double c1 = 0.32;
+            double c2 = 0.68;
+            double[][] boxes = new double[][]{{d1, 0, d1, d2, c1, d2}, {d1, d3, d1, d2, 1, d2}, {c1, c1, 0, c2, d3, c1}, {c1, c1, c2, c2, d3, 1},
+                    {0, c1, c1, c1, d3, c2}, {c2, c1, c1, 1, d3, c2}};
+
+            center = new Cuboid6(c1, c1, c1, c2, d3, c2);
+
+            pipe = new Cuboid6[6];
+            for (int s = 0; s < pipe.length; s++) {
+                pipe[s] = new Cuboid6(boxes[s][0],
+                        boxes[s][1],
+                        boxes[s][2],
+                        boxes[s][3],
+                        boxes[s][4],
+                        boxes[s][5]
+                );
+            }
+
         }
 
 
@@ -83,9 +108,9 @@ public class ModelHelper {
                 } else {
                     int singlePipeIndex = -1, doublePipeIndex = -1;
                     for (int i : orthogs[side]) {
-                        if (MathHelper.isBitSet(cMask, i)) {
+                        if (MathHelper.isBitSet(cMask, i) && pipeWCenter[i] != null) {
                             singlePipeIndex = i;
-                            if (MathHelper.isBitSet(cMask, i ^ 1)) {
+                            if (MathHelper.isBitSet(cMask, i ^ 1) && pipeFullLength[i] != null && pipeFullLength[i ^ 1] != null) {
                                 doublePipeIndex = i;
                                 break;
                             }
@@ -106,8 +131,14 @@ public class ModelHelper {
                             else if (MathHelper.isBitSet(cMask, i))
                                 addSideFace(verts, pipe[i], side);
                         }
-                    } else if (!MathHelper.isBitSet(cMask, side)) {
-                        addSideFace(verts, center, side);
+                    } else {
+                        if (!MathHelper.isBitSet(cMask, side))
+                            addSideFace(verts, center, side);
+
+                        for (int i : orthogs[side]) {
+                            if (MathHelper.isBitSet(cMask, i))
+                                addSideFace(verts, pipe[i], side);
+                        }
                     }
                 }
 
