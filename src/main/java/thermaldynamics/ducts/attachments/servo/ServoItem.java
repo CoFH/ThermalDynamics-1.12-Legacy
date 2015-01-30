@@ -148,7 +148,7 @@ public class ServoItem extends ServoBase {
         RouteCache cache1 = itemDuct.getCache(false);
         if (cache1 != cache) {
             cache = cache1;
-            routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
+            routeList.setList(cache.outputRoutes, getSortType());
         }
 
 
@@ -381,10 +381,15 @@ public class ServoItem extends ServoBase {
         RouteCache cache1 = itemDuct.getCache(false);
         if (cache1 != cache) {
             cache = cache1;
-            routeList.setList(cache.outputRoutes, ListWrapper.SortType.NORMAL);
+            routeList.setList(cache.outputRoutes, getSortType());
         }
 
         return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
+    }
+
+    public ListWrapper.SortType getSortType() {
+        int level = filter.getLevel(FilterLogic.levelRouteMode);
+        return ListWrapper.SortType.values()[level];
     }
 
 

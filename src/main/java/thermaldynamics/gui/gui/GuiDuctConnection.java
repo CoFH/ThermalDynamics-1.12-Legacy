@@ -7,6 +7,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.ducts.attachments.ConnectionBase;
+import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.gui.containers.ContainerDuctConnection;
 
 public class GuiDuctConnection extends GuiBaseAdv {
@@ -15,8 +16,12 @@ public class GuiDuctConnection extends GuiBaseAdv {
     public static ResourceLocation TEX = new ResourceLocation("thermaldynamics:textures/gui/guiServo.png");
 
     ContainerDuctConnection container;
-    public ElementButton[] elementButtons = new ElementButton[0];
-    ;
+    public ElementButton[] flagButtons = new ElementButton[0];
+    public ElementButton[] levelButtons = new ElementButton[FilterLogic.defaultLevels.length];
+
+    public ElementButton incStack;
+    public ElementButton subStacksize;
+
     public int buttonSize;
 
     public GuiDuctConnection(InventoryPlayer inventory, ConnectionBase servoBase) {
@@ -28,7 +33,13 @@ public class GuiDuctConnection extends GuiBaseAdv {
         this.ySize = 205;
     }
 
-    int[][] buttons = {
+    private final static int[][] levelButtonPos = {
+            {-1, -1},
+            {0, 204},
+            {80, 204}
+    };
+
+    private static final int[][] flagButtonsPos = {
             {176, 0},
             {216, 0},
             {176, 60},
@@ -45,45 +56,79 @@ public class GuiDuctConnection extends GuiBaseAdv {
         if (servoBase.canAlterRS())
             addTab(new TabRedstone(this, servoBase));
 
-        int flagNo = container.filter.numFlags();
-        elementButtons = new ElementButton[flagNo];
-        if (flagNo != 0) {
+        int[] flagNums = container.filter.validFlags();
+        flagButtons = new ElementButton[container.filter.numFlags()];
+
+        int[] levelNums = container.filter.getValidLevels();
+        levelButtons = new ElementButton[FilterLogic.defaultLevels.length];
+
+        int buttonNo = flagNums.length + levelNums.length;
+        if (buttonNo != 0) {
             buttonSize = 20;
             int button_offset = buttonSize + 6;
-            int x0 = xSize / 2 - flagNo * (button_offset / 2);
+            int x0 = xSize / 2 - buttonNo * (button_offset / 2);
             int y0 = container.gridY0 + container.gridHeight * 18 + 8;
 
-            for (int i = 0; i < flagNo; i++) {
-                elementButtons[i] = new ElementButton(
+            for (int i = 0; i < flagNums.length; i++) {
+                int j = flagNums[i];
+                flagButtons[j] = new ElementButton(
                         this,
                         x0 + button_offset * i, y0,
-                        container.filter.flagType(i),
-                        buttons[i][0], buttons[i][1],
-                        buttons[i][0], buttons[i][1] + buttonSize,
-                        buttons[i][0], buttons[i][1] + buttonSize * 2,
+                        container.filter.flagType(j),
+                        flagButtonsPos[j][0], flagButtonsPos[j][1],
+                        flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize,
+                        flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize * 2,
                         buttonSize, buttonSize,
                         TEX.toString()
                 );
 
-
-                addElement(elementButtons[i]);
-
-                if (!container.filter.canAlterFlag(i)) elementButtons[i].setDisabled();
+                addElement(flagButtons[j]);
             }
 
-            setButtons();
+            for (int i = 0; i < levelNums.length; i++) {
+                int j = levelNums[i];
+                levelButtons[j] = new ElementButton(
+                        this,
+                        x0 + button_offset * (i + flagNums.length), y0,
+                        "Level"+j,
+                        levelButtonPos[j][0], levelButtonPos[j][1],
+                        levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize,
+                        buttonSize, buttonSize,
+                        TEX.toString()
+                );
+
+                addElement(levelButtons[j]);
+            }
+
         }
+
+
+        setButtons();
     }
+
 
     private void setButtons() {
 
-        for (int i = 0; i < elementButtons.length; i++) {
-            boolean b = container.filter.getFlag(i);
-            int x = buttons[i][0] + (b ? buttonSize : 0);
-            elementButtons[i].setSheetX(x);
-            elementButtons[i].setHoverX(x);
-            String s = "info.thermaldynamics.filter." + elementButtons[i].getName() + (b ? ".on" : ".off");
-            elementButtons[i].setToolTip("info.thermaldynamics.filter." + elementButtons[i].getName() + (b ? ".on" : ".off"));
+        for (int i = 0; i < flagButtons.length; i++) {
+            if (flagButtons[i] != null) {
+                boolean b = container.filter.getFlag(i);
+                int x = flagButtonsPos[i][0] + (b ? buttonSize : 0);
+                flagButtons[i].setSheetX(x);
+                flagButtons[i].setHoverX(x);
+                String s = "info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off");
+                flagButtons[i].setToolTip("info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off"));
+            }
+        }
+
+        for (int i = 0; i < levelButtons.length; i++) {
+            if (levelButtons[i] != null) {
+                int level = container.filter.getLevel(i);
+                int x = levelButtonPos[i][0] + level * buttonSize;
+                levelButtons[i].setSheetX(x);
+                levelButtons[i].setHoverX(x);
+                //String s = "info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off");
+                //flagButtons[i].setToolTip("info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off"));
+            }
         }
     }
 
@@ -95,10 +140,19 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
     @Override
     public void handleElementButtonClick(String buttonName, int mouseButton) {
-        for (int i = 0; i < elementButtons.length; i++) {
-            ElementButton button = elementButtons[i];
-            if (button.getName().equals(buttonName)) {
+        for (int i = 0; i < flagButtons.length; i++) {
+            ElementButton button = flagButtons[i];
+            if (button != null && button.getName().equals(buttonName)) {
                 container.filter.setFlag(i, !container.filter.getFlag(i));
+                setButtons();
+                return;
+            }
+        }
+
+        for (int i = 0; i < levelButtons.length; i++) {
+            ElementButton button = levelButtons[i];
+            if (button != null && button.getName().equals(buttonName)) {
+                container.filter.incLevel(i);
                 setButtons();
                 return;
             }
@@ -108,6 +162,10 @@ public class GuiDuctConnection extends GuiBaseAdv {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTick, int x, int y) {
         super.drawGuiContainerBackgroundLayer(partialTick, x, y);
+        drawSlots();
+    }
+
+    private void drawSlots() {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         bindTexture(TEX);
 

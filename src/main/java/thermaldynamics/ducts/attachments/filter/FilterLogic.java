@@ -4,18 +4,19 @@ import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cpw.mods.fml.common.registry.GameData;
+import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.hash.TIntHashSet;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidStack;
+import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.ConnectionBase;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 
 public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     public static final int[] maxFilterItems = {1, 4, 9, 12, 16};
@@ -30,8 +31,8 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     private final ItemStack[] items;
 
     public boolean recalc = true;
-    public ConnectionBase duct;
-    public int type;
+    public final ConnectionBase connection;
+    public final int type;
     public static final boolean[] defaultflags = {true, false, false, true, true};
     boolean[] flags = {true, false, false, true, true};
 
@@ -43,8 +44,9 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
     public static int[] options = {0, 1, 6, 6, 6};
     private Ducts.Type transferType;
+    private int[] validFlags;
 
-    public FilterLogic(int type, Ducts.Type transferType, ConnectionBase duct) {
+    public FilterLogic(int type, Ducts.Type transferType, ConnectionBase connection) {
         this.type = type;
         this.transferType = transferType;
 
@@ -56,7 +58,13 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
             fluidsNBT = new HashSet<FluidStack>();
         }
 
-        this.duct = duct;
+        this.connection = connection;
+
+        initLevels();
+    }
+
+    public int[] getValidLevels() {
+        return validLevels;
     }
 
     public void calcItems() {
@@ -167,6 +175,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     }
 
     @Override
+    public boolean shouldIncRouteItems() {
+        return levels[levelConservativeMode] == 1;
+    }
+
+    @Override
     public ItemStack[] getFilterStacks() {
         return items;
     }
@@ -193,9 +206,9 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
             return;
         }
 
-        if (duct.tile.world().isRemote) {
-            duct.sendFilterConfigPacket(flagType, flag);
-        } else duct.tile.markDirty();
+        if (connection.tile.world().isRemote) {
+            connection.sendFilterConfigPacketFlag(flagType, flag);
+        } else connection.tile.markDirty();
 
         flags[flagType] = flag;
         recalc = true;
@@ -209,6 +222,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     @Override
     public int numFlags() {
         return transferType == Ducts.Type.Item ? flags.length : 0;
+    }
+
+    public int[] validFlags() {
+        return validFlags;
     }
 
     @Override
@@ -233,6 +250,16 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         recalc = true;
 
         handleFlagByte(tag.getByte("Flags"));
+
+        NBTTagCompound nbt = tag.getCompoundTag("Levels");
+        for (int i = 0; i < levels.length; i++) {
+            if (nbt.hasKey("Level" + i)) {
+                levels[i] = Math.max(minLevels[type][i], Math.min(maxLevels[type][i], nbt.getInteger("Level" + i))
+                );
+            } else
+                levels[i] = defaultLevels[i];
+
+        }
     }
 
     public void writeToNBT(NBTTagCompound tag) {
@@ -247,6 +274,12 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         }
         tag.setTag("Inventory", list);
         tag.setByte("Flags", (byte) getFlagByte());
+
+        NBTTagCompound nbt = new NBTTagCompound();
+        for (int i = 0; i < levels.length; i++) {
+            nbt.setInteger("Level" + i, levels[i]);
+        }
+        tag.setTag("Levels", nbt);
     }
 
     @Override
@@ -272,9 +305,118 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         }
     }
 
-
-    public String getModName(Item item) {
+    //TODO: Move to COFHCore somewhere
+    public static String getModName(Item item) {
         String s = GameData.getItemRegistry().getNameForObject(item);
         return s.substring(0, s.indexOf(':'));
     }
+
+    public int getNumLevels() {
+        return validLevels.length;
+    }
+
+    public static enum Perm {
+        FILTER(true, false, Ducts.Type.Item),
+        SERVO(false, true, Ducts.Type.Item),
+        ALL(true, true, Ducts.Type.Item);
+
+        public final boolean filter;
+        public final boolean servo;
+        public final Ducts.Type ductType;
+
+        Perm(boolean filter, boolean servo, Ducts.Type ductType) {
+            this.filter = filter;
+            this.servo = servo;
+            this.ductType = ductType;
+        }
+
+        public boolean appliesTo(FilterLogic base) {
+            return base.transferType == ductType &&
+                    (base.connection.getID() != AttachmentRegistry.FILTER_FLUID || filter) &&
+                    (base.connection.getID() != AttachmentRegistry.FILTER_INV || filter) &&
+                    (base.connection.getID() != AttachmentRegistry.SERVO_INV || servo) &&
+                    (base.connection.getID() != AttachmentRegistry.SERVO_FLUID || servo);
+        }
+    }
+
+    public static final Perm[] levelPerms = {Perm.SERVO, Perm.SERVO, Perm.FILTER};
+    public static final int[][] minLevels = {
+            {1, 2, 0},
+            {1, 0, 0},
+            {1, 0, 0},
+            {1, 0, 0},
+            {1, 0, 0},
+    };
+
+    public static final int[][] maxLevels = {
+            {1, 2, 0},
+            {8, 0, 0},
+            {64, 3, 1},
+            {64, 3, 1},
+            {64, 3, 1},
+    };
+    public static final int[] defaultLevels = {64, 0, 1};
+    public static int[] validLevels;
+
+    private int[] levels = new int[defaultLevels.length];
+
+    private void initLevels() {
+        TIntArrayList vLevels = new TIntArrayList(levels.length);
+
+        for (int i = 0; i < levels.length; i++) {
+            levels[i] = Math.max(Math.min(defaultLevels[i], maxLevels[type][i]), minLevels[type][i]);
+            if (i != levelStacksize && levelPerms[i].appliesTo(this) && minLevels[type][i] < maxLevels[type][i]) {
+                vLevels.add(i);
+            }
+        }
+
+        validLevels = vLevels.toArray();
+
+        vLevels.clear();
+
+        for (int i = 0; i < numFlags(); i++) {
+            if (canAlterFlag(i)) vLevels.add(i);
+        }
+
+        validFlags = vLevels.toArray();
+
+
+    }
+
+    public final static int levelStacksize = 0;
+    public final static int levelRouteMode = 1;
+    public final static int levelConservativeMode = 2;
+
+    public void incLevel(int i) {
+        int l = getLevel(i) + 1;
+        if (l > maxLevels[type][i]) l = minLevels[type][i];
+        setLevel(i, l);
+    }
+
+    public void setLevel(int i, int level) {
+        if (level < minLevels[type][i]) level = minLevels[type][i];
+        if (level > maxLevels[type][i]) level = maxLevels[type][i];
+
+        if (levels[i] == level)
+            return;
+
+        if (!levelPerms[i].appliesTo(this))
+            return;
+
+        if (connection.tile.world().isRemote) {
+            connection.sendFilterConfigPacketLevel(i, level);
+        } else {
+            connection.tile.markDirty();
+            levelsChanged = true;
+        }
+
+        levels[i] = level;
+    }
+
+
+    public int getLevel(int i) {
+        return levels[i];
+    }
+
+    public boolean levelsChanged;
 }

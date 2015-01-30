@@ -555,6 +555,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         if (insertingItem == null) return null;
         if (internalGrid == null) return insertingItem;
 
+        boolean routeItems = filterCache[side].shouldIncRouteItems();
+
 
         if (cache3[side] != null) { // IDeepStorage
             ItemStack cacheStack = cache3[side].getStoredItemType();
@@ -565,16 +567,17 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             int m = cache3[side].getMaxStoredCount();
             if (s >= m) return insertingItem;
 
-
-            LinkedList<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
-            if (travelingItems != null && !travelingItems.isEmpty()) {
-                for (Iterator<TravelingItem> iterator = travelingItems.iterator(); s < m && iterator.hasNext(); ) {
-                    TravelingItem travelingItem = iterator.next();
-                    boolean equalsItem = ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack);
-                    if (cacheStack == null && !equalsItem) return insertingItem;
-                    if (equalsItem) s += travelingItem.stack.stackSize;
+            if (routeItems) {
+                LinkedList<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
+                if (travelingItems != null && !travelingItems.isEmpty()) {
+                    for (Iterator<TravelingItem> iterator = travelingItems.iterator(); s < m && iterator.hasNext(); ) {
+                        TravelingItem travelingItem = iterator.next();
+                        boolean equalsItem = ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem.stack);
+                        if (cacheStack == null && !equalsItem) return insertingItem;
+                        if (equalsItem) s += travelingItem.stack.stackSize;
+                    }
+                    if (s >= m) return insertingItem;
                 }
-                if (s >= m) return insertingItem;
             }
 
             insertingItem.stackSize -= (m - s);
@@ -583,15 +586,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
             return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
         } else {
-//            if (cache[side].getInventoryStackLimit() > 64) {
-//                int slot;
-//                for (slot = 0; slot < cache[side].getSizeInventory(); slot++) {
-//                    if ((cache[side].getStackInSlot(slot) == null && cache[side].isItemValidForSlot(slot, insertingItem)) || ItemHelper.itemsEqualWithMetadata(cache[side].getStackInSlot(slot), insertingItem)) {
-//                        if (cache2[side] == null || cache2[side].canInsertItem(slot, insertingItem, side))
-//                            break;
-//                    }
-//                }
-//            }
+            if(!routeItems)
+                return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
 
             LinkedList<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
             if (travelingItems == null || travelingItems.isEmpty())

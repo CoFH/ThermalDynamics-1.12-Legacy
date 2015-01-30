@@ -57,8 +57,7 @@ public class ContainerAttachmentBase extends Container {
             return;
         }
 
-            baseTile.sendGuiNetworkData(this, crafters, false);
-
+        baseTile.sendGuiNetworkData(this, crafters, false);
     }
 
     public void addCraftingToCrafters(ICrafting crafter) {

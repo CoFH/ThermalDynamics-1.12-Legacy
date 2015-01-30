@@ -8,6 +8,8 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -26,9 +28,6 @@ import thermaldynamics.ducts.attachments.filter.IFilterItems;
 import thermaldynamics.gui.GuiHandler;
 import thermaldynamics.gui.containers.ContainerDuctConnection;
 import thermaldynamics.gui.gui.GuiDuctConnection;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class ConnectionBase extends Attachment implements IStuffable, IRedstoneControl, IFilterAttachment {
     public boolean stuffed = false;
@@ -182,6 +181,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
         public final static byte GUI = 0;
         public final static byte RSCONTROL = 1;
         public final static byte FILTERFLAG = 2;
+        public final static byte FILTERLEVEL = 3;
 
     }
 
@@ -194,12 +194,25 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
             byte aByte = payload.getByte();
             filter.setFlag(aByte >> 1, (aByte & 1) == 1);
             filter.recalc = true;
+        } else if (a == NETWORK_ID.FILTERLEVEL) {
+
+            byte b = payload.getByte();
+            byte c = payload.getByte();
+            filter.setLevel(b, c);
+            filter.recalc = true;
         }
     }
 
-    public void sendFilterConfigPacket(int flagType, boolean flag) {
+    public void sendFilterConfigPacketFlag(int flagType, boolean flag) {
         PacketTileInfo packet = getNewPacket(NETWORK_ID.FILTERFLAG);
         packet.addByte(flagType << 1 | (flag ? 1 : 0));
+        PacketHandler.sendToServer(packet);
+    }
+
+    public void sendFilterConfigPacketLevel(int levelType, int level) {
+        PacketTileInfo packet = getNewPacket(NETWORK_ID.FILTERLEVEL);
+        packet.addByte(levelType);
+        packet.addByte(level);
         PacketHandler.sendToServer(packet);
     }
 
@@ -215,12 +228,25 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
             }
         }
         prevFlag = flagByte;
+
+        if (filter.levelsChanged || newGuy) {
+            for (int i = 0; i < FilterLogic.defaultLevels.length; i++) {
+                for (Object player : players) {
+                    ((ICrafting) player).sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
+                }
+            }
+
+            filter.levelsChanged = false;
+        }
     }
 
     @Override
     public void receiveGuiNetworkData(int i, int j) {
         super.receiveGuiNetworkData(i, j);
-        if (i == 0) filter.handleFlagByte(j);
+        if (i == 0)
+            filter.handleFlagByte(j);
+        else
+            filter.setLevel(i - 1, j);
     }
 
     @Override
