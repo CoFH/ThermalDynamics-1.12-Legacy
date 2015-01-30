@@ -58,7 +58,6 @@ public class ItemCoverRenderer implements IItemRenderer {
             GL11.glScaled(0.5, 0.5, 0.5);
         }
         RenderHelper.setBlockTextureSheet();
-        //net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
         RenderUtils.preItemRender();
 
         CCRenderState.startDrawing();
