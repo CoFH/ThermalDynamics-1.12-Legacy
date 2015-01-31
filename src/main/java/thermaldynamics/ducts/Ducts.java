@@ -129,7 +129,16 @@ public enum Ducts {
             "thermalfoundation:fluid/Fluid_Redstone_Still", 192),
 
     FLUID_REDSTONE_OPAQUE(36, true, 1, 1, "fluidDuctRedstone", Type.Fluid, DuctFactory.fluid_redstone, "invar", "thermaldynamics:duct/fluid/ConnectionFluid11", null, 0, Constants.sideDucts,
-            "thermalfoundation:fluid/Fluid_Redstone_Still", 192),;
+            "thermalfoundation:fluid/Fluid_Redstone_Still", 192),
+
+    FLUID_REDSTONE_TRANS_STRUCT(37, false, 1, 1, "fluidDuctRedstoneEmpty", Type.Fluid, DuctFactory.structural, "invar", "thermaldynamics:duct/fluid/ConnectionFluid10", null, 0, Constants.sideDucts,
+            null, 0),
+
+    FLUID_REDSTONE_OPAQUE_STRUCT(38, true, 1, 1, "fluidDuctRedstoneEmpty", Type.Fluid, DuctFactory.structural, "invar", "thermaldynamics:duct/fluid/ConnectionFluid11", null, 0, Constants.sideDucts,
+                          null, 0),
+
+    ;
+
 
     public final static Ducts[] ductList;
 

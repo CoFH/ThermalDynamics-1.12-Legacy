@@ -45,6 +45,12 @@ public class TDCrafting {
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_HARDENED_OPAQUE.itemStack, 6), " I ", "IGI", " I ", 'I', "ingotInvar", 'G', "ingotLead"));
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_HARDENED_TRANS.itemStack, 6), " I ", "IGI", " I ", 'I', "ingotInvar", 'G', "blockGlassHardened"));
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_REDSTONE_TRANS_STRUCT.itemStack, 3), "LGL", "PPP", "LGL", 'L', "ingotLead", 'G', "blockGlassHardened", 'P', Ducts.FLUID_HARDENED_TRANS.itemStack));
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_REDSTONE_OPAQUE_STRUCT.itemStack, 3), "LGL", "PPP", "LGL", 'L', "ingotLead", 'G', "blockGlassHardened", 'P', Ducts.FLUID_HARDENED_OPAQUE.itemStack));
+
+        ThermalExpansionHelper.addTransposerFill(800, Ducts.FLUID_REDSTONE_TRANS_STRUCT.itemStack, Ducts.FLUID_REDSTONE_TRANS.itemStack, new FluidStack(TFFluids.fluidRedstone, 100), false);
+        ThermalExpansionHelper.addTransposerFill(800, Ducts.FLUID_REDSTONE_OPAQUE_STRUCT.itemStack, Ducts.FLUID_REDSTONE_OPAQUE.itemStack, new FluidStack(TFFluids.fluidRedstone, 100), false);
+
         // Servo
 
         String[] materials = {"Iron", "Invar", "Electrum", "Signalum", "Enderium"};
