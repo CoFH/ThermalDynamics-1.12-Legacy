@@ -1,4 +1,4 @@
-package thermaldynamics.gui.gui;
+package thermaldynamics.gui.client;
 
 import thermaldynamics.ducts.attachments.servo.ServoBase;
 

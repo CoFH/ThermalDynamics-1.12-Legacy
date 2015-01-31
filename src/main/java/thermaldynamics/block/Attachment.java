@@ -6,6 +6,9 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,144 +17,155 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
-import java.util.List;
 import net.minecraft.util.MovingObjectPosition;
 
 public abstract class Attachment {
-    public final TileMultiBlock tile;
-    public final byte side;
 
-    public Attachment(TileMultiBlock tile, byte side) {
-        this.tile = tile;
-        this.side = side;
-    }
+	public final TileMultiBlock tile;
+	public final byte side;
 
-    public abstract int getID();
+	public Attachment(TileMultiBlock tile, byte side) {
 
-    public void writeToNBT(NBTTagCompound tag) {
+		this.tile = tile;
+		this.side = side;
+	}
 
-    }
+	public abstract int getID();
 
-    public void readFromNBT(NBTTagCompound tag) {
+	public void writeToNBT(NBTTagCompound tag) {
 
-    }
+	}
 
-    public void addDescriptionToPacket(PacketCoFHBase packet) {
+	public void readFromNBT(NBTTagCompound tag) {
 
-    }
+	}
 
-    public void getDescriptionFromPacket(PacketCoFHBase packet) {
+	public void addDescriptionToPacket(PacketCoFHBase packet) {
 
-    }
+	}
 
-    public abstract Cuboid6 getCuboid();
+	public void getDescriptionFromPacket(PacketCoFHBase packet) {
 
-    public boolean onWrenched() {
-        tile.removeAttachment(this);
-        for (ItemStack stack : getDrops()) {
-            dropItemStack(stack);
-        }
-        return true;
-    }
+	}
 
+	public abstract Cuboid6 getCuboid();
 
-    public abstract TileMultiBlock.NeighborTypes getNeighbourType();
+	public boolean onWrenched() {
 
-    public abstract boolean isNode();
+		tile.removeAttachment(this);
+		for (ItemStack stack : getDrops()) {
+			dropItemStack(stack);
+		}
+		return true;
+	}
 
-    public boolean doesTick() {
-        return false;
-    }
+	public abstract TileMultiBlock.NeighborTypes getNeighbourType();
 
-    public void tick(int pass) {
+	public abstract boolean isNode();
 
-    }
+	public boolean doesTick() {
 
-    public void dropItemStack(ItemStack item) {
-        Cuboid6 c = getCuboid();
-        CoreUtils.dropItemStackIntoWorldWithVelocity(item,
-                tile.getWorldObj(),
-                tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
-                tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y),
-                tile.z() + c.min.z + tile.world().rand.nextFloat() * (c.max.z - c.min.z)
+		return false;
+	}
 
-        );
-    }
+	public void tick(int pass) {
 
-    @SideOnly(Side.CLIENT)
-    public abstract boolean render(int pass, RenderBlocks renderBlocks);
+	}
 
-    @SuppressWarnings("unchecked")
-    public void addCollisionBoxesToList(AxisAlignedBB axis, List list, Entity entity) {
-        Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.xCoord, tile.yCoord, tile.zCoord));
-        if (cuboid6.intersects(new Cuboid6(axis))) {
-            list.add(cuboid6.toAABB());
-        }
-    }
+	public void dropItemStack(ItemStack item) {
 
-    public boolean makesSideSolid() {
-        return false;
-    }
+		Cuboid6 c = getCuboid();
+		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorldObj(), tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
+				tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat()
+				* (c.max.z - c.min.z)
 
-    public void onNeighbourChange() {
+				);
+	}
 
-    }
+	@SideOnly(Side.CLIENT)
+	public abstract boolean render(int pass, RenderBlocks renderBlocks);
 
-    public abstract ItemStack getPickBlock();
+	@SuppressWarnings("unchecked")
+	public void addCollisionBoxesToList(AxisAlignedBB axis, List list, Entity entity) {
 
-    public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
-        return tileMultiBlock.attachments[side] == null;
-    }
+		Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.xCoord, tile.yCoord, tile.zCoord));
+		if (cuboid6.intersects(new Cuboid6(axis))) {
+			list.add(cuboid6.toAABB());
+		}
+	}
 
-    public abstract List<ItemStack> getDrops();
+	public boolean makesSideSolid() {
 
-    @SideOnly(Side.CLIENT)
-    public Object getGuiClient(InventoryPlayer inventory) {
-        return null;
-    }
+		return false;
+	}
 
-    public Object getGuiServer(InventoryPlayer inventory) {
-        return null;
-    }
+	public void onNeighbourChange() {
 
-    public boolean isUseable(EntityPlayer player) {
-        return tile.isUseable(player);
-    }
+	}
 
-    public void receiveGuiNetworkData(int i, int j) {
+	public abstract ItemStack getPickBlock();
 
-    }
+	public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
 
-    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+		return tileMultiBlock.attachments[side] == null;
+	}
 
-    }
+	public abstract List<ItemStack> getDrops();
 
-    public int getInvSlotCount() {
-        return 0;
-    }
+	@SideOnly(Side.CLIENT)
+	public Object getGuiClient(InventoryPlayer inventory) {
 
-    public boolean openGui(EntityPlayer player) {
-        return false;
-    }
+		return null;
+	}
 
-    public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public Object getGuiServer(InventoryPlayer inventory) {
 
-    }
+		return null;
+	}
 
-    public BlockDuct.ConnectionTypes getRenderConnectionType() {
-        return TileMultiBlock.getDefaultConnectionType(getNeighbourType(), TileMultiBlock.ConnectionTypes.NORMAL);
-    }
+	public boolean isUseable(EntityPlayer player) {
 
-    public boolean allowPipeConnection() {
-        return false;
-    }
+		return tile.isUseable(player);
+	}
 
-    public boolean addToTile() {
-        return canAddToTile(tile) && tile.addAttachment(this);
-    }
+	public void receiveGuiNetworkData(int i, int j) {
 
-    public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
+	}
 
-    }
+	public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+
+	}
+
+	public int getInvSlotCount() {
+
+		return 0;
+	}
+
+	public boolean openGui(EntityPlayer player) {
+
+		return false;
+	}
+
+	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+
+	}
+
+	public BlockDuct.ConnectionTypes getRenderConnectionType() {
+
+		return TileMultiBlock.getDefaultConnectionType(getNeighbourType(), TileMultiBlock.ConnectionTypes.NORMAL);
+	}
+
+	public boolean allowPipeConnection() {
+
+		return false;
+	}
+
+	public boolean addToTile() {
+
+		return canAddToTile(tile) && tile.addAttachment(this);
+	}
+
+	public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
+
+	}
 }

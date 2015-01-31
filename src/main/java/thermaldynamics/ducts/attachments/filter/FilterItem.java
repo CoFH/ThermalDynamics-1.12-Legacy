@@ -9,8 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.Ducts;
-import thermaldynamics.gui.containers.ContainerDuctConnection;
-import thermaldynamics.gui.gui.GuiDuctConnection;
+import thermaldynamics.gui.client.GuiDuctConnection;
+import thermaldynamics.gui.container.ContainerDuctConnection;
 
 public class FilterItem extends FilterBase {
     public FilterItem(TileMultiBlock tile, byte side, int type) {

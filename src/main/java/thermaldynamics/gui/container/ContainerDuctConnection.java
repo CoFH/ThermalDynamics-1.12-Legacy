@@ -1,4 +1,4 @@
-package thermaldynamics.gui.containers;
+package thermaldynamics.gui.container;
 
 import cofh.lib.util.helpers.ItemHelper;
 import net.minecraft.entity.player.EntityPlayer;

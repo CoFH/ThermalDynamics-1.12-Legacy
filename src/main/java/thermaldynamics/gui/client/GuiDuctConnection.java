@@ -1,4 +1,4 @@
-package thermaldynamics.gui.gui;
+package thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiBaseAdv;
 import cofh.core.gui.element.TabRedstone;
@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import thermaldynamics.ducts.attachments.ConnectionBase;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
-import thermaldynamics.gui.containers.ContainerDuctConnection;
+import thermaldynamics.gui.container.ContainerDuctConnection;
 
 public class GuiDuctConnection extends GuiBaseAdv {
     InventoryPlayer inventory;

@@ -26,8 +26,8 @@ import thermaldynamics.ducts.attachments.filter.IFilterAttachment;
 import thermaldynamics.ducts.attachments.filter.IFilterFluid;
 import thermaldynamics.ducts.attachments.filter.IFilterItems;
 import thermaldynamics.gui.GuiHandler;
-import thermaldynamics.gui.containers.ContainerDuctConnection;
-import thermaldynamics.gui.gui.GuiDuctConnection;
+import thermaldynamics.gui.client.GuiDuctConnection;
+import thermaldynamics.gui.container.ContainerDuctConnection;
 
 public abstract class ConnectionBase extends Attachment implements IStuffable, IRedstoneControl, IFilterAttachment {
     public boolean stuffed = false;

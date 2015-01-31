@@ -12,9 +12,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -34,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.Ducts;
@@ -48,284 +51,323 @@ import thermaldynamics.ducts.item.TileItemDuctEnder;
 import thermaldynamics.ducts.item.TileItemDuctRedstone;
 
 public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAppearance {
-    public int offset;
 
-    public BlockDuct(int offset) {
-        super(Material.glass);
-        setHardness(1.0F);
-        setResistance(150.0F);
-        setStepSound(soundTypeMetal);
-        setBlockName("thermalducts.duct");
-        setCreativeTab(ThermalDynamics.tab);
-        this.offset = offset * 16;
-    }
+	public int offset;
 
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for (int i = 0; i < 16; i++) {
-            if (Ducts.isValid(i + offset))
-                list.add(Ducts.getDuct(i + offset).itemStack.copy());
-        }
-    }
+	public BlockDuct(int offset) {
 
-    @Override
-    public boolean hasTileEntity(int metadata) {
-        return Ducts.isValid(metadata + offset);
-    }
+		super(Material.glass);
+		setHardness(1.0F);
+		setResistance(150.0F);
+		setStepSound(soundTypeMetal);
+		setBlockName("thermalducts.duct");
+		setCreativeTab(ThermalDynamics.tab);
+		this.offset = offset * 16;
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World world, int metadata) {
-        Ducts duct = Ducts.getType(metadata + offset);
-        return duct.factory.createTileEntity(duct, world);
-    }
+	@Override
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int side, int metadata) {
-        return Ducts.getType(metadata + offset).iconBaseTexture;
-    }
+		for (int i = 0; i < 16; i++) {
+			if (Ducts.isValid(i + offset)) {
+				list.add(Ducts.getDuct(i + offset).itemStack.copy());
+			}
+		}
+	}
 
-    @Override
-    public int damageDropped(int i) {
-        return i;
-    }
+	@Override
+	public boolean hasTileEntity(int metadata) {
 
-    @Override
-    public boolean canCreatureSpawn(EnumCreatureType type, IBlockAccess world, int x, int y, int z) {
-        return false;
-    }
+		return Ducts.isValid(metadata + offset);
+	}
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void onBlockHighlight(DrawBlockHighlightEvent event) {
+	@Override
+	public TileEntity createNewTileEntity(World world, int metadata) {
 
-        if (event.target.typeOfHit == MovingObjectType.BLOCK
-                && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
-                .equals(getUnlocalizedName())) {
-            RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
+		Ducts duct = Ducts.getType(metadata + offset);
+		return duct.factory.createTileEntity(duct, world);
+	}
 
-            ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
-            if (theTile.shouldRenderCustomHitBox(event.target.subHit, event.player)) {
-                event.setCanceled(true);
-                RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, theTile.getCustomHitBox(event.target.subHit, event.player));
-            }
-        }
-    }
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(int side, int metadata) {
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister ir) {
-        if (offset != 0)
-            return;
+		return Ducts.getType(metadata + offset).iconBaseTexture;
+	}
 
-        IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
-        IconRegistry.addIcon("TinDuct", "thermaldynamics:altDucts/tin_trans", ir);
+	@Override
+	public int damageDropped(int i) {
 
-//        IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte) 64));
-//        IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still", (byte) 128));
-//        IconRegistry.addIcon("Trans_Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still", (byte) 192));
+		return i;
+	}
 
-        for (int i = 0; i < 5; i++)
-            for (int j = 0; j < 2; j++)
-                IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/servo/ServoBase" + i + "" + j, ir);
+	@Override
+	public boolean canCreatureSpawn(EnumCreatureType type, IBlockAccess world, int x, int y, int z) {
 
-        for (int i = 0; i < 5; i++)
-            IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/filter/Filter" + i + "0", ir);
+		return false;
+	}
 
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onBlockHighlight(DrawBlockHighlightEvent event) {
 
-        IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);
+		if (event.target.typeOfHit == MovingObjectType.BLOCK
+				&& event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
+						.equals(getUnlocalizedName())) {
+			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
 
-        IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
+			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
+			if (theTile.shouldRenderCustomHitBox(event.target.subHit, event.player)) {
+				event.setCanceled(true);
+				RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, theTile.getCustomHitBox(event.target.subHit, event.player));
+			}
+		}
+	}
 
-        for (int i = 0; i < Ducts.values().length; i++) {
-            Ducts ducts = Ducts.values()[i];
-            ducts.registerIcons(ir);
-        }
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerBlockIcons(IIconRegister ir) {
 
+		if (offset != 0) {
+			return;
+		}
 
-    }
+		IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
+		IconRegistry.addIcon("TinDuct", "thermaldynamics:altDucts/tin_trans", ir);
 
-    @Override
-    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-        if (target.subHit >= 14 && target.subHit < 20) {
-            TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
-            ItemStack pickBlock = tileEntity.attachments[target.subHit - 14].getPickBlock();
-            if (pickBlock != null) return pickBlock;
-        }
+		// IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte)
+		// 64));
+		// IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still",
+		// (byte) 128));
+		// IconRegistry.addIcon("Trans_Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still",
+		// (byte) 192));
 
-        if (target.subHit >= 20 && target.subHit < 26) {
-            TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
-            ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
-            if (pickBlock != null) return pickBlock;
-        }
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 2; j++) {
+				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/servo/ServoBase" + i + "" + j, ir);
+			}
+		}
 
-        return super.getPickBlock(target, world, x, y, z);
-    }
+		for (int i = 0; i < 5; i++) {
+			IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/filter/Filter" + i + "0", ir);
+		}
 
-    @Override
-    public int getRenderType() {
-        return TDProps.renderDuctId;
-    }
+		IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);
 
-    @Override
-    public boolean canRenderInPass(int pass) {
-        renderPass = pass;
-        return pass < 2;
-    }
+		IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
 
-    @Override
-    public int getRenderBlockPass() {
-        return 1;
-    }
+		for (int i = 0; i < Ducts.values().length; i++) {
+			Ducts ducts = Ducts.values()[i];
+			ducts.registerIcons(ir);
+		}
 
-    @Override
-    public Block getVisualBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileMultiBlock) {
-            Cover cover = ((TileMultiBlock) tileEntity).covers[side.ordinal()];
-            if (cover != null) return cover.block;
+	}
 
-        }
-        return this;
-    }
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
 
-    @Override
-    public int getVisualMeta(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileMultiBlock) {
-            Cover cover = ((TileMultiBlock) tileEntity).covers[side.ordinal()];
-            if (cover != null) return cover.meta;
-        }
-        return world.getBlockMetadata(x, y, z);
-    }
+		if (target.subHit >= 14 && target.subHit < 20) {
+			TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
+			ItemStack pickBlock = tileEntity.attachments[target.subHit - 14].getPickBlock();
+			if (pickBlock != null) {
+				return pickBlock;
+			}
+		}
 
-    @Override
-    public boolean supportsVisualConnections() {
-        return true;
-    }
+		if (target.subHit >= 20 && target.subHit < 26) {
+			TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
+			ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
+			if (pickBlock != null) {
+				return pickBlock;
+			}
+		}
 
-    public static enum ConnectionTypes {
-        NONE(false), DUCT, TILECONNECTION, STRUCTURE;
+		return super.getPickBlock(target, world, x, y, z);
+	}
 
-        private final boolean renderDuct;
+	@Override
+	public int getRenderType() {
 
-        private ConnectionTypes() {
+		return TDProps.renderDuctId;
+	}
 
-            renderDuct = true;
-        }
+	@Override
+	public boolean canRenderInPass(int pass) {
 
-        private ConnectionTypes(boolean renderDuct) {
+		renderPass = pass;
+		return pass < 2;
+	}
 
-            this.renderDuct = renderDuct;
-        }
+	@Override
+	public int getRenderBlockPass() {
 
-        public boolean renderDuct() {
+		return 1;
+	}
 
-            return renderDuct;
-        }
-    }
+	@Override
+	public Block getVisualBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 
-    @Override
-    public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
-        TileEntity tile = world.getTileEntity(x, y, z);
-        int bMeta = world.getBlockMetadata(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (tileEntity instanceof TileMultiBlock) {
+			Cover cover = ((TileMultiBlock) tileEntity).covers[side.ordinal()];
+			if (cover != null) {
+				return cover.block;
+			}
 
+		}
+		return this;
+	}
 
-        ItemStack dropBlock = new ItemStack(this, 1, bMeta);
+	@Override
+	public int getVisualMeta(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 
-        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-        ret.add(dropBlock);
+		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (tileEntity instanceof TileMultiBlock) {
+			Cover cover = ((TileMultiBlock) tileEntity).covers[side.ordinal()];
+			if (cover != null) {
+				return cover.meta;
+			}
+		}
+		return world.getBlockMetadata(x, y, z);
+	}
 
-        if (tile instanceof TileMultiBlock) {
-            TileMultiBlock multiBlock = (TileMultiBlock) tile;
-            for (Attachment a : multiBlock.attachments) {
-                if (a != null)
-                    ret.addAll(a.getDrops());
-            }
-            for (Cover cover : multiBlock.covers) {
-                if (cover != null)
-                    ret.addAll(cover.getDrops());
-            }
+	@Override
+	public boolean supportsVisualConnections() {
 
+		return true;
+	}
 
-        }
+	public static enum ConnectionTypes {
+		NONE(false), DUCT, TILECONNECTION, STRUCTURE;
 
-        if (nbt != null) {
-            dropBlock.setTagCompound(nbt);
-        }
-        if (!simulate) {
-            if (tile instanceof TileCoFHBase) {
-                ((TileCoFHBase) tile).blockDismantled();
-            }
-            world.setBlockToAir(x, y, z);
+		private final boolean renderDuct;
 
-            if (!returnDrops) {
-                float f = 0.3F;
-                for (ItemStack stack : ret) {
-                    double x2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-                    double y2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-                    double z2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-                    EntityItem item = new EntityItem(world, x + x2, y + y2, z + z2, stack);
-                    item.delayBeforeCanPickup = 10;
-                    world.spawnEntityInWorld(item);
-                }
+		private ConnectionTypes() {
 
-                if (player != null) {
-                    CoreUtils.dismantleLog(player.getCommandSenderName(), this, bMeta, x, y, z);
-                }
-            }
-        }
+			renderDuct = true;
+		}
 
-        return ret;
-    }
+		private ConnectionTypes(boolean renderDuct) {
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void randomDisplayTick(World world, int x, int y, int z, Random p_149734_5_) {
-        super.randomDisplayTick(world, x, y, z, p_149734_5_);
-        TileEntity tileEntity = world.getTileEntity(x, y, z);
-        if (tileEntity instanceof TileMultiBlock) ((TileMultiBlock) tileEntity).randomDisplayTick();
-    }
+			this.renderDuct = renderDuct;
+		}
 
-    @Override
-    public float getSize(World world, int x, int y, int z) {
-        return Ducts.getDuct(offset + world.getBlockMetadata(x, y, z)).isLargeTube() ? 0.05F : super.getSize(world, x, y, z);
-    }
+		public boolean renderDuct() {
 
-    /* IInitializer */
-    @Override
-    public boolean preInit() {
-        GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDucts_" + offset);
+			return renderDuct;
+		}
+	}
 
-        for (int i = 0; i < 16; i++) {
-            if (Ducts.isValid(offset + i)) {
-                Ducts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
-            }
-        }
+	@Override
+	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
 
-        return true;
-    }
+		TileEntity tile = world.getTileEntity(x, y, z);
+		int bMeta = world.getBlockMetadata(x, y, z);
 
-    @Override
-    public boolean initialize() {
-        MinecraftForge.EVENT_BUS.register(this);
-        if (offset != 0)
-            return true;
+		ItemStack dropBlock = new ItemStack(this, 1, bMeta);
 
-        GameRegistry.registerTileEntity(TileFluidDuct.class, "thermalducts.ducts.energy.TileFluidDuct");
-        GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermalducts.ducts.energy.TileFragileFluidDuct");
-        GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
-        GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermalducts.ducts.energy.TileEnergyDuctSuperConductor");
-        GameRegistry.registerTileEntity(TileItemDuct.class, "thermalducts.ducts.energy.TileItemDuct");
-        GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermalducts.ducts.energy.TileItemDuctEnder");
-        GameRegistry.registerTileEntity(TileItemDuctRedstone.class, "thermalducts.ducts.energy.TileItemDuctRedstone");
-        GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermalducts.ducts.TileStructuralDuct");
-        return true;
-    }
+		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+		ret.add(dropBlock);
 
-    @Override
-    public boolean postInit() {
-        return true;
-    }
+		if (tile instanceof TileMultiBlock) {
+			TileMultiBlock multiBlock = (TileMultiBlock) tile;
+			for (Attachment a : multiBlock.attachments) {
+				if (a != null) {
+					ret.addAll(a.getDrops());
+				}
+			}
+			for (Cover cover : multiBlock.covers) {
+				if (cover != null) {
+					ret.addAll(cover.getDrops());
+				}
+			}
+
+		}
+
+		if (nbt != null) {
+			dropBlock.setTagCompound(nbt);
+		}
+		if (!simulate) {
+			if (tile instanceof TileCoFHBase) {
+				((TileCoFHBase) tile).blockDismantled();
+			}
+			world.setBlockToAir(x, y, z);
+
+			if (!returnDrops) {
+				float f = 0.3F;
+				for (ItemStack stack : ret) {
+					double x2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+					double y2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+					double z2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+					EntityItem item = new EntityItem(world, x + x2, y + y2, z + z2, stack);
+					item.delayBeforeCanPickup = 10;
+					world.spawnEntityInWorld(item);
+				}
+
+				if (player != null) {
+					CoreUtils.dismantleLog(player.getCommandSenderName(), this, bMeta, x, y, z);
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void randomDisplayTick(World world, int x, int y, int z, Random p_149734_5_) {
+
+		super.randomDisplayTick(world, x, y, z, p_149734_5_);
+		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		if (tileEntity instanceof TileMultiBlock) {
+			((TileMultiBlock) tileEntity).randomDisplayTick();
+		}
+	}
+
+	@Override
+	public float getSize(World world, int x, int y, int z) {
+
+		return Ducts.getDuct(offset + world.getBlockMetadata(x, y, z)).isLargeTube() ? 0.05F : super.getSize(world, x, y, z);
+	}
+
+	/* IInitializer */
+	@Override
+	public boolean preInit() {
+
+		GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDucts_" + offset);
+
+		for (int i = 0; i < 16; i++) {
+			if (Ducts.isValid(offset + i)) {
+				Ducts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean initialize() {
+
+		MinecraftForge.EVENT_BUS.register(this);
+		if (offset != 0) {
+			return true;
+		}
+
+		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermalducts.ducts.energy.TileFluidDuct");
+		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermalducts.ducts.energy.TileFragileFluidDuct");
+		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
+		GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermalducts.ducts.energy.TileEnergyDuctSuperConductor");
+		GameRegistry.registerTileEntity(TileItemDuct.class, "thermalducts.ducts.energy.TileItemDuct");
+		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermalducts.ducts.energy.TileItemDuctEnder");
+		GameRegistry.registerTileEntity(TileItemDuctRedstone.class, "thermalducts.ducts.energy.TileItemDuctRedstone");
+		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermalducts.ducts.TileStructuralDuct");
+		return true;
+	}
+
+	@Override
+	public boolean postInit() {
+
+		return true;
+	}
 
 }

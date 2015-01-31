@@ -1,4 +1,4 @@
-package thermaldynamics.gui.containers;
+package thermaldynamics.gui.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
