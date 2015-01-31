@@ -14,8 +14,6 @@ tile.thermalducts.duct.itemDuctRedstone.name=Fluctuating Itemduct
 tile.thermalducts.duct.itemDuctEnder.name=Warp Itemduct
 tile.thermalducts.duct.structureDuct.name=Structuralduct
 
-
-
 tile.thermalducts.duct.energyBasicDuct.info=Transfers RF
 tile.thermalducts.duct.energyHardenedDuct.info=Transfers RF
 tile.thermalducts.duct.energyReinforcedDuct.info=Transfers RF
@@ -36,19 +34,17 @@ tile.thermalducts.duct.vacuum.name=Vacuum
 
 item.thermalducts.cover.name=Cover
 
-item.thermalducts.servo.0.name=Basic Servo
-item.thermalducts.servo.1.name=Hardened Servo
-item.thermalducts.servo.2.name=Reinforced Servo
-item.thermalducts.servo.3.name=Signalum Servo
-item.thermalducts.servo.4.name=Resonant Servo
-
-
 item.thermalducts.filter.0.name=Basic Filter
 item.thermalducts.filter.1.name=Hardened Filter
 item.thermalducts.filter.2.name=Reinforced Filter
 item.thermalducts.filter.3.name=Signalum Filter
 item.thermalducts.filter.4.name=Resonant Filter
 
+item.thermalducts.servo.0.name=Basic Servo
+item.thermalducts.servo.1.name=Hardened Servo
+item.thermalducts.servo.2.name=Reinforced Servo
+item.thermalducts.servo.3.name=Signalum Servo
+item.thermalducts.servo.4.name=Resonant Servo
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata
@@ -66,7 +62,3 @@ info.thermaldynamics.filter.oreDic.off=Use Ore Dictionary
 info.thermaldynamics.filter.oreDic.on=Ignore Ore Dictionary
 info.thermaldynamics.filter.modSorting.off=Use Mod Owner
 info.thermaldynamics.filter.modSorting.on=Ignore Mod Owner
-
-
-
-
