@@ -75,7 +75,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         Attachment attachment = attachments[from.ordinal()];
         if (attachment == null) {
             ItemStack itemCopy = ItemHelper.cloneStack(item);
-            TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(8, item.stackSize)), getCache(false).outputRoutes, this, from.ordinal(), 8, (byte) 1);
+            TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(8, item.stackSize)), getCache(false).outputRoutes, this, from.ordinal(), ServoItem.range[0], (byte) 1);
             if (routeForItem == null)
                 return item;
 

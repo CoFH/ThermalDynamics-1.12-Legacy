@@ -308,14 +308,14 @@ public class ServoItem extends ServoBase {
         return null;
     }
 
-    public static int[] range = {4, 16, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+    public static int[] range = {8, 16, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
     public static boolean[] multiStack = {false, false, false, true, true};
 
     public int getMaxRange() {
         return range[type];
     }
 
-    public static int[] maxSize = {8, 16, 64, 64, 64};
+    public static int[] maxSize = {4, 16, 64, 64, 64};
 
     public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
         itemStack.stackSize = Math.min(itemStack.stackSize, filter.getLevel(FilterLogic.levelStacksize));
