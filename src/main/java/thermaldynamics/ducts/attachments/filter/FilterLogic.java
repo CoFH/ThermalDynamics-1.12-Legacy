@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.ConnectionBase;
+import static thermaldynamics.ducts.attachments.servo.ServoItem.maxSize;
 
 public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     public static final int[] maxFilterItems = {1, 4, 9, 12, 16};
@@ -349,11 +350,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     };
 
     public static final int[][] maxLevels = {
-            {8, 2, 0},
-            {16, 0, 0},
-            {64, 3, 1},
-            {64, 3, 1},
-            {64, 3, 1},
+            {maxSize[0], 2, 0},
+            {maxSize[1], 0, 0},
+            {maxSize[2], 3, 1},
+            {maxSize[3], 3, 1},
+            {maxSize[4], 3, 1},
     };
     public static final int[] defaultLevels = {64, 0, 1};
     public int[] validLevels;
