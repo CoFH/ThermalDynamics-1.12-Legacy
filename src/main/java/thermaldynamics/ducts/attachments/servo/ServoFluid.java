@@ -15,7 +15,6 @@ public
 class ServoFluid extends ServoBase {
     TileFluidDuct fluidDuct;
 
-    public static int[] maxthroughput = {50, 100, 200, 400, 10000};
     public static float[] throttle = {0.2F, 0.5F, 1F, 1F, 2F};
 
     @Override
@@ -62,7 +61,7 @@ class ServoFluid extends ServoBase {
             return;
         }
 
-        int maxInput = Math.min(Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type])), maxthroughput[type]);
+        int maxInput = Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]));
         if (maxInput == 0)
             return;
 

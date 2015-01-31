@@ -4,6 +4,7 @@ import cofh.lib.util.helpers.StringHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,9 +21,6 @@ import thermaldynamics.ducts.attachments.servo.ServoFluid;
 import thermaldynamics.ducts.attachments.servo.ServoItem;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
-
-import java.util.List;
-import java.util.Locale;
 
 public class ItemServo extends ItemAttachment {
 
@@ -138,7 +136,6 @@ public class ItemServo extends ItemAttachment {
 
         list.add(StringHelper.WHITE + "Fluid" + StringHelper.END);
         //String.format(Locale.ENGLISH, "%,d", a)
-        list.add(tab + "Max Throughput: " + String.format(Locale.ENGLISH, "%,d", ServoFluid.maxthroughput[type]) + "mB");
         list.add(tab + "Throttle Multiplier: " + Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%");
 
     }
