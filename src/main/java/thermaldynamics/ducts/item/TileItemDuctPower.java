@@ -56,7 +56,7 @@ public class TileItemDuctPower extends TileItemDuct implements IEnergyHandler {
 
     @Override
     public boolean canConnectEnergy(ForgeDirection from) {
-        return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED &&
-                (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.STRUCTURE);
+        return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+//                && (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.STRUCTURE);
     }
 }

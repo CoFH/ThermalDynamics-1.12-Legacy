@@ -46,6 +46,7 @@ import thermaldynamics.ducts.energy.TileEnergyDuct;
 import thermaldynamics.ducts.energy.TileEnergyDuctSuperConductor;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.fluid.TileFluidDuctFragile;
+import thermaldynamics.ducts.fluid.TileFluidDuctRedstone;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TileItemDuctEnder;
 import thermaldynamics.ducts.item.TileItemDuctRedstone;
@@ -238,7 +239,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 	}
 
 	public static enum ConnectionTypes {
-		NONE(false), DUCT, TILECONNECTION, STRUCTURE;
+		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
 
 		private final boolean renderDuct;
 
@@ -355,6 +356,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 
 		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermalducts.ducts.energy.TileFluidDuct");
 		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermalducts.ducts.energy.TileFragileFluidDuct");
+        GameRegistry.registerTileEntity(TileFluidDuctRedstone.class, "thermalducts.ducts.energy.TileFluidDuctRedstone");
 		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermalducts.ducts.energy.TileEnergyDuct");
 		GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermalducts.ducts.energy.TileEnergyDuctSuperConductor");
 		GameRegistry.registerTileEntity(TileItemDuct.class, "thermalducts.ducts.energy.TileItemDuct");

@@ -114,7 +114,10 @@ public class FluidGrid extends MultiBlockGrid {
     public void mergeGrids(MultiBlockGrid theGrid) {
 
         super.mergeGrids(theGrid);
-        myTank.fill(((FluidGrid) theGrid).getFluid(), true);
+
+        FluidGrid fluidGrid = (FluidGrid) theGrid;
+        doesPassiveTicking = doesPassiveTicking || fluidGrid.doesPassiveTicking;
+        myTank.fill(fluidGrid.getFluid(), true);
     }
 
 
