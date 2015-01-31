@@ -356,7 +356,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
             {64, 3, 1},
     };
     public static final int[] defaultLevels = {64, 0, 1};
-    public static int[] validLevels;
+    public int[] validLevels;
 
     private int[] levels = new int[defaultLevels.length];
 
