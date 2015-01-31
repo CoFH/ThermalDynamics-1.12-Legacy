@@ -73,11 +73,19 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             return item;
 
         Attachment attachment = attachments[from.ordinal()];
-        if (attachment == null || attachment.getID() != AttachmentRegistry.SERVO_INV) {
-            return item;
-        }
+        if (attachment == null) {
+            ItemStack itemCopy = ItemHelper.cloneStack(item);
+            TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(8, item.stackSize)), getCache(false).outputRoutes, this, from.ordinal(), 8, (byte) 1);
+            if (routeForItem == null)
+                return item;
 
-        return ((ServoItem) attachment).insertItem(item);
+            insertNewItem(routeForItem);
+            itemCopy.stackSize -= routeForItem.stack.stackSize;
+            return itemCopy.stackSize > 0 ? itemCopy : null;
+        } else if (attachment.getID() != AttachmentRegistry.SERVO_INV) {
+            return item;
+        } else
+            return ((ServoItem) attachment).insertItem(item);
     }
 
     public static enum CacheType {
@@ -557,7 +565,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
         boolean routeItems = filterCache[side].shouldIncRouteItems();
 
-
         if (cache3[side] != null) { // IDeepStorage
             ItemStack cacheStack = cache3[side].getStoredItemType();
             if (cacheStack != null && !ItemHelper.itemsEqualWithMetadata(cacheStack, insertingItem))
@@ -586,7 +593,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
             return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
         } else {
-            if(!routeItems)
+            if (!routeItems)
                 return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
 
             LinkedList<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
