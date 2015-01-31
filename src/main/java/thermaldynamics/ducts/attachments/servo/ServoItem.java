@@ -315,10 +315,10 @@ public class ServoItem extends ServoBase {
         return range[type];
     }
 
-    public static int[] maxSize = {1, 8, 64, 64, 64};
+    public static int[] maxSize = {8, 16, 64, 64, 64};
 
     public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
-        itemStack.stackSize = Math.min(itemStack.stackSize, maxSize[type]);
+        itemStack.stackSize = Math.min(itemStack.stackSize, filter.getLevel(FilterLogic.levelStacksize));
         return itemStack;
     }
 

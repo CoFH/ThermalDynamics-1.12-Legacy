@@ -349,8 +349,8 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     };
 
     public static final int[][] maxLevels = {
-            {1, 2, 0},
-            {8, 0, 0},
+            {8, 2, 0},
+            {16, 0, 0},
             {64, 3, 1},
             {64, 3, 1},
             {64, 3, 1},
