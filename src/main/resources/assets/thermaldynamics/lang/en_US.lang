@@ -1,50 +1,54 @@
 itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
 
-tile.thermalducts.duct.energyBasicDuct.name=Basic Fluxduct
-tile.thermalducts.duct.energyHardenedDuct.name=Hardened Fluxduct
-tile.thermalducts.duct.energyReinforcedDuct.name=Reinforced Fluxduct
-tile.thermalducts.duct.energyEmptyReinforcedDuct.name=Reinforced Fluxduct (Empty)
-tile.thermalducts.duct.energySuperconductorDuct.name=Magnetic-Enhanced Fluxduct
-tile.thermalducts.duct.energySuperconductorEmptyDuct.name=Magnetic-Enhanced Fluxduct (Empty)
-tile.thermalducts.duct.fluidWeakDuct.name=Copper Fluiduct
-tile.thermalducts.duct.fluidDuct.name=Invar Fluiduct
-tile.thermalducts.duct.itemDuct.name=Itemduct
-tile.thermalducts.duct.itemDuctFast.name=Impulse Itemduct
-tile.thermalducts.duct.itemDuctRedstone.name=Fluctuating Itemduct
-tile.thermalducts.duct.itemDuctEnder.name=Warp Itemduct
-tile.thermalducts.duct.structureDuct.name=Structuralduct
+tile.thermaldynamics.duct.energyBasic.name=Leadstone Fluxduct
+tile.thermaldynamics.duct.energyHardened.name=Hardened Fluxduct
+tile.thermaldynamics.duct.energyReinforced.name=Redstone Energy Fluxduct
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Redstone Energy Fluxduct (Empty)
+tile.thermaldynamics.duct.energySuperconductor.name=Magnetic-Enhanced Fluxduct
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=Magnetic-Enhanced Fluxduct (Empty)
+tile.thermaldynamics.duct.fluidBasic.name=Copper Fluiduct
+tile.thermaldynamics.duct.fluidHardened.name=Hardened Fluiduct
+tile.thermaldynamics.duct.itemBasic.name=Itemduct
+tile.thermaldynamics.duct.itemFast.name=Impulse Itemduct
+tile.thermaldynamics.duct.itemRedstone.name=Fluctuating Itemduct
+tile.thermaldynamics.duct.itemEnder.name=Warp Itemduct
+tile.thermaldynamics.duct.structure.name=Structuralduct
 
-tile.thermalducts.duct.energyBasicDuct.info=Transfers RF
-tile.thermalducts.duct.energyHardenedDuct.info=Transfers RF
-tile.thermalducts.duct.energyReinforcedDuct.info=Transfers RF
-tile.thermalducts.duct.energyEmptyReinforcedDuct.info=Crafting ingredient
-tile.thermalducts.duct.energySuperconductorDuct.info=Transfers RF with unlimited throughput
-tile.thermalducts.duct.energySuperconductorEmptyDuct.info=Crafting Ingredient
-tile.thermalducts.duct.fluidWeakDuct.info=Transfers fluids. Will break when filled with fluids at extreme temperatures.
-tile.thermalducts.duct.fluidDuct.info=Transfers fluids
-tile.thermalducts.duct.itemDuct.info=Transfers items
-tile.thermalducts.duct.itemDuctFast.info=Transfers items faster
-tile.thermalducts.duct.itemDuctRedstone.info=Transfers items and limited energy
-tile.thermalducts.duct.itemDuctEnder.info=Uses RF energy to transfer items instantly
-tile.thermalducts.duct.structureDuct.info=Provides Structure
+tile.thermaldynamics.duct.energyBasic.info=Transfers Redstone Flux (RF)
+tile.thermaldynamics.duct.energyHardened.info=Transfers Redstone Flux (RF)
+tile.thermaldynamics.duct.energyReinforced.info=Transfers Redstone Flux (RF)
+tile.thermaldynamics.duct.energyReinforcedEmpty.info=Crafting Ingredient
+tile.thermaldynamics.duct.energySuperconductor.info=Transfers Redstone Flux (RF)
+tile.thermaldynamics.duct.energySuperconductorEmpty.info=Crafting Ingredient
+tile.thermaldynamics.duct.fluidBasic.info=Transfers Fluids.
+tile.thermaldynamics.duct.fluidHardened.info=Transfers Fluids.
+tile.thermaldynamics.duct.itemBasic.info=Transfers Items
+tile.thermaldynamics.duct.itemFast.info=Transfers Items quickly.
+tile.thermaldynamics.duct.itemRedstone.info=Transfers Items and Redstone Flux (RF)
+tile.thermaldynamics.duct.itemEnder.info=Transfers Items instantly. Uses Redstone Flux (RF).
+tile.thermaldynamics.duct.structure.info=Provides Structure
 
-tile.thermalducts.duct.opaque.name=(Opaque)
-tile.thermalducts.duct.dense.name=Dense
-tile.thermalducts.duct.vacuum.name=Vacuum
+tile.thermaldynamics.duct.opaque.name=(Opaque)
+tile.thermaldynamics.duct.dense.name=Dense
+tile.thermaldynamics.duct.vacuum.name=Vacuum
 
-item.thermalducts.cover.name=Cover
+item.thermaldynamics.cover.name=Cover
 
-item.thermalducts.filter.0.name=Basic Filter
-item.thermalducts.filter.1.name=Hardened Filter
-item.thermalducts.filter.2.name=Reinforced Filter
-item.thermalducts.filter.3.name=Signalum Filter
-item.thermalducts.filter.4.name=Resonant Filter
+item.thermaldynamics.filter.0.name=Basic Filter
+item.thermaldynamics.filter.1.name=Hardened Filter
+item.thermaldynamics.filter.2.name=Reinforced Filter
+item.thermaldynamics.filter.3.name=Signalum Filter
+item.thermaldynamics.filter.4.name=Resonant Filter
 
-item.thermalducts.servo.0.name=Basic Servo
-item.thermalducts.servo.1.name=Hardened Servo
-item.thermalducts.servo.2.name=Reinforced Servo
-item.thermalducts.servo.3.name=Signalum Servo
-item.thermalducts.servo.4.name=Resonant Servo
+item.thermaldynamics.servo.0.name=Basic Servo
+item.thermaldynamics.servo.1.name=Hardened Servo
+item.thermaldynamics.servo.2.name=Reinforced Servo
+item.thermaldynamics.servo.3.name=Signalum Servo
+item.thermaldynamics.servo.4.name=Resonant Servo
+
+info.thermaldynamics.duct.energy=Transfers Redstone Flux (RF).
+info.thermaldynamics.duct.fluid=Transfers Fluids.
+info.thermaldynamics.duct.item=Transfers Items.
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata

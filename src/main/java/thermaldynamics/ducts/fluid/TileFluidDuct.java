@@ -1,5 +1,6 @@
 package thermaldynamics.ducts.fluid;
 
+import cofh.core.CoFHProps;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
@@ -16,7 +17,6 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.core.TDProps;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
@@ -293,7 +293,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 
-		return fluidGrid != null ? new FluidTankInfo[] { fluidGrid.myTank.getInfo() } : TDProps.EMPTY_TANK_INFO;
+		return fluidGrid != null ? new FluidTankInfo[] { fluidGrid.myTank.getInfo() } : CoFHProps.EMPTY_TANK_INFO;
 	}
 
 	@Override

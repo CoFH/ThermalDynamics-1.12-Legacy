@@ -3,6 +3,7 @@ package thermaldynamics.ducts.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.energy.subgrid.SubTileEnergyEnder;
 
 public class TileItemDuctEnder extends TileItemDuctPower {
@@ -69,10 +70,10 @@ public class TileItemDuctEnder extends TileItemDuctPower {
             for (TravelingItem travelingItem : myItems) {
                 if (travelingItem.reRoute || travelingItem.myPath == null) {
                     travelingItem.bounceItem(this);
-                } else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= PropsConduit.ENDER_TRANSMIT_COST &&
-                        energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, true) >= PropsConduit.ENDER_TRANSMIT_COST
+                } else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST &&
+                        energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST
                         ) {
-                    energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, false);
+                    energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
                     multiAdvance(travelingItem, false);
                 } else {
                     travelingItem.tickForward(this);
@@ -102,8 +103,8 @@ public class TileItemDuctEnder extends TileItemDuctPower {
     @Override
     public void insertNewItem(TravelingItem travelingItem) {
 
-        if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= PropsConduit.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, true) >= PropsConduit.ENDER_TRANSMIT_COST) {
-            energy.energyGrid.myStorage.extractEnergy(PropsConduit.ENDER_TRANSMIT_COST, false);
+        if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+            energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
             multiAdvance(travelingItem, true);
         } else
             super.insertNewItem(travelingItem);

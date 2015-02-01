@@ -17,7 +17,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 	InventoryPlayer inventory;
 	ConnectionBase servoBase;
-	public static ResourceLocation TEX = new ResourceLocation("thermaldynamics:textures/gui/guiServo.png");
+	public static ResourceLocation TEX = new ResourceLocation("thermaldynamics:textures/gui/Connection.png");
 
 	ContainerDuctConnection container;
 	public ElementButton[] flagButtons = new ElementButton[0];
@@ -72,7 +72,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		if (buttonNo != 0) {
 			buttonSize = 20;
 			int button_offset = buttonSize + 6;
-			int x0 = xSize / 2 - buttonNo * (button_offset / 2);
+			int x0 = xSize / 2 - buttonNo * (button_offset / 2) + 3;
 			int y0 = container.gridY0 + container.gridHeight * 18 + 8;
 
 			for (int i = 0; i < flagNums.length; i++) {
@@ -80,7 +80,6 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				flagButtons[j] = new ElementButton(this, x0 + button_offset * i, y0, container.filter.flagType(j), flagButtonsPos[j][0], flagButtonsPos[j][1],
 						flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize, flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize * 2, buttonSize,
 						buttonSize, TEX.toString());
-
 				addElement(flagButtons[j]);
 			}
 
@@ -88,7 +87,6 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				int j = levelNums[i];
 				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, "Level" + j, levelButtonPos[j][0],
 						levelButtonPos[j][1], levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize, buttonSize, buttonSize, TEX.toString());
-
 				addElement(levelButtons[j]);
 			}
 

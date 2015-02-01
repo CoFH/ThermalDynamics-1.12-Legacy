@@ -24,6 +24,7 @@ import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.core.TDProps;
 import thermaldynamics.core.TickHandlerClient;
 import thermaldynamics.ducts.attachments.IStuffable;
 import thermaldynamics.ducts.attachments.filter.IFilterAttachment;
@@ -377,7 +378,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             myPayload.addByte(TileInfoPackets.TRAVELING_ITEMS);
 
             int loopStop = myItems.size();
-            loopStop = Math.min(loopStop, PropsConduit.MAX_ITEMS_TRANSMITTED);
+            loopStop = Math.min(loopStop, TDProps.MAX_ITEMS_TRANSMITTED);
             myPayload.addByte(loopStop);
             for (int i = 0; i < loopStop; i++) {
                 myItems.get(i).writePacket(myPayload);

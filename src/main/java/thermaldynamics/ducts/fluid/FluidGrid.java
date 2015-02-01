@@ -4,7 +4,7 @@ import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.FluidHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import thermaldynamics.ducts.item.PropsConduit;
+import thermaldynamics.core.TDProps;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
@@ -74,7 +74,7 @@ public class FluidGrid extends MultiBlockGrid {
     @Override
     public void tickGrid() {
 
-        if (worldGrid.worldObj.getTotalWorldTime() % PropsConduit.FLUID_UPDATE_DELAY == 0) {
+        if (worldGrid.worldObj.getTotalWorldTime() % TDProps.FLUID_UPDATE_DELAY == 0) {
             updateAllRenders();
         }
         if (myTank.getFluid() != null && nodeSet.size() > 0) {
@@ -195,7 +195,7 @@ public class FluidGrid extends MultiBlockGrid {
 
     public boolean updateRender() {
 
-        if (recentRenderUpdate && myTracker.hasDelayPassed(worldGrid.worldObj, PropsConduit.FLUID_EMPTY_UPDATE_DELAY)) {
+        if (recentRenderUpdate && myTracker.hasDelayPassed(worldGrid.worldObj, TDProps.FLUID_EMPTY_UPDATE_DELAY)) {
             recentRenderUpdate = false;
         }
         if (myTank.getFluid() != null && myTank.getCapacity() > 0) {

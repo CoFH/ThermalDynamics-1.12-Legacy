@@ -10,16 +10,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.Ducts;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.item.ItemGrid;
-import thermaldynamics.ducts.item.PropsConduit;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TravelingItem;
 import thermaldynamics.multiblock.Route;
 import thermaldynamics.multiblock.RouteCache;
 import thermaldynamics.multiblock.listtypes.ListWrapper;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,7 +103,7 @@ public class ServoItem extends ServoBase {
             for (ItemStack stuffedItem : stuffedItems) {
                 ItemStack stack = stuffedItem.copy();
                 int m = stuffedItem.getMaxStackSize();
-                for (int i = 0; stack.stackSize > 0 && i < PropsConduit.MAX_STUFFED_ITEMSTACKS_DROP; i++) {
+                for (int i = 0; stack.stackSize > 0 && i < TDProps.MAX_STUFFED_ITEMSTACKS_DROP; i++) {
                     if (m < stack.stackSize) m = stack.stackSize;
                     drops.add(ItemHelper.cloneStack(stack, m));
                     stack.stackSize -= m;

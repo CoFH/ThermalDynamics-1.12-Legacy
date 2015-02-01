@@ -45,7 +45,7 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler {
 
 	static {
-		GameRegistry.registerTileEntity(TileMultiBlock.class, "thermalducts.multiblock");
+		GameRegistry.registerTileEntity(TileMultiBlock.class, "thermaldynamics.multiblock");
 	}
 
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -548,7 +548,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public String getName() {
 
-		return "tile.thermalducts.multiblock.name";
+		return "tile.thermaldynamics.multiblock.name";
 	}
 
 	@Override

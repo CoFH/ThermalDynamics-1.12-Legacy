@@ -4,7 +4,9 @@ import cofh.lib.util.helpers.StringHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.Ducts;
@@ -24,147 +27,149 @@ import thermaldynamics.ducts.item.TileItemDuct;
 
 public class ItemServo extends ItemAttachment {
 
-    public final String tab = "  ";
+	public final String tab = "  ";
 
-    public ItemServo() {
-        super();
-        this.setUnlocalizedName("thermalducts.servo");
-    }
+	public ItemServo() {
 
-    @Override
-    public String getUnlocalizedName(ItemStack item) {
-        return super.getUnlocalizedName(item) + "." + item.getItemDamage();
-    }
+		super();
+		this.setUnlocalizedName("thermaldynamics.servo");
+	}
 
+	@Override
+	public String getUnlocalizedName(ItemStack item) {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
-        for (int i = 0; i < 5; i++) {
-            p_150895_3_.add(new ItemStack(p_150895_1_, 1, i));
-        }
-    }
+		return super.getUnlocalizedName(item) + "." + item.getItemDamage();
+	}
 
-    IIcon[] icons;
+	@Override
+	@SuppressWarnings("unchecked")
+	public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister ir) {
-        icons = new IIcon[5];
-        for (int i = 0; i < 5; i++)
-            icons[i] = ir.registerIcon("thermaldynamics:servo" + i);
-        this.itemIcon = icons[0];
-    }
+		for (int i = 0; i < 5; i++) {
+			p_150895_3_.add(new ItemStack(p_150895_1_, 1, i));
+		}
+	}
 
-    @Override
-    public IIcon getIconFromDamage(int i) {
-        return icons[i % icons.length];
-    }
+	IIcon[] icons;
 
-    @Override
-    public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
-        int type = stack.getItemDamage() % 5;
-        if (tile instanceof TileFluidDuct)
-            return new ServoFluid(tile, (byte) (side ^ 1), type);
-        if (tile instanceof TileItemDuct)
-            return new ServoItem(tile, (byte) (side ^ 1), type);
-        return null;
-    }
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IIconRegister ir) {
 
+		icons = new IIcon[5];
+		for (int i = 0; i < 5; i++)
+			icons[i] = ir.registerIcon("thermaldynamics:servo" + i);
+		this.itemIcon = icons[0];
+	}
 
-    public static ItemStack iron, invar, electrum, signalum, ender;
+	@Override
+	public IIcon getIconFromDamage(int i) {
 
-    @Override
-    public boolean preInit() {
-        GameRegistry.registerItem(this, "servo");
+		return icons[i % icons.length];
+	}
 
-        iron = new ItemStack(this, 1, 0);
-        invar = new ItemStack(this, 1, 1);
-        electrum = new ItemStack(this, 1, 2);
-        signalum = new ItemStack(this, 1, 3);
-        ender = new ItemStack(this, 1, 4);
+	@Override
+	public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
 
-        return true;
-    }
+		int type = stack.getItemDamage() % 5;
+		if (tile instanceof TileFluidDuct)
+			return new ServoFluid(tile, (byte) (side ^ 1), type);
+		if (tile instanceof TileItemDuct)
+			return new ServoItem(tile, (byte) (side ^ 1), type);
+		return null;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
-        super.addInformation(stack, player, list, extraInfo);
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
 
-        int type = stack.getItemDamage() % 5;
+		super.addInformation(stack, player, list, extraInfo);
 
+		int type = stack.getItemDamage() % 5;
 
-        if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
-            list.add(StringHelper.shiftForDetails());
-        }
-        if (!StringHelper.isShiftKeyDown()) {
-            return;
-        }
+		if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
+			list.add(StringHelper.shiftForDetails());
+		}
+		if (!StringHelper.isShiftKeyDown()) {
+			return;
+		}
 
-        if (ServoBase.canAlterRS(type))
-            list.add("Internal Redstone Control");
-        else
-            list.add("Requires External Redstone Signal");
+		if (ServoBase.canAlterRS(type))
+			list.add("Internal Redstone Control");
+		else
+			list.add("Requires External Redstone Signal");
 
+		list.add(StringHelper.WHITE + "Items" + StringHelper.END);
 
-        list.add(StringHelper.WHITE + "Items" + StringHelper.END);
+		list.add(tab
+				+ "Send Delay: "
+				+ StringHelper.GRAY
+				+ ((ServoItem.tickDelays[type] % 20) == 0 ? Integer.toString(ServoItem.tickDelays[type] / 20) : Float
+						.toString(ServoItem.tickDelays[type] / 20F)) + " Secs" + StringHelper.END);
 
+		list.add(tab + "Max Stack Size: " + StringHelper.GRAY + ServoItem.maxSize[type] + StringHelper.END);
 
-        list.add(tab + "Send Delay: " + StringHelper.GRAY +
-                ((ServoItem.tickDelays[type] % 20) == 0 ?
-                        Integer.toString(ServoItem.tickDelays[type] / 20) :
-                        Float.toString(ServoItem.tickDelays[type] / 20F)
-                ) + " Secs"
-                + StringHelper.END);
+		list.add(tab + "Max Range: " + StringHelper.GRAY + (ServoItem.range[type] == Integer.MAX_VALUE ? "Infinite" : (ServoItem.range[type] + " Blocks"))
+				+ StringHelper.END);
 
+		addFiltering(list, type, tab);
 
-        list.add(tab + "Max Stack Size: " + StringHelper.GRAY + ServoItem.maxSize[type] + StringHelper.END);
+		if (ServoItem.multiStack[type])
+			list.add(tab + "Extracts over multiple slots");
+		else
+			list.add(tab + "Extracts from a single slot");
 
-        list.add(tab + "Max Range: " + StringHelper.GRAY + (ServoItem.range[type] == Integer.MAX_VALUE ? "Infinite" : (ServoItem.range[type] + " Blocks")) + StringHelper.END);
+		if (ServoItem.speedBoost[type] != 1)
+			list.add(tab + "Item Speed Boost: " + StringHelper.GRAY + ServoItem.speedBoost[type] + "x " + StringHelper.END);
 
-        addFiltering(list, type, tab);
+		list.add(StringHelper.WHITE + "Fluid" + StringHelper.END);
+		// String.format(Locale.ENGLISH, "%,d", a)
+		list.add(tab + "Throttle Multiplier: " + Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%");
 
-        if (ServoItem.multiStack[type])
-            list.add(tab + "Extracts over multiple slots");
-        else
-            list.add(tab + "Extracts from a single slot");
+	}
 
-        if (ServoItem.speedBoost[type] != 1)
-            list.add(tab + "Item Speed Boost: " + StringHelper.GRAY + ServoItem.speedBoost[type] + "x " + StringHelper.END);
+	@SuppressWarnings("unchecked")
+	public static void addFiltering(List list, int type, String tab) {
 
+		StringBuilder b = new StringBuilder();
 
-        list.add(StringHelper.WHITE + "Fluid" + StringHelper.END);
-        //String.format(Locale.ENGLISH, "%,d", a)
-        list.add(tab + "Throttle Multiplier: " + Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%");
+		b.append("Filter Options: " + StringHelper.GRAY);
+		boolean flag = false;
+		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
+			if (FilterLogic.canAlterFlag(Ducts.Type.Item, type, i)) {
+				if (flag) {
+					b.append(", ");
+				} else {
+					flag = true;
+				}
 
-    }
+				b.append(StringHelper.localize("info.thermaldynamics.filter." + FilterLogic.flagTypes[i]));
+			}
+		}
+		flag = false;
+		for (String s : (List<String>) Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
+			if (flag)
+				s = tab + StringHelper.GRAY + s;
+			flag = true;
+			list.add(tab + s + StringHelper.END);
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    public static void addFiltering(List list, int type, String tab) {
-        StringBuilder b = new StringBuilder();
+	/* IInitializer */
+	@Override
+	public boolean preInit() {
 
-        b.append("Filter Options: " + StringHelper.GRAY);
-        boolean flag = false;
-        for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
-            if (FilterLogic.canAlterFlag(Ducts.Type.Item, type, i)) {
-                if (flag) {
-                    b.append(", ");
-                } else {
-                    flag = true;
-                }
+		GameRegistry.registerItem(this, "servo");
 
-                b.append(StringHelper.localize("info.thermaldynamics.filter." + FilterLogic.flagTypes[i]));
-            }
-        }
-        flag = false;
-        for (String s : (List<String>) Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
-            if (flag)
-                s = tab + StringHelper.GRAY + s;
-            flag = true;
-            list.add(tab + s + StringHelper.END);
-        }
-    }
+		iron = new ItemStack(this, 1, 0);
+		invar = new ItemStack(this, 1, 1);
+		electrum = new ItemStack(this, 1, 2);
+		signalum = new ItemStack(this, 1, 3);
+		ender = new ItemStack(this, 1, 4);
 
+		return true;
+	}
+
+	public static ItemStack iron, invar, electrum, signalum, ender;
 
 }

@@ -1,16 +1,16 @@
 package thermaldynamics.ducts.energy.subgrid;
 
 import net.minecraft.world.World;
-import thermaldynamics.ducts.item.PropsConduit;
+import thermaldynamics.core.TDProps;
 
 public class EnergySubGridEnder extends EnergySubGrid {
 
     public EnergySubGridEnder(World world) {
-        super(world, 16 * PropsConduit.ENDER_TRANSMIT_COST, 16 * PropsConduit.ENDER_TRANSMIT_COST);
+        super(world, 16 * TDProps.ENDER_TRANSMIT_COST, 16 * TDProps.ENDER_TRANSMIT_COST);
     }
 
     public boolean isPowered() {
-        return myStorage.getEnergyStored() >= PropsConduit.ENDER_TRANSMIT_COST;
+        return myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST;
     }
 
     @Override

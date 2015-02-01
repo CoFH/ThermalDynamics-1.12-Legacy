@@ -25,7 +25,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 	@Override
 	public String getUnlocalizedName(ItemStack item) {
 
-		return Ducts.isValid(id(item)) ? "tile.thermalducts.duct." + Ducts.getType(id(item)).unlocalizedName + ".name" : super.getUnlocalizedName(item);
+		return Ducts.isValid(id(item)) ? "tile.thermaldynamics.duct." + Ducts.getType(id(item)).unlocalizedName + ".name" : super.getUnlocalizedName(item);
 	}
 
 	@Override
@@ -35,15 +35,14 @@ public class ItemBlockDuct extends ItemBlockBase {
 			StringBuilder builder = new StringBuilder();
 			Ducts type = Ducts.getType(id(item));
 			if (type.pathWeight == 1000) {
-				builder.append(StringHelper.localize("tile.thermalducts.duct.dense.name")).append(" ");
+				builder.append(StringHelper.localize("tile.thermaldynamics.duct.dense.name")).append(" ");
 			} else if (type.pathWeight == -1000) {
-				builder.append(StringHelper.localize("tile.thermalducts.duct.vacuum.name")).append(" ");
+				builder.append(StringHelper.localize("tile.thermaldynamics.duct.vacuum.name")).append(" ");
 			}
-
 			builder.append(super.getItemStackDisplayName(item));
 
 			if (type.opaque) {
-				builder.append(" ").append(StringHelper.localize("tile.thermalducts.duct.opaque.name"));
+				builder.append(" ").append(StringHelper.localize("tile.thermaldynamics.duct.opaque.name"));
 			}
 
 			return builder.toString();
@@ -70,6 +69,22 @@ public class ItemBlockDuct extends ItemBlockBase {
 			return;
 		}
 
+		switch (Ducts.getType(id(stack)).ductType) {
+		case Energy:
+			list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
+			break;
+		case Fluid:
+			list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
+			break;
+		case Item:
+			list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
+			break;
+		case Structural:
+			list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+			break;
+		default:
+		}
+
 		// if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
 		// list.add(StringHelper.shiftForDetails());
 		// }
@@ -77,6 +92,6 @@ public class ItemBlockDuct extends ItemBlockBase {
 		// return;
 		// }
 
-		list.add(StringHelper.localize("tile.thermalducts.duct." + Ducts.getType(id(stack)).unlocalizedName + ".info"));
+		// list.add(StringHelper.localize("tile.thermaldynamics.duct." + Ducts.getType(id(stack)).unlocalizedName + ".info"));
 	}
 }
