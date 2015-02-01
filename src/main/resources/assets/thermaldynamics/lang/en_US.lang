@@ -61,7 +61,7 @@ info.thermaldynamics.duct.structure=Provides Structure
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata
 info.thermaldynamics.filter.nbt=NBT
-info.thermaldynamics.filter.oreDic=Ore Dictionary
+info.thermaldynamics.filter.oreDict=Ore Dictionary
 info.thermaldynamics.filter.modSorting=Mod Owner
 
 info.thermaldynamics.filter.whiteList.off=Whitelist

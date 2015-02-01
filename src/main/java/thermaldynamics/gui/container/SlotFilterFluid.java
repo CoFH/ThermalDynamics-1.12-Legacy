@@ -11,14 +11,14 @@ public class SlotFilterFluid extends SlotFilter {
 	public SlotFilterFluid(IFilterConfig tile, int slotIndex, int x, int y) {
 
 		super(tile, slotIndex, x, y);
-
 	}
 
 	@Override
 	public void putStack(ItemStack stack) {
 
-		if (isItemValid(stack))
+		if (isItemValid(stack)) {
 			super.putStack(stack);
+		}
 	}
 
 	@Override

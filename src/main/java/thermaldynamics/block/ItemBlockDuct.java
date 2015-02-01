@@ -68,18 +68,17 @@ public class ItemBlockDuct extends ItemBlockBase {
 		if (!Ducts.isValid(id(stack))) {
 			return;
 		}
-
 		switch (Ducts.getType(id(stack)).ductType) {
-		case Energy:
+		case ENERGY:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 			break;
-		case Fluid:
+		case FLUID:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
 			break;
-		case Item:
+		case ITEM:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
 			break;
-		case Structural:
+		case STRUCTURAL:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
 			break;
 		default:

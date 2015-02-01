@@ -28,7 +28,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	public static final int[] maxFilterItems = { 3, 6, 9, 12, 15 };
 	public static final int[] maxFilterItemWidth = { 3, 3, 3, 4, 5 };
 	private final static int flagBlackList = 0;
-	private final static int flagIngoreMetadata = 1;
+	private final static int flagIgnoreMetadata = 1;
 	private final static int flagIgnoreNBT = 2;
 	private final static int flagIgnoreOreDictionary = 3;
 	private final static int flagIgnoreMod = 4;
@@ -51,6 +51,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	public static int[] options = { 0, 1, 6, 6, 6 };
 	private final Ducts.Type transferType;
 	private int[] validFlags;
+	public boolean levelsChanged;
 
 	public FilterLogic(int type, Ducts.Type transferType, ConnectionBase connection) {
 
@@ -59,9 +60,9 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 		items = new ItemStack[maxFilterItems[type]];
 
-		if (transferType == Ducts.Type.Item) {
+		if (transferType == Ducts.Type.ITEM) {
 			quickItems = new LinkedList<ItemStack>();
-		} else if (transferType == Ducts.Type.Fluid) {
+		} else if (transferType == Ducts.Type.FLUID) {
 			fluidsNBT = new HashSet<FluidStack>();
 		}
 		this.connection = connection;
@@ -107,7 +108,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 						if (!flags[flagIgnoreMod]) {
 							modNames.add(CoreUtils.getModName(item.getItem()));
 						}
-
 						if (!flags[flagIgnoreOreDictionary]) {
 							ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
 							if (allOreIDs != null)
@@ -116,12 +116,13 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 										oreIds.add(integer.intValue());
 								}
 						}
-
 						ItemStack d = item.copy();
-						if (flags[flagIngoreMetadata])
+						if (flags[flagIgnoreMetadata]) {
 							d.setItemDamage(0);
-						if (flags[flagIgnoreNBT])
+						}
+						if (flags[flagIgnoreNBT]) {
 							d.setTagCompound(null);
+						}
 
 						for (ItemStack i : quickItems) {
 							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
@@ -133,13 +134,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							quickItems.add(d);
 
 					} else if (isFluid()) {
-
 						FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
 						if (fluidStack != null) {
 							fluidStack.amount = 1;
 							fluidsNBT.add(fluidStack);
 						}
-
 					}
 				}
 			}
@@ -150,12 +149,12 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 	public boolean isFluid() {
 
-		return transferType == Ducts.Type.Fluid;
+		return transferType == Ducts.Type.FLUID;
 	}
 
 	public boolean isItem() {
 
-		return transferType == Ducts.Type.Item;
+		return transferType == Ducts.Type.ITEM;
 	}
 
 	@Override
@@ -182,7 +181,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			if (filter.getItem() != item.getItem())
 				continue;
 
-			if (!flags[flagIngoreMetadata] && filter.getItemDamage() != item.getItemDamage())
+			if (!flags[flagIgnoreMetadata] && filter.getItemDamage() != item.getItemDamage())
 				continue;
 
 			if (!flags[flagIgnoreNBT] && !ItemHelper.doNBTsMatch(item.stackTagCompound, filter.stackTagCompound))
@@ -248,7 +247,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	@Override
 	public int numFlags() {
 
-		return transferType == Ducts.Type.Item ? flags.length : 0;
+		return transferType == Ducts.Type.ITEM ? flags.length : 0;
 	}
 
 	public int[] validFlags() {
@@ -264,7 +263,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 	public static boolean canAlterFlag(Ducts.Type transferType, int type, int flagType) {
 
-		return transferType == Ducts.Type.Item && options[type] >= flagType;
+		return transferType == Ducts.Type.ITEM && options[type] >= flagType;
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
@@ -348,7 +347,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	}
 
 	public static enum Perm {
-		FILTER(true, false, Ducts.Type.Item), SERVO(false, true, Ducts.Type.Item), ALL(true, true, Ducts.Type.Item);
+		FILTER(true, false, Ducts.Type.ITEM), SERVO(false, true, Ducts.Type.ITEM), ALL(true, true, Ducts.Type.ITEM);
 
 		public final boolean filter;
 		public final boolean servo;
@@ -468,5 +467,4 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		return levels[i];
 	}
 
-	public boolean levelsChanged;
 }

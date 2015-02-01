@@ -1,8 +1,10 @@
 package thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiBaseAdv;
+import cofh.core.gui.element.TabInfo;
 import cofh.core.gui.element.TabRedstone;
 import cofh.lib.gui.element.ElementButton;
+import cofh.lib.util.helpers.StringHelper;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -20,6 +22,8 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	static final String TEX_PATH = "thermaldynamics:textures/gui/Connection.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 
+	public String myInfo = "";
+
 	InventoryPlayer inventory;
 	ConnectionBase conBase;
 
@@ -35,6 +39,10 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 	public int buttonSize;
 
+	private static final int[][] levelButtonPos = { { -1, -1 }, { 0, 204 }, { 80, 204 } };
+
+	private static final int[][] flagButtonsPos = { { 176, 0 }, { 216, 0 }, { 176, 60 }, { 216, 60 }, { 176, 120 }, { 216, 120 }, { 176, 180 }, { 216, 180 }, };
+
 	public GuiDuctConnection(InventoryPlayer inventory, ConnectionBase conBase) {
 
 		super(new ContainerDuctConnection(inventory, conBase), TEXTURE);
@@ -46,17 +54,25 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM;
 	}
 
-	private static final int[][] levelButtonPos = { { -1, -1 }, { 0, 204 }, { 80, 204 } };
+	protected void generateInfo(String tileString, int lines) {
 
-	private static final int[][] flagButtonsPos = { { 176, 0 }, { 216, 0 }, { 176, 60 }, { 216, 60 }, { 176, 120 }, { 216, 120 }, { 176, 180 }, { 216, 180 }, };
+		myInfo = StringHelper.localize(tileString + "." + 0);
+		for (int i = 1; i < lines; i++) {
+			myInfo += "\n\n" + StringHelper.localize(tileString + "." + i);
+		}
+	}
 
 	@Override
 	public void initGui() {
 
 		super.initGui();
 
-		if (conBase.canAlterRS())
+		if (conBase.canAlterRS()) {
 			addTab(new TabRedstone(this, conBase));
+		}
+		if (!myInfo.isEmpty()) {
+			addTab(new TabInfo(this, myInfo));
+		}
 
 		int[] flagNums = container.filter.validFlags();
 		flagButtons = new ElementButton[container.filter.numFlags()];

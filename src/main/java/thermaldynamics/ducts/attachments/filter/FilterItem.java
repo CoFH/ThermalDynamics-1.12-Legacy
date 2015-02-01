@@ -34,8 +34,9 @@ public class FilterItem extends FilterBase {
 	public void cacheTile(TileEntity tile) {
 
 		inventory = (IInventory) tile;
-		if (tile instanceof ISidedInventory)
+		if (tile instanceof ISidedInventory) {
 			sidedInventory = (ISidedInventory) tile;
+		}
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class FilterItem extends FilterBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.Item, this);
+		return new FilterLogic(type, Ducts.Type.ITEM, this);
 	}
 
 }

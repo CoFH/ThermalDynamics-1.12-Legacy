@@ -3,6 +3,7 @@ package thermaldynamics.block;
 import java.util.HashMap;
 
 import thermaldynamics.ducts.attachments.facades.Cover;
+import thermaldynamics.ducts.attachments.filter.FilterFluid;
 import thermaldynamics.ducts.attachments.filter.FilterItem;
 import thermaldynamics.ducts.attachments.servo.ServoFluid;
 import thermaldynamics.ducts.attachments.servo.ServoItem;
@@ -26,6 +27,8 @@ public class AttachmentRegistry {
 			return new ServoFluid(tile, side);
 		} else if (id == SERVO_ITEM) {
 			return new ServoItem(tile, side);
+		} else if (id == FILTER_FLUID) {
+			return new FilterFluid(tile, side);
 		} else if (id == FILTER_ITEM) {
 			return new FilterItem(tile, side);
 		}

@@ -49,7 +49,7 @@ public class TDCrafting {
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(Ducts.FLUID_ENERGY_OPAQUE_STRUCT.itemStack, 3), "LGL", "PPP", "LGL", 'L', "ingotLead", 'G', "blockGlassHardened", 'P', Ducts.FLUID_HARDENED_OPAQUE.itemStack));
 
         ThermalExpansionHelper.addTransposerFill(800, Ducts.FLUID_ENERGY_TRANS_STRUCT.itemStack, Ducts.FLUID_ENERGY_TRANS.itemStack, new FluidStack(TFFluids.fluidRedstone, 100), false);
-        ThermalExpansionHelper.addTransposerFill(800, Ducts.FLUID_ENERGY_OPAQUE_STRUCT.itemStack, Ducts.FLUID_REDSTONE_OPAQUE.itemStack, new FluidStack(TFFluids.fluidRedstone, 100), false);
+        ThermalExpansionHelper.addTransposerFill(800, Ducts.FLUID_ENERGY_OPAQUE_STRUCT.itemStack, Ducts.FLUID_ENERGY_OPAQUE.itemStack, new FluidStack(TFFluids.fluidRedstone, 100), false);
 
         // Servo
 
@@ -93,15 +93,15 @@ public class TDCrafting {
         ThermalExpansionHelper.addTransposerFill(800, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_ENERGY_OPAQUE.itemStack, new FluidStack(TFFluids.fluidRedstone, 50), false);
 
 
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDERIUM_TRANS.itemStack, 3), Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_TRANS.itemStack, "dustEnderium"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDERIUM_OPAQUE.itemStack, 3), Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, "dustEnderium"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDER_TRANS.itemStack, 3), Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_TRANS.itemStack, Ducts.ITEM_TRANS.itemStack, "dustEnderium"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(Ducts.ITEM_ENDER_OPAQUE.itemStack, 3), Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, Ducts.ITEM_OPAQUE.itemStack, "dustEnderium"));
 
         // Conversions
         for (Ducts[] d : new Ducts[][]{
                 {Ducts.ITEM_TRANS, Ducts.ITEM_OPAQUE},
                 {Ducts.ITEM_FAST_TRANS, Ducts.ITEM_FAST_OPAQUE},
                 {Ducts.ITEM_ENERGY_TRANS, Ducts.ITEM_ENERGY_OPAQUE},
-                {Ducts.ITEM_ENDERIUM_TRANS, Ducts.ITEM_ENDERIUM_OPAQUE},
+                {Ducts.ITEM_ENDER_TRANS, Ducts.ITEM_ENDER_OPAQUE},
                 {Ducts.FLUID_TRANS, Ducts.FLUID_OPAQUE},
                 {Ducts.FLUID_HARDENED_TRANS, Ducts.FLUID_HARDENED_OPAQUE},
         }) {
@@ -124,8 +124,8 @@ public class TDCrafting {
                 {Ducts.ITEM_ENERGY_TRANS, Ducts.ITEM_ENERGY_TRANS_DENSE, Ducts.ITEM_ENERGY_TRANS_VACUUM},
                 {Ducts.ITEM_ENERGY_OPAQUE, Ducts.ITEM_ENERGY_OPAQUE_DENSE, Ducts.ITEM_ENERGY_OPAQUE_VACUUM},
 
-                {Ducts.ITEM_ENDERIUM_TRANS, Ducts.ITEM_ENDER_TRANS_DENSE, Ducts.ITEM_ENDER_TRANS_VACUUM},
-                {Ducts.ITEM_ENDERIUM_OPAQUE, Ducts.ITEM_ENDER_OPAQUE_DENSE, Ducts.ITEM_ENDER_OPAQUE_VACUUM},
+                {Ducts.ITEM_ENDER_TRANS, Ducts.ITEM_ENDER_TRANS_DENSE, Ducts.ITEM_ENDER_TRANS_VACUUM},
+                {Ducts.ITEM_ENDER_OPAQUE, Ducts.ITEM_ENDER_OPAQUE_DENSE, Ducts.ITEM_ENDER_OPAQUE_VACUUM},
         }) {
             ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[1].itemStack, new FluidStack(TFFluids.fluidCoal, 100), true);
             ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[2].itemStack, new FluidStack(TFFluids.fluidSteam, 1000), true);

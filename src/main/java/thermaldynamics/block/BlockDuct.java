@@ -45,8 +45,8 @@ import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.ducts.energy.TileEnergyDuct;
 import thermaldynamics.ducts.energy.TileEnergyDuctSuperConductor;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
-import thermaldynamics.ducts.fluid.TileFluidDuctFragile;
 import thermaldynamics.ducts.fluid.TileFluidDuctFlux;
+import thermaldynamics.ducts.fluid.TileFluidDuctFragile;
 import thermaldynamics.ducts.item.TileItemDuct;
 import thermaldynamics.ducts.item.TileItemDuctEnder;
 import thermaldynamics.ducts.item.TileItemDuctFlux;
@@ -114,7 +114,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 
 		if (event.target.typeOfHit == MovingObjectType.BLOCK
 				&& event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
-				.equals(getUnlocalizedName())) {
+						.equals(getUnlocalizedName())) {
 			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
 
 			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
@@ -154,8 +154,11 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		}
 
 		IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);
-
 		IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
+
+		// for (int i = 0; i < TDDucts.ductList.size(); i++) {
+		// TDDucts.ductList.get(i).registerIcons(ir);
+		// }
 
 		for (int i = 0; i < Ducts.values().length; i++) {
 			Ducts ducts = Ducts.values()[i];
@@ -316,9 +319,10 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(World world, int x, int y, int z, Random p_149734_5_) {
+	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
 
-		super.randomDisplayTick(world, x, y, z, p_149734_5_);
+		super.randomDisplayTick(world, x, y, z, rand);
+
 		TileEntity tileEntity = world.getTileEntity(x, y, z);
 		if (tileEntity instanceof TileMultiBlock) {
 			((TileMultiBlock) tileEntity).randomDisplayTick();
@@ -350,19 +354,22 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 	public boolean initialize() {
 
 		MinecraftForge.EVENT_BUS.register(this);
+
 		if (offset != 0) {
 			return true;
 		}
+		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.FluxDuct");
+		GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermaldynamics.FluxDuctSuperConductor");
 
-		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.ducts.energy.TileFluidDuct");
-		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.ducts.energy.TileFragileFluidDuct");
-		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.ducts.energy.TileFluidDuctRedstone");
-		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.ducts.energy.TileEnergyDuct");
-		GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermaldynamics.ducts.energy.TileEnergyDuctSuperConductor");
-		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ducts.energy.TileItemDuct");
-		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ducts.energy.TileItemDuctEnder");
-		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ducts.energy.TileItemDuctRedstone");
-		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.ducts.TileStructuralDuct");
+		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
+		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
+		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
+
+		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ItemDuct");
+		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");
+		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
+
+		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
 		return true;
 	}
 

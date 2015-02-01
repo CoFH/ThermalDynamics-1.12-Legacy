@@ -32,6 +32,7 @@ public class ItemServo extends ItemAttachment {
 	public ItemServo() {
 
 		super();
+
 		this.setUnlocalizedName("thermaldynamics.servo");
 	}
 
@@ -50,15 +51,14 @@ public class ItemServo extends ItemAttachment {
 		}
 	}
 
-	IIcon[] icons;
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister ir) {
 
 		icons = new IIcon[5];
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			icons[i] = ir.registerIcon("thermaldynamics:servo" + i);
+		}
 		this.itemIcon = icons[0];
 	}
 
@@ -72,14 +72,15 @@ public class ItemServo extends ItemAttachment {
 	public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
 
 		int type = stack.getItemDamage() % 5;
-		if (tile instanceof TileFluidDuct)
+		if (tile instanceof TileFluidDuct) {
 			return new ServoFluid(tile, (byte) (side ^ 1), type);
-		if (tile instanceof TileItemDuct)
+		}
+		if (tile instanceof TileItemDuct) {
 			return new ServoItem(tile, (byte) (side ^ 1), type);
+		}
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
 
@@ -127,7 +128,6 @@ public class ItemServo extends ItemAttachment {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void addFiltering(List list, int type, String tab) {
 
 		StringBuilder b = new StringBuilder();
@@ -135,13 +135,12 @@ public class ItemServo extends ItemAttachment {
 		b.append("Filter Options: " + StringHelper.GRAY);
 		boolean flag = false;
 		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
-			if (FilterLogic.canAlterFlag(Ducts.Type.Item, type, i)) {
+			if (FilterLogic.canAlterFlag(Ducts.Type.ITEM, type, i)) {
 				if (flag) {
 					b.append(", ");
 				} else {
 					flag = true;
 				}
-
 				b.append(StringHelper.localize("info.thermaldynamics.filter." + FilterLogic.flagTypes[i]));
 			}
 		}
@@ -160,19 +159,17 @@ public class ItemServo extends ItemAttachment {
 
 		GameRegistry.registerItem(this, "servo");
 
-		iron = new ItemStack(this, 1, 0);
-		invar = new ItemStack(this, 1, 1);
-		electrum = new ItemStack(this, 1, 2);
-		signalum = new ItemStack(this, 1, 3);
-		ender = new ItemStack(this, 1, 4);
+		basicServo = new ItemStack(this, 1, 0);
+		hardenedServo = new ItemStack(this, 1, 1);
+		reinforcedServo = new ItemStack(this, 1, 2);
+		signalumServo = new ItemStack(this, 1, 3);
+		resonantServo = new ItemStack(this, 1, 4);
 
 		return true;
 	}
 
-	public static enum Types {
-		BASIC, HARDENED, REINFORCED, SIGNALUM, RESONANT
-	}
+	IIcon[] icons;
 
-	public static ItemStack iron, invar, electrum, signalum, ender;
+	public static ItemStack basicServo, hardenedServo, reinforcedServo, signalumServo, resonantServo;
 
 }

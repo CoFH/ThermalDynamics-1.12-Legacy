@@ -2,6 +2,13 @@ package thermaldynamics.core;
 
 public class TDProps {
 
+	private TDProps() {
+
+	}
+
+	/* Graphics */
+	public static final String PATH_GFX = "thermaldynamics:textures/";
+
 	// Energy that each node can store.
 	public static final int ENERGY_PER_NODE = 80 * 7;
 

@@ -9,9 +9,9 @@ import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
-public class EnergySuperConductorGrid extends EnergyGrid {
+public class EnergyGridSuperConductor extends EnergyGrid {
 
-	public EnergySuperConductorGrid(World world, int type) {
+	public EnergyGridSuperConductor(World world, int type) {
 
 		super(world, type);
 		myStorage.setMaxExtract(myStorage.getMaxEnergyStored());
@@ -93,7 +93,7 @@ public class EnergySuperConductorGrid extends EnergyGrid {
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return grid instanceof EnergySuperConductorGrid;
+		return grid instanceof EnergyGridSuperConductor;
 	}
 
 	@Override

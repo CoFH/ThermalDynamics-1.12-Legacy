@@ -92,7 +92,7 @@ public class ServoFluid extends ServoBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.Fluid, this);
+		return new FilterLogic(type, Ducts.Type.FLUID, this);
 	}
 
 }

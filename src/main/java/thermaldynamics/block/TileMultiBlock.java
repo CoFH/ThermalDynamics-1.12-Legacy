@@ -522,7 +522,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	/*
 	 * Should return true if theTile is an instance of this multiblock.
-	 *
+	 * 
 	 * This must also be an instance of IMultiBlock
 	 */
 	public boolean isConnectable(TileEntity theTile, int side) {
@@ -537,7 +537,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 *
+	 * 
 	 * IE: Inventory's to ItemDuct's
 	 */
 	public boolean isSignificantTile(TileEntity theTile, int side) {

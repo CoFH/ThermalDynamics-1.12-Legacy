@@ -1,131 +1,149 @@
 package thermaldynamics.ducts.item;
 
-
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyReceiver;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
 
 public class TileItemDuctFlux extends TileItemDuctPower {
-    public final SubTileEnergyRedstone redstoneEnergy;
-    boolean isSubNode = false;
 
-    @Override
-    public void onNeighborBlockChange() {
-        super.onNeighborBlockChange();
-        checkSubNode();
-    }
+	public final SubTileEnergyRedstone redstoneEnergy;
+	boolean isSubNode = false;
 
-    public TileItemDuctFlux() {
-        super();
-        setSubEnergy(redstoneEnergy = new SubTileEnergyRedstone(this));
-    }
+	@Override
+	public void onNeighborBlockChange() {
 
-    public void checkSubNode() {
-        boolean newSubNode = false;
-        for (int i = 0; i < 6; i++) {
-            if (energyCache[i] != null) {
-                newSubNode = true;
-                break;
-            }
-        }
+		super.onNeighborBlockChange();
+		checkSubNode();
+	}
 
-        if (isSubNode != newSubNode) {
-            isSubNode = newSubNode;
-            if (energy.energyGrid != null) {
-                energy.energyGrid.addBlock(energy);
-            }
+	public TileItemDuctFlux() {
 
-        }
-    }
+		super();
+		setSubEnergy(redstoneEnergy = new SubTileEnergyRedstone(this));
+	}
 
-    @Override
-    public boolean isSubNode() {
-        return isSubNode;
-    }
+	public void checkSubNode() {
 
-    @Override
-    public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
-        super.onNeighborTileChange(tileX, tileY, tileZ);
-        checkSubNode();
-    }
+		boolean newSubNode = false;
+		for (int i = 0; i < 6; i++) {
+			if (energyCache[i] != null) {
+				newSubNode = true;
+				break;
+			}
+		}
 
-    @Override
-    public boolean tickPass(int pass) {
-        if (!super.tickPass(pass)) return false;
-        if (pass == 0 && isSubNode) {
-            int maxSend = redstoneEnergy.internalGrid.toDistribute;
-            redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
-        }
-        return true;
-    }
+		if (isSubNode != newSubNode) {
+			isSubNode = newSubNode;
+			if (energy.energyGrid != null) {
+				energy.energyGrid.addBlock(energy);
+			}
 
-    public int transmitEnergy(int power) {
-        int usedPower = 0;
+		}
+	}
 
-        for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
-            if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-                if (energyCache[i] != null) {
-                    if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-                        usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-                    }
-                    if (usedPower >= power) {
-                        this.tickInternalSideCounter(i + 1);
-                        break;
-                    }
-                }
-            }
-        }
+	@Override
+	public boolean isSubNode() {
 
-        for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
-            if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-                if (energyCache[i] != null) {
-                    if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-                        usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-                    }
-                    if (usedPower >= power) {
-                        this.tickInternalSideCounter(i + 1);
-                        break;
-                    }
-                }
-            }
-        }
-        return usedPower;
-    }
+		return isSubNode;
+	}
 
+	@Override
+	public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
 
-    IEnergyReceiver[] energyCache = new IEnergyReceiver[6];
+		super.onNeighborTileChange(tileX, tileY, tileZ);
+		checkSubNode();
+	}
 
-    @Override
-    public void clearCache(int side) {
-        super.clearCache(side);
-        energyCache[side] = null;
-    }
+	@Override
+	public boolean tickPass(int pass) {
 
-    @Override
-    public void cacheImportant(TileEntity tile, int side) {
-        super.cacheImportant(tile, side);
-        if (tile instanceof IEnergyReceiver)
-            energyCache[side] = (IEnergyReceiver) tile;
-    }
+		if (!super.tickPass(pass))
+			return false;
+		if (pass == 0 && isSubNode) {
+			int maxSend = redstoneEnergy.internalGrid.toDistribute;
+			redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
+		}
+		return true;
+	}
 
-    @Override
-    public void cacheInputTile(TileEntity tile, int side) {
-        super.cacheInputTile(tile, side);
-        if (tile instanceof IEnergyReceiver)
-            energyCache[side] = (IEnergyReceiver) tile;
-    }
+	public int transmitEnergy(int power) {
 
-    @Override
-    public void cacheStructural(TileEntity tile, int side) {
-        if (tile instanceof IEnergyReceiver)
-            energyCache[side] = (IEnergyReceiver) tile;
-        isOutput = true;
-    }
+		int usedPower = 0;
 
-    @Override
-    public boolean isStructureTile(TileEntity theTile, int side) {
-        return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.getOrientation(side ^ 1));
-    }
+		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
+			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+				if (energyCache[i] != null) {
+					if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+						usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+					}
+					if (usedPower >= power) {
+						this.tickInternalSideCounter(i + 1);
+						break;
+					}
+				}
+			}
+		}
+
+		for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
+			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+				if (energyCache[i] != null) {
+					if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+						usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+					}
+					if (usedPower >= power) {
+						this.tickInternalSideCounter(i + 1);
+						break;
+					}
+				}
+			}
+		}
+		return usedPower;
+	}
+
+	IEnergyReceiver[] energyCache = new IEnergyReceiver[6];
+
+	@Override
+	public void clearCache(int side) {
+
+		super.clearCache(side);
+		energyCache[side] = null;
+	}
+
+	@Override
+	public void cacheImportant(TileEntity tile, int side) {
+
+		super.cacheImportant(tile, side);
+		if (tile instanceof IEnergyReceiver) {
+			energyCache[side] = (IEnergyReceiver) tile;
+		}
+	}
+
+	@Override
+	public void cacheInputTile(TileEntity tile, int side) {
+
+		super.cacheInputTile(tile, side);
+		if (tile instanceof IEnergyReceiver) {
+			energyCache[side] = (IEnergyReceiver) tile;
+		}
+	}
+
+	@Override
+	public void cacheStructural(TileEntity tile, int side) {
+
+		if (tile instanceof IEnergyReceiver) {
+			energyCache[side] = (IEnergyReceiver) tile;
+		}
+		isOutput = true;
+	}
+
+	@Override
+	public boolean isStructureTile(TileEntity theTile, int side) {
+
+		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.getOrientation(side ^ 1));
+	}
+
 }

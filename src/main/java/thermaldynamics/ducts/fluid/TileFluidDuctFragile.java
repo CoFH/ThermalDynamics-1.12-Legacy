@@ -29,11 +29,16 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class TileFluidDuctFragile extends TileFluidDuct {
 
-	public static final int roomTemperature = FluidRegistry.WATER.getTemperature();
-	public static final int freezingTemperature = 274;
-	public static final int meltingTemperature = 800;
+	public static final int ROOM_TEMPERATURE = FluidRegistry.WATER.getTemperature();
+	public static final int FREEZING_TEMPERATURE = 274;
+	public static final int MELTING_TEMPERATURE = 800;
 
-	public float internalTemperature = roomTemperature;
+	public float internalTemperature = ROOM_TEMPERATURE;
+
+	public TileFluidDuctFragile() {
+
+		super();
+	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -86,11 +91,6 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 			super.handleTileInfoPacketType(payload, b);
 	}
 
-	public TileFluidDuctFragile() {
-
-		super();
-	}
-
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
@@ -103,8 +103,8 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick() {
 
-		if (getDuctType().opaque ? internalTemperature > meltingTemperature : myRenderFluid != null && myRenderFluid.amount > 0
-				&& getTemperature(myRenderFluid) > meltingTemperature) {
+		if (getDuctType().opaque ? internalTemperature > MELTING_TEMPERATURE : myRenderFluid != null && myRenderFluid.amount > 0
+				&& getTemperature(myRenderFluid) > MELTING_TEMPERATURE) {
 			List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
 			addTraceableCuboids(cuboids);
 			if (cuboids.size() == 0)
@@ -132,7 +132,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 			internalTemperature = internalTemperature + (fluidTemp - internalTemperature) * 0.01F;
 
-			if (internalTemperature < freezingTemperature || internalTemperature > meltingTemperature) {
+			if (internalTemperature < FREEZING_TEMPERATURE || internalTemperature > MELTING_TEMPERATURE) {
 				if (worldObj.rand.nextInt(20) == 0) {
 
 					if (fluid != null && fluid.amount > 0) {
@@ -159,7 +159,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 				return f.getTemperature(fluid);
 		}
 
-		return roomTemperature;
+		return ROOM_TEMPERATURE;
 	}
 
 	public void breakAndSpill(FluidStack fluidStack) {

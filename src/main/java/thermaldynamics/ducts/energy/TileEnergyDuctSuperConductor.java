@@ -6,19 +6,19 @@ import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class TileEnergyDuctSuperConductor extends TileEnergyDuct {
 
-	private EnergySuperConductorGrid internalGridSC;
+	private EnergyGridSuperConductor internalGridSC;
 
 	@Override
 	public void setGrid(MultiBlockGrid newGrid) {
 
 		super.setGrid(newGrid);
-		internalGridSC = (EnergySuperConductorGrid) newGrid;
+		internalGridSC = (EnergyGridSuperConductor) newGrid;
 	}
 
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		return new EnergySuperConductorGrid(worldObj, getDuctType().type);
+		return new EnergyGridSuperConductor(worldObj, getDuctType().type);
 	}
 
 	@Override

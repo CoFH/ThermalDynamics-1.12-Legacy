@@ -419,7 +419,7 @@ public class ServoItem extends ServoBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.Item, this);
+		return new FilterLogic(type, Ducts.Type.ITEM, this);
 	}
 
 }

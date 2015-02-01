@@ -55,7 +55,7 @@ public class TDCreativeTab extends CreativeTabs {
 		World world = CoFHCore.proxy.getClientWorld();
 
 		if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
-			int next = MathHelper.RANDOM.nextInt(Ducts.ductList.length - 1);
+			int next = MathHelper.RANDOM.nextInt(Ducts.ductList.length);
 			iconIndex = next >= iconIndex ? next + 1 : next;
 		}
 		iconTracker.markTime(world);
@@ -63,18 +63,18 @@ public class TDCreativeTab extends CreativeTabs {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void displayAllReleventItems(List p_78018_1_) {
+	public void displayAllReleventItems(List list) {
 
 		LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
 		super.displayAllReleventItems(itemStacks);
 
 		for (Ducts d : Ducts.getSortedDucts()) {
-			p_78018_1_.add(d.itemStack.copy());
+			list.add(d.itemStack.copy());
 		}
 
 		for (ItemStack item : itemStacks) {
 			if (!(item.getItem() instanceof ItemBlockDuct))
-				p_78018_1_.add(item);
+				list.add(item);
 		}
 	}
 
