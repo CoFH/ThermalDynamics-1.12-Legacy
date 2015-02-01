@@ -5,10 +5,12 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.item.Item;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
+
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.block.BlockDuct;
 import thermaldynamics.debughelper.CommandServerDebug;
@@ -23,36 +25,37 @@ import thermaldynamics.render.RenderDuctItemsEnder;
 
 public class ProxyClient extends Proxy {
 
-    @Override
-    public void registerRenderInformation() {
-        FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
-        for (BlockDuct duct : ThermalDynamics.blockDuct) {
-            MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
-        }
+	@Override
+	public void registerRenderInformation() {
 
-        MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, ItemCoverRenderer.instance);
+		FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
+		for (BlockDuct duct : ThermalDynamics.blockDuct) {
+			MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
+		}
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
+		MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, ItemCoverRenderer.instance);
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
 
-        ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
-    }
+		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void registerIcons(TextureStitchEvent.Pre event) {
+		ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
+	}
 
-    }
+	@Override
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void registerIcons(TextureStitchEvent.Pre event) {
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void initializeIcons(TextureStitchEvent.Post event) {
+	}
 
-        RenderDuct.initialize();
-    }
+	@Override
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void initializeIcons(TextureStitchEvent.Post event) {
+
+		RenderDuct.initialize();
+	}
 
 }

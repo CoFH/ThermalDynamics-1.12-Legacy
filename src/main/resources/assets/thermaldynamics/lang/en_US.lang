@@ -6,12 +6,17 @@ tile.thermaldynamics.duct.energyReinforced.name=Redstone Energy Fluxduct
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=Redstone Energy Fluxduct (Empty)
 tile.thermaldynamics.duct.energySuperconductor.name=Magnetic-Enhanced Fluxduct
 tile.thermaldynamics.duct.energySuperconductorEmpty.name=Magnetic-Enhanced Fluxduct (Empty)
+
 tile.thermaldynamics.duct.fluidBasic.name=Copper Fluiduct
 tile.thermaldynamics.duct.fluidHardened.name=Hardened Fluiduct
+tile.thermaldynamics.duct.fluidFlux.name=
+tile.thermaldynamics.duct.fluidFluxEmpty.name=
+
 tile.thermaldynamics.duct.itemBasic.name=Itemduct
 tile.thermaldynamics.duct.itemFast.name=Impulse Itemduct
-tile.thermaldynamics.duct.itemRedstone.name=Fluctuating Itemduct
+tile.thermaldynamics.duct.itemFlux.name=Fluctuating Itemduct
 tile.thermaldynamics.duct.itemEnder.name=Warp Itemduct
+
 tile.thermaldynamics.duct.structure.name=Structuralduct
 
 tile.thermaldynamics.duct.energyBasic.info=Transfers Redstone Flux (RF)
@@ -20,11 +25,13 @@ tile.thermaldynamics.duct.energyReinforced.info=Transfers Redstone Flux (RF)
 tile.thermaldynamics.duct.energyReinforcedEmpty.info=Crafting Ingredient
 tile.thermaldynamics.duct.energySuperconductor.info=Transfers Redstone Flux (RF)
 tile.thermaldynamics.duct.energySuperconductorEmpty.info=Crafting Ingredient
+
 tile.thermaldynamics.duct.fluidBasic.info=Transfers Fluids.
 tile.thermaldynamics.duct.fluidHardened.info=Transfers Fluids.
+tile.thermaldynamics.duct.fluidFlux.info=
 tile.thermaldynamics.duct.itemBasic.info=Transfers Items
 tile.thermaldynamics.duct.itemFast.info=Transfers Items quickly.
-tile.thermaldynamics.duct.itemRedstone.info=Transfers Items and Redstone Flux (RF)
+tile.thermaldynamics.duct.itemFlux.info=Transfers Items and Redstone Flux (RF)
 tile.thermaldynamics.duct.itemEnder.info=Transfers Items instantly. Uses Redstone Flux (RF).
 tile.thermaldynamics.duct.structure.info=Provides Structure
 
@@ -49,6 +56,7 @@ item.thermaldynamics.servo.4.name=Resonant Servo
 info.thermaldynamics.duct.energy=Transfers Redstone Flux (RF).
 info.thermaldynamics.duct.fluid=Transfers Fluids.
 info.thermaldynamics.duct.item=Transfers Items.
+info.thermaldynamics.duct.structure=Provides Structure
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata
@@ -62,7 +70,7 @@ info.thermaldynamics.filter.metadata.off=Use Metadata
 info.thermaldynamics.filter.metadata.on=Ignore Metadata
 info.thermaldynamics.filter.nbt.off=Use NBT
 info.thermaldynamics.filter.nbt.on=Ignore NBT
-info.thermaldynamics.filter.oreDic.off=Use Ore Dictionary
-info.thermaldynamics.filter.oreDic.on=Ignore Ore Dictionary
+info.thermaldynamics.filter.oreDict.off=Use Ore Dictionary
+info.thermaldynamics.filter.oreDict.on=Ignore Ore Dictionary
 info.thermaldynamics.filter.modSorting.off=Use Mod Owner
 info.thermaldynamics.filter.modSorting.on=Ignore Mod Owner

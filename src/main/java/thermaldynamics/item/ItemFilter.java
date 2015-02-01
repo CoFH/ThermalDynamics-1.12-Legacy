@@ -33,10 +33,10 @@ public class ItemFilter extends ItemAttachment {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
+	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
 		for (int i = 0; i < 5; i++) {
-			p_150895_3_.add(new ItemStack(p_150895_1_, 1, i));
+			list.add(new ItemStack(item, 1, i));
 		}
 	}
 
@@ -47,8 +47,9 @@ public class ItemFilter extends ItemAttachment {
 	public void registerIcons(IIconRegister ir) {
 
 		icons = new IIcon[5];
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			icons[i] = ir.registerIcon("thermaldynamics:filter" + i);
+		}
 		this.itemIcon = icons[0];
 	}
 

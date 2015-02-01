@@ -1,13 +1,13 @@
-package thermaldynamics.ducts.fluid;
+package thermaldynamics.ducts.item;
 
+
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import thermaldynamics.block.BlockDuct;
 import thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
-import thermaldynamics.multiblock.MultiBlockGrid;
 
-public class TileFluidDuctRedstone extends TileFluidDuctPowered {
+public class TileItemDuctFlux extends TileItemDuctPower {
     public final SubTileEnergyRedstone redstoneEnergy;
     boolean isSubNode = false;
 
@@ -17,7 +17,7 @@ public class TileFluidDuctRedstone extends TileFluidDuctPowered {
         checkSubNode();
     }
 
-    public TileFluidDuctRedstone() {
+    public TileItemDuctFlux() {
         super();
         setSubEnergy(redstoneEnergy = new SubTileEnergyRedstone(this));
     }
@@ -52,27 +52,9 @@ public class TileFluidDuctRedstone extends TileFluidDuctPowered {
     }
 
     @Override
-    public BlockDuct.ConnectionTypes getConnectionType(int side) {
-        BlockDuct.ConnectionTypes connectionType = super.getConnectionType(side);
-        if (connectionType == BlockDuct.ConnectionTypes.DUCT) {
-            if (!(neighborMultiBlocks[side] instanceof TileFluidDuctPowered)) {
-                return BlockDuct.ConnectionTypes.CLEANDUCT;
-            }
-        }
-        return connectionType;
-    }
-
-    @Override
-    public MultiBlockGrid getNewGrid() {
-        FluidGrid grid = new FluidGrid(worldObj, getDuctType().type);
-        grid.doesPassiveTicking = true;
-        return grid;
-    }
-
-    @Override
     public boolean tickPass(int pass) {
         if (!super.tickPass(pass)) return false;
-        if (pass == 2 && isSubNode) {
+        if (pass == 0 && isSubNode) {
             int maxSend = redstoneEnergy.internalGrid.toDistribute;
             redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
         }
@@ -137,7 +119,13 @@ public class TileFluidDuctRedstone extends TileFluidDuctPowered {
 
     @Override
     public void cacheStructural(TileEntity tile, int side) {
-        energyCache[side] = (IEnergyReceiver) tile;
+        if (tile instanceof IEnergyReceiver)
+            energyCache[side] = (IEnergyReceiver) tile;
         isOutput = true;
+    }
+
+    @Override
+    public boolean isStructureTile(TileEntity theTile, int side) {
+        return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.getOrientation(side ^ 1));
     }
 }

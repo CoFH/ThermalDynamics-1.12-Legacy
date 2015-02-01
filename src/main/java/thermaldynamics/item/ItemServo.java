@@ -43,10 +43,10 @@ public class ItemServo extends ItemAttachment {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
+	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
 		for (int i = 0; i < 5; i++) {
-			p_150895_3_.add(new ItemStack(p_150895_1_, 1, i));
+			list.add(new ItemStack(item, 1, i));
 		}
 	}
 
@@ -93,7 +93,6 @@ public class ItemServo extends ItemAttachment {
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-
 		if (ServoBase.canAlterRS(type))
 			list.add("Internal Redstone Control");
 		else
@@ -168,6 +167,10 @@ public class ItemServo extends ItemAttachment {
 		ender = new ItemStack(this, 1, 4);
 
 		return true;
+	}
+
+	public static enum Types {
+		BASIC, HARDENED, REINFORCED, SIGNALUM, RESONANT
 	}
 
 	public static ItemStack iron, invar, electrum, signalum, ender;

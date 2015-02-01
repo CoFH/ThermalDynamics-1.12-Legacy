@@ -3,21 +3,24 @@ package thermaldynamics.ducts.attachments.filter;
 import net.minecraft.item.ItemStack;
 
 public interface IFilterItems {
-    public boolean matchesFilter(ItemStack item);
 
-    public boolean shouldIncRouteItems();
+	public boolean matchesFilter(ItemStack item);
 
-    final static IFilterItems nullFilter =  new IFilterItems() {
-        @Override
-        public boolean matchesFilter(ItemStack item) {
-            return true;
-        }
+	public boolean shouldIncRouteItems();
 
-        @Override
-        public boolean shouldIncRouteItems() {
-            return true;
-        }
-    };
+	final static IFilterItems nullFilter = new IFilterItems() {
 
+		@Override
+		public boolean matchesFilter(ItemStack item) {
+
+			return true;
+		}
+
+		@Override
+		public boolean shouldIncRouteItems() {
+
+			return true;
+		}
+	};
 
 }

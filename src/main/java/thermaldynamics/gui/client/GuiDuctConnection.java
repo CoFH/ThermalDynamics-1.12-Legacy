@@ -4,63 +4,59 @@ import cofh.core.gui.GuiBaseAdv;
 import cofh.core.gui.element.TabRedstone;
 import cofh.lib.gui.element.ElementButton;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.ducts.attachments.ConnectionBase;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.gui.container.ContainerDuctConnection;
 
 public class GuiDuctConnection extends GuiBaseAdv {
 
+	static final String TEX_PATH = "thermaldynamics:textures/gui/Connection.png";
+	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
+
 	InventoryPlayer inventory;
-	ConnectionBase servoBase;
-	public static ResourceLocation TEX = new ResourceLocation("thermaldynamics:textures/gui/Connection.png");
+	ConnectionBase conBase;
 
 	ContainerDuctConnection container;
 	public ElementButton[] flagButtons = new ElementButton[0];
 	public ElementButton[] levelButtons = new ElementButton[FilterLogic.defaultLevels.length];
 
-	public ElementButton incStack;
-	public ElementButton subStacksize;
+	boolean isItemServo;
+	public ElementButton decStackSize;
+	public ElementButton incStackSize;
+	int minSize;
+	int maxSize;
 
 	public int buttonSize;
 
-	public GuiDuctConnection(InventoryPlayer inventory, ConnectionBase servoBase) {
+	public GuiDuctConnection(InventoryPlayer inventory, ConnectionBase conBase) {
 
-		super(new ContainerDuctConnection(inventory, servoBase), TEX);
-		this.servoBase = servoBase;
+		super(new ContainerDuctConnection(inventory, conBase), TEXTURE);
+		this.conBase = conBase;
 		this.inventory = inventory;
 		container = (ContainerDuctConnection) inventorySlots;
-		name = "Filter";
+		name = conBase.getName();
 		this.ySize = 205;
+		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM;
 	}
 
-	private static final int[][] levelButtonPos = {
-        	{-1, -1},
-        	{0, 204},
-        	{80, 204}
-	};
+	private static final int[][] levelButtonPos = { { -1, -1 }, { 0, 204 }, { 80, 204 } };
 
-	private static final int[][] flagButtonsPos = {
-        	{176, 0},
-        	{216, 0},
-        	{176, 60},
-        	{216, 60},
-        	{176, 120},
-        	{216, 120},
-        	{176, 180},
-        	{216, 180},
-	};
+	private static final int[][] flagButtonsPos = { { 176, 0 }, { 216, 0 }, { 176, 60 }, { 216, 60 }, { 176, 120 }, { 216, 120 }, { 176, 180 }, { 216, 180 }, };
 
 	@Override
 	public void initGui() {
 
 		super.initGui();
-		if (servoBase.canAlterRS())
-			addTab(new TabRedstone(this, servoBase));
+
+		if (conBase.canAlterRS())
+			addTab(new TabRedstone(this, conBase));
 
 		int[] flagNums = container.filter.validFlags();
 		flagButtons = new ElementButton[container.filter.numFlags()];
@@ -79,17 +75,25 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				int j = flagNums[i];
 				flagButtons[j] = new ElementButton(this, x0 + button_offset * i, y0, container.filter.flagType(j), flagButtonsPos[j][0], flagButtonsPos[j][1],
 						flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize, flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize * 2, buttonSize,
-						buttonSize, TEX.toString());
+						buttonSize, TEX_PATH);
 				addElement(flagButtons[j]);
 			}
 
 			for (int i = 0; i < levelNums.length; i++) {
 				int j = levelNums[i];
-				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, "Level" + j, levelButtonPos[j][0],
-						levelButtonPos[j][1], levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize, buttonSize, buttonSize, TEX.toString());
+				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, "level" + j, levelButtonPos[j][0],
+						levelButtonPos[j][1], levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize, buttonSize, buttonSize, TEX_PATH);
 				addElement(levelButtons[j]);
 			}
+		}
+		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH);
+		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH);
 
+		if (isItemServo) {
+			addElement(decStackSize);
+			addElement(incStackSize);
+			minSize = conBase.filter.minLevels[conBase.filter.type][0];
+			maxSize = conBase.filter.maxLevels[conBase.filter.type][0];
 		}
 		setButtons();
 	}
@@ -102,7 +106,6 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				int x = flagButtonsPos[i][0] + (b ? buttonSize : 0);
 				flagButtons[i].setSheetX(x);
 				flagButtons[i].setHoverX(x);
-				String s = "info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off");
 				flagButtons[i].setToolTip("info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off"));
 			}
 		}
@@ -113,8 +116,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				int x = levelButtonPos[i][0] + level * buttonSize;
 				levelButtons[i].setSheetX(x);
 				levelButtons[i].setHoverX(x);
-				// String s = "info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off");
-				// flagButtons[i].setToolTip("info.thermaldynamics.filter." + flagButtons[i].getName() + (b ? ".on" : ".off"));
+				levelButtons[i].setToolTip("info.thermaldynamics.filter." + levelButtons[i].getName() + level);
 			}
 		}
 	}
@@ -123,6 +125,20 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	protected void updateElementInformation() {
 
 		super.updateElementInformation();
+
+		if (isItemServo) {
+			int qty = conBase.filter.getLevel(0);
+			if (qty > minSize) {
+				decStackSize.setActive();
+			} else {
+				decStackSize.setDisabled();
+			}
+			if (qty < maxSize) {
+				incStackSize.setActive();
+			} else {
+				incStackSize.setDisabled();
+			}
+		}
 		setButtons();
 	}
 
@@ -132,33 +148,78 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		for (int i = 0; i < flagButtons.length; i++) {
 			ElementButton button = flagButtons[i];
 			if (button != null && button.getName().equals(buttonName)) {
-				container.filter.setFlag(i, !container.filter.getFlag(i));
+				if (container.filter.setFlag(i, !container.filter.getFlag(i))) {
+					if (container.filter.getFlag(i)) {
+						playSound("random.click", 1.0F, 0.8F);
+					} else {
+						playSound("random.click", 1.0F, 0.6F);
+					}
+				}
 				setButtons();
 				return;
 			}
 		}
-
 		for (int i = 0; i < levelButtons.length; i++) {
 			ElementButton button = levelButtons[i];
 			if (button != null && button.getName().equals(buttonName)) {
-				container.filter.incLevel(i);
+				if (mouseButton == 0) {
+					container.filter.incLevel(i);
+					playSound("random.click", 1.0F, 0.8F);
+				} else if (mouseButton == 1) {
+					container.filter.decLevel(i);
+					playSound("random.click", 1.0F, 0.6F);
+				}
 				setButtons();
 				return;
 			}
 		}
+		int change = 1;
+		float pitch = 0.7F;
+		if (GuiScreen.isShiftKeyDown()) {
+			change = 16;
+			pitch = 0.9F;
+			if (mouseButton == 1) {
+				change = 4;
+				pitch = 0.8F;
+			}
+		}
+		if (buttonName.equalsIgnoreCase("DecStackSize")) {
+			container.filter.decLevel(0, change, false);
+			pitch -= 0.1F;
+		} else if (buttonName.equalsIgnoreCase("IncStackSize")) {
+			container.filter.incLevel(0, change, false);
+			pitch += 0.1F;
+		}
+		playSound("random.click", 1.0F, pitch);
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int x, int y) {
+
+		if (isItemServo) {
+			int xQty = 146;
+			int qty = conBase.filter.getLevel(0);
+			if (qty < 10) {
+				xQty += 6;
+			}
+			fontRendererObj.drawString("" + qty, xQty, 44, 0x404040);
+		}
+
+		super.drawGuiContainerForegroundLayer(x, y);
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTick, int x, int y) {
 
 		super.drawGuiContainerBackgroundLayer(partialTick, x, y);
+
 		drawSlots();
 	}
 
 	private void drawSlots() {
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		bindTexture(TEX);
+		bindTexture(TEXTURE);
 
 		int x0 = container.gridX0 - 1;
 		int y0 = container.gridY0 - 1;

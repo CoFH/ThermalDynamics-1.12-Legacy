@@ -1,87 +1,90 @@
 package thermaldynamics.core;
 
-import net.minecraft.world.World;
-import thermaldynamics.debughelper.DebugHelper;
-import thermaldynamics.multiblock.IMultiBlock;
-import thermaldynamics.multiblock.MultiBlockGrid;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
+import net.minecraft.world.World;
+
+import thermaldynamics.multiblock.IMultiBlock;
+import thermaldynamics.multiblock.MultiBlockGrid;
+
 public class WorldGridList {
 
-    public World worldObj;
+	public World worldObj;
 
-    public WorldGridList(World world) {
-        this.worldObj = world;
-    }
+	public WorldGridList(World world) {
 
-    public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<MultiBlockGrid>();
-    public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<IMultiBlock>();
+		this.worldObj = world;
+	}
 
-    public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<MultiBlockGrid>();
-    public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<MultiBlockGrid>();
-    public LinkedHashSet<MultiBlockGrid> oldGrids = new LinkedHashSet<MultiBlockGrid>();
+	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<MultiBlockGrid>();
+	public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<IMultiBlock>();
 
+	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<MultiBlockGrid>();
+	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<MultiBlockGrid>();
+	public LinkedHashSet<MultiBlockGrid> oldGrids = new LinkedHashSet<MultiBlockGrid>();
 
-    public void tickStart() {
+	public void tickStart() {
 
-        if (!newGrids.isEmpty()) {
-            tickingGrids.addAll(newGrids);
-            newGrids.clear();
-        }
+		if (!newGrids.isEmpty()) {
+			tickingGrids.addAll(newGrids);
+			newGrids.clear();
+		}
 
-        if (!oldGrids.isEmpty()) {
-            tickingGrids.removeAll(oldGrids);
-            oldGrids.clear();
-        }
+		if (!oldGrids.isEmpty()) {
+			tickingGrids.removeAll(oldGrids);
+			oldGrids.clear();
+		}
 
-    }
+	}
 
-    public void tickEnd() {
-        if (!gridsToRecreate.isEmpty()) {
-            tickingGrids.removeAll(gridsToRecreate);
-            for (MultiBlockGrid grid : gridsToRecreate) {
-                for (IMultiBlock multiBlock : grid.idleSet) {
-                    tickingBlocks.add(multiBlock);
-                    grid.destroyNode(multiBlock);
-                }
+	public void tickEnd() {
 
-                for (IMultiBlock multiBlock : grid.nodeSet) {
-                    tickingBlocks.add(multiBlock);
-                    grid.destroyNode(multiBlock);
-                }
-            }
-            gridsToRecreate.clear();
-        }
+		if (!gridsToRecreate.isEmpty()) {
+			tickingGrids.removeAll(gridsToRecreate);
+			for (MultiBlockGrid grid : gridsToRecreate) {
+				for (IMultiBlock multiBlock : grid.idleSet) {
+					tickingBlocks.add(multiBlock);
+					grid.destroyNode(multiBlock);
+				}
 
-        LinkedList<MultiBlockGrid> mtickinggrids = new LinkedList<MultiBlockGrid>();
+				for (IMultiBlock multiBlock : grid.nodeSet) {
+					tickingBlocks.add(multiBlock);
+					grid.destroyNode(multiBlock);
+				}
+			}
+			gridsToRecreate.clear();
+		}
 
-        for (MultiBlockGrid grid : tickingGrids) {
-            grid.tickGrid();
-            if (grid.isTickProcessing()) mtickinggrids.add(grid);
-        }
+		LinkedList<MultiBlockGrid> mtickinggrids = new LinkedList<MultiBlockGrid>();
 
-        if (!mtickinggrids.isEmpty()) {
+		for (MultiBlockGrid grid : tickingGrids) {
+			grid.tickGrid();
+			if (grid.isTickProcessing())
+				mtickinggrids.add(grid);
+		}
 
-            long deadline = System.nanoTime() + 100000L;
-            Iterator<MultiBlockGrid> iterator = mtickinggrids.iterator();
-            while (System.nanoTime() < deadline && iterator.hasNext()) {
-                iterator.next().doTickProcessing(deadline);
-            }
+		if (!mtickinggrids.isEmpty()) {
 
-        }
+			long deadline = System.nanoTime() + 100000L;
+			Iterator<MultiBlockGrid> iterator = mtickinggrids.iterator();
+			while (System.nanoTime() < deadline && iterator.hasNext()) {
+				iterator.next().doTickProcessing(deadline);
+			}
 
-        if (!tickingBlocks.isEmpty()) {
-            Iterator<IMultiBlock> iter = tickingBlocks.iterator();
-            while (iter.hasNext()) {
-                IMultiBlock block = iter.next();
-                if (block.existsYet()) {
-                    block.tickMultiBlock();
-                    iter.remove();
-                }
-            }
-        }
-    }
+		}
+
+		if (!tickingBlocks.isEmpty()) {
+			Iterator<IMultiBlock> iter = tickingBlocks.iterator();
+			while (iter.hasNext()) {
+				IMultiBlock block = iter.next();
+				if (block.existsYet()) {
+					block.tickMultiBlock();
+					iter.remove();
+				}
+			}
+		}
+	}
+
 }

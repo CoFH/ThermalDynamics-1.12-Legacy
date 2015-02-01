@@ -3,19 +3,21 @@ package thermaldynamics.ducts.attachments.filter;
 import net.minecraft.item.ItemStack;
 
 public interface IFilterConfig {
-    public ItemStack[] getFilterStacks();
 
-    public void onChange();
+	public ItemStack[] getFilterStacks();
 
-    public int filterStackGridWidth();
+	public void onChange();
 
-    public boolean getFlag(int flagType);
+	public int filterStackGridWidth();
 
-    public void setFlag(int flagType, boolean flag);
+	public boolean getFlag(int flagType);
 
-    public boolean canAlterFlag(int flagType);
+	public boolean setFlag(int flagType, boolean flag);
 
-    public String flagType(int flagType);
+	public boolean canAlterFlag(int flagType);
 
-    public int numFlags();
+	public String flagType(int flagType);
+
+	public int numFlags();
+
 }

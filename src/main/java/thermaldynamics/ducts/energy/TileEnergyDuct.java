@@ -3,161 +3,175 @@ package thermaldynamics.ducts.energy;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.multiblock.MultiBlockGrid;
 
 public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
-    public int energyForGrid = 0;
-    public int lastStoredValue = 0;
-    EnergyGrid internalGrid;
+	public int energyForGrid = 0;
+	public int lastStoredValue = 0;
+	EnergyGrid internalGrid;
 
+	public TileEnergyDuct() {
 
-    public TileEnergyDuct() {
+	}
 
+	@Override
+	public void setGrid(MultiBlockGrid newGrid) {
 
-    }
+		super.setGrid(newGrid);
+		internalGrid = (EnergyGrid) newGrid;
+	}
 
-    @Override
-    public void setGrid(MultiBlockGrid newGrid) {
+	@Override
+	public MultiBlockGrid getNewGrid() {
 
-        super.setGrid(newGrid);
-        internalGrid = (EnergyGrid) newGrid;
-    }
+		return new EnergyGrid(worldObj, getDuctType().type);
+	}
 
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
 
-    @Override
-    public MultiBlockGrid getNewGrid() {
+		return // neighborTypes[from.ordinal()] == NeighborTypes.TILE &&
+		connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+	}
 
-        return new EnergyGrid(worldObj, getDuctType().type);
-    }
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
 
-    @Override
-    public boolean canConnectEnergy(ForgeDirection from) {
-        return //neighborTypes[from.ordinal()] == NeighborTypes.TILE &&
-                connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
-    }
+		return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
+	}
 
-    @Override
-    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
-    }
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
 
-    @Override
-    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.extractEnergy(maxExtract, simulate) : 0;
-    }
+		return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.extractEnergy(maxExtract, simulate) : 0;
+	}
 
-    @Override
-    public int getEnergyStored(ForgeDirection from) {
-        return this.internalGrid != null ? this.internalGrid.myStorage.getEnergyStored() : 0;
-    }
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
 
-    @Override
-    public int getMaxEnergyStored(ForgeDirection from) {
+		return this.internalGrid != null ? this.internalGrid.myStorage.getEnergyStored() : 0;
+	}
 
-        return this.internalGrid != null ? this.internalGrid.myStorage.getMaxEnergyStored() : 0;
-    }
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
 
-    public boolean isConnectable(TileEntity theTile, int side) {
-        return theTile instanceof TileEnergyDuct && ((TileEnergyDuct) theTile).getDuctType().type == getDuctType().type;
-    }
+		return this.internalGrid != null ? this.internalGrid.myStorage.getMaxEnergyStored() : 0;
+	}
 
-    public boolean isSignificantTile(TileEntity theTile, int side) {
-        return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side ^ 1])
-                ;
-    }
+	@Override
+	public boolean isConnectable(TileEntity theTile, int side) {
 
-    @Override
-    public void tileUnloading() {
-        if (isNode) {
-            internalGrid.myStorage.extractEnergy(lastStoredValue, false);
-        }
-    }
+		return theTile instanceof TileEnergyDuct && ((TileEnergyDuct) theTile).getDuctType().type == getDuctType().type;
+	}
 
-    public boolean tickPass(int pass) {
-        if (!super.tickPass(pass)) return false;
-        int power = this.internalGrid.getSendableEnergy();
+	@Override
+	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-        int usedPower = transmitEnergy(power);
+		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+	}
 
-        this.internalGrid.useEnergy(usedPower);
-        return true;
-    }
+	@Override
+	public void tileUnloading() {
 
-    public int transmitEnergy(int power) {
-        int usedPower = 0;
+		if (isNode) {
+			internalGrid.myStorage.extractEnergy(lastStoredValue, false);
+		}
+	}
 
-        for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
-            if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+	@Override
+	public boolean tickPass(int pass) {
 
-                if (cache[i] != null) {
+		if (!super.tickPass(pass))
+			return false;
+		int power = this.internalGrid.getSendableEnergy();
 
-                    if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-                        usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-                    }
-                    if (usedPower >= power) {
-                        this.tickInternalSideCounter(i + 1);
-                        break;
-                    }
-                }
-            }
-        }
+		int usedPower = transmitEnergy(power);
 
-        for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
-            if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-                if (cache[i] != null) {
-                    if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-                        usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-                    }
-                    if (usedPower >= power) {
-                        this.tickInternalSideCounter(i + 1);
-                        break;
-                    }
-                }
-            }
-        }
-        return usedPower;
-    }
+		this.internalGrid.useEnergy(usedPower);
+		return true;
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
+	public int transmitEnergy(int power) {
 
-        energyForGrid = nbt.getInteger("Energy");
-    }
+		int usedPower = 0;
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
+		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
+			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 
-        if (internalGrid != null) {
-            if (isNode) {
-                lastStoredValue = internalGrid.getNodeShare(this);
-                nbt.setInteger("Energy", lastStoredValue);
-            }
-        } else if (energyForGrid > 0) {
-            nbt.setInteger("Energy", energyForGrid);
-        } else {
-            energyForGrid = 0;
-        }
-    }
+				if (cache[i] != null) {
 
-    IEnergyReceiver[] cache = new IEnergyReceiver[6];
+					if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+						usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+					}
+					if (usedPower >= power) {
+						this.tickInternalSideCounter(i + 1);
+						break;
+					}
+				}
+			}
+		}
 
-    @Override
-    public void cacheImportant(TileEntity tile, int side) {
-        if (tile instanceof IEnergyReceiver)
-            cache[side] = (IEnergyReceiver) tile;
-    }
+		for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
+			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+				if (cache[i] != null) {
+					if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
+						usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+					}
+					if (usedPower >= power) {
+						this.tickInternalSideCounter(i + 1);
+						break;
+					}
+				}
+			}
+		}
+		return usedPower;
+	}
 
-    @Override
-    public void clearCache(int side) {
-        cache[side] = null;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
 
+		super.readFromNBT(nbt);
+
+		energyForGrid = nbt.getInteger("Energy");
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+
+		super.writeToNBT(nbt);
+
+		if (internalGrid != null) {
+			if (isNode) {
+				lastStoredValue = internalGrid.getNodeShare(this);
+				nbt.setInteger("Energy", lastStoredValue);
+			}
+		} else if (energyForGrid > 0) {
+			nbt.setInteger("Energy", energyForGrid);
+		} else {
+			energyForGrid = 0;
+		}
+	}
+
+	IEnergyReceiver[] cache = new IEnergyReceiver[6];
+
+	@Override
+	public void cacheImportant(TileEntity tile, int side) {
+
+		if (tile instanceof IEnergyReceiver)
+			cache[side] = (IEnergyReceiver) tile;
+	}
+
+	@Override
+	public void clearCache(int side) {
+
+		cache[side] = null;
+	}
 
 }

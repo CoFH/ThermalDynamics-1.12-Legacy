@@ -39,6 +39,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public boolean isValidInput;
 	public boolean isPowered = false;
 	public ControlMode rsMode = ControlMode.HIGH;
+	public FilterLogic filter;
 
 	public ConnectionBase(TileMultiBlock tile, byte side) {
 
@@ -68,7 +69,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public TileMultiBlock.NeighborTypes getNeighbourType() {
+	public TileMultiBlock.NeighborTypes getNeighborType() {
 
 		return isValidInput ? TileMultiBlock.NeighborTypes.INPUT : TileMultiBlock.NeighborTypes.DUCT_ATTACHMENT;
 	}
@@ -96,9 +97,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public void onNeighbourChange() {
+	public void onNeighborChange() {
 
-		super.onNeighbourChange();
+		super.onNeighborChange();
 
 		TileEntity adjacentTileEntity = tile.getAdjTileEntitySafe(side);
 
@@ -111,8 +112,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
-		if (wasPowered != isPowered || isValidInput != wasValidInput)
+		if (wasPowered != isPowered || isValidInput != wasValidInput) {
 			tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+		}
 	}
 
 	@Override
@@ -167,7 +169,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 			packet.addByte(rsMode.ordinal());
 			PacketHandler.sendToServer(packet);
 		} else {
-			onNeighbourChange();
+			onNeighborChange();
 		}
 	}
 
@@ -264,7 +266,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 					((ICrafting) player).sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
 				}
 			}
-
 			filter.levelsChanged = false;
 		}
 	}
@@ -308,8 +309,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 		return super.getRenderConnectionType();
 	}
-
-	public FilterLogic filter;
 
 	@Override
 	public IFilterItems getItemFilter() {

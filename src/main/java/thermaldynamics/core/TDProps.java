@@ -1,6 +1,5 @@
 package thermaldynamics.core;
 
-
 public class TDProps {
 
 	// Energy that each node can store.

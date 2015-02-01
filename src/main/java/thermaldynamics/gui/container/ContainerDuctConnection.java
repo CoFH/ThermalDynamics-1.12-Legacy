@@ -95,4 +95,5 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 		}
 		return null;
 	}
+
 }

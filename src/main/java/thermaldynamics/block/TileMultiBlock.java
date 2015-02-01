@@ -343,10 +343,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		clearCache(i);
 
 		if (attachments[i] != null) {
-			attachments[i].onNeighbourChange();
+			attachments[i].onNeighborChange();
 			neighborMultiBlocks[i] = null;
 
-			neighborTypes[i] = attachments[i].getNeighbourType();
+			neighborTypes[i] = attachments[i].getNeighborType();
 			if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
 				theTile = getAdjTileEntitySafe(i);
 				if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
@@ -664,7 +664,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		for (int i = 0; i < 6; i++) {
 			if (attachments[i] != null) {
 				NBTTagCompound tag = new NBTTagCompound();
-				tag.setShort("id", (short) attachments[i].getID());
+				tag.setShort("id", (short) attachments[i].getId());
 				attachments[i].writeToNBT(tag);
 				nbt.setTag("attachment" + i, tag);
 			}
@@ -872,7 +872,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		payload.addByte(attachmentMask);
 		for (byte i = 0; i < 6; i++) {
 			if (attachments[i] != null) {
-				payload.addByte(attachments[i].getID());
+				payload.addByte(attachments[i].getId());
 				attachments[i].addDescriptionToPacket(payload);
 			}
 		}

@@ -30,7 +30,9 @@ public abstract class Attachment {
 		this.side = side;
 	}
 
-	public abstract int getID();
+	public abstract String getName();
+
+	public abstract int getId();
 
 	public void writeToNBT(NBTTagCompound tag) {
 
@@ -59,7 +61,7 @@ public abstract class Attachment {
 		return true;
 	}
 
-	public abstract TileMultiBlock.NeighborTypes getNeighbourType();
+	public abstract TileMultiBlock.NeighborTypes getNeighborType();
 
 	public abstract boolean isNode();
 
@@ -77,9 +79,9 @@ public abstract class Attachment {
 		Cuboid6 c = getCuboid();
 		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorldObj(), tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
 				tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat()
-				* (c.max.z - c.min.z)
+						* (c.max.z - c.min.z)
 
-				);
+		);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -99,7 +101,7 @@ public abstract class Attachment {
 		return false;
 	}
 
-	public void onNeighbourChange() {
+	public void onNeighborChange() {
 
 	}
 
@@ -152,7 +154,7 @@ public abstract class Attachment {
 
 	public BlockDuct.ConnectionTypes getRenderConnectionType() {
 
-		return TileMultiBlock.getDefaultConnectionType(getNeighbourType(), TileMultiBlock.ConnectionTypes.NORMAL);
+		return TileMultiBlock.getDefaultConnectionType(getNeighborType(), TileMultiBlock.ConnectionTypes.NORMAL);
 	}
 
 	public boolean allowPipeConnection() {
@@ -168,4 +170,5 @@ public abstract class Attachment {
 	public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
 
 	}
+
 }
