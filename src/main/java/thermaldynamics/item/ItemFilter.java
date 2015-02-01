@@ -4,20 +4,17 @@ import cofh.lib.util.helpers.StringHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
+import thermaldynamics.ducts.attachments.filter.FilterFluid;
 import thermaldynamics.ducts.attachments.filter.FilterItem;
-import thermaldynamics.ducts.attachments.servo.ServoFluid;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 import thermaldynamics.ducts.item.TileItemDuct;
 
@@ -67,7 +64,7 @@ public class ItemFilter extends ItemAttachment {
 
 		int type = stack.getItemDamage() % 5;
 		if (tile instanceof TileFluidDuct) {
-			return new ServoFluid(tile, (byte) (side ^ 1), type);
+			return new FilterFluid(tile, (byte) (side ^ 1), type);
 		}
 		if (tile instanceof TileItemDuct) {
 			return new FilterItem(tile, (byte) (side ^ 1), type);
