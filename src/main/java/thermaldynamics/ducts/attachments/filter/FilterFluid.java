@@ -5,7 +5,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
 
 public class FilterFluid extends FilterBase {
 
@@ -48,7 +48,7 @@ public class FilterFluid extends FilterBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.FLUID, this);
+		return new FilterLogic(type, Duct.Type.FLUID, this);
 	}
 
 }

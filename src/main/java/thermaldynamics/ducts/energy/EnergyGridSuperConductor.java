@@ -50,7 +50,6 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 			overSent[i] = t >= toDistribute && toDistribute < maxSent;
 			curSent += t;
 		}
-
 		for (int i = 0; i < list.length; i++) {
 			if (overSent[i] && curSent < maxSent) {
 				curSent = sendEnergytoTile(list[i], curSent, maxSent, maxSent - toDistribute);
@@ -65,7 +64,6 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 				}
 			}
 		}
-
 		curSent += myStorage.receiveEnergy(maxSent - curSent, simulate);
 
 		return curSent;

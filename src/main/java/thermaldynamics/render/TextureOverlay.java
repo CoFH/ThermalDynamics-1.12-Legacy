@@ -3,6 +3,7 @@ package thermaldynamics.render;
 import cofh.repack.codechicken.lib.render.TextureDataHolder;
 import cofh.repack.codechicken.lib.render.TextureSpecial;
 import cofh.repack.codechicken.lib.render.TextureUtils;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -10,86 +11,144 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 public class TextureOverlay {
-    private final static String folder = "thermaldynamics:textures/blocks/altDucts/";
 
-    public static ResourceLocation toLoc(String name) {
-        return new ResourceLocation(folder + name + ".png");
-    }
+	private static final String PATH_BASE = "thermaldynamics:textures/blocks/duct/base/";
+	private static final String PATH_CONNECTION = "thermaldynamics:textures/blocks/duct/connection/";
+	private static final String PATH_FRAME = "thermaldynamics:textures/blocks/duct/base/";
 
-    public static TextureDataHolder incSize(TextureDataHolder tex, int newWidth) {
-        int n = newWidth / tex.width;
-        TextureDataHolder newTex = new TextureDataHolder(newWidth, tex.height * n);
+	public static ResourceLocation toLoc(String path, String name) {
 
-        for (int i = 0; i < newTex.data.length; i++) {
-            newTex.data[i] = 0x98769876;
-        }
+		return new ResourceLocation(path + name + ".png");
+	}
 
-        for (int x = 0; x < tex.width; x++) {
-            for (int y = 0; y < tex.height; y++) {
-                int col = tex.data[x + y * tex.width];
-                for (int dx = 0; dx < n; dx++) {
-                    for (int dy = 0; dy < n; dy++) {
-                        newTex.data[(x * n + dx) + (y * n + dy) * newTex.width] = col;
-                    }
-                }
-            }
-        }
+	public static TextureDataHolder incSize(TextureDataHolder tex, int newWidth) {
 
-        return newTex;
-    }
+		int n = newWidth / tex.width;
+		TextureDataHolder newTex = new TextureDataHolder(newWidth, tex.height * n);
 
-    public static IIcon generateTexture(IIconRegister register, String base, String... textures) {
-        TextureDataHolder image = null, newimage;
-        image = TextureUtils.loadTexture(toLoc(base));
+		for (int i = 0; i < newTex.data.length; i++) {
+			newTex.data[i] = 0x98769876;
+		}
+		for (int x = 0; x < tex.width; x++) {
+			for (int y = 0; y < tex.height; y++) {
+				int col = tex.data[x + y * tex.width];
+				for (int dx = 0; dx < n; dx++) {
+					for (int dy = 0; dy < n; dy++) {
+						newTex.data[(x * n + dx) + (y * n + dy) * newTex.width] = col;
+					}
+				}
+			}
+		}
+		return newTex;
+	}
 
-        StringBuilder builder = new StringBuilder("thermaldynamics:Duct_").append(base);
+	public static IIcon generateBaseTexture(IIconRegister register, String base, String... textures) {
 
-        for (String texture : textures) {
-            if (texture == null)
-                continue;
+		TextureDataHolder image = null, newimage;
+		image = TextureUtils.loadTexture(toLoc(PATH_BASE, base));
 
-            builder.append('_').append(texture);
-        }
+		StringBuilder builder = new StringBuilder("thermaldynamics:Duct_").append(base);
 
-        String name = builder.toString();
+		for (String texture : textures) {
+			if (texture == null) {
+				continue;
+			}
+			builder.append('_').append(texture);
+		}
+		String name = builder.toString();
 
-        TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
-        if (entry != null)
-            return entry;
+		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		if (entry != null) {
+			return entry;
+		}
+		for (String texture : textures) {
+			if (texture == null) {
+				continue;
+			}
+			newimage = TextureUtils.loadTexture(toLoc(PATH_BASE, texture));
 
-        for (String texture : textures) {
-            if (texture == null)
-                continue;
+			if (image.width != newimage.width) {
+				if (image.width < newimage.width) {
+					image = incSize(image, newimage.width);
+				} else {
+					newimage = incSize(newimage, image.width);
+				}
+			}
+			if ("trans".equals(texture)) {
+				for (int j = 0; j < newimage.data.length; j++) {
+					if (((newimage.data[j] >> 24) & 0xFF) != 0)
+						image.data[j] = 0;
+				}
+			} else {
+				for (int j = 0; j < newimage.data.length; j++) {
+					int colour = newimage.data[j];
+					if (((colour >> 24) & 0xFF) != 0) {
+						image.data[j] = colour;
+					}
+				}
+			}
+		}
+		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		texture.addTexture(image);
 
-            newimage = TextureUtils.loadTexture(toLoc(texture));
+		return texture;
+	}
 
-            if (image.width != newimage.width) {
-                if (image.width < newimage.width) {
-                    image = incSize(image, newimage.width);
-                } else {
-                    newimage = incSize(newimage, image.width);
-                }
-            }
+	public static IIcon generateConnectionTexture(IIconRegister register, String connection) {
 
-            if ("trans".equals(texture)) {
-                for (int j = 0; j < newimage.data.length; j++) {
-                    if (((newimage.data[j] >> 24) & 0xFF) != 0) image.data[j] = 0;
-                }
-            } else {
-                for (int j = 0; j < newimage.data.length; j++) {
-                    int colour = newimage.data[j];
-                    if (((colour >> 24) & 0xFF) != 0) {
-                        image.data[j] = colour;
-                    }
-                }
-            }
+		TextureDataHolder image = null, newimage;
+		image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
 
-        }
+		StringBuilder builder = new StringBuilder("thermaldynamics:Conn_").append(connection);
 
-        TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
-        texture.addTexture(image);
+		String name = builder.toString();
 
-        return texture;
-    }
+		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		if (entry != null) {
+			return entry;
+		}
+		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		texture.addTexture(image);
+
+		return texture;
+	}
+
+	public static IIcon generateFrameTexture(IIconRegister register, String frame) {
+
+		TextureDataHolder image = null, newimage;
+		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
+
+		StringBuilder builder = new StringBuilder("thermaldynamics:Frame_").append(frame);
+
+		String name = builder.toString();
+
+		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		if (entry != null) {
+			return entry;
+		}
+		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		texture.addTexture(image);
+
+		return texture;
+	}
+
+	public static IIcon generateFrameBandTexture(IIconRegister register, String frame) {
+
+		TextureDataHolder image = null, newimage;
+		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
+
+		StringBuilder builder = new StringBuilder("thermaldynamics:Band_").append(frame);
+
+		String name = builder.toString();
+
+		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		if (entry != null) {
+			return entry;
+		}
+		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		texture.addTexture(image);
+
+		return texture;
+	}
 
 }

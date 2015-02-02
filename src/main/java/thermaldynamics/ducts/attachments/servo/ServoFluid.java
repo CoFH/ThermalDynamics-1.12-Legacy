@@ -7,7 +7,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.fluid.TileFluidDuct;
 
@@ -92,7 +92,7 @@ public class ServoFluid extends ServoBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.FLUID, this);
+		return new FilterLogic(type, Duct.Type.FLUID, this);
 	}
 
 }

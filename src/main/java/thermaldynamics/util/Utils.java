@@ -1,4 +1,4 @@
-package thermaldynamics.block;
+package thermaldynamics.util;
 
 import buildcraft.api.tools.IToolWrench;
 

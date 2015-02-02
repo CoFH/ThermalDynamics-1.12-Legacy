@@ -128,7 +128,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 		if (!items.hasNext()) {
 			return;
 		}
-
 		travelingItemSpin += .001;
 		travelingItemSpin %= 180;
 		travelingEntityItem.hoverStart = travelingItemSpin;
@@ -162,7 +161,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 				GL11.glTranslated(vec[0] * (v - s), vec[1] * (v - s), vec[2] * (v - s));
 
 			}
-
 			GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
 			travelingEntityItem.setEntityItemStack(renderItem.stack);

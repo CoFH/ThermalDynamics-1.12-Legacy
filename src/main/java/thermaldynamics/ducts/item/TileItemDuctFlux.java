@@ -35,7 +35,6 @@ public class TileItemDuctFlux extends TileItemDuctPower {
 				break;
 			}
 		}
-
 		if (isSubNode != newSubNode) {
 			isSubNode = newSubNode;
 			if (energy.energyGrid != null) {
@@ -61,8 +60,9 @@ public class TileItemDuctFlux extends TileItemDuctPower {
 	@Override
 	public boolean tickPass(int pass) {
 
-		if (!super.tickPass(pass))
+		if (!super.tickPass(pass)) {
 			return false;
+		}
 		if (pass == 0 && isSubNode) {
 			int maxSend = redstoneEnergy.internalGrid.toDistribute;
 			redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));

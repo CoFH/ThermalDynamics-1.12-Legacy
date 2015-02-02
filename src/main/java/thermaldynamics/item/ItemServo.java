@@ -17,7 +17,7 @@ import net.minecraft.util.IIcon;
 
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.attachments.servo.ServoBase;
 import thermaldynamics.ducts.attachments.servo.ServoFluid;
@@ -132,7 +132,7 @@ public class ItemServo extends ItemAttachment {
 		b.append("Filter Options: " + StringHelper.GRAY);
 		boolean flag = false;
 		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
-			if (FilterLogic.canAlterFlag(Ducts.Type.ITEM, type, i)) {
+			if (FilterLogic.canAlterFlag(Duct.Type.ITEM, type, i)) {
 				if (flag) {
 					b.append(", ");
 				} else {

@@ -4,13 +4,14 @@ tile.thermaldynamics.duct.energyBasic.name=Leadstone Fluxduct
 tile.thermaldynamics.duct.energyHardened.name=Hardened Fluxduct
 tile.thermaldynamics.duct.energyReinforced.name=Redstone Energy Fluxduct
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=Redstone Energy Fluxduct (Empty)
-tile.thermaldynamics.duct.energySuperconductor.name=Magnetic-Enhanced Fluxduct
-tile.thermaldynamics.duct.energySuperconductorEmpty.name=Magnetic-Enhanced Fluxduct (Empty)
+tile.thermaldynamics.duct.energyResonant.name=Resonant Fluxduct
+tile.thermaldynamics.duct.energySuperconductor.name=Cryo-Stabilized Fluxduct
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=Cryo-Stabilized Fluxduct (Empty)
 
 tile.thermaldynamics.duct.fluidBasic.name=Copper Fluiduct
 tile.thermaldynamics.duct.fluidHardened.name=Hardened Fluiduct
-tile.thermaldynamics.duct.fluidFlux.name=
-tile.thermaldynamics.duct.fluidFluxEmpty.name=
+tile.thermaldynamics.duct.fluidFlux.name=Flux-Coupled Fluiduct
+tile.thermaldynamics.duct.fluidFluxEmpty.name=Flux-Coupled Fluiduct (Empty)
 
 tile.thermaldynamics.duct.itemBasic.name=Itemduct
 tile.thermaldynamics.duct.itemFast.name=Impulse Itemduct

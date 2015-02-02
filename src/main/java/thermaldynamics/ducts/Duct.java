@@ -21,10 +21,11 @@ public class Duct {
 	public IIcon iconBaseTexture;
 	public IIcon iconConnectionTexture;
 	public IIcon iconFluidTexture;
-	public IIcon iconOverDuctTexture;
-	public IIcon iconOverDuctInternalTexture;
+	public IIcon iconFrameTexture;
+	public IIcon iconFrameBandTexture;
+	public IIcon iconFrameFluidTexture;
 
-	public byte overDuctType = 0;
+	public byte frameType = 0;
 
 	public final int id;
 	public final String unlocalizedName;
@@ -35,14 +36,14 @@ public class Duct {
 	public final String connectionTexture;
 	public final String fluidTexture;
 	public final byte fluidTransparency;
-	public final String overDuct;
-	public final String overDuct2;
-	public final byte overDuct2Trans;
+	public final String frameTexture;
+	public final String frameFluidTexture;
+	public final byte frameFluidTransparency;
 	public final boolean opaque;
 	public final int type;
 
 	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String overDuct, String overDuct2, int overDuct2Trans) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		this.id = id;
 		this.pathWeight = pathWeight;
@@ -55,41 +56,41 @@ public class Duct {
 		this.connectionTexture = connectionTexture;
 		this.fluidTexture = fluidTexture;
 		this.fluidTransparency = (byte) fluidTransparency;
-		this.overDuct = overDuct;
-		this.overDuct2 = overDuct2;
-		this.overDuct2Trans = (byte) overDuct2Trans;
+		this.frameTexture = frameTexture;
+		this.frameFluidTexture = frameFluidTexture;
+		this.frameFluidTransparency = (byte) frameFluidTransparency;
 	}
 
 	public boolean isLargeTube() {
 
-		return overDuct != null && !SIDE_DUCTS.equals(overDuct);
+		return frameTexture != null && !SIDE_DUCTS.equals(frameTexture);
 	}
 
 	public void registerIcons(IIconRegister ir) {
 
-		// iconBaseTexture = ir.registerIcon(baseTexture);
-
-		iconBaseTexture = TextureOverlay.generateTexture(ir, baseTexture, opaque ? null : "trans", pathWeight == 1000 ? "dense"
+		iconBaseTexture = TextureOverlay.generateBaseTexture(ir, baseTexture, opaque ? null : "trans", pathWeight == 1000 ? "dense"
 				: pathWeight == -1000 ? "vacuum" : null);
 
 		if (connectionTexture != null) {
-			iconConnectionTexture = ir.registerIcon(connectionTexture);
+			iconConnectionTexture = TextureOverlay.generateConnectionTexture(ir, connectionTexture);
 		}
 		if (fluidTexture != null) {
 			iconFluidTexture = TextureTransparent.registerTransparentIcon(ir, fluidTexture, fluidTransparency);
 		}
-		if (overDuct != null) {
-			if (SIDE_DUCTS.equals(overDuct)) {
-				overDuctType = 1;
+		if (frameTexture != null) {
+			if (SIDE_DUCTS.equals(frameTexture)) {
+				frameType = 1;
 			} else {
-				iconOverDuctTexture = ir.registerIcon(overDuct);
-				overDuctType = 2;
+				iconFrameTexture = TextureOverlay.generateFrameTexture(ir, frameTexture);
+				iconFrameBandTexture = TextureOverlay.generateFrameBandTexture(ir, frameTexture);
+				frameType = 2;
 			}
 		}
-		if (overDuct2 != null) {
-			if (overDuctType == 0)
-				overDuctType = 2;
-			iconOverDuctInternalTexture = TextureTransparent.registerTransparentIcon(ir, overDuct2, overDuct2Trans);
+		if (frameFluidTexture != null) {
+			if (frameType == 0) {
+				frameType = 2;
+			}
+			iconFrameFluidTexture = TextureTransparent.registerTransparentIcon(ir, frameFluidTexture, frameFluidTransparency);
 		}
 	}
 

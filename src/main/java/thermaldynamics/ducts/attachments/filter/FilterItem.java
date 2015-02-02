@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
 
 public class FilterItem extends FilterBase {
 
@@ -54,7 +54,7 @@ public class FilterItem extends FilterBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.ITEM, this);
+		return new FilterLogic(type, Duct.Type.ITEM, this);
 	}
 
 }

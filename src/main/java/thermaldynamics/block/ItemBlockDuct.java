@@ -10,7 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
+import thermaldynamics.ducts.TDDucts;
 
 public class ItemBlockDuct extends ItemBlockBase {
 
@@ -25,15 +26,15 @@ public class ItemBlockDuct extends ItemBlockBase {
 	@Override
 	public String getUnlocalizedName(ItemStack item) {
 
-		return Ducts.isValid(id(item)) ? "tile.thermaldynamics.duct." + Ducts.getType(id(item)).unlocalizedName + ".name" : super.getUnlocalizedName(item);
+		return TDDucts.isValid(id(item)) ? "tile.thermaldynamics.duct." + TDDucts.getType(id(item)).unlocalizedName + ".name" : super.getUnlocalizedName(item);
 	}
 
 	@Override
 	public String getItemStackDisplayName(ItemStack item) {
 
-		if (Ducts.isValid(id(item))) {
+		if (TDDucts.isValid(id(item))) {
 			StringBuilder builder = new StringBuilder();
-			Ducts type = Ducts.getType(id(item));
+			Duct type = TDDucts.getType(id(item));
 			if (type.pathWeight == 1000) {
 				builder.append(StringHelper.localize("tile.thermaldynamics.duct.dense.name")).append(" ");
 			} else if (type.pathWeight == -1000) {
@@ -65,10 +66,10 @@ public class ItemBlockDuct extends ItemBlockBase {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean check) {
 
-		if (!Ducts.isValid(id(stack))) {
+		if (!TDDucts.isValid(id(stack))) {
 			return;
 		}
-		switch (Ducts.getType(id(stack)).ductType) {
+		switch (TDDucts.getType(id(stack)).ductType) {
 		case ENERGY:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 			break;

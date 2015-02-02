@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import thermaldynamics.ThermalDynamics;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.TDDucts;
 import thermaldynamics.ducts.attachments.facades.CoverHelper;
 
 public class CoverRecipeNEIHandler extends ShapelessRecipeHandler {
@@ -26,7 +26,7 @@ public class CoverRecipeNEIHandler extends ShapelessRecipeHandler {
 
 		public CachedCoverRecipeSimple(ItemStack block) {
 
-			super(new Object[] { block, Ducts.STRUCTURE.itemStack }, CoverHelper.getCoverStack(block));
+			super(new Object[] { block, TDDucts.structure.itemStack }, CoverHelper.getCoverStack(block));
 		}
 	}
 
@@ -44,7 +44,7 @@ public class CoverRecipeNEIHandler extends ShapelessRecipeHandler {
 
 			ArrayList objects = new ArrayList();
 			objects.add(items);
-			objects.add(Ducts.STRUCTURE.itemStack);
+			objects.add(TDDucts.structure.itemStack);
 			setIngredients(objects);
 		}
 
@@ -53,7 +53,7 @@ public class CoverRecipeNEIHandler extends ShapelessRecipeHandler {
 
 			for (PositionedStack positionedStack : ingredients) {
 				ItemStack item = positionedStack.item;
-				if (item != Ducts.STRUCTURE.itemStack) {
+				if (item != TDDucts.structure.itemStack) {
 					if (CoverHelper.isValid(item)) {
 						setResult(CoverHelper.getCoverStack(item));
 						return super.getResult();
@@ -98,7 +98,7 @@ public class CoverRecipeNEIHandler extends ShapelessRecipeHandler {
 
 		if (CoverHelper.isValid(ingredient)) {
 			arecipes.add(new CachedCoverRecipeSimple(ingredient));
-		} else if (ItemHelper.itemsEqualForCrafting(Ducts.STRUCTURE.itemStack, ingredient)) {
+		} else if (ItemHelper.itemsEqualForCrafting(TDDucts.structure.itemStack, ingredient)) {
 			arecipes.add(new CachedCoverRecipeAll());
 		}
 	}

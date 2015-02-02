@@ -39,7 +39,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import thermaldynamics.ThermalDynamics;
 import thermaldynamics.core.TDProps;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
+import thermaldynamics.ducts.TDDucts;
 import thermaldynamics.ducts.TileStructuralDuct;
 import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.ducts.energy.TileEnergyDuct;
@@ -70,8 +71,8 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 
 		for (int i = 0; i < 16; i++) {
-			if (Ducts.isValid(i + offset)) {
-				list.add(Ducts.getDuct(i + offset).itemStack.copy());
+			if (TDDucts.isValid(i + offset)) {
+				list.add(TDDucts.getDuct(i + offset).itemStack.copy());
 			}
 		}
 	}
@@ -79,13 +80,13 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 	@Override
 	public boolean hasTileEntity(int metadata) {
 
-		return Ducts.isValid(metadata + offset);
+		return TDDucts.isValid(metadata + offset);
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 
-		Ducts duct = Ducts.getType(metadata + offset);
+		Duct duct = TDDucts.getType(metadata + offset);
 		return duct.factory.createTileEntity(duct, world);
 	}
 
@@ -93,7 +94,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int side, int metadata) {
 
-		return Ducts.getType(metadata + offset).iconBaseTexture;
+		return TDDucts.getType(metadata + offset).iconBaseTexture;
 	}
 
 	@Override
@@ -132,39 +133,20 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		if (offset != 0) {
 			return;
 		}
-
-		IconRegistry.addIcon("CenterLine", "thermaldynamics:duct/item/CenterLine", ir);
-		IconRegistry.addIcon("TinDuct", "thermaldynamics:altDucts/tin_trans", ir);
-
-		// IconRegistry.addIcon("Trans_Fluid_Ender_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Ender_Still", (byte)
-		// 64));
-		// IconRegistry.addIcon("Trans_Fluid_Glowstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Glowstone_Still",
-		// (byte) 128));
-		// IconRegistry.addIcon("Trans_Fluid_Redstone_Still", TextureTransparent.registerTransparentIcon(ir, "thermalfoundation:fluid/Fluid_Redstone_Still",
-		// (byte) 192));
-
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 2; j++) {
-				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/servo/ServoBase" + i + "" + j, ir);
+				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/attachment/servo/ServoBase" + i + "" + j, ir);
 			}
 		}
-
 		for (int i = 0; i < 5; i++) {
-			IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/filter/Filter" + i + "0", ir);
+			IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/attachment/filter/Filter" + i + "0", ir);
 		}
-
-		IconRegistry.addIcon("OverDuctBase", "thermaldynamics:duct/OverDuctBase", ir);
 		IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
 
-		// for (int i = 0; i < TDDucts.ductList.size(); i++) {
-		// TDDucts.ductList.get(i).registerIcons(ir);
-		// }
-
-		for (int i = 0; i < Ducts.values().length; i++) {
-			Ducts ducts = Ducts.values()[i];
-			ducts.registerIcons(ir);
+		for (int i = 0; i < TDDucts.ductList.size(); i++) {
+			TDDucts.ductList.get(i).registerIcons(ir);
 		}
-
+		TDDucts.structureInvis.registerIcons(ir);
 	}
 
 	@Override
@@ -177,7 +159,6 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 				return pickBlock;
 			}
 		}
-
 		if (target.subHit >= 20 && target.subHit < 26) {
 			TileMultiBlock tileEntity = (TileMultiBlock) world.getTileEntity(x, y, z);
 			ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
@@ -185,7 +166,6 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 				return pickBlock;
 			}
 		}
-
 		return super.getPickBlock(target, world, x, y, z);
 	}
 
@@ -332,7 +312,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 	@Override
 	public float getSize(World world, int x, int y, int z) {
 
-		return Ducts.getDuct(offset + world.getBlockMetadata(x, y, z)).isLargeTube() ? 0.05F : super.getSize(world, x, y, z);
+		return TDDucts.getDuct(offset + world.getBlockMetadata(x, y, z)).isLargeTube() ? 0.05F : super.getSize(world, x, y, z);
 	}
 
 	/* IInitializer */
@@ -342,8 +322,8 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDynamics_" + offset);
 
 		for (int i = 0; i < 16; i++) {
-			if (Ducts.isValid(offset + i)) {
-				Ducts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
+			if (TDDucts.isValid(offset + i)) {
+				TDDucts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
 			}
 		}
 

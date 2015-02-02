@@ -36,11 +36,13 @@ import org.apache.commons.lang3.StringUtils;
 import thermaldynamics.core.TickHandler;
 import thermaldynamics.debughelper.DebugHelper;
 import thermaldynamics.debughelper.DebugTickHandler;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
+import thermaldynamics.ducts.TDDucts;
 import thermaldynamics.ducts.attachments.facades.Cover;
 import thermaldynamics.multiblock.IMultiBlock;
 import thermaldynamics.multiblock.MultiBlockFormer;
 import thermaldynamics.multiblock.MultiBlockGrid;
+import thermaldynamics.util.Utils;
 
 public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler {
 
@@ -522,7 +524,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	/*
 	 * Should return true if theTile is an instance of this multiblock.
-	 * 
+	 *
 	 * This must also be an instance of IMultiBlock
 	 */
 	public boolean isConnectable(TileEntity theTile, int side) {
@@ -537,7 +539,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 * 
+	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
 	public boolean isSignificantTile(TileEntity theTile, int side) {
@@ -702,12 +704,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		return super.openGui(player);
 	}
 
-	Ducts duct = null;
+	Duct duct = null;
 
-	public Ducts getDuctType() {
+	public Duct getDuctType() {
 
 		if (duct == null) {
-			duct = Ducts.getDuct(((BlockDuct) getBlockType()).offset + getBlockMetadata());
+			duct = TDDucts.getDuct(((BlockDuct) getBlockType()).offset + getBlockMetadata());
 		}
 		return duct;
 	}

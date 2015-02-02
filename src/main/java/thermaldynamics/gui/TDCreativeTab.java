@@ -16,9 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import thermaldynamics.block.ItemBlockDuct;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
+import thermaldynamics.ducts.TDDucts;
 
 public class TDCreativeTab extends CreativeTabs {
+
+	int iconIndex = 0;
+	TimeTracker iconTracker = new TimeTracker();
 
 	public TDCreativeTab() {
 
@@ -30,7 +34,7 @@ public class TDCreativeTab extends CreativeTabs {
 	public ItemStack getIconItemStack() {
 
 		updateIcon();
-		return Ducts.getDuct(iconIndex).itemStack;
+		return TDDucts.getDuct(iconIndex).itemStack;
 	}
 
 	@Override
@@ -47,18 +51,15 @@ public class TDCreativeTab extends CreativeTabs {
 		return "thermaldynamics.creativeTab";
 	}
 
-	int iconIndex = 0;
-	TimeTracker iconTracker = new TimeTracker();
-
 	private void updateIcon() {
 
 		World world = CoFHCore.proxy.getClientWorld();
 
 		if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
-			int next = MathHelper.RANDOM.nextInt(Ducts.ductList.length);
+			int next = MathHelper.RANDOM.nextInt(TDDucts.ductList.size() - 1);
 			iconIndex = next >= iconIndex ? next + 1 : next;
+			iconTracker.markTime(world);
 		}
-		iconTracker.markTime(world);
 	}
 
 	@Override
@@ -68,13 +69,13 @@ public class TDCreativeTab extends CreativeTabs {
 		LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
 		super.displayAllReleventItems(itemStacks);
 
-		for (Ducts d : Ducts.getSortedDucts()) {
+		for (Duct d : TDDucts.getSortedDucts()) {
 			list.add(d.itemStack.copy());
 		}
-
 		for (ItemStack item : itemStacks) {
-			if (!(item.getItem() instanceof ItemBlockDuct))
+			if (!(item.getItem() instanceof ItemBlockDuct)) {
 				list.add(item);
+			}
 		}
 	}
 

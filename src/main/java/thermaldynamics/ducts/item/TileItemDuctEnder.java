@@ -3,210 +3,220 @@ package thermaldynamics.ducts.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+
 import thermaldynamics.core.TDProps;
 import thermaldynamics.ducts.energy.subgrid.SubTileEnergyEnder;
 
 public class TileItemDuctEnder extends TileItemDuctPower {
 
-    public boolean powered = false;
+	public boolean powered = false;
 
-    final SubTileEnergyEnder enderEnergy;
+	final SubTileEnergyEnder enderEnergy;
 
-    public TileItemDuctEnder() {
-        super();
-        setSubEnergy(enderEnergy = new SubTileEnergyEnder(this));
-    }
+	public TileItemDuctEnder() {
 
-    @Override
-    public void removeItem(TravelingItem travelingItem) {
-        super.removeItem(travelingItem);
-    }
+		super();
+		setSubEnergy(enderEnergy = new SubTileEnergyEnder(this));
+	}
 
-    @Override
-    public void insertItem(TravelingItem travelingItem) {
-        super.insertItem(travelingItem);
-    }
+	@Override
+	public void removeItem(TravelingItem travelingItem) {
 
+		super.removeItem(travelingItem);
+	}
 
-    @Override
-    public int getPipeLength() {
-        return isPowered() ? 1 : 60;
-    }
+	@Override
+	public void insertItem(TravelingItem travelingItem) {
 
-    @Override
-    public int getPipeHalfLength() {
-        return isPowered() ? 1 : 30;
-    }
+		super.insertItem(travelingItem);
+	}
 
-    @Override
-    public float[][] getSideCoordsModifier() {
-        return _SIDE_MODS[isPowered() ? 3 : 2];
-    }
+	@Override
+	public int getPipeLength() {
 
-    @Override
-    public boolean acceptingItems() {
-        return enderEnergy.internalGrid != null && enderEnergy.internalGrid.isPowered();
-    }
+		return isPowered() ? 1 : 60;
+	}
 
-    @Override
-    public boolean isSubNode() {
-        return true;
-    }
+	@Override
+	public int getPipeHalfLength() {
 
-    @Override
-    public void tickItems() {
-        int c = 0;
-        if (itemsToAdd.size() > 0) {
-            for (TravelingItem travelingItem : itemsToAdd) {
-                c = c | (1 << travelingItem.direction) | (1 << travelingItem.oldDirection);
-                myItems.add(travelingItem);
-            }
+		return isPowered() ? 1 : 30;
+	}
 
-            itemsToAdd.clear();
-            hasChanged = true;
-        }
+	@Override
+	public float[][] getSideCoordsModifier() {
 
-        if (myItems.size() > 0) {
-            for (TravelingItem travelingItem : myItems) {
-                if (travelingItem.reRoute || travelingItem.myPath == null) {
-                    travelingItem.bounceItem(this);
-                } else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST &&
-                        energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST
-                        ) {
-                    energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
-                    multiAdvance(travelingItem, false);
-                } else {
-                    travelingItem.tickForward(this);
-                }
-            }
+		return _SIDE_MODS[isPowered() ? 3 : 2];
+	}
 
-            if (itemsToRemove.size() > 0) {
-                myItems.removeAll(itemsToRemove);
-                itemsToRemove.clear();
-                hasChanged = true;
-            }
-        }
+	@Override
+	public boolean acceptingItems() {
 
-        if (enderEnergy.internalGrid != null) {
-            if (enderEnergy.internalGrid.isPowered() != powered) {
-                powered = enderEnergy.internalGrid.isPowered();
-                sendPowerPacket();
-            }
-        }
+		return enderEnergy.internalGrid != null && enderEnergy.internalGrid.isPowered();
+	}
 
-        if (!powered && hasChanged) {
-            hasChanged = false;
-            sendTravelingItemsPacket();
-        }
-    }
+	@Override
+	public boolean isSubNode() {
 
-    @Override
-    public void insertNewItem(TravelingItem travelingItem) {
+		return true;
+	}
 
-        if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
-            energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
-            multiAdvance(travelingItem, true);
-        } else
-            super.insertNewItem(travelingItem);
-    }
+	@Override
+	public void tickItems() {
 
-    public void multiAdvance(TravelingItem travelingItem, boolean newInsert) {
-        TileItemDuct duct = this;
+		int c = 0;
+		if (itemsToAdd.size() > 0) {
+			for (TravelingItem travelingItem : itemsToAdd) {
+				c = c | (1 << travelingItem.direction) | (1 << travelingItem.oldDirection);
+				myItems.add(travelingItem);
+			}
+			itemsToAdd.clear();
+			hasChanged = true;
+		}
+		if (myItems.size() > 0) {
+			for (TravelingItem travelingItem : myItems) {
+				if (travelingItem.reRoute || travelingItem.myPath == null) {
+					travelingItem.bounceItem(this);
+				} else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST
+						&& energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+					energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
+					multiAdvance(travelingItem, false);
+				} else {
+					travelingItem.tickForward(this);
+				}
+			}
+			if (itemsToRemove.size() > 0) {
+				myItems.removeAll(itemsToRemove);
+				itemsToRemove.clear();
+				hasChanged = true;
+			}
+		}
+		if (enderEnergy.internalGrid != null) {
+			if (enderEnergy.internalGrid.isPowered() != powered) {
+				powered = enderEnergy.internalGrid.isPowered();
+				sendPowerPacket();
+			}
+		}
+		if (!powered && hasChanged) {
+			hasChanged = false;
+			sendTravelingItemsPacket();
+		}
+	}
 
-        while (true) {
-            duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
-            if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK) {
-                TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
-                if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-                    duct = newHome;
-                    if (travelingItem.myPath.hasNextDirection()) {
-                        travelingItem.oldDirection = travelingItem.direction;
-                        travelingItem.direction = travelingItem.myPath.getNextDirection();
-                    } else {
-                        travelingItem.reRoute = true;
-                        transferItem(travelingItem, duct, newInsert);
-                        return;
-                    }
+	@Override
+	public void insertNewItem(TravelingItem travelingItem) {
 
-                    if (duct.getClass() != TileItemDuctEnder.class) {
-                        transferItem(travelingItem, duct, newInsert);
-                        return;
-                    }
-                } else {
-                    travelingItem.reRoute = true;
-                    transferItem(travelingItem, duct, newInsert);
-                    return;
-                }
-            } else if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.OUTPUT) {
-                travelingItem.stack.stackSize = duct.insertIntoInventory(travelingItem.stack, travelingItem.direction);
+		if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST
+				&& energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+			energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
+			multiAdvance(travelingItem, true);
+		} else
+			super.insertNewItem(travelingItem);
+	}
 
-                if (travelingItem.stack.stackSize > 0) {
-                    travelingItem.reRoute = true;
-                    transferItem(travelingItem, duct, newInsert);
-                } else
-                    itemsToRemove.add(travelingItem);
-                return;
-            } else {
-                travelingItem.reRoute = true;
-                transferItem(travelingItem, duct, newInsert);
-                return;
-            }
-        }
-    }
+	public void multiAdvance(TravelingItem travelingItem, boolean newInsert) {
 
-    public void transferItem(TravelingItem travelingItem, TileItemDuct duct, boolean newInsert) {
-        if (newInsert) {
-            internalGrid.shouldRepoll = true;
-            duct.insertItem(travelingItem);
-        } else if (duct != this) {
-            duct.insertItem(travelingItem);
-            itemsToRemove.add(travelingItem);
-        }
-    }
+		TileItemDuct duct = this;
 
-    public void sendPowerPacket() {
-        PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-        myPayload.addByte(0);
-        myPayload.addByte(TileInfoPackets.ENDER_POWER);
-        myPayload.addBool(powered);
-        PacketHandler.sendToAllAround(myPayload, this);
-    }
+		while (true) {
+			duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
+			if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK) {
+				TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
+				if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+					duct = newHome;
+					if (travelingItem.myPath.hasNextDirection()) {
+						travelingItem.oldDirection = travelingItem.direction;
+						travelingItem.direction = travelingItem.myPath.getNextDirection();
+					} else {
+						travelingItem.reRoute = true;
+						transferItem(travelingItem, duct, newInsert);
+						return;
+					}
+					if (duct.getClass() != TileItemDuctEnder.class) {
+						transferItem(travelingItem, duct, newInsert);
+						return;
+					}
+				} else {
+					travelingItem.reRoute = true;
+					transferItem(travelingItem, duct, newInsert);
+					return;
+				}
+			} else if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.OUTPUT) {
+				travelingItem.stack.stackSize = duct.insertIntoInventory(travelingItem.stack, travelingItem.direction);
 
-    @Override
-    public void handlePacketType(PacketCoFHBase payload, int b) {
-        if (b == TileInfoPackets.ENDER_POWER) {
-            powered = payload.getBool();
+				if (travelingItem.stack.stackSize > 0) {
+					travelingItem.reRoute = true;
+					transferItem(travelingItem, duct, newInsert);
+				} else
+					itemsToRemove.add(travelingItem);
+				return;
+			} else {
+				travelingItem.reRoute = true;
+				transferItem(travelingItem, duct, newInsert);
+				return;
+			}
+		}
+	}
 
-            centerLine = 0;
-            for (int i = 0; i < centerLineSub.length; i++)
-                centerLineSub[i] = 0;
+	public void transferItem(TravelingItem travelingItem, TileItemDuct duct, boolean newInsert) {
 
-        } else
-            super.handlePacketType(payload, b);
-    }
+		if (newInsert) {
+			internalGrid.shouldRepoll = true;
+			duct.insertItem(travelingItem);
+		} else if (duct != this) {
+			duct.insertItem(travelingItem);
+			itemsToRemove.add(travelingItem);
+		}
+	}
 
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 0 && (powered || super.shouldRenderInPass(pass));
-    }
+	public void sendPowerPacket() {
 
+		PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
+		myPayload.addByte(0);
+		myPayload.addByte(TileInfoPackets.ENDER_POWER);
+		myPayload.addBool(powered);
+		PacketHandler.sendToAllAround(myPayload, this);
+	}
 
-    @Override
-    public PacketCoFHBase getPacket() {
-        PacketCoFHBase packet = super.getPacket();
-        packet.addBool(isPowered());
-        return packet;
-    }
+	@Override
+	public void handlePacketType(PacketCoFHBase payload, int b) {
 
-    public boolean isPowered() {
-        return enderEnergy.internalGrid != null ? enderEnergy.internalGrid.isPowered() : powered;
-    }
+		if (b == TileInfoPackets.ENDER_POWER) {
+			powered = payload.getBool();
+			centerLine = 0;
+			for (int i = 0; i < centerLineSub.length; i++)
+				centerLineSub[i] = 0;
+		} else
+			super.handlePacketType(payload, b);
+	}
 
-    @Override
-    public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-        super.handleTilePacket(payload, isServer);
-        powered = payload.getBool();
-    }
+	@Override
+	public boolean shouldRenderInPass(int pass) {
 
+		return pass == 0 && (powered || super.shouldRenderInPass(pass));
+	}
+
+	@Override
+	public PacketCoFHBase getPacket() {
+
+		PacketCoFHBase packet = super.getPacket();
+
+		packet.addBool(isPowered());
+
+		return packet;
+	}
+
+	public boolean isPowered() {
+
+		return enderEnergy.internalGrid != null ? enderEnergy.internalGrid.isPowered() : powered;
+	}
+
+	@Override
+	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+
+		super.handleTilePacket(payload, isServer);
+
+		powered = payload.getBool();
+	}
 
 }

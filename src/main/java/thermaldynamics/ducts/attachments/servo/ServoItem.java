@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TDProps;
-import thermaldynamics.ducts.Ducts;
+import thermaldynamics.ducts.Duct;
 import thermaldynamics.ducts.attachments.filter.FilterLogic;
 import thermaldynamics.ducts.item.ItemGrid;
 import thermaldynamics.ducts.item.TileItemDuct;
@@ -419,7 +419,7 @@ public class ServoItem extends ServoBase {
 	@Override
 	public FilterLogic createFilterLogic() {
 
-		return new FilterLogic(type, Ducts.Type.ITEM, this);
+		return new FilterLogic(type, Duct.Type.ITEM, this);
 	}
 
 }

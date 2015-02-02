@@ -15,8 +15,8 @@ public class EnergyGrid extends MultiBlockGrid {
 
 	private final int type;
 
-	public static final int NODE_STORAGE[] = { 480, 2400, 60000, 60000 };
-	public static final int NODE_TRANSFER[] = { 80, 400, 10000, 10000 };
+	public static final int NODE_STORAGE[] = { 960, 4800, 24000, 120000, 2400 };
+	public static final int NODE_TRANSFER[] = { 160, 800, 4000, 20000, 400 };
 
 	public EnergyGrid(World world, int type) {
 
@@ -44,10 +44,10 @@ public class EnergyGrid extends MultiBlockGrid {
 			currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
 			extraEnergy = myStorage.getEnergyStored() % nodeSet.size();
 			for (IMultiBlock m : nodeSet) {
-				if (!m.tickPass(0))
+				if (!m.tickPass(0)) {
 					break;
+				}
 			}
-
 		}
 	}
 
@@ -85,8 +85,9 @@ public class EnergyGrid extends MultiBlockGrid {
 	@Override
 	public void removeBlock(IMultiBlock oldBlock) {
 
-		if (oldBlock.isNode())
+		if (oldBlock.isNode()) {
 			((TileEnergyDuct) oldBlock).energyForGrid = getNodeShare(oldBlock);
+		}
 		super.removeBlock(oldBlock);
 	}
 
