@@ -81,8 +81,8 @@ public class TravelingItem {
 		if (myPath == null) {
 			bounceItem(homeTile);
 		} else if (progress >= homeTile.getPipeLength()) {
+            progress %=  homeTile.getPipeLength();
 			advanceTile(homeTile);
-			progress = 0;
 		} else if (progress >= homeTile.getPipeHalfLength() && progress - step < homeTile.getPipeHalfLength()) {
 			if (reRoute || homeTile.neighborTypes[direction] == NeighborTypes.NONE) {
 				bounceItem(homeTile);
@@ -224,8 +224,9 @@ public class TravelingItem {
 				moveCoordsByProgress(progress, this, homeTile);
 		}
 		if (progress >= homeTile.getPipeLength()) {
-			progress = 0;
-			if (shouldDie) {
+			progress %= homeTile.getPipeLength();
+
+            if (shouldDie) {
 				homeTile.removeItem(this);
 			} else {
 				homeTile.removeItem(this);
