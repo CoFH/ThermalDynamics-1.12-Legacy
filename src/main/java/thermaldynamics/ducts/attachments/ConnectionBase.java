@@ -138,7 +138,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	@Override
 	public boolean isNode() {
 
-		return isValidInput;
+		return true;
 	}
 
 	@Override

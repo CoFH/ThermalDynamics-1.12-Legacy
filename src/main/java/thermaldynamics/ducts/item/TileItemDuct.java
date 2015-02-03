@@ -175,8 +175,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	@Override
 	public boolean canStuffItem() {
-
-		return isInput;
+        for (Attachment attachment : attachments) {
+            if(attachment instanceof IStuffable)
+                return true;
+        }
+        return false;
 	}
 
 	boolean wasVisited = false;
