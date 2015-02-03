@@ -131,7 +131,7 @@ public class ServoItem extends ServoBase {
 	}
 
 	public static int[] tickDelays = { 60, 40, 20, 10, 10 };
-	public static byte[] speedBoost = { 1, 1, 1, 1, 2 };
+	public static byte[] speedBoost = { 1, 1, 1, 2, 3 };
 
 	public int tickDelay() {
 
@@ -158,18 +158,18 @@ public class ServoItem extends ServoBase {
 	public void tick(int pass) {
 
 		if (pass == 0) {
-			if (isPowered && (isValidInput || isStuffed()) && itemDuct.world().getTotalWorldTime() % tickDelay() == 0)
+			if (isPowered && (isValidInput || isStuffed()) && itemDuct.world().getTotalWorldTime() % tickDelay() == 0) {
 				ItemGrid.toTick.add(this);
+			}
 			return;
-		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0)
+		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) {
 			return;
-
+		}
 		RouteCache cache1 = itemDuct.getCache(false);
 		if (cache1 != cache) {
 			cache = cache1;
 			routeList.setList(cache.outputRoutes, getSortType());
 		}
-
 		if (cache.isFinishedGenerating() && cache.outputRoutes.isEmpty())
 			return;
 
@@ -181,9 +181,9 @@ public class ServoItem extends ServoBase {
 					send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
 					TravelingItem travelingItem = getRouteForItem(send);
 
-					if (travelingItem == null)
+					if (travelingItem == null) {
 						continue;
-
+					}
 					stuffedItem.stackSize -= travelingItem.stack.stackSize;
 					if (stuffedItem.stackSize <= 0)
 						iterator.remove();
@@ -197,9 +197,9 @@ public class ServoItem extends ServoBase {
 			}
 		} else if (pass == 2 && !stuffed) {
 
-			if (!isValidInput)
+			if (!isValidInput) {
 				return;
-
+			}
 			if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
 				int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
 				for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
@@ -313,13 +313,11 @@ public class ServoItem extends ServoBase {
 				TileItemDuct.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
 				if (routeInfo.canRoute) {
 					int stackSize = item.stackSize - routeInfo.stackSize;
-
 					if (stackSize <= 0) {
 						continue;
 					}
 					Route itemRoute = outputRoute.copy();
 					itemRoute.pathDirections.add(routeInfo.side);
-
 					item.stackSize -= routeInfo.stackSize;
 					return new TravelingItem(item, duct, itemRoute, (byte) (side ^ 1), speed);
 				}
@@ -391,9 +389,9 @@ public class ServoItem extends ServoBase {
 
 		ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
 		TravelingItem routeForItem = getRouteForItem(sending);
-		if (routeForItem == null)
+		if (routeForItem == null) {
 			return item;
-
+		}
 		itemDuct.insertNewItem(routeForItem);
 		item.stackSize -= routeForItem.stack.stackSize;
 		return item.stackSize > 0 ? item : null;
@@ -406,7 +404,6 @@ public class ServoItem extends ServoBase {
 			cache = cache1;
 			routeList.setList(cache.outputRoutes, getSortType());
 		}
-
 		return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
 	}
 

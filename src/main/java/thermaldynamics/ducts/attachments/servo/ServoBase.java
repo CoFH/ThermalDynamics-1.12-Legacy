@@ -39,8 +39,9 @@ public abstract class ServoBase extends ConnectionBase {
 
 		super.writeToNBT(tag);
 		tag.setBoolean("power", isPowered);
-		if (canAlterRS())
+		if (canAlterRS()) {
 			tag.setByte("rsMode", (byte) rsMode.ordinal());
+		}
 	}
 
 	@Override
@@ -49,8 +50,9 @@ public abstract class ServoBase extends ConnectionBase {
 		super.readFromNBT(tag);
 		isPowered = tag.getBoolean("power");
 
-		if (canAlterRS())
+		if (canAlterRS()) {
 			rsMode = IRedstoneControl.ControlMode.values()[tag.getByte("rsMode")];
+		}
 	}
 
 	@Override
@@ -58,8 +60,9 @@ public abstract class ServoBase extends ConnectionBase {
 
 		super.addDescriptionToPacket(packet);
 		packet.addBool(isPowered);
-		if (canAlterRS())
+		if (canAlterRS()) {
 			packet.addByte(rsMode.ordinal());
+		}
 	}
 
 	@Override
@@ -67,8 +70,9 @@ public abstract class ServoBase extends ConnectionBase {
 
 		super.getDescriptionFromPacket(packet);
 		isPowered = packet.getBool();
-		if (canAlterRS())
+		if (canAlterRS()) {
 			rsMode = IRedstoneControl.ControlMode.values()[packet.getByte()];
+		}
 	}
 
 	@Override
@@ -98,13 +102,12 @@ public abstract class ServoBase extends ConnectionBase {
 	@SideOnly(Side.CLIENT)
 	public boolean render(int pass, RenderBlocks renderBlocks) {
 
-		if (pass == 1)
+		if (pass == 1) {
 			return false;
-
+		}
 		Translation trans = RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(trans,
 				RenderUtils.getIconTransformation(RenderDuct.servoTexture[type * 2 + (stuffed ? 1 : 0)]));
-
 		return true;
 	}
 

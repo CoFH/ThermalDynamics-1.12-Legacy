@@ -10,15 +10,6 @@ import thermaldynamics.debughelper.PacketDebug;
 
 public class Proxy {
 
-	public void registerPackets() {
-
-		PacketDebug.initialize();
-	}
-
-	public void registerRenderInformation() {
-
-	}
-
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
@@ -28,6 +19,15 @@ public class Proxy {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
+
+	}
+
+	public void registerPacketInformation() {
+
+		PacketDebug.initialize();
+	}
+
+	public void registerRenderInformation() {
 
 	}
 
