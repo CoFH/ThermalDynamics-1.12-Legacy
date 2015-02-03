@@ -80,8 +80,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             if (routeForItem == null)
                 return item;
 
-            insertNewItem(routeForItem);
             itemCopy.stackSize -= routeForItem.stack.stackSize;
+            insertNewItem(routeForItem);
             return itemCopy.stackSize > 0 ? itemCopy : null;
         } else if (attachment.getId() != AttachmentRegistry.SERVO_ITEM) {
             return item;
