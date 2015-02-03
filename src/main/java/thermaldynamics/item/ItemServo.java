@@ -109,9 +109,6 @@ public class ItemServo extends ItemAttachment {
 
 		list.add(tab + "Max Stack Size: " + StringHelper.GRAY + ServoItem.maxSize[type] + StringHelper.END);
 
-		list.add(tab + "Max Range: " + StringHelper.GRAY + (ServoItem.range[type] == Integer.MAX_VALUE ? "Infinite" : (ServoItem.range[type] + " Blocks"))
-				+ StringHelper.END);
-
 		addFiltering(list, type, tab);
 
 		if (ServoItem.multiStack[type])

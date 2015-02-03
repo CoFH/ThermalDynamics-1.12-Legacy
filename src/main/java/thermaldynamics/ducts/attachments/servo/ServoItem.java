@@ -28,7 +28,7 @@ import thermaldynamics.multiblock.listtypes.ListWrapper;
 
 public class ServoItem extends ServoBase {
 
-	public static int[] range = { 8, 16, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE };
+	public static int[] range = { Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE };
 	public static int[] maxSize = { 4, 16, 64, 64, 64 };
 	public static boolean[] multiStack = { false, false, false, true, true };
 
