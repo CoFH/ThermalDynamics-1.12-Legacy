@@ -261,10 +261,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		return canAlterFlag(transferType, type, flagType);
 	}
 
-	public static boolean canAlterFlag(Duct.Type transferType, int type, int flagType) {
+    public static boolean canAlterFlag(Duct.Type transferType, int type, int flagType) {
 
-		return transferType == Duct.Type.ITEM && options[type] >= flagType;
-	}
+        return (transferType == Duct.Type.ITEM && options[type] >= flagType)
+                || (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
+    }
 
 	public void readFromNBT(NBTTagCompound tag) {
 
