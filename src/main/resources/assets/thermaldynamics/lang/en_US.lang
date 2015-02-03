@@ -75,3 +75,11 @@ info.thermaldynamics.filter.oreDict.off=Use Ore Dictionary
 info.thermaldynamics.filter.oreDict.on=Ignore Ore Dictionary
 info.thermaldynamics.filter.modSorting.off=Use Mod Owner
 info.thermaldynamics.filter.modSorting.on=Ignore Mod Owner
+
+info.thermaldynamics.servo.extractRate=Extraction Rate
+info.thermaldynamics.servo.speedBoost=Speed Boost
+info.thermaldynamics.servo.maxStackSize=Max Stack Size
+info.thermaldynamics.servo.redstoneExt=Requires Redstone Signal
+info.thermaldynamics.servo.redstoneInt=Internal Redstone Control
+info.thermaldynamics.servo.slotMulti=Extracts from multiple slots.
+info.thermaldynamics.servo.slotSingle=Extracts from a single slot.

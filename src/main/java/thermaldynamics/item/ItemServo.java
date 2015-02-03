@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -27,12 +28,9 @@ import thermaldynamics.ducts.item.TileItemDuct;
 
 public class ItemServo extends ItemAttachment {
 
-	public final String tab = "  ";
-
 	public ItemServo() {
 
 		super();
-
 		this.setUnlocalizedName("thermaldynamics.servo");
 	}
 
@@ -43,12 +41,17 @@ public class ItemServo extends ItemAttachment {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
 		for (int i = 0; i < 5; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
+	}
+
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+
+		return rarity[stack.getItemDamage() % 5];
 	}
 
 	@Override
@@ -94,42 +97,42 @@ public class ItemServo extends ItemAttachment {
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-		if (ServoBase.canAlterRS(type))
-			list.add("Internal Redstone Control");
-		else
-			list.add("Requires External Redstone Signal");
+		if (ServoBase.canAlterRS(type)) {
+			list.add(StringHelper.localize("info.thermaldynamics.servo.redstoneInt"));
+		} else {
+			list.add(StringHelper.localize("info.thermaldynamics.servo.redstoneExt"));
+		}
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
 
-		list.add(StringHelper.WHITE + "Items" + StringHelper.END);
-
-		list.add(tab
-				+ "Send Delay: "
-				+ StringHelper.GRAY
+		list.add("  "
+				+ StringHelper.localize("info.thermaldynamics.servo.extractRate")
+				+ ": "
+				+ StringHelper.WHITE
 				+ ((ServoItem.tickDelays[type] % 20) == 0 ? Integer.toString(ServoItem.tickDelays[type] / 20) : Float
-						.toString(ServoItem.tickDelays[type] / 20F)) + " Secs" + StringHelper.END);
+						.toString(ServoItem.tickDelays[type] / 20F)) + "s" + StringHelper.END);
+		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.maxStackSize") + ": " + StringHelper.WHITE + ServoItem.maxSize[type]
+				+ StringHelper.END);
+		addFiltering(list, type);
 
-		list.add(tab + "Max Stack Size: " + StringHelper.GRAY + ServoItem.maxSize[type] + StringHelper.END);
-
-		addFiltering(list, type, tab);
-
-		if (ServoItem.multiStack[type])
-			list.add(tab + "Extracts over multiple slots");
-		else
-			list.add(tab + "Extracts from a single slot");
-
-		if (ServoItem.speedBoost[type] != 1)
-			list.add(tab + "Item Speed Boost: " + StringHelper.GRAY + ServoItem.speedBoost[type] + "x " + StringHelper.END);
-
-		list.add(StringHelper.WHITE + "Fluid" + StringHelper.END);
-		// String.format(Locale.ENGLISH, "%,d", a)
-		list.add(tab + "Throttle Multiplier: " + Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%");
-
+		if (ServoItem.multiStack[type]) {
+			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotMulti"));
+		} else {
+			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotSingle"));
+		}
+		if (ServoItem.speedBoost[type] != 1) {
+			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.speedBoost") + ": " + StringHelper.WHITE + ServoItem.speedBoost[type] + "x "
+					+ StringHelper.END);
+		}
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluid") + StringHelper.END);
+		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.extractRate") + ": " + StringHelper.WHITE
+				+ Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%" + StringHelper.END);
 	}
 
-	public static void addFiltering(List list, int type, String tab) {
+	public static void addFiltering(List list, int type) {
 
 		StringBuilder b = new StringBuilder();
 
-		b.append("Filter Options: " + StringHelper.GRAY);
+		b.append("Filter Options: " + StringHelper.WHITE);
 		boolean flag = false;
 		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
 			if (FilterLogic.canAlterFlag(Duct.Type.ITEM, type, i)) {
@@ -144,9 +147,9 @@ public class ItemServo extends ItemAttachment {
 		flag = false;
 		for (String s : (List<String>) Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
 			if (flag)
-				s = tab + StringHelper.GRAY + s;
+				s = "  " + StringHelper.WHITE + s;
 			flag = true;
-			list.add(tab + s + StringHelper.END);
+			list.add("  " + s + StringHelper.END);
 		}
 	}
 
@@ -167,6 +170,7 @@ public class ItemServo extends ItemAttachment {
 
 	IIcon[] icons;
 
+	public static EnumRarity[] rarity = { EnumRarity.common, EnumRarity.common, EnumRarity.uncommon, EnumRarity.uncommon, EnumRarity.rare };
 	public static ItemStack basicServo, hardenedServo, reinforcedServo, signalumServo, resonantServo;
 
 }

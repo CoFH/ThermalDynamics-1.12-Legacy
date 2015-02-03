@@ -57,15 +57,15 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 			MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(world, player, x, y, z);
 			if (movingObjectPosition != null) {
 				int subHit = movingObjectPosition.subHit;
-				if (subHit < 6)
+				if (subHit < 6) {
 					s = subHit;
-				else if (subHit < 12)
+				} else if (subHit < 12) {
 					s = (subHit - 6);
-				else if (subHit == 13)
+				} else if (subHit == 13) {
 					s = side;
-				else
+				} else {
 					s = ((subHit - 14) % 6);
-
+				}
 				if (s != -1) {
 					attachment = getAttachment(s ^ 1, stack, (TileMultiBlock) tile);
 				}

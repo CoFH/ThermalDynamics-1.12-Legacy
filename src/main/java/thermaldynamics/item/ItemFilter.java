@@ -4,13 +4,17 @@ import cofh.lib.util.helpers.StringHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.ducts.attachments.filter.FilterFluid;
@@ -23,7 +27,6 @@ public class ItemFilter extends ItemAttachment {
 	public ItemFilter() {
 
 		super();
-
 		this.setUnlocalizedName("thermaldynamics.filter");
 	}
 
@@ -34,12 +37,17 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
 		for (int i = 0; i < 5; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
+	}
+
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+
+		return rarity[stack.getItemDamage() % 5];
 	}
 
 	@Override
@@ -85,6 +93,9 @@ public class ItemFilter extends ItemAttachment {
 		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
+
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluid") + StringHelper.END);
 	}
 
 	/* IInitializer */
@@ -104,6 +115,7 @@ public class ItemFilter extends ItemAttachment {
 
 	IIcon[] icons;
 
+	public static EnumRarity[] rarity = { EnumRarity.common, EnumRarity.common, EnumRarity.uncommon, EnumRarity.uncommon, EnumRarity.rare };
 	public static ItemStack basicFilter, hardenedFilter, reinforcedFilter, signalumFilter, resonantFilter;
 
 }
