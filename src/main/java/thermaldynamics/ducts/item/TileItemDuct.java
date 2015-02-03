@@ -77,24 +77,26 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
 
 		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
-				.ordinal()].allowTransfer)))
+		                                                                                                                                          .ordinal()].allowTransfer))) {
 			return item;
-
+		}
 		Attachment attachment = attachments[from.ordinal()];
 		if (attachment == null) {
 			ItemStack itemCopy = ItemHelper.cloneStack(item);
 			TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(8, item.stackSize)), getCache(false).outputRoutes,
 					this, from.ordinal(), ServoItem.range[0], (byte) 1);
-			if (routeForItem == null)
+			if (routeForItem == null) {
 				return item;
+			}
 
-			insertNewItem(routeForItem);
 			itemCopy.stackSize -= routeForItem.stack.stackSize;
+			insertNewItem(routeForItem);
 			return itemCopy.stackSize > 0 ? itemCopy : null;
 		} else if (attachment.getId() != AttachmentRegistry.SERVO_ITEM) {
 			return item;
-		} else
+		} else {
 			return ((ServoItem) attachment).insertItem(item);
+		}
 	}
 
 	public static enum CacheType {
@@ -123,7 +125,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 * 
+	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override
@@ -533,7 +535,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	}
 
 	@Override
-	 public boolean isConnectable(TileEntity theTile, int side) {
+	public boolean isConnectable(TileEntity theTile, int side) {
 
 		return theTile instanceof TileItemDuct;
 	}
@@ -557,7 +559,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	// }
 
 	@Override
-	 public RouteInfo canRouteItem(ItemStack anItem) {
+	public RouteInfo canRouteItem(ItemStack anItem) {
 
 		if (internalGrid == null)
 			return noRoute;
