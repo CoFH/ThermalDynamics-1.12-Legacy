@@ -23,7 +23,7 @@ public class TDDucts {
 		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency, pathModifiable);
 
-        while (id <= ductList.size()) ductList.add(null);
+        while (id >= ductList.size()) ductList.add(null);
         Duct oldDuct = ductList.set(id, newDuct);
         if (oldDuct != null)
             ThermalDynamics.log.info("Replacing " + oldDuct.unlocalizedName + " with " + newDuct.unlocalizedName);
