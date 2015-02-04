@@ -146,29 +146,29 @@ public class TDCrafting {
 		}
 
 		/* DENSE / VACUUM - TE Integration */
-		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicDense, TDDucts.itemBasicVacuum },
-				{ TDDucts.itemBasicOpaque, TDDucts.itemBasicOpaqueDense, TDDucts.itemBasicOpaqueVacuum },
-
-				{ TDDucts.itemFast, TDDucts.itemFastDense, TDDucts.itemFastVacuum },
-				{ TDDucts.itemFastOpaque, TDDucts.itemFastOpaqueDense, TDDucts.itemFastOpaqueVacuum },
-
-				// { TDDucts.itemEnergy, TDDucts.itemEnergyDense, TDDucts.itemEnergyVacuum },
-				// { TDDucts.itemEnergyOpaque, TDDucts.itemEnergyOpaqueDense, TDDucts.itemEnergyOpaqueVacuum },
-
-				{ TDDucts.itemEnder, TDDucts.itemEnderDense, TDDucts.itemEnderVacuum },
-				{ TDDucts.itemEnderOpaque, TDDucts.itemEnderOpaqueDense, TDDucts.itemEnderOpaqueVacuum }, }) {
-
-			final ItemStack b = duct[0].itemStack;
-			final ItemStack d = duct[1].itemStack;
-			final ItemStack v = duct[2].itemStack;
-
-			// TODO: Make this better
-			GameRegistry.addRecipe(new ShapelessOreRecipe(d, b, "dustSilver"));
-			GameRegistry.addRecipe(new ShapelessOreRecipe(v, b, "dustLead"));
-
-			// ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[1].itemStack, new FluidStack(TFFluids.fluidCoal, 100), true);
-			// ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[2].itemStack, new FluidStack(TFFluids.fluidSteam, 1000), true);
-		}
+//		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicDense, TDDucts.itemBasicVacuum },
+//				{ TDDucts.itemBasicOpaque, TDDucts.itemBasicOpaqueDense, TDDucts.itemBasicOpaqueVacuum },
+//
+//				{ TDDucts.itemFast, TDDucts.itemFastDense, TDDucts.itemFastVacuum },
+//				{ TDDucts.itemFastOpaque, TDDucts.itemFastOpaqueDense, TDDucts.itemFastOpaqueVacuum },
+//
+//				// { TDDucts.itemEnergy, TDDucts.itemEnergyDense, TDDucts.itemEnergyVacuum },
+//				// { TDDucts.itemEnergyOpaque, TDDucts.itemEnergyOpaqueDense, TDDucts.itemEnergyOpaqueVacuum },
+//
+//				{ TDDucts.itemEnder, TDDucts.itemEnderDense, TDDucts.itemEnderVacuum },
+//				{ TDDucts.itemEnderOpaque, TDDucts.itemEnderOpaqueDense, TDDucts.itemEnderOpaqueVacuum }, }) {
+//
+//			final ItemStack b = duct[0].itemStack;
+//			final ItemStack d = duct[1].itemStack;
+//			final ItemStack v = duct[2].itemStack;
+//
+//			// TODO: Make this better
+//			GameRegistry.addRecipe(new ShapelessOreRecipe(d, b, "dustSilver"));
+//			GameRegistry.addRecipe(new ShapelessOreRecipe(v, b, "dustLead"));
+//
+//			// ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[1].itemStack, new FluidStack(TFFluids.fluidCoal, 100), true);
+//			// ThermalExpansionHelper.addTransposerFill(800, duct[0].itemStack, duct[2].itemStack, new FluidStack(TFFluids.fluidSteam, 1000), true);
+//		}
 	}
 
 	public static ShapelessOreRecipe addInputMetaRange(ShapelessOreRecipe recipe, ItemStack input, int minMeta, int maxMeta) {

@@ -103,7 +103,7 @@ public class TDDucts {
 		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonant", Type.STRUCTURAL, DuctFactory.energy, "enderium", "enderium", null, 0,
 				null, null, 0, false);
 
-		energySuperCond = addDuct(OFFSET_ENERGY + 5, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
+		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 128, false);
 		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
 				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0, false);
@@ -165,7 +165,7 @@ public class TDDucts {
 	public static int OFFSET_ENERGY = 0 * 16;
 	public static int OFFSET_FLUID = 1 * 16;
 	public static int OFFSET_ITEM = 2 * 16;
-	public static int OFFSET_STRUCTURE = 4 * 16;
+	public static int OFFSET_STRUCTURE = 3 * 16;
 
 	/* ENERGY */
 	public static Duct energyBasic;
@@ -196,28 +196,11 @@ public class TDDucts {
 
 	/* ITEM */
 	public static Duct itemBasic;
-	public static Duct itemBasicDense;
-	public static Duct itemBasicVacuum;
-
 	public static Duct itemBasicOpaque;
-	public static Duct itemBasicOpaqueDense;
-	public static Duct itemBasicOpaqueVacuum;
-
 	public static Duct itemFast;
-	public static Duct itemFastDense;
-	public static Duct itemFastVacuum;
-
 	public static Duct itemFastOpaque;
-	public static Duct itemFastOpaqueDense;
-	public static Duct itemFastOpaqueVacuum;
-
 	public static Duct itemEnder;
-	public static Duct itemEnderDense;
-	public static Duct itemEnderVacuum;
-
 	public static Duct itemEnderOpaque;
-	public static Duct itemEnderOpaqueDense;
-	public static Duct itemEnderOpaqueVacuum;
 
 	// public static Duct itemEnergy;
 	// public static Duct itemEnergyDense;
