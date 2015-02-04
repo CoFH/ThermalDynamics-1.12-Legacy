@@ -94,15 +94,16 @@ public class TDDucts {
 
 		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0, false);
+
 		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
 				"electrum", null, 0, null, null, 0, false);
 
-		energyResonant = addDuct(OFFSET_ENERGY + 3, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
+		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0, false);
 		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonant", Type.STRUCTURAL, DuctFactory.energy, "enderium", "enderium", null, 0,
 				null, null, 0, false);
 
-		energySuperCond = addDuct(OFFSET_ENERGY + 4, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
+		energySuperCond = addDuct(OFFSET_ENERGY + 5, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 128, false);
 		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
 				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0, false);
