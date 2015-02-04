@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import thermaldynamics.ThermalDynamics;
 import thermaldynamics.ducts.Duct.Type;
 
 public class TDDucts {
@@ -22,8 +23,11 @@ public class TDDucts {
 		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
 
-		ductList.add(newDuct);
-		return newDuct;
+        while (id < ductList.size()) ductList.add(null);
+        Duct oldDuct = ductList.set(id, newDuct);
+        if (oldDuct != null)
+            ThermalDynamics.log.info("Replacing " + oldDuct.unlocalizedName + " with " + newDuct.unlocalizedName);
+        return newDuct;
 	}
 
 	public static Duct getDuct(int id) {
