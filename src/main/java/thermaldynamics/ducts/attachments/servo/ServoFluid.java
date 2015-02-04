@@ -88,7 +88,7 @@ public class ServoFluid extends ServoBase {
 	private boolean fluidPassesFiltering(FluidStack theFluid) {
 
 		// TODO: This needs to be fixed, but fluid filters are really complicated and broken atm
-		return theFluid != null && theFluid.fluidID != 0; // && filter.allowFluid(theFluid);
+		return theFluid != null && theFluid.fluidID != 0 && filter.allowFluid(theFluid);
 	}
 
 	@Override
