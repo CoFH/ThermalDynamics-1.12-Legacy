@@ -65,13 +65,15 @@ public class ServoFluid extends ServoBase {
 	public void tick(int pass) {
 
 		super.tick(pass);
+
 		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
 			return;
 		}
-		int maxInput = Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]));
-		if (maxInput == 0)
-			return;
 
+		int maxInput = Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]));
+		if (maxInput == 0) {
+			return;
+		}
 		FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false);
 
 		if (fluidPassesFiltering(returned)) {
@@ -85,7 +87,8 @@ public class ServoFluid extends ServoBase {
 
 	private boolean fluidPassesFiltering(FluidStack theFluid) {
 
-		return theFluid != null && theFluid.fluidID != 0 && filter.allowFluid(theFluid);
+		// TODO: This needs to be fixed, but fluid filters are really complicated and broken atm
+		return theFluid != null && theFluid.fluidID != 0; // && filter.allowFluid(theFluid);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import thermaldynamics.ducts.attachments.servo.ServoFluid;
 import thermaldynamics.ducts.attachments.servo.ServoItem;
 
 public class AttachmentRegistry {
+
 	public final static byte FACADE = 0;
 	public final static byte SERVO_FLUID = 1;
 	public final static byte SERVO_ITEM = 2;

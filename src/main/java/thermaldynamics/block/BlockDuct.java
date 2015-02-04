@@ -115,7 +115,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 
 		if (event.target.typeOfHit == MovingObjectType.BLOCK
 				&& event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
-						.equals(getUnlocalizedName())) {
+				.equals(getUnlocalizedName())) {
 			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
 
 			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
@@ -144,7 +144,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
 
 		for (int i = 0; i < TDDucts.ductList.size(); i++) {
-			TDDucts.ductList.get(i).registerIcons(ir);
+			if (TDDucts.isValid(i)) {
+				TDDucts.ductList.get(i).registerIcons(ir);
+			}
 		}
 		TDDucts.structureInvis.registerIcons(ir);
 	}

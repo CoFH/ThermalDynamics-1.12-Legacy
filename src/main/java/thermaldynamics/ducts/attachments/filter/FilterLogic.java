@@ -99,7 +99,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		} else if (isFluid()) {
 			fluidsNBT.clear();
 		}
-
 		synchronized (items) {
 			boolean flag = true;
 			for (ItemStack item : items) {
@@ -247,7 +246,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	@Override
 	public int numFlags() {
 
-		return transferType == Duct.Type.ITEM ? flags.length : 0;
+		return flags.length;
 	}
 
 	public int[] validFlags() {
@@ -261,11 +260,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		return canAlterFlag(transferType, type, flagType);
 	}
 
-    public static boolean canAlterFlag(Duct.Type transferType, int type, int flagType) {
+	public static boolean canAlterFlag(Duct.Type transferType, int type, int flagType) {
 
-        return (transferType == Duct.Type.ITEM && options[type] >= flagType)
-                || (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
-    }
+		return (transferType == Duct.Type.ITEM && options[type] >= flagType)
+				|| (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
+	}
 
 	public void readFromNBT(NBTTagCompound tag) {
 
@@ -316,10 +315,12 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	@Override
 	public boolean allowFluid(FluidStack fluid) {
 
-		if (fluid == null)
+		if (fluid == null) {
 			return false;
-		if (recalc)
+		}
+		if (recalc) {
 			calcItems();
+		}
 		fluid = fluid.copy();
 		fluid.amount = 1;
 		return fluidsNBT.contains(fluid);

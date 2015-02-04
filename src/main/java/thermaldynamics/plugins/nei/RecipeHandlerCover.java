@@ -18,9 +18,9 @@ import thermaldynamics.ThermalDynamics;
 import thermaldynamics.ducts.TDDucts;
 import thermaldynamics.ducts.attachments.facades.CoverHelper;
 
-public class CoverRecipeNEIHandler extends ShapelessRecipeHandler {
+public class RecipeHandlerCover extends ShapelessRecipeHandler {
 
-	public static CoverRecipeNEIHandler instance = new CoverRecipeNEIHandler();
+	public static RecipeHandlerCover instance = new RecipeHandlerCover();
 
 	public class CachedCoverRecipeSimple extends CachedShapelessRecipe {
 

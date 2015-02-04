@@ -6,8 +6,10 @@ import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.repack.codechicken.lib.vec.Vector3;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -20,6 +22,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import thermaldynamics.block.TileMultiBlock.NeighborTypes;
 import thermaldynamics.util.Utils;
 
@@ -69,7 +72,6 @@ public abstract class BlockMultiBlock extends BlockCoFHBase implements ITileEnti
 					theTile.covers[i].addCollisionBoxesToList(axis, list, entity);
 				}
 			}
-
 			if (theTile.neighborTypes[0] != NeighborTypes.NONE) {
 				this.setBlockBounds(min, 0.0F, min, max, max, max);
 				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);

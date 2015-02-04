@@ -11,8 +11,8 @@ public class NEIThermalDynamicsConfig implements IConfigureNEI {
 	@Override
 	public void loadConfig() {
 
-		API.registerRecipeHandler(CoverRecipeNEIHandler.instance);
-		API.registerUsageHandler(CoverRecipeNEIHandler.instance);
+		API.registerRecipeHandler(RecipeHandlerCover.instance);
+		API.registerUsageHandler(RecipeHandlerCover.instance);
 	}
 
 	@Override

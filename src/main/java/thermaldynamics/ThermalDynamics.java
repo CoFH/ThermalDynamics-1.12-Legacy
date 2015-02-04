@@ -81,6 +81,8 @@ public class ThermalDynamics extends BaseMod {
 		proxy.registerPacketInformation();
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/ThermalDynamics.cfg")));
 
+		TDDucts.addDucts();
+
 		int numBlocks = (int) Math.ceil(TDDucts.ductList.size() / 16.0);
 		blockDuct = new BlockDuct[numBlocks];
 		for (int i = 0; i < numBlocks; i++) {

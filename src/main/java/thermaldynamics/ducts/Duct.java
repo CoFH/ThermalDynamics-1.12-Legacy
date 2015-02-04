@@ -13,7 +13,7 @@ public class Duct {
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public static enum Type {
-		ITEM, FLUID, ENERGY, ENTITY, STRUCTURAL
+		ENERGY, FLUID, ITEM, ENTITY, STRUCTURAL
 	}
 
 	public ItemStack itemStack = null;

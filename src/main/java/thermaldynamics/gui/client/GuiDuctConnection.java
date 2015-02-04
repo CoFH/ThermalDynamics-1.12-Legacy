@@ -40,7 +40,6 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	public int buttonSize;
 
 	private static final int[][] levelButtonPos = { { -1, -1 }, { 0, 204 }, { 80, 204 } };
-
 	private static final int[][] flagButtonsPos = { { 176, 0 }, { 216, 0 }, { 176, 60 }, { 216, 60 }, { 176, 120 }, { 216, 120 }, { 176, 180 }, { 216, 180 }, };
 
 	public GuiDuctConnection(InventoryPlayer inventory, ConnectionBase conBase) {

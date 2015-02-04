@@ -41,7 +41,6 @@ public class SlotFilter extends SlotFalseCopy {
 			filter.getFilterStacks()[getSlotIndex()] = stack;
 			onSlotChanged();
 		}
-
 	}
 
 	@Override
