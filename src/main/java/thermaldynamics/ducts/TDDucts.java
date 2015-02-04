@@ -18,10 +18,10 @@ public class TDDucts {
 	public static ArrayList<Duct> ductListSorted = null;
 
 	static Duct addDuct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+                        String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency, boolean pathModifiable) {
 
 		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
-				frameTexture, frameFluidTexture, frameFluidTransparency);
+				frameTexture, frameFluidTexture, frameFluidTransparency, pathModifiable);
 
         while (id < ductList.size()) ductList.add(null);
         Duct oldDuct = ductList.set(id, newDuct);
@@ -87,39 +87,35 @@ public class TDDucts {
 	static void addEnergyDucts() {
 
 		energyBasic = addDuct(OFFSET_ENERGY + 0, false, 1, 0, "energyBasic", Type.ENERGY, DuctFactory.energy, "lead", "lead", Duct.REDSTONE_BLOCK, 255, null,
-				null, 255);
+				null, 255, false);
 
 		energyHardened = addDuct(OFFSET_ENERGY + 1, false, 1, 1, "energyHardened", Type.ENERGY, DuctFactory.energy, "invar", "invar", Duct.REDSTONE_BLOCK, 255,
-				null, null, 0);
+				null, null, 0, false);
 
 		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0);
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0, false);
 		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
-				"electrum", null, 0, null, null, 0);
+				"electrum", null, 0, null, null, 0, false);
 
-		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0);
+		energyResonant = addDuct(OFFSET_ENERGY + 3, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0, false);
 		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonant", Type.STRUCTURAL, DuctFactory.energy, "enderium", "enderium", null, 0,
-				null, null, 0);
+				null, null, 0, false);
 
-		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 128);
+		energySuperCond = addDuct(OFFSET_ENERGY + 4, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 128, false);
 		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
-				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0);
-
-		for (int i = OFFSET_ENERGY + 8; i < OFFSET_FLUID; i++) {
-			ductList.add(null);
-		}
+				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0, false);
 	}
 
 	static void addFluidDucts() {
 
-		fluidBasic = addDuct(OFFSET_FLUID + 0, false, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null, 0);
+		fluidBasic = addDuct(OFFSET_FLUID + 0, false, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null, 0, false);
 		fluidBasicOpaque = addDuct(OFFSET_FLUID + 1, true, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null,
-				0);
+				0, false);
 
-		fluidHardened = addDuct(OFFSET_FLUID + 2, false, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
-		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
+		fluidHardened = addDuct(OFFSET_FLUID + 2, false, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0, false);
+		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0, false);
 
 		// fluidEnergy = addDuct(OFFSET_FLUID + 4, false, 1, 1, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "invar", "invar", null, 0, Duct.SIDE_DUCTS,
 		// "thermalfoundation:fluid/Fluid_Redstone_Still", 192);
@@ -131,68 +127,22 @@ public class TDDucts {
 		// "thermalfoundation:fluid/Fluid_Redstone_Still", 192);
 		// fluidEnergyOpaqueEmpty = addDuct(OFFSET_FLUID + 7, true, 1, 1, "fluidFluxEmpty", Type.STRUCTURAL, DuctFactory.structural, "invar", "invar", null, 0,
 		// Duct.SIDE_DUCTS, null, 0);
-
-		for (int i = OFFSET_FLUID + 4; i < OFFSET_ITEM; i++) {
-			ductList.add(null);
-		}
 	}
 
 	static void addItemDucts() {
 
-		itemBasic = addDuct(OFFSET_ITEM + 0, false, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
+		itemBasic = addDuct(OFFSET_ITEM + 0, false, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0, false);
 
-		itemBasicDense = addDuct(OFFSET_ITEM + 1, false, 1000, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
+		itemBasicOpaque = addDuct(OFFSET_ITEM + 1, true, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0, true);
 
-		itemBasicVacuum = addDuct(OFFSET_ITEM + 2, false, -1000, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
+		itemFast = addDuct(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
+				"thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0, true);
 
-		ductList.add(null);
+		itemFastOpaque = addDuct(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0, true);
 
-		itemBasicOpaque = addDuct(OFFSET_ITEM + 4, true, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
+		itemEnder = addDuct(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0, true);
 
-		itemBasicOpaqueDense = addDuct(OFFSET_ITEM + 5, true, 1000, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
-
-		itemBasicOpaqueVacuum = addDuct(OFFSET_ITEM + 6, true, -1000, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
-
-		ductList.add(null);
-
-		itemFast = addDuct(OFFSET_ITEM + 8, false, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
-				"thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0);
-
-		itemFastDense = addDuct(OFFSET_ITEM + 9, false, 1000, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
-				"thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0);
-
-		itemFastVacuum = addDuct(OFFSET_ITEM + 10, false, -1000, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
-				"thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0);
-
-		ductList.add(null);
-
-		itemFastOpaque = addDuct(OFFSET_ITEM + 12, true, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
-
-		itemFastOpaqueDense = addDuct(OFFSET_ITEM + 13, true, 1000, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
-
-		itemFastOpaqueVacuum = addDuct(OFFSET_ITEM + 14, true, -1000, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
-
-		ductList.add(null);
-
-		itemEnder = addDuct(OFFSET_ITEM + 16, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
-
-		itemEnderDense = addDuct(OFFSET_ITEM + 17, false, 1000, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null,
-				null, 0);
-
-		itemEnderVacuum = addDuct(OFFSET_ITEM + 18, false, -1000, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null,
-				null, 0);
-
-		ductList.add(null);
-
-		itemEnderOpaque = addDuct(OFFSET_ITEM + 20, true, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
-
-		itemEnderOpaqueDense = addDuct(OFFSET_ITEM + 21, true, 1000, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null,
-				null, 0);
-
-		itemEnderOpaqueVacuum = addDuct(OFFSET_ITEM + 22, true, -1000, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48,
-				null, null, 0);
-
-		ductList.add(null);
+		itemEnderOpaque = addDuct(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0, true);
 
 		// itemEnergy = addDuct(OFFSET_ITEM + 24, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin",
 		// "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0);
@@ -204,21 +154,11 @@ public class TDDucts {
 		// "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0);
 		//
 		// itemEnergyOpaque = addDuct(OFFSET_ITEM + 28, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
-		//
-		// itemEnergyOpaqueDense = addDuct(OFFSET_ITEM + 29, true, 1000, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null,
-		// 0);
-		//
-		// itemEnergyOpaqueVacuum = addDuct(OFFSET_ITEM + 30, true, -1000, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null,
-		// 0);
-
-		for (int i = OFFSET_ITEM + 24; i < OFFSET_STRUCTURE; i++) {
-			ductList.add(null);
-		}
 	}
 
 	static void addSupportDucts() {
 
-		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
+		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0, false);
 	}
 
 	public static int OFFSET_ENERGY = 0 * 16;
@@ -291,8 +231,8 @@ public class TDDucts {
 
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,
-			0);
+			0, false);
 
-	public static Duct placeholder = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
+	public static Duct placeholder = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0, false);
 
 }
