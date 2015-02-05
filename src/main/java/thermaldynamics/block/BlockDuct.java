@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -244,15 +245,28 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		}
 	}
 
-	@Override
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase living, ItemStack stack) {
+        super.onBlockPlacedBy(world, x, y, z, living, stack);
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if(tile instanceof TileMultiBlock)
+            ((TileMultiBlock)tile).onPlacedBy(living, stack);
+    }
+
+    @Override
 	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
 
 		TileEntity tile = world.getTileEntity(x, y, z);
 		int bMeta = world.getBlockMetadata(x, y, z);
 
-		ItemStack dropBlock = new ItemStack(this, 1, bMeta);
+		ItemStack dropBlock;
+        if (tile instanceof TileMultiBlock) {
+            dropBlock = ((TileMultiBlock) tile).getDrop();
+        } else {
+            dropBlock= new ItemStack(this, 1, bMeta);
+        }
 
-		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 		ret.add(dropBlock);
 
 		if (tile instanceof TileMultiBlock) {

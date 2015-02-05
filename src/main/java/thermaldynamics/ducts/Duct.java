@@ -70,8 +70,7 @@ public class Duct {
 
 	public void registerIcons(IIconRegister ir) {
 
-		iconBaseTexture = TextureOverlay.generateBaseTexture(ir, baseTexture, opaque ? null : "trans", pathWeight == 1000 ? "dense"
-				: pathWeight == -1000 ? "vacuum" : null);
+		iconBaseTexture = TextureOverlay.generateBaseTexture(ir, baseTexture, opaque ? null : "trans", null);
 
 		if (connectionTexture != null) {
 			iconConnectionTexture = TextureOverlay.generateConnectionTexture(ir, connectionTexture);
@@ -102,4 +101,8 @@ public class Duct {
 		return this.id > other.id ? 1 : this.id < other.id ? -1 : 0;
 	}
 
+
+    public IIcon getBaseTexture(ItemStack itemStack){
+        return iconBaseTexture;
+    }
 }

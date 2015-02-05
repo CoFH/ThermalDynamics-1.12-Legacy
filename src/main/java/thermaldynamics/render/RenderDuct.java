@@ -153,7 +153,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	}
 
-	public boolean renderBase(boolean invRender, int renderType, int[] connection, double x, double y, double z) {
+	public boolean renderBase(boolean invRender, int renderType, int[] connection, double x, double y, double z, IIcon iconBaseTexture) {
 
 		x += 0.5;
 		y += 0.5;
@@ -183,7 +183,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 				}
 			}
 		}
-		RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(ductType.iconBaseTexture);
+		RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
 		(ductType.opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(trans, icon);
 
 		if (ductType.frameType == 1) {
@@ -352,7 +352,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		int renderType = TDDucts.getDuct(((BlockDuct) block).offset + world.getBlockMetadata(x, y, z)).id;
 
 		if (BlockCoFHBase.renderPass == 0) {
-			renderBase(false, renderType, connections, x, y, z);
+			renderBase(false, renderType, connections, x, y, z, theTile.getBaseIcon());
 			flag = true;
 		} else {
 			flag = renderWorldExtra(false, theTile, renderType, connections, x, y, z) || flag;
@@ -393,7 +393,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		Block blockFromItem = Block.getBlockFromItem(item.getItem());
 
-		int metadata = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + item.getItemDamage()).id;
+        Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + item.getItemDamage());
+        int metadata = duct.id;
 		boolean renderExtra = false;
 
 		GL11.glPushMatrix();
@@ -405,7 +406,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderUtils.preItemRender();
 
 		CCRenderState.startDrawing();
-		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset);
+		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
 		CCRenderState.draw();
 
 		CCRenderState.startDrawing();

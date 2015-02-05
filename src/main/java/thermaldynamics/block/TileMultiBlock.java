@@ -20,12 +20,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Facing;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -998,7 +1001,19 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		return false;
 	}
 
-	public static enum NeighborTypes {
+    public IIcon getBaseIcon() {
+        return getDuctType().iconBaseTexture;
+    }
+
+    public ItemStack getDrop() {
+        return new ItemStack(getBlockType(), 1, getBlockMetadata());
+    }
+
+    public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
+
+    }
+
+    public static enum NeighborTypes {
 		NONE, MULTIBLOCK, OUTPUT(true), INPUT(true), STRUCTURE(true), DUCT_ATTACHMENT;
 
 		NeighborTypes() {

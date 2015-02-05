@@ -9,11 +9,10 @@ import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import com.google.common.collect.Iterables;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -21,15 +20,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
-
 import thermaldynamics.block.Attachment;
 import thermaldynamics.block.AttachmentRegistry;
 import thermaldynamics.block.TileMultiBlock;
 import thermaldynamics.core.TDProps;
 import thermaldynamics.core.TickHandlerClient;
+import thermaldynamics.ducts.DuctItem;
 import thermaldynamics.ducts.attachments.IStuffable;
 import thermaldynamics.ducts.attachments.filter.IFilterAttachment;
 import thermaldynamics.ducts.attachments.filter.IFilterItems;
@@ -46,6 +45,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
 	public List<TravelingItem> itemsToRemove = new LinkedList<TravelingItem>();
 	public List<TravelingItem> itemsToAdd = new LinkedList<TravelingItem>();
+
+    public byte pathWeightType = 0;
 
 	// Type Helper Arrays
 	static int[] _PIPE_LEN = { 40, 10, 60, 1 };
@@ -164,10 +165,26 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	@Override
 	public int getWeight() {
 
-		return getDuctType().pathWeight;
+        if(pathWeightType == DuctItem.PATHWEIGHT_DENSE)
+            return 1000;
+        else if(pathWeightType == DuctItem.PATHWEIGHT_VACUUM)
+            return -1000;
+        else
+		    return getDuctType().pathWeight;
 	}
 
-	@Override
+    @Override
+    public IIcon getBaseIcon() {
+
+        if(pathWeightType == DuctItem.PATHWEIGHT_DENSE)
+            return ((DuctItem) getDuctType()).iconBaseTextureDense;
+        else if(pathWeightType == DuctItem.PATHWEIGHT_VACUUM)
+            return ((DuctItem) getDuctType()).iconBaseTextureVacuum;
+        else
+            return super.getBaseIcon();
+    }
+
+    @Override
 	public boolean isOutput() {
 
 		return isOutput;
@@ -504,13 +521,39 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		public static final byte ENDER_POWER = 6;
 	}
 
-	@Override
+    @Override
+    public PacketCoFHBase getPacket() {
+        PacketCoFHBase packet = super.getPacket();
+        packet.addByte(pathWeightType);
+        return packet;
+    }
+
+    @Override
 	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
 
 		super.handleTilePacket(payload, isServer);
+        if(!isServer) pathWeightType = payload.getByte();
 	}
 
-	public void tickItemsClient() {
+    @Override
+    public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
+        super.onPlacedBy(living, stack);
+        if(stack.hasTagCompound()){
+            byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
+            if(b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM)
+                pathWeightType = b;
+        }
+    }
+
+    @Override
+    public ItemStack getDrop() {
+        ItemStack drop = super.getDrop();
+        if(drop.stackTagCompound == null) drop.stackTagCompound = new NBTTagCompound();
+        drop.stackTagCompound.setByte(DuctItem.PATHWEIGHT_NBT, pathWeightType);
+        return drop;
+    }
+
+    public void tickItemsClient() {
 
 		if (centerLine > 0) {
 			centerLine--;
