@@ -10,7 +10,7 @@
 	
 	<!-- Project information -->
 	<property name="build.name" value="${ant.project.name}"/>
-	<property name="class.pckg" value="thermaldynamics"/>
+	<property name="class.pckg" value="cofh/thermaldynamics"/>
 	<!-- Version file -->
 	<property name="verclass.dir" value="${src.dir}/${class.pckg}" />
 	<property name="verclass.name" value="ThermalDynamics.java"/>
