@@ -57,6 +57,13 @@ public class TravelingItem {
 		stack = theItem;
 		this.oldDirection = oldDirection;
 		this.step = speed;
+
+        if (myPath != null && myPath.endPoint != null) {
+            destX = myPath.endPoint.x();
+            destY = myPath.endPoint.y();
+            destZ = myPath.endPoint.z();
+            hasDest = true;
+        }
 	}
 
 	// Client Only
