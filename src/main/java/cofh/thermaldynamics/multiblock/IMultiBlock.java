@@ -48,4 +48,6 @@ public interface IMultiBlock {
     // e.g. Ender-pipes will require power but will not share power through regular pipes
     // we could also do stuff like pipe-wire using this if we were so inclined
     public IMultiBlock[] getSubTiles();
+
+    public void onNeighborBlockChange();
 }

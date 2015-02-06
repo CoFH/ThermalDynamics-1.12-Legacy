@@ -1,9 +1,8 @@
 package cofh.thermaldynamics.multiblock;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 import java.util.LinkedList;
 import java.util.Queue;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class MultiBlockFormer {
 
@@ -34,6 +33,7 @@ public class MultiBlockFormer {
             return;
         }
 
+        currentMultiBlock.onNeighborBlockChange();
         currentMultiBlock.setInvalidForForming();
 
         IMultiBlock aBlock;
