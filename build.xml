@@ -246,7 +246,7 @@
 			</copy>
 			<update-languages/>
 			<manifest file="${classes.dir}/MANIFEST.MF">
-				<attribute name="FMLAT" value="META-INF/tdynamics_at.cfg"/>
+				<attribute name="FMLAT" value="tdynamics_at.cfg"/>
 			</manifest>
 			<jar destfile="${dist.dir}/${build.name}${build.full}@{build}.jar"
 				compress="true" level="9" basedir="${classes.dir}"
