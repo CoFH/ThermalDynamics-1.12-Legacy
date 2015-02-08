@@ -54,6 +54,12 @@ item.thermaldynamics.servo.2.name=Reinforced Servo
 item.thermaldynamics.servo.3.name=Signalum Servo
 item.thermaldynamics.servo.4.name=Resonant Servo
 
+item.thermaldynamics.retriever.0.name=Basic Retriever
+item.thermaldynamics.retriever.1.name=Hardened Retriever
+item.thermaldynamics.retriever.2.name=Reinforced Retriever
+item.thermaldynamics.retriever.3.name=Signalum Retriever
+item.thermaldynamics.retriever.4.name=Resonant Retriever
+
 info.thermaldynamics.duct.energy=Transfers Redstone Flux (RF).
 info.thermaldynamics.duct.fluid=Transfers Fluids.
 info.thermaldynamics.duct.item=Transfers Items.
