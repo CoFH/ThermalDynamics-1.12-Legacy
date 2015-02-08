@@ -134,6 +134,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 2; j++) {
 				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/attachment/servo/ServoBase" + i + "" + j, ir);
+                IconRegistry.addIcon("RetrieverBase" + (i * 2 + j), "thermaldynamics:duct/attachment/retriever/RetrieverBase" + i + "" + j, ir);
 			}
 		}
 		for (int i = 0; i < 5; i++) {

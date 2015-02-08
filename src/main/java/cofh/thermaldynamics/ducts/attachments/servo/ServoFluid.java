@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class ServoFluid extends ServoBase {
 
-	TileFluidDuct fluidDuct;
+	public TileFluidDuct fluidDuct;
 
 	public static float[] throttle = { 0.5F, 0.75F, 1F, 1.5F, 2F };
 
@@ -35,7 +35,7 @@ public class ServoFluid extends ServoBase {
 		fluidDuct = (TileFluidDuct) tile;
 	}
 
-	IFluidHandler theTile;
+	public IFluidHandler theTile;
 
 	@Override
 	public void clearCache() {
@@ -85,9 +85,8 @@ public class ServoFluid extends ServoBase {
 		}
 	}
 
-	private boolean fluidPassesFiltering(FluidStack theFluid) {
+	public boolean fluidPassesFiltering(FluidStack theFluid) {
 
-		// TODO: This needs to be fixed, but fluid filters are really complicated and broken atm
 		return theFluid != null && theFluid.fluidID != 0 && filter.allowFluid(theFluid);
 	}
 

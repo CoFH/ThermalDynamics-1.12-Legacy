@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
-	IFluidHandler[] cache = new IFluidHandler[6];
+	public IFluidHandler[] cache = new IFluidHandler[6];
 
 	public IFilterFluid[] filterCache = { IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter,
 			IFilterFluid.nullFilter, IFilterFluid.nullFilter };
@@ -87,7 +87,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 		return true;
 	}
 
-	protected int transfer(int bSide, int available) {
+	public int transfer(int bSide, int available) {
 
 		if (neighborTypes[bSide] != NeighborTypes.OUTPUT || connectionTypes[bSide] == ConnectionTypes.BLOCKED)
 			return 0;

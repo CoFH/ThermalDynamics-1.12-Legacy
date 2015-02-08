@@ -15,6 +15,7 @@ import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.item.ItemCover;
 import cofh.thermaldynamics.item.ItemFilter;
+import cofh.thermaldynamics.item.ItemRetriever;
 import cofh.thermaldynamics.item.ItemServo;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
@@ -90,6 +91,7 @@ public class ThermalDynamics extends BaseMod {
 		itemServo = addItem(new ItemServo());
 		itemFilter = addItem(new ItemFilter());
 		itemCover = addItem(new ItemCover());
+        itemRetriever = addItem(new ItemRetriever());
 
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
@@ -172,6 +174,7 @@ public class ThermalDynamics extends BaseMod {
 	public static ItemServo itemServo;
 	public static ItemFilter itemFilter;
 	public static ItemCover itemCover;
+    public static ItemRetriever itemRetriever;
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {

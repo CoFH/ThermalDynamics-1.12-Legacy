@@ -29,9 +29,9 @@ public class ServoItem extends ServoBase {
 	public static int[] maxSize = { 4, 16, 64, 64, 64 };
 	public static boolean[] multiStack = { false, false, false, true, true };
 
-	LinkedList<ItemStack> stuffedItems = new LinkedList<ItemStack>();
+	public LinkedList<ItemStack> stuffedItems = new LinkedList<ItemStack>();
 
-	TileItemDuct itemDuct;
+    public TileItemDuct itemDuct;
 
 	public ServoItem(TileMultiBlock tile, byte side, int type) {
 
@@ -104,8 +104,8 @@ public class ServoItem extends ServoBase {
 		onNeighborChange();
 	}
 
-	RouteCache cache = null;
-	ListWrapper<Route> routeList = new ListWrapper<Route>();
+	public RouteCache cache = null;
+    public ListWrapper<Route> routeList = new ListWrapper<Route>();
 
 	@Override
 	public List<ItemStack> getDrops() {
@@ -172,24 +172,9 @@ public class ServoItem extends ServoBase {
 
 		if (pass == 1) {
 			if (isStuffed()) {
-				for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext();) {
-					ItemStack stuffedItem = iterator.next();
-					ItemStack send = stuffedItem.copy();
-					send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
-					TravelingItem travelingItem = getRouteForItem(send);
+                handleStuffedItems();
 
-					if (travelingItem == null) {
-						continue;
-					}
-					stuffedItem.stackSize -= travelingItem.stack.stackSize;
-					if (stuffedItem.stackSize <= 0)
-						iterator.remove();
-
-					itemDuct.insertNewItem(travelingItem);
-					return;
-				}
-
-			} else if (stuffed) {
+            } else if (stuffed) {
 				onNeighborChange();
 			}
 		} else if (pass == 2 && !stuffed) {
@@ -197,100 +182,123 @@ public class ServoItem extends ServoBase {
 			if (!isValidInput) {
 				return;
 			}
-			if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
-				int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
-				for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
-					int slot = accessibleSlotsFromSide[i];
-					ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
-
-					if (itemStack == null) {
-						continue;
-					}
-					itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
-
-					if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
-						continue;
-					}
-					if (!filter.matchesFilter(itemStack)) {
-						continue;
-					}
-					TravelingItem travelingItem = getRouteForItem(itemStack);
-
-					if (travelingItem == null) {
-						continue;
-					}
-					travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-
-					if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
-						cachedSidedInv.markDirty();
-						continue;
-					}
-					if (multiStack[type]) {
-						int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStacksize));
-						if (travelingItem.stack.stackSize < totalSize) {
-							for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
-								slot = accessibleSlotsFromSide[i];
-								itemStack = cachedSidedInv.getStackInSlot(slot);
-								if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)
-										&& cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
-									itemStack = cachedSidedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
-									if (itemStack != null)
-										travelingItem.stack.stackSize += itemStack.stackSize;
-								}
-							}
-						}
-					}
-					cachedSidedInv.markDirty();
-					itemDuct.insertNewItem(travelingItem);
-					return;
-				}
-			} else if (cacheType == TileItemDuct.CacheType.IINV) {
-				for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
-					ItemStack itemStack = cachedInv.getStackInSlot(slot);
-					if (itemStack == null)
-						continue;
-
-					itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
-
-					if (itemStack == null || itemStack.stackSize == 0) {
-						continue;
-					}
-					if (!filter.matchesFilter(itemStack)) {
-						continue;
-					}
-					TravelingItem travelingItem = getRouteForItem(itemStack);
-
-					if (travelingItem == null) {
-						continue;
-					}
-					travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-
-					if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
-						cachedInv.markDirty();
-						continue;
-					}
-					if (multiStack[type]) {
-						int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStacksize));
-						if (multiStack[type] && travelingItem.stack.stackSize < totalSize) {
-							for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSize; slot++) {
-								itemStack = cachedInv.getStackInSlot(slot);
-								if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-									itemStack = cachedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
-									if (itemStack != null)
-										travelingItem.stack.stackSize += itemStack.stackSize;
-								}
-							}
-						}
-					}
-					cachedInv.markDirty();
-					itemDuct.insertNewItem(travelingItem);
-					return;
-				}
-			}
-		}
+            handleItemSending();
+        }
 	}
 
-	public byte getSpeed() {
+    public void handleItemSending() {
+        if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
+            int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
+            for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
+                int slot = accessibleSlotsFromSide[i];
+                ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
+
+                if (itemStack == null) {
+                    continue;
+                }
+                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+
+                if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+                    continue;
+                }
+                if (!filter.matchesFilter(itemStack)) {
+                    continue;
+                }
+                TravelingItem travelingItem = getRouteForItem(itemStack);
+
+                if (travelingItem == null) {
+                    continue;
+                }
+                travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+
+                if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
+                    cachedSidedInv.markDirty();
+                    continue;
+                }
+                if (multiStack[type]) {
+                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStacksize));
+                    if (travelingItem.stack.stackSize < totalSize) {
+                        for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
+                            slot = accessibleSlotsFromSide[i];
+                            itemStack = cachedSidedInv.getStackInSlot(slot);
+                            if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)
+                                    && cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+                                itemStack = cachedSidedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
+                                if (itemStack != null)
+                                    travelingItem.stack.stackSize += itemStack.stackSize;
+                            }
+                        }
+                    }
+                }
+                cachedSidedInv.markDirty();
+                itemDuct.insertNewItem(travelingItem);
+                return;
+            }
+        } else if (cacheType == TileItemDuct.CacheType.IINV) {
+            for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
+                ItemStack itemStack = cachedInv.getStackInSlot(slot);
+                if (itemStack == null)
+                    continue;
+
+                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+
+                if (itemStack == null || itemStack.stackSize == 0) {
+                    continue;
+                }
+                if (!filter.matchesFilter(itemStack)) {
+                    continue;
+                }
+                TravelingItem travelingItem = getRouteForItem(itemStack);
+
+                if (travelingItem == null) {
+                    continue;
+                }
+                travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+
+                if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
+                    cachedInv.markDirty();
+                    continue;
+                }
+                if (multiStack[type]) {
+                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStacksize));
+                    if (multiStack[type] && travelingItem.stack.stackSize < totalSize) {
+                        for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSize; slot++) {
+                            itemStack = cachedInv.getStackInSlot(slot);
+                            if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
+                                itemStack = cachedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
+                                if (itemStack != null)
+                                    travelingItem.stack.stackSize += itemStack.stackSize;
+                            }
+                        }
+                    }
+                }
+                cachedInv.markDirty();
+                itemDuct.insertNewItem(travelingItem);
+                return;
+            }
+        }
+    }
+
+    public void handleStuffedItems() {
+        for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext();) {
+            ItemStack stuffedItem = iterator.next();
+            ItemStack send = stuffedItem.copy();
+            send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
+            TravelingItem travelingItem = getRouteForItem(send);
+
+            if (travelingItem == null) {
+                continue;
+            }
+            stuffedItem.stackSize -= travelingItem.stack.stackSize;
+            if (stuffedItem.stackSize <= 0)
+                iterator.remove();
+
+            itemDuct.insertNewItem(travelingItem);
+            return;
+        }
+    }
+
+    public byte getSpeed() {
 
 		return speedBoost[type];
 	}
@@ -375,9 +383,9 @@ public class ServoItem extends ServoBase {
 			cacheType = TileItemDuct.CacheType.IINV;
 	}
 
-	IInventory cachedInv;
-	ISidedInventory cachedSidedInv;
-	TileItemDuct.CacheType cacheType;
+	public IInventory cachedInv;
+    public ISidedInventory cachedSidedInv;
+    public TileItemDuct.CacheType cacheType;
 
 	public ItemStack insertItem(ItemStack item) {
 

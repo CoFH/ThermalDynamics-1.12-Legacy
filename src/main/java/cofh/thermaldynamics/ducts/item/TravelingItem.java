@@ -165,6 +165,10 @@ public class TravelingItem {
 						oldDirection = (byte) (direction ^ 1);
 						direction = myPath.getNextDirection();
 						homeTile.hasChanged = true;
+                        hasDest = true;
+                        destX = myPath.endPoint.x();
+                        destY = myPath.endPoint.y();
+                        destZ = myPath.endPoint.z();
 						return;
 					}
 				}
@@ -321,9 +325,9 @@ public class TravelingItem {
 		theNBT.setInteger("step", step);
 
 		if (hasDest) {
-			theNBT.setInteger("destX", myPath.endPoint.x());
-			theNBT.setInteger("destY", myPath.endPoint.y());
-			theNBT.setInteger("destZ", myPath.endPoint.z());
+			theNBT.setInteger("destX", destX);
+			theNBT.setInteger("destY", destY);
+			theNBT.setInteger("destZ", destZ);
 			theNBT.setBoolean("mustGo", mustGoToDest);
 		}
 		theNBT.setInteger("startX", startX);
