@@ -4,6 +4,7 @@ import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
@@ -13,7 +14,7 @@ public class Duct {
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public static enum Type {
-		ENERGY, FLUID, ITEM, ENTITY, STRUCTURAL
+		ENERGY, FLUID, ITEM, ENTITY, STRUCTURAL, CRAFTING
 	}
 
 	public ItemStack itemStack = null;
@@ -35,16 +36,19 @@ public class Duct {
 	public final String baseTexture;
 	public final String connectionTexture;
 	public final String fluidTexture;
-    public final boolean pathModifiable;
-    public final byte fluidTransparency;
+	public final boolean pathModifiable;
+	public final byte fluidTransparency;
 	public final String frameTexture;
 	public final String frameFluidTexture;
 	public final byte frameFluidTransparency;
 	public final boolean opaque;
 	public final int type;
 
+	public EnumRarity rarity = EnumRarity.common;
+
 	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-                String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency, boolean pathModifiable) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency,
+			boolean pathModifiable) {
 
 		this.id = id;
 		this.pathWeight = pathWeight;
@@ -56,11 +60,17 @@ public class Duct {
 		this.baseTexture = baseTexture;
 		this.connectionTexture = connectionTexture;
 		this.fluidTexture = fluidTexture;
-        this.pathModifiable = pathModifiable;
-        this.fluidTransparency = (byte) fluidTransparency;
+		this.pathModifiable = pathModifiable;
+		this.fluidTransparency = (byte) fluidTransparency;
 		this.frameTexture = frameTexture;
 		this.frameFluidTexture = frameFluidTexture;
 		this.frameFluidTransparency = (byte) frameFluidTransparency;
+	}
+
+	public Duct setRarity(int rarity) {
+
+		this.rarity = EnumRarity.values()[rarity %= EnumRarity.values().length];
+		return this;
 	}
 
 	public boolean isLargeTube() {
@@ -101,8 +111,8 @@ public class Duct {
 		return this.id > other.id ? 1 : this.id < other.id ? -1 : 0;
 	}
 
+	public IIcon getBaseTexture(ItemStack itemStack) {
 
-    public IIcon getBaseTexture(ItemStack itemStack){
-        return iconBaseTexture;
-    }
+		return iconBaseTexture;
+	}
 }

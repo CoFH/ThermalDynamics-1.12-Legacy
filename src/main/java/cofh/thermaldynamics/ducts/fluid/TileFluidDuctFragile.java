@@ -9,9 +9,11 @@ import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -118,11 +120,10 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 	@Override
 	public boolean tickPass(int pass) {
 
-		if (!super.tickPass(pass))
+		if (!super.tickPass(pass)) {
 			return false;
-
+		}
 		if (pass == 2) {
-
 			FluidStack fluid = fluidGrid.getFluid();
 			int fluidTemp;
 			fluidTemp = getTemperature(fluid);
@@ -139,7 +140,6 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 						else
 							fluidGrid.myTank.drain(worldObj.rand.nextInt(fluid.amount), false);
 					}
-
 					breakAndSpill(fluid);
 					return false;
 				}

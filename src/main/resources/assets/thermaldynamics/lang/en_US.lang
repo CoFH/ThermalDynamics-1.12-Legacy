@@ -5,6 +5,7 @@ tile.thermaldynamics.duct.energyHardened.name=Hardened Fluxduct
 tile.thermaldynamics.duct.energyReinforced.name=Redstone Energy Fluxduct
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=Redstone Energy Fluxduct (Empty)
 tile.thermaldynamics.duct.energyResonant.name=Resonant Fluxduct
+tile.thermaldynamics.duct.energyResonantEmpty.name=Resonant Fluxduct (Empty)
 tile.thermaldynamics.duct.energySuperconductor.name=Cryo-Stabilized Fluxduct
 tile.thermaldynamics.duct.energySuperconductorEmpty.name=Cryo-Stabilized Fluxduct (Empty)
 
@@ -20,20 +21,16 @@ tile.thermaldynamics.duct.itemEnder.name=Warp Itemduct
 
 tile.thermaldynamics.duct.structure.name=Structuralduct
 
-tile.thermaldynamics.duct.energyBasic.info=Transfers Redstone Flux (RF)
-tile.thermaldynamics.duct.energyHardened.info=Transfers Redstone Flux (RF)
-tile.thermaldynamics.duct.energyReinforced.info=Transfers Redstone Flux (RF)
-tile.thermaldynamics.duct.energyReinforcedEmpty.info=Crafting Ingredient
-tile.thermaldynamics.duct.energySuperconductor.info=Transfers Redstone Flux (RF)
-tile.thermaldynamics.duct.energySuperconductorEmpty.info=Crafting Ingredient
+tile.thermaldynamics.duct.energySupercond.info=Has very low residual capacitance.
 
-tile.thermaldynamics.duct.fluidBasic.info=Transfers Fluids.
-tile.thermaldynamics.duct.fluidHardened.info=Transfers Fluids.
+tile.thermaldynamics.duct.fluidBasic.info=Will break if contents are extremely hot or cold.
+tile.thermaldynamics.duct.fluidHardened.info=Contents may be any temperature.
 tile.thermaldynamics.duct.fluidFlux.info=
+
 tile.thermaldynamics.duct.itemBasic.info=Transfers Items
-tile.thermaldynamics.duct.itemFast.info=Transfers Items quickly.
-tile.thermaldynamics.duct.itemFlux.info=Transfers Items and Redstone Flux (RF)
-tile.thermaldynamics.duct.itemEnder.info=Transfers Items instantly. Uses Redstone Flux (RF).
+tile.thermaldynamics.duct.itemFast.info=Glowstone-filled. Items travel more rapidly.
+tile.thermaldynamics.duct.itemEnder.info=Uses Redstone Flux (RF) to move Items instantly.
+tile.thermaldynamics.duct.itemFlux.info=Transfers Items and Redstone Flux (RF).
 tile.thermaldynamics.duct.structure.info=Provides Structure
 
 tile.thermaldynamics.duct.opaque.name=(Opaque)
@@ -60,10 +57,13 @@ item.thermaldynamics.retriever.2.name=Reinforced Retriever
 item.thermaldynamics.retriever.3.name=Signalum Retriever
 item.thermaldynamics.retriever.4.name=Resonant Retriever
 
+info.thermaldynamics.capacitance=Capacitance
+info.thermaldynamics.throughput=Throughput
+
 info.thermaldynamics.duct.energy=Transfers Redstone Flux (RF).
 info.thermaldynamics.duct.fluid=Transfers Fluids.
 info.thermaldynamics.duct.item=Transfers Items.
-info.thermaldynamics.duct.structure=Provides Structure
+info.thermaldynamics.duct.structure=Provides Structure.
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata

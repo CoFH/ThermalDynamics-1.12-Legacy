@@ -5,6 +5,7 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ducts.Duct;
 import cofh.thermaldynamics.ducts.DuctItem;
 import cofh.thermaldynamics.ducts.TDDucts;
+import cofh.thermaldynamics.ducts.energy.EnergyGrid;
 
 import java.util.List;
 
@@ -63,38 +64,68 @@ public class ItemBlockDuct extends ItemBlockBase {
 	@Override
 	public EnumRarity getRarity(ItemStack stack) {
 
+		int ductId = id(stack);
+
+		if (TDDucts.isValid(ductId)) {
+			return TDDucts.getType(ductId).rarity;
+		}
 		return EnumRarity.uncommon;
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean check) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
 
-		if (!TDDucts.isValid(id(stack))) {
+		super.addInformation(stack, player, list, extraInfo);
+
+		if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
+			list.add(StringHelper.shiftForDetails());
+		}
+		if (!StringHelper.isShiftKeyDown()) {
 			return;
 		}
-		switch (TDDucts.getType(id(stack)).ductType) {
+		int ductId = id(stack);
+
+		if (!TDDucts.isValid(ductId)) {
+			return;
+		}
+		Duct duct = TDDucts.getType(ductId);
+		switch (duct.ductType) {
 		case ENERGY:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
+
+			if (duct != TDDucts.energySuperCond) {
+				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type]
+						+ StringHelper.LIGHT_GRAY + " RF/t.");
+			} else {
+				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.BRIGHT_BLUE
+						+ StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + " RF/t.");
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySupercond.info"));
+			}
 			break;
 		case FLUID:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
+
+			if (duct.type == 0) {
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
+			} else if (duct.type == 1) {
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
+			}
 			break;
 		case ITEM:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
+
+			if (duct.type == 0) {
+				// list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemBasic.info"));
+			} else if (duct.type == 1) {
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
+			} else if (duct.type == 2) {
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
+			}
 			break;
 		case STRUCTURAL:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
 			break;
 		default:
 		}
-
-		// if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
-		// list.add(StringHelper.shiftForDetails());
-		// }
-		// if (!StringHelper.isShiftKeyDown()) {
-		// return;
-		// }
-
-		// list.add(StringHelper.localize("tile.thermaldynamics.duct." + Ducts.getType(id(stack)).unlocalizedName + ".info"));
 	}
 }

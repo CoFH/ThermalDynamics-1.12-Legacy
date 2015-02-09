@@ -11,6 +11,7 @@ import cofh.thermaldynamics.ducts.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.ducts.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -59,13 +60,11 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 		if (fluidGrid == null) {
 			return true;
 		}
-
 		if (pass == 0) {
 			int available = fluidGrid.toDistribute;
 			int sent = 0;
 
 			for (int i = this.internalSideCounter; i < this.neighborTypes.length && sent < available; i++) {
-
 				sent += transfer(i, available - sent);
 
 				if (sent >= available) {
@@ -74,7 +73,6 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 				}
 
 			}
-
 			for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
 				sent += transfer(i, available - sent);
 

@@ -115,18 +115,25 @@ public class TDDucts {
 		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0, false);
 
-		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
+		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
 				"electrum", null, 0, null, null, 0, false);
 
 		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0, false);
-		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonant", Type.STRUCTURAL, DuctFactory.energy, "enderium", "enderium", null, 0,
-				null, null, 0, false);
+		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, DuctFactory.structural, "enderium", "enderium",
+				null, 0, null, null, 0, false);
 
 		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
 				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 96, false);
-		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.STRUCTURAL, DuctFactory.structural, "electrum",
+		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
 				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0, false);
+
+		energyReinforced.setRarity(1);
+		energyReinforcedEmpty.setRarity(1);
+		energyResonant.setRarity(2);
+		energyResonantEmpty.setRarity(2);
+		energySuperCond.setRarity(2);
+		energySuperCondEmpty.setRarity(2);
 	}
 
 	static void addFluidDucts() {
@@ -150,6 +157,9 @@ public class TDDucts {
 		// "thermalfoundation:fluid/Fluid_Redstone_Still", 192);
 		// fluidEnergyOpaqueEmpty = addDuct(OFFSET_FLUID + 7, true, 1, 1, "fluidFluxEmpty", Type.STRUCTURAL, DuctFactory.structural, "invar", "invar", null, 0,
 		// Duct.SIDE_DUCTS, null, 0);
+
+		fluidHardened.setRarity(1);
+		fluidHardenedOpaque.setRarity(1);
 	}
 
 	static void addItemDucts() {
@@ -170,6 +180,11 @@ public class TDDucts {
 		// "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0);
 
 		// itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 28, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
+
+		itemFast.setRarity(1);
+		itemFastOpaque.setRarity(1);
+		itemEnder.setRarity(2);
+		itemEnderOpaque.setRarity(2);
 	}
 
 	static void addSupportDucts() {
