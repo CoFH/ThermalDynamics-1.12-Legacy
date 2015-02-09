@@ -21,6 +21,7 @@ import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.CustomProperty;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
@@ -45,7 +46,8 @@ import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies)
+@Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies,
+		guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
 public class ThermalDynamics extends BaseMod {
 
 	public static final String modId = "ThermalDynamics";
@@ -91,7 +93,7 @@ public class ThermalDynamics extends BaseMod {
 		itemServo = addItem(new ItemServo());
 		itemFilter = addItem(new ItemFilter());
 		itemCover = addItem(new ItemCover());
-        itemRetriever = addItem(new ItemRetriever());
+		itemRetriever = addItem(new ItemRetriever());
 
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
@@ -174,7 +176,7 @@ public class ThermalDynamics extends BaseMod {
 	public static ItemServo itemServo;
 	public static ItemFilter itemFilter;
 	public static ItemCover itemCover;
-    public static ItemRetriever itemRetriever;
+	public static ItemRetriever itemRetriever;
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {

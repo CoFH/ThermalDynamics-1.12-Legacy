@@ -3,8 +3,10 @@ package cofh.thermaldynamics.gui;
 import cofh.thermaldynamics.ThermalDynamics;
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.client.config.IConfigElement;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
@@ -16,7 +18,7 @@ public class GuiConfigTD extends GuiConfig {
 		super(parentScreen, getConfigElements(parentScreen), ThermalDynamics.modId, false, false, ThermalDynamics.modName);
 	}
 
-	public static final String[] CATEGORIES = { "block", "item", "security", "plugins", "tweak" };
+	public static final String[] CATEGORIES = {};
 
 	@SuppressWarnings("rawtypes")
 	private static List<IConfigElement> getConfigElements(GuiScreen parent) {

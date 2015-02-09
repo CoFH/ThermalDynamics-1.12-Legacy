@@ -2,10 +2,10 @@
     {
         "modid": "ThermalDynamics",
         "name": "Thermal Dynamics",
-        "description": "Thermal meets Dynamic - Ducts!",
+        "description": "Thermal meets Dynamic - provides options for transporting items, fluids, and Redstone Flux!",
         "version": "${version}",
         "credits": "Team CoFH",
-        "logoFile": "/mods/thermaldynamics/textures/logo.png",
+        "logoFile": "/assets/thermaldynamics/textures/logo.png",
         "mcversion": "1.7.10",
         "url": "http://www.teamcofh.com",
         "updateUrl": "",
