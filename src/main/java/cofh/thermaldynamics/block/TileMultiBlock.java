@@ -26,6 +26,7 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
@@ -1006,6 +1007,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
     }
 
     public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
+
+    }
+
+    public void dropAdditonal(ArrayList<ItemStack> ret) {
 
     }
 

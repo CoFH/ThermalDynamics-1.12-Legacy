@@ -279,7 +279,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 					ret.addAll(cover.getDrops());
 				}
 			}
-
+            multiBlock.dropAdditonal(ret);
 		}
 
 		if (nbt != null) {

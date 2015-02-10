@@ -24,6 +24,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import com.google.common.collect.Iterables;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -567,6 +568,14 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM)
                 pathWeightType = b;
         }
+    }
+
+    @Override
+    public void dropAdditonal(ArrayList<ItemStack> ret) {
+        for (TravelingItem travelingItem : Iterables.concat(myItems, itemsToAdd)) {
+            ret.add(travelingItem.stack);
+        }
+        super.dropAdditonal(ret);
     }
 
     @Override
