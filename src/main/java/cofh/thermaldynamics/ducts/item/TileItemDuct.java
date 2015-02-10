@@ -419,11 +419,15 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
         itemsToAdd.clear();
         myItems.clear();
-        NBTTagList list = nbt.getTagList("TravellingItems", 10);
-        for (int i = 0; i < list.tagCount(); i++) {
-            NBTTagCompound compound = list.getCompoundTagAt(i);
-            myItems.add(new TravelingItem(compound));
+        if(nbt.hasKey("TravellingItems",9)) {
+            NBTTagList list = nbt.getTagList("TravellingItems", 10);
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound compound = list.getCompoundTagAt(i);
+                myItems.add(new TravelingItem(compound));
+            }
         }
+
+        pathWeightType = nbt.getByte("Weight");
     }
 
     @Override
@@ -438,7 +442,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
             items.appendTag(tag);
         }
 
-        nbt.setTag("TravellingItems", items);
+        if(items.tagCount() > 0)
+            nbt.setTag("TravellingItems", items);
+
+        if(pathWeightType != 0)
+            nbt.setByte("Weight", pathWeightType);
     }
 
     public void sendTravelingItemsPacket() {
@@ -564,8 +572,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     @Override
     public ItemStack getDrop() {
         ItemStack drop = super.getDrop();
-        if (drop.stackTagCompound == null) drop.stackTagCompound = new NBTTagCompound();
-        drop.stackTagCompound.setByte(DuctItem.PATHWEIGHT_NBT, pathWeightType);
+        if(pathWeightType != 0) {
+            if (drop.stackTagCompound == null) drop.stackTagCompound = new NBTTagCompound();
+            drop.stackTagCompound.setByte(DuctItem.PATHWEIGHT_NBT, pathWeightType);
+        }
         return drop;
     }
 
