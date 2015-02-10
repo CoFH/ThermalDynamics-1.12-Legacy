@@ -82,10 +82,10 @@ info.thermaldynamics.filter.oreDict.on=Ignore Ore Dictionary
 info.thermaldynamics.filter.modSorting.off=Use Mod Owner
 info.thermaldynamics.filter.modSorting.on=Ignore Mod Owner
 
-info.thermaldynamics.filter.routeType.0=Nearest-First Sending
-info.thermaldynamics.filter.routeType.1=Furthest-First Sending
-info.thermaldynamics.filter.routeType.2=Random Sending
-info.thermaldynamics.filter.routeType.3=Round Robin Sending
+info.thermaldynamics.filter.routeType.0=Nearest-First
+info.thermaldynamics.filter.routeType.1=Furthest-First
+info.thermaldynamics.filter.routeType.2=Random
+info.thermaldynamics.filter.routeType.3=Round Robin
 
 info.thermaldynamics.filter.antiSpam.0=Allow Over-sending
 info.thermaldynamics.filter.antiSpam.1=Prevent Over-sending
