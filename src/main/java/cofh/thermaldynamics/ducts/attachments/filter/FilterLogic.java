@@ -385,6 +385,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     public static final int[][] maxLevels = {{maxSize[0], 2, 0}, {maxSize[1], 0, 0}, {maxSize[2], 3, 1}, {maxSize[3], 3, 1}, {maxSize[4], 3, 1},};
     public static final int[] defaultLevels = {64, 0, 1};
     public int[] validLevels;
+    public final static String[] levelNames = {"stacksize", "routeType", "antiSpam"};
 
     private final int[] levels = new int[defaultLevels.length];
 

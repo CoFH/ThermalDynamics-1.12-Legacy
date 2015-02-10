@@ -93,7 +93,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 			for (int i = 0; i < levelNums.length; i++) {
 				int j = levelNums[i];
-				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, "level" + j, levelButtonPos[j][0],
+				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, FilterLogic.levelNames[j], levelButtonPos[j][0],
 						levelButtonPos[j][1], levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize, buttonSize, buttonSize, TEX_PATH);
 				addElement(levelButtons[j]);
 			}
@@ -104,8 +104,8 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		if (isItemServo) {
 			addElement(decStackSize);
 			addElement(incStackSize);
-			minSize = conBase.filter.minLevels[conBase.filter.type][0];
-			maxSize = conBase.filter.maxLevels[conBase.filter.type][0];
+			minSize = FilterLogic.minLevels[conBase.filter.type][0];
+			maxSize = FilterLogic.maxLevels[conBase.filter.type][0];
 		}
 		setButtons();
 	}
@@ -128,7 +128,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				int x = levelButtonPos[i][0] + level * buttonSize;
 				levelButtons[i].setSheetX(x);
 				levelButtons[i].setHoverX(x);
-				levelButtons[i].setToolTip("info.thermaldynamics.filter." + levelButtons[i].getName() + level);
+				levelButtons[i].setToolTip("info.thermaldynamics.filter." + levelButtons[i].getName() +"." + level);
 			}
 		}
 	}
