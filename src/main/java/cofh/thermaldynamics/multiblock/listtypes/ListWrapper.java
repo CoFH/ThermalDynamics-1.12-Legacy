@@ -38,7 +38,7 @@ public class ListWrapper<T> implements Iterable<T> {
             if (list.size() == 1) {
                 return list.listIterator();
             }
-            if (array == null) {
+            if (array == null || list.size() != array.length) {
                 array = list.toArray();
             }
 

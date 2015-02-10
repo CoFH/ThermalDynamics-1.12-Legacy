@@ -160,17 +160,15 @@ public class ServoItem extends ServoBase {
 			}
 			return;
 		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) {
-			return;
-		}
-		RouteCache cache1 = itemDuct.getCache(false);
-		if (cache1 != cache) {
-			cache = cache1;
-			routeList.setList(cache.outputRoutes, getSortType());
-		}
-		if (cache.isFinishedGenerating() && cache.outputRoutes.isEmpty())
-			return;
+            return;
+        }
 
-		if (pass == 1) {
+        if (!verifyCache()) return;
+
+        if (cache.outputRoutes.isEmpty()) return;
+
+
+        if (pass == 1) {
 			if (isStuffed()) {
                 handleStuffedItems();
 
@@ -185,6 +183,18 @@ public class ServoItem extends ServoBase {
             handleItemSending();
         }
 	}
+
+    public boolean verifyCache() {
+        RouteCache cache1 = itemDuct.getCache(false);
+        if (!cache1.isFinishedGenerating())
+            return false;
+
+        if (cache1 != cache) {
+            cache = cache1;
+            routeList.setList(cache.outputRoutes, getSortType());
+        }
+        return true;
+    }
 
     public void handleItemSending() {
         if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
@@ -404,11 +414,7 @@ public class ServoItem extends ServoBase {
 
 	public TravelingItem getRouteForItem(ItemStack item) {
 
-		RouteCache cache1 = itemDuct.getCache(false);
-		if (cache1 != cache) {
-			cache = cache1;
-			routeList.setList(cache.outputRoutes, getSortType());
-		}
+        if (!verifyCache()) return null;
 		return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
 	}
 
