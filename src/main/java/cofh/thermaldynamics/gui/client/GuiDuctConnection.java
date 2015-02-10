@@ -47,8 +47,9 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		container = (ContainerDuctConnection) inventorySlots;
 		name = conBase.getName();
 		this.ySize = 205;
-		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM;
-	}
+        this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM
+                || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
+    }
 
 	protected void generateInfo(String tileString, int lines) {
 
