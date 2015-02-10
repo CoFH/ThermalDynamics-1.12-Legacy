@@ -98,8 +98,8 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 					ShaderHelper.releaseShader();
 				}
 			}
-			ShaderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
-			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
+            ShaderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
+            ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 			CCRenderState.startDrawing();
 			models[6].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
 			CCRenderState.draw();

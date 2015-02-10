@@ -116,7 +116,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 
 	public static int getAlphaLevel(int centerLine, float frame) {
 
-		return (int) Math.min(255, 1.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
+		return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
 	}
 
 	public void renderTravelingItems(Iterator<TravelingItem> items, TileItemDuct duct, World world, double x, double y, double z, float frame) {
