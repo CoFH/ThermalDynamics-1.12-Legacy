@@ -58,7 +58,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 
 		super(Material.glass);
 		setHardness(1.0F);
-		setResistance(150.0F);
+		setResistance(10.0F);
 		setStepSound(soundTypeMetal);
 		setBlockName("thermaldynamics.duct");
 		setCreativeTab(ThermalDynamics.tab);
