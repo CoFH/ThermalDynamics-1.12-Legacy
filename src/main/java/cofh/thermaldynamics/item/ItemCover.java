@@ -2,6 +2,7 @@ package cofh.thermaldynamics.item;
 
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.ducts.attachments.facades.Cover;
 import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -18,39 +19,43 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ItemCover extends ItemAttachment {
 
+    public static boolean showInNEI = DebugHelper.debug;
+
 	public ItemCover() {
 
 		this.setCreativeTab(null);
 		this.setUnlocalizedName("thermaldynamics.cover");
 		this.setTextureName("thermaldynamics:cover");
+        if(!showInNEI)
+            setCreativeTab(null);
 	}
 
 	@Override
 	public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
 
-		super.getSubItems(p_150895_1_, p_150895_2_, p_150895_3_);
+        if(showInNEI) {
+            Iterator iterator = Item.itemRegistry.iterator();
 
-		Iterator iterator = Item.itemRegistry.iterator();
+            ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 
-		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+            while (iterator.hasNext()) {
+                Item item = (Item) iterator.next();
 
-		while (iterator.hasNext()) {
-			Item item = (Item) iterator.next();
+                if (item != null && item != this) {
+                    item.getSubItems(item, null, stacks);
+                }
+            }
 
-			if (item != null && item != this) {
-				item.getSubItems(item, null, stacks);
-			}
-		}
+            for (ItemStack stack : stacks) {
+                if (!(stack.getItem() instanceof ItemBlock))
+                    continue;
 
-		for (ItemStack stack : stacks) {
-			if (!(stack.getItem() instanceof ItemBlock))
-				continue;
+                if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())))
+                    continue;
 
-			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())))
-				continue;
-
-			p_150895_3_.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
-		}
+                p_150895_3_.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+            }
+        }
 
 	}
 
@@ -108,5 +113,4 @@ public class ItemCover extends ItemAttachment {
 		GameRegistry.registerItem(this, "cover");
 		return true;
 	}
-
 }

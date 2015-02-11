@@ -6,7 +6,6 @@ import cofh.thermaldynamics.ducts.TDDucts;
 import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
@@ -58,10 +57,8 @@ public class RecipeCover implements IRecipe {
 				continue;
 			}
 			if (!ItemHelper.itemsEqualForCrafting(stack, TDDucts.structure.itemStack)) {
-				block = ((ItemBlock) stack.getItem()).field_150939_a;
-				meta = stack.getItem().getMetadata(stack.getItemDamage());
 
-				return ItemHelper.cloneStack(CoverHelper.getCoverStack(block, (byte) meta), 6);
+				return ItemHelper.cloneStack(CoverHelper.getCoverStack(stack), 6);
 			}
 		}
 		return null;
