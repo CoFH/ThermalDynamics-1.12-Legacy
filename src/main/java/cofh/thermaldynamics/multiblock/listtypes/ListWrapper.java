@@ -11,7 +11,7 @@ public class ListWrapper<T> implements Iterable<T> {
     LinkedList<T> list;
     Object[] array;
     int cursor;
-    SortType type;
+    public SortType type;
 
 
     public void setList(LinkedList<T> list, SortType type) {

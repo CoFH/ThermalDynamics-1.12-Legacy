@@ -189,7 +189,7 @@ public class ServoItem extends ServoBase {
         if (!cache1.isFinishedGenerating())
             return false;
 
-        if (cache1 != cache) {
+        if (cache1 != cache || routeList.type != getSortType()) {
             cache = cache1;
             routeList.setList(cache.outputRoutes, getSortType());
         }
