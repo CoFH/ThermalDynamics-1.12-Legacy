@@ -1,9 +1,11 @@
 package cofh.thermaldynamics.ducts.attachments;
 
+import cofh.api.tileentity.IPortableData;
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import cofh.lib.util.helpers.RedstoneControlHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
@@ -29,7 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class ConnectionBase extends Attachment implements IStuffable, IRedstoneControl, IFilterAttachment {
+public abstract class ConnectionBase extends Attachment implements IStuffable, IRedstoneControl, IFilterAttachment, IPortableData {
 
 	public boolean stuffed = false;
 	public int type = 0;
@@ -328,4 +330,27 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return true;
 	}
 
+
+    @Override
+    public String getDataType() {
+        return getName() + "_" + getId();
+    }
+
+    @Override
+    public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
+        if (canAlterRS() && tag.hasKey("RSControl"))
+            setControl(RedstoneControlHelper.getControlFromNBT(tag));
+
+        filter.readFromNBT(tag);
+
+        onNeighborChange();
+    }
+
+    @Override
+    public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+        if (canAlterRS())
+            RedstoneControlHelper.setItemStackTagRS(tag, this);
+
+        filter.writeToNBT(tag);
+    }
 }

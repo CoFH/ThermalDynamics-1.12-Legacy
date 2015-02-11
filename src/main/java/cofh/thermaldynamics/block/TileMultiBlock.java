@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.block;
 
 import cofh.api.tileentity.IPlacedTile;
+import cofh.api.tileentity.IPortableData;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
@@ -44,7 +45,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler {
+public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
 
 	static {
 		GameRegistry.registerTileEntity(TileMultiBlock.class, "thermaldynamics.multiblock");
@@ -1056,4 +1057,50 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 		return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
 	}
+
+
+    @Override
+    public String getDataType() {
+        return "tile.thermaldynamics.duct";
+    }
+
+    @Override
+    public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
+        if (!tag.hasKey("AttachmentType", 8)) return;
+        MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+        if (rayTrace == null)
+            return;
+
+        int subHit = rayTrace.subHit;
+        if (subHit <= 13 || subHit >= 20)
+            return;
+
+        if (!(attachments[subHit - 14] instanceof IPortableData))
+            return;
+        IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
+
+        if (tag.getString("AttachmentType").equals(iPortableData.getDataType())) {
+            iPortableData.readPortableData(player, tag);
+        }
+    }
+
+    @Override
+    public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+        MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+        if (rayTrace == null)
+            return;
+
+        int subHit = rayTrace.subHit;
+        if (subHit <= 13 || subHit >= 20)
+            return;
+
+        if (!(attachments[subHit - 14] instanceof IPortableData))
+            return;
+
+        IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
+        iPortableData.writePortableData(player, tag);
+        if (!tag.hasNoTags()) {
+            tag.setString("AttachmentType", iPortableData.getDataType());
+        }
+    }
 }
