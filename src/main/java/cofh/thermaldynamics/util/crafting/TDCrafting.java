@@ -104,10 +104,8 @@ public class TDCrafting {
                 false);
         addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, new FluidStack(
                 TFFluids.fluidGlowstone, 200), false);
-        // ThermalExpansionHelper.addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemEnergy.itemStack, new FluidStack(TFFluids.fluidRedstone, 50),
-        // false);
-        // ThermalExpansionHelper.addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, new FluidStack(
-        // TFFluids.fluidRedstone, 50), false);
+        addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemEnergy.itemStack, new FluidStack(TFFluids.fluidRedstone, 50), false);
+        addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, new FluidStack(TFFluids.fluidRedstone, 50), false);
 
 		/* STRUCTURE */
         GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetLead", 'I', "ingotLead"));
@@ -126,7 +124,7 @@ public class TDCrafting {
                     "ingot" + materials[i], 'i', "nuggetIron"));
 
             GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ThermalDynamics.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ender_eye, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I',
-                    "ingot" + materials[i], 'i', "nuggetIron"));
+                    "ingot" + materials[i], 'i', "nuggetEnderium"));
 
             if (i > 0) {
                 for (Item item : new Item[]{ThermalDynamics.itemFilter, ThermalDynamics.itemServo, ThermalDynamics.itemRetriever}) {
