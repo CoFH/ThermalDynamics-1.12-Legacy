@@ -4,7 +4,7 @@ import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
-import cofh.thermalfoundation.block.TFBlocks;
+import cofh.thermaldynamics.render.RenderDuct;
 import java.nio.ByteOrder;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -55,7 +55,7 @@ public class CoverRenderer {
             Vector3 normal;
             int intNormal = 0;
 
-            IIcon icon = TFBlocks.blockStorage.getIcon(0, 3);
+            IIcon icon = RenderDuct.coverBase;
 
             for (int k = rawBufferIndex; k < rawBufferIndex2; k += 32) {
                 flag = flag2 = false;

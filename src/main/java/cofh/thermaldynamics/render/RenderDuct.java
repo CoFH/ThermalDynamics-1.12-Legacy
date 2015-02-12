@@ -42,6 +42,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	static IIcon textureCenterLine;
 
+    public static IIcon coverBase;
 	public static IIcon[] servoTexture = new IIcon[10];
     public static IIcon[] retrieverTexture = new IIcon[10];
 	public static IIcon[] filterTexture = new IIcon[5];
@@ -80,8 +81,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		}
 		for (int i = 0; i < 5; i++) {
 			filterTexture[i] = IconRegistry.getIcon("FilterBase" + i);
-		}
-		sideDucts = IconRegistry.getIcon("SideDucts");
+        }
+        coverBase = IconRegistry.getIcon("CoverBase");
+        sideDucts = IconRegistry.getIcon("SideDucts");
 
 		textureCenterLine = TFFluids.fluidSteam.getIcon();
 	}
