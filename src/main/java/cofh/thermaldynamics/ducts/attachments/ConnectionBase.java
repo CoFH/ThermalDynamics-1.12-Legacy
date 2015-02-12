@@ -333,7 +333,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
     @Override
     public String getDataType() {
-        return getName() + "_" + getId();
+        return "ConnectionBase";
     }
 
     @Override
