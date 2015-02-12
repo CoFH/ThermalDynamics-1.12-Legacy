@@ -36,7 +36,6 @@ public class Duct {
 	public final String baseTexture;
 	public final String connectionTexture;
 	public final String fluidTexture;
-	public final boolean pathModifiable;
 	public final byte fluidTransparency;
 	public final String frameTexture;
 	public final String frameFluidTexture;
@@ -47,8 +46,7 @@ public class Duct {
 	public EnumRarity rarity = EnumRarity.common;
 
 	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency,
-			boolean pathModifiable) {
+                String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		this.id = id;
 		this.pathWeight = pathWeight;
@@ -60,7 +58,6 @@ public class Duct {
 		this.baseTexture = baseTexture;
 		this.connectionTexture = connectionTexture;
 		this.fluidTexture = fluidTexture;
-		this.pathModifiable = pathModifiable;
 		this.fluidTransparency = (byte) fluidTransparency;
 		this.frameTexture = frameTexture;
 		this.frameFluidTexture = frameFluidTexture;
