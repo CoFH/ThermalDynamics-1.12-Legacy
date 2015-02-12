@@ -44,7 +44,7 @@ public class TextureOverlay {
 
 	public static IIcon generateBaseTexture(IIconRegister register, String base, String... textures) {
 
-		TextureDataHolder image = null, newimage;
+		TextureDataHolder image, newimage;
 		image = TextureUtils.loadTexture(toLoc(PATH_BASE, base));
 
 		StringBuilder builder = new StringBuilder("thermaldynamics:Duct_").append(base);
@@ -96,12 +96,10 @@ public class TextureOverlay {
 
 	public static IIcon generateConnectionTexture(IIconRegister register, String connection) {
 
-		TextureDataHolder image = null, newimage;
-		image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
+		TextureDataHolder image;
+        image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
 
-		StringBuilder builder = new StringBuilder("thermaldynamics:Conn_").append(connection);
-
-		String name = builder.toString();
+        String name = "thermaldynamics:Conn_" + connection;
 
 		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
 		if (entry != null) {
@@ -115,12 +113,10 @@ public class TextureOverlay {
 
 	public static IIcon generateFrameTexture(IIconRegister register, String frame) {
 
-		TextureDataHolder image = null, newimage;
-		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
+		TextureDataHolder image;
+        image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
 
-		StringBuilder builder = new StringBuilder("thermaldynamics:Frame_").append(frame);
-
-		String name = builder.toString();
+        String name = "thermaldynamics:Frame_" + frame;
 
 		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
 		if (entry != null) {
@@ -134,12 +130,10 @@ public class TextureOverlay {
 
 	public static IIcon generateFrameBandTexture(IIconRegister register, String frame) {
 
-		TextureDataHolder image = null, newimage;
-		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
+		TextureDataHolder image;
+        image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
 
-		StringBuilder builder = new StringBuilder("thermaldynamics:Band_").append(frame);
-
-		String name = builder.toString();
+        String name = "thermaldynamics:Band_" + frame;
 
 		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
 		if (entry != null) {
