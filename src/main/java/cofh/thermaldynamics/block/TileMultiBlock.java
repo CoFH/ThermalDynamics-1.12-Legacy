@@ -27,6 +27,7 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,7 +94,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public long lastUpdateTime = -1;
 	public int hashCode = 0;
 
-	public LinkedList<Chunk> neighbourChunks = new LinkedList<Chunk>();
+	public LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<WeakReference<Chunk>>();
 
 	@Override
 	public void onChunkUnload() {
@@ -413,54 +414,57 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 				this, i) : null);
 	}
 
-	public boolean checkForChunkUnload() {
+    public boolean checkForChunkUnload() {
 
-		if (neighbourChunks.isEmpty()) {
-			return false;
-		}
-		for (Chunk neighbourChunk : neighbourChunks) {
-			if (!neighbourChunk.isChunkLoaded) {
-				onNeighborBlockChange();
-				return !isNode;
-			}
-		}
-		return false;
-	}
+        if (neighbourChunks.isEmpty()) {
+            return false;
+        }
 
-	public void rebuildChunkCache() {
+        for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
+            Object chunk = neighbourChunk.get();
+            if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
+                onNeighborBlockChange();
+                neighbourChunks.clear();
+                return true;
+            }
+        }
+        return false;
+    }
 
-		if (!neighbourChunks.isEmpty()) {
-			neighbourChunks.clear();
-		}
-		if (!isNode) {
-			return;
-		}
-		Chunk base = worldObj.getChunkFromBlockCoords(x(), y());
+    public void rebuildChunkCache() {
 
-		for (byte i = 0; i < 6; i++) {
-			if (neighborTypes[i] == NeighborTypes.INPUT || neighborTypes[i] == NeighborTypes.OUTPUT) {
-				Chunk chunk = worldObj.getChunkFromBlockCoords(x() + Facing.offsetsXForSide[i], z() + Facing.offsetsZForSide[i]);
-				if (chunk != base) {
-					neighbourChunks.add(chunk);
-				}
-			}
-		}
-	}
+        if (!neighbourChunks.isEmpty()) {
+            neighbourChunks.clear();
+        }
+        if (!isNode) {
+            return;
+        }
+        Chunk base = worldObj.getChunkFromBlockCoords(x(), y());
 
-	public void cacheStructural(TileEntity theTile, int i) {
+        for (byte i = 0; i < 6; i++) {
+            if (neighborTypes[i] == NeighborTypes.INPUT || neighborTypes[i] == NeighborTypes.OUTPUT) {
+                Chunk chunk = worldObj.getChunkFromBlockCoords(x() + Facing.offsetsXForSide[i], z() + Facing.offsetsZForSide[i]);
+                if (chunk != base) {
+                    neighbourChunks.add(new WeakReference<Chunk>(chunk));
+                }
+            }
+        }
+    }
 
-	}
+    public void cacheStructural(TileEntity theTile, int i) {
 
-	@Override
-	public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
+    }
 
-		if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
-			return;
-		}
+    @Override
+    public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
 
-		if (isInvalid()) {
-			return;
-		}
+        if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
+            return;
+        }
+
+        if (isInvalid()) {
+            return;
+        }
 
 		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_WEAK_CHANGE);
 
