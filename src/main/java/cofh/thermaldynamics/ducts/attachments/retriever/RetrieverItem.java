@@ -81,7 +81,7 @@ public class RetrieverItem extends ServoItem {
                 if(endPoint.attachments[i] != null && endPoint.attachments[i].getId() == this.getId())
                     continue;
 
-                if (endPoint.cache[i] == null || (endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.INPUT))
+                if (endPoint.cache[i] == null || (endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer)
                     continue;
 
                 if (endPoint.cache2[i] != null) {
@@ -131,7 +131,7 @@ public class RetrieverItem extends ServoItem {
                             }
                         }
 
-                        endPoint.insertItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
+                        endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
                         return;
                     }
                 } else {
@@ -173,7 +173,7 @@ public class RetrieverItem extends ServoItem {
                             }
                         }
 
-                        endPoint.insertItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
+                        endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
                         return;
                     }
                 }

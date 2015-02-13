@@ -102,7 +102,7 @@ public class TravelingItem {
 			if (newHome != null) {
 				if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
 					homeTile.removeItem(this);
-					newHome.insertItem(this);
+					newHome.transferItem(this);
 					if (myPath.hasNextDirection()) {
 						oldDirection = direction;
 						direction = myPath.getNextDirection();

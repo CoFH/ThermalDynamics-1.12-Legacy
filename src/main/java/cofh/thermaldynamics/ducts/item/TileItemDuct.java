@@ -371,10 +371,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     public void insertNewItem(TravelingItem travelingItem) {
 
         internalGrid.poll(travelingItem);
-        insertItem(travelingItem);
+        transferItem(travelingItem);
     }
 
-    public void insertItem(TravelingItem travelingItem) {
+    public void transferItem(TravelingItem travelingItem) {
 
         itemsToAdd.add(travelingItem);
     }

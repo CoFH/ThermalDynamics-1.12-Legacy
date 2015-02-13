@@ -25,9 +25,9 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 	}
 
 	@Override
-	public void insertItem(TravelingItem travelingItem) {
+	public void transferItem(TravelingItem travelingItem) {
 
-		super.insertItem(travelingItem);
+		super.transferItem(travelingItem);
 	}
 
 	@Override
@@ -63,10 +63,9 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 	@Override
 	public void tickItems() {
 
-		int c = 0;
+
 		if (itemsToAdd.size() > 0) {
 			for (TravelingItem travelingItem : itemsToAdd) {
-				c = c | (1 << travelingItem.direction) | (1 << travelingItem.oldDirection);
 				myItems.add(travelingItem);
 			}
 			itemsToAdd.clear();
@@ -90,16 +89,7 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 				hasChanged = true;
 			}
 		}
-		if (enderEnergy.internalGrid != null) {
-			if (enderEnergy.internalGrid.isPowered() != powered) {
-				powered = enderEnergy.internalGrid.isPowered();
-				sendPowerPacket();
-			}
-		}
-		if (!powered && hasChanged) {
-			hasChanged = false;
-			sendTravelingItemsPacket();
-		}
+		updateRender();
 	}
 
 	@Override
@@ -161,9 +151,9 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 
 		if (newInsert) {
 			internalGrid.shouldRepoll = true;
-			duct.insertItem(travelingItem);
+			duct.transferItem(travelingItem);
 		} else if (duct != this) {
-			duct.insertItem(travelingItem);
+			duct.transferItem(travelingItem);
 			itemsToRemove.add(travelingItem);
 		}
 	}
@@ -218,4 +208,16 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 		powered = payload.getBool();
 	}
 
+    public void updateRender() {
+        if (enderEnergy.internalGrid != null) {
+            if (enderEnergy.internalGrid.isPowered() != powered) {
+                powered = enderEnergy.internalGrid.isPowered();
+                sendPowerPacket();
+            }
+        }
+        if (!powered && hasChanged) {
+            hasChanged = false;
+            sendTravelingItemsPacket();
+        }
+    }
 }
