@@ -1,15 +1,17 @@
 package cofh.thermaldynamics.ducts.energy.subgrid;
 
-import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.ducts.item.TileItemDuctEnder;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 public class SubTileEnergyEnder extends SubTileEnergy {
 
 	public EnergySubGridEnder internalGrid;
+    public TileItemDuctEnder parentTile;
 
-	public SubTileEnergyEnder(TileMultiBlock parent) {
+	public SubTileEnergyEnder(TileItemDuctEnder parent) {
 
 		super(parent);
+        parentTile = parent;
 	}
 
 	@Override
