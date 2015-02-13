@@ -128,10 +128,10 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 			int fluidTemp;
 			fluidTemp = getTemperature(fluid);
 
-			internalTemperature = internalTemperature + (fluidTemp - internalTemperature) * 0.01F;
+			internalTemperature = internalTemperature + (fluidTemp - internalTemperature) * 0.0005F;
 
 			if (internalTemperature < FREEZING_TEMPERATURE || internalTemperature > MELTING_TEMPERATURE) {
-				if (worldObj.rand.nextInt(20) == 0) {
+				if (worldObj.rand.nextInt(50) == 0) {
 
 					if (fluid != null && fluid.amount > 0) {
 						fluid = fluid.copy();
