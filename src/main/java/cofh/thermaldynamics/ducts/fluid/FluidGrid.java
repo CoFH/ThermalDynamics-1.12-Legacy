@@ -40,9 +40,10 @@ public class FluidGrid extends MultiBlockGrid {
 			} else {
 				myTank.fill(theCondF.fluidForGrid, true);
 			}
-			theCondF.fluidForGrid = null;
-		}
-	}
+            theCondF.fluidForGrid = null;
+            recentRenderUpdate = true;
+        }
+    }
 
 	@Override
 	public void balanceGrid() {
@@ -125,6 +126,7 @@ public class FluidGrid extends MultiBlockGrid {
 		FluidGrid fluidGrid = (FluidGrid) theGrid;
 		doesPassiveTicking = doesPassiveTicking || fluidGrid.doesPassiveTicking;
 		myTank.fill(fluidGrid.getFluid(), true);
+        recentRenderUpdate = true;
 	}
 
 	@Override
