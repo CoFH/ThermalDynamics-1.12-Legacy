@@ -140,11 +140,17 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
                     continue;
                 }
 
+                double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
+
+                v -= 0.5;
+
+                if(renderItem.shouldDie && v > 0)
+                    continue;
+
                 GL11.glPushMatrix();
                 {
-                    double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
 
-                    v -= 0.5;
+
                     if (v < 0) {
                         translateItem(renderItem.oldDirection, v);
                     } else {
