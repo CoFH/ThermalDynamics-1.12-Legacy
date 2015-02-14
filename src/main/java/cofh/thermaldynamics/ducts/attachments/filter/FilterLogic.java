@@ -347,7 +347,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     public void handleFlagByte(int t) {
 
         for (int i = 0; i < flags.length; i++) {
-            if(canAlterFlag(t))
+            if(canAlterFlag(i))
                 flags[i] = (t & (1 << i)) != 0;
             else
                 flags[i] = defaultflags[i];
