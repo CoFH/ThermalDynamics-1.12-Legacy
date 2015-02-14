@@ -73,6 +73,8 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 		}
 		if (myItems.size() > 0) {
 			for (TravelingItem travelingItem : myItems) {
+                if (internalGrid.repoll)
+                    internalGrid.poll(travelingItem);
 				if (travelingItem.reRoute || travelingItem.myPath == null) {
 					travelingItem.bounceItem(this);
 				} else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST
