@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Facing;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -130,39 +131,41 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 
 		TravelingItem renderItem;
 
-		for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
-			renderItem = items.next();
-			if (renderItem == null || renderItem.stack == null) {
-				continue;
-			}
+        GL11.glPushMatrix();
+        {
+            GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
+            for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
+                renderItem = items.next();
+                if (renderItem == null || renderItem.stack == null) {
+                    continue;
+                }
 
-			GL11.glPushMatrix();
+                GL11.glPushMatrix();
+                {
+                    double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
 
-			GL11.glTranslated(x + renderItem.x, y + renderItem.y, z + renderItem.z);
+                    v -= 0.5;
+                    if (v < 0) {
+                        translateItem(renderItem.oldDirection, v);
+                    } else {
+                        translateItem(renderItem.direction, v);
+                    }
 
-			float[] vec;
+                    GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
-			if (renderItem.step == 1) {
-				vec = TravelingItem.getVec(renderItem.progress + 1, renderItem, duct);
-				GL11.glTranslated(vec[0] * frame, vec[1] * frame, vec[2] * frame);
-			} else {
-				float v = renderItem.step * frame;
-				int s;
-				for (s = 0; s < v; s++) {
-					vec = TravelingItem.getVec(renderItem.progress + s, renderItem, duct);
-					GL11.glTranslated(vec[0], vec[1], vec[2]);
-				}
-				vec = TravelingItem.getVec(renderItem.progress + s, renderItem, duct);
-				s--;
-				GL11.glTranslated(vec[0] * (v - s), vec[1] * (v - s), vec[2] * (v - s));
+                    travelingEntityItem.setEntityItemStack(renderItem.stack);
+                    travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
+                }
+                GL11.glPopMatrix();
+            }
+        }
+        GL11.glPopMatrix();
+    }
 
-			}
-			GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
-
-			travelingEntityItem.setEntityItemStack(renderItem.stack);
-			travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
-			GL11.glPopMatrix();
-		}
-	}
-
+    private void translateItem(byte direction, double v) {
+        GL11.glTranslated(
+                Facing.offsetsXForSide[direction] * v,
+                Facing.offsetsYForSide[direction] * v,
+                Facing.offsetsZForSide[direction] * v);
+    }
 }

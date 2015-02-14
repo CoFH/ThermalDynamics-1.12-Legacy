@@ -86,7 +86,7 @@ public class TravelingItem {
 		if (myPath == null) {
 			bounceItem(homeTile);
 		} else if (progress >= homeTile.getPipeLength()) {
-            progress %=  homeTile.getPipeLength();
+            progress %= homeTile.getPipeLength();
 			advanceTile(homeTile);
 		} else if (progress >= homeTile.getPipeHalfLength() && progress - step < homeTile.getPipeHalfLength()) {
 			if (reRoute || homeTile.neighborTypes[direction] == NeighborTypes.NONE) {
