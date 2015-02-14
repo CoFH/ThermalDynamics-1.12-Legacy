@@ -149,8 +149,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 
                 GL11.glPushMatrix();
                 {
-
-
                     if (v < 0) {
                         translateItem(renderItem.oldDirection, v);
                     } else {
