@@ -27,10 +27,12 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -44,9 +46,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
+public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox,
+															ITileInfoPacketHandler, IPortableData {
 
 	static {
 		GameRegistry.registerTileEntity(TileMultiBlock.class, "thermaldynamics.multiblock");
@@ -77,9 +81,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public boolean isNode = false;
 	public MultiBlockGrid myGrid;
 	public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
-	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
+	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
+			NeighborTypes.NONE,
 			NeighborTypes.NONE };
-	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
+	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
+			ConnectionTypes.NORMAL,
 			ConnectionTypes.NORMAL, ConnectionTypes.NORMAL };
 	public byte internalSideCounter = 0;
 
@@ -89,7 +95,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
 
-	public static final SubTileMultiBlock[] blankSubTiles = {};
+	public static final SubTileMultiBlock[] blankSubTiles = { };
 	public SubTileMultiBlock[] subTiles = blankSubTiles;
 	public long lastUpdateTime = -1;
 	public int hashCode = 0;
@@ -200,14 +206,16 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public boolean isBlockedSide(int side) {
 
-		return connectionTypes[side] == ConnectionTypes.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
+		return connectionTypes[side] == ConnectionTypes.BLOCKED ||
+				(attachments[side] != null && !attachments[side].allowPipeConnection());
 	}
 
 	@Override
 	public boolean isSideConnected(byte side) {
 
 		TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, side);
-		return tileEntity instanceof TileMultiBlock && !isBlockedSide(side) && !((TileMultiBlock) tileEntity).isBlockedSide(side ^ 1);
+		return tileEntity instanceof TileMultiBlock && !isBlockedSide(side) &&
+				!((TileMultiBlock) tileEntity).isBlockedSide(side ^ 1);
 	}
 
 	@Override
@@ -240,7 +248,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public void tilePlaced() {
 
-		onNeighborBlockChange();
+		// onNeighborBlockChange();
 
 		if (ServerHelper.isServerWorld(worldObj)) {
 			TickHandler.addMultiBlockToCalculate(this);
@@ -410,61 +418,63 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	public TileEntity getAdjTileEntitySafe(int i) {
 
-		return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper.getAdjacentTileEntity(
-				this, i) : null);
+		return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper
+				.getAdjacentTileEntity(
+					this, i)
+				: null);
 	}
 
-    public boolean checkForChunkUnload() {
+	public boolean checkForChunkUnload() {
 
-        if (neighbourChunks.isEmpty()) {
-            return false;
-        }
+		if (neighbourChunks.isEmpty()) {
+			return false;
+		}
 
-        for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
-            Object chunk = neighbourChunk.get();
-            if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
-                onNeighborBlockChange();
-                neighbourChunks.clear();
-                return true;
-            }
-        }
-        return false;
-    }
+		for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
+			Object chunk = neighbourChunk.get();
+			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
+				onNeighborBlockChange();
+				neighbourChunks.clear();
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public void rebuildChunkCache() {
+	public void rebuildChunkCache() {
 
-        if (!neighbourChunks.isEmpty()) {
-            neighbourChunks.clear();
-        }
-        if (!isNode) {
-            return;
-        }
-        Chunk base = worldObj.getChunkFromBlockCoords(x(), y());
+		if (!neighbourChunks.isEmpty()) {
+			neighbourChunks.clear();
+		}
+		if (!isNode) {
+			return;
+		}
+		Chunk base = worldObj.getChunkFromBlockCoords(x(), y());
 
-        for (byte i = 0; i < 6; i++) {
-            if (neighborTypes[i] == NeighborTypes.INPUT || neighborTypes[i] == NeighborTypes.OUTPUT) {
-                Chunk chunk = worldObj.getChunkFromBlockCoords(x() + Facing.offsetsXForSide[i], z() + Facing.offsetsZForSide[i]);
-                if (chunk != base) {
-                    neighbourChunks.add(new WeakReference<Chunk>(chunk));
-                }
-            }
-        }
-    }
+		for (byte i = 0; i < 6; i++) {
+			if (neighborTypes[i] == NeighborTypes.INPUT || neighborTypes[i] == NeighborTypes.OUTPUT) {
+				Chunk chunk = worldObj.getChunkFromBlockCoords(x() + Facing.offsetsXForSide[i], z() + Facing.offsetsZForSide[i]);
+				if (chunk != base) {
+					neighbourChunks.add(new WeakReference<Chunk>(chunk));
+				}
+			}
+		}
+	}
 
-    public void cacheStructural(TileEntity theTile, int i) {
+	public void cacheStructural(TileEntity theTile, int i) {
 
-    }
+	}
 
-    @Override
-    public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
+	@Override
+	public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
 
-        if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
-            return;
-        }
+		if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
+			return;
+		}
 
-        if (isInvalid()) {
-            return;
-        }
+		if (isInvalid()) {
+			return;
+		}
 
 		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_WEAK_CHANGE);
 
@@ -529,7 +539,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	/*
 	 * Should return true if theTile is an instance of this multiblock.
-	 *
 	 * This must also be an instance of IMultiBlock
 	 */
 	public boolean isConnectable(TileEntity theTile, int side) {
@@ -544,7 +553,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
 	public boolean isSignificantTile(TileEntity theTile, int side) {
@@ -974,7 +982,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			return BlockDuct.ConnectionTypes.STRUCTURE;
 		} else if (neighborType == NeighborTypes.INPUT) {
 			return BlockDuct.ConnectionTypes.DUCT;
-		} else if (neighborType == NeighborTypes.NONE || connectionType == ConnectionTypes.BLOCKED || connectionType == ConnectionTypes.REJECTED) {
+		} else if (neighborType == NeighborTypes.NONE || connectionType == ConnectionTypes.BLOCKED ||
+				connectionType == ConnectionTypes.REJECTED) {
 			return BlockDuct.ConnectionTypes.NONE;
 		} else if (neighborType == NeighborTypes.OUTPUT) {
 			return BlockDuct.ConnectionTypes.TILECONNECTION;
@@ -1003,24 +1012,31 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		return false;
 	}
 
-    public IIcon getBaseIcon() {
-        return getDuctType().iconBaseTexture;
-    }
+	public IIcon getBaseIcon() {
 
-    public ItemStack getDrop() {
-        return new ItemStack(getBlockType(), 1, getBlockMetadata());
-    }
+		return getDuctType().iconBaseTexture;
+	}
 
-    public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
+	public ItemStack getDrop() {
 
-    }
+		return new ItemStack(getBlockType(), 1, getBlockMetadata());
+	}
 
-    public void dropAdditonal(ArrayList<ItemStack> ret) {
+	public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
 
-    }
+	}
 
-    public static enum NeighborTypes {
-		NONE, MULTIBLOCK, OUTPUT(true), INPUT(true), STRUCTURE(true), DUCT_ATTACHMENT;
+	public void dropAdditonal(ArrayList<ItemStack> ret) {
+
+	}
+
+	public static enum NeighborTypes {
+		NONE,
+		MULTIBLOCK,
+		OUTPUT(true),
+		INPUT(true),
+		STRUCTURE(true),
+		DUCT_ATTACHMENT;
 
 		NeighborTypes() {
 
@@ -1037,7 +1053,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
 	public static enum ConnectionTypes {
-		NORMAL(true), ONEWAY(true), REJECTED(false), BLOCKED(false);
+		NORMAL(true),
+		ONEWAY(true),
+		REJECTED(false),
+		BLOCKED(false);
 
 		ConnectionTypes(boolean allowTransfer) {
 
@@ -1062,49 +1081,51 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
 	}
 
+	@Override
+	public String getDataType() {
 
-    @Override
-    public String getDataType() {
-        return "tile.thermaldynamics.duct";
-    }
+		return "tile.thermaldynamics.duct";
+	}
 
-    @Override
-    public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
-        if (!tag.hasKey("AttachmentType", 8)) return;
-        MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-        if (rayTrace == null)
-            return;
+	@Override
+	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
 
-        int subHit = rayTrace.subHit;
-        if (subHit <= 13 || subHit >= 20)
-            return;
+		if (!tag.hasKey("AttachmentType", 8)) return;
+		MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+		if (rayTrace == null)
+			return;
 
-        if (!(attachments[subHit - 14] instanceof IPortableData))
-            return;
-        IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
+		int subHit = rayTrace.subHit;
+		if (subHit <= 13 || subHit >= 20)
+			return;
 
-        if (tag.getString("AttachmentType").equals(iPortableData.getDataType())) {
-            iPortableData.readPortableData(player, tag);
-        }
-    }
+		if (!(attachments[subHit - 14] instanceof IPortableData))
+			return;
+		IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
 
-    @Override
-    public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
-        MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-        if (rayTrace == null)
-            return;
+		if (tag.getString("AttachmentType").equals(iPortableData.getDataType())) {
+			iPortableData.readPortableData(player, tag);
+		}
+	}
 
-        int subHit = rayTrace.subHit;
-        if (subHit <= 13 || subHit >= 20)
-            return;
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
 
-        if (!(attachments[subHit - 14] instanceof IPortableData))
-            return;
+		MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+		if (rayTrace == null)
+			return;
 
-        IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
-        iPortableData.writePortableData(player, tag);
-        if (!tag.hasNoTags()) {
-            tag.setString("AttachmentType", iPortableData.getDataType());
-        }
-    }
+		int subHit = rayTrace.subHit;
+		if (subHit <= 13 || subHit >= 20)
+			return;
+
+		if (!(attachments[subHit - 14] instanceof IPortableData))
+			return;
+
+		IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
+		iPortableData.writePortableData(player, tag);
+		if (!tag.hasNoTags()) {
+			tag.setString("AttachmentType", iPortableData.getDataType());
+		}
+	}
 }
