@@ -97,3 +97,6 @@ info.thermaldynamics.servo.redstoneExt=Requires Redstone Signal
 info.thermaldynamics.servo.redstoneInt=Internal Redstone Control
 info.thermaldynamics.servo.slotMulti=Extracts from multiple slots.
 info.thermaldynamics.servo.slotSingle=Extracts from a single slot.
+
+recipe.thermaldynamics.covers=Covers crafting
+tile.thermaldynamics.duct=Duct
