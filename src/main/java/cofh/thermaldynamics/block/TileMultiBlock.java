@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.block;
 
-import cofh.api.tileentity.IPlacedTile;
 import cofh.api.tileentity.IPortableData;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.network.ITileInfoPacketHandler;
@@ -49,8 +48,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, IPlacedTile, ITilePacketHandler, ICustomHitBox,
-															ITileInfoPacketHandler, IPortableData {
+public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
 
 	static {
 		GameRegistry.registerTileEntity(TileMultiBlock.class, "thermaldynamics.multiblock");
@@ -81,11 +79,9 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public boolean isNode = false;
 	public MultiBlockGrid myGrid;
 	public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[ForgeDirection.VALID_DIRECTIONS.length];
-	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
-			NeighborTypes.NONE,
+	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
 			NeighborTypes.NONE };
-	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
-			ConnectionTypes.NORMAL,
+	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
 			ConnectionTypes.NORMAL, ConnectionTypes.NORMAL };
 	public byte internalSideCounter = 0;
 
@@ -95,7 +91,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
 
-	public static final SubTileMultiBlock[] blankSubTiles = { };
+	public static final SubTileMultiBlock[] blankSubTiles = {};
 	public SubTileMultiBlock[] subTiles = blankSubTiles;
 	public long lastUpdateTime = -1;
 	public int hashCode = 0;
@@ -206,16 +202,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public boolean isBlockedSide(int side) {
 
-		return connectionTypes[side] == ConnectionTypes.BLOCKED ||
-				(attachments[side] != null && !attachments[side].allowPipeConnection());
+		return connectionTypes[side] == ConnectionTypes.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
 	}
 
 	@Override
 	public boolean isSideConnected(byte side) {
 
 		TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, side);
-		return tileEntity instanceof TileMultiBlock && !isBlockedSide(side) &&
-				!((TileMultiBlock) tileEntity).isBlockedSide(side ^ 1);
+		return tileEntity instanceof TileMultiBlock && !isBlockedSide(side) && !((TileMultiBlock) tileEntity).isBlockedSide(side ^ 1);
 	}
 
 	@Override
@@ -242,16 +236,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 		for (SubTileMultiBlock subTile : subTiles) {
 			subTile.onNeighbourChange();
-		}
-	}
-
-	@Override
-	public void tilePlaced() {
-
-		// onNeighborBlockChange();
-
-		if (ServerHelper.isServerWorld(worldObj)) {
-			TickHandler.addMultiBlockToCalculate(this);
 		}
 	}
 
@@ -305,6 +289,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			subTile.destroyAndRecreate();
 		}
 		return true;
+	}
+
+	@Override
+	public void blockPlaced() {
+
+		if (ServerHelper.isServerWorld(worldObj)) {
+			TickHandler.addMultiBlockToCalculate(this);
+		}
 	}
 
 	@Override
@@ -418,10 +410,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 	public TileEntity getAdjTileEntitySafe(int i) {
 
-		return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper
-				.getAdjacentTileEntity(
-					this, i)
-				: null);
+		return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper.getAdjacentTileEntity(
+				this, i) : null);
 	}
 
 	public boolean checkForChunkUnload() {
@@ -538,8 +528,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
 	/*
-	 * Should return true if theTile is an instance of this multiblock.
-	 * This must also be an instance of IMultiBlock
+	 * Should return true if theTile is an instance of this multiblock. This must also be an instance of IMultiBlock
 	 */
 	public boolean isConnectable(TileEntity theTile, int side) {
 
@@ -552,8 +541,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
 	/*
-	 * Should return true if theTile is significant to this multiblock
-	 * IE: Inventory's to ItemDuct's
+	 * Should return true if theTile is significant to this multiblock IE: Inventory's to ItemDuct's
 	 */
 	public boolean isSignificantTile(TileEntity theTile, int side) {
 
@@ -982,8 +970,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			return BlockDuct.ConnectionTypes.STRUCTURE;
 		} else if (neighborType == NeighborTypes.INPUT) {
 			return BlockDuct.ConnectionTypes.DUCT;
-		} else if (neighborType == NeighborTypes.NONE || connectionType == ConnectionTypes.BLOCKED ||
-				connectionType == ConnectionTypes.REJECTED) {
+		} else if (neighborType == NeighborTypes.NONE || connectionType == ConnectionTypes.BLOCKED || connectionType == ConnectionTypes.REJECTED) {
 			return BlockDuct.ConnectionTypes.NONE;
 		} else if (neighborType == NeighborTypes.OUTPUT) {
 			return BlockDuct.ConnectionTypes.TILECONNECTION;
@@ -1031,12 +1018,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
 	public static enum NeighborTypes {
-		NONE,
-		MULTIBLOCK,
-		OUTPUT(true),
-		INPUT(true),
-		STRUCTURE(true),
-		DUCT_ATTACHMENT;
+		NONE, MULTIBLOCK, OUTPUT(true), INPUT(true), STRUCTURE(true), DUCT_ATTACHMENT;
 
 		NeighborTypes() {
 
@@ -1053,10 +1035,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
 	public static enum ConnectionTypes {
-		NORMAL(true),
-		ONEWAY(true),
-		REJECTED(false),
-		BLOCKED(false);
+		NORMAL(true), ONEWAY(true), REJECTED(false), BLOCKED(false);
 
 		ConnectionTypes(boolean allowTransfer) {
 
@@ -1090,7 +1069,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
 
-		if (!tag.hasKey("AttachmentType", 8)) return;
+		if (!tag.hasKey("AttachmentType", 8))
+			return;
 		MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
 		if (rayTrace == null)
 			return;

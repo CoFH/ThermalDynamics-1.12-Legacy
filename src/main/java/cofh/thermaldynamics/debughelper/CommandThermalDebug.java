@@ -7,10 +7,12 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileMultiBlock;
 import com.google.common.base.Throwables;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -47,9 +49,9 @@ public class CommandThermalDebug extends CommandBase {
 	Field chunksToUnload;
 
 	private static final String[] trueWords = { "true", "t", "1", "yes", "oui", "affirmative", "truth", "yarp", "uhuh", "yep", "doit", "yea", "tango",
-			"heckyeah", "win" };
+		"heckyeah", "win" };
 	private static final String[] falseWords = { "false", "f", "0", "no", "non", "negative", "cake", "narp", "nuhuh", "nope", "dont", "nay", "foxtrot",
-			"hellno", "fail" };
+		"hellno", "fail" };
 	private static final String[] mixWords = { "random", "r", "0.5", "imfeelinglucky", "yesno", "supriseme", "whatever", "schrodinger" };
 
 	public static boolean textToBoolean(String s) {
@@ -126,7 +128,7 @@ public class CommandThermalDebug extends CommandBase {
 
 				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[0], 0, 3);
 
-				pos.getTileEntity(world, TileMultiBlock.class).tilePlaced();
+				pos.getTileEntity(world, TileMultiBlock.class).blockPlaced();
 
 				if (rand.nextInt(4) == 0) {
 					pos.setOrientation(pos.orientation.getRotation(rand.nextBoolean() ? ForgeDirection.UP : ForgeDirection.DOWN));
