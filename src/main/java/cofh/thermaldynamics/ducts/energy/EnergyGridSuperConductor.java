@@ -68,6 +68,8 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 	}
 
 	public int sendEnergytoTile(TileEnergyDuct dest, int curSent, int maxSent, int toDistribute) {
+        if(!dest.cachesExist())
+            return curSent;
 
 		for (int i = 0; i < 6 && curSent < maxSent; i++) {
 			if (dest.neighborTypes[i] == TileMultiBlock.NeighborTypes.OUTPUT) {

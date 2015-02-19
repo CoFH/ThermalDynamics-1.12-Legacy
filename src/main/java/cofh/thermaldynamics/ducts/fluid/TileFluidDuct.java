@@ -23,10 +23,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 
-	public IFluidHandler[] cache = new IFluidHandler[6];
-
-	public IFilterFluid[] filterCache = { IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter,
-			IFilterFluid.nullFilter, IFilterFluid.nullFilter };
+	public IFluidHandler[] cache;
+	public IFilterFluid[] filterCache;
 
 	public TileFluidDuct() {
 
@@ -57,7 +55,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 		if (!super.tickPass(pass))
 			return false;
 
-		if (fluidGrid == null) {
+		if (fluidGrid == null || !cachesExist()) {
 			return true;
 		}
 		if (pass == 0) {
@@ -163,7 +161,20 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 		}
 	}
 
-	@Override
+    @Override
+    public boolean cachesExist() {
+        return cache != null;
+    }
+
+    @Override
+    public void createCaches() {
+        cache = new IFluidHandler[6];
+        filterCache = new IFilterFluid[]{IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter,
+                IFilterFluid.nullFilter, IFilterFluid.nullFilter};
+    }
+
+
+    @Override
 	public void cacheImportant(TileEntity tile, int side) {
 
 		if (attachments[side] instanceof IFilterAttachment)

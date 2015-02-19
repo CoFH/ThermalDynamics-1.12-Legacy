@@ -26,7 +26,17 @@ public class TileStructuralDuct extends TileMultiBlock {
 		// No Grids needed
 	}
 
-	@Override
+    @Override
+    public boolean cachesExist() {
+        return true;
+    }
+
+    @Override
+    public void createCaches() {
+
+    }
+
+    @Override
 	public void cacheImportant(TileEntity tile, int side) {
 
 	}

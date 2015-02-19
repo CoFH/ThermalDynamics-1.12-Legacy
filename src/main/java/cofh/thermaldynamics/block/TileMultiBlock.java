@@ -344,7 +344,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public void handleSideUpdate(int i) {
 
 		TileEntity theTile;
-		clearCache(i);
+        if(cachesExist()) clearCache(i);
 
 		if (attachments[i] != null) {
 			attachments[i].onNeighborChange();
@@ -361,12 +361,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			} else if (neighborTypes[i] == NeighborTypes.OUTPUT) {
 				theTile = getAdjTileEntitySafe(i);
 				if (isSignificantTile(theTile, i)) {
+                    if(!cachesExist()) createCaches();
 					cacheImportant(theTile, i);
 				}
 				isOutput = true;
 			} else if (neighborTypes[i] == NeighborTypes.INPUT) {
 				theTile = getAdjTileEntitySafe(i);
 				if (theTile != null) {
+                    if(!cachesExist()) createCaches();
 					cacheInputTile(theTile, i);
 				}
 				isInput = true;
@@ -389,12 +391,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			} else if (isSignificantTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborTypes.OUTPUT;
+                if(!cachesExist()) createCaches();
 				cacheImportant(theTile, i);
 				isNode = true;
 				isOutput = true;
 			} else if (isStructureTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborTypes.STRUCTURE;
+                if(!cachesExist()) createCaches();
 				cacheStructural(theTile, i);
 				isNode = true;
 			} else {
@@ -903,6 +907,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 	}
+
+    public abstract boolean cachesExist();
+
+    public abstract void createCaches();
 
 	public abstract void cacheImportant(TileEntity tile, int side);
 

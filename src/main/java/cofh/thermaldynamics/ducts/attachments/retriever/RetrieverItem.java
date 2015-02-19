@@ -82,7 +82,7 @@ public class RetrieverItem extends ServoItem {
                 if(endPoint.attachments[i] != null && endPoint.attachments[i].getId() == this.getId())
                     continue;
 
-                if (endPoint.cache[i] == null || (endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer)
+                if (!endPoint.cachesExist() || endPoint.cache[i] == null || (endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileMultiBlock.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer)
                     continue;
 
                 if (endPoint.cache2[i] != null) {

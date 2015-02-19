@@ -88,6 +88,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
 		if (!super.tickPass(pass))
 			return false;
+
 		int power = this.internalGrid.getSendableEnergy();
 
 		int usedPower = transmitEnergy(power);
@@ -99,6 +100,8 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 	public int transmitEnergy(int power) {
 
 		int usedPower = 0;
+
+        if(!cachesExist()) return usedPower;
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
@@ -157,7 +160,12 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 		}
 	}
 
-	IEnergyReceiver[] cache = new IEnergyReceiver[6];
+    @Override
+    public boolean cachesExist() {
+        return cache != null;
+    }
+
+    IEnergyReceiver[] cache;
 
 	@Override
 	public void cacheImportant(TileEntity tile, int side) {
@@ -165,6 +173,12 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 		if (tile instanceof IEnergyReceiver)
 			cache[side] = (IEnergyReceiver) tile;
 	}
+
+    @Override
+    public void createCaches() {
+
+        cache = new IEnergyReceiver[6];
+    }
 
 	@Override
 	public void clearCache(int side) {

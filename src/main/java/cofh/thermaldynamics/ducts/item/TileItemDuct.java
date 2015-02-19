@@ -72,12 +72,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		}
 	}
 
-	public IFilterItems[] filterCache = { IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter,
-			IFilterItems.nullFilter, IFilterItems.nullFilter };
-	public IInventory[] cache = new IInventory[6];
-	public ISidedInventory[] cache2 = new ISidedInventory[6];
-	public IDeepStorageUnit[] cache3 = new IDeepStorageUnit[6];
-	public CacheType[] cacheType = { CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, };
+	public IFilterItems[] filterCache;
+	public IInventory[] cache;
+	public ISidedInventory[] cache2;
+	public IDeepStorageUnit[] cache3;
+	public CacheType[] cacheType;
 
 	@Override
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
@@ -382,11 +381,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		itemsToAdd.add(travelingItem);
 	}
 
-	public IInventory getCachedTileEntity(byte direction) {
-
-		return cache[direction];
-	}
-
 	public boolean hasChanged = false;
 
 	public void tickItems() {
@@ -478,7 +472,24 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		handlePacketType(payload, b);
 	}
 
-	public void handlePacketType(PacketCoFHBase payload, int b) {
+    @Override
+    public boolean cachesExist() {
+        return cache != null;
+    }
+
+    @Override
+    public void createCaches() {
+
+        filterCache = new IFilterItems[]{IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter,
+                IFilterItems.nullFilter, IFilterItems.nullFilter};
+        cache = new IInventory[6];
+        cache2 = new ISidedInventory[6];
+        cache3 = new IDeepStorageUnit[6];
+        cacheType = new CacheType[]{CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE,};
+    }
+
+
+    public void handlePacketType(PacketCoFHBase payload, int b) {
 
 		if (b == TileInfoPackets.PULSE_LINE) {
 			int c = payload.getByte();
@@ -700,7 +711,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 		if (insertingItem == null)
 			return null;
-		if (internalGrid == null)
+		if (internalGrid == null || !cachesExist())
 			return insertingItem;
 
 		boolean routeItems = filterCache[side].shouldIncRouteItems();
@@ -830,7 +841,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	public int insertIntoInventory(ItemStack stack, int direction) {
 
-		if (cache[direction] == null)
+		if (!cachesExist() || cache[direction] == null)
 			return stack.stackSize;
 		if (!filterCache[direction].matchesFilter(stack))
 			return stack.stackSize;

@@ -92,6 +92,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	public int transmitEnergy(int power) {
 
 		int usedPower = 0;
+        if(!cachesExist()) return 0;
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
@@ -123,7 +124,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		return usedPower;
 	}
 
-	IEnergyReceiver[] energyCache = new IEnergyReceiver[6];
+	IEnergyReceiver[] energyCache;
 
 	@Override
 	public void clearCache(int side) {
@@ -132,8 +133,14 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		energyCache[side] = null;
 	}
 
-	@Override
-	public void cacheImportant(TileEntity tile, int side) {
+    @Override
+    public void createCaches() {
+        super.createCaches();
+        energyCache = new IEnergyReceiver[6];
+    }
+
+    @Override
+    public void cacheImportant(TileEntity tile, int side) {
 
 		super.cacheImportant(tile, side);
 		if (tile instanceof IEnergyReceiver)
