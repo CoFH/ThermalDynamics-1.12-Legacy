@@ -10,11 +10,12 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.iterator.TObjectLongIterator;
+import java.util.HashSet;
+import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.world.ChunkEvent;
-import java.util.HashSet;
-import java.util.Random;
 
 public class DebugTickHandler {
 
@@ -39,6 +40,21 @@ public class DebugTickHandler {
     public void printChunkEvent(ChunkEvent event) {
         if (!showLoading) return;
         DebugHelper.info("[" + event.getChunk().xPosition + "," + event.getChunk().zPosition + "]_" + (event.getChunk().worldObj.isRemote ? "Client" : "Server"));
+    }
+
+    @SubscribeEvent
+    public void subTicks(TickEvent.ServerTickEvent event){
+        if(DebugHelper.subTicks.isEmpty())
+            return;
+        TObjectLongIterator<String> it = DebugHelper.subTicks.iterator();
+
+        while (it.hasNext()) {
+            it.advance();
+            DebugHelper.info(it.key() + ": " + (it.value() * 1e-6) + " ms");
+        }
+
+
+        DebugHelper.subTicks.clear();
     }
 
     @SubscribeEvent
