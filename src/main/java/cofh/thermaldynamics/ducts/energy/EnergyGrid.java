@@ -51,7 +51,7 @@ public class EnergyGrid extends MultiBlockGrid {
 
 	public int getSendableEnergy() {
 
-		return Math.min(myStorage.getMaxExtract(), currentEnergy + extraEnergy);
+		return Math.min(myStorage.getMaxExtract(), currentEnergy == 0? extraEnergy : currentEnergy);
 	}
 
 	public void useEnergy(int energyUsed) {
