@@ -10,6 +10,7 @@ import cofh.thermaldynamics.core.TickHandlerClient;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -58,12 +59,12 @@ public class TravelingItem {
 		this.oldDirection = oldDirection;
 		this.step = speed;
 
-        if (myPath != null && myPath.endPoint != null) {
-            destX = myPath.endPoint.x();
-            destY = myPath.endPoint.y();
-            destZ = myPath.endPoint.z();
-            hasDest = true;
-        }
+		if (myPath != null && myPath.endPoint != null) {
+			destX = myPath.endPoint.x();
+			destY = myPath.endPoint.y();
+			destZ = myPath.endPoint.z();
+			hasDest = true;
+		}
 	}
 
 	// Client Only
@@ -81,12 +82,10 @@ public class TravelingItem {
 
 		progress += step;
 
-		calcCoordsFromProgress(this, homeTile);
-
 		if (myPath == null) {
 			bounceItem(homeTile);
 		} else if (progress >= homeTile.getPipeLength()) {
-            progress %= homeTile.getPipeLength();
+			progress %= homeTile.getPipeLength();
 			advanceTile(homeTile);
 		} else if (progress >= homeTile.getPipeHalfLength() && progress - step < homeTile.getPipeHalfLength()) {
 			if (reRoute || homeTile.neighborTypes[direction] == NeighborTypes.NONE) {
@@ -165,10 +164,10 @@ public class TravelingItem {
 						oldDirection = (byte) (direction ^ 1);
 						direction = myPath.getNextDirection();
 						homeTile.hasChanged = true;
-                        hasDest = true;
-                        destX = myPath.endPoint.x();
-                        destY = myPath.endPoint.y();
-                        destZ = myPath.endPoint.z();
+						hasDest = true;
+						destX = myPath.endPoint.x();
+						destY = myPath.endPoint.y();
+						destZ = myPath.endPoint.z();
 						return;
 					}
 				}
@@ -235,7 +234,7 @@ public class TravelingItem {
 		if (progress >= homeTile.getPipeLength()) {
 			progress %= homeTile.getPipeLength();
 
-            if (shouldDie) {
+			if (shouldDie) {
 				homeTile.removeItem(this);
 			} else {
 				homeTile.removeItem(this);

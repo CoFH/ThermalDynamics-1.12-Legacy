@@ -419,7 +419,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		if (neighbourChunks.isEmpty()) {
 			return false;
 		}
-
 		for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
 			Object chunk = neighbourChunk.get();
 			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
@@ -591,7 +590,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_CHUNK_UNLOADED);
 			return false;
 		}
-
 		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.TILE_TICKED);
 
 		if (!tickingAttachments.isEmpty()) {
@@ -599,7 +597,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 				attachment.tick(pass);
 			}
 		}
-
 		return true;
 	}
 

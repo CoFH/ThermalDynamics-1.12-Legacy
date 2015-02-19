@@ -17,6 +17,7 @@ import cofh.thermaldynamics.item.ItemCover;
 import cofh.thermaldynamics.item.ItemFilter;
 import cofh.thermaldynamics.item.ItemRetriever;
 import cofh.thermaldynamics.item.ItemServo;
+import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -42,6 +43,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.oredict.RecipeSorter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,7 +83,9 @@ public class ThermalDynamics extends BaseMod {
 
 		UpdateManager.registerUpdater(new UpdateManager(this, releaseURL));
 		proxy.registerPacketInformation();
-		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg")));
+		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
+
+		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
 
 		TDDucts.addDucts();
 
