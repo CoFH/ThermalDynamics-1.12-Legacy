@@ -7,7 +7,6 @@ import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import net.minecraft.world.World;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
@@ -19,7 +18,8 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
 	public int travelingItemsCount = 0;
 	public static ArrayList<Attachment> toTick = new ArrayList<Attachment>();
-	public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
+	//public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
+    public HashMap<BlockCoord, StackMap> travelingItems = new HashMap<BlockCoord, StackMap>();
 	public boolean shouldRepoll = true;
 	public boolean repoll = false;
 
@@ -69,13 +69,13 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
 		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ITEM_POLL);
 		BlockCoord dest = item.getDest();
-		LinkedList<TravelingItem> list = travelingItems.get(dest);
+        StackMap list = travelingItems.get(dest);
 		if (list == null) {
-			list = new LinkedList<TravelingItem>();
+			list = new StackMap();
 			travelingItems.put(dest, list);
 		}
 
-		if (list.add(item))
+		if (list.addItemstack(item.stack, item.myPath.getLastSide()))
 			travelingItemsCount++;
 	}
 

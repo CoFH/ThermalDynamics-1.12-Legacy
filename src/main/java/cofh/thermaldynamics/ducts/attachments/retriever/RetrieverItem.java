@@ -10,12 +10,13 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileMultiBlock;
 import cofh.thermaldynamics.ducts.attachments.servo.ServoItem;
 import cofh.thermaldynamics.ducts.item.SimulatedInv;
+import cofh.thermaldynamics.ducts.item.StackMap;
 import cofh.thermaldynamics.ducts.item.TileItemDuct;
 import cofh.thermaldynamics.ducts.item.TravelingItem;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
+import gnu.trove.iterator.TObjectIntIterator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -63,12 +64,12 @@ public class RetrieverItem extends ServoItem {
 
         SimulatedInv simulatedInv = cacheType == TileItemDuct.CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cachedSidedInv) : SimulatedInv.wrapInv(cachedInv);
 
-        LinkedList<TravelingItem> travelingItems = itemDuct.internalGrid.travelingItems.get(new BlockCoord(itemDuct).offset(side));
+        StackMap travelingItems = itemDuct.internalGrid.travelingItems.get(new BlockCoord(itemDuct).offset(side));
         if (travelingItems != null) {
-            for (TravelingItem travelingItem : travelingItems) {
-                if (travelingItem.myPath != null) {
-                    InventoryHelper.insertItemStackIntoInventory(simulatedInv, travelingItem.stack.copy(), travelingItem.myPath.getLastSide() ^ 1);
-                }
+
+            for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
+                iterator.advance();
+                InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), iterator.key().side);
             }
         }
 
