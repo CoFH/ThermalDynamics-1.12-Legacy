@@ -11,8 +11,7 @@ tile.thermaldynamics.duct.energySuperconductorEmpty.name=Cryo-Stabilized Fluxduc
 
 tile.thermaldynamics.duct.fluidBasic.name=Copper Fluiduct
 tile.thermaldynamics.duct.fluidHardened.name=Hardened Fluiduct
-tile.thermaldynamics.duct.fluidFlux.name=Flux-Coupled Fluiduct
-tile.thermaldynamics.duct.fluidFluxEmpty.name=Flux-Coupled Fluiduct (Empty)
+tile.thermaldynamics.duct.fluidFlux.name=Flux-Plated Fluiduct
 
 tile.thermaldynamics.duct.itemBasic.name=Itemduct
 tile.thermaldynamics.duct.itemFast.name=Impulse Itemduct
@@ -25,7 +24,7 @@ tile.thermaldynamics.duct.energySupercond.info=Has very low residual capacitance
 
 tile.thermaldynamics.duct.fluidBasic.info=Will break if contents are extremely hot or cold.
 tile.thermaldynamics.duct.fluidHardened.info=Contents may be any temperature.
-tile.thermaldynamics.duct.fluidFlux.info=
+tile.thermaldynamics.duct.fluidFlux.info=Transfers Fluids and Redstone Flux (RF).
 
 tile.thermaldynamics.duct.itemBasic.info=Transfers Items
 tile.thermaldynamics.duct.itemFast.info=Glowstone-filled. Items travel more rapidly.

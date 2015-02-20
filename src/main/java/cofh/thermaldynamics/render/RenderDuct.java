@@ -172,6 +172,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 					icon = RenderUtils.getIconTransformation(TDDucts.structure.iconBaseTexture);
 					modelConnection[0][s].render(8, 24, trans, icon);
 					modelConnection[0][s].render(32, 48, trans, icon);
+                    if (ductType.iconConnectionTexture != null) {
+                        modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(ductType.iconConnectionTexture));
+                    }
 				} else {
 					c = c | (1 << s);
 					if (invRender) {

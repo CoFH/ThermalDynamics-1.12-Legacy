@@ -79,16 +79,12 @@ public class TDCrafting {
 				glassHardened));
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidHardenedOpaque.itemStack, 6), " I ", "IGI", " I ", 'I', "ingotInvar",
 				'G', "ingotLead"));
-		// GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidEnergyEmpty.itemStack, 3), "LGL", "PPP", "LGL", 'L', "ingotLead", 'G',
-		// "blockGlassHardened", 'P', TDDucts.fluidHardened.itemStack));
-		// GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidEnergyOpaqueEmpty.itemStack, 3), "LGL", "PPP", "LGL", 'L', "ingotLead",
-		// 'G', "blockGlassHardened", 'P', TDDucts.fluidHardenedOpaque.itemStack));
 
-		/* FLUID - TE Integration */
-		// ThermalExpansionHelper.addTransposerFill(800, TDDucts.fluidEnergyEmpty.itemStack, TDDucts.fluidEnergy.itemStack, new FluidStack(
-		// TFFluids.fluidRedstone, 100), false);
-		// ThermalExpansionHelper.addTransposerFill(800, TDDucts.fluidEnergyOpaqueEmpty.itemStack, TDDucts.fluidEnergyOpaque.itemStack, new FluidStack(
-		// TFFluids.fluidRedstone, 100), false);
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.fluidFlux.itemStack, 3), TDDucts.fluidHardened.itemStack,
+                TDDucts.fluidHardened.itemStack, TDDucts.fluidHardened.itemStack, "dustSignalum", "ingotElectrum"));
+
+        GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.fluidFluxOpaque.itemStack, 3), TDDucts.fluidHardenedOpaque.itemStack,
+                TDDucts.fluidHardenedOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, "dustSignalum", "ingotElectrum"));
 
 		/* ITEMS */
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened));

@@ -5,9 +5,12 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 public class SubTileEnergyRedstone extends SubTileEnergy {
 
-	public EnergySubGridDistribute internalGrid;
+    public final int NODE_TRANSFER = 2000;
+    public final int NODE_STORAGE = 12000;
 
-	public SubTileEnergyRedstone(TileMultiBlock parent) {
+    public EnergySubGridDistribute internalGrid;
+
+    public SubTileEnergyRedstone(TileMultiBlock parent) {
 
 		super(parent);
 	}
@@ -15,7 +18,7 @@ public class SubTileEnergyRedstone extends SubTileEnergy {
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		return new EnergySubGridDistribute(parent.world(), 2400, 400);
+		return new EnergySubGridDistribute(parent.world(), NODE_STORAGE, NODE_TRANSFER);
 	}
 
 	@Override

@@ -28,6 +28,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	public void checkSubNode() {
 
 		boolean newSubNode = false;
+        if(cachesExist())
 		for (int i = 0; i < 6; i++) {
 			if (energyCache[i] != null) {
 				newSubNode = true;

@@ -10,8 +10,6 @@ import java.util.List;
 
 public class TDDucts {
 
-    ;
-
     private TDDucts() {
 
 	}
@@ -147,19 +145,14 @@ public class TDDucts {
 		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0
         );
 
-		// fluidEnergy = addDuct(OFFSET_FLUID + 4, false, 1, 1, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "invar", "invar", null, 0, Duct.SIDE_DUCTS,
-		// "thermalfoundation:fluid/Fluid_Redstone_Still", 192);
-		// fluidEnergyEmpty = addDuct(OFFSET_FLUID + 5, false, 1, 1, "fluidFluxEmpty", Type.STRUCTURAL, DuctFactory.structural, "invar", "invar", null, 0,
-		// Duct.SIDE_DUCTS, null, 0);
-		//
-		// fluidEnergyOpaque = addDuct(OFFSET_FLUID + 6, true, 1, 1, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "invar", "invar", null, 0,
-		// Duct.SIDE_DUCTS,
-		// "thermalfoundation:fluid/Fluid_Redstone_Still", 192);
-		// fluidEnergyOpaqueEmpty = addDuct(OFFSET_FLUID + 7, true, 1, 1, "fluidFluxEmpty", Type.STRUCTURAL, DuctFactory.structural, "invar", "invar", null, 0,
-		// Duct.SIDE_DUCTS, null, 0);
+        fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null, null, 0);
+        fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null, null, 0);
 
 		fluidHardened.setRarity(1);
 		fluidHardenedOpaque.setRarity(1);
+
+        fluidFlux.setRarity(1);
+        fluidFluxOpaque.setRarity(1);
 	}
 
 	static void addItemDucts() {
@@ -220,11 +213,8 @@ public class TDDucts {
 	public static Duct fluidHardened;
 	public static Duct fluidHardenedOpaque;
 
-	// public static Duct fluidEnergy;
-	// public static Duct fluidEnergyEmpty;
-	//
-	// public static Duct fluidEnergyOpaque;
-	// public static Duct fluidEnergyOpaqueEmpty;
+	public static Duct fluidFlux;
+    public static Duct fluidFluxOpaque;
 
 	/* ITEM */
 	public static DuctItem itemBasic;
