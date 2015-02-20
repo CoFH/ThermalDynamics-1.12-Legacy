@@ -75,7 +75,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 			travelingItems.put(dest, list);
 		}
 
-		if (list.addItemstack(item.stack, item.myPath.getLastSide()))
+		if (item.myPath != null && list.addItemstack(item.stack, item.myPath.getLastSide()))
 			travelingItemsCount++;
 	}
 
