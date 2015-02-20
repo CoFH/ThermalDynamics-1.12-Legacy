@@ -161,20 +161,21 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 		}
 	}
 
-    @Override
-    public boolean cachesExist() {
-        return cache != null;
-    }
+	@Override
+	public boolean cachesExist() {
 
-    @Override
-    public void createCaches() {
-        cache = new IFluidHandler[6];
-        filterCache = new IFilterFluid[]{IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter,
-                IFilterFluid.nullFilter, IFilterFluid.nullFilter};
-    }
+		return cache != null;
+	}
 
+	@Override
+	public void createCaches() {
 
-    @Override
+		cache = new IFluidHandler[6];
+		filterCache = new IFilterFluid[] { IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter, IFilterFluid.nullFilter,
+				IFilterFluid.nullFilter, IFilterFluid.nullFilter };
+	}
+
+	@Override
 	public void cacheImportant(TileEntity tile, int side) {
 
 		if (attachments[side] instanceof IFilterAttachment)
