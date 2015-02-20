@@ -25,11 +25,14 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import com.google.common.collect.Iterables;
+
 import gnu.trove.iterator.TObjectIntIterator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -40,6 +43,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IItemDuct {
@@ -82,7 +86,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
 
 		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
-		                                                                                                                                          .ordinal()].allowTransfer))) {
+				.ordinal()].allowTransfer))) {
 			return item;
 		}
 
@@ -144,7 +148,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 *
+	 * 
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override
@@ -472,24 +476,24 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		handlePacketType(payload, b);
 	}
 
-    @Override
-    public boolean cachesExist() {
-        return cache != null;
-    }
+	@Override
+	public boolean cachesExist() {
 
-    @Override
-    public void createCaches() {
+		return cache != null;
+	}
 
-        filterCache = new IFilterItems[]{IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter,
-                IFilterItems.nullFilter, IFilterItems.nullFilter};
-        cache = new IInventory[6];
-        cache2 = new ISidedInventory[6];
-        cache3 = new IDeepStorageUnit[6];
-        cacheType = new CacheType[]{CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE,};
-    }
+	@Override
+	public void createCaches() {
 
+		filterCache = new IFilterItems[] { IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter, IFilterItems.nullFilter,
+				IFilterItems.nullFilter, IFilterItems.nullFilter };
+		cache = new IInventory[6];
+		cache2 = new ISidedInventory[6];
+		cache3 = new IDeepStorageUnit[6];
+		cacheType = new CacheType[] { CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, CacheType.NONE, };
+	}
 
-    public void handlePacketType(PacketCoFHBase payload, int b) {
+	public void handlePacketType(PacketCoFHBase payload, int b) {
 
 		if (b == TileInfoPackets.PULSE_LINE) {
 			int c = payload.getByte();
@@ -701,9 +705,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	public int simTransferI(int side, ItemStack insertingItem) {
 
-        DebugHelper.startTimer();
+		DebugHelper.startTimer();
 		ItemStack itemStack = simTransfer(side, insertingItem);
-        DebugHelper.stopTimerTick("simTransfer");
+		DebugHelper.stopTimerTick("simTransfer");
 		return itemStack == null ? 0 : itemStack.stackSize;
 	}
 
@@ -711,66 +715,67 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 		if (insertingItem == null)
 			return null;
-		if (internalGrid == null || !cachesExist())
+		if (internalGrid == null || !cachesExist()) {
 			return insertingItem;
-
+		}
 		boolean routeItems = filterCache[side].shouldIncRouteItems();
 
 		if (cache3[side] != null) { // IDeepStorage
 			ItemStack cacheStack = cache3[side].getStoredItemType();
-			if (cacheStack != null && !ItemHelper.itemsEqualWithMetadata(cacheStack, insertingItem))
+			if (cacheStack != null && !ItemHelper.itemsIdentical(cacheStack, insertingItem)) {
 				return insertingItem;
-
+			}
 			int s = cacheStack != null ? cacheStack.stackSize : 0;
 			int m = cache3[side].getMaxStoredCount();
-			if (s >= m)
+			if (s >= m) {
 				return insertingItem;
-
+			}
 			if (routeItems) {
-                StackMap travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
+				StackMap travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
 				if (travelingItems != null && !travelingItems.isEmpty()) {
 					for (Iterator<ItemStack> iterator = travelingItems.getItems(); s < m && iterator.hasNext();) {
 						ItemStack travelingItem = iterator.next();
-						boolean equalsItem = ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem);
-						if (cacheStack == null && !equalsItem)
+						boolean equalsItem = ItemHelper.itemsIdentical(insertingItem, travelingItem);
+						if (cacheStack == null && !equalsItem) {
 							return insertingItem;
-						if (equalsItem)
+						}
+						if (equalsItem) {
 							s += travelingItem.stackSize;
+						}
 					}
-					if (s >= m)
+					if (s >= m) {
 						return insertingItem;
+					}
 				}
 			}
-
 			insertingItem.stackSize -= (m - s);
-			if (insertingItem.stackSize <= 0)
+			if (insertingItem.stackSize <= 0) {
 				return null;
-
+			}
 			return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
 		} else {
-			if (!routeItems)
+			if (!routeItems) {
 				return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
-
-            StackMap travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
-			if (travelingItems == null || travelingItems.isEmpty())
+			}
+			StackMap travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
+			if (travelingItems == null || travelingItems.isEmpty()) {
 				return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
-
+			}
 			if (travelingItems.size() == 1) {
-				if (ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItems.getItems().next())) {
+				if (ItemHelper.itemsIdentical(insertingItem, travelingItems.getItems().next())) {
 					insertingItem.stackSize += travelingItems.getItems().next().stackSize;
 					return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
 				}
 			} else {
 				int s = 0;
 				for (ItemStack travelingItem : travelingItems.getItems()) {
-					if (!ItemHelper.itemsEqualWithMetadata(insertingItem, travelingItem)) {
+					if (!ItemHelper.itemsIdentical(insertingItem, travelingItem)) {
 						s = -1;
 						break;
 					} else {
 						s += travelingItem.stackSize;
 					}
 				}
-
 				if (s >= 0) {
 					insertingItem.stackSize += s;
 					return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
@@ -780,14 +785,13 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			// Super hacky - must optimize at some point
 			SimulatedInv simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cache2[side]) : SimulatedInv.wrapInv(cache[side]);
 
-
-            for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
-                iterator.advance();
-                if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()) , iterator.key().side) != null
-                        && ItemHelper.itemsEqualWithMetadata(insertingItem, iterator.key().toItemStack(iterator.value()),true))
-                    return insertingItem;
-            }
-
+			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext();) {
+				iterator.advance();
+				if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), iterator.key().side) != null
+						&& ItemHelper.itemsIdentical(insertingItem, iterator.key().toItemStack(iterator.value()))) {
+					return insertingItem;
+				}
+			}
 			insertingItem = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
 			simulatedInv.clear();
 			return insertingItem;
