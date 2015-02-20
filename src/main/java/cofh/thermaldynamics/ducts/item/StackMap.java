@@ -5,6 +5,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import java.util.Iterator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
@@ -57,7 +58,13 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
             if (metadata != itemEntry.metadata) return false;
             if (nbtHashCode != itemEntry.nbtHashCode) return false;
             if (!item.equals(itemEntry.item)) return false;
-            if (tag != null ? !tag.equals(itemEntry.tag) : itemEntry.tag != null) return false;
+            if (tag != null) {
+                if(tag != itemEntry.tag) {
+                    if (!tag.equals(itemEntry.tag)) return false;
+                }
+            } else {
+                if (itemEntry.tag != null) return false;
+            }
 
             return true;
         }
@@ -67,7 +74,6 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
             int result = item.hashCode();
             result = 31 * result + side;
             result = 31 * result + metadata;
-            result = 31 * result + (tag != null ? tag.hashCode() : 0);
             result = 31 * result + nbtHashCode;
             return result;
         }
@@ -80,6 +86,11 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
     public class IteratorItemstack implements Iterator<ItemStack>, Iterable<ItemStack> {
 
         public final TObjectIntIterator<ItemEntry> iterator;
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
 
         public IteratorItemstack() {
             iterator = StackMap.this.iterator();
@@ -100,5 +111,16 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
         public Iterator<ItemStack> iterator() {
             return this;
         }
+    }
+
+    public long quickHash(NBTTagCompound tag){
+
+
+        return 0;
+    }
+
+    public long quickHash(NBTBase tag){
+        long t = tag.getId();
+
     }
 }
