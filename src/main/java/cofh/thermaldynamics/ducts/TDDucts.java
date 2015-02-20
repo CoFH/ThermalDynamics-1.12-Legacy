@@ -10,7 +10,7 @@ import java.util.List;
 
 public class TDDucts {
 
-    private TDDucts() {
+	private TDDucts() {
 
 	}
 
@@ -18,7 +18,7 @@ public class TDDucts {
 	public static ArrayList<Duct> ductListSorted = null;
 
 	static Duct addDuct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-                        String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
@@ -27,7 +27,7 @@ public class TDDucts {
 	}
 
 	static DuctItem addDuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-                                String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		DuctItem newDuct = new DuctItem(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
@@ -136,23 +136,23 @@ public class TDDucts {
 
 	static void addFluidDucts() {
 
-		fluidBasic = addDuct(OFFSET_FLUID + 0, false, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null, 0
-        );
+		fluidBasic = addDuct(OFFSET_FLUID + 0, false, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null, 0);
 		fluidBasicOpaque = addDuct(OFFSET_FLUID + 1, true, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null,
 				0);
 
 		fluidHardened = addDuct(OFFSET_FLUID + 2, false, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
-		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0
-        );
+		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
 
-        fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null, null, 0);
-        fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null, null, 0);
+		fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null,
+				null, 0);
+		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null,
+				null, 0);
 
 		fluidHardened.setRarity(1);
 		fluidHardenedOpaque.setRarity(1);
 
-        fluidFlux.setRarity(1);
-        fluidFluxOpaque.setRarity(1);
+		fluidFlux.setRarity(1);
+		fluidFluxOpaque.setRarity(1);
 	}
 
 	static void addItemDucts() {
@@ -164,27 +164,28 @@ public class TDDucts {
 				"thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0);
 		itemFastOpaque = addDuctItem(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
 
-		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0
-        );
+		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
 		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null,
 				null, 0);
 
-        itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin", "thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0);
+		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin",
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0);
 
-        itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
+		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
 
-        itemFast.setRarity(1);
-        itemFastOpaque.setRarity(1);
+		itemFast.setRarity(1);
+		itemFastOpaque.setRarity(1);
+
 		itemEnder.setRarity(2);
 		itemEnderOpaque.setRarity(2);
-        itemEnergy.setRarity(1);
-        itemEnergyOpaque.setRarity(1);
+
+		itemEnergy.setRarity(1);
+		itemEnergyOpaque.setRarity(1);
 	}
 
 	static void addSupportDucts() {
 
-		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0
-        );
+		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
 	}
 
 	public static int OFFSET_ENERGY = 0 * 16;
@@ -214,17 +215,20 @@ public class TDDucts {
 	public static Duct fluidHardenedOpaque;
 
 	public static Duct fluidFlux;
-    public static Duct fluidFluxOpaque;
+	public static Duct fluidFluxOpaque;
 
 	/* ITEM */
 	public static DuctItem itemBasic;
 	public static DuctItem itemBasicOpaque;
+
 	public static DuctItem itemFast;
 	public static DuctItem itemFastOpaque;
+
 	public static DuctItem itemEnder;
 	public static DuctItem itemEnderOpaque;
-    public static DuctItem itemEnergy;
-    public static DuctItem itemEnergyOpaque;
+
+	public static DuctItem itemEnergy;
+	public static DuctItem itemEnergyOpaque;
 
 	// public static Duct itemEnergy;
 	// public static Duct itemEnergyOpaque;
@@ -236,7 +240,6 @@ public class TDDucts {
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,
 			0);
 
-	public static Duct placeholder = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0
-    );
+	public static Duct placeholder = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
 
 }
