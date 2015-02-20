@@ -91,6 +91,11 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 				hasChanged = true;
 			}
 		}
+
+        if(hasChanged) {
+            internalGrid.shouldRepoll = true;
+        }
+
 		updateRender();
 	}
 
