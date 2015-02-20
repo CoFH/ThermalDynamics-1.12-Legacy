@@ -117,5 +117,11 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 
             return this;
         }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove");
+        }
+
     }
 }
