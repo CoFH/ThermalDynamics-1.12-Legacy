@@ -14,7 +14,7 @@ public class SlotFilterFluid extends SlotFilter {
 	@Override
 	public void putStack(ItemStack stack) {
 
-		if (isItemValid(stack)) {
+		if (stack == null || isItemValid(stack)) {
 			super.putStack(stack);
 		}
 	}
