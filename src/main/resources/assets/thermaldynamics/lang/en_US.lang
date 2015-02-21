@@ -38,6 +38,10 @@ tile.thermaldynamics.duct.vacuum.name=Vacuum
 
 item.thermaldynamics.cover.name=Cover
 
+item.thermaldynamics.filter.info=Restricts what may pass through it.
+item.thermaldynamics.retriever.info=Pulls distant items/fluids to itself.
+item.thermaldynamics.servo.info=Extracts items/fluids from something.
+
 item.thermaldynamics.filter.0.name=Basic Filter
 item.thermaldynamics.filter.1.name=Hardened Filter
 item.thermaldynamics.filter.2.name=Reinforced Filter
@@ -63,6 +67,7 @@ info.thermaldynamics.duct.energy=Transfers Redstone Flux (RF).
 info.thermaldynamics.duct.fluid=Transfers Fluids.
 info.thermaldynamics.duct.item=Transfers Items.
 info.thermaldynamics.duct.structure=Provides Structure.
+info.thermaldynamics.duct.crafting=Crafting Item.
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata

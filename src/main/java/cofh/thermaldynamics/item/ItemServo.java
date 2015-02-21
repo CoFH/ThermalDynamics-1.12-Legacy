@@ -13,7 +13,9 @@ import cofh.thermaldynamics.ducts.item.TileItemDuct;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -88,10 +90,12 @@ public class ItemServo extends ItemAttachment {
 
 		int type = stack.getItemDamage() % 5;
 
-		if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
-			list.add(StringHelper.shiftForDetails());
-		}
 		if (!StringHelper.isShiftKeyDown()) {
+			list.add(StringHelper.getInfoText("item.thermaldynamics.servo.info"));
+
+			if (StringHelper.displayShiftForDetail) {
+				list.add(StringHelper.shiftForDetails());
+			}
 			return;
 		}
 		if (ServoBase.canAlterRS(type)) {
@@ -109,7 +113,7 @@ public class ItemServo extends ItemAttachment {
 						.toString(ServoItem.tickDelays[type] / 20F)) + "s" + StringHelper.END);
 		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.maxStackSize") + ": " + StringHelper.WHITE + ServoItem.maxSize[type]
 				+ StringHelper.END);
-		addFiltering(list, type);
+		addFiltering(list, type, Duct.Type.ITEM);
 
 		if (ServoItem.multiStack[type]) {
 			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotMulti"));
@@ -120,19 +124,20 @@ public class ItemServo extends ItemAttachment {
 			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.speedBoost") + ": " + StringHelper.WHITE + ServoItem.speedBoost[type] + "x "
 					+ StringHelper.END);
 		}
-		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluid") + StringHelper.END);
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
 		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.extractRate") + ": " + StringHelper.WHITE
 				+ Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%" + StringHelper.END);
+		addFiltering(list, type, Duct.Type.FLUID);
 	}
 
-	public static void addFiltering(List list, int type) {
+	public static void addFiltering(List list, int type, Duct.Type duct) {
 
 		StringBuilder b = new StringBuilder();
 
 		b.append("Filter Options: " + StringHelper.WHITE);
 		boolean flag = false;
 		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
-			if (FilterLogic.canAlterFlag(Duct.Type.ITEM, type, i)) {
+			if (FilterLogic.canAlterFlag(duct, type, i)) {
 				if (flag) {
 					b.append(", ");
 				} else {

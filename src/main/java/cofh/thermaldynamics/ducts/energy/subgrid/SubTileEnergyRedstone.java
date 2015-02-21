@@ -5,12 +5,12 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 public class SubTileEnergyRedstone extends SubTileEnergy {
 
-    public final int NODE_TRANSFER = 2000;
-    public final int NODE_STORAGE = 12000;
+	public static int NODE_TRANSFER = 2000;
+	public static int NODE_STORAGE = 12000;
 
-    public EnergySubGridDistribute internalGrid;
+	public EnergySubGridDistribute internalGrid;
 
-    public SubTileEnergyRedstone(TileMultiBlock parent) {
+	public SubTileEnergyRedstone(TileMultiBlock parent) {
 
 		super(parent);
 	}

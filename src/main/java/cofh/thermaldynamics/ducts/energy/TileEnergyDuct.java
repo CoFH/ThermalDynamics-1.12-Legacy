@@ -5,6 +5,7 @@ import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.block.TileMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,8 +36,7 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
 
-		return // neighborTypes[from.ordinal()] == NeighborTypes.TILE &&
-		connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
 	}
 
 	@Override
@@ -101,7 +101,8 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
 		int usedPower = 0;
 
-        if(!cachesExist()) return usedPower;
+		if (!cachesExist())
+			return usedPower;
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
@@ -160,12 +161,13 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 		}
 	}
 
-    @Override
-    public boolean cachesExist() {
-        return cache != null;
-    }
+	@Override
+	public boolean cachesExist() {
 
-    IEnergyReceiver[] cache;
+		return cache != null;
+	}
+
+	IEnergyReceiver[] cache;
 
 	@Override
 	public void cacheImportant(TileEntity tile, int side) {
@@ -174,11 +176,11 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 			cache[side] = (IEnergyReceiver) tile;
 	}
 
-    @Override
-    public void createCaches() {
+	@Override
+	public void createCaches() {
 
-        cache = new IEnergyReceiver[6];
-    }
+		cache = new IEnergyReceiver[6];
+	}
 
 	@Override
 	public void clearCache(int side) {

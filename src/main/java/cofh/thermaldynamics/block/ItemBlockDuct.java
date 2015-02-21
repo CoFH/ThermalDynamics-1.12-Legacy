@@ -6,6 +6,7 @@ import cofh.thermaldynamics.ducts.Duct;
 import cofh.thermaldynamics.ducts.DuctItem;
 import cofh.thermaldynamics.ducts.TDDucts;
 import cofh.thermaldynamics.ducts.energy.EnergyGrid;
+import cofh.thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
 
 import java.util.List;
 
@@ -109,6 +110,10 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
 			} else if (duct.type == 1) {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
+			} else if (duct.type == 2) {
+				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
+				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
+						+ StringHelper.LIGHT_GRAY + " RF/t.");
 			}
 			break;
 		case ITEM:
@@ -120,10 +125,17 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
 			} else if (duct.type == 2) {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
+			} else if (duct.type == 3) {
+				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
+				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
+						+ StringHelper.LIGHT_GRAY + " RF/t.");
 			}
 			break;
 		case STRUCTURAL:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+			break;
+		case CRAFTING:
+			list.add(StringHelper.localize("info.thermaldynamics.duct.crafting"));
 			break;
 		default:
 		}

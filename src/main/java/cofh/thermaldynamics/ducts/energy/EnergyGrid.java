@@ -3,6 +3,7 @@ package cofh.thermaldynamics.ducts.energy;
 import cofh.api.energy.EnergyStorage;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.world.World;
 
 public class EnergyGrid extends MultiBlockGrid {
@@ -13,8 +14,12 @@ public class EnergyGrid extends MultiBlockGrid {
 
 	private final int type;
 
-	public static final int NODE_STORAGE[] = { 960, 4800, 24000, 120000, 2400 };
-	public static final int NODE_TRANSFER[] = { 160, 800, 4000, 20000, 400 };
+	public static int NODE_STORAGE[] = { 1200, 4800, 48000, 192000, 2400 };
+	public static int NODE_TRANSFER[] = { 200, 800, 8000, 32000, 400 };
+
+	static {
+		String category2 = "Duct.";
+	}
 
 	public EnergyGrid(World world, int type) {
 
@@ -51,7 +56,7 @@ public class EnergyGrid extends MultiBlockGrid {
 
 	public int getSendableEnergy() {
 
-		return Math.min(myStorage.getMaxExtract(), currentEnergy == 0? extraEnergy : currentEnergy);
+		return Math.min(myStorage.getMaxExtract(), currentEnergy == 0 ? extraEnergy : currentEnergy);
 	}
 
 	public void useEnergy(int energyUsed) {

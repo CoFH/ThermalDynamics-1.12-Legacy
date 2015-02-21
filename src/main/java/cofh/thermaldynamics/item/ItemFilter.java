@@ -3,14 +3,19 @@ package cofh.thermaldynamics.item;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.ducts.Duct;
 import cofh.thermaldynamics.ducts.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.ducts.attachments.filter.FilterItem;
+import cofh.thermaldynamics.ducts.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.ducts.fluid.TileFluidDuct;
 import cofh.thermaldynamics.ducts.item.TileItemDuct;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -84,15 +89,43 @@ public class ItemFilter extends ItemAttachment {
 
 		int type = stack.getItemDamage() % 5;
 
-		if (StringHelper.displayShiftForDetail && !StringHelper.isShiftKeyDown()) {
-			list.add(StringHelper.shiftForDetails());
-		}
 		if (!StringHelper.isShiftKeyDown()) {
+			list.add(StringHelper.getInfoText("item.thermaldynamics.filter.info"));
+
+			if (StringHelper.displayShiftForDetail) {
+				list.add(StringHelper.shiftForDetails());
+			}
 			return;
 		}
 		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
+		addFiltering(list, type, Duct.Type.ITEM);
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
+		addFiltering(list, type, Duct.Type.FLUID);
+	}
 
-		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluid") + StringHelper.END);
+	public static void addFiltering(List list, int type, Duct.Type duct) {
+
+		StringBuilder b = new StringBuilder();
+
+		b.append("Filter Options: " + StringHelper.WHITE);
+		boolean flag = false;
+		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
+			if (FilterLogic.canAlterFlag(duct, type, i)) {
+				if (flag) {
+					b.append(", ");
+				} else {
+					flag = true;
+				}
+				b.append(StringHelper.localize("info.thermaldynamics.filter." + FilterLogic.flagTypes[i]));
+			}
+		}
+		flag = false;
+		for (String s : (List<String>) Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
+			if (flag)
+				s = "  " + StringHelper.WHITE + s;
+			flag = true;
+			list.add("  " + s + StringHelper.END);
+		}
 	}
 
 	/* IInitializer */

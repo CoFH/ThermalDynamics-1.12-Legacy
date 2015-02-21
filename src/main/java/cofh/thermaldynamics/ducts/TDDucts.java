@@ -230,9 +230,6 @@ public class TDDucts {
 	public static DuctItem itemEnergy;
 	public static DuctItem itemEnergyOpaque;
 
-	// public static Duct itemEnergy;
-	// public static Duct itemEnergyOpaque;
-
 	/* STRUCTURE */
 	public static Duct structure;
 
