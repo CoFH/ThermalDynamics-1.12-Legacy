@@ -7,16 +7,16 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileMultiBlock;
 import com.google.common.base.Throwables;
 import cpw.mods.fml.relauncher.ReflectionHelper;
-
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -74,13 +74,54 @@ public class CommandThermalDebug extends CommandBase {
 		throw new RuntimeException("Unable to interpret word " + s + " as true/false");
 	}
 
+    public String randString() {
+        StringBuilder builder = new StringBuilder("rand_");
+        int z = MathHelper.RANDOM.nextInt(10) + 1;
+        for (int i = 0; i < z; i++) {
+            builder.append((char) ('a' + MathHelper.RANDOM.nextInt(26)));
+        }
+        return builder.toString();
+    }
+
 	@Override
 	public void processCommand(ICommandSender p_71515_1_, String[] args) {
 
 		if (args.length == 0)
 			return;
 
-		if ("showLoading".equals(args[0])) {
+        if("addRandNBT".equals(args[0])){
+            if (!(p_71515_1_ instanceof EntityPlayerMP))
+                return;
+
+            EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
+
+            ItemStack heldItem = player.getHeldItem();
+            if(heldItem == null)
+                return;
+
+            heldItem.setStackDisplayName(randString());
+            for (int j = 0; j < 4; j++) {
+                NBTTagCompound tag = new NBTTagCompound();
+                for (int i = 0; i < 5; i++)
+                    tag.setString(randString(), randString());
+                for (int i = 0; i < 5; i++)
+                    tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
+                heldItem.stackTagCompound.setTag(randString(), tag);
+            }
+
+            NBTTagCompound tag = heldItem.stackTagCompound;
+            for (int i = 0; i < 5; i++)
+                tag.setString(randString(), randString());
+            for (int i = 0; i < 5; i++)
+                tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
+
+            if(MathHelper.RANDOM.nextInt(4) == 0)
+                tag.setTag("ench", new NBTTagCompound());
+
+            player.updateHeldItem();
+
+        }
+		else if ("showLoading".equals(args[0])) {
 			DebugTickHandler.showLoading = !DebugTickHandler.showLoading;
 		} else if ("unload".equals(args[0])) {
 			if (!(p_71515_1_ instanceof EntityPlayerMP))
