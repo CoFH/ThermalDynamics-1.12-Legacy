@@ -2,8 +2,6 @@ package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
-import cofh.thermaldynamics.debughelper.DebugTickHandler;
-
 import java.util.HashSet;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -61,7 +59,6 @@ public abstract class MultiBlockGrid {
 
 	public void mergeGrids(MultiBlockGrid theGrid) {
 
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.GRID_MERGED);
 		if (!theGrid.nodeSet.isEmpty()) {
 			for (IMultiBlock aBlock : theGrid.nodeSet) {
 				aBlock.setGrid(this);
@@ -85,7 +82,6 @@ public abstract class MultiBlockGrid {
 
 	public void destroy() {
 
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.GRID_DESTROYED);
 		nodeSet.clear();
 		idleSet.clear();
 

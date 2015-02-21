@@ -1,12 +1,10 @@
 package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.block.TileMultiBlock;
-import cofh.thermaldynamics.debughelper.DebugTickHandler;
-
-import net.minecraftforge.common.util.ForgeDirection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class RouteCache {
     public IMultiBlockRoute origin;
@@ -30,7 +28,6 @@ public class RouteCache {
     }
 
     public void init() {
-        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ROUTE_SEARCH);
         outputRoutes = new LinkedList<Route>();
         if (origin.isOutput()) {
             Route singleOutput = new Route(origin);
@@ -145,13 +142,11 @@ public class RouteCache {
 
 
     public void reset() {
-        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ROUTE_RESET);
         isFinishedGenerating = false;
         init();
     }
 
     public void invalidate() {
-        DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ROUTE_INVALIDATED);
         invalid = true;
         outputRoutes.clear();
         stuffableRoutes.clear();

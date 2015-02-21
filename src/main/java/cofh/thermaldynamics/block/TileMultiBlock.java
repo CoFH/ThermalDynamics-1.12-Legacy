@@ -14,8 +14,6 @@ import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.core.TickHandler;
-import cofh.thermaldynamics.debughelper.DebugHelper;
-import cofh.thermaldynamics.debughelper.DebugTickHandler;
 import cofh.thermaldynamics.ducts.Duct;
 import cofh.thermaldynamics.ducts.TDDucts;
 import cofh.thermaldynamics.ducts.attachments.facades.Cover;
@@ -26,12 +24,10 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -45,7 +41,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
@@ -149,7 +144,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		super.invalidate();
 
 		if (ServerHelper.isServerWorld(worldObj)) {
-			DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.TILE_INVALIDATED);
 			for (SubTileMultiBlock subTile : subTiles) {
 				subTile.invalidate();
 			}
@@ -310,8 +304,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			return;
 		}
 
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_CHANGE);
-
 		TileEntity theTile;
 		boolean wasNode = isNode;
 		isNode = false;
@@ -469,8 +461,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			return;
 		}
 
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_WEAK_CHANGE);
-
 		int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
 		boolean wasNode = isNode;
@@ -578,12 +568,11 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public void formGrid() {
 
 		if (myGrid == null && ServerHelper.isServerWorld(worldObj)) {
-			DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.GRID_FORMED);
-			DebugHelper.startTimer();
+//			DebugHelper.startTimer();
 			new MultiBlockFormer().formGrid(this);
 			// DEBUG CODE
-			DebugHelper.stopTimer("Grid");
-			DebugHelper.info("Grid Formed: " + (myGrid != null ? myGrid.nodeSet.size() + myGrid.idleSet.size() : "Failed"));
+//			DebugHelper.stopTimer("Grid");
+//			DebugHelper.info("Grid Formed: " + (myGrid != null ? myGrid.nodeSet.size() + myGrid.idleSet.size() : "Failed"));
 		}
 	}
 
@@ -591,10 +580,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public boolean tickPass(int pass) {
 
 		if (checkForChunkUnload()) {
-			DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.NEIGHBOUR_CHUNK_UNLOADED);
 			return false;
 		}
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.TILE_TICKED);
 
 		if (!tickingAttachments.isEmpty()) {
 			for (Attachment attachment : tickingAttachments) {
@@ -857,8 +844,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	/* NETWORK METHODS */
 	@Override
 	public PacketCoFHBase getPacket() {
-
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.PACKET_FORMED);
 		PacketCoFHBase payload = super.getPacket();
 
 		int attachmentMask = 0;

@@ -2,7 +2,6 @@ package cofh.thermaldynamics.ducts.item;
 
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.debughelper.DebugTickHandler;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
 		if (shouldRepoll) {
 			repoll = true;
-			DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ITEM_REPOLL);
 			if (!travelingItems.isEmpty())
 				travelingItems.clear();
 			travelingItemsCount = 0;
@@ -71,7 +69,6 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
         if(item.myPath == null)
             return;
 
-		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ITEM_POLL);
 		BlockCoord dest = item.getDest();
         StackMap list = travelingItems.get(dest);
 		if (list == null) {
