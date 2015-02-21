@@ -2,9 +2,7 @@ package cofh.thermaldynamics.ducts.item;
 
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.hash.TObjectIntHashMap;
-
 import java.util.Iterator;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +15,12 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
         return true;
     }
 
+    public boolean addItemEntry(ItemEntry entry, int amount) {
+
+        adjustOrPutValue(entry, amount, amount);
+        return true;
+    }
+
     public final static class ItemEntry {
 
         public Item item;
@@ -24,16 +28,16 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
         public NBTTagCompound tag;
         public int side;
 
-        private ItemEntry(ItemStack item, int side) {
+        public ItemEntry(ItemStack item, int side) {
 
             this(item.getItem(), item.getItemDamage(), item.stackTagCompound, side);
         }
 
-        private ItemEntry(Item item, int metadata, NBTTagCompound tag, int side) {
+        public ItemEntry(Item item, int metadata, NBTTagCompound tag, int side) {
 
             this.item = item;
             this.metadata = metadata;
-            this.tag = tag;
+            this.tag = (tag != null) ? (NBTTagCompound) tag.copy() : null;
             this.side = side;
         }
 
@@ -55,7 +59,6 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 
         @Override
         public boolean equals(Object o) {
-
             if (this == o)
                 return true;
             if (!(o instanceof ItemEntry))
@@ -72,9 +75,19 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
             if (!item.equals(itemEntry.item)) {
                 return false;
             }
-            if (tag != null ? !tag.equals(itemEntry.tag) : itemEntry.tag != null) {
+
+            if (tag != null) {
+                if(itemEntry.tag == null)
+                    return false;
+                else if (tag != itemEntry.tag) {
+                    if (tag.equals(itemEntry.tag)) {
+                        tag = itemEntry.tag;
+                    } else
+                        return false;
+                }
+            } else if (itemEntry.tag != null)
                 return false;
-            }
+
             return true;
         }
 

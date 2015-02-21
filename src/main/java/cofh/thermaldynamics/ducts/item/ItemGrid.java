@@ -66,6 +66,10 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	}
 
 	public void poll(TravelingItem item) {
+        travelingItemsCount++;
+
+        if(item.myPath == null)
+            return;
 
 		DebugTickHandler.tickEvent(DebugTickHandler.DebugEvent.ITEM_POLL);
 		BlockCoord dest = item.getDest();
@@ -75,8 +79,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 			travelingItems.put(dest, list);
 		}
 
-		if (item.myPath != null && list.addItemstack(item.stack, item.myPath.getLastSide()))
-			travelingItemsCount++;
+		list.addItemEntry(item.getStackEntry(), item.stack.stackSize);
 	}
 
 	@Override

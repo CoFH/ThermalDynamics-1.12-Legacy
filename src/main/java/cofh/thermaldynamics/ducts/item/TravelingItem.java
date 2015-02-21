@@ -10,7 +10,6 @@ import cofh.thermaldynamics.core.TickHandlerClient;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -35,8 +34,9 @@ public class TravelingItem {
 	public boolean mustGoToDest = false;
 	public boolean hasDest = false;
 	public boolean reRoute = false;
+    public StackMap.ItemEntry stackItemEntry;
 
-	public boolean shouldDie = false;
+    public boolean shouldDie = false;
 	public int step = 1;
 
 	public TravelingItem(ItemStack theItem, IMultiBlock start, Route itemPath, byte oldDirection, byte speed) {
@@ -375,5 +375,12 @@ public class TravelingItem {
 			myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
 		return myPath.dest;
 	}
+
+    public StackMap.ItemEntry getStackEntry(){
+        if(stackItemEntry == null)
+            stackItemEntry = new StackMap.ItemEntry(stack, 0);
+        stackItemEntry.side = myPath.getLastSide();
+        return stackItemEntry;
+    }
 
 }
