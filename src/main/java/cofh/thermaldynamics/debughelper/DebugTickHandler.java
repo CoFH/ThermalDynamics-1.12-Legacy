@@ -54,7 +54,7 @@ public class DebugTickHandler {
             it.advance();
             int i = DebugHelper.subTickCalls.get(it.key());
             double v = it.value() * 1e-6;
-            builder.append(it.key() + "={" + v + " ms" + ", n=" + i + ", avg=" + (v / (i ==0 ? 1 : i))+"} ");
+            builder.append(it.key()).append("={").append(v).append(" ms").append(", n=").append(i).append(", avg=").append(v / (i == 0 ? 1 : i)).append("} ");
 
             it.setValue(0);
             DebugHelper.subTickCalls.put(it.key(), 0);
