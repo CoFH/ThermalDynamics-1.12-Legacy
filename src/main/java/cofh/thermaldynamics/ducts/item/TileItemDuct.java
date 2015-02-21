@@ -704,10 +704,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	}
 
 	public int simTransferI(int side, ItemStack insertingItem) {
-
-		DebugHelper.startTimer();
 		ItemStack itemStack = simTransfer(side, insertingItem);
-		DebugHelper.stopTimerTick("simTransfer");
 		return itemStack == null ? 0 : itemStack.stackSize;
 	}
 
@@ -757,6 +754,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			if (!routeItems) {
 				return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
 			}
+
 			StackMap travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
 			if (travelingItems == null || travelingItems.isEmpty()) {
 				return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
@@ -787,6 +785,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext();) {
 				iterator.advance();
+
 				if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), iterator.key().side) != null
 						&& ItemHelper.itemsIdentical(insertingItem, iterator.key().toItemStack(iterator.value()))) {
 					return insertingItem;
