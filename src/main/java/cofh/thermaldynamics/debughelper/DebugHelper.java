@@ -3,6 +3,7 @@ package cofh.thermaldynamics.debughelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.map.hash.TObjectLongHashMap;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
@@ -163,9 +164,18 @@ public class DebugHelper {
     }
 
     public static TObjectLongHashMap<String> subTicks = new TObjectLongHashMap<String>();
+    public static TObjectLongHashMap<String> markTicks = new TObjectLongHashMap<String>();
+    public static TObjectIntHashMap<String> subTickCalls = new TObjectIntHashMap<String>();
+
+    public static void startTimerTick(String type){
+        subTickCalls.adjustOrPutValue(type, 1, 1);
+        long time = System.nanoTime();
+        markTicks.put(type, time);
+    }
 
     public static void stopTimerTick(String type){
-        long l = System.nanoTime() - time;
+        long time = System.nanoTime();
+        long l = time - markTicks.get(type);
         subTicks.adjustOrPutValue(type, l, l);
     }
 }

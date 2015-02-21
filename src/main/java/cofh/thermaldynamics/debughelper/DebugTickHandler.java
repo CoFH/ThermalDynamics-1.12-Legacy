@@ -46,15 +46,21 @@ public class DebugTickHandler {
     public void subTicks(TickEvent.ServerTickEvent event){
         if(DebugHelper.subTicks.isEmpty())
             return;
+
+        StringBuilder builder = new StringBuilder();
         TObjectLongIterator<String> it = DebugHelper.subTicks.iterator();
 
         while (it.hasNext()) {
             it.advance();
-            DebugHelper.info(it.key() + ": " + (it.value() * 1e-6) + " ms");
+            int i = DebugHelper.subTickCalls.get(it.key());
+            double v = it.value() * 1e-6;
+            builder.append(it.key() + "={" + v + " ms" + ", n=" + i + ", avg=" + (v / (i ==0 ? 1 : i))+"} ");
+
+            it.setValue(0);
+            DebugHelper.subTickCalls.put(it.key(), 0);
         }
 
-
-        DebugHelper.subTicks.clear();
+        DebugHelper.info(builder.toString());
     }
 
     @SubscribeEvent
