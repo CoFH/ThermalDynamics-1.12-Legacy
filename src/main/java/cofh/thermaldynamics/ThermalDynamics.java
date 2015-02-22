@@ -49,12 +49,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies,
-		guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
+guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
 public class ThermalDynamics extends BaseMod {
 
 	public static final String modId = "ThermalDynamics";
 	public static final String modName = "Thermal Dynamics";
-	public static final String version = "1.7.10R1.0.0B1";
+	public static final String version = "1.7.10R1.0.0RC1";
 	public static final String dependencies = "required-after:ThermalFoundation@[" + ThermalFoundation.version + ",)";
 	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/ThermalDynamics";
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
