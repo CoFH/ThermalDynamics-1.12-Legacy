@@ -25,7 +25,7 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 
 		public CachedCoverRecipeSimple(ItemStack block) {
 
-			super(new Object[] { block, TDDucts.structure.itemStack }, CoverHelper.getCoverStack(block));
+			super(new Object[] { block, TDDucts.structure.itemStack }, ItemHelper.cloneStack(CoverHelper.getCoverStack(block),6));
 		}
 	}
 
@@ -54,9 +54,9 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 				ItemStack item = positionedStack.item;
 				if (item != TDDucts.structure.itemStack) {
 					if (CoverHelper.isValid(item)) {
-						setResult(CoverHelper.getCoverStack(item));
-						return super.getResult();
-					}
+                        setResult(ItemHelper.cloneStack(CoverHelper.getCoverStack(item), 6));
+                        return super.getResult();
+                    }
 				}
 			}
 			return null;
