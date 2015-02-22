@@ -73,7 +73,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		FluidGrid grid = new FluidGrid(worldObj, getDuctType().type);
+		FluidGrid grid = new FluidGrid(worldObj);
 		grid.doesPassiveTicking = true;
 		return grid;
 	}
@@ -83,7 +83,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 
 		if (!super.tickPass(pass))
 			return false;
-		if (pass == 2 && isSubNode) {
+		if (pass == 2 && isSubNode && redstoneEnergy.internalGrid != null) {
 			int maxSend = redstoneEnergy.internalGrid.toDistribute;
 			redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
 		}

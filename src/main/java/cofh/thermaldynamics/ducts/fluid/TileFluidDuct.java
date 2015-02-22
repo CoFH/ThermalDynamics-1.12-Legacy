@@ -33,7 +33,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		return new FluidGrid(worldObj, getDuctType().type);
+		return new FluidGrid(worldObj);
 	}
 
 	IFluidHandler[] importantCache = new IFluidHandler[6];
@@ -134,7 +134,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public boolean isConnectable(TileEntity theTile, int side) {
 
-		return theTile instanceof TileFluidDuct && ((TileFluidDuct) theTile).getDuctType().type == getDuctType().type
+		return theTile instanceof TileFluidDuct
 				&& FluidHelper.isFluidEqualOrNull(((TileFluidDuct) theTile).getConnectionFluid(), this.getConnectionFluid());
 	}
 

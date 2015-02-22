@@ -19,13 +19,10 @@ public class FluidGrid extends MultiBlockGrid {
 	int renderFluidLevel = 0;
 	FluidStack myRenderFluid;
 
-	public int type;
-
-	public FluidGrid(World world, int type) {
+	public FluidGrid(World world) {
 
 		super(world);
 
-		this.type = type;
 	}
 
 	@Override
@@ -73,7 +70,7 @@ public class FluidGrid extends MultiBlockGrid {
 	@Override
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
-		return aBlock instanceof TileFluidDuct && ((TileFluidDuct) aBlock).getDuctType().type == type
+		return aBlock instanceof TileFluidDuct
 				&& FluidHelper.isFluidEqualOrNull(((TileFluidDuct) aBlock).getConnectionFluid(), myTank.getFluid());
 	}
 
@@ -132,7 +129,7 @@ public class FluidGrid extends MultiBlockGrid {
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return super.canGridsMerge(grid) && ((FluidGrid) grid).type == this.type && FluidHelper.isFluidEqualOrNull(((FluidGrid) grid).getFluid(), getFluid());
+		return super.canGridsMerge(grid) && FluidHelper.isFluidEqualOrNull(((FluidGrid) grid).getFluid(), getFluid());
 	}
 
 	public int getFluidThroughput() {

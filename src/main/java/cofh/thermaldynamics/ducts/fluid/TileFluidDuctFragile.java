@@ -93,7 +93,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		FluidGrid grid = new FluidGrid(worldObj, getDuctType().type);
+		FluidGrid grid = new FluidGrid(worldObj);
 		grid.doesPassiveTicking = true;
 		return grid;
 	}
