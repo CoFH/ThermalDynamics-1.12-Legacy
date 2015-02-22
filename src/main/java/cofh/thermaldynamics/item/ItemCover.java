@@ -7,6 +7,8 @@ import cofh.thermaldynamics.ducts.attachments.facades.Cover;
 import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -118,6 +120,7 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
+    @SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister ir) {
 
 	}
