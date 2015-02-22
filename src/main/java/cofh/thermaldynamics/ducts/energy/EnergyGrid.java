@@ -1,6 +1,8 @@
 package cofh.thermaldynamics.ducts.energy;
 
 import cofh.api.energy.EnergyStorage;
+import cofh.lib.util.helpers.MathHelper;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
@@ -17,8 +19,18 @@ public class EnergyGrid extends MultiBlockGrid {
 	public static int NODE_STORAGE[] = { 1200, 4800, 48000, 192000, 2400 };
 	public static int NODE_TRANSFER[] = { 200, 800, 8000, 32000, 400 };
 
-	static {
-		String category2 = "Duct.";
+	public static void initialize() {
+
+		String names[] = { "Basic", "Hardened", "Reinforced", "Resonant" };
+		String category;
+		String category2 = "Duct.Energy.";
+
+		for (int i = 3; i >= 0; i--) {
+			category = category2 + names[i];
+			NODE_TRANSFER[i] = MathHelper.clampI(ThermalDynamics.config.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10,
+					NODE_TRANSFER[i] * 10);
+			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
+		}
 	}
 
 	public EnergyGrid(World world, int type) {

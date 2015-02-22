@@ -14,8 +14,10 @@ import cofh.thermaldynamics.ducts.Duct;
 import cofh.thermaldynamics.ducts.TDDucts;
 import cofh.thermaldynamics.ducts.TileStructuralDuct;
 import cofh.thermaldynamics.ducts.attachments.facades.Cover;
+import cofh.thermaldynamics.ducts.energy.EnergyGrid;
 import cofh.thermaldynamics.ducts.energy.TileEnergyDuct;
 import cofh.thermaldynamics.ducts.energy.TileEnergyDuctSuperConductor;
+import cofh.thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.ducts.fluid.TileFluidDuct;
 import cofh.thermaldynamics.ducts.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.ducts.fluid.TileFluidDuctFragile;
@@ -26,9 +28,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -134,14 +138,14 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 2; j++) {
 				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/attachment/servo/ServoBase" + i + "" + j, ir);
-                IconRegistry.addIcon("RetrieverBase" + (i * 2 + j), "thermaldynamics:duct/attachment/retriever/RetrieverBase" + i + "" + j, ir);
+				IconRegistry.addIcon("RetrieverBase" + (i * 2 + j), "thermaldynamics:duct/attachment/retriever/RetrieverBase" + i + "" + j, ir);
 			}
 		}
 
-        IconRegistry.addIcon("CoverBase", "thermaldynamics:duct/attachment/cover/support", ir);
+		IconRegistry.addIcon("CoverBase", "thermaldynamics:duct/attachment/cover/support", ir);
 
-        for (int i = 0; i < 5; i++) {
-            IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/attachment/filter/Filter" + i + "0", ir);
+		for (int i = 0; i < 5; i++) {
+			IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/attachment/filter/Filter" + i + "0", ir);
 		}
 		IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
 
@@ -246,28 +250,29 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		}
 	}
 
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase living, ItemStack stack) {
-        super.onBlockPlacedBy(world, x, y, z, living, stack);
-        TileEntity tile = world.getTileEntity(x, y, z);
-        if(tile instanceof TileMultiBlock)
-            ((TileMultiBlock)tile).onPlacedBy(living, stack);
-    }
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase living, ItemStack stack) {
 
-    @Override
+		super.onBlockPlacedBy(world, x, y, z, living, stack);
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if (tile instanceof TileMultiBlock)
+			((TileMultiBlock) tile).onPlacedBy(living, stack);
+	}
+
+	@Override
 	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
 
 		TileEntity tile = world.getTileEntity(x, y, z);
 		int bMeta = world.getBlockMetadata(x, y, z);
 
 		ItemStack dropBlock;
-        if (tile instanceof TileMultiBlock) {
-            dropBlock = ((TileMultiBlock) tile).getDrop();
-        } else {
-            dropBlock= new ItemStack(this, 1, bMeta);
-        }
+		if (tile instanceof TileMultiBlock) {
+			dropBlock = ((TileMultiBlock) tile).getDrop();
+		} else {
+			dropBlock = new ItemStack(this, 1, bMeta);
+		}
 
-        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 		ret.add(dropBlock);
 
 		if (tile instanceof TileMultiBlock) {
@@ -282,7 +287,7 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 					ret.addAll(cover.getDrops());
 				}
 			}
-            multiBlock.dropAdditonal(ret);
+			multiBlock.dropAdditonal(ret);
 		}
 
 		if (nbt != null) {
@@ -357,6 +362,9 @@ public class BlockDuct extends BlockMultiBlock implements IInitializer, IBlockAp
 		}
 		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.FluxDuct");
 		GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermaldynamics.FluxDuctSuperConductor");
+
+		EnergyGrid.initialize();
+		SubTileEnergyRedstone.initialize();
 
 		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
 		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
