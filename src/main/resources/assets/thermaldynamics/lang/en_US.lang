@@ -1,5 +1,6 @@
 itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
 
+tile.thermaldynamics.duct=Duct
 tile.thermaldynamics.duct.energyBasic.name=Leadstone Fluxduct
 tile.thermaldynamics.duct.energyHardened.name=Hardened Fluxduct
 tile.thermaldynamics.duct.energyReinforced.name=Redstone Energy Fluxduct
@@ -102,5 +103,4 @@ info.thermaldynamics.servo.redstoneInt=Internal Redstone Control
 info.thermaldynamics.servo.slotMulti=Extracts from multiple slots.
 info.thermaldynamics.servo.slotSingle=Extracts from a single slot.
 
-recipe.thermaldynamics.covers=Covers crafting
-tile.thermaldynamics.duct=Duct
+recipe.thermaldynamics.covers=Cover Crafting

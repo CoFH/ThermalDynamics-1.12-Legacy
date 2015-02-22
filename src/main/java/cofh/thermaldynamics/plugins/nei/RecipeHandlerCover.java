@@ -1,15 +1,17 @@
 package cofh.thermaldynamics.plugins.nei;
 
 import codechicken.nei.ItemPanel;
-import codechicken.nei.NEIClientUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.ShapelessRecipeHandler;
 import cofh.lib.util.helpers.ItemHelper;
+import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.ducts.TDDucts;
 import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -103,7 +105,7 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 	@Override
 	public String getRecipeName() {
 
-		return NEIClientUtils.translate("recipe.thermaldynamics.covers");
+		return StringHelper.localize("recipe.thermaldynamics.covers");
 	}
 
 	@Override
