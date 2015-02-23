@@ -69,6 +69,7 @@ info.thermaldynamics.duct.fluid=Transfers Fluids.
 info.thermaldynamics.duct.item=Transfers Items.
 info.thermaldynamics.duct.structure=Provides Structure.
 info.thermaldynamics.duct.crafting=Crafting Item.
+info.thermaldynamics.duct.cover=Combine with a Block to create Covers.
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata

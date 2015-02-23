@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.block;
 
 import cofh.core.item.ItemBlockBase;
+import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ducts.Duct;
 import cofh.thermaldynamics.ducts.DuctItem;
@@ -82,6 +83,9 @@ public class ItemBlockDuct extends ItemBlockBase {
 			list.add(StringHelper.shiftForDetails());
 		}
 		if (!StringHelper.isShiftKeyDown()) {
+			if (ItemHelper.itemsIdentical(stack, TDDucts.structure.itemStack)) {
+				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
+			}
 			return;
 		}
 		int ductId = id(stack);
@@ -133,6 +137,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 			break;
 		case STRUCTURAL:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+			list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
 			break;
 		case CRAFTING:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.crafting"));

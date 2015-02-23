@@ -6,9 +6,9 @@ import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.ducts.attachments.facades.Cover;
 import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,12 +31,13 @@ public class ItemCover extends ItemAttachment {
 		this.setCreativeTab(null);
 		this.setUnlocalizedName("thermaldynamics.cover");
 		this.setTextureName("thermaldynamics:cover");
-		if (!showInNEI)
+		if (!showInNEI) {
 			setCreativeTab(null);
+		}
 	}
 
 	@Override
-	public void getSubItems(Item p_150895_1_, CreativeTabs p_150895_2_, List p_150895_3_) {
+	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
 		if (showInNEI) {
 			Iterator iterator = Item.itemRegistry.iterator();
@@ -44,13 +45,12 @@ public class ItemCover extends ItemAttachment {
 			ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 
 			while (iterator.hasNext()) {
-				Item item = (Item) iterator.next();
+				Item anItem = (Item) iterator.next();
 
-				if (item != null && item != this) {
-					item.getSubItems(item, null, stacks);
+				if (anItem != null && anItem != this) {
+					anItem.getSubItems(anItem, null, stacks);
 				}
 			}
-
 			for (ItemStack stack : stacks) {
 				if (!(stack.getItem() instanceof ItemBlock))
 					continue;
@@ -58,7 +58,7 @@ public class ItemCover extends ItemAttachment {
 				if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())))
 					continue;
 
-				p_150895_3_.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+				list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
 			}
 		}
 
@@ -120,7 +120,7 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister ir) {
 
 	}

@@ -8,137 +8,146 @@ import java.util.ListIterator;
 
 public class ListWrapper<T> implements Iterable<T> {
 
-    LinkedList<T> list;
-    Object[] array;
-    int cursor;
-    public SortType type;
+	LinkedList<T> list;
+	Object[] array;
+	int cursor;
+	public SortType type;
 
+	public void setList(LinkedList<T> list, SortType type) {
 
-    public void setList(LinkedList<T> list, SortType type) {
-        this.list = list;
-        array = null;
-        this.type = type;
-        cursor = 0;
-    }
+		this.list = list;
+		array = null;
+		this.type = type;
+		cursor = 0;
+	}
 
-    @Override
-    public Iterator<T> iterator() {
-        if (type == SortType.NORMAL)
-            return list.iterator();
-        else if (type == SortType.REVERSE)
-            return list.descendingIterator();
-        else if (type == SortType.ROUNDROBIN) {
-            cursor++;
-            if (cursor >= list.size()) cursor = 0;
-            if (cursor == 0)
-                return list.iterator();
+	@Override
+	public Iterator<T> iterator() {
 
-            return new RRobinIter();
-        } else if (type == SortType.SHUFFLE) {
-            if (list.size() == 1) {
-                return list.listIterator();
-            }
-            if (array == null || list.size() != array.length) {
-                array = list.toArray();
-            }
+		if (type == SortType.NORMAL)
+			return list.iterator();
+		else if (type == SortType.REVERSE)
+			return list.descendingIterator();
+		else if (type == SortType.ROUNDROBIN) {
+			cursor++;
+			if (cursor >= list.size())
+				cursor = 0;
+			return new RRobinIter();
+		} else if (type == SortType.SHUFFLE) {
+			if (list.size() == 1) {
+				return list.listIterator();
+			}
+			if (array == null || list.size() != array.length) {
+				array = list.toArray();
+			}
 
-            return new ShuffleIter();
-        }
+			return new ShuffleIter();
+		}
 
-        return list.iterator();
-    }
+		return list.iterator();
+	}
 
-    public class RRobinIter implements Iterator<T> {
+	public class RRobinIter implements Iterator<T> {
 
-        public ListIterator<T> tListIterator;
+		public ListIterator<T> tListIterator;
 
-        public RRobinIter() {
-            tListIterator = list.listIterator(cursor + 1);
-        }
+		public RRobinIter() {
 
-        @Override
-        public boolean hasNext() {
-            return tListIterator.nextIndex() != cursor;
-        }
+			tListIterator = list.listIterator(cursor + 1);
+		}
 
-        @Override
-        public T next() {
-            if (!tListIterator.hasNext()) tListIterator = list.listIterator(0);
-            return tListIterator.next();
-        }
+		@Override
+		public boolean hasNext() {
 
-        @Override
-        public void remove() {
+			return tListIterator.nextIndex() != cursor;
+		}
 
-        }
-    }
+		@Override
+		public T next() {
 
+			if (!tListIterator.hasNext())
+				tListIterator = list.listIterator(0);
+			return tListIterator.next();
+		}
 
-    public static enum SortType {
-        NORMAL,
-        REVERSE,
-        SHUFFLE,
-        ROUNDROBIN
-    }
+		@Override
+		public void remove() {
 
-    private class ShuffleIterBuilding implements Iterator<T> {
-        ListIterator<T> listIterator;
+		}
+	}
 
-        public ShuffleIterBuilding() {
-            array = new Object[list.size()];
-            listIterator = list.listIterator();
-        }
+	public static enum SortType {
+		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
+	}
 
-        @Override
-        public boolean hasNext() {
-            return listIterator.hasNext();
-        }
+	private class ShuffleIterBuilding implements Iterator<T> {
 
-        @Override
-        public T next() {
-            int i = listIterator.nextIndex();
+		ListIterator<T> listIterator;
 
-            T next = listIterator.next();
-            int j = MathHelper.RANDOM.nextInt(i + 1);
-            array[i] = array[j];
-            array[j] = next;
+		public ShuffleIterBuilding() {
 
-            return next;
-        }
+			array = new Object[list.size()];
+			listIterator = list.listIterator();
+		}
 
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
+		@Override
+		public boolean hasNext() {
 
-    private class ShuffleIter implements Iterator<T> {
-        int i;
+			return listIterator.hasNext();
+		}
 
-        public ShuffleIter() {
-            super();
-        }
+		@Override
+		public T next() {
 
-        @Override
-        public boolean hasNext() {
-            return i < array.length;
-        }
+			int i = listIterator.nextIndex();
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public T next() {
-            Object t = array[i];
-            int j = MathHelper.RANDOM.nextInt(array.length - i) + i;
-            array[i] = array[j];
-            array[j] = t;
+			T next = listIterator.next();
+			int j = MathHelper.RANDOM.nextInt(i + 1);
+			array[i] = array[j];
+			array[j] = next;
 
-            i++;
-            return (T) t;
-        }
+			return next;
+		}
 
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
+		@Override
+		public void remove() {
+
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	private class ShuffleIter implements Iterator<T> {
+
+		int i;
+
+		public ShuffleIter() {
+
+			super();
+		}
+
+		@Override
+		public boolean hasNext() {
+
+			return i < array.length;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T next() {
+
+			Object t = array[i];
+			int j = MathHelper.RANDOM.nextInt(array.length - i) + i;
+			array[i] = array[j];
+			array[j] = t;
+
+			i++;
+			return (T) t;
+		}
+
+		@Override
+		public void remove() {
+
+			throw new UnsupportedOperationException();
+		}
+	}
 }
