@@ -38,6 +38,12 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
+	public int getId() {
+
+		return AttachmentRegistry.RETRIEVER_ITEM;
+	}
+
+	@Override
 	public ItemStack getPickBlock() {
 
 		return new ItemStack(ThermalDynamics.itemRetriever, 1, type);
@@ -59,12 +65,6 @@ public class RetrieverItem extends ServoItem {
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(trans,
 				RenderUtils.getIconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
 		return true;
-	}
-
-	@Override
-	public int getId() {
-
-		return AttachmentRegistry.RETRIEVER_ITEM;
 	}
 
 	@Override
@@ -223,4 +223,5 @@ public class RetrieverItem extends ServoItem {
 
 		return isValidInput ? TileMultiBlock.NeighborTypes.OUTPUT : TileMultiBlock.NeighborTypes.DUCT_ATTACHMENT;
 	}
+
 }
