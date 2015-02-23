@@ -26,8 +26,9 @@ public class TileEnergyDuctSuperConductor extends TileEnergyDuct {
 
 		if (this.internalGridSC != null && canConnectEnergy(from)) {
 			return internalGridSC.sendEnergy(maxReceive, simulate);
-		} else
+		} else {
 			return 0;
+		}
 	}
 
 }

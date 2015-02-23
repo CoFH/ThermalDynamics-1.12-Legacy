@@ -16,8 +16,8 @@ public class EnergyGrid extends MultiBlockGrid {
 
 	private final int type;
 
-	public static int NODE_STORAGE[] = { 1200, 4800, 48000, 192000, 2400 };
-	public static int NODE_TRANSFER[] = { 200, 800, 8000, 32000, 400 };
+	public static int NODE_STORAGE[] = { 1200, 4800, 48000, 192000, 0 };
+	public static int NODE_TRANSFER[] = { 200, 800, 8000, 32000, 0 };
 
 	public static void initialize() {
 

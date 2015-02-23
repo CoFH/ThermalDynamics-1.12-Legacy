@@ -23,23 +23,24 @@ public class ListWrapper<T> implements Iterable<T> {
 
 	@Override
 	public Iterator<T> iterator() {
-        if (list.size() <= 1)
-            return list.listIterator();
 
+		if (list.size() <= 1) {
+			return list.listIterator();
+		}
 		if (type == SortType.NORMAL)
 			return list.iterator();
 		else if (type == SortType.REVERSE)
 			return list.descendingIterator();
 		else if (type == SortType.ROUNDROBIN) {
 			cursor++;
-			if (cursor >= list.size())
+			if (cursor >= list.size()) {
 				cursor = 0;
+			}
 			return new RRobinIter();
 		} else if (type == SortType.SHUFFLE) {
 			if (array == null || list.size() != array.length) {
 				array = list.toArray();
 			}
-
 			return new ShuffleIter();
 		}
 
@@ -149,4 +150,5 @@ public class ListWrapper<T> implements Iterable<T> {
 			throw new UnsupportedOperationException();
 		}
 	}
+
 }

@@ -21,7 +21,7 @@ tile.thermaldynamics.duct.itemEnder.name=Warp Itemduct
 
 tile.thermaldynamics.duct.structure.name=Structuralduct
 
-tile.thermaldynamics.duct.energySupercond.info=Has very low residual capacitance.
+tile.thermaldynamics.duct.energySupercond.info=Has no residual capacitance.
 
 tile.thermaldynamics.duct.fluidBasic.info=Will break if contents are extremely hot or cold.
 tile.thermaldynamics.duct.fluidHardened.info=Contents may be any temperature.

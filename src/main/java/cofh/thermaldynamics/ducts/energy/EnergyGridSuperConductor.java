@@ -1,13 +1,13 @@
 package cofh.thermaldynamics.ducts.energy;
 
-import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.block.TileMultiBlock;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class EnergyGridSuperConductor extends EnergyGrid {
+
+	int nodeTracker;
 
 	public EnergyGridSuperConductor(World world, int type) {
 
@@ -34,51 +34,25 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 
 	boolean[] overSent = null;
 
-	public int sendEnergy(int maxSent, boolean simulate) {
+	public int sendEnergy(int energy, boolean simulate) {
 
 		TileEnergyDuct[] list = nodeList;
-		if (list == null || list.length == 0 || maxSent <= 0)
-			return myStorage.receiveEnergy(maxSent, simulate);
+		int startAmount = energy;
 
-		int curSent = 0;
-		int toDistribute = maxSent / list.length;
-
-		for (int i = 0; i < list.length && curSent < maxSent; i++) {
-			int t = sendEnergytoTile(list[i], 0, maxSent - curSent, toDistribute);
-			overSent[i] = t >= toDistribute && toDistribute < maxSent;
-			curSent += t;
+		if (list == null || list.length == 0) {
+			return myStorage.receiveEnergy(energy, simulate);
 		}
-		for (int i = 0; i < list.length; i++) {
-			if (overSent[i] && curSent < maxSent) {
-				curSent = sendEnergytoTile(list[i], curSent, maxSent, maxSent - toDistribute);
-			}
-
-			if (!simulate && i > 0) {
-				int j = MathHelper.RANDOM.nextInt(i + 1);
-				if (i != j) {
-					TileEnergyDuct t = list[i];
-					list[i] = list[j];
-					list[j] = t;
-				}
-			}
+		for (int i = nodeTracker; i < list.length && energy > 0; i++) {
+			energy -= list[i].transmitEnergy(energy);
 		}
-		curSent += myStorage.receiveEnergy(maxSent - curSent, simulate);
-
-		return curSent;
-	}
-
-	public int sendEnergytoTile(TileEnergyDuct dest, int curSent, int maxSent, int toDistribute) {
-        if(!dest.cachesExist())
-            return curSent;
-
-		for (int i = 0; i < 6 && curSent < maxSent; i++) {
-			if (dest.neighborTypes[i] == TileMultiBlock.NeighborTypes.OUTPUT) {
-				if (dest.cache[i] != null) {
-					curSent += dest.cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], Math.min(toDistribute, maxSent - curSent), false);
-				}
-			}
+		for (int i = 0; i < list.length && i < nodeTracker && energy > 0; i++) {
+			energy -= list[i].transmitEnergy(energy);
 		}
-		return curSent;
+		nodeTracker++;
+		if (nodeTracker >= list.length) {
+			nodeTracker = 0;
+		}
+		return startAmount - energy;
 	}
 
 	@Override
