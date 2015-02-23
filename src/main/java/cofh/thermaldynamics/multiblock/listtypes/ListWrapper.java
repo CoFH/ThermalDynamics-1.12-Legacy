@@ -23,6 +23,8 @@ public class ListWrapper<T> implements Iterable<T> {
 
 	@Override
 	public Iterator<T> iterator() {
+        if (list.size() <= 1)
+            return list.listIterator();
 
 		if (type == SortType.NORMAL)
 			return list.iterator();
@@ -34,9 +36,6 @@ public class ListWrapper<T> implements Iterable<T> {
 				cursor = 0;
 			return new RRobinIter();
 		} else if (type == SortType.SHUFFLE) {
-			if (list.size() == 1) {
-				return list.listIterator();
-			}
 			if (array == null || list.size() != array.length) {
 				array = list.toArray();
 			}
