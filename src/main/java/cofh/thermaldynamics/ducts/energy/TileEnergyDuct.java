@@ -91,26 +91,26 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 
 		int power = this.internalGrid.getSendableEnergy();
 
-		int usedPower = transmitEnergy(power);
+		int usedPower = transmitEnergy(power, false);
 
 		this.internalGrid.useEnergy(usedPower);
 		return true;
 	}
 
-	public int transmitEnergy(int power) {
+	public int transmitEnergy(int energy, boolean simulate) {
 
-		int usedPower = 0;
+		int usedEnergy = 0;
 
 		if (!cachesExist()) {
-			return usedPower;
+			return usedEnergy;
 		}
-		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
+		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedEnergy < energy; i++) {
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (cache[i] != null) {
 					if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+						usedEnergy += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], energy - usedEnergy, simulate);
 					}
-					if (usedPower >= power) {
+					if (!simulate && usedEnergy >= energy) {
 						this.tickInternalSideCounter(i + 1);
 						break;
 					}
@@ -118,20 +118,20 @@ public class TileEnergyDuct extends TileMultiBlock implements IEnergyHandler {
 			}
 		}
 
-		for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
+		for (byte i = 0; i < this.internalSideCounter && usedEnergy < energy; i++) {
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (cache[i] != null) {
 					if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedPower += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+						usedEnergy += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], energy - usedEnergy, simulate);
 					}
-					if (usedPower >= power) {
+					if (!simulate && usedEnergy >= energy) {
 						this.tickInternalSideCounter(i + 1);
 						break;
 					}
 				}
 			}
 		}
-		return usedPower;
+		return usedEnergy;
 	}
 
 	@Override

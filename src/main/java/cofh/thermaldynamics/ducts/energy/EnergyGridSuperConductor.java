@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 public class EnergyGridSuperConductor extends EnergyGrid {
 
 	int nodeTracker;
+	boolean isSendingEnergy;
 
 	public EnergyGridSuperConductor(World world, int type) {
 
@@ -26,32 +27,41 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 				nodeList[i] = (TileEnergyDuct) multiBlock;
 				i++;
 			}
-			overSent = new boolean[nodeList.length];
 		}
 	}
 
 	TileEnergyDuct[] nodeList = null;
 
-	boolean[] overSent = null;
-
 	public int sendEnergy(int energy, boolean simulate) {
+
+		if (isSendingEnergy) {
+			return 0;
+		}
+		int tempTracker = nodeTracker;
 
 		TileEnergyDuct[] list = nodeList;
 		int startAmount = energy;
 
 		if (list == null || list.length == 0) {
-			return myStorage.receiveEnergy(energy, simulate);
+			return 0;
 		}
+		isSendingEnergy = true;
 		for (int i = nodeTracker; i < list.length && energy > 0; i++) {
-			energy -= list[i].transmitEnergy(energy);
+			energy -= list[i].transmitEnergy(energy, simulate);
+			if (energy == 0) {
+				nodeTracker = i;
+			}
 		}
 		for (int i = 0; i < list.length && i < nodeTracker && energy > 0; i++) {
-			energy -= list[i].transmitEnergy(energy);
+			energy -= list[i].transmitEnergy(energy, simulate);
+			if (energy == 0) {
+				nodeTracker = i;
+			}
 		}
-		nodeTracker++;
-		if (nodeTracker >= list.length) {
-			nodeTracker = 0;
+		if (simulate) {
+			nodeTracker = tempTracker;
 		}
+		isSendingEnergy = false;
 		return startAmount - energy;
 	}
 

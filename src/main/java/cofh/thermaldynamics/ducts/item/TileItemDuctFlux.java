@@ -3,9 +3,9 @@ package cofh.thermaldynamics.ducts.item;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-
 public class TileItemDuctFlux extends TileItemDuctPower {
 
 	public final SubTileEnergyRedstone redstoneEnergy;
@@ -26,16 +26,16 @@ public class TileItemDuctFlux extends TileItemDuctPower {
 
 	public void checkSubNode() {
 
-        boolean newSubNode = false;
-        if (cachesExist())
-            for (int i = 0; i < 6; i++) {
-                if (energyCache[i] != null) {
-                    newSubNode = true;
-                    break;
-                }
-            }
-        if (isSubNode != newSubNode) {
-            isSubNode = newSubNode;
+		boolean newSubNode = false;
+		if (cachesExist())
+			for (int i = 0; i < 6; i++) {
+				if (energyCache[i] != null) {
+					newSubNode = true;
+					break;
+				}
+			}
+		if (isSubNode != newSubNode) {
+			isSubNode = newSubNode;
 			if (energy.energyGrid != null) {
 				energy.energyGrid.addBlock(energy);
 			}
@@ -72,7 +72,8 @@ public class TileItemDuctFlux extends TileItemDuctPower {
 	public int transmitEnergy(int power) {
 
 		int usedPower = 0;
-        if(!cachesExist()) return 0;
+		if (!cachesExist())
+			return 0;
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
@@ -106,11 +107,12 @@ public class TileItemDuctFlux extends TileItemDuctPower {
 
 	IEnergyReceiver[] energyCache;
 
-    @Override
-    public void createCaches() {
-        super.createCaches();
-        energyCache = new IEnergyReceiver[6];
-    }
+	@Override
+	public void createCaches() {
+
+		super.createCaches();
+		energyCache = new IEnergyReceiver[6];
+	}
 
 	@Override
 	public void clearCache(int side) {

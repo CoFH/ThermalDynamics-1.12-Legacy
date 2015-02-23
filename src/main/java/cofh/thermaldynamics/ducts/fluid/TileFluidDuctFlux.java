@@ -4,6 +4,7 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.ducts.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -28,13 +29,13 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	public void checkSubNode() {
 
 		boolean newSubNode = false;
-        if(cachesExist())
-		for (int i = 0; i < 6; i++) {
-			if (energyCache[i] != null) {
-				newSubNode = true;
-				break;
+		if (cachesExist())
+			for (int i = 0; i < 6; i++) {
+				if (energyCache[i] != null) {
+					newSubNode = true;
+					break;
+				}
 			}
-		}
 
 		if (isSubNode != newSubNode) {
 			isSubNode = newSubNode;
@@ -93,7 +94,8 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	public int transmitEnergy(int power) {
 
 		int usedPower = 0;
-        if(!cachesExist()) return 0;
+		if (!cachesExist())
+			return 0;
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
@@ -134,14 +136,15 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		energyCache[side] = null;
 	}
 
-    @Override
-    public void createCaches() {
-        super.createCaches();
-        energyCache = new IEnergyReceiver[6];
-    }
+	@Override
+	public void createCaches() {
 
-    @Override
-    public void cacheImportant(TileEntity tile, int side) {
+		super.createCaches();
+		energyCache = new IEnergyReceiver[6];
+	}
+
+	@Override
+	public void cacheImportant(TileEntity tile, int side) {
 
 		super.cacheImportant(tile, side);
 		if (tile instanceof IEnergyReceiver)
