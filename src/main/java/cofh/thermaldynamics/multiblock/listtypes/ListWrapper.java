@@ -80,42 +80,6 @@ public class ListWrapper<T> implements Iterable<T> {
 		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
 	}
 
-	private class ShuffleIterBuilding implements Iterator<T> {
-
-		ListIterator<T> listIterator;
-
-		public ShuffleIterBuilding() {
-
-			array = new Object[list.size()];
-			listIterator = list.listIterator();
-		}
-
-		@Override
-		public boolean hasNext() {
-
-			return listIterator.hasNext();
-		}
-
-		@Override
-		public T next() {
-
-			int i = listIterator.nextIndex();
-
-			T next = listIterator.next();
-			int j = MathHelper.RANDOM.nextInt(i + 1);
-			array[i] = array[j];
-			array[j] = next;
-
-			return next;
-		}
-
-		@Override
-		public void remove() {
-
-			throw new UnsupportedOperationException();
-		}
-	}
-
 	private class ShuffleIter implements Iterator<T> {
 
 		int i;
