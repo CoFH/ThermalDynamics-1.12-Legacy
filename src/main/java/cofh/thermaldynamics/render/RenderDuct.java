@@ -290,6 +290,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
 		IIcon fluidTex = RenderHelper.getFluidTexture(stack);
 
+        if(level > 6) level = 6;
+
 		if (fluid.isGaseous(stack)) {
 			CCRenderState.setColour(RenderUtils.getFluidRenderColor(stack) << 8 | 32 + 36 * level);
 			level = 6;
