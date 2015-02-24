@@ -10,7 +10,7 @@ tile.thermaldynamics.duct.energyResonantEmpty.name=Resonant Fluxduct (Empty)
 tile.thermaldynamics.duct.energySuperconductor.name=Cryo-Stabilized Fluxduct
 tile.thermaldynamics.duct.energySuperconductorEmpty.name=Cryo-Stabilized Fluxduct (Empty)
 
-tile.thermaldynamics.duct.fluidBasic.name=Copper Fluiduct
+tile.thermaldynamics.duct.fluidBasic.name=Temperate Fluiduct
 tile.thermaldynamics.duct.fluidHardened.name=Hardened Fluiduct
 tile.thermaldynamics.duct.fluidFlux.name=Flux-Plated Fluiduct
 
@@ -43,19 +43,19 @@ item.thermaldynamics.filter.info=Restricts what may pass through it.
 item.thermaldynamics.retriever.info=Pulls distant items/fluids to itself.
 item.thermaldynamics.servo.info=Extracts items/fluids from something.
 
-item.thermaldynamics.filter.0.name=Basic Filter
+item.thermaldynamics.filter.0.name=Filter
 item.thermaldynamics.filter.1.name=Hardened Filter
 item.thermaldynamics.filter.2.name=Reinforced Filter
 item.thermaldynamics.filter.3.name=Signalum Filter
 item.thermaldynamics.filter.4.name=Resonant Filter
 
-item.thermaldynamics.servo.0.name=Basic Servo
+item.thermaldynamics.servo.0.name=Servo
 item.thermaldynamics.servo.1.name=Hardened Servo
 item.thermaldynamics.servo.2.name=Reinforced Servo
 item.thermaldynamics.servo.3.name=Signalum Servo
 item.thermaldynamics.servo.4.name=Resonant Servo
 
-item.thermaldynamics.retriever.0.name=Basic Retriever
+item.thermaldynamics.retriever.0.name=Retriever
 item.thermaldynamics.retriever.1.name=Hardened Retriever
 item.thermaldynamics.retriever.2.name=Reinforced Retriever
 item.thermaldynamics.retriever.3.name=Signalum Retriever
