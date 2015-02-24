@@ -377,6 +377,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 		Attachment attachment = attachments[travelingItem.direction];
 		if (attachment instanceof IStuffable) {
+            signalRepoll();
 			((IStuffable) attachment).stuffItem(travelingItem.stack);
 		}
 	}
@@ -420,7 +421,6 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		}
 
 		if (hasChanged) {
-			internalGrid.shouldRepoll = true;
 			sendTravelingItemsPacket();
 			hasChanged = false;
 		}
@@ -560,10 +560,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		cacheType[side] = CacheType.NONE;
 	}
 
-	public void removeItem(TravelingItem travelingItem) {
+    public void removeItem(TravelingItem travelingItem, boolean disappearing) {
 
-		itemsToRemove.add(travelingItem);
-	}
+        if (disappearing) signalRepoll();
+        itemsToRemove.add(travelingItem);
+    }
 
 	public class TileInfoPackets {
 
@@ -861,11 +862,16 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		if (!filterCache[direction].matchesFilter(stack))
 			return stack.stackSize;
 
-		return insertIntoInventory_do(stack, direction);
+        return insertIntoInventory_do(stack, direction);
 	}
 
-	public int insertIntoInventory_do(ItemStack stack, int direction) {
+    public void signalRepoll() {
+        if(internalGrid != null) internalGrid.shouldRepoll=true;
+    }
 
+    public int insertIntoInventory_do(ItemStack stack, int direction) {
+
+        signalRepoll();
 		stack = InventoryHelper.insertItemStackIntoInventory(cache[direction], stack, direction ^ 1);
 		return stack == null ? 0 : stack.stackSize;
 	}

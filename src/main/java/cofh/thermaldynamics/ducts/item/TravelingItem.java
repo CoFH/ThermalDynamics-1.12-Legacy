@@ -17,9 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 public class TravelingItem {
 
 	public ItemStack stack;
-	public float x;
-	public float y;
-	public float z;
+
 	public byte progress;
 	public byte direction;
 	public byte oldDirection;
@@ -49,9 +47,7 @@ public class TravelingItem {
 		progress = 0;
 		direction = itemPath.getNextDirection();
 		myPath = itemPath;
-		x = xCoord;
-		y = yCoord;
-		z = zCoord;
+
 		startX = xCoord;
 		startY = yCoord;
 		startZ = zCoord;
@@ -75,7 +71,6 @@ public class TravelingItem {
 		this.oldDirection = oldDirection;
 		stack = theItem;
 		this.step = step;
-		calcCoordsFromProgress(this, homeTile);
 	}
 
 	public void tickForward(TileItemDuct homeTile) {
@@ -100,7 +95,7 @@ public class TravelingItem {
 			TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
 			if (newHome != null) {
 				if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
-					homeTile.removeItem(this);
+					homeTile.removeItem(this, false);
 					newHome.transferItem(this);
 					if (myPath.hasNextDirection()) {
 						oldDirection = direction;
@@ -117,12 +112,12 @@ public class TravelingItem {
 				bounceItem(homeTile);
 				return;
 			}
-			homeTile.removeItem(this);
+			homeTile.removeItem(this, true);
 		} else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT && goingToStuff && myPath.pathPos >= myPath.pathWeight) {
 			if (homeTile.canStuffItem()) {
 				goingToStuff = false;
 				homeTile.stuffItem(this);
-				homeTile.removeItem(this);
+				homeTile.removeItem(this, true);
 			} else {
 				goingToStuff = false;
 				bounceItem(homeTile);
@@ -179,7 +174,7 @@ public class TravelingItem {
 			byte d = homeTile.getStuffedSide();
 			if (d == direction) {
 				homeTile.stuffItem(this);
-				homeTile.removeItem(this);
+				homeTile.removeItem(this, true);
 			} else {
 				myPath = new Route(homeTile);
 				myPath.pathDirections.add(myPath.endPoint.getStuffedSide());
@@ -198,7 +193,7 @@ public class TravelingItem {
 				homeTile.hasChanged = true;
 			} else {
 				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
-				homeTile.removeItem(this);
+				homeTile.removeItem(this, true);
 			}
 		}
 	}
@@ -224,20 +219,15 @@ public class TravelingItem {
 	}
 
 	public void tickClientForward(TileItemDuct homeTile) {
-
 		progress += step;
 
-		if (!shouldDie || (progress <= homeTile.getPipeHalfLength())) {
-			for (int i = 0; i < step; i++)
-				moveCoordsByProgress(progress, this, homeTile);
-		}
 		if (progress >= homeTile.getPipeLength()) {
 			progress %= homeTile.getPipeLength();
 
 			if (shouldDie) {
-				homeTile.removeItem(this);
+				homeTile.removeItem(this,true);
 			} else {
-				homeTile.removeItem(this);
+				homeTile.removeItem(this, false);
 				shouldDie = true;
 				TileEntity newTile = BlockHelper.getAdjacentTileEntity(homeTile, direction);
 				if (newTile instanceof TileItemDuct) {
@@ -247,22 +237,22 @@ public class TravelingItem {
 					if (!TickHandlerClient.tickBlocks.contains(itemDuct) && !TickHandlerClient.tickBlocksToAdd.contains(itemDuct)) {
 						TickHandlerClient.tickBlocksToAdd.add(itemDuct);
 					}
-					calcCoordsFromProgress(this, itemDuct);
+
 				}
 			}
 		}
 	}
 
-	public static void calcCoordsFromProgress(TravelingItem theItem, TileItemDuct homeTile) {
-
-		theItem.x = START_COORD[theItem.oldDirection][0];
-		theItem.y = START_COORD[theItem.oldDirection][1];
-		theItem.z = START_COORD[theItem.oldDirection][2];
-
-		for (int i = 0; i < theItem.progress; i++) {
-			moveCoordsByProgress(i, theItem, homeTile);
-		}
-	}
+//	public static void calcCoordsFromProgress(TravelingItem theItem, TileItemDuct homeTile) {
+//
+//		theItem.x = START_COORD[theItem.oldDirection][0];
+//		theItem.y = START_COORD[theItem.oldDirection][1];
+//		theItem.z = START_COORD[theItem.oldDirection][2];
+//
+//		for (int i = 0; i < theItem.progress; i++) {
+//			moveCoordsByProgress(i, theItem, homeTile);
+//		}
+//	}
 
 	public static float[] getVec(int progress, TravelingItem theItem, TileItemDuct homeTile) {
 
@@ -278,21 +268,6 @@ public class TravelingItem {
 	}
 
 	private static final float[] zeroVec = { 0F, 0F, 0F };
-
-	public static void moveCoordsByProgress(int Progress, TravelingItem theItem, TileItemDuct homeTile) {
-
-		if (Progress <= homeTile.getPipeHalfLength()) {
-			theItem.x += homeTile.getSideCoordsModifier()[theItem.oldDirection][0];
-			theItem.y += homeTile.getSideCoordsModifier()[theItem.oldDirection][1];
-			theItem.z += homeTile.getSideCoordsModifier()[theItem.oldDirection][2];
-		} else {
-			if (theItem.direction >= 0) {
-				theItem.x += homeTile.getSideCoordsModifier()[theItem.direction][0];
-				theItem.y += homeTile.getSideCoordsModifier()[theItem.direction][1];
-				theItem.z += homeTile.getSideCoordsModifier()[theItem.direction][2];
-			}
-		}
-	}
 
 	public void writePacket(PacketCoFHBase myPayload) {
 
@@ -313,9 +288,6 @@ public class TravelingItem {
 		theNBT.setTag("stack", new NBTTagCompound());
 		stack.writeToNBT(theNBT.getCompoundTag("stack"));
 
-		theNBT.setFloat("x", x);
-		theNBT.setFloat("y", y);
-		theNBT.setFloat("z", z);
 		theNBT.setByte("progress", progress);
 		theNBT.setByte("direction", direction);
 		theNBT.setByte("oldDir", oldDirection);
@@ -337,9 +309,6 @@ public class TravelingItem {
 	public TravelingItem(NBTTagCompound theNBT) {
 
 		stack = ItemStack.loadItemStackFromNBT(theNBT.getCompoundTag("stack"));
-		x = theNBT.getFloat("x");
-		y = theNBT.getFloat("y");
-		z = theNBT.getFloat("z");
 		progress = theNBT.getByte("progress");
 		direction = theNBT.getByte("direction");
 		oldDirection = theNBT.getByte("oldDir");

@@ -19,12 +19,6 @@ public class TileItemDuctEnder extends TileItemDuctPower {
 	}
 
 	@Override
-	public void removeItem(TravelingItem travelingItem) {
-
-		super.removeItem(travelingItem);
-	}
-
-	@Override
 	public void transferItem(TravelingItem travelingItem) {
 
 		super.transferItem(travelingItem);
