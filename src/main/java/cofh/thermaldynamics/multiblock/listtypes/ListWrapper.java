@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.multiblock.listtypes;
 
 import cofh.lib.util.helpers.MathHelper;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -36,6 +35,7 @@ public class ListWrapper<T> implements Iterable<T> {
 			if (cursor >= list.size()) {
 				cursor = 0;
 			}
+            if(cursor == 0) return list.listIterator();
 			return new RRobinIter();
 		} else if (type == SortType.SHUFFLE) {
 			if (array == null || list.size() != array.length) {
@@ -53,20 +53,25 @@ public class ListWrapper<T> implements Iterable<T> {
 
 		public RRobinIter() {
 
-			tListIterator = list.listIterator(cursor + 1);
+			tListIterator = list.listIterator(cursor);
 		}
 
 		@Override
 		public boolean hasNext() {
 
-			return tListIterator.nextIndex() != cursor;
+            if (!tListIterator.hasNext()) {
+                if (cursor == 0)
+                    return false;
+                else
+                    tListIterator = list.listIterator(0);
+            }
+
+			return tListIterator.nextIndex() != cursor - 1;
 		}
 
 		@Override
 		public T next() {
 
-			if (!tListIterator.hasNext())
-				tListIterator = list.listIterator(0);
 			return tListIterator.next();
 		}
 
