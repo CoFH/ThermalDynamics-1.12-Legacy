@@ -13,7 +13,6 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileMultiBlock;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandlerClient;
-import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.ducts.DuctItem;
 import cofh.thermaldynamics.ducts.attachments.IStuffable;
 import cofh.thermaldynamics.ducts.attachments.filter.IFilterAttachment;
@@ -43,7 +42,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IItemDuct {
@@ -151,13 +149,27 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	 * 
 	 * IE: Inventory's to ItemDuct's
 	 */
-	@Override
-	public boolean isSignificantTile(TileEntity theTile, int side) {
+    @Override
+    public boolean isSignificantTile(TileEntity theTile, int side) {
+        if (!(theTile instanceof IInventory))
+            return false;
+        if ((theTile instanceof IInventoryConnection)) {
+            IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile)
+                    .canConnectInventory(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+            if (connectionType == IInventoryConnection.ConnectionType.DENY)
+                return false;
+            if (connectionType == IInventoryConnection.ConnectionType.FORCE)
+                return true;
+        }
 
-		return theTile instanceof IInventory
-				&& (!(theTile instanceof IInventoryConnection) || ((IInventoryConnection) theTile)
-						.canConnectInventory(ForgeDirection.VALID_DIRECTIONS[side ^ 1]) != IInventoryConnection.ConnectionType.DENY);
-	}
+        if (((IInventory) theTile).getSizeInventory() == 0)
+            return false;
+
+        if (theTile instanceof ISidedInventory && ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1).length == 0)
+            return false;
+
+        return true;
+    }
 
 	@Override
 	public void setGrid(MultiBlockGrid newGrid) {
