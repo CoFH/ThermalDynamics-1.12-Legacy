@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 public class SimulatedInv implements IInventory {
     public static SimulatedInv INSTANCE = new SimulatedInv();
     public static SimulatedInvSided INSTANCE_SIDED = new SimulatedInvSided();
-    public int REBUILD_THRESHOLD = 512;
+    public static final int REBUILD_THRESHOLD = 128;
 
     public static SimulatedInv wrapInv(IInventory inventory) {
         INSTANCE.setTarget(inventory);

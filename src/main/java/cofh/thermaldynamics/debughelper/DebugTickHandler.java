@@ -50,9 +50,12 @@ public class DebugTickHandler {
         StringBuilder builder = new StringBuilder();
         TObjectLongIterator<String> it = DebugHelper.subTicks.iterator();
 
+        boolean print = false;
+
         while (it.hasNext()) {
             it.advance();
             int i = DebugHelper.subTickCalls.get(it.key());
+            print = print || i > 0;
             double v = it.value() * 1e-6;
             builder.append(it.key()).append("={").append(v).append(" ms").append(", n=").append(i).append(", avg=").append(v / (i == 0 ? 1 : i)).append("} ");
 
@@ -60,6 +63,7 @@ public class DebugTickHandler {
             DebugHelper.subTickCalls.put(it.key(), 0);
         }
 
+        if(print)
         DebugHelper.info(builder.toString());
     }
 
