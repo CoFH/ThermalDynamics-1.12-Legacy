@@ -176,7 +176,7 @@ public class Cover extends Attachment {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-		GL11.glDepthMask(true);
+		GL11.glDepthMask(false);
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
 		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
