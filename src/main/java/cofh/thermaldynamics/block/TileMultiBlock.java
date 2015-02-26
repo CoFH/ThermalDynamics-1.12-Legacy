@@ -787,7 +787,12 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 				if (myGrid != null) {
 					myGrid.destroyAndRecreate();
 				}
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+
+                for (SubTileMultiBlock subTile : subTiles) {
+                    subTile.destroyAndRecreate();
+                }
+
+                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				return true;
 			}
 			if (subHit > 13 && subHit < 20) {
