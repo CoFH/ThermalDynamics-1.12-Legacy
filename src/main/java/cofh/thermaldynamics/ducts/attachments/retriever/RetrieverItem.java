@@ -165,11 +165,11 @@ public class RetrieverItem extends ServoItem {
 						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item))
 							continue;
 
-						ItemStack remainder = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, item, side ^ 1);
+						ItemStack remainder = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1);
 
 						if (remainder != null)
 							item.stackSize -= remainder.stackSize;
-						if (item.stackSize == 0)
+						if (item.stackSize <= 0)
 							continue;
 
 						Route route1 = endPoint.getRoute(itemDuct);
