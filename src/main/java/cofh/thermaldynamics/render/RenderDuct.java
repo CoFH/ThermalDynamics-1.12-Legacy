@@ -21,6 +21,7 @@ import cofh.thermaldynamics.ducts.attachments.facades.Cover;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -31,6 +32,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
@@ -42,9 +44,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	static IIcon textureCenterLine;
 
-    public static IIcon coverBase;
+	public static IIcon coverBase;
 	public static IIcon[] servoTexture = new IIcon[10];
-    public static IIcon[] retrieverTexture = new IIcon[10];
+	public static IIcon[] retrieverTexture = new IIcon[10];
 	public static IIcon[] filterTexture = new IIcon[5];
 
 	public static IIcon sideDucts;
@@ -77,13 +79,13 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		generateModels();
 		for (int i = 0; i < 10; i++) {
 			servoTexture[i] = IconRegistry.getIcon("ServoBase" + i);
-            retrieverTexture[i] = IconRegistry.getIcon("RetrieverBase" + i);
+			retrieverTexture[i] = IconRegistry.getIcon("RetrieverBase" + i);
 		}
 		for (int i = 0; i < 5; i++) {
 			filterTexture[i] = IconRegistry.getIcon("FilterBase" + i);
-        }
-        coverBase = IconRegistry.getIcon("CoverBase");
-        sideDucts = IconRegistry.getIcon("SideDucts");
+		}
+		coverBase = IconRegistry.getIcon("CoverBase");
+		sideDucts = IconRegistry.getIcon("SideDucts");
 
 		textureCenterLine = TFFluids.fluidSteam.getIcon();
 	}
@@ -172,9 +174,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 					icon = RenderUtils.getIconTransformation(TDDucts.structure.iconBaseTexture);
 					modelConnection[0][s].render(8, 24, trans, icon);
 					modelConnection[0][s].render(32, 48, trans, icon);
-                    if (ductType.iconConnectionTexture != null) {
-                        modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(ductType.iconConnectionTexture));
-                    }
+					if (ductType.iconConnectionTexture != null) {
+						modelConnection[1][s].render(trans, RenderUtils.getIconTransformation(ductType.iconConnectionTexture));
+					}
 				} else {
 					c = c | (1 << s);
 					if (invRender) {
@@ -290,7 +292,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
 		IIcon fluidTex = RenderHelper.getFluidTexture(stack);
 
-        if(level > 6) level = 6;
+		if (level > 6)
+			level = 6;
 
 		if (fluid.isGaseous(stack)) {
 			CCRenderState.setColour(RenderUtils.getFluidRenderColor(stack) << 8 | 32 + 36 * level);
@@ -399,8 +402,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		Block blockFromItem = Block.getBlockFromItem(item.getItem());
 
-        Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + item.getItemDamage());
-        int metadata = duct.id;
+		Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + item.getItemDamage());
+		int metadata = duct.id;
 		boolean renderExtra = false;
 
 		GL11.glPushMatrix();
@@ -412,11 +415,11 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderUtils.preItemRender();
 
 		CCRenderState.startDrawing();
-		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
+		renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
 		CCRenderState.draw();
 
 		CCRenderState.startDrawing();
-		renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
 		CCRenderState.draw();
 
 		CCRenderState.useNormals = false;
