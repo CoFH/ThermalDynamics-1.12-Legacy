@@ -77,6 +77,7 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		}
 
+        onMinorGridChange();
 		theGrid.destroy();
 	}
 

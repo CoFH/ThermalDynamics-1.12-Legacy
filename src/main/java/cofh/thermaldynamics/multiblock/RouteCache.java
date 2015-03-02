@@ -105,6 +105,8 @@ public class RouteCache {
                     if (!visited.contains(validTile)) {
                         visited.add(validTile);
 
+                        validTile.onNeighborBlockChange();
+
                         if (validTile.canStuffItem())
                             stuffableRoutes.add(new Route(route, validTile, i, true));
 
