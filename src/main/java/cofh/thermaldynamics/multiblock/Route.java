@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.multiblock;
 
 import cofh.repack.codechicken.lib.vec.BlockCoord;
+import gnu.trove.iterator.TByteIterator;
 import gnu.trove.list.linked.TByteLinkedList;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,7 +11,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class Route implements Comparable<Route> {
     public TByteLinkedList pathDirections = new TByteLinkedList();
-    public int pathPos = 0;
+
     public IMultiBlockRoute endPoint;
     public int pathWeight = 0;
     public boolean routeFinished = false;
@@ -80,23 +81,22 @@ public class Route implements Comparable<Route> {
     }
 
     public byte getNextDirection() {
-
-        return pathDirections.get(pathPos++);
+        return pathDirections.removeAt(0);
     }
 
     public boolean hasNextDirection() {
 
-        return pathDirections.size() > pathPos;
+        return pathDirections.size() > 0;
     }
 
     public int getCurrentDirection() {
 
-        return pathDirections.get(pathPos);
+        return pathDirections.get(0);
     }
 
     public int checkNextDirection() {
 
-        return pathDirections.get(pathPos + 1);
+        return pathDirections.get(1);
     }
 
     public int getLastSide() {
@@ -140,17 +140,18 @@ public class Route implements Comparable<Route> {
     }
 
     public byte[] toByteArray() {
-        int src = pathPos;
-        int len = pathDirections.size() - src;
-        byte[] b = pathDirections.toArray(src, len);
+        byte[] bytes = new byte[(pathDirections.size() + 1) / 2];
+        int i = 0;
 
-        byte[] bytes = new byte[(b.length + 1) / 2];
-        for (int i = 0; (i * 2) < b.length; i += 1) {
-            bytes[i] = b[i * 2];
-            if (i * 2 + 1 == b.length)
-                bytes[i] |= (6 << 3);
-            else
-                bytes[i] |= b[i * 2 + 1] << 3;
+        TByteIterator iterator = pathDirections.iterator();
+        while (iterator.hasNext()) {
+            bytes[i] = iterator.next();
+            if (iterator.hasNext()) {
+                bytes[i] |= (iterator.next() << 3);
+            } else {
+                bytes[i] |= 48;
+            }
+            i++;
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
