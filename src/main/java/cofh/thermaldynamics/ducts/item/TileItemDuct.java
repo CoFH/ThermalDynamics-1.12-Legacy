@@ -184,6 +184,10 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		return new ItemGrid(worldObj);
 	}
 
+    public byte ticksExisted = 0;
+    public final static byte maxTicksExistedBeforeFindAlt = 2;
+    public final static byte maxTicksExistedBeforeStuff = 6;
+    public final static byte maxTicksExistedBeforeDump = 10;
 	@Override
 	public boolean tickPass(int pass) {
 
@@ -191,6 +195,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			return false;
 
 		if (pass == 0) {
+            if(ticksExisted < maxTicksExistedBeforeDump) ticksExisted++;
 			tickItems();
 		}
 		return true;
@@ -602,6 +607,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM)
 				pathWeightType = b;
 		}
+        ticksExisted = maxTicksExistedBeforeDump;
 	}
 
 	@Override

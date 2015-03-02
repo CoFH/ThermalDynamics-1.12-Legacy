@@ -148,7 +148,11 @@ public class TravelingItem {
 					}
 				}
 			}
+
+            if(homeTile.ticksExisted < TileItemDuct.maxTicksExistedBeforeFindAlt)
+                return;
 		}
+
 		if (!hasDest || (!mustGoToDest && hasDest)) {
 			for (Route aRoute : routes.outputRoutes) {
 				if (aRoute.endPoint.isNode()) {
@@ -168,6 +172,9 @@ public class TravelingItem {
 				}
 			}
 		}
+
+        if(homeTile.ticksExisted <= TileItemDuct.maxTicksExistedBeforeStuff)
+            return;
 
 		// Failed to find an exit
 		if (homeTile.acceptingStuff()) {
@@ -191,7 +198,7 @@ public class TravelingItem {
 				oldDirection = (byte) (direction ^ 1);
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
-			} else {
+			} else if(homeTile.ticksExisted == TileItemDuct.maxTicksExistedBeforeDump) {
 				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
 				homeTile.removeItem(this, true);
 			}
