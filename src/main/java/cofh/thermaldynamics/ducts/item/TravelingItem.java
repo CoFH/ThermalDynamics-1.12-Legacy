@@ -311,6 +311,10 @@ public class TravelingItem {
 		theNBT.setInteger("startX", startX);
 		theNBT.setInteger("startY", startY);
 		theNBT.setInteger("startZ", startZ);
+
+        if(myPath != null){
+            theNBT.setByteArray("route", myPath.toByteArray());
+        }
 	}
 
 	public TravelingItem(NBTTagCompound theNBT) {
@@ -335,10 +339,10 @@ public class TravelingItem {
 		startY = theNBT.getInteger("startY");
 		startZ = theNBT.getInteger("startZ");
 
-	}
-
-	public static final float[][] START_COORD = { { 0.5F, 1, 0.5F }, { 0.5F, 0, 0.5F }, { 0.5F, 0.5F, 1 }, { 0.5F, 0.5F, 0 }, { 1, 0.5F, 0.5F },
-			{ 0, 0.5F, 0.5F } };
+        if (theNBT.hasKey("route", 7)) {
+            myPath = new Route(theNBT.getByteArray("route"));
+        }
+    }
 
 	// DOWN, UP, NORTH, SOUTH, WEST, EAST
 
@@ -347,8 +351,15 @@ public class TravelingItem {
 		if (myPath == null)
 			return null;
 
-		if (myPath.dest == null)
-			myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
+		if (myPath.dest == null) {
+            if(myPath.endPoint == null) {
+                if(!hasDest) return null;
+                myPath.dest = (new BlockCoord(destX, destY, destZ).offset(myPath.getLastSide()));
+            } else
+                myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
+
+
+        }
 		return myPath.dest;
 	}
 
