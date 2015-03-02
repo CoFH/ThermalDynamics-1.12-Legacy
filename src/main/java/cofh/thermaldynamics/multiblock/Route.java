@@ -108,12 +108,11 @@ public class Route implements Comparable<Route> {
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
         byte[] array;
 
-
         try {
-            if(bais.read() == 0){
+            if (bais.read() == 0) {
                 array = new byte[bais.available()];
                 bais.read(array);
-            }else {
+            } else {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 GZIPInputStream zis = new GZIPInputStream(bais);
                 byte[] tmpBuffer = new byte[256];
@@ -124,16 +123,35 @@ public class Route implements Comparable<Route> {
                 array = baos.toByteArray();
             }
 
-            pathDirections.addAll(array);
+            for (byte b1 : array) {
+                byte b2 = (byte) (b1 & 7);
+                if(b2 < 6) {
+                    pathDirections.add(b2);
+                }
+                byte b3 = (byte) (b1 >> 3);
+                if (b3 < 6) {
+                    pathDirections.add(b3);
+                }
+            }
+
         } catch (IOException ignore) {
 
         }
     }
 
-    public byte[] toByteArray(){
+    public byte[] toByteArray() {
         int src = pathPos;
         int len = pathDirections.size() - src;
-        byte[] bytes = pathDirections.toArray(src, len);
+        byte[] b = pathDirections.toArray(src, len);
+
+        byte[] bytes = new byte[(b.length + 1) / 2];
+        for (int i = 0; (i * 2) < b.length; i += 1) {
+            bytes[i] = b[i * 2];
+            if (i * 2 + 1 == b.length)
+                bytes[i] |= (6 << 3);
+            else
+                bytes[i] |= b[i * 2 + 1] << 3;
+        }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
