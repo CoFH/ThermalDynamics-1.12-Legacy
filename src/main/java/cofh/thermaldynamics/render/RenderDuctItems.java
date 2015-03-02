@@ -9,6 +9,9 @@ import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.ducts.item.TileItemDuct;
 import cofh.thermaldynamics.ducts.item.TravelingItem;
 import com.google.common.collect.Iterators;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import java.util.Iterator;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -50,7 +53,17 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 
 		travelingItemRender.setRenderManager(RenderManager.instance);
 		travelingEntityItem.hoverStart = 0;
+
+        FMLCommonHandler.instance().bus().register(instance);
 	}
+
+    public static float spinStep = 0.026175f;
+
+    @SubscribeEvent
+    public void clientTick(TickEvent.ClientTickEvent event) {
+        travelingItemSpin += spinStep;
+        travelingItemSpin %= 180;
+    }
 
 	@Override
 	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
@@ -125,9 +138,8 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 		if (!items.hasNext()) {
 			return;
 		}
-		travelingItemSpin += .001;
-		travelingItemSpin %= 180;
-		travelingEntityItem.hoverStart = travelingItemSpin;
+
+		travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
 
 		TravelingItem renderItem;
 
