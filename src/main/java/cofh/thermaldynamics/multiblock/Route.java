@@ -7,14 +7,13 @@ public class Route implements Comparable<Route> {
     public TByteLinkedList pathDirections = new TByteLinkedList();
     public int pathPos = 0;
     public IMultiBlockRoute endPoint;
-    public IMultiBlockRoute startPoint;
     public int pathWeight = 0;
     public boolean routeFinished = false;
     public BlockCoord dest;
 
     public Route(IMultiBlockRoute myParent) {
 
-        startPoint = myParent;
+
         endPoint = myParent;
     }
 
@@ -24,7 +23,7 @@ public class Route implements Comparable<Route> {
         pathDirections = new TByteLinkedList( prevRoute.pathDirections);
         pathWeight = prevRoute.pathWeight + newPlace.getWeight();
         endPoint = newPlace;
-        startPoint = prevRoute.startPoint;
+
         pathDirections.add(direction);
         routeFinished = isFinished;
     }
@@ -36,7 +35,7 @@ public class Route implements Comparable<Route> {
         pathDirections = new TByteLinkedList( prevRoute.pathDirections);
         pathWeight = prevRoute.pathWeight;
         endPoint = prevRoute.endPoint;
-        startPoint = prevRoute.startPoint;
+
         routeFinished = true;
     }
 
@@ -46,7 +45,7 @@ public class Route implements Comparable<Route> {
         pathDirections = new TByteLinkedList( prevRoute.pathDirections);
         pathWeight = prevRoute.pathWeight;
         endPoint = prevRoute.endPoint;
-        startPoint = prevRoute.startPoint;
+
         routeFinished = prevRoute.routeFinished;
     }
 
@@ -99,6 +98,4 @@ public class Route implements Comparable<Route> {
 
         return pathDirections.size() > 0 ? pathDirections.get(pathDirections.size() - 1) : 0;
     }
-
-
 }
