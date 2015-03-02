@@ -167,7 +167,7 @@ public class CommandThermalDebug extends CommandBase {
 				if (rand.nextInt(20) == 0)
 					positions.add(pos.copy());
 
-				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[0], 0, 3);
+				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[2], 0, 3);
 
 				pos.getTileEntity(world, TileMultiBlock.class).blockPlaced();
 
