@@ -1021,7 +1021,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		}
 
 		// Are we attached to a non-multiblock tile
-		public boolean attachedToNeightbour;
+		public final boolean attachedToNeightbour;
 
 		NeighborTypes(boolean b) {
 

@@ -260,7 +260,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 
-		if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
+        if (isOpen(from)) {
 			return fluidGrid.myTank.fill(resource, doFill);
 		}
 		return 0;
@@ -269,7 +269,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
 
-		if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
+		if (isOpen(from)) {
 			return fluidGrid.myTank.drain(resource, doDrain);
 		}
 		return null;
@@ -278,7 +278,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 
-		if (fluidGrid != null && neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED) {
+        if (isOpen(from)) {
 			return fluidGrid.myTank.drain(maxDrain, doDrain);
 		}
 		return null;
@@ -287,16 +287,23 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
 
-		return neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+		return isOpen(from);
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 
-		return neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+		return isOpen(from);
 	}
 
-	@Override
+    public boolean isOpen(ForgeDirection from) {
+
+        return fluidGrid != null && (from == ForgeDirection.UNKNOWN || (
+                (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.INPUT)
+                        && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED));
+    }
+
+    @Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 
 		return fluidGrid != null ? new FluidTankInfo[] { fluidGrid.myTank.getInfo() } : CoFHProps.EMPTY_TANK_INFO;
