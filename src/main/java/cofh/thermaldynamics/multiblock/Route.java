@@ -16,6 +16,7 @@ public class Route implements Comparable<Route> {
     public int pathWeight = 0;
     public boolean routeFinished = false;
     public BlockCoord dest;
+    public static final byte[] tmpBuffer = new byte[256];
 
     public Route(IMultiBlockRoute myParent) {
 
@@ -115,7 +116,6 @@ public class Route implements Comparable<Route> {
             } else {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 GZIPInputStream zis = new GZIPInputStream(bais);
-                byte[] tmpBuffer = new byte[256];
                 int n;
                 while ((n = zis.read(tmpBuffer)) >= 0)
                     baos.write(tmpBuffer, 0, n);

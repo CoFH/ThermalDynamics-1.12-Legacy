@@ -1103,4 +1103,9 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			tag.setString("AttachmentType", iPortableData.getDataType());
 		}
 	}
+
+    public void cofh_invalidate(){
+        invalidate();
+        markChunkDirty();
+    }
 }

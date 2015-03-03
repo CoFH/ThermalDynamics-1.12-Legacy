@@ -113,7 +113,7 @@ public class TravelingItem {
 				return;
 			}
 			homeTile.removeItem(this, true);
-		} else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT && goingToStuff && myPath.pathPos >= myPath.pathWeight) {
+		} else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT && goingToStuff) {
 			if (homeTile.canStuffItem()) {
 				goingToStuff = false;
 				homeTile.stuffItem(this);
