@@ -99,16 +99,18 @@ public class ItemBlockDuct extends ItemBlockBase {
 			list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 
 			if (duct != TDDucts.energySuperCond) {
-				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type]
+				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type]
 						+ StringHelper.LIGHT_GRAY + " RF/t.");
 			} else {
-				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.BRIGHT_BLUE
-						+ StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + " RF/t.");
+				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.infinite")
+						+ StringHelper.LIGHT_GRAY + " RF/t.");
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySupercond.info"));
 			}
+			list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
 			break;
 		case FLUID:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
+			list.add(StringHelper.getNoticeText("info.thermaldynamics.transferFluid"));
 
 			if (duct.type == 0) {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
@@ -116,13 +118,12 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
 			} else if (duct.type == 2) {
 				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
+				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
 						+ StringHelper.LIGHT_GRAY + " RF/t.");
 			}
 			break;
 		case ITEM:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
-
 			if (duct.type == 0) {
 				// list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemBasic.info"));
 			} else if (duct.type == 1) {
@@ -131,8 +132,17 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
 			} else if (duct.type == 3) {
 				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-				list.add(StringHelper.localize("info.thermaldynamics.throughput") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
+				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
 						+ StringHelper.LIGHT_GRAY + " RF/t.");
+				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
+			}
+			if (stack.hasTagCompound()) {
+				byte pathWeight = stack.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT);
+				if (pathWeight == DuctItem.PATHWEIGHT_DENSE) {
+					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.dense"));
+				} else if (pathWeight == DuctItem.PATHWEIGHT_VACUUM) {
+					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.vacuum"));
+				}
 			}
 			break;
 		case STRUCTURAL:

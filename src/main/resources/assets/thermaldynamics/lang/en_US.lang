@@ -62,7 +62,9 @@ item.thermaldynamics.retriever.3.name=Signalum Retriever
 item.thermaldynamics.retriever.4.name=Resonant Retriever
 
 info.thermaldynamics.capacitance=Capacitance
-info.thermaldynamics.throughput=Throughput
+info.thermaldynamics.transfer=Transfer
+info.thermaldynamics.transferConnection=Transfer amount is per connection.
+info.thermaldynamics.transferFluid=Transfer rate varies by fluid.
 
 info.thermaldynamics.duct.energy=Transfers Redstone Flux (RF).
 info.thermaldynamics.duct.fluid=Transfers Fluids.
@@ -70,6 +72,8 @@ info.thermaldynamics.duct.item=Transfers Items.
 info.thermaldynamics.duct.structure=Provides Structure.
 info.thermaldynamics.duct.crafting=Crafting Item.
 info.thermaldynamics.duct.cover=Combine with a Block to create Covers.
+info.thermaldynamics.duct.dense=Increases path length dramatically.
+info.thermaldynamics.duct.vacuum=Decreases path length dramatically.
 
 info.thermaldynamics.filter.whiteList=Blacklist
 info.thermaldynamics.filter.metadata=Metadata

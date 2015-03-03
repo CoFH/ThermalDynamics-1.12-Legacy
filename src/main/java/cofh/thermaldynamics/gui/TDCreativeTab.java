@@ -6,11 +6,14 @@ import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.ducts.Duct;
+import cofh.thermaldynamics.ducts.DuctItem;
 import cofh.thermaldynamics.ducts.TDDucts;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -68,6 +71,11 @@ public class TDCreativeTab extends CreativeTabs {
 
 		for (Duct d : TDDucts.getSortedDucts()) {
 			list.add(d.itemStack.copy());
+
+			if (d instanceof DuctItem) {
+				list.add(((DuctItem) d).getDenseItemStack());
+				list.add(((DuctItem) d).getVacuumItemStack());
+			}
 		}
 		for (ItemStack item : itemStacks) {
 			if (!(item.getItem() instanceof ItemBlockDuct)) {
@@ -75,5 +83,4 @@ public class TDCreativeTab extends CreativeTabs {
 			}
 		}
 	}
-
 }

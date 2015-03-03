@@ -97,14 +97,16 @@ public class TDCrafting {
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened));
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.itemBasicOpaque.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "ingotLead"));
 
-		GameRegistry.addRecipe(new ShapelessOreRecipe(TDDucts.itemEnder.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium",
-				"nuggetEnderium"));
-		GameRegistry.addRecipe(new ShapelessOreRecipe(TDDucts.itemEnderOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "nuggetEnderium", "nuggetEnderium",
-				"nuggetEnderium"));
-		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.itemEnder.itemStack, 3), TDDucts.itemBasic.itemStack,
-				TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "ingotEnderium"));
-		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.itemEnderOpaque.itemStack, 3), TDDucts.itemBasicOpaque.itemStack,
-				TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "ingotEnderium"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.itemEnder.itemStack, 2), TDDucts.itemBasic.itemStack,
+				TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.itemEnderOpaque.itemStack, 2), TDDucts.itemBasicOpaque.itemStack,
+				TDDucts.itemBasicOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.itemEnder.itemStack, 6), TDDucts.itemBasic.itemStack,
+				TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack,
+				TDDucts.itemBasic.itemStack, "ingotEnderium"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.itemEnderOpaque.itemStack, 6), TDDucts.itemBasicOpaque.itemStack,
+				TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack,
+				TDDucts.itemBasicOpaque.itemStack, "ingotEnderium"));
 
 		/* ITEMS - TE Integration */
 		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemFast.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);

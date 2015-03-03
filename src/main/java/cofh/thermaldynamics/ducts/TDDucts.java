@@ -105,19 +105,19 @@ public class TDDucts {
 	static void addEnergyDucts() {
 
 		energyBasic = addDuct(OFFSET_ENERGY + 0, false, 1, 0, "energyBasic", Type.ENERGY, DuctFactory.energy, "lead", "lead", Duct.REDSTONE_BLOCK, 255, null,
-				null, 255);
+				null, 0);
 
 		energyHardened = addDuct(OFFSET_ENERGY + 1, false, 1, 1, "energyHardened", Type.ENERGY, DuctFactory.energy, "invar", "invar", Duct.REDSTONE_BLOCK, 255,
 				null, null, 0);
 
 		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0);
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 128, null, null, 0);
 
 		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
 				"electrum", null, 0, null, null, 0);
 
 		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, null, null, 0);
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 128, null, null, 0);
 		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, DuctFactory.structural, "enderium", "enderium",
 				null, 0, null, null, 0);
 
