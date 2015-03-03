@@ -4,6 +4,7 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.WeakHashMap;
@@ -14,15 +15,16 @@ public class TickHandler {
 
 	public static TickHandler INSTANCE = new TickHandler();
 	public final static WeakHashMap<World, WorldGridList> handlers = new WeakHashMap<World, WorldGridList>();
-	public final static LinkedHashSet<IMultiBlock> multiBlocksToCalculate = new LinkedHashSet<IMultiBlock>();
+	public final static LinkedHashSet<WeakReference<IMultiBlock>> multiBlocksToCalculate = new LinkedHashSet<WeakReference<IMultiBlock>>();
 
 	public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
 
-		if (multiBlock.world() != null)
-			getTickHandler(multiBlock.world()).tickingBlocks.add(multiBlock);
-		else
+		if (multiBlock.world() != null) {
+            if(ServerHelper.isServerWorld(multiBlock.world()))
+                getTickHandler(multiBlock.world()).tickingBlocks.add(multiBlock);
+        } else
 			synchronized (multiBlocksToCalculate) {
-				multiBlocksToCalculate.add(multiBlock);
+				multiBlocksToCalculate.add(new WeakReference<IMultiBlock>(multiBlock));
 			}
 	}
 
@@ -34,16 +36,20 @@ public class TickHandler {
 
 		synchronized (multiBlocksToCalculate) {
 			if (!multiBlocksToCalculate.isEmpty()) {
-				Iterator<IMultiBlock> iterator = multiBlocksToCalculate.iterator();
+				Iterator<WeakReference<IMultiBlock>> iterator = multiBlocksToCalculate.iterator();
 				while (iterator.hasNext()) {
-					IMultiBlock multiBlock = iterator.next();
-					if (multiBlock.world() != null) {
-						getTickHandler(multiBlock.world()).tickingBlocks.add(multiBlock);
-						iterator.remove();
-					}
-				}
-			}
+					IMultiBlock multiBlock = iterator.next().get();
+                    if (multiBlock == null)
+                        iterator.remove();
+                    else if (multiBlock.world() != null) {
+                        if (ServerHelper.isServerWorld(multiBlock.world()))
+                            getTickHandler(multiBlock.world()).tickingBlocks.add(multiBlock);
+                        iterator.remove();
+                    }
+                }
+            }
 		}
+
 	}
 
 	public static WorldGridList getTickHandler(World world) {
@@ -64,6 +70,9 @@ public class TickHandler {
 
 	@SubscribeEvent
 	public void tick(TickEvent.WorldTickEvent evt) {
+
+        if(handlers.isEmpty())
+            return;
 
 		synchronized (handlers) {
 			WorldGridList worldGridList = handlers.get(evt.world);
