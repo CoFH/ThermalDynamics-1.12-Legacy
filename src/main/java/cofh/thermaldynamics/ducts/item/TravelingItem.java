@@ -250,32 +250,6 @@ public class TravelingItem {
 		}
 	}
 
-//	public static void calcCoordsFromProgress(TravelingItem theItem, TileItemDuct homeTile) {
-//
-//		theItem.x = START_COORD[theItem.oldDirection][0];
-//		theItem.y = START_COORD[theItem.oldDirection][1];
-//		theItem.z = START_COORD[theItem.oldDirection][2];
-//
-//		for (int i = 0; i < theItem.progress; i++) {
-//			moveCoordsByProgress(i, theItem, homeTile);
-//		}
-//	}
-
-	public static float[] getVec(int progress, TravelingItem theItem, TileItemDuct homeTile) {
-
-		if (progress <= homeTile.getPipeHalfLength()) {
-			return homeTile.getSideCoordsModifier()[theItem.oldDirection];
-
-		} else {
-			if (theItem.direction >= 0) {
-				return homeTile.getSideCoordsModifier()[theItem.direction];
-			}
-		}
-		return zeroVec;
-	}
-
-	private static final float[] zeroVec = { 0F, 0F, 0F };
-
 	public void writePacket(PacketCoFHBase myPayload) {
 
 		myPayload.addByte(progress);
