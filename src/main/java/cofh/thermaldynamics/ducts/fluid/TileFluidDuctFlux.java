@@ -161,8 +161,8 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 
 	@Override
 	public void cacheStructural(TileEntity tile, int side) {
-
-		energyCache[side] = (IEnergyReceiver) tile;
+        if (tile instanceof IEnergyReceiver)
+		    energyCache[side] = (IEnergyReceiver) tile;
 		isOutput = true;
 	}
 
