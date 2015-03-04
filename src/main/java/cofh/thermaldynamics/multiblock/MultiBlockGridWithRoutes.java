@@ -13,16 +13,18 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 
     @Override
     public void doTickProcessing(long deadline) {
-        Iterator<RouteCache> iterator = calculatingRoutes.iterator();
-        RouteCache routeCache = iterator.next();
-        while (System.nanoTime() < deadline) {
-            if (!routeCache.processStep()) {
-                iterator.remove();
-                routeCacheMap.put(routeCache.origin, routeCache);
-                if (iterator.hasNext())
-                    routeCache = iterator.next();
-                else
-                    return;
+        synchronized (calculatingRoutes) {
+            Iterator<RouteCache> iterator = calculatingRoutes.iterator();
+            RouteCache routeCache = iterator.next();
+            while (System.nanoTime() < deadline) {
+                if (!routeCache.processStep()) {
+                    iterator.remove();
+                    routeCacheMap.put(routeCache.origin, routeCache);
+                    if (iterator.hasNext())
+                        routeCache = iterator.next();
+                    else
+                        return;
+                }
             }
         }
     }
@@ -34,7 +36,7 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
     }
 
     public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<IMultiBlockRoute, RouteCache>();
-    public LinkedList<RouteCache> calculatingRoutes = new LinkedList<RouteCache>();
+    public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<RouteCache>();
 
     @Override
     public void onMinorGridChange() {
@@ -49,8 +51,10 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
             routeCacheMap.clear();
         }
 
-        if (!calculatingRoutes.isEmpty())
-            calculatingRoutes.clear();
+        synchronized (calculatingRoutes) {
+            if (!calculatingRoutes.isEmpty())
+                calculatingRoutes.clear();
+        }
     }
 
     public RouteCache getRoutesFromOutputNonUrgent(IMultiBlockRoute start) {
@@ -61,7 +65,9 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
         }
 
         cache = new RouteCache(start);
-        calculatingRoutes.add(cache);
+        synchronized (calculatingRoutes) {
+            calculatingRoutes.add(cache);
+        }
         routeCacheMap.put(start, cache);
         return cache;
     }
