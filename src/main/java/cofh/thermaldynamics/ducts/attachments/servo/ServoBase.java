@@ -3,6 +3,7 @@ package cofh.thermaldynamics.ducts.attachments.servo;
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.render.RenderUtils;
+import cofh.lib.util.helpers.StringHelper;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileMultiBlock;
@@ -10,11 +11,24 @@ import cofh.thermaldynamics.ducts.attachments.ConnectionBase;
 import cofh.thermaldynamics.render.RenderDuct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class ServoBase extends ConnectionBase {
+
+	public static final String[] NAMES = { "basic", "hardened", "reinforced", "signalum", "resonant" };
+	static boolean[] redstoneControl = { true, true, true, true, true };
+
+	public static void initialize() {
+
+		String category = "Attachment.Servo.";
+
+		for (int i = 0; i < NAMES.length; i++) {
+			redstoneControl[i] = ThermalDynamics.config.get(category + StringHelper.titleCase(NAMES[i]), "RedstoneControl", redstoneControl[i]);
+		}
+	}
 
 	public ServoBase(TileMultiBlock tile, byte side) {
 
@@ -87,7 +101,7 @@ public abstract class ServoBase extends ConnectionBase {
 
 	public static boolean canAlterRS(int type) {
 
-		return type >= 2;
+		return redstoneControl[type % redstoneControl.length];
 	}
 
 	@Override

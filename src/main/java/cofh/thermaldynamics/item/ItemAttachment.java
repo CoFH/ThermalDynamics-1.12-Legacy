@@ -9,10 +9,12 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.ducts.attachments.servo.ServoBase;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -89,10 +91,11 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 	@Override
 	public boolean postInit() {
 
+		ServoBase.initialize();
+
 		return true;
 	}
 
-	@SuppressWarnings("SuspiciousNameCombination")
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onBlockHighlight(DrawBlockHighlightEvent event) {

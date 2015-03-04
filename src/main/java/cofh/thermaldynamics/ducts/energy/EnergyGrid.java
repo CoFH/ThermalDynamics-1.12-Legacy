@@ -25,7 +25,7 @@ public class EnergyGrid extends MultiBlockGrid {
 		String category;
 		String category2 = "Duct.Energy.";
 
-		for (int i = 3; i >= 0; i--) {
+		for (int i = 0; i < 4; i++) {
 			category = category2 + names[i];
 			NODE_TRANSFER[i] = MathHelper.clampI(ThermalDynamics.config.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10,
 					NODE_TRANSFER[i] * 10);

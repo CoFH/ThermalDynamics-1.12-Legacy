@@ -102,6 +102,10 @@ public class ThermalDynamics extends BaseMod {
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
 		}
+
+		// TODO: Temp
+		config.removeCategory("Recipes");
+
 		config.save();
 	}
 

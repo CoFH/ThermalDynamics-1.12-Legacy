@@ -31,8 +31,8 @@ public class TDCrafting {
 
 	public static void loadRecipes() {
 
-		useHardenedGlass = ThermalDynamics.config.get("Recipes", "UseHardenedGlass", true);
-		useTransposerRecipes = ThermalDynamics.config.get("Recipes", "UseFluidTransposer", true);
+		useHardenedGlass = ThermalDynamics.config.get("Duct.Recipes", "UseHardenedGlass", true);
+		useTransposerRecipes = ThermalDynamics.config.get("Duct.Recipes", "UseFluidTransposer", true);
 		String glassHardened = useHardenedGlass ? "blockGlassHardened" : "blockGlass";
 
 		/* ENERGY */
@@ -76,7 +76,7 @@ public class TDCrafting {
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidHardened.itemStack, 6), "IGI", 'I', "ingotInvar", 'G', glassHardened));
 		GameRegistry
-		.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidHardenedOpaque.itemStack, 6), "IGI", 'I', "ingotInvar", 'G', "ingotLead"));
+				.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidHardenedOpaque.itemStack, 6), "IGI", 'I', "ingotInvar", 'G', "ingotLead"));
 
 		GameRegistry.addRecipe(new ShapelessOreRecipe(TDDucts.fluidFlux.itemStack, TDDucts.fluidHardened.itemStack, "nuggetSignalum", "nuggetSignalum",
 				"nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum"));
