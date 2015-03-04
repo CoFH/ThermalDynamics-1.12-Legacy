@@ -9,6 +9,7 @@ import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
+import cofh.lib.util.position.BlockPosition;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
@@ -24,10 +25,12 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -41,6 +44,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
@@ -189,7 +193,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public IMultiBlock getConnectedSide(byte side) {
 
-		return (IMultiBlock) BlockHelper.getAdjacentTileEntity(this, side);
+		return BlockPosition.getAdjacentTileEntity(this, ForgeDirection.getOrientation(side), IMultiBlock.class);
 
 	}
 
@@ -202,14 +206,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public boolean isSideConnected(byte side) {
 
-		TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, side);
+		TileEntity tileEntity = BlockPosition.getAdjacentTileEntity(this, ForgeDirection.getOrientation(side));
 		return tileEntity instanceof TileMultiBlock && !isBlockedSide(side) && !((TileMultiBlock) tileEntity).isBlockedSide(side ^ 1);
 	}
 
 	@Override
 	public void setNotConnected(byte side) {
 
-		TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, side);
+		TileEntity tileEntity = BlockPosition.getAdjacentTileEntity(this, ForgeDirection.getOrientation(side));
 
 		if (isSignificantTile(tileEntity, side)) {
 			neighborMultiBlocks[side] = null;
@@ -304,7 +308,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			return;
 		}
 
-		TileEntity theTile;
 		boolean wasNode = isNode;
 		isNode = false;
 		boolean wasInput = isInput;
