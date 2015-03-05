@@ -1112,7 +1112,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
     public void cofh_invalidate(){
-        invalidate();
         markChunkDirty();
     }
 }

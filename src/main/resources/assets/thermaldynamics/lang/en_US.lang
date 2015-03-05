@@ -102,7 +102,7 @@ info.thermaldynamics.filter.antiSpam.1=Prevent Over-sending
 
 info.thermaldynamics.filter.incStocksize=Inc. Max Total Items in Inventory
 info.thermaldynamics.filter.decStocksize=Dec. Max Total Items in Inventory
-info.thermaldynamics.filter.zeroStocksize=0 (Inf)
+info.thermaldynamics.filter.zeroStocksize=Inf
 
 info.thermaldynamics.servo.incStacksize=Inc. Stack Size Extracted
 info.thermaldynamics.servo.decStacksize=Dec. Stack Size Extracted
