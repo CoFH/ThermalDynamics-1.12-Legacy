@@ -563,6 +563,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public void tickMultiBlock() {
 
+        if(isInvalid()) return;
+
 		onNeighborBlockChange();
 		formGrid();
 

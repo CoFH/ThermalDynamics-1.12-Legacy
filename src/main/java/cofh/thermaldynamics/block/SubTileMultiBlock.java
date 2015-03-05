@@ -122,7 +122,7 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 	@Override
 	public void tickMultiBlock() {
 
-		if (grid == null && ServerHelper.isServerWorld(parent.world())) {
+		if (!parent.isInvalid() && grid == null && ServerHelper.isServerWorld(parent.world())) {
 			onNeighbourChange();
 			formGrid();
 		}
