@@ -19,7 +19,8 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	static final String TEX_PATH = "thermaldynamics:textures/gui/Connection.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 
-	public String myInfo = "";
+
+    public String myInfo = "";
 
 	InventoryPlayer inventory;
 	ConnectionBase conBase;
@@ -29,10 +30,18 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	public ElementButton[] levelButtons = new ElementButton[FilterLogic.defaultLevels.length];
 
 	boolean isItemServo;
+    boolean isAdvItemFilter;
 	public ElementButton decStackSize;
 	public ElementButton incStackSize;
-	int minSize;
-	int maxSize;
+
+    public ElementButton decStockingSize;
+    public ElementButton incStockingSize;
+
+	int minStackSize;
+	int maxStackSize;
+
+    int minStockingSize;
+    int maxStockingSize;
 
 	public int buttonSize;
 
@@ -49,6 +58,9 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		this.ySize = 205;
         this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM
                 || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
+        this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM ||
+                conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM) &&
+                conBase.filter.canAlterFlag(FilterLogic.levelStocksize);
     }
 
 	protected void generateInfo(String tileString, int lines) {
@@ -99,14 +111,24 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				addElement(levelButtons[j]);
 			}
 		}
-		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH);
-		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH);
+		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.servo.decStacksize");
+		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.servo.incStacksize");
+
+        decStockingSize = new ElementButton(this, 137, 28, "DecStockingSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.filter.decStocksize");
+        incStockingSize = new ElementButton(this, 153, 28, "IncStockingSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.filter.incStocksize");
+
+        if (isAdvItemFilter) {
+            addElement(decStockingSize);
+            addElement(incStockingSize);
+            minStockingSize = FilterLogic.minLevels[conBase.filter.type][FilterLogic.levelStocksize];
+            maxStockingSize = FilterLogic.maxLevels[conBase.filter.type][FilterLogic.levelStocksize];
+        }
 
 		if (isItemServo) {
 			addElement(decStackSize);
 			addElement(incStackSize);
-			minSize = FilterLogic.minLevels[conBase.filter.type][0];
-			maxSize = FilterLogic.maxLevels[conBase.filter.type][0];
+			minStackSize = FilterLogic.minLevels[conBase.filter.type][0];
+			maxStackSize = FilterLogic.maxLevels[conBase.filter.type][0];
 		}
 		setButtons();
 	}
@@ -139,14 +161,28 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 		super.updateElementInformation();
 
+        if (isAdvItemFilter) {
+            int qty = conBase.filter.getLevel(FilterLogic.levelStocksize);
+            if (qty > minStockingSize) {
+                decStockingSize.setActive();
+            } else {
+                decStockingSize.setDisabled();
+            }
+            if (qty < maxStockingSize) {
+                incStockingSize.setActive();
+            } else {
+                incStockingSize.setDisabled();
+            }
+        }
+
 		if (isItemServo) {
 			int qty = conBase.filter.getLevel(0);
-			if (qty > minSize) {
+			if (qty > minStackSize) {
 				decStackSize.setActive();
 			} else {
 				decStackSize.setDisabled();
 			}
-			if (qty < maxSize) {
+			if (qty < maxStackSize) {
 				incStackSize.setActive();
 			} else {
 				incStackSize.setDisabled();
@@ -203,11 +239,34 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			container.filter.incLevel(0, change, false);
 			pitch += 0.1F;
 		}
+
+        if (buttonName.equalsIgnoreCase("DecStockingSize")) {
+            container.filter.decLevel(FilterLogic.levelStocksize, change, false);
+            pitch -= 0.1F;
+        } else if (buttonName.equalsIgnoreCase("IncStockingSize")) {
+            container.filter.incLevel(FilterLogic.levelStocksize, change, false);
+            pitch += 0.1F;
+        }
+
 		playSound("random.click", 1.0F, pitch);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
+
+        if (isAdvItemFilter) {
+            int xQty = 146;
+            int qty = conBase.filter.getLevel(FilterLogic.levelStocksize);
+            if(qty == 0) {
+                xQty -= 9;
+                fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.filter.zeroStocksize"), xQty, 18, 0x404040);
+            }else{
+                if (qty < 10) {
+                    xQty += 6;
+                }
+                fontRendererObj.drawString("" + qty, xQty, 18, 0x404040);
+            }
+        }
 
 		if (isItemServo) {
 			int xQty = 146;
@@ -215,7 +274,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			if (qty < 10) {
 				xQty += 6;
 			}
-			fontRendererObj.drawString("" + qty, xQty, 44, 0x404040);
+			fontRendererObj.drawString("" + qty, xQty, 46, 0x404040);
 		}
 
 		super.drawGuiContainerForegroundLayer(x, y);

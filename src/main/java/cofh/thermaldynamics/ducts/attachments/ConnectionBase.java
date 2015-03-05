@@ -222,10 +222,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 			filter.setFlag(aByte >> 1, (aByte & 1) == 1);
 			filter.recalc = true;
 		} else if (a == NETWORK_ID.FILTERLEVEL) {
-
 			byte b = payload.getByte();
-			byte c = payload.getByte();
-			filter.setLevel(b, c);
+			int c = payload.getShort();
+            filter.setLevel(b, c);
 			filter.recalc = true;
 		}
 	}
@@ -241,7 +240,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 		PacketTileInfo packet = getNewPacket(NETWORK_ID.FILTERLEVEL);
 		packet.addByte(levelType);
-		packet.addByte(level);
+		packet.addShort(level);
 		PacketHandler.sendToServer(packet);
 	}
 

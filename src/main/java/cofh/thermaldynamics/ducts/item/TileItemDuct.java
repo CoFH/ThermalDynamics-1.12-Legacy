@@ -744,7 +744,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 				return insertingItem;
 			}
 			int s = cacheStack != null ? cacheStack.stackSize : 0;
-			int m = cache3[side].getMaxStoredCount();
+			int m = Math.min(cache3[side].getMaxStoredCount(), maxStock);
+
 			if (s >= m) {
 				return insertingItem;
 			}
@@ -770,7 +771,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			if (insertingItem.stackSize <= 0) {
 				return null;
 			}
-			return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
+            return insertingItem;
 		} else {
 			if (!routeItems) {
 				return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);

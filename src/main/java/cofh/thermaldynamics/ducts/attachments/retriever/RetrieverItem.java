@@ -210,7 +210,7 @@ public class RetrieverItem extends ServoItem {
 			ItemStack stuffedItem = iterator.next();
 			if (!filter.matchesFilter(stuffedItem))
 				continue;
-            
+
 			itemDuct.insertIntoInventory(stuffedItem, side);
 			if (stuffedItem == null || stuffedItem.stackSize == 0)
 				iterator.remove();

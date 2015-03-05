@@ -390,7 +390,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         }
     }
 
-    public static final Perm[] levelPerms = {Perm.SERVO, Perm.SERVO, Perm.FILTER, Perm.FILTER};
+    public static final Perm[] levelPerms = {Perm.SERVO, Perm.SERVO, Perm.FILTER, Perm.ALL};
     public static final int[][] minLevels = {{1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0},};
 
     public static final int[][] maxLevels = {
