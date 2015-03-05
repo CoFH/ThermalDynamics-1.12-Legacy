@@ -100,8 +100,8 @@ info.thermaldynamics.filter.routeType.3=Round Robin
 info.thermaldynamics.filter.antiSpam.0=Allow Over-sending
 info.thermaldynamics.filter.antiSpam.1=Prevent Over-sending
 
-info.thermaldynamics.filter.incStocksize=Inc. Max Amount Allowed
-info.thermaldynamics.filter.decStocksize=Dec. Max Amount Allowed
+info.thermaldynamics.filter.incStocksize=Inc. Max Total Items in Inventory
+info.thermaldynamics.filter.decStocksize=Dec. Max Total Items in Inventory
 info.thermaldynamics.filter.zeroStocksize=0 (Inf)
 
 info.thermaldynamics.servo.incStacksize=Inc. Stack Size Extracted
