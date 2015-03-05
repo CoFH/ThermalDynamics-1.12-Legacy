@@ -226,7 +226,7 @@ public class ServoItem extends ServoBase {
                     continue;
                 }
                 if (multiStack[type]) {
-                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStacksize));
+                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStackSize));
                     if (travelingItem.stack.stackSize < totalSize) {
                         for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
                             slot = accessibleSlotsFromSide[i];
@@ -270,7 +270,7 @@ public class ServoItem extends ServoBase {
                     continue;
                 }
                 if (multiStack[type]) {
-                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStacksize));
+                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStackSize));
                     if (multiStack[type] && travelingItem.stack.stackSize < totalSize) {
                         for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSize; slot++) {
                             itemStack = cachedInv.getStackInSlot(slot);
@@ -348,7 +348,7 @@ public class ServoItem extends ServoBase {
 
 	public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
 
-		itemStack.stackSize = Math.min(itemStack.stackSize, filter.getLevel(FilterLogic.levelStacksize));
+		itemStack.stackSize = Math.min(itemStack.stackSize, filter.getLevel(FilterLogic.levelStackSize));
 		return itemStack;
 	}
 

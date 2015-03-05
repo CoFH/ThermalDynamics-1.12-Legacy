@@ -203,7 +203,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     @Override
     public int getMaxStock() {
 
-        return levels[levelStocksize] == 0 ? Integer.MAX_VALUE : levels[levelStocksize];
+        return levels[levelRetainSize] == 0 ? Integer.MAX_VALUE : levels[levelRetainSize];
     }
 
     @Override
@@ -412,7 +412,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
         for (int i = 0; i < levels.length; i++) {
             levels[i] = Math.max(Math.min(defaultLevels[i], maxLevels[type][i]), minLevels[type][i]);
-            if (i != levelStacksize && i != levelStocksize && levelPerms[i].appliesTo(this) && minLevels[type][i] < maxLevels[type][i]) {
+            if (i != levelStackSize && i != levelRetainSize && levelPerms[i].appliesTo(this) && minLevels[type][i] < maxLevels[type][i]) {
                 vLevels.add(i);
             }
         }
@@ -427,10 +427,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         validFlags = vLevels.toArray();
     }
 
-    public final static int levelStacksize = 0;
+    public final static int levelStackSize = 0;
     public final static int levelRouteMode = 1;
     public final static int levelConservativeMode = 2;
-    public final static int levelStocksize = 3;
+    public final static int levelRetainSize = 3;
 
     public void incLevel(int i) {
 

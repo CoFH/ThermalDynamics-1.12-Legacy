@@ -9,9 +9,11 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.ducts.attachments.ConnectionBase;
 import cofh.thermaldynamics.ducts.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiDuctConnection extends GuiBaseAdv {
@@ -19,8 +21,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	static final String TEX_PATH = "thermaldynamics:textures/gui/Connection.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 
-
-    public String myInfo = "";
+	public String myInfo = "";
 
 	InventoryPlayer inventory;
 	ConnectionBase conBase;
@@ -30,18 +31,18 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	public ElementButton[] levelButtons = new ElementButton[FilterLogic.defaultLevels.length];
 
 	boolean isItemServo;
-    boolean isAdvItemFilter;
+	boolean isAdvItemFilter;
 	public ElementButton decStackSize;
 	public ElementButton incStackSize;
 
-    public ElementButton decStockingSize;
-    public ElementButton incStockingSize;
+	public ElementButton decRetainSize;
+	public ElementButton incRetainSize;
 
 	int minStackSize;
 	int maxStackSize;
 
-    int minStockingSize;
-    int maxStockingSize;
+	int minRetainSize;
+	int maxRetainSize;
 
 	public int buttonSize;
 
@@ -56,13 +57,12 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		container = (ContainerDuctConnection) inventorySlots;
 		name = conBase.getName();
 		this.ySize = 205;
-        this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM
-                || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
-        this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM ||
-                conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM) &&
-                conBase.filter.canAlterFlag(FilterLogic.levelStocksize);
-    }
+		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
+		this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM)
+				&& conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
+	}
 
+	@Override
 	protected void generateInfo(String tileString, int lines) {
 
 		myInfo = StringHelper.localize(tileString + "." + 0);
@@ -111,18 +111,22 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				addElement(levelButtons[j]);
 			}
 		}
-		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.servo.decStacksize");
-		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.servo.incStacksize");
+		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH)
+		.setToolTip("info.thermaldynamics.servo.decStackSize");
+		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH)
+		.setToolTip("info.thermaldynamics.servo.incStackSize");
 
-        decStockingSize = new ElementButton(this, 137, 28, "DecStockingSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.filter.decStocksize");
-        incStockingSize = new ElementButton(this, 153, 28, "IncStockingSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.filter.incStocksize");
+		decRetainSize = new ElementButton(this, 137, 28, "DecRetainSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH)
+		.setToolTip("info.thermaldynamics.filter.decRetainSize");
+		incRetainSize = new ElementButton(this, 153, 28, "IncRetainSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH)
+		.setToolTip("info.thermaldynamics.filter.incRetainSize");
 
-        if (isAdvItemFilter) {
-            addElement(decStockingSize);
-            addElement(incStockingSize);
-            minStockingSize = FilterLogic.minLevels[conBase.filter.type][FilterLogic.levelStocksize];
-            maxStockingSize = FilterLogic.maxLevels[conBase.filter.type][FilterLogic.levelStocksize];
-        }
+		if (isAdvItemFilter) {
+			addElement(decRetainSize);
+			addElement(incRetainSize);
+			minRetainSize = FilterLogic.minLevels[conBase.filter.type][FilterLogic.levelRetainSize];
+			maxRetainSize = FilterLogic.maxLevels[conBase.filter.type][FilterLogic.levelRetainSize];
+		}
 
 		if (isItemServo) {
 			addElement(decStackSize);
@@ -151,7 +155,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 				int x = levelButtonPos[i][0] + level * buttonSize;
 				levelButtons[i].setSheetX(x);
 				levelButtons[i].setHoverX(x);
-				levelButtons[i].setToolTip("info.thermaldynamics.filter." + levelButtons[i].getName() +"." + level);
+				levelButtons[i].setToolTip("info.thermaldynamics.filter." + levelButtons[i].getName() + "." + level);
 			}
 		}
 	}
@@ -161,19 +165,19 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 		super.updateElementInformation();
 
-        if (isAdvItemFilter) {
-            int qty = conBase.filter.getLevel(FilterLogic.levelStocksize);
-            if (qty > minStockingSize) {
-                decStockingSize.setActive();
-            } else {
-                decStockingSize.setDisabled();
-            }
-            if (qty < maxStockingSize) {
-                incStockingSize.setActive();
-            } else {
-                incStockingSize.setDisabled();
-            }
-        }
+		if (isAdvItemFilter) {
+			int qty = conBase.filter.getLevel(FilterLogic.levelRetainSize);
+			if (qty > minRetainSize) {
+				decRetainSize.setActive();
+			} else {
+				decRetainSize.setDisabled();
+			}
+			if (qty < maxRetainSize) {
+				incRetainSize.setActive();
+			} else {
+				incRetainSize.setDisabled();
+			}
+		}
 
 		if (isItemServo) {
 			int qty = conBase.filter.getLevel(0);
@@ -233,20 +237,20 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			}
 		}
 		if (buttonName.equalsIgnoreCase("DecStackSize")) {
-			container.filter.decLevel(0, change, false);
+			container.filter.decLevel(FilterLogic.levelStackSize, change, false);
 			pitch -= 0.1F;
 		} else if (buttonName.equalsIgnoreCase("IncStackSize")) {
-			container.filter.incLevel(0, change, false);
+			container.filter.incLevel(FilterLogic.levelStackSize, change, false);
 			pitch += 0.1F;
 		}
 
-        if (buttonName.equalsIgnoreCase("DecStockingSize")) {
-            container.filter.decLevel(FilterLogic.levelStocksize, change, false);
-            pitch -= 0.1F;
-        } else if (buttonName.equalsIgnoreCase("IncStockingSize")) {
-            container.filter.incLevel(FilterLogic.levelStocksize, change, false);
-            pitch += 0.1F;
-        }
+		if (buttonName.equalsIgnoreCase("DecRetainSize")) {
+			container.filter.decLevel(FilterLogic.levelRetainSize, change, false);
+			pitch -= 0.1F;
+		} else if (buttonName.equalsIgnoreCase("IncRetainSize")) {
+			container.filter.incLevel(FilterLogic.levelRetainSize, change, false);
+			pitch += 0.1F;
+		}
 
 		playSound("random.click", 1.0F, pitch);
 	}
@@ -254,19 +258,21 @@ public class GuiDuctConnection extends GuiBaseAdv {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
 
-        if (isAdvItemFilter) {
-            int xQty = 146;
-            int qty = conBase.filter.getLevel(FilterLogic.levelStocksize);
-            if(qty == 0) {
-                xQty -= 9;
-                fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.filter.zeroStocksize"), xQty, 18, 0x404040);
-            }else{
-                if (qty < 10) {
-                    xQty += 6;
-                }
-                fontRendererObj.drawString("" + qty, xQty, 18, 0x404040);
-            }
-        }
+		if (isAdvItemFilter) {
+			int xQty = 146;
+			int qty = conBase.filter.getLevel(FilterLogic.levelRetainSize);
+			if (qty == 0) {
+				xQty -= 9;
+				fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.filter.zeroRetainSize"), xQty, 18, 0x404040);
+			} else {
+				if (qty < 10) {
+					xQty += 6;
+				} else if (qty >= 100) {
+					xQty -= 3;
+				}
+				fontRendererObj.drawString("" + qty, xQty, 18, 0x404040);
+			}
+		}
 
 		if (isItemServo) {
 			int xQty = 146;

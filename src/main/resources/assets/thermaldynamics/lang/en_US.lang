@@ -100,12 +100,12 @@ info.thermaldynamics.filter.routeType.3=Round Robin
 info.thermaldynamics.filter.antiSpam.0=Allow Over-sending
 info.thermaldynamics.filter.antiSpam.1=Prevent Over-sending
 
-info.thermaldynamics.filter.incStocksize=Inc. Max Total Items in Inventory
-info.thermaldynamics.filter.decStocksize=Dec. Max Total Items in Inventory
-info.thermaldynamics.filter.zeroStocksize=Inf
+info.thermaldynamics.filter.incRetainSize=Inc. Max Total Items in Inventory
+info.thermaldynamics.filter.decRetainSize=Dec. Max Total Items in Inventory
+info.thermaldynamics.filter.zeroRetainSize=Infinite
 
-info.thermaldynamics.servo.incStacksize=Inc. Stack Size Extracted
-info.thermaldynamics.servo.decStacksize=Dec. Stack Size Extracted
+info.thermaldynamics.servo.incStackSize=Inc. Stack Size Extracted
+info.thermaldynamics.servo.decStackSize=Dec. Stack Size Extracted
 
 info.thermaldynamics.servo.extractRate=Extraction Rate
 info.thermaldynamics.servo.speedBoost=Speed Boost
