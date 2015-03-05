@@ -21,6 +21,12 @@ public interface IFilterItems {
 
 			return true;
 		}
-	};
 
+        @Override
+        public int getMaxStock() {
+            return Integer.MAX_VALUE;
+        }
+    };
+
+    public int getMaxStock();
 }

@@ -19,4 +19,11 @@ public class FilterLogicItem implements IFilterItems {
 		return false;
 	}
 
+    @Override
+    public int getMaxStock() {
+
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

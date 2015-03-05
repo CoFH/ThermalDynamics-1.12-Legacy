@@ -116,7 +116,7 @@ public class RetrieverItem extends ServoItem {
 						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item))
 							continue;
 
-						ItemStack remainder = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, item, side ^ 1);
+						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item, side ^ 1, filter.getMaxStock());
 
 						if (remainder != null)
 							item.stackSize -= remainder.stackSize;
@@ -165,7 +165,7 @@ public class RetrieverItem extends ServoItem {
 						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item))
 							continue;
 
-						ItemStack remainder = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1);
+						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
 						if (remainder != null)
 							item.stackSize -= remainder.stackSize;

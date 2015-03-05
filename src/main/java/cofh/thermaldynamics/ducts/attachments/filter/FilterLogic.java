@@ -201,6 +201,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     }
 
     @Override
+    public int getMaxStock() {
+        return levels[levelStocksize] == 0 ? Integer.MAX_VALUE : levels[levelStocksize];
+    }
+
+    @Override
     public ItemStack[] getFilterStacks() {
 
         return items;
@@ -384,13 +389,19 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         }
     }
 
-    public static final Perm[] levelPerms = {Perm.SERVO, Perm.SERVO, Perm.FILTER};
-    public static final int[][] minLevels = {{1, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 0},};
+    public static final Perm[] levelPerms = {Perm.SERVO, Perm.SERVO, Perm.FILTER, Perm.FILTER};
+    public static final int[][] minLevels = {{1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0}, {1, 0, 0, 0},};
 
-    public static final int[][] maxLevels = {{maxSize[0], 0, 0}, {maxSize[1], 0, 0}, {maxSize[2], 3, 1}, {maxSize[3], 3, 1}, {maxSize[4], 3, 1},};
-    public static final int[] defaultLevels = {64, 0, 1};
+    public static final int[][] maxLevels = {
+            {maxSize[0], 0, 0, 0},
+            {maxSize[1], 0, 0, 0},
+            {maxSize[2], 3, 1, 0},
+            {maxSize[3], 3, 1, 64},
+            {maxSize[4], 3, 1, 320}};
+
+    public static final int[] defaultLevels = {64, 0, 1, 0};
     public int[] validLevels;
-    public final static String[] levelNames = {"stacksize", "routeType", "antiSpam"};
+    public final static String[] levelNames = {"stacksize", "routeType", "antiSpam", "stockSize"};
 
     private final int[] levels = new int[defaultLevels.length];
 
@@ -400,7 +411,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
         for (int i = 0; i < levels.length; i++) {
             levels[i] = Math.max(Math.min(defaultLevels[i], maxLevels[type][i]), minLevels[type][i]);
-            if (i != levelStacksize && levelPerms[i].appliesTo(this) && minLevels[type][i] < maxLevels[type][i]) {
+            if (i != levelStacksize && i != levelStocksize && levelPerms[i].appliesTo(this) && minLevels[type][i] < maxLevels[type][i]) {
                 vLevels.add(i);
             }
         }
@@ -418,6 +429,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     public final static int levelStacksize = 0;
     public final static int levelRouteMode = 1;
     public final static int levelConservativeMode = 2;
+    public final static int levelStocksize = 3;
 
     public void incLevel(int i) {
 

@@ -736,6 +736,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		}
 		boolean routeItems = filterCache[side].shouldIncRouteItems();
 
+        int maxStock = filterCache[side].getMaxStock();
+
 		if (cache3[side] != null) { // IDeepStorage
 			ItemStack cacheStack = cache3[side].getStoredItemType();
 			if (cacheStack != null && !ItemHelper.itemsIdentical(cacheStack, insertingItem)) {
@@ -768,20 +770,20 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			if (insertingItem.stackSize <= 0) {
 				return null;
 			}
-			return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+			return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
 		} else {
 			if (!routeItems) {
-				return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+				return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
 			}
 
 			StackMap travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
 			if (travelingItems == null || travelingItems.isEmpty()) {
-				return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+				return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
 			}
 			if (travelingItems.size() == 1) {
 				if (ItemHelper.itemsIdentical(insertingItem, travelingItems.getItems().next())) {
 					insertingItem.stackSize += travelingItems.getItems().next().stackSize;
-					return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
+					return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
 				}
 			} else {
 				int s = 0;
@@ -795,9 +797,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 				}
 				if (s >= 0) {
 					insertingItem.stackSize += s;
-					return InventoryHelper.simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1);
-				}
-			}
+                    return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
+                }
+            }
 
 			// Super hacky - must optimize at some point
 			SimulatedInv simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cache2[side]) : SimulatedInv.wrapInv(cache[side]);
@@ -810,7 +812,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 					return insertingItem;
 				}
 			}
-			insertingItem = InventoryHelper.simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1);
+			insertingItem = simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1, maxStock);
 			simulatedInv.clear();
 			return insertingItem;
 		}
@@ -878,7 +880,80 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
     public int insertIntoInventory_do(ItemStack stack, int direction) {
 
         signalRepoll();
-		stack = InventoryHelper.insertItemStackIntoInventory(cache[direction], stack, direction ^ 1);
+		stack = insertItemStackIntoInventory(cache[direction], stack, direction ^ 1, filterCache[direction].getMaxStock());
 		return stack == null ? 0 : stack.stackSize;
 	}
+
+    public static int getNumItems(IInventory inv, int side, ItemStack insertingItem, int cap) {
+        if(inv instanceof IDeepStorageUnit){
+            ItemStack storedItemType = ((IDeepStorageUnit) inv).getStoredItemType();
+            if(ItemHelper.itemsIdentical(storedItemType, insertingItem)){
+                return storedItemType.stackSize;
+            }else
+                return 0;
+        }
+
+        int storedNo = 0;
+
+        if(inv instanceof ISidedInventory) {
+            ISidedInventory iSidedInventory = ((ISidedInventory) inv);
+            for (int slot : iSidedInventory.getAccessibleSlotsFromSide(side)) {
+                ItemStack stackInSlot = iSidedInventory.getStackInSlot(slot);
+                if(ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
+                    storedNo += stackInSlot.stackSize;
+                    if(storedNo >= cap) return storedNo;
+                }
+            }
+
+            return storedNo;
+        } else {
+            for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
+                ItemStack stackInSlot = inv.getStackInSlot(slot);
+                if (ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
+                    storedNo += stackInSlot.stackSize;
+                    if (storedNo >= cap) return storedNo;
+                }
+            }
+
+            return storedNo;
+        }
+    }
+
+    public static ItemStack insertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
+        if (cap < 0 || cap == Integer.MAX_VALUE)
+            return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+
+        int toInsert = cap - getNumItems(inventory, side, stack, cap);
+
+        if (toInsert <= 0)
+            return stack;
+
+        if (stack.stackSize < toInsert)
+            return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+        else {
+            ItemStack remaining = InventoryHelper.insertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
+            if (remaining != null) stack.stackSize += remaining.stackSize;
+
+            return stack;
+        }
+    }
+
+    public static ItemStack simulateInsertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
+        if (cap < 0 || cap == Integer.MAX_VALUE)
+            return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
+
+        int toInsert = cap - getNumItems(inventory, side, stack, cap);
+
+        if (toInsert <= 0)
+            return stack;
+
+        if (stack.stackSize < toInsert)
+            return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
+        else {
+            ItemStack remaining = InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
+            if (remaining != null) stack.stackSize += remaining.stackSize;
+
+            return stack;
+        }
+    }
 }
