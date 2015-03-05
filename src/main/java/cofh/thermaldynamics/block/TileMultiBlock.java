@@ -193,7 +193,9 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public IMultiBlock getConnectedSide(byte side) {
 
-		return BlockPosition.getAdjacentTileEntity(this, ForgeDirection.getOrientation(side), IMultiBlock.class);
+		if (side >= neighborMultiBlocks.length)
+			return null;
+		return neighborMultiBlocks[side];
 
 	}
 
@@ -206,8 +208,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	@Override
 	public boolean isSideConnected(byte side) {
 
-		TileEntity tileEntity = BlockPosition.getAdjacentTileEntity(this, ForgeDirection.getOrientation(side));
-		return tileEntity instanceof TileMultiBlock && !isBlockedSide(side) && !((TileMultiBlock) tileEntity).isBlockedSide(side ^ 1);
+		if (side >= neighborMultiBlocks.length)
+			return false;
+		IMultiBlock tileEntity = neighborMultiBlocks[side];
+		return tileEntity != null && !isBlockedSide(side) && !tileEntity.isBlockedSide(side ^ 1);
 	}
 
 	@Override
@@ -1108,7 +1112,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	}
 
     public void cofh_invalidate(){
-        // invalidate();
+        invalidate();
         markChunkDirty();
     }
 }
