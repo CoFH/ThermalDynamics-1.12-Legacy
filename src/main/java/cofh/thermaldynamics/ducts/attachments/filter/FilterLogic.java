@@ -202,6 +202,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
     @Override
     public int getMaxStock() {
+
         return levels[levelStocksize] == 0 ? Integer.MAX_VALUE : levels[levelStocksize];
     }
 

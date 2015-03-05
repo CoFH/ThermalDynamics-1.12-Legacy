@@ -947,7 +947,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
         if (toInsert <= 0)
             return stack;
 
-        if (stack.stackSize < toInsert)
+        if (stack.stackSize <= toInsert)
             return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
         else {
             ItemStack remaining = InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
