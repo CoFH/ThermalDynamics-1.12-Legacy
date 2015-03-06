@@ -192,6 +192,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
 		(ductType.opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(trans, icon);
 
+        if (ductType.iconFluidTexture != null && ductType.fluidTransparency == (byte) 255) {
+            modelFluidTubes[c].render(x , y , z , RenderUtils.getIconTransformation(ductType.iconFluidTexture));
+        }
+
 		if (ductType.frameType == 1) {
 			renderSideTubes(0, connection, x - 0.5, y - 0.5, z - 0.5, sideDucts);
 		}
@@ -240,7 +244,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		boolean flag = false;
 
-		if (texture != null) {
+		if (texture != null && ductType.fluidTransparency != (byte) 255) {
 			int c = 0;
 
 			for (int s = 0; s < 6; s++) {
@@ -414,15 +418,19 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.setBlockTextureSheet();
 		RenderUtils.preItemRender();
 
-		CCRenderState.startDrawing();
-		renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
-		CCRenderState.draw();
-
-		CCRenderState.startDrawing();
+        GL11.glDepthMask(true);
+        CCRenderState.startDrawing();
 		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
 		CCRenderState.draw();
 
-		CCRenderState.useNormals = false;
+        GL11.glDepthMask(false);
+        CCRenderState.startDrawing();
+        renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+        CCRenderState.draw();
+
+        GL11.glDepthMask(true);
+
+        CCRenderState.useNormals = false;
 		RenderHelper.setItemTextureSheet();
 
 		RenderUtils.postItemRender();

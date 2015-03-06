@@ -122,7 +122,7 @@ public class TDDucts {
 				null, 0, null, null, 0);
 
 		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 96);
+				"thermalfoundation:fluid/Fluid_Redstone_Still", 255, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 96);
 		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
 				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0);
 
