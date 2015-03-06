@@ -690,7 +690,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	@Override
 	public RouteInfo canRouteItem(ItemStack anItem) {
 
-		if (internalGrid == null)
+		if (internalGrid == null || !cachesExist())
 			return noRoute;
 		int stackSizeLeft;
 		ItemStack curItem;
