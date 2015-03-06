@@ -42,6 +42,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, IItemDuct {
@@ -84,7 +85,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
 
 		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
-				.ordinal()].allowTransfer))) {
+		                                                                                                                                          .ordinal()].allowTransfer))) {
 			return item;
 		}
 
@@ -146,30 +147,31 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 * 
+	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
-    @Override
-    public boolean isSignificantTile(TileEntity theTile, int side) {
-        if (!(theTile instanceof IInventory))
-            return false;
-        if ((theTile instanceof IInventoryConnection)) {
-            IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile)
-                    .canConnectInventory(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
-            if (connectionType == IInventoryConnection.ConnectionType.DENY)
-                return false;
-            if (connectionType == IInventoryConnection.ConnectionType.FORCE)
-                return true;
-        }
+	@Override
+	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-        if (((IInventory) theTile).getSizeInventory() == 0)
-            return false;
+		if (!(theTile instanceof IInventory))
+			return false;
+		if ((theTile instanceof IInventoryConnection)) {
+			IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile)
+					.canConnectInventory(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+			if (connectionType == IInventoryConnection.ConnectionType.DENY)
+				return false;
+			if (connectionType == IInventoryConnection.ConnectionType.FORCE)
+				return true;
+		}
 
-        if (theTile instanceof ISidedInventory && ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1).length == 0)
-            return false;
+		if (((IInventory) theTile).getSizeInventory() == 0)
+			return false;
 
-        return true;
-    }
+		if (theTile instanceof ISidedInventory && ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1).length == 0)
+			return false;
+
+		return true;
+	}
 
 	@Override
 	public void setGrid(MultiBlockGrid newGrid) {
@@ -184,10 +186,11 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		return new ItemGrid(worldObj);
 	}
 
-    public byte ticksExisted = 0;
-    public final static byte maxTicksExistedBeforeFindAlt = 2;
-    public final static byte maxTicksExistedBeforeStuff = 6;
-    public final static byte maxTicksExistedBeforeDump = 10;
+	public byte ticksExisted = 0;
+	public final static byte maxTicksExistedBeforeFindAlt = 2;
+	public final static byte maxTicksExistedBeforeStuff = 6;
+	public final static byte maxTicksExistedBeforeDump = 10;
+
 	@Override
 	public boolean tickPass(int pass) {
 
@@ -195,7 +198,8 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			return false;
 
 		if (pass == 0) {
-            if(ticksExisted < maxTicksExistedBeforeDump) ticksExisted++;
+			if (ticksExisted < maxTicksExistedBeforeDump)
+				ticksExisted++;
 			tickItems();
 		}
 		return true;
@@ -382,7 +386,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 		Attachment attachment = attachments[travelingItem.direction];
 		if (attachment instanceof IStuffable) {
-            signalRepoll();
+			signalRepoll();
 			((IStuffable) attachment).stuffItem(travelingItem.stack);
 		}
 	}
@@ -565,11 +569,12 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		cacheType[side] = CacheType.NONE;
 	}
 
-    public void removeItem(TravelingItem travelingItem, boolean disappearing) {
+	public void removeItem(TravelingItem travelingItem, boolean disappearing) {
 
-        if (disappearing) signalRepoll();
-        itemsToRemove.add(travelingItem);
-    }
+		if (disappearing)
+			signalRepoll();
+		itemsToRemove.add(travelingItem);
+	}
 
 	public class TileInfoPackets {
 
@@ -607,7 +612,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM)
 				pathWeightType = b;
 		}
-        ticksExisted = maxTicksExistedBeforeDump;
+		ticksExisted = maxTicksExistedBeforeDump;
 	}
 
 	@Override
@@ -723,6 +728,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	}
 
 	public int simTransferI(int side, ItemStack insertingItem) {
+
 		ItemStack itemStack = simTransfer(side, insertingItem);
 		return itemStack == null ? 0 : itemStack.stackSize;
 	}
@@ -736,7 +742,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 		}
 		boolean routeItems = filterCache[side].shouldIncRouteItems();
 
-        int maxStock = filterCache[side].getMaxStock();
+		int maxStock = filterCache[side].getMaxStock();
 
 		if (cache3[side] != null) { // IDeepStorage
 			ItemStack cacheStack = cache3[side].getStoredItemType();
@@ -771,7 +777,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			if (insertingItem.stackSize <= 0) {
 				return null;
 			}
-            return insertingItem;
+			return insertingItem;
 		} else {
 			if (!routeItems) {
 				return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
@@ -798,9 +804,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 				}
 				if (s >= 0) {
 					insertingItem.stackSize += s;
-                    return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
-                }
-            }
+					return simulateInsertItemStackIntoInventory(cache[side], insertingItem, side ^ 1, maxStock);
+				}
+			}
 
 			// Super hacky - must optimize at some point
 			SimulatedInv simulatedInv = cacheType[side] == CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cache2[side]) : SimulatedInv.wrapInv(cache[side]);
@@ -824,8 +830,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 		for (byte i = 0; i < 6; i++) {
 			if (attachments[i] instanceof IStuffable) {
-				if (((IStuffable) attachments[i]).canStuff())
+				if (((IStuffable) attachments[i]).canStuff()) {
 					return i;
+				}
 
 			}
 		}
@@ -843,8 +850,9 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	public boolean acceptingStuff() {
 
 		for (byte i = 0; i < 6; i++) {
-			if (attachments[i] instanceof IStuffable)
+			if (attachments[i] instanceof IStuffable) {
 				return ((IStuffable) attachments[i]).canStuff();
+			}
 		}
 		return false;
 	}
@@ -866,95 +874,109 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	public int insertIntoInventory(ItemStack stack, int direction) {
 
-		if (!cachesExist() || cache[direction] == null)
+		if (!cachesExist() || cache[direction] == null) {
 			return stack.stackSize;
-		if (!filterCache[direction].matchesFilter(stack))
+		}
+		if (!filterCache[direction].matchesFilter(stack)) {
 			return stack.stackSize;
-
-        return insertIntoInventory_do(stack, direction);
+		}
+		return insertIntoInventory_do(stack, direction);
 	}
 
-    public void signalRepoll() {
-        if(internalGrid != null) internalGrid.shouldRepoll=true;
-    }
+	public void signalRepoll() {
 
-    public int insertIntoInventory_do(ItemStack stack, int direction) {
+		if (internalGrid != null) {
+			internalGrid.shouldRepoll = true;
+		}
+	}
 
-        signalRepoll();
+	public int insertIntoInventory_do(ItemStack stack, int direction) {
+
+		signalRepoll();
 		stack = insertItemStackIntoInventory(cache[direction], stack, direction ^ 1, filterCache[direction].getMaxStock());
 		return stack == null ? 0 : stack.stackSize;
 	}
 
-    public static int getNumItems(IInventory inv, int side, ItemStack insertingItem, int cap) {
-        if(inv instanceof IDeepStorageUnit){
-            ItemStack storedItemType = ((IDeepStorageUnit) inv).getStoredItemType();
-            if(ItemHelper.itemsIdentical(storedItemType, insertingItem)){
-                return storedItemType.stackSize;
-            }else
-                return 0;
-        }
+	public static int getNumItems(IInventory inv, int side, ItemStack insertingItem, int cap) {
 
-        int storedNo = 0;
+		if (inv instanceof IDeepStorageUnit) {
+			ItemStack storedItemType = ((IDeepStorageUnit) inv).getStoredItemType();
+			if (ItemHelper.itemsIdentical(storedItemType, insertingItem)) {
+				return storedItemType.stackSize;
+			} else {
+				return 0;
+			}
+		}
 
-        if(inv instanceof ISidedInventory) {
-            ISidedInventory iSidedInventory = ((ISidedInventory) inv);
-            for (int slot : iSidedInventory.getAccessibleSlotsFromSide(side)) {
-                ItemStack stackInSlot = iSidedInventory.getStackInSlot(slot);
-                if(ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
-                    storedNo += stackInSlot.stackSize;
-                    if(storedNo >= cap) return storedNo;
-                }
-            }
+		int storedNo = 0;
 
-            return storedNo;
-        } else {
-            for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
-                ItemStack stackInSlot = inv.getStackInSlot(slot);
-                if (ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
-                    storedNo += stackInSlot.stackSize;
-                    if (storedNo >= cap) return storedNo;
-                }
-            }
+		if (inv instanceof ISidedInventory) {
+			ISidedInventory iSidedInventory = ((ISidedInventory) inv);
+			for (int slot : iSidedInventory.getAccessibleSlotsFromSide(side)) {
+				ItemStack stackInSlot = iSidedInventory.getStackInSlot(slot);
+				if (ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
+					storedNo += stackInSlot.stackSize;
+					if (storedNo >= cap) {
+						return storedNo;
+					}
+				}
+			}
 
-            return storedNo;
-        }
-    }
+			return storedNo;
+		} else {
+			for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
+				ItemStack stackInSlot = inv.getStackInSlot(slot);
+				if (ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
+					storedNo += stackInSlot.stackSize;
+					if (storedNo >= cap) {
+						return storedNo;
+					}
+				}
+			}
+			return storedNo;
+		}
+	}
 
-    public static ItemStack insertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
-        if (cap < 0 || cap == Integer.MAX_VALUE)
-            return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+	public static ItemStack insertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
 
-        int toInsert = cap - getNumItems(inventory, side, stack, cap);
+		if (cap < 0 || cap == Integer.MAX_VALUE) {
+			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+		}
+		int toInsert = cap - getNumItems(inventory, side, stack, cap);
 
-        if (toInsert <= 0)
-            return stack;
+		if (toInsert <= 0)
+			return stack;
 
-        if (stack.stackSize < toInsert)
-            return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
-        else {
-            ItemStack remaining = InventoryHelper.insertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
-            if (remaining != null) stack.stackSize += remaining.stackSize;
+		if (stack.stackSize < toInsert) {
+			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+		} else {
+			ItemStack remaining = InventoryHelper.insertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
+			if (remaining != null) {
+				stack.stackSize += remaining.stackSize;
+			}
+			return stack;
+		}
+	}
 
-            return stack;
-        }
-    }
+	public static ItemStack simulateInsertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
 
-    public static ItemStack simulateInsertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
-        if (cap < 0 || cap == Integer.MAX_VALUE)
-            return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
+		if (cap < 0 || cap == Integer.MAX_VALUE)
+			return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
 
-        int toInsert = cap - getNumItems(inventory, side, stack, cap);
+		int toInsert = cap - getNumItems(inventory, side, stack, cap);
 
-        if (toInsert <= 0)
-            return stack;
+		if (toInsert <= 0) {
+			return stack;
+		}
+		if (stack.stackSize <= toInsert)
+			return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
+		else {
+			ItemStack remaining = InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
+			if (remaining != null) {
+				stack.stackSize += remaining.stackSize;
+			}
+			return stack;
+		}
+	}
 
-        if (stack.stackSize <= toInsert)
-            return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
-        else {
-            ItemStack remaining = InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
-            if (remaining != null) stack.stackSize += remaining.stackSize;
-
-            return stack;
-        }
-    }
 }
