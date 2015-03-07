@@ -85,7 +85,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
 
 		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
-		                                                                                                                                          .ordinal()].allowTransfer))) {
+				.ordinal()].allowTransfer))) {
 			return item;
 		}
 
@@ -147,7 +147,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 *
+	 * 
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override
