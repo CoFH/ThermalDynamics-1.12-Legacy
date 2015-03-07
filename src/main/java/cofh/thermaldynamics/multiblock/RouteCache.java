@@ -53,7 +53,7 @@ public class RouteCache {
     }
 
     public boolean processStep() {
-        if (isFinishedGenerating)
+        if (isFinishedGenerating || invalid)
             return false;
 
         boolean continueLoop = false;

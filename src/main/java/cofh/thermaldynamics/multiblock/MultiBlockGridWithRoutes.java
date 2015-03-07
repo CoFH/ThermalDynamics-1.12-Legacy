@@ -3,7 +3,6 @@ package cofh.thermaldynamics.multiblock;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
@@ -13,22 +12,13 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 
     @Override
     public void doTickProcessing(long deadline) {
-        synchronized (calculatingRoutes) {
-            Iterator<RouteCache> iterator = calculatingRoutes.iterator();
-            RouteCache routeCache = iterator.next();
-            while (System.nanoTime() < deadline) {
-                if (!routeCache.processStep()) {
-                    iterator.remove();
-                    routeCacheMap.put(routeCache.origin, routeCache);
-                    if (iterator.hasNext())
-                        routeCache = iterator.next();
-                    else
-                        return;
-                }
+        while (!calculatingRoutes.isEmpty() && System.nanoTime() < deadline) {
+            RouteCache routeCache = calculatingRoutes.peek();
+            if (routeCache != null && !routeCache.processStep()) {
+                calculatingRoutes.remove(routeCache);
             }
         }
     }
-
 
     @Override
     public boolean isTickProcessing() {
@@ -51,10 +41,8 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
             routeCacheMap.clear();
         }
 
-        synchronized (calculatingRoutes) {
-            if (!calculatingRoutes.isEmpty())
-                calculatingRoutes.clear();
-        }
+        if (!calculatingRoutes.isEmpty())
+            calculatingRoutes.clear();
     }
 
     public RouteCache getRoutesFromOutputNonUrgent(IMultiBlockRoute start) {
@@ -65,9 +53,8 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
         }
 
         cache = new RouteCache(start);
-        synchronized (calculatingRoutes) {
-            calculatingRoutes.add(cache);
-        }
+        calculatingRoutes.add(cache);
+
         routeCacheMap.put(start, cache);
         return cache;
     }
