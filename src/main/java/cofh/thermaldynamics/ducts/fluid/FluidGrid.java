@@ -90,26 +90,26 @@ public class FluidGrid extends MultiBlockGrid {
 			}
 
 			if (toDistribute > 0) {
-				for (IMultiBlock node : nodeSet) {
-					if (!node.tickPass(0))
+				for (IMultiBlock m : nodeSet) {
+					if (!m.tickPass(0)|| m.getGrid() == null)
 						break;
 				}
 			}
 		}
 		if (!nodeSet.isEmpty())
-			for (IMultiBlock node : nodeSet)
-				if (!node.tickPass(1))
+			for (IMultiBlock m : nodeSet)
+				if (!m.tickPass(1)|| m.getGrid() == null)
 					break;
 
 		if (doesPassiveTicking) {
 			if (!nodeSet.isEmpty())
-				for (IMultiBlock node : nodeSet)
-					if (!node.tickPass(2))
+				for (IMultiBlock m : nodeSet)
+					if (!m.tickPass(2) || m.getGrid() == null)
 						break;
 
 			if (!idleSet.isEmpty())
-				for (IMultiBlock node : idleSet) {
-					if (!node.tickPass(2))
+				for (IMultiBlock m : idleSet) {
+					if (!m.tickPass(2) || m.getGrid() == null)
 						break;
 				}
 		}

@@ -36,12 +36,12 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 		shouldRepoll = false;
 
 		for (IMultiBlock m : nodeSet) {
-			if (!m.tickPass(0))
+			if (!m.tickPass(0) || m.getGrid() == null)
 				break;
 		}
 		if (repoll || travelingItemsCount > 0) {
 			for (IMultiBlock m : idleSet) {
-				if (!m.tickPass(0))
+				if (!m.tickPass(0)|| m.getGrid() == null)
 					break;
 			}
 		}
