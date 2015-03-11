@@ -817,6 +817,7 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 	public void doDebug(EntityPlayer thePlayer) {
 
 		thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
+        thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
 		thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
 		thePlayer.addChatMessage(new ChatComponentText("Grid Nodes: " + myGrid.nodeSet.size()));
 	}
