@@ -377,7 +377,6 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 			connectionTypes[i] = ConnectionTypes.NORMAL;
 			isNode = attachments[i].isNode();
-
 		} else {
 			theTile = getAdjTileEntitySafe(i);
 			if (theTile == null) {
@@ -387,14 +386,14 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			} else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
 				neighborMultiBlocks[i] = (IMultiBlock) theTile;
 				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-			} else if (isSignificantTile(theTile, i)) {
+			} else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborTypes.OUTPUT;
                 if(!cachesExist()) createCaches();
 				cacheImportant(theTile, i);
 				isNode = true;
 				isOutput = true;
-			} else if (isStructureTile(theTile, i)) {
+			} else if (connectionTypes[i].allowTransfer && isStructureTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborTypes.STRUCTURE;
                 if(!cachesExist()) createCaches();
