@@ -275,7 +275,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		if (i == 0)
 			filter.handleFlagByte(j);
 		else
-			filter.setLevel(i - 1, j);
+			filter.setLevel(i - 1, j, false);
 	}
 
 	@Override

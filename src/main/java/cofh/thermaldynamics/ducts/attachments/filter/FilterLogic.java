@@ -469,6 +469,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
     }
 
     public void setLevel(int i, int level) {
+        setLevel(i, level, true);
+    }
+
+    public void setLevel(int i, int level, boolean sendUpdate) {
 
         if (level < minLevels[type][i]) {
             level = minLevels[type][i];
@@ -482,7 +486,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
         if (!levelPerms[i].appliesTo(this)) {
             return;
         }
-        if (connection.tile.world().isRemote) {
+        if (connection.tile.world().isRemote && sendUpdate) {
             connection.sendFilterConfigPacketLevel(i, level);
         } else {
             connection.tile.markDirty();
