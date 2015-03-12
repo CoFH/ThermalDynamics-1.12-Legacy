@@ -134,21 +134,7 @@ public class TileFluidDuct extends TileMultiBlock implements IFluidHandler {
 	@Override
 	public boolean isConnectable(TileEntity theTile, int side) {
 
-        if (theTile instanceof TileFluidDuct) {
-            TileFluidDuct fluidDuct = (TileFluidDuct) theTile;
-            if (FluidHelper.isFluidEqualOrNull(fluidDuct.getConnectionFluid(), this.getConnectionFluid()))
-                return true;
-            else {
-                connectionTypes[side] = ConnectionTypes.BLOCKED;
-                if(fluidDuct.connectionTypes[side ^ 1] != ConnectionTypes.BLOCKED){
-                    fluidDuct.connectionTypes[side ^ 1] = ConnectionTypes.BLOCKED;
-                    fluidDuct.handleSideUpdate(side ^ 1);
-                }
-                worldObj.markBlockForUpdate(theTile.xCoord, theTile.yCoord, theTile.zCoord);
-                return false;
-            }
-        }
-        else return false;
+        return theTile instanceof TileFluidDuct;
 	}
 
 	public FluidStack getConnectionFluid() {

@@ -234,7 +234,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		} else {
 			neighborTypes[side] = NeighborTypes.NONE;
 			neighborMultiBlocks[side] = null;
+            connectionTypes[side] = ConnectionTypes.BLOCKED;
 		}
+
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
 		for (SubTileMultiBlock subTile : subTiles) {
 			subTile.onNeighbourChange();

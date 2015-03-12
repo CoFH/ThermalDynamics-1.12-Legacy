@@ -49,13 +49,10 @@ public class Utils {
 	}
 
 	private static void bcWrenchUsed(Item item, EntityPlayer p, int x, int y, int z) {
-
 		if (item instanceof IToolWrench) {
 			((IToolWrench) item).wrenchUsed(p, x, y, z);
 		}
 	}
-
-
 
 	public static boolean isHoldingMultimeter(EntityPlayer player) {
 
