@@ -814,7 +814,7 @@ public class TileItemDuct extends TileMultiBlock implements IMultiBlockRoute, II
 			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext();) {
 				iterator.advance();
 
-				if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), iterator.key().side) != null
+				if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), iterator.key().side ^ 1) != null
 						&& ItemHelper.itemsIdentical(insertingItem, iterator.key().toItemStack(iterator.value()))) {
 					return insertingItem;
 				}
