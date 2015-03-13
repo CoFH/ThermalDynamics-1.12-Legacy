@@ -31,7 +31,6 @@ public class ListWrapper<T> implements Iterable<T> {
 		else if (type == SortType.REVERSE)
 			return list.descendingIterator();
 		else if (type == SortType.ROUNDROBIN) {
-            advanceCursor();
 			return new RRobinIter();
 		} else if (type == SortType.SHUFFLE) {
 			if (array == null || list.size() != array.length) {
