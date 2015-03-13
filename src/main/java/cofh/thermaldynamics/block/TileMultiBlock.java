@@ -498,9 +498,8 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 
 		isNode = false;
 		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			if (neighborTypes[i] == NeighborTypes.OUTPUT || (attachments[i] != null && attachments[i].isNode())) {
+			if (neighborTypes[i] == NeighborTypes.OUTPUT || neighborTypes[i] == NeighborTypes.STRUCTURE || (attachments[i] != null && attachments[i].isNode())) {
 				isNode = true;
-				return;
 			}
 			if (neighborTypes[i] == NeighborTypes.OUTPUT) {
 				isOutput = true;
