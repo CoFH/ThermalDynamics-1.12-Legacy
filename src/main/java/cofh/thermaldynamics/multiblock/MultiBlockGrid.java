@@ -2,14 +2,14 @@ package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
-import java.util.HashSet;
+import cofh.thermaldynamics.debughelper.NoComodSet;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class MultiBlockGrid {
 
-	public HashSet<IMultiBlock> nodeSet = new HashSet<IMultiBlock>();
-	public HashSet<IMultiBlock> idleSet = new HashSet<IMultiBlock>();
+	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<IMultiBlock>();
+	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
 	public WorldGridList worldGrid;
 
 	public MultiBlockGrid(WorldGridList worldGrid) {
