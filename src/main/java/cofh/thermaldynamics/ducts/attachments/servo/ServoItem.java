@@ -115,14 +115,15 @@ public class ServoItem extends ServoBase {
 		if (isStuffed())
 			for (ItemStack stuffedItem : stuffedItems) {
 				ItemStack stack = stuffedItem.copy();
-				int m = stuffedItem.getMaxStackSize();
-				for (int i = 0; stack.stackSize > 0 && i < TDProps.MAX_STUFFED_ITEMSTACKS_DROP; i++) {
-					if (m < stack.stackSize)
-						m = stack.stackSize;
-					drops.add(ItemHelper.cloneStack(stack, m));
-					stack.stackSize -= m;
+                while (stack.stackSize > 0 && drops.size() <= TDProps.MAX_STUFFED_ITEMSTACKS_DROP) {
+                    if (stack.stackSize <= stuffedItem.getMaxStackSize()) {
+                        drops.add(ItemHelper.cloneStack(stack));
+                        break;
+                    } else {
+                        drops.add(stack.splitStack(stuffedItem.getMaxStackSize()));
+                    }
 				}
-			}
+            }
 
 		return drops;
 	}
