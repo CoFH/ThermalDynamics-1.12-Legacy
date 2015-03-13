@@ -56,7 +56,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		this.inventory = inventory;
 		container = (ContainerDuctConnection) inventorySlots;
 		name = conBase.getName();
-		this.ySize = 205;
+		this.ySize = 204;
 		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
 		this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM)
 				&& conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
@@ -112,14 +112,14 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			}
 		}
 		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH)
-		.setToolTip("info.thermaldynamics.servo.decStackSize");
+				.setToolTip("info.thermaldynamics.servo.decStackSize");
 		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH)
-		.setToolTip("info.thermaldynamics.servo.incStackSize");
+				.setToolTip("info.thermaldynamics.servo.incStackSize");
 
 		decRetainSize = new ElementButton(this, 137, 28, "DecRetainSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH)
-		.setToolTip("info.thermaldynamics.filter.decRetainSize");
+				.setToolTip("info.thermaldynamics.filter.decRetainSize");
 		incRetainSize = new ElementButton(this, 153, 28, "IncRetainSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH)
-		.setToolTip("info.thermaldynamics.filter.incRetainSize");
+				.setToolTip("info.thermaldynamics.filter.incRetainSize");
 
 		if (isAdvItemFilter) {
 			addElement(decRetainSize);
