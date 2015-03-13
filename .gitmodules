@@ -1,0 +1,4 @@
+[submodule "src/main/resources/assets/thermaldynamics/lang"]
+	path = src/main/resources/assets/thermaldynamics/lang
+	url = https://github.com/CoFH/ThermalDynamics-Localization.git
+	branch = master
