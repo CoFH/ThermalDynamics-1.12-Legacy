@@ -336,6 +336,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 			subTile.onNeighbourChange();
 		}
 
+        for (Attachment tickingAttachment : tickingAttachments) {
+            tickingAttachment.postNeighbourChange();
+        }
+
 		if (ServerHelper.isServerWorld(worldObj)) {
 			rebuildChunkCache();
 		}
@@ -488,6 +492,10 @@ public abstract class TileMultiBlock extends TileCoFHBase implements IMultiBlock
 		} else if (myGrid != null && (isOutput != wasOutput || isInput != wasInput)) {
 			myGrid.onMajorGridChange();
 		}
+
+        for (Attachment tickingAttachment : tickingAttachments) {
+            tickingAttachment.postNeighbourChange();
+        }
 
 		if (ServerHelper.isServerWorld(worldObj)) {
 			rebuildChunkCache();

@@ -31,10 +31,7 @@ public class ListWrapper<T> implements Iterable<T> {
 		else if (type == SortType.REVERSE)
 			return list.descendingIterator();
 		else if (type == SortType.ROUNDROBIN) {
-			cursor++;
-			if (cursor >= list.size()) {
-				cursor = 0;
-			}
+            advanceCursor();
             if(cursor == 0) return list.listIterator();
 			return new RRobinIter();
 		} else if (type == SortType.SHUFFLE) {
@@ -47,7 +44,25 @@ public class ListWrapper<T> implements Iterable<T> {
 		return list.iterator();
 	}
 
-	public class RRobinIter implements Iterator<T> {
+    public void advanceCursor() {
+        cursor++;
+        if (cursor >= list.size()) {
+            cursor = 0;
+        }
+    }
+
+    public T peekRR() {
+        if (cursor + 1 >= list.size()) {
+            return list.get(0);
+        } else
+            return list.get(cursor + 1);
+    }
+
+    public int size() {
+        return list.size();
+    }
+
+    public class RRobinIter implements Iterator<T> {
 
 		public ListIterator<T> tListIterator;
 

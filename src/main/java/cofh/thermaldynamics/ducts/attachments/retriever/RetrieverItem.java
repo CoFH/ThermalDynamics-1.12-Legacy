@@ -14,12 +14,10 @@ import cofh.thermaldynamics.ducts.item.StackMap;
 import cofh.thermaldynamics.ducts.item.TileItemDuct;
 import cofh.thermaldynamics.ducts.item.TravelingItem;
 import cofh.thermaldynamics.multiblock.Route;
+import cofh.thermaldynamics.multiblock.listtypes.ListWrapper;
 import cofh.thermaldynamics.render.RenderDuct;
-
 import gnu.trove.iterator.TObjectIntIterator;
-
 import java.util.Iterator;
-
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -67,7 +65,24 @@ public class RetrieverItem extends ServoItem {
 		return true;
 	}
 
-	@Override
+    boolean baseTileHasOtherOutputs = false;
+
+    @Override
+    public void postNeighbourChange() {
+
+        baseTileHasOtherOutputs = false;
+        for (int i = 0; i < 6; i++) {
+            if((tile.neighborTypes[i] == TileMultiBlock.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileMultiBlock.NeighborTypes.INPUT) &&
+                    (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+                baseTileHasOtherOutputs = true;
+                break;
+            }
+        }
+        super.postNeighbourChange();
+
+    }
+
+    @Override
 	public void handleItemSending() {
 
 		SimulatedInv simulatedInv = cacheType == TileItemDuct.CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cachedSidedInv) : SimulatedInv.wrapInv(cachedInv);
@@ -81,13 +96,23 @@ public class RetrieverItem extends ServoItem {
 			}
 		}
 
+        if(routeList.type == ListWrapper.SortType.ROUNDROBIN && !baseTileHasOtherOutputs){
+            if(routeList.size() == 1)
+                return;
+
+            Route route = routeList.peekRR();
+            if(route.endPoint == tile){
+                routeList.advanceCursor();
+            }
+        }
+
 		for (Route route : routeList) {
 			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
 
 			for (int k = 0; k < 6; k++) {
 				int i = (endPoint.internalSideCounter + k) % 6;
 
-				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == this.getId())
+				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM)
 					continue;
 
 				if (!endPoint.cachesExist()

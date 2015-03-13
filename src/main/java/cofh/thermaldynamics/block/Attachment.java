@@ -171,4 +171,7 @@ public abstract class Attachment {
 
 	}
 
+    public void postNeighbourChange() {
+
+    }
 }
