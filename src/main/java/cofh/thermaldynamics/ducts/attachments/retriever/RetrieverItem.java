@@ -14,7 +14,6 @@ import cofh.thermaldynamics.ducts.item.StackMap;
 import cofh.thermaldynamics.ducts.item.TileItemDuct;
 import cofh.thermaldynamics.ducts.item.TravelingItem;
 import cofh.thermaldynamics.multiblock.Route;
-import cofh.thermaldynamics.multiblock.listtypes.ListWrapper;
 import cofh.thermaldynamics.render.RenderDuct;
 import gnu.trove.iterator.TObjectIntIterator;
 import java.util.Iterator;
@@ -96,15 +95,15 @@ public class RetrieverItem extends ServoItem {
 			}
 		}
 
-        if(routeList.type == ListWrapper.SortType.ROUNDROBIN && !baseTileHasOtherOutputs){
-            if(routeList.size() == 1)
-                return;
-
-            Route route = routeList.peekRR();
-            if(route.endPoint == tile){
-                routeList.advanceCursor();
-            }
-        }
+//        if(routeList.type == ListWrapper.SortType.ROUNDROBIN && !baseTileHasOtherOutputs){
+//            if(routeList.size() == 1)
+//                return;
+//
+//            Route route = routeList.peekRR();
+//            if(route.endPoint == tile){
+//                routeList.advanceCursor();
+//            }
+//        }
 
 		for (Route route : routeList) {
 			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
