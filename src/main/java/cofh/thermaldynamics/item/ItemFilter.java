@@ -12,7 +12,9 @@ import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -105,7 +107,7 @@ public class ItemFilter extends ItemAttachment {
 
 		StringBuilder b = new StringBuilder();
 
-		b.append("Filter Options: " + StringHelper.WHITE);
+		b.append(StringHelper.localize("info.thermaldynamics.filter.options") + ": " + StringHelper.WHITE);
 		boolean flag = false;
 		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
 			if (FilterLogic.canAlterFlag(duct, type, i)) {
