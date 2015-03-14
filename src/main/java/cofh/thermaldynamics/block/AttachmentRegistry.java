@@ -1,12 +1,12 @@
 package cofh.thermaldynamics.block;
 
-import cofh.thermaldynamics.ducts.attachments.facades.Cover;
-import cofh.thermaldynamics.ducts.attachments.filter.FilterFluid;
-import cofh.thermaldynamics.ducts.attachments.filter.FilterItem;
-import cofh.thermaldynamics.ducts.attachments.retriever.RetrieverFluid;
-import cofh.thermaldynamics.ducts.attachments.retriever.RetrieverItem;
-import cofh.thermaldynamics.ducts.attachments.servo.ServoFluid;
-import cofh.thermaldynamics.ducts.attachments.servo.ServoItem;
+import cofh.thermaldynamics.duct.attachments.facades.Cover;
+import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
+import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
+import cofh.thermaldynamics.duct.attachments.retriever.RetrieverFluid;
+import cofh.thermaldynamics.duct.attachments.retriever.RetrieverItem;
+import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
+import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 
 public class AttachmentRegistry {
 
@@ -18,7 +18,7 @@ public class AttachmentRegistry {
     public final static byte RETRIEVER_FLUID = 5;
     public final static byte RETRIEVER_ITEM = 6;
 
-	public static Attachment createAttachment(TileMultiBlock tile, byte side, int id) {
+	public static Attachment createAttachment(TileTDBase tile, byte side, int id) {
 
 		if (id == FACADE) {
 			return new Cover(tile, side);

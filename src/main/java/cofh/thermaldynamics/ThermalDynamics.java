@@ -5,12 +5,12 @@ import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
 import cofh.mod.BaseMod;
 import cofh.mod.updater.UpdateManager;
-import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.core.Proxy;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
 import cofh.thermaldynamics.debughelper.DebugHelper;
-import cofh.thermaldynamics.ducts.TDDucts;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.item.ItemCover;
@@ -34,17 +34,14 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import java.io.File;
 import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.RecipeSorter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

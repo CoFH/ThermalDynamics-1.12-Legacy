@@ -6,12 +6,10 @@ import codechicken.nei.recipe.ShapelessRecipeHandler;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.ducts.TDDucts;
-import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
-
+import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

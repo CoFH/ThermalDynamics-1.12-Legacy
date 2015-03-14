@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.core;
 
-import cofh.thermaldynamics.ducts.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;

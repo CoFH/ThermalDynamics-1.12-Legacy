@@ -1,18 +1,16 @@
 package cofh.thermaldynamics.item;
 
 import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.debughelper.DebugHelper;
-import cofh.thermaldynamics.ducts.attachments.facades.Cover;
-import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
+import cofh.thermaldynamics.duct.attachments.facades.Cover;
+import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -69,7 +67,7 @@ public class ItemCover extends ItemAttachment {
 	private static float[] hitZ = { 0.5F, 0.5F, 0, 1, 0.5F, 0.5F };
 
 	@Override
-	public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
+	public Attachment getAttachment(int side, ItemStack stack, TileTDBase tile) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8))

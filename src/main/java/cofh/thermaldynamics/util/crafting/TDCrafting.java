@@ -4,18 +4,16 @@ import cofh.api.modhelpers.ThermalExpansionHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.ducts.Duct;
-import cofh.thermaldynamics.ducts.DuctItem;
-import cofh.thermaldynamics.ducts.TDDucts;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.DuctItem;
+import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cofh.thermalfoundation.item.TFItems;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.block.TileTDBase;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -98,7 +98,7 @@ public class RouteCache {
 
         byte foundDir = -1;
         for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            if (route.endPoint.getCachedSideType(i) == TileMultiBlock.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i) == TileMultiBlock.ConnectionTypes.NORMAL) {
+            if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i) == TileTDBase.ConnectionTypes.NORMAL) {
                 IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
 
                 if (validTile != null) {

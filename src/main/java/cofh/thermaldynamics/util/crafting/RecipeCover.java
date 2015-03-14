@@ -2,8 +2,8 @@ package cofh.thermaldynamics.util.crafting;
 
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.ducts.TDDucts;
-import cofh.thermaldynamics.ducts.attachments.facades.CoverHelper;
+import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;

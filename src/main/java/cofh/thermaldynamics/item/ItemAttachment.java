@@ -8,13 +8,12 @@ import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileMultiBlock;
-import cofh.thermaldynamics.ducts.attachments.servo.ServoBase;
+import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.attachments.servo.ServoBase;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -52,7 +51,7 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 		Attachment attachment = null;
 
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof TileMultiBlock) {
+		if (tile instanceof TileTDBase) {
 			int s = -1;
 			MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(world, player, x, y, z);
 			if (movingObjectPosition != null) {
@@ -67,19 +66,19 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 					s = ((subHit - 14) % 6);
 				}
 				if (s != -1) {
-					attachment = getAttachment(s ^ 1, stack, (TileMultiBlock) tile);
+					attachment = getAttachment(s ^ 1, stack, (TileTDBase) tile);
 				}
 			}
 		} else {
 			tile = BlockHelper.getAdjacentTileEntity(world, x, y, z, side);
-			if (tile instanceof TileMultiBlock) {
-				attachment = getAttachment(side, stack, (TileMultiBlock) tile);
+			if (tile instanceof TileTDBase) {
+				attachment = getAttachment(side, stack, (TileTDBase) tile);
 			}
 		}
 		return attachment;
 	}
 
-	public abstract Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile);
+	public abstract Attachment getAttachment(int side, ItemStack stack, TileTDBase tile);
 
 	@Override
 	public boolean initialize() {

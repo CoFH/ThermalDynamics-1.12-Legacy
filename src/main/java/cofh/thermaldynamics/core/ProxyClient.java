@@ -1,11 +1,11 @@
 package cofh.thermaldynamics.core;
 
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.debughelper.CommandServerDebug;
-import cofh.thermaldynamics.ducts.fluid.TileFluidDuct;
-import cofh.thermaldynamics.ducts.item.TileItemDuct;
-import cofh.thermaldynamics.ducts.item.TileItemDuctEnder;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.render.ItemCoverRenderer;
 import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;

@@ -3,11 +3,9 @@ package cofh.thermaldynamics.util;
 import buildcraft.api.tools.IToolWrench;
 
 import cofh.api.item.IToolHammer;
-import cofh.thermalexpansion.item.TEItems;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 public class Utils {
 
@@ -34,7 +32,6 @@ public class Utils {
 
 	// BCHelper {
 	private static boolean bcWrenchExists = classExists("buildcraft.api.tools.IToolWrench");
-	private static boolean isTEPresent = classExists("cofh.thermalexpansion.item.TEItems");
 
 	private static boolean classExists(String className) {
 
@@ -56,22 +53,6 @@ public class Utils {
 		if (item instanceof IToolWrench) {
 			((IToolWrench) item).wrenchUsed(p, x, y, z);
 		}
-	}
-
-	public static boolean isHoldingMultimeter(EntityPlayer player) {
-
-		return isTEPresent && isHoldingTE(player, 0);
-	}
-
-	public static boolean isHoldingDebugger(EntityPlayer player) {
-
-		return isTEPresent && isHoldingTE(player, 1);
-	}
-
-	private static boolean isHoldingTE(EntityPlayer player, int type) {
-
-		ItemStack item = player.getHeldItem();
-		return item != null && item.getItem() == TEItems.itemMultimeter && item.getItemDamage() == type;
 	}
 
 }

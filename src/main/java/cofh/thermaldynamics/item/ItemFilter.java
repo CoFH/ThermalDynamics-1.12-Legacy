@@ -2,19 +2,17 @@ package cofh.thermaldynamics.item;
 
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileMultiBlock;
-import cofh.thermaldynamics.ducts.Duct;
-import cofh.thermaldynamics.ducts.attachments.filter.FilterFluid;
-import cofh.thermaldynamics.ducts.attachments.filter.FilterItem;
-import cofh.thermaldynamics.ducts.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.ducts.fluid.TileFluidDuct;
-import cofh.thermaldynamics.ducts.item.TileItemDuct;
+import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
+import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
+import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
+import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -70,7 +68,7 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public Attachment getAttachment(int side, ItemStack stack, TileMultiBlock tile) {
+	public Attachment getAttachment(int side, ItemStack stack, TileTDBase tile) {
 
 		int type = stack.getItemDamage() % 5;
 		if (tile instanceof TileFluidDuct) {

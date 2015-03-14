@@ -1,8 +1,7 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.block.TileMultiBlock;
-import cofh.thermaldynamics.ducts.item.TileItemDuct;
-
+import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.item.TileItemDuct;
 import net.minecraft.item.ItemStack;
 
 public interface IMultiBlockRoute extends IMultiBlock {
@@ -15,9 +14,9 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
     public int getMaxRange();
 
-    public TileMultiBlock.NeighborTypes getCachedSideType(byte side);
+    public TileTDBase.NeighborTypes getCachedSideType(byte side);
 
-    public TileMultiBlock.ConnectionTypes getConnectionType(byte side);
+    public TileTDBase.ConnectionTypes getConnectionType(byte side);
 
     public IMultiBlock getCachedTile(byte side);
 

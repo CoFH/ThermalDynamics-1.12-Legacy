@@ -4,7 +4,7 @@ import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.position.BlockPosition;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.block.TileTDBase;
 import com.google.common.base.Throwables;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import java.lang.reflect.Field;
@@ -169,7 +169,7 @@ public class CommandThermalDebug extends CommandBase {
 
 				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[2], 0, 3);
 
-				pos.getTileEntity(world, TileMultiBlock.class).blockPlaced();
+				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
 
 				if (rand.nextInt(4) == 0) {
 					pos.setOrientation(pos.orientation.getRotation(rand.nextBoolean() ? ForgeDirection.UP : ForgeDirection.DOWN));

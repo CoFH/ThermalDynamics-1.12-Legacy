@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
-import cofh.thermaldynamics.ducts.attachments.filter.IFilterConfig;
+import cofh.thermaldynamics.duct.attachments.filter.IFilterConfig;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;

@@ -4,11 +4,10 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.List;
-
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,10 +20,10 @@ import net.minecraft.util.MovingObjectPosition;
 
 public abstract class Attachment {
 
-	public final TileMultiBlock tile;
+	public final TileTDBase tile;
 	public final byte side;
 
-	public Attachment(TileMultiBlock tile, byte side) {
+	public Attachment(TileTDBase tile, byte side) {
 
 		this.tile = tile;
 		this.side = side;
@@ -61,7 +60,7 @@ public abstract class Attachment {
 		return true;
 	}
 
-	public abstract TileMultiBlock.NeighborTypes getNeighborType();
+	public abstract TileTDBase.NeighborTypes getNeighborType();
 
 	public abstract boolean isNode();
 
@@ -107,7 +106,7 @@ public abstract class Attachment {
 
 	public abstract ItemStack getPickBlock();
 
-	public boolean canAddToTile(TileMultiBlock tileMultiBlock) {
+	public boolean canAddToTile(TileTDBase tileMultiBlock) {
 
 		return tileMultiBlock.attachments[side] == null;
 	}
@@ -154,7 +153,7 @@ public abstract class Attachment {
 
 	public BlockDuct.ConnectionTypes getRenderConnectionType() {
 
-		return TileMultiBlock.getDefaultConnectionType(getNeighborType(), TileMultiBlock.ConnectionTypes.NORMAL);
+		return TileTDBase.getDefaultConnectionType(getNeighborType(), TileTDBase.ConnectionTypes.NORMAL);
 	}
 
 	public boolean allowPipeConnection() {

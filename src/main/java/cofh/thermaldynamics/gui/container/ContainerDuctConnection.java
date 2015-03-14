@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.ducts.attachments.ConnectionBase;
-import cofh.thermaldynamics.ducts.attachments.filter.FilterLogic;
+import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

@@ -12,16 +12,15 @@ import cofh.repack.codechicken.lib.vec.Scale;
 import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.BlockDuct;
-import cofh.thermaldynamics.block.TileMultiBlock;
+import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.core.TDProps;
-import cofh.thermaldynamics.ducts.Duct;
-import cofh.thermaldynamics.ducts.TDDucts;
-import cofh.thermaldynamics.ducts.attachments.facades.Cover;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.attachments.facades.Cover;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -32,7 +31,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
@@ -236,7 +234,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		return true;
 	}
 
-	public boolean renderWorldExtra(boolean invRender, TileMultiBlock tile, int renderType, int[] connection, double x, double y, double z) {
+	public boolean renderWorldExtra(boolean invRender, TileTDBase tile, int renderType, int[] connection, double x, double y, double z) {
 
 		Tessellator.instance.setColorOpaque_F(1, 1, 1);
 		Duct ductType = TDDucts.ductList.get(renderType);
@@ -325,7 +323,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		CCRenderState.draw();
 	}
 
-	public void getDuctConnections(TileMultiBlock tile) {
+	public void getDuctConnections(TileTDBase tile) {
 
 		for (int i = 0; i < 6; i++) {
 			connections[i] = tile.getConnectionType(i).ordinal();
@@ -342,10 +340,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileMultiBlock)) {
+		if (!(tile instanceof TileTDBase)) {
 			return false;
 		}
-		TileMultiBlock theTile = (TileMultiBlock) tile;
+		TileTDBase theTile = (TileTDBase) tile;
 
 		RenderUtils.preWorldRender(world, x, y, z);
 		getDuctConnections(theTile);

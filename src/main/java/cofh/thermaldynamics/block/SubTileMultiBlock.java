@@ -12,9 +12,9 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 
 	public MultiBlockGrid grid;
 	private boolean isValid = true;
-	public TileMultiBlock parent;
+	public TileTDBase parent;
 
-	public SubTileMultiBlock(TileMultiBlock parent) {
+	public SubTileMultiBlock(TileTDBase parent) {
 
 		this.parent = parent;
 	}
