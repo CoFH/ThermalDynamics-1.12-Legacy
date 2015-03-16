@@ -3,9 +3,10 @@ package cofh.thermaldynamics.core;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+
 import net.minecraft.world.World;
 
 public class WorldGridList {
@@ -56,7 +57,7 @@ public class WorldGridList {
 			gridsToRecreate.clear();
 		}
 
-		LinkedList<MultiBlockGrid> mtickinggrids = new LinkedList<MultiBlockGrid>();
+		ArrayList<MultiBlockGrid> mtickinggrids = new ArrayList<MultiBlockGrid>();
 
 		for (MultiBlockGrid grid : tickingGrids) {
 			grid.tickGrid();
@@ -67,9 +68,13 @@ public class WorldGridList {
 		if (!mtickinggrids.isEmpty()) {
 
 			long deadline = System.nanoTime() + 100000L;
-			Iterator<MultiBlockGrid> iterator = mtickinggrids.iterator();
-			while (System.nanoTime() < deadline && iterator.hasNext()) {
-				iterator.next().doTickProcessing(deadline);
+			for (int i = 0, e = mtickinggrids.size(), c = 0; i < e; ++i) {
+				mtickinggrids.get(i).doTickProcessing(deadline);
+				if (c++ == 7) {
+					if (System.nanoTime() > deadline)
+						break;
+					c = 0;
+				}
 			}
 
 		}

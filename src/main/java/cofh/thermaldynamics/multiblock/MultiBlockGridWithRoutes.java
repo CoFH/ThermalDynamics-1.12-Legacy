@@ -1,9 +1,9 @@
 package cofh.thermaldynamics.multiblock;
 
-import net.minecraft.world.World;
-
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import net.minecraft.world.World;
 
 public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
     public MultiBlockGridWithRoutes(World world) {
@@ -12,10 +12,15 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 
     @Override
     public void doTickProcessing(long deadline) {
-        while (!calculatingRoutes.isEmpty() && System.nanoTime() < deadline) {
+        for (int i = 0; !calculatingRoutes.isEmpty(); ++i) {
             RouteCache routeCache = calculatingRoutes.peek();
             if (routeCache != null && !routeCache.processStep()) {
                 calculatingRoutes.remove(routeCache);
+            }
+            if (i == 15) {
+            	if (System.nanoTime() > deadline)
+            		return;
+            	i = 0;
             }
         }
     }

@@ -4,8 +4,10 @@ import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import net.minecraft.world.World;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
@@ -25,23 +27,21 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	@Override
 	public void tickGrid() {
 
+		repoll = shouldRepoll;
 		if (shouldRepoll) {
-			repoll = true;
 			if (!travelingItems.isEmpty())
 				travelingItems.clear();
 			travelingItemsCount = 0;
-		} else {
-			repoll = false;
 		}
 		shouldRepoll = false;
 
 		for (IMultiBlock m : nodeSet) {
-			if (!m.tickPass(0) || m.getGrid() == null)
+			if (!m.tickPass(0))
 				break;
 		}
 		if (repoll || travelingItemsCount > 0) {
 			for (IMultiBlock m : idleSet) {
-				if (!m.tickPass(0)|| m.getGrid() == null)
+				if (!m.tickPass(0))
 					break;
 			}
 		}
