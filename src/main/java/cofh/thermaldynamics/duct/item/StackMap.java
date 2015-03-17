@@ -23,10 +23,11 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 
     public final static class ItemEntry {
 
-        public Item item;
-        public int metadata;
+        public final Item item;
+        public final int item_id;
+        public final int metadata;
         public NBTTagCompound tag;
-        public int side;
+        public final int side;
 
         public ItemEntry(ItemStack item, int side) {
 
@@ -39,6 +40,7 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
             this.metadata = metadata;
             this.tag = (tag != null) ? (NBTTagCompound) tag.copy() : null;
             this.side = side;
+            this.item_id = getId();
         }
 
         public ItemStack toItemStack(int amount) {
@@ -47,7 +49,7 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
                 return new ItemStack(item, amount, metadata);
 
             ItemStack itemStack = new ItemStack(item, amount, metadata);
-            itemStack.stackTagCompound = tag;
+            itemStack.stackTagCompound = (NBTTagCompound) tag.copy();
             return itemStack;
         }
 
@@ -55,6 +57,17 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
         protected final int getId() {
 
             return Item.getIdFromItem(item);
+        }
+
+        @Override
+        public String toString() {
+            return "ItemEntry{" +
+                    "item=" + item +
+                    ", item_id=" + item_id +
+                    ", metadata=" + metadata +
+                    ", tag=" + tag +
+                    ", side=" + side +
+                    '}';
         }
 
         @Override
@@ -94,7 +107,7 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
         @Override
         public int hashCode() {
 
-            return (metadata & 16383) | getId() << 14 | side << 28;
+            return (metadata & 16383) | item_id << 14 | side << 28;
         }
     }
 

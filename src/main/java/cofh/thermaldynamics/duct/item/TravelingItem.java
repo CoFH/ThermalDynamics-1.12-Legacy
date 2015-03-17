@@ -338,9 +338,9 @@ public class TravelingItem {
 	}
 
     public StackMap.ItemEntry getStackEntry(){
-        if(stackItemEntry == null)
-            stackItemEntry = new StackMap.ItemEntry(stack, 0);
-        stackItemEntry.side = myPath.getLastSide();
+        if (stackItemEntry == null || stackItemEntry.side != myPath.getLastSide())
+            stackItemEntry = new StackMap.ItemEntry(stack, myPath.getLastSide());
+
         return stackItemEntry;
     }
 

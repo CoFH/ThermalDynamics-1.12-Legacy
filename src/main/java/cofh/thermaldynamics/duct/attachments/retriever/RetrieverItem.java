@@ -235,6 +235,7 @@ public class RetrieverItem extends ServoItem {
 			if (!filter.matchesFilter(stuffedItem))
 				continue;
 
+
             stuffedItem.stackSize = itemDuct.insertIntoInventory(stuffedItem, side);
 			if (stuffedItem.stackSize <= 0)
 				iterator.remove();
