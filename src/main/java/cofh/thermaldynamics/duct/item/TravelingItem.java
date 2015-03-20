@@ -133,6 +133,8 @@ public class TravelingItem {
 
 		TileItemDuct.RouteInfo curInfo;
 
+        reRoute = false;
+
 		if (hasDest) {
 			for (Route aRoute : routes.outputRoutes) {
 				if (aRoute.endPoint.isNode() && aRoute.endPoint.x() == destX && aRoute.endPoint.y() == destY && aRoute.endPoint.z() == destZ) {
