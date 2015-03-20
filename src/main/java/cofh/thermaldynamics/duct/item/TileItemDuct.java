@@ -80,6 +80,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	@Override
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
 
+        if(item == null)
+            return null;
+
 		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
 				.ordinal()].allowTransfer))) {
 			return item;
@@ -692,7 +695,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		ItemStack curItem;
 
 		for (byte i = internalSideCounter; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
+			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 
@@ -707,7 +710,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			}
 		}
 		for (byte i = 0; i < internalSideCounter; i++) {
-			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem)) {
+			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 				if (curItem.stackSize > 0) {

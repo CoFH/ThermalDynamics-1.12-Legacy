@@ -220,6 +220,9 @@ public class ServoItem extends ServoBase {
                 if (travelingItem == null) {
                     continue;
                 }
+
+                int totalSize = travelingItem.stack.stackSize;
+
                 travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
 
                 if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
@@ -227,7 +230,6 @@ public class ServoItem extends ServoBase {
                     continue;
                 }
                 if (multiStack[type]) {
-                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStackSize));
                     if (travelingItem.stack.stackSize < totalSize) {
                         for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
                             slot = accessibleSlotsFromSide[i];
@@ -264,6 +266,9 @@ public class ServoItem extends ServoBase {
                 if (travelingItem == null) {
                     continue;
                 }
+
+                int totalSendSize = travelingItem.stack.stackSize;
+
                 travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
 
                 if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
@@ -271,12 +276,11 @@ public class ServoItem extends ServoBase {
                     continue;
                 }
                 if (multiStack[type]) {
-                    int totalSize = Math.min(travelingItem.stack.getMaxStackSize(), filter.getLevel(FilterLogic.levelStackSize));
-                    if (multiStack[type] && travelingItem.stack.stackSize < totalSize) {
-                        for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSize; slot++) {
+                    if (travelingItem.stack.stackSize < totalSendSize) {
+                        for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSendSize; slot++) {
                             itemStack = cachedInv.getStackInSlot(slot);
                             if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-                                itemStack = cachedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
+                                itemStack = cachedInv.decrStackSize(slot, totalSendSize - travelingItem.stack.stackSize);
                                 if (itemStack != null)
                                     travelingItem.stack.stackSize += itemStack.stackSize;
                             }
@@ -408,8 +412,8 @@ public class ServoItem extends ServoBase {
 		if (routeForItem == null) {
 			return item;
 		}
+        item.stackSize -= routeForItem.stack.stackSize;
 		itemDuct.insertNewItem(routeForItem);
-		item.stackSize -= routeForItem.stack.stackSize;
 		return item.stackSize > 0 ? item : null;
 	}
 

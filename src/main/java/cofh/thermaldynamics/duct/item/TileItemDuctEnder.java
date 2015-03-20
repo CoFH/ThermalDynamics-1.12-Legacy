@@ -137,7 +137,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 				if (travelingItem.stack.stackSize > 0) {
 					travelingItem.reRoute = true;
 					transferItem(travelingItem, duct, newInsert);
-				} else
+				} else if (!newInsert)
 					itemsToRemove.add(travelingItem);
 				return;
 			} else {
