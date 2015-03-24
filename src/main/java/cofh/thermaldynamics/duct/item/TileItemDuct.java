@@ -13,6 +13,7 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandlerClient;
+import cofh.thermaldynamics.debughelper.ErrorHelper;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.attachments.IStuffable;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
@@ -166,8 +167,15 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		if (((IInventory) theTile).getSizeInventory() == 0)
 			return false;
 
-		if (theTile instanceof ISidedInventory && ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1).length == 0)
-			return false;
+		if (theTile instanceof ISidedInventory) {
+            int[] slots = ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1);
+            if (slots == null){
+                ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getAccessibleSlotsFromSide() with side=" + (side ^ 1));
+                return false;
+            }
+            if(slots.length == 0)
+                return false;
+        }
 
 		return true;
 	}
