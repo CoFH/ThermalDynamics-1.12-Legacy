@@ -25,11 +25,14 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import com.google.common.collect.Iterables;
+
 import gnu.trove.iterator.TObjectIntIterator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -40,6 +43,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemDuct {
@@ -81,17 +85,16 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	@Override
 	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
 
-        if(item == null)
-            return null;
-
+		if (item == null) {
+			return null;
+		}
 		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
 				.ordinal()].allowTransfer))) {
 			return item;
 		}
-
-		if (internalGrid == null)
+		if (internalGrid == null) {
 			return item;
-
+		}
 		Attachment attachment = attachments[from.ordinal()];
 		if (attachment == null) {
 			ItemStack itemCopy = ItemHelper.cloneStack(item);
@@ -153,8 +156,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	@Override
 	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-		if (!(theTile instanceof IInventory))
+		if (!(theTile instanceof IInventory)) {
 			return false;
+		}
 		if ((theTile instanceof IInventoryConnection)) {
 			IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile)
 					.canConnectInventory(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
@@ -163,20 +167,18 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			if (connectionType == IInventoryConnection.ConnectionType.FORCE)
 				return true;
 		}
-
-		if (((IInventory) theTile).getSizeInventory() == 0)
+		if (((IInventory) theTile).getSizeInventory() == 0) {
 			return false;
-
+		}
 		if (theTile instanceof ISidedInventory) {
-            int[] slots = ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1);
-            if (slots == null){
-                ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getAccessibleSlotsFromSide() with side=" + (side ^ 1));
-                return false;
-            }
-            if(slots.length == 0)
-                return false;
-        }
-
+			int[] slots = ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1);
+			if (slots == null) {
+				ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getAccessibleSlotsFromSide() with side=" + (side ^ 1));
+				return false;
+			}
+			if (slots.length == 0)
+				return false;
+		}
 		return true;
 	}
 
@@ -205,8 +207,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			return false;
 
 		if (pass == 0) {
-			if (ticksExisted < maxTicksExistedBeforeDump)
+			if (ticksExisted < maxTicksExistedBeforeDump) {
 				ticksExisted++;
+			}
 			tickItems();
 		}
 		return true;
@@ -244,8 +247,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	public boolean canStuffItem() {
 
 		for (Attachment attachment : attachments) {
-			if (attachment instanceof IStuffable)
+			if (attachment instanceof IStuffable) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -435,7 +439,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 				hasChanged = true;
 			}
 		}
-
 		if (hasChanged) {
 			sendTravelingItemsPacket();
 			hasChanged = false;
@@ -449,6 +452,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 		itemsToAdd.clear();
 		myItems.clear();
+
 		if (nbt.hasKey("TravellingItems", 9)) {
 			NBTTagList list = nbt.getTagList("TravellingItems", 10);
 			for (int i = 0; i < list.tagCount(); i++) {
@@ -471,12 +475,12 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			travelingItem.toNBT(tag);
 			items.appendTag(tag);
 		}
-
-		if (items.tagCount() > 0)
+		if (items.tagCount() > 0) {
 			nbt.setTag("TravellingItems", items);
-
-		if (pathWeightType != 0)
+		}
+		if (pathWeightType != 0) {
 			nbt.setByte("Weight", pathWeightType);
+		}
 	}
 
 	public void sendTravelingItemsPacket() {
@@ -530,7 +534,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 					centerLineSub[i] = maxCenterLine;
 				}
 			}
-
 			centerLine = maxCenterLine;
 			if (!TickHandlerClient.tickBlocks.contains(this) && !TickHandlerClient.tickBlocksToAdd.contains(this)) {
 				TickHandlerClient.tickBlocksToAdd.add(this);
@@ -542,7 +545,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 				for (byte i = 0; i < n; i++) {
 					myItems.add(TravelingItem.fromPacket(payload, this));
 				}
-
 				if (!TickHandlerClient.tickBlocks.contains(this) && !TickHandlerClient.tickBlocksToAdd.contains(this)) {
 					TickHandlerClient.tickBlocksToAdd.add(this);
 				}
@@ -578,8 +580,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	public void removeItem(TravelingItem travelingItem, boolean disappearing) {
 
-		if (disappearing)
+		if (disappearing) {
 			signalRepoll();
+		}
 		itemsToRemove.add(travelingItem);
 	}
 
