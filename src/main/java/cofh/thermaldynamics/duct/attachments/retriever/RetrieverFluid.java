@@ -35,7 +35,7 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public void tick(int pass) {
 
-		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
+		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput || !tile.cachesExist()) {
 			return;
 		}
 		int maxInput = Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]));

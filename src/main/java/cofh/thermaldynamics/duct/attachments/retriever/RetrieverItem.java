@@ -15,6 +15,8 @@ import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import gnu.trove.iterator.TObjectIntIterator;
 import java.util.Iterator;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -53,6 +55,7 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
+    @SideOnly(Side.CLIENT)
 	public boolean render(int pass, RenderBlocks renderBlocks) {
 
 		if (pass == 1) {
