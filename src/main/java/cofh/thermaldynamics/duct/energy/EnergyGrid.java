@@ -106,9 +106,9 @@ public class EnergyGrid extends MultiBlockGrid {
 		super.removeBlock(oldBlock);
 	}
 
-	public int getNodeShare(IMultiBlock conduitEnergy) {
+	public int getNodeShare(IMultiBlock ductEnergy) {
 
-		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(conduitEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
+		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
 				+ myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
 

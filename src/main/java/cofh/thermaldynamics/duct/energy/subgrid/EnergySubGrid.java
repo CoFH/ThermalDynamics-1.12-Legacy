@@ -35,9 +35,9 @@ public class EnergySubGrid extends MultiBlockGrid {
 		return super.canGridsMerge(grid);
 	}
 
-	public int getNodeShare(IMultiBlock conduitEnergy) {
+	public int getNodeShare(IMultiBlock ductEnergy) {
 
-		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(conduitEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
+		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
 				+ myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
 

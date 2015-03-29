@@ -45,7 +45,7 @@ public class FluidGrid extends MultiBlockGrid {
 	@Override
 	public void balanceGrid() {
 
-		myTank.setCapacity(size() * myTank.fluidPerConduit);
+		myTank.setCapacity(size() * myTank.fluidPerDuct);
 	}
 
 	public float getThroughPutModifier() {
@@ -53,7 +53,7 @@ public class FluidGrid extends MultiBlockGrid {
 		return 1F;
 	}
 
-	public int getMaxFluidPerConduit() {
+	public int getMaxFluidPerDuct() {
 
 		return 1000;
 	}
