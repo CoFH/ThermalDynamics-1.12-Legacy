@@ -21,8 +21,10 @@ import cofh.thermaldynamics.gui.client.GuiDuctConnection;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -160,8 +162,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	@Override
 	public void setControl(ControlMode control) {
 
-		if (!canAlterRS())
+		if (!canAlterRS()) {
 			return;
+		}
 		rsMode = control;
 		if (ServerHelper.isClientWorld(tile.world())) {
 			PacketTileInfo packet = getNewPacket(NETWORK_ID.RSCONTROL);
@@ -197,8 +200,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	public FilterLogic getFilter() {
 
-		if (filter == null)
+		if (filter == null) {
 			filter = createFilterLogic();
+		}
 		return filter;
 	}
 
@@ -224,7 +228,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		} else if (a == NETWORK_ID.FILTERLEVEL) {
 			byte b = payload.getByte();
 			int c = payload.getShort();
-            filter.setLevel(b, c);
+			filter.setLevel(b, c);
 			filter.recalc = true;
 		}
 	}
@@ -272,10 +276,11 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public void receiveGuiNetworkData(int i, int j) {
 
 		super.receiveGuiNetworkData(i, j);
-		if (i == 0)
+		if (i == 0) {
 			filter.handleFlagByte(j);
-		else
+		} else {
 			filter.setLevel(i - 1, j, false);
+		}
 	}
 
 	@Override
@@ -329,27 +334,31 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return true;
 	}
 
+	@Override
+	public String getDataType() {
 
-    @Override
-    public String getDataType() {
-        return "ConnectionBase";
-    }
+		return "ConnectionBase";
+	}
 
-    @Override
-    public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
-        if (canAlterRS() && tag.hasKey("RSControl"))
-            setControl(RedstoneControlHelper.getControlFromNBT(tag));
+	@Override
+	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
 
-        filter.readFromNBT(tag);
+		if (canAlterRS() && tag.hasKey("RSControl")) {
+			setControl(RedstoneControlHelper.getControlFromNBT(tag));
+		}
 
-        onNeighborChange();
-    }
+		filter.readFromNBT(tag);
 
-    @Override
-    public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
-        if (canAlterRS())
-            RedstoneControlHelper.setItemStackTagRS(tag, this);
+		onNeighborChange();
+	}
 
-        filter.writeToNBT(tag);
-    }
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+
+		if (canAlterRS()) {
+			RedstoneControlHelper.setItemStackTagRS(tag, this);
+		}
+
+		filter.writeToNBT(tag);
+	}
 }

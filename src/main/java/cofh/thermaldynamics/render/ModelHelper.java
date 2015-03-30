@@ -33,8 +33,9 @@ public class ModelHelper {
 		public static Cuboid6[] rotateCuboids(Cuboid6 downCube) {
 
 			Cuboid6[] cuboid6s = new Cuboid6[6];
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++) {
 				cuboid6s[i] = downCube.copy().apply(Rotation.sideRotations[i]);
+			}
 			return cuboid6s;
 		}
 
@@ -97,8 +98,9 @@ public class ModelHelper {
 			for (int side = 0; side < 6; side++) {
 				if (!opaque && MathHelper.isBitSet(cMask, side)) {
 					for (int i : orthogs[side]) {
-						if (MathHelper.isBitSet(cMask, i))
+						if (MathHelper.isBitSet(cMask, i)) {
 							addSideFace(verts, pipe[i], side);
+						}
 					}
 				} else {
 					int singlePipeIndex = -1, doublePipeIndex = -1;
@@ -111,34 +113,35 @@ public class ModelHelper {
 							}
 						}
 					}
-
 					if (doublePipeIndex != -1) {
 						for (int i : orthogs[side]) {
-							if (i == doublePipeIndex)
+							if (i == doublePipeIndex) {
 								addSideFace(verts, pipeFullLength[i], side);
-							else if (i != (doublePipeIndex ^ 1) && MathHelper.isBitSet(cMask, i))
+							} else if (i != (doublePipeIndex ^ 1) && MathHelper.isBitSet(cMask, i)) {
 								addSideFace(verts, pipe[i], side);
+							}
 						}
 					} else if (singlePipeIndex != -1) {
 						for (int i : orthogs[side]) {
-							if (i == singlePipeIndex)
+							if (i == singlePipeIndex) {
 								addSideFace(verts, pipeWCenter[i], side);
-							else if (MathHelper.isBitSet(cMask, i))
+							} else if (MathHelper.isBitSet(cMask, i)) {
 								addSideFace(verts, pipe[i], side);
+							}
 						}
 					} else {
-						if (!MathHelper.isBitSet(cMask, side))
+						if (!MathHelper.isBitSet(cMask, side)) {
 							addSideFace(verts, center, side);
+						}
 
 						for (int i : orthogs[side]) {
-							if (MathHelper.isBitSet(cMask, i))
+							if (MathHelper.isBitSet(cMask, i)) {
 								addSideFace(verts, pipe[i], side);
+							}
 						}
 					}
 				}
-
 			}
-
 			return verts;
 		}
 	}
@@ -160,18 +163,24 @@ public class ModelHelper {
 
 		for (Vertex5 v : newModel.verts) {
 			v.vec.multiply(size);
-			if (v.vec.x < bounds.min.x)
+			if (v.vec.x < bounds.min.x) {
 				v.vec.x = bounds.min.x;
-			if (v.vec.y < bounds.min.y)
+			}
+			if (v.vec.y < bounds.min.y) {
 				v.vec.y = bounds.min.y;
-			if (v.vec.z < bounds.min.z)
+			}
+			if (v.vec.z < bounds.min.z) {
 				v.vec.z = bounds.min.z;
-			if (v.vec.x > bounds.max.x)
+			}
+			if (v.vec.x > bounds.max.x) {
 				v.vec.x = bounds.max.x;
-			if (v.vec.y > bounds.max.y)
+			}
+			if (v.vec.y > bounds.max.y) {
 				v.vec.y = bounds.max.y;
-			if (v.vec.z > bounds.max.z)
+			}
+			if (v.vec.z > bounds.max.z) {
 				v.vec.z = bounds.max.z;
+			}
 		}
 
 		return newModel.computeNormals();
@@ -185,16 +194,18 @@ public class ModelHelper {
 	public static void addSideFaces(LinkedList<Vertex5> vecs, Cuboid6 bounds, int sideMask) {
 
 		for (int s = 0; s < 6; s++) {
-			if ((sideMask & (1 << s)) == 0)
+			if ((sideMask & (1 << s)) == 0) {
 				addSideFace(vecs, bounds, s);
+			}
 		}
 	}
 
 	public static LinkedList<Vertex5> addSideFace(LinkedList<Vertex5> vecs, Cuboid6 bounds, int side) {
 
 		face.loadCuboidFace(bounds.copy().add(Vector3.center), side);
-		for (Vertex5 v : face.getVertices())
+		for (Vertex5 v : face.getVertices()) {
 			vecs.add(new Vertex5(v.vec.copy().sub(Vector3.center), v.uv.copy()));
+		}
 		return vecs;
 	}
 
@@ -223,7 +234,6 @@ public class ModelHelper {
 					iterator.remove();
 				}
 			}
-
 			faces.add(f);
 		}
 
@@ -268,8 +278,9 @@ public class ModelHelper {
 		public boolean isPolygon() {
 
 			for (int i = 0; i < 4; i++) {
-				if (vec(i).vec.equalsT(vec(i + 1).vec))
+				if (vec(i).vec.equalsT(vec(i + 1).vec)) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -282,21 +293,26 @@ public class ModelHelper {
 
 		public boolean attemptToCombine(Face other) {
 
-			if (isPolygon() || other.isPolygon())
+			if (isPolygon() || other.isPolygon()) {
 				return false;
+			}
 
-			if (attemptToCombineUnflipped(other))
+			if (attemptToCombineUnflipped(other)) {
 				return true;
+			}
 			reverse();
-			if (attemptToCombineUnflipped(other))
+			if (attemptToCombineUnflipped(other)) {
 				return true;
+			}
 			reverse();
 			other.reverse();
-			if (attemptToCombineUnflipped(other))
+			if (attemptToCombineUnflipped(other)) {
 				return true;
+			}
 			reverse();
-			if (attemptToCombineUnflipped(other))
+			if (attemptToCombineUnflipped(other)) {
 				return true;
+			}
 			reverse();
 			other.reverse();
 			return false;
@@ -366,15 +382,15 @@ public class ModelHelper {
 		public static Vertex5 toVertex5(Vector3 vector3, int side) {
 
 			UV uv;
-			if (side == 0 || side == 1)
+			if (side == 0 || side == 1) {
 				uv = new UV(0.5 + vector3.x, 0.5 + vector3.z);
-			else if (side == 2 || side == 3)
+			} else if (side == 2 || side == 3) {
 				uv = new UV(0.5 + vector3.x, 0.5 + vector3.y);
-			else if (side == 4 || side == 5)
+			} else if (side == 4 || side == 5) {
 				uv = new UV(0.5 + vector3.z, 0.5 + vector3.y);
-			else
+			} else {
 				uv = new UV(0.5, 0.5);
-
+			}
 			return new Vertex5(vector3, uv);
 		}
 
@@ -415,9 +431,9 @@ public class ModelHelper {
 			model.verts[10] = toVertex5(octoFace[4].copy(), 0);
 			model.verts[11] = toVertex5(octoFace[7].copy(), 0);
 
-			for (int i = 0; i < 12; i++)
+			for (int i = 0; i < 12; i++) {
 				model.verts[i].vec.y = -0.5 * (frameOnly ? 0.75 : 0.99);
-
+			}
 			CCModel.generateBackface(model, 0, model, 12, 12);
 			return model;
 		}
@@ -426,7 +442,6 @@ public class ModelHelper {
 
 			CCModel model = CCModel.newModel(7, 64);
 			double v = (size);
-
 			double o = 1.01;
 
 			for (int k = 0; k < 8; k++) {
@@ -435,7 +450,6 @@ public class ModelHelper {
 				model.verts[k * 4 + 2] = new Vertex5(octoFace[(k + 1) % 8].copy().multiply(o, 1, o).setSide(0, -v), 0.5 + innerSize, 0.5 - v);
 				model.verts[k * 4 + 3] = new Vertex5(octoFace[(k + 1) % 8].copy().multiply(o, 1, o), 0.5 + innerSize, 0);
 			}
-
 			CCModel.generateBackface(model, 0, model, 32, 32);
 			return model;
 		}
@@ -456,21 +470,20 @@ public class ModelHelper {
 				CCModel.generateBackface(models[i], 0, models[i], n, n);
 				finalizeModel(models[i]);
 			}
-
 			models[64] = generateConnection();
 			for (int s = 0; s < 6; s++) {
-				if (s != 0)
+				if (s != 0) {
 					models[64 + s] = models[64].sidedCopy(0, s, Vector3.zero);
+				}
 				finalizeModel(models[64 + s]);
 			}
-
 			models[70] = generateSideFace();
 			for (int s = 0; s < 6; s++) {
-				if (s != 0)
+				if (s != 0) {
 					models[70 + s] = models[70].sidedCopy(0, s, Vector3.zero);
+				}
 				finalizeModel(models[70 + s]);
 			}
-
 			return models;
 		}
 
@@ -482,14 +495,14 @@ public class ModelHelper {
 			LinkedList<Vertex5> arm = new LinkedList<Vertex5>();
 
 			for (int k = 0; k < 8; k++) {
-				if (frameOnly && (k % 2 == 0))
+				if (frameOnly && (k % 2 == 0)) {
 					continue;
+				}
 				arm.add(toVertex5(octoFace[k].copy()));
 				arm.add(toVertex5(octoFace[k].copy().setSide(0, -size)));
 				arm.add(toVertex5(octoFace[(k + 1) % 8].copy().setSide(0, -size)));
 				arm.add(toVertex5(octoFace[(k + 1) % 8].copy()));
 			}
-
 			for (int i = 0; i < 6; i++) {
 				if ((connections & (1 << i)) != 0) {
 
@@ -498,12 +511,11 @@ public class ModelHelper {
 					v.addAll(apply(center, Rotation.sideRotations[i]));
 				}
 			}
-
 			for (int i = 0; i < 6; i++) {
 				for (int j = (i + 1); j < 6; j++) {
-					if ((i ^ 1) == j)
+					if ((i ^ 1) == j) {
 						continue;
-
+					}
 					boolean a = (connections & (1 << i)) != 0;
 					boolean b = (connections & (1 << j)) != 0;
 
@@ -529,7 +541,6 @@ public class ModelHelper {
 					}
 				}
 			}
-
 			if (!frameOnly) {
 
 				for (int i = 0; i < 2; i++) {
@@ -581,7 +592,6 @@ public class ModelHelper {
 									a2 = v1;
 									a3 = v2;
 								}
-
 								v.add(toVertex5(a1.copy().multiply(innerSize).add(a2.copy().multiply(size)).add(a3.copy().multiply(innerSize)), 0));
 								v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(size).add(a3.copy().multiply(innerSize))), 0));
 								v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(innerSize)).add(a3.copy().multiply(size)), 0));
@@ -607,7 +617,6 @@ public class ModelHelper {
 									a2 = v1;
 									a3 = v2;
 								}
-
 								v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(innerSize)).add(a3.copy().multiply(innerSize)), dir));
 								v.add(toVertex5(a1.copy().multiply(size).add(a2.copy().multiply(size)).add(a3.copy().multiply(innerSize)), dir));
 								v.add(toVertex5(a1.copy().multiply(innerSize).add(a2.copy().multiply(size)).add(a3.copy().multiply(size)), dir));
@@ -617,7 +626,6 @@ public class ModelHelper {
 					}
 				}
 			}
-
 			return v;
 		}
 	}
@@ -675,7 +683,6 @@ public class ModelHelper {
 				min.z = max.z;
 				max.z = temp;
 			}
-
 			if (h < 1) {
 				Vector3 mid = min.copy().add(max).multiply(0.5);
 
@@ -686,7 +693,6 @@ public class ModelHelper {
 				max.y = max.y <= -0.5 || max.y >= 0.5 ? max.y : (max.y - mid.y) * h + mid.y;
 				max.z = max.z <= -0.5 || max.z >= 0.5 ? max.z : (max.z - mid.z) * h + mid.z;
 			}
-
 			return new Cuboid6(min, max);
 		}
 
@@ -705,7 +711,6 @@ public class ModelHelper {
 					addSideFaces(vecs, cube, (1 << i) ^ (63));
 				}
 			}
-
 			for (int j = 0; j < 6; j++) {
 				if (i != j && (i ^ 1) != j) {
 					a = axes[i];
@@ -719,7 +724,6 @@ public class ModelHelper {
 					addSideFaces(vecs, cube, (1 << orthog) | (1 << (orthog ^ 1)));
 				}
 			}
-
 			return vecs;
 		}
 
@@ -769,16 +773,18 @@ public class ModelHelper {
 
 				int m = ((1 << cr[0]) & connections) | ((1 << cr[1]) & connections) | ((1 << cr[2]) & connections);
 
-				if (cullSides || ((connections & (1 << cr[1])) != 0) == ((connections & (1 << cr[2])) != 0))
+				if (cullSides || ((connections & (1 << cr[1])) != 0) == ((connections & (1 << cr[2])) != 0)) {
 					m = m | (1 << (cr[0] ^ 1));
-				if (cullSides || ((connections & (1 << cr[0])) != 0) == ((connections & (1 << cr[2])) != 0))
+				}
+				if (cullSides || ((connections & (1 << cr[0])) != 0) == ((connections & (1 << cr[2])) != 0)) {
 					m = m | (1 << (cr[1] ^ 1));
-				if (cullSides || ((connections & (1 << cr[0])) != 0) == ((connections & (1 << cr[1])) != 0))
+				}
+				if (cullSides || ((connections & (1 << cr[0])) != 0) == ((connections & (1 << cr[1])) != 0)) {
 					m = m | (1 << (cr[2] ^ 1));
+				}
 
 				addSideFaces(vecs, cube, m);
 			}
-
 			return vecs;
 		}
 
@@ -814,10 +820,8 @@ public class ModelHelper {
 
 				finalizeModel(models[64 + i]);
 			}
-
 			return models;
 		}
-
 	}
 
 }

@@ -7,10 +7,12 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase;
 import com.google.common.base.Throwables;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -49,83 +51,95 @@ public class CommandThermalDebug extends CommandBase {
 	Field chunksToUnload;
 
 	private static final String[] trueWords = { "true", "t", "1", "yes", "oui", "affirmative", "truth", "yarp", "uhuh", "yep", "doit", "yea", "tango",
-		"heckyeah", "win" };
+			"heckyeah", "win" };
 	private static final String[] falseWords = { "false", "f", "0", "no", "non", "negative", "cake", "narp", "nuhuh", "nope", "dont", "nay", "foxtrot",
-		"hellno", "fail" };
+			"hellno", "fail" };
 	private static final String[] mixWords = { "random", "r", "0.5", "imfeelinglucky", "yesno", "supriseme", "whatever", "schrodinger" };
 
 	public static boolean textToBoolean(String s) {
 
 		s = s.trim();
 		for (String trueWord : trueWords) {
-			if (trueWord.equalsIgnoreCase(s))
+			if (trueWord.equalsIgnoreCase(s)) {
 				return true;
+			}
 		}
 		for (String falseWord : falseWords) {
-			if (falseWord.equalsIgnoreCase(s))
+			if (falseWord.equalsIgnoreCase(s)) {
 				return false;
+			}
 		}
 
 		for (String mixWord : mixWords) {
-			if (mixWord.equalsIgnoreCase(s))
+			if (mixWord.equalsIgnoreCase(s)) {
 				return MathHelper.RANDOM.nextBoolean();
+			}
 		}
 
 		throw new RuntimeException("Unable to interpret word " + s + " as true/false");
 	}
 
-    public String randString() {
-        StringBuilder builder = new StringBuilder("rand_");
-        int z = MathHelper.RANDOM.nextInt(10) + 1;
-        for (int i = 0; i < z; i++) {
-            builder.append((char) ('a' + MathHelper.RANDOM.nextInt(26)));
-        }
-        return builder.toString();
-    }
+	public String randString() {
+
+		StringBuilder builder = new StringBuilder("rand_");
+		int z = MathHelper.RANDOM.nextInt(10) + 1;
+		for (int i = 0; i < z; i++) {
+			builder.append((char) ('a' + MathHelper.RANDOM.nextInt(26)));
+		}
+		return builder.toString();
+	}
 
 	@Override
 	public void processCommand(ICommandSender p_71515_1_, String[] args) {
 
-		if (args.length == 0)
+		if (args.length == 0) {
 			return;
+		}
 
-        if("addRandNBT".equals(args[0])){
-            if (!(p_71515_1_ instanceof EntityPlayerMP))
-                return;
+		if ("addRandNBT".equals(args[0])) {
+			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+				return;
+			}
 
-            EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
+			EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
 
-            ItemStack heldItem = player.getHeldItem();
-            if(heldItem == null)
-                return;
+			ItemStack heldItem = player.getHeldItem();
+			if (heldItem == null) {
+				return;
+			}
 
-            heldItem.setStackDisplayName(randString());
-            for (int j = 0; j < 4; j++) {
-                NBTTagCompound tag = new NBTTagCompound();
-                for (int i = 0; i < 5; i++)
-                    tag.setString(randString(), randString());
-                for (int i = 0; i < 5; i++)
-                    tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
-                heldItem.stackTagCompound.setTag(randString(), tag);
-            }
+			heldItem.setStackDisplayName(randString());
+			for (int j = 0; j < 4; j++) {
+				NBTTagCompound tag = new NBTTagCompound();
+				for (int i = 0; i < 5; i++) {
+					tag.setString(randString(), randString());
+				}
+				for (int i = 0; i < 5; i++) {
+					tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
+				}
+				heldItem.stackTagCompound.setTag(randString(), tag);
+			}
 
-            NBTTagCompound tag = heldItem.stackTagCompound;
-            for (int i = 0; i < 5; i++)
-                tag.setString(randString(), randString());
-            for (int i = 0; i < 5; i++)
-                tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
+			NBTTagCompound tag = heldItem.stackTagCompound;
+			for (int i = 0; i < 5; i++) {
+				tag.setString(randString(), randString());
+			}
+			for (int i = 0; i < 5; i++) {
+				tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
+			}
 
-            if(MathHelper.RANDOM.nextInt(4) == 0)
-                tag.setTag("ench", new NBTTagCompound());
+			if (MathHelper.RANDOM.nextInt(4) == 0) {
+				tag.setTag("ench", new NBTTagCompound());
+			}
 
-            player.updateHeldItem();
+			player.updateHeldItem();
 
-        }
-		else if ("showLoading".equals(args[0])) {
+		} else if ("showLoading".equals(args[0])) {
 			DebugTickHandler.showLoading = !DebugTickHandler.showLoading;
 		} else if ("unload".equals(args[0])) {
-			if (!(p_71515_1_ instanceof EntityPlayerMP))
+			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
 				return;
+			}
 
 			if (chunksToUnload == null) {
 				chunksToUnload = ReflectionHelper.findField(ChunkProviderServer.class, "chunksToUnload");
@@ -146,26 +160,28 @@ public class CommandThermalDebug extends CommandBase {
 		} else if ("grids".equals(args[0])) {
 			DebugTickHandler.showParticles = !DebugTickHandler.showParticles;
 		} else if ("generate".equals(args[0]) && args.length == 2) {
-			if (!(p_71515_1_ instanceof EntityPlayerMP))
+			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
 				return;
+			}
 
 			EntityPlayerMP playerMP = (EntityPlayerMP) p_71515_1_;
 			BlockPosition pos = new BlockPosition((int) Math.floor(playerMP.posX), (int) Math.floor(playerMP.posY) - 5, (int) Math.floor(playerMP.posZ));
 
 			final World world = playerMP.getEntityWorld();
-			if (pos.getBlock(world) != Blocks.air)
+			if (pos.getBlock(world) != Blocks.air) {
 				return;
+			}
 
 			pos.setOrientation(ForgeDirection.NORTH);
 
 			LinkedList<BlockPosition> positions = new LinkedList<BlockPosition>();
 
 			int n = Integer.valueOf(args[1]);
-			;
 
 			for (int i = 0; i < n; i++) {
-				if (rand.nextInt(20) == 0)
+				if (rand.nextInt(20) == 0) {
 					positions.add(pos.copy());
+				}
 
 				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[2], 0, 3);
 

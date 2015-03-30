@@ -5,6 +5,7 @@ import cofh.lib.util.helpers.FluidHelper;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -37,10 +38,10 @@ public class FluidGrid extends MultiBlockGrid {
 			} else {
 				myTank.fill(theCondF.fluidForGrid, true);
 			}
-            theCondF.fluidForGrid = null;
-            recentRenderUpdate = true;
-        }
-    }
+			theCondF.fluidForGrid = null;
+			recentRenderUpdate = true;
+		}
+	}
 
 	@Override
 	public void balanceGrid() {
@@ -70,8 +71,7 @@ public class FluidGrid extends MultiBlockGrid {
 	@Override
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
-		return aBlock instanceof TileFluidDuct
-				&& FluidHelper.isFluidEqualOrNull(((TileFluidDuct) aBlock).getConnectionFluid(), myTank.getFluid());
+		return aBlock instanceof TileFluidDuct && FluidHelper.isFluidEqualOrNull(((TileFluidDuct) aBlock).getConnectionFluid(), myTank.getFluid());
 	}
 
 	public boolean doesPassiveTicking = false;
@@ -91,27 +91,36 @@ public class FluidGrid extends MultiBlockGrid {
 
 			if (toDistribute > 0) {
 				for (IMultiBlock m : nodeSet) {
-					if (!m.tickPass(0)|| m.getGrid() == null)
+					if (!m.tickPass(0) || m.getGrid() == null) {
 						break;
+					}
 				}
 			}
 		}
-		if (!nodeSet.isEmpty())
-			for (IMultiBlock m : nodeSet)
-				if (!m.tickPass(1)|| m.getGrid() == null)
+		if (!nodeSet.isEmpty()) {
+			for (IMultiBlock m : nodeSet) {
+				if (!m.tickPass(1) || m.getGrid() == null) {
 					break;
+				}
+			}
+		}
 
 		if (doesPassiveTicking) {
-			if (!nodeSet.isEmpty())
-				for (IMultiBlock m : nodeSet)
-					if (!m.tickPass(2) || m.getGrid() == null)
+			if (!nodeSet.isEmpty()) {
+				for (IMultiBlock m : nodeSet) {
+					if (!m.tickPass(2) || m.getGrid() == null) {
 						break;
-
-			if (!idleSet.isEmpty())
-				for (IMultiBlock m : idleSet) {
-					if (!m.tickPass(2) || m.getGrid() == null)
-						break;
+					}
 				}
+			}
+
+			if (!idleSet.isEmpty()) {
+				for (IMultiBlock m : idleSet) {
+					if (!m.tickPass(2) || m.getGrid() == null) {
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -123,7 +132,7 @@ public class FluidGrid extends MultiBlockGrid {
 		FluidGrid fluidGrid = (FluidGrid) theGrid;
 		doesPassiveTicking = doesPassiveTicking || fluidGrid.doesPassiveTicking;
 		myTank.fill(fluidGrid.getFluid(), true);
-        recentRenderUpdate = true;
+		recentRenderUpdate = true;
 	}
 
 	@Override

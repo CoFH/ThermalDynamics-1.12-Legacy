@@ -15,8 +15,8 @@ public class AttachmentRegistry {
 	public final static byte SERVO_ITEM = 2;
 	public final static byte FILTER_FLUID = 3;
 	public final static byte FILTER_ITEM = 4;
-    public final static byte RETRIEVER_FLUID = 5;
-    public final static byte RETRIEVER_ITEM = 6;
+	public final static byte RETRIEVER_FLUID = 5;
+	public final static byte RETRIEVER_ITEM = 6;
 
 	public static Attachment createAttachment(TileTDBase tile, byte side, int id) {
 
@@ -29,12 +29,12 @@ public class AttachmentRegistry {
 		} else if (id == FILTER_FLUID) {
 			return new FilterFluid(tile, side);
 		} else if (id == FILTER_ITEM) {
-            return new FilterItem(tile, side);
-        }else if (id == RETRIEVER_FLUID){
-            return new RetrieverFluid(tile,side);
+			return new FilterItem(tile, side);
+		} else if (id == RETRIEVER_FLUID) {
+			return new RetrieverFluid(tile, side);
 		} else if (id == RETRIEVER_ITEM) {
-            return new RetrieverItem(tile, side);
-        }
+			return new RetrieverItem(tile, side);
+		}
 		throw new RuntimeException("Illegal Attachment ID");
 	}
 

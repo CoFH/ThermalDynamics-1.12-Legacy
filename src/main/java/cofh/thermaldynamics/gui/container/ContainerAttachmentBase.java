@@ -3,6 +3,7 @@ package cofh.thermaldynamics.gui.container;
 import cofh.lib.gui.slot.SlotFalseCopy;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.block.Attachment;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;

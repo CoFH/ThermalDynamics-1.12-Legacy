@@ -36,10 +36,11 @@ public class DuctItem extends Duct {
 
 		if (itemStack.stackTagCompound != null) {
 			byte b = itemStack.stackTagCompound.getByte(PATHWEIGHT_NBT);
-			if (b == PATHWEIGHT_DENSE)
+			if (b == PATHWEIGHT_DENSE) {
 				return iconBaseTextureDense;
-			else if (b == PATHWEIGHT_VACUUM)
+			} else if (b == PATHWEIGHT_VACUUM) {
 				return iconBaseTextureVacuum;
+			}
 		}
 		return super.getBaseTexture(itemStack);
 	}

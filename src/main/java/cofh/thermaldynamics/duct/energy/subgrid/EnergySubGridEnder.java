@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.duct.energy.subgrid;
 
 import cofh.thermaldynamics.core.TDProps;
-
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import com.google.common.collect.Iterables;
+
 import net.minecraft.world.World;
 
 public class EnergySubGridEnder extends EnergySubGrid {
@@ -21,26 +21,27 @@ public class EnergySubGridEnder extends EnergySubGrid {
 
 	@Override
 	public void tickGrid() {
-        if(updateRenderer){
-            for (Object iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
-                ((SubTileEnergyEnder) iMultiBlock).parentTile.updateRender();
-            }
-        }
+
+		if (updateRenderer) {
+			for (Object iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
+				((SubTileEnergyEnder) iMultiBlock).parentTile.updateRender();
+			}
+		}
 	}
 
-    @Override
-    public void addBlock(IMultiBlock aBlock) {
+	@Override
+	public void addBlock(IMultiBlock aBlock) {
 
-        super.addBlock(aBlock);
-        updateRenderer = true;
-    }
+		super.addBlock(aBlock);
+		updateRenderer = true;
+	}
 
-    boolean updateRenderer = false;
+	boolean updateRenderer = false;
 
-    @Override
-    public void mergeGrids(MultiBlockGrid theGrid) {
+	@Override
+	public void mergeGrids(MultiBlockGrid theGrid) {
 
-        super.mergeGrids(theGrid);
-        updateRenderer = true;
-    }
+		super.mergeGrids(theGrid);
+		updateRenderer = true;
+	}
 }

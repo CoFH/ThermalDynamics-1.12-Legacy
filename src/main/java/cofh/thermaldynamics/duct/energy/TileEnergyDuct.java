@@ -86,8 +86,9 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 	@Override
 	public boolean tickPass(int pass) {
 
-		if (!super.tickPass(pass))
+		if (!super.tickPass(pass)) {
 			return false;
+		}
 
 		int power = this.internalGrid.getSendableEnergy();
 
@@ -170,8 +171,9 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 	@Override
 	public void cacheImportant(TileEntity tile, int side) {
 
-		if (tile instanceof IEnergyReceiver)
+		if (tile instanceof IEnergyReceiver) {
 			cache[side] = (IEnergyReceiver) tile;
+		}
 	}
 
 	@Override

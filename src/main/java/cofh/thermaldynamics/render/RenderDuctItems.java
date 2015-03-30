@@ -12,7 +12,9 @@ import com.google.common.collect.Iterators;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+
 import java.util.Iterator;
+
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -21,6 +23,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuctItems extends TileEntitySpecialRenderer {
@@ -54,16 +57,17 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 		travelingItemRender.setRenderManager(RenderManager.instance);
 		travelingEntityItem.hoverStart = 0;
 
-        FMLCommonHandler.instance().bus().register(instance);
+		FMLCommonHandler.instance().bus().register(instance);
 	}
 
-    public static float spinStep = 0.026175f;
+	public static float spinStep = 0.026175f;
 
-    @SubscribeEvent
-    public void clientTick(TickEvent.ClientTickEvent event) {
-        travelingItemSpin += spinStep;
-        travelingItemSpin %= 180;
-    }
+	@SubscribeEvent
+	public void clientTick(TickEvent.ClientTickEvent event) {
+
+		travelingItemSpin += spinStep;
+		travelingItemSpin %= 180;
+	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
@@ -143,45 +147,44 @@ public class RenderDuctItems extends TileEntitySpecialRenderer {
 
 		TravelingItem renderItem;
 
-        GL11.glPushMatrix();
-        {
-            GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
-            for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
-                renderItem = items.next();
-                if (renderItem == null || renderItem.stack == null) {
-                    continue;
-                }
+		GL11.glPushMatrix();
+		{
+			GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
+			for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
+				renderItem = items.next();
+				if (renderItem == null || renderItem.stack == null) {
+					continue;
+				}
 
-                double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
+				double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
 
-                v -= 0.5;
+				v -= 0.5;
 
-                if(renderItem.shouldDie && v > 0)
-                    continue;
+				if (renderItem.shouldDie && v > 0) {
+					continue;
+				}
 
-                GL11.glPushMatrix();
-                {
-                    if (v < 0) {
-                        translateItem(renderItem.oldDirection, v);
-                    } else {
-                        translateItem(renderItem.direction, v);
-                    }
+				GL11.glPushMatrix();
+				{
+					if (v < 0) {
+						translateItem(renderItem.oldDirection, v);
+					} else {
+						translateItem(renderItem.direction, v);
+					}
 
-                    GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
+					GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
-                    travelingEntityItem.setEntityItemStack(renderItem.stack);
-                    travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
-                }
-                GL11.glPopMatrix();
-            }
-        }
-        GL11.glPopMatrix();
-    }
+					travelingEntityItem.setEntityItemStack(renderItem.stack);
+					travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
+				}
+				GL11.glPopMatrix();
+			}
+		}
+		GL11.glPopMatrix();
+	}
 
-    private void translateItem(byte direction, double v) {
-        GL11.glTranslated(
-                Facing.offsetsXForSide[direction] * v,
-                Facing.offsetsYForSide[direction] * v,
-                Facing.offsetsZForSide[direction] * v);
-    }
+	private void translateItem(byte direction, double v) {
+
+		GL11.glTranslated(Facing.offsetsXForSide[direction] * v, Facing.offsetsYForSide[direction] * v, Facing.offsetsZForSide[direction] * v);
+	}
 }

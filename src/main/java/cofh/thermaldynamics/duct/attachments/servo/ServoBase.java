@@ -11,6 +11,7 @@ import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.render.RenderDuct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

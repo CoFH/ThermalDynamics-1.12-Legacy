@@ -14,6 +14,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,8 +39,9 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 		Attachment attachment = getAttachment(stack, player, world, x, y, z, side);
 
 		if (attachment != null && attachment.addToTile()) {
-			if (!player.capabilities.isCreativeMode)
+			if (!player.capabilities.isCreativeMode) {
 				stack.stackSize--;
+			}
 			return true;
 		}
 
@@ -109,8 +111,9 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 		Attachment attachment = getAttachment(event.player.getHeldItem(), event.player, event.player.getEntityWorld(), event.target.blockX,
 				event.target.blockY, event.target.blockZ, event.target.sideHit);
 
-		if (attachment == null || !attachment.canAddToTile(attachment.tile))
+		if (attachment == null || !attachment.canAddToTile(attachment.tile)) {
 			return;
+		}
 
 		Cuboid6 c = attachment.getCuboid();
 		c.max.sub(c.min);

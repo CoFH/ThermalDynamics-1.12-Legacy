@@ -46,7 +46,7 @@ public class Duct {
 	public EnumRarity rarity = EnumRarity.common;
 
 	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-                String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		this.id = id;
 		this.pathWeight = pathWeight;

@@ -3,9 +3,11 @@ package cofh.thermaldynamics.render;
 import cofh.core.render.RenderUtils;
 import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuctFluids extends TileEntitySpecialRenderer {

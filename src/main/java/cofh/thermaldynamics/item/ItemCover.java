@@ -8,9 +8,11 @@ import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -50,11 +52,13 @@ public class ItemCover extends ItemAttachment {
 				}
 			}
 			for (ItemStack stack : stacks) {
-				if (!(stack.getItem() instanceof ItemBlock))
+				if (!(stack.getItem() instanceof ItemBlock)) {
 					continue;
+				}
 
-				if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())))
+				if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
 					continue;
+				}
 
 				list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
 			}
@@ -70,8 +74,9 @@ public class ItemCover extends ItemAttachment {
 	public Attachment getAttachment(int side, ItemStack stack, TileTDBase tile) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
-		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8))
+		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return null;
+		}
 
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
@@ -79,8 +84,9 @@ public class ItemCover extends ItemAttachment {
 		if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
 			nbt.removeTag("Meta");
 			nbt.removeTag("Block");
-			if (nbt.hasNoTags())
+			if (nbt.hasNoTags()) {
 				stack.setTagCompound(null);
+			}
 			return null;
 		}
 

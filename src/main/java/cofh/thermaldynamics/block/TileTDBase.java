@@ -26,10 +26,12 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -43,6 +45,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
@@ -191,8 +194,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	@Override
 	public IMultiBlock getConnectedSide(byte side) {
 
-		if (side >= neighborMultiBlocks.length)
+		if (side >= neighborMultiBlocks.length) {
 			return null;
+		}
 		return neighborMultiBlocks[side];
 
 	}
@@ -206,8 +210,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	@Override
 	public boolean isSideConnected(byte side) {
 
-		if (side >= neighborMultiBlocks.length)
+		if (side >= neighborMultiBlocks.length) {
 			return false;
+		}
 		IMultiBlock tileEntity = neighborMultiBlocks[side];
 		return tileEntity != null && !isBlockedSide(side) && !tileEntity.isBlockedSide(side ^ 1);
 	}
@@ -232,10 +237,10 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		} else {
 			neighborTypes[side] = NeighborTypes.NONE;
 			neighborMultiBlocks[side] = null;
-            connectionTypes[side] = ConnectionTypes.BLOCKED;
+			connectionTypes[side] = ConnectionTypes.BLOCKED;
 		}
 
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 
 		for (SubTileMultiBlock subTile : subTiles) {
 			subTile.onNeighbourChange();
@@ -334,9 +339,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			subTile.onNeighbourChange();
 		}
 
-        for (Attachment tickingAttachment : tickingAttachments) {
-            tickingAttachment.postNeighbourChange();
-        }
+		for (Attachment tickingAttachment : tickingAttachments) {
+			tickingAttachment.postNeighbourChange();
+		}
 
 		if (ServerHelper.isServerWorld(worldObj)) {
 			rebuildChunkCache();
@@ -348,7 +353,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public void handleSideUpdate(int i) {
 
 		TileEntity theTile;
-        if(cachesExist()) clearCache(i);
+		if (cachesExist()) {
+			clearCache(i);
+		}
 
 		if (attachments[i] != null) {
 			attachments[i].onNeighborChange();
@@ -365,14 +372,18 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			} else if (neighborTypes[i] == NeighborTypes.OUTPUT) {
 				theTile = getAdjTileEntitySafe(i);
 				if (isSignificantTile(theTile, i)) {
-                    if(!cachesExist()) createCaches();
+					if (!cachesExist()) {
+						createCaches();
+					}
 					cacheImportant(theTile, i);
 				}
 				isOutput = true;
 			} else if (neighborTypes[i] == NeighborTypes.INPUT) {
 				theTile = getAdjTileEntitySafe(i);
 				if (theTile != null) {
-                    if(!cachesExist()) createCaches();
+					if (!cachesExist()) {
+						createCaches();
+					}
 					cacheInputTile(theTile, i);
 				}
 				isInput = true;
@@ -394,14 +405,18 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			} else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborTypes.OUTPUT;
-                if(!cachesExist()) createCaches();
+				if (!cachesExist()) {
+					createCaches();
+				}
 				cacheImportant(theTile, i);
 				isNode = true;
 				isOutput = true;
 			} else if (connectionTypes[i].allowTransfer && isStructureTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborTypes.STRUCTURE;
-                if(!cachesExist()) createCaches();
+				if (!cachesExist()) {
+					createCaches();
+				}
 				cacheStructural(theTile, i);
 				isNode = true;
 			} else {
@@ -491,9 +506,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			myGrid.onMajorGridChange();
 		}
 
-        for (Attachment tickingAttachment : tickingAttachments) {
-            tickingAttachment.postNeighbourChange();
-        }
+		for (Attachment tickingAttachment : tickingAttachments) {
+			tickingAttachment.postNeighbourChange();
+		}
 
 		if (ServerHelper.isServerWorld(worldObj)) {
 			rebuildChunkCache();
@@ -570,7 +585,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	@Override
 	public void tickMultiBlock() {
 
-        if(isInvalid()) return;
+		if (isInvalid()) {
+			return;
+		}
 
 		onNeighborBlockChange();
 		formGrid();
@@ -584,11 +601,11 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public void formGrid() {
 
 		if (myGrid == null && ServerHelper.isServerWorld(worldObj)) {
-//			DebugHelper.startTimer();
+			// DebugHelper.startTimer();
 			new MultiBlockFormer().formGrid(this);
 			// DEBUG CODE
-//			DebugHelper.stopTimer("Grid");
-//			DebugHelper.info("Grid Formed: " + (myGrid != null ? myGrid.nodeSet.size() + myGrid.idleSet.size() : "Failed"));
+			// DebugHelper.stopTimer("Grid");
+			// DebugHelper.info("Grid Formed: " + (myGrid != null ? myGrid.nodeSet.size() + myGrid.idleSet.size() : "Failed"));
 		}
 	}
 
@@ -804,11 +821,11 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 					myGrid.destroyAndRecreate();
 				}
 
-                for (SubTileMultiBlock subTile : subTiles) {
-                    subTile.destroyAndRecreate();
-                }
+				for (SubTileMultiBlock subTile : subTiles) {
+					subTile.destroyAndRecreate();
+				}
 
-                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				return true;
 			}
 			if (subHit > 13 && subHit < 20) {
@@ -825,7 +842,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public void doDebug(EntityPlayer thePlayer) {
 
 		thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
-        thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
+		thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
 		thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
 		thePlayer.addChatMessage(new ChatComponentText("Grid Nodes: " + myGrid.nodeSet.size()));
 	}
@@ -866,6 +883,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	/* NETWORK METHODS */
 	@Override
 	public PacketCoFHBase getPacket() {
+
 		PacketCoFHBase payload = super.getPacket();
 
 		int attachmentMask = 0;
@@ -915,9 +933,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	}
 
-    public abstract boolean cachesExist();
+	public abstract boolean cachesExist();
 
-    public abstract void createCaches();
+	public abstract void createCaches();
 
 	public abstract void cacheImportant(TileEntity tile, int side);
 
@@ -1081,18 +1099,22 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	@Override
 	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
 
-		if (!tag.hasKey("AttachmentType", 8))
+		if (!tag.hasKey("AttachmentType", 8)) {
 			return;
+		}
 		MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-		if (rayTrace == null)
+		if (rayTrace == null) {
 			return;
+		}
 
 		int subHit = rayTrace.subHit;
-		if (subHit <= 13 || subHit >= 20)
+		if (subHit <= 13 || subHit >= 20) {
 			return;
+		}
 
-		if (!(attachments[subHit - 14] instanceof IPortableData))
+		if (!(attachments[subHit - 14] instanceof IPortableData)) {
 			return;
+		}
 		IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
 
 		if (tag.getString("AttachmentType").equals(iPortableData.getDataType())) {
@@ -1104,15 +1126,18 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
 
 		MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-		if (rayTrace == null)
+		if (rayTrace == null) {
 			return;
+		}
 
 		int subHit = rayTrace.subHit;
-		if (subHit <= 13 || subHit >= 20)
+		if (subHit <= 13 || subHit >= 20) {
 			return;
+		}
 
-		if (!(attachments[subHit - 14] instanceof IPortableData))
+		if (!(attachments[subHit - 14] instanceof IPortableData)) {
 			return;
+		}
 
 		IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
 		iPortableData.writePortableData(player, tag);
@@ -1121,7 +1146,8 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		}
 	}
 
-    public void cofh_invalidate(){
-        markChunkDirty();
-    }
+	public void cofh_invalidate() {
+
+		markChunkDirty();
+	}
 }

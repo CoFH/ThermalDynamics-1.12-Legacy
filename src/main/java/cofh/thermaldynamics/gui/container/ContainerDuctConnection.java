@@ -3,7 +3,9 @@ package cofh.thermaldynamics.gui.container;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
+
 import java.util.LinkedList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -47,10 +49,11 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 		}
 		for (int i = 0; i < gridHeight; i++) {
 			for (int j = 0; j < gridWidth; j++) {
-				if (filter.isItem())
+				if (filter.isItem()) {
 					filterSlots.add(((SlotFilter) addSlotToContainer(new SlotFilter(filter, j + i * gridWidth, gridX0 + j * 18, gridY0 + i * 18))));
-				else
+				} else {
 					filterSlots.add(((SlotFilter) addSlotToContainer(new SlotFilterFluid(filter, j + i * gridWidth, gridX0 + j * 18, gridY0 + i * 18))));
+				}
 			}
 		}
 	}
@@ -73,15 +76,18 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 				for (int i = invFull; i < invTile; i++) {
 					Slot slot1 = (Slot) inventorySlots.get(i);
 					if (!slot1.getHasStack()) {
-						if (k == null)
+						if (k == null) {
 							k = slot1;
+						}
 					} else {
-						if (ItemHelper.itemsEqualWithMetadata(slot1.getStack(), stack))
+						if (ItemHelper.itemsEqualWithMetadata(slot1.getStack(), stack)) {
 							return null;
+						}
 					}
 				}
-				if (k != null)
+				if (k != null) {
 					k.putStack(stack.copy());
+				}
 
 				return null;
 			} else {

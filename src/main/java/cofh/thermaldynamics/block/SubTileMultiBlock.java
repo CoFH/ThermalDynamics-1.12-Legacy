@@ -5,6 +5,7 @@ import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 

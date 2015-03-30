@@ -58,16 +58,18 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 		if (!getDuctType().opaque) {
 			sendRenderPacket();
-		} else
+		} else {
 			sendOpaqueTempPacket();
+		}
 	}
 
 	int prevTemperature = 0;
 
 	public void sendOpaqueTempPacket() {
 
-		if (fluidGrid == null)
+		if (fluidGrid == null) {
 			return;
+		}
 
 		int temp = getTemperature(fluidGrid.getRenderFluid());
 		if (temp != prevTemperature) {
@@ -86,8 +88,9 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 		if (b == TileFluidPackets.TEMPERATURE) {
 			internalTemperature = payload.getInt();
-		} else
+		} else {
 			super.handleTileInfoPacketType(payload, b);
+		}
 	}
 
 	@Override
@@ -106,8 +109,9 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 				&& getTemperature(myRenderFluid) > MELTING_TEMPERATURE) {
 			List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
 			addTraceableCuboids(cuboids);
-			if (cuboids.size() == 0)
+			if (cuboids.size() == 0) {
 				return;
+			}
 			Random rand = worldObj.rand;
 			Cuboid6 box = cuboids.get(rand.nextInt(cuboids.size()));
 			Vector3 vec = (box.max.sub(box.min)).multiply(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()).add(box.min);
@@ -135,10 +139,11 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 					if (fluid != null && fluid.amount > 0) {
 						fluid = fluid.copy();
-						if (fluid.amount < 100 || worldObj.rand.nextInt(5) == 0)
+						if (fluid.amount < 100 || worldObj.rand.nextInt(5) == 0) {
 							fluidGrid.myTank.setFluid(null);
-						else
+						} else {
 							fluidGrid.myTank.drain(worldObj.rand.nextInt(fluid.amount), false);
+						}
 					}
 					breakAndSpill(fluid);
 					return false;
@@ -152,8 +157,9 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 		if (fluid != null) {
 			Fluid f = fluid.getFluid();
-			if (f != null)
+			if (f != null) {
 				return f.getTemperature(fluid);
+			}
 		}
 
 		return ROOM_TEMPERATURE;

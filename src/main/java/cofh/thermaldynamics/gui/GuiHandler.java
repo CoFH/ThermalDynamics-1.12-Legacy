@@ -4,6 +4,7 @@ import cofh.core.block.TileCoFHBase;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
 import cpw.mods.fml.common.network.IGuiHandler;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -21,8 +22,9 @@ public class GuiHandler implements IGuiHandler {
 		if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID_END) {
 			if (tile instanceof TileTDBase) {
 				Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
-				if (attachment != null)
+				if (attachment != null) {
 					return attachment.getGuiServer(player.inventory);
+				}
 			}
 		}
 		switch (id) {
@@ -43,8 +45,9 @@ public class GuiHandler implements IGuiHandler {
 		if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID_END) {
 			if (tile instanceof TileTDBase) {
 				Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
-				if (attachment != null)
+				if (attachment != null) {
 					return attachment.getGuiClient(player.inventory);
+				}
 			}
 		}
 		switch (id) {

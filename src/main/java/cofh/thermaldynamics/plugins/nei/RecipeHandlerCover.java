@@ -8,8 +8,10 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,7 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 
 		public CachedCoverRecipeSimple(ItemStack block) {
 
-			super(new Object[] { block, TDDucts.structure.itemStack }, ItemHelper.cloneStack(CoverHelper.getCoverStack(block),6));
+			super(new Object[] { block, TDDucts.structure.itemStack }, ItemHelper.cloneStack(CoverHelper.getCoverStack(block), 6));
 		}
 	}
 
@@ -52,9 +54,9 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 				ItemStack item = positionedStack.item;
 				if (item != TDDucts.structure.itemStack) {
 					if (CoverHelper.isValid(item)) {
-                        setResult(ItemHelper.cloneStack(CoverHelper.getCoverStack(item), 6));
-                        return super.getResult();
-                    }
+						setResult(ItemHelper.cloneStack(CoverHelper.getCoverStack(item), 6));
+						return super.getResult();
+					}
 				}
 			}
 			return null;
@@ -64,19 +66,21 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 	@Override
 	public void loadCraftingRecipes(ItemStack result) {
 
-		if (result.getItem() != ThermalDynamics.itemCover)
+		if (result.getItem() != ThermalDynamics.itemCover) {
 			return;
+		}
 
 		NBTTagCompound nbt = result.getTagCompound();
-		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8))
+		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return;
+		}
 
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
-		if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta))
+		if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
 			return;
-
+		}
 		arecipes.add(new CachedCoverRecipeSimple(new ItemStack(block, 1, meta)));
 	}
 
@@ -85,9 +89,9 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 
 		if (outputId.equals("crafting")) {
 			arecipes.add(new CachedCoverRecipeAll());
-		} else
+		} else {
 			super.loadCraftingRecipes(outputId, results);
-
+		}
 	}
 
 	@Override
@@ -111,4 +115,5 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 
 		return true;
 	}
+
 }

@@ -27,10 +27,11 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 	@Override
 	public BlockDuct.ConnectionTypes getConnectionType(int side) {
 
-		if (neighborTypes[side] == NeighborTypes.STRUCTURE)
+		if (neighborTypes[side] == NeighborTypes.STRUCTURE) {
 			return connectionTypes[side] != ConnectionTypes.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
-		else
+		} else {
 			return super.getConnectionType(side);
+		}
 	}
 
 	@Override

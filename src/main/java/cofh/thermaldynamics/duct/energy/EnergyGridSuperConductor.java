@@ -59,9 +59,13 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 			}
 		}
 
-        if (energy > 0) nodeTracker++;
+		if (energy > 0) {
+			nodeTracker++;
+		}
 
-        if (nodeTracker >= list.length) nodeTracker = 0;
+		if (nodeTracker >= list.length) {
+			nodeTracker = 0;
+		}
 
 		if (simulate) {
 			nodeTracker = tempTracker;

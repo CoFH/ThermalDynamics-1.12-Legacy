@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct.Type;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

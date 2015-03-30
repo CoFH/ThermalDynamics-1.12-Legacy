@@ -61,8 +61,9 @@ public class WorldGridList {
 
 		for (MultiBlockGrid grid : tickingGrids) {
 			grid.tickGrid();
-			if (grid.isTickProcessing())
+			if (grid.isTickProcessing()) {
 				mtickinggrids.add(grid);
+			}
 		}
 
 		if (!mtickinggrids.isEmpty()) {
@@ -71,8 +72,9 @@ public class WorldGridList {
 			for (int i = 0, e = mtickinggrids.size(), c = 0; i < e; ++i) {
 				mtickinggrids.get(i).doTickProcessing(deadline);
 				if (c++ == 7) {
-					if (System.nanoTime() > deadline)
+					if (System.nanoTime() > deadline) {
 						break;
+					}
 					c = 0;
 				}
 			}

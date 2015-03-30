@@ -150,8 +150,9 @@ public class ItemRetriever extends ItemAttachment {
 		}
 		flag = false;
 		for (String s : (List<String>) Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
-			if (flag)
+			if (flag) {
 				s = "  " + StringHelper.WHITE + s;
+			}
 			flag = true;
 			list.add("  " + s + StringHelper.END);
 		}

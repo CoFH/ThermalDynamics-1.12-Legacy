@@ -36,12 +36,13 @@ public class SubTileEnergy extends SubTileMultiBlock {
 		return parent.isSubNode();
 	}
 
-    @Override
-    public void onNeighborBlockChange() {
-        parent.onNeighborBlockChange();
-    }
+	@Override
+	public void onNeighborBlockChange() {
 
-    @Override
+		parent.onNeighborBlockChange();
+	}
+
+	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 
 		super.readFromNBT(nbt);

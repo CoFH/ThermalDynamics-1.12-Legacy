@@ -28,9 +28,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -115,7 +117,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 
 		if (event.target.typeOfHit == MovingObjectType.BLOCK
 				&& event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
-				.equals(getUnlocalizedName())) {
+						.equals(getUnlocalizedName())) {
 			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
 
 			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
@@ -253,8 +255,9 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 
 		super.onBlockPlacedBy(world, x, y, z, living, stack);
 		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof TileTDBase)
+		if (tile instanceof TileTDBase) {
 			((TileTDBase) tile).onPlacedBy(living, stack);
+		}
 	}
 
 	@Override

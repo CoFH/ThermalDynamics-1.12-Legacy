@@ -21,6 +21,7 @@ import cofh.thermaldynamics.duct.attachments.facades.Cover;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -31,6 +32,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
@@ -190,9 +192,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
 		(ductType.opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(trans, icon);
 
-        if (ductType.iconFluidTexture != null && ductType.fluidTransparency == (byte) 255) {
-            modelFluidTubes[c].render(x , y , z , RenderUtils.getIconTransformation(ductType.iconFluidTexture));
-        }
+		if (ductType.iconFluidTexture != null && ductType.fluidTransparency == (byte) 255) {
+			modelFluidTubes[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFluidTexture));
+		}
 
 		if (ductType.frameType == 1) {
 			renderSideTubes(0, connection, x - 0.5, y - 0.5, z - 0.5, sideDucts);
@@ -219,16 +221,19 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		CCModel[] models = pass == 0 ? ModelHelper.SideTubeGen.standardTubes : ModelHelper.SideTubeGen.standardTubesInner;
 		int c = 0;
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; i++) {
 			if (BlockDuct.ConnectionTypes.values()[connections[i]].renderDuct() && connections[i] != BlockDuct.ConnectionTypes.CLEANDUCT.ordinal()) {
 				c = c | (1 << i);
 
-				if (connections[i] != BlockDuct.ConnectionTypes.DUCT.ordinal())
+				if (connections[i] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
 					models[64 + i].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(icon));
+				}
 			}
+		}
 
-		if (models[c].verts.length == 0)
+		if (models[c].verts.length == 0) {
 			return false;
+		}
 
 		models[c].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(icon));
 		return true;
@@ -294,8 +299,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
 		IIcon fluidTex = RenderHelper.getFluidTexture(stack);
 
-		if (level > 6)
+		if (level > 6) {
 			level = 6;
+		}
 
 		if (fluid.isGaseous(stack)) {
 			CCRenderState.setColour(RenderUtils.getFluidRenderColor(stack) << 8 | 32 + 36 * level);
@@ -416,19 +422,19 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.setBlockTextureSheet();
 		RenderUtils.preItemRender();
 
-        GL11.glDepthMask(true);
-        CCRenderState.startDrawing();
+		GL11.glDepthMask(true);
+		CCRenderState.startDrawing();
 		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
 		CCRenderState.draw();
 
-        GL11.glDepthMask(false);
-        CCRenderState.startDrawing();
-        renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
-        CCRenderState.draw();
+		GL11.glDepthMask(false);
+		CCRenderState.startDrawing();
+		renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+		CCRenderState.draw();
 
-        GL11.glDepthMask(true);
+		GL11.glDepthMask(true);
 
-        CCRenderState.useNormals = false;
+		CCRenderState.useNormals = false;
 		RenderHelper.setItemTextureSheet();
 
 		RenderUtils.postItemRender();

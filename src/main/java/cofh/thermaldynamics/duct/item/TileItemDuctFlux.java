@@ -30,13 +30,14 @@ public class TileItemDuctFlux extends TileItemDuctPowered {
 	public void checkSubNode() {
 
 		boolean newSubNode = false;
-		if (cachesExist())
+		if (cachesExist()) {
 			for (int i = 0; i < 6; i++) {
 				if (energyCache[i] != null) {
 					newSubNode = true;
 					break;
 				}
 			}
+		}
 		if (isSubNode != newSubNode) {
 			isSubNode = newSubNode;
 			if (energy.energyGrid != null) {
@@ -75,8 +76,9 @@ public class TileItemDuctFlux extends TileItemDuctPowered {
 	public int transmitEnergy(int power) {
 
 		int usedPower = 0;
-		if (!cachesExist())
+		if (!cachesExist()) {
 			return 0;
+		}
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {

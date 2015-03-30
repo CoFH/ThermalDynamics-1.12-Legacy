@@ -1,13 +1,17 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
 import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
+
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.hash.TIntHashSet;
+
 import java.util.HashSet;
 import java.util.LinkedList;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -114,8 +118,9 @@ public abstract class FilterLogicBase implements IFilterConfig {
 		vLevels.clear();
 
 		for (int i = 0; i < numFlags(); i++) {
-			if (canAlterFlag(i))
+			if (canAlterFlag(i)) {
 				vLevels.add(i);
+			}
 		}
 		validFlags = vLevels.toArray();
 	}

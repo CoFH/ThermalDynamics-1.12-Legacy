@@ -7,7 +7,9 @@ import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.List;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -170,7 +172,7 @@ public abstract class Attachment {
 
 	}
 
-    public void postNeighbourChange() {
+	public void postNeighbourChange() {
 
-    }
+	}
 }

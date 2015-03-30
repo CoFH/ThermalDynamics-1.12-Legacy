@@ -19,8 +19,8 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
 	public int travelingItemsCount = 0;
 	public static ArrayList<Attachment> toTick = new ArrayList<Attachment>();
-	//public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
-    public HashMap<BlockCoord, StackMap> travelingItems = new HashMap<BlockCoord, StackMap>();
+	// public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
+	public HashMap<BlockCoord, StackMap> travelingItems = new HashMap<BlockCoord, StackMap>();
 	public boolean shouldRepoll = true;
 	public boolean repoll = false;
 
@@ -29,20 +29,23 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 
 		repoll = shouldRepoll;
 		if (shouldRepoll) {
-			if (!travelingItems.isEmpty())
+			if (!travelingItems.isEmpty()) {
 				travelingItems.clear();
+			}
 			travelingItemsCount = 0;
 		}
 		shouldRepoll = false;
 
 		for (IMultiBlock m : nodeSet) {
-			if (!m.tickPass(0))
+			if (!m.tickPass(0)) {
 				break;
+			}
 		}
 		if (repoll || travelingItemsCount > 0) {
 			for (IMultiBlock m : idleSet) {
-				if (!m.tickPass(0))
+				if (!m.tickPass(0)) {
 					break;
+				}
 			}
 		}
 		if (!toTick.isEmpty()) {
@@ -64,13 +67,15 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	}
 
 	public void poll(TravelingItem item) {
-        travelingItemsCount++;
 
-        if(item.myPath == null)
-            return;
+		travelingItemsCount++;
+
+		if (item.myPath == null) {
+			return;
+		}
 
 		BlockCoord dest = item.getDest();
-        StackMap list = travelingItems.get(dest);
+		StackMap list = travelingItems.get(dest);
 		if (list == null) {
 			list = new StackMap();
 			travelingItems.put(dest, list);

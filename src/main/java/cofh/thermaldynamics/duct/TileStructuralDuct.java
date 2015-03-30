@@ -26,17 +26,18 @@ public class TileStructuralDuct extends TileTDBase {
 		// No Grids needed
 	}
 
-    @Override
-    public boolean cachesExist() {
-        return true;
-    }
+	@Override
+	public boolean cachesExist() {
 
-    @Override
-    public void createCaches() {
+		return true;
+	}
 
-    }
+	@Override
+	public void createCaches() {
 
-    @Override
+	}
+
+	@Override
 	public void cacheImportant(TileEntity tile, int side) {
 
 	}

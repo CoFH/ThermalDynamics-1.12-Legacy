@@ -8,6 +8,7 @@ import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.render.RenderDuct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 
@@ -40,8 +41,9 @@ public abstract class FilterBase extends ConnectionBase {
 	@SideOnly(Side.CLIENT)
 	public boolean render(int pass, RenderBlocks renderBlocks) {
 
-		if (pass == 1)
+		if (pass == 1) {
 			return false;
+		}
 
 		Translation trans = RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
 		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(trans, RenderUtils.getIconTransformation(RenderDuct.filterTexture[type]));

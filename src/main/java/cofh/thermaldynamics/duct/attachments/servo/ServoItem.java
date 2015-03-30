@@ -13,9 +13,11 @@ import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import cofh.thermaldynamics.multiblock.listtypes.ListWrapper;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -31,7 +33,7 @@ public class ServoItem extends ServoBase {
 
 	public LinkedList<ItemStack> stuffedItems = new LinkedList<ItemStack>();
 
-    public TileItemDuct itemDuct;
+	public TileItemDuct itemDuct;
 
 	public ServoItem(TileTDBase tile, byte side, int type) {
 
@@ -75,8 +77,9 @@ public class ServoItem extends ServoBase {
 			NBTTagList tlist = tag.getTagList("StuffedInv", 10);
 			for (int j = 0; j < tlist.tagCount(); j++) {
 				ItemStack item = ItemHelper.readItemStackFromNBT(tlist.getCompoundTagAt(j));
-				if (item != null && item.getItem() != null)
+				if (item != null && item.getItem() != null) {
 					stuffedItems.add(item);
+				}
 			}
 		}
 		stuffed = isStuffed();
@@ -94,8 +97,9 @@ public class ServoItem extends ServoBase {
 		for (ItemStack stuffed : stuffedItems) {
 			if (ItemHelper.itemsEqualWithMetadata(item, stuffed, true)) {
 				stuffed.stackSize += item.stackSize;
-				if (stuffed.stackSize < 0)
+				if (stuffed.stackSize < 0) {
 					stuffed.stackSize = Integer.MAX_VALUE;
+				}
 				return;
 			}
 		}
@@ -105,25 +109,26 @@ public class ServoItem extends ServoBase {
 	}
 
 	public RouteCache cache = null;
-    public ListWrapper<Route> routeList = new ListWrapper<Route>();
+	public ListWrapper<Route> routeList = new ListWrapper<Route>();
 
 	@Override
 	public List<ItemStack> getDrops() {
 
 		List<ItemStack> drops = super.getDrops();
 
-		if (isStuffed())
+		if (isStuffed()) {
 			for (ItemStack stuffedItem : stuffedItems) {
 				ItemStack stack = stuffedItem.copy();
-                while (stack.stackSize > 0 && drops.size() <= TDProps.MAX_STUFFED_ITEMSTACKS_DROP) {
-                    if (stack.stackSize <= stuffedItem.getMaxStackSize()) {
-                        drops.add(ItemHelper.cloneStack(stack));
-                        break;
-                    } else {
-                        drops.add(stack.splitStack(stuffedItem.getMaxStackSize()));
-                    }
+				while (stack.stackSize > 0 && drops.size() <= TDProps.MAX_STUFFED_ITEMSTACKS_DROP) {
+					if (stack.stackSize <= stuffedItem.getMaxStackSize()) {
+						drops.add(ItemHelper.cloneStack(stack));
+						break;
+					} else {
+						drops.add(stack.splitStack(stuffedItem.getMaxStackSize()));
+					}
 				}
-            }
+			}
+		}
 
 		return drops;
 	}
@@ -142,14 +147,16 @@ public class ServoItem extends ServoBase {
 		Cuboid6 c = getCuboid();
 		if (isStuffed()) {
 			for (ItemStack stack : stuffedItems) {
-				while (stack.stackSize > 0)
+				while (stack.stackSize > 0) {
 					dropItemStack(stack.splitStack(Math.min(stack.stackSize, stack.getMaxStackSize())));
+				}
 			}
 			stuffedItems.clear();
 			onNeighborChange();
 			return true;
-		} else
+		} else {
 			return super.onWrenched();
+		}
 	}
 
 	@Override
@@ -161,19 +168,22 @@ public class ServoItem extends ServoBase {
 			}
 			return;
 		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) {
-            return;
-        }
+			return;
+		}
 
-        if (!verifyCache()) return;
+		if (!verifyCache()) {
+			return;
+		}
 
-        if (cache.outputRoutes.isEmpty()) return;
+		if (cache.outputRoutes.isEmpty()) {
+			return;
+		}
 
-
-        if (pass == 1) {
+		if (pass == 1) {
 			if (isStuffed()) {
-                handleStuffedItems();
+				handleStuffedItems();
 
-            } else if (stuffed) {
+			} else if (stuffed) {
 				onNeighborChange();
 			}
 		} else if (pass == 2 && !stuffed) {
@@ -181,152 +191,162 @@ public class ServoItem extends ServoBase {
 			if (!isValidInput) {
 				return;
 			}
-            handleItemSending();
-        }
+			handleItemSending();
+		}
 	}
 
-    public boolean verifyCache() {
-        RouteCache cache1 = itemDuct.getCache(false);
-        if (!cache1.isFinishedGenerating())
-            return false;
+	public boolean verifyCache() {
 
-        if (cache1 != cache || routeList.type != getSortType()) {
-            cache = cache1;
-            routeList.setList(cache.outputRoutes, getSortType());
-        }
-        return true;
-    }
+		RouteCache cache1 = itemDuct.getCache(false);
+		if (!cache1.isFinishedGenerating()) {
+			return false;
+		}
 
-    public void handleItemSending() {
-        if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
-            int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
-            for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
-                int slot = accessibleSlotsFromSide[i];
-                ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
+		if (cache1 != cache || routeList.type != getSortType()) {
+			cache = cache1;
+			routeList.setList(cache.outputRoutes, getSortType());
+		}
+		return true;
+	}
 
-                if (itemStack == null) {
-                    continue;
-                }
-                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+	public void handleItemSending() {
 
-                if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
-                    continue;
-                }
-                if (!filter.matchesFilter(itemStack)) {
-                    continue;
-                }
-                TravelingItem travelingItem = getRouteForItem(itemStack);
+		if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
+			int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
+			for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
+				int slot = accessibleSlotsFromSide[i];
+				ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
 
-                if (travelingItem == null) {
-                    continue;
-                }
+				if (itemStack == null) {
+					continue;
+				}
+				itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
 
-                int totalSize = travelingItem.stack.stackSize;
+				if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+					continue;
+				}
+				if (!filter.matchesFilter(itemStack)) {
+					continue;
+				}
+				TravelingItem travelingItem = getRouteForItem(itemStack);
 
-                travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+				if (travelingItem == null) {
+					continue;
+				}
 
-                if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
-                    cachedSidedInv.markDirty();
-                    continue;
-                }
-                if (multiStack[type]) {
-                    if (travelingItem.stack.stackSize < totalSize) {
-                        for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
-                            slot = accessibleSlotsFromSide[i];
-                            itemStack = cachedSidedInv.getStackInSlot(slot);
-                            if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)
-                                    && cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
-                                itemStack = cachedSidedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
-                                if (itemStack != null)
-                                    travelingItem.stack.stackSize += itemStack.stackSize;
-                            }
-                        }
-                    }
-                }
-                cachedSidedInv.markDirty();
-                itemDuct.insertNewItem(travelingItem);
-                return;
-            }
-        } else if (cacheType == TileItemDuct.CacheType.IINV) {
-            for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
-                ItemStack itemStack = cachedInv.getStackInSlot(slot);
-                if (itemStack == null)
-                    continue;
+				int totalSize = travelingItem.stack.stackSize;
 
-                itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+				travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
 
-                if (itemStack == null || itemStack.stackSize == 0) {
-                    continue;
-                }
-                if (!filter.matchesFilter(itemStack)) {
-                    continue;
-                }
-                TravelingItem travelingItem = getRouteForItem(itemStack);
+				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
+					cachedSidedInv.markDirty();
+					continue;
+				}
+				if (multiStack[type]) {
+					if (travelingItem.stack.stackSize < totalSize) {
+						for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
+							slot = accessibleSlotsFromSide[i];
+							itemStack = cachedSidedInv.getStackInSlot(slot);
+							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)
+									&& cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+								itemStack = cachedSidedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
+								if (itemStack != null) {
+									travelingItem.stack.stackSize += itemStack.stackSize;
+								}
+							}
+						}
+					}
+				}
+				cachedSidedInv.markDirty();
+				itemDuct.insertNewItem(travelingItem);
+				return;
+			}
+		} else if (cacheType == TileItemDuct.CacheType.IINV) {
+			for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
+				ItemStack itemStack = cachedInv.getStackInSlot(slot);
+				if (itemStack == null) {
+					continue;
+				}
 
-                if (travelingItem == null) {
-                    continue;
-                }
+				itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
 
-                int totalSendSize = travelingItem.stack.stackSize;
+				if (itemStack == null || itemStack.stackSize == 0) {
+					continue;
+				}
+				if (!filter.matchesFilter(itemStack)) {
+					continue;
+				}
+				TravelingItem travelingItem = getRouteForItem(itemStack);
 
-                travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+				if (travelingItem == null) {
+					continue;
+				}
 
-                if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
-                    cachedInv.markDirty();
-                    continue;
-                }
-                if (multiStack[type]) {
-                    if (travelingItem.stack.stackSize < totalSendSize) {
-                        for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSendSize; slot++) {
-                            itemStack = cachedInv.getStackInSlot(slot);
-                            if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-                                itemStack = cachedInv.decrStackSize(slot, totalSendSize - travelingItem.stack.stackSize);
-                                if (itemStack != null)
-                                    travelingItem.stack.stackSize += itemStack.stackSize;
-                            }
-                        }
-                    }
-                }
-                cachedInv.markDirty();
-                itemDuct.insertNewItem(travelingItem);
-                return;
-            }
-        }
-    }
+				int totalSendSize = travelingItem.stack.stackSize;
 
-    public void handleStuffedItems() {
-        for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext();) {
-            ItemStack stuffedItem = iterator.next();
-            ItemStack send = stuffedItem.copy();
-            send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
-            TravelingItem travelingItem = getRouteForItem(send);
+				travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
 
-            if (travelingItem == null) {
-                continue;
-            }
-            stuffedItem.stackSize -= travelingItem.stack.stackSize;
-            if (stuffedItem.stackSize <= 0)
-                iterator.remove();
+				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
+					cachedInv.markDirty();
+					continue;
+				}
+				if (multiStack[type]) {
+					if (travelingItem.stack.stackSize < totalSendSize) {
+						for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSendSize; slot++) {
+							itemStack = cachedInv.getStackInSlot(slot);
+							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
+								itemStack = cachedInv.decrStackSize(slot, totalSendSize - travelingItem.stack.stackSize);
+								if (itemStack != null) {
+									travelingItem.stack.stackSize += itemStack.stackSize;
+								}
+							}
+						}
+					}
+				}
+				cachedInv.markDirty();
+				itemDuct.insertNewItem(travelingItem);
+				return;
+			}
+		}
+	}
 
-            itemDuct.insertNewItem(travelingItem);
-            return;
-        }
-    }
+	public void handleStuffedItems() {
 
-    public byte getSpeed() {
+		for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext();) {
+			ItemStack stuffedItem = iterator.next();
+			ItemStack send = stuffedItem.copy();
+			send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
+			TravelingItem travelingItem = getRouteForItem(send);
+
+			if (travelingItem == null) {
+				continue;
+			}
+			stuffedItem.stackSize -= travelingItem.stack.stackSize;
+			if (stuffedItem.stackSize <= 0) {
+				iterator.remove();
+			}
+
+			itemDuct.insertNewItem(travelingItem);
+			return;
+		}
+	}
+
+	public byte getSpeed() {
 
 		return speedBoost[type];
 	}
 
 	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route> routes, TileItemDuct duct, int side, int maxRange, byte speed) {
 
-		if (item == null || item.stackSize == 0)
+		if (item == null || item.stackSize == 0) {
 			return null;
+		}
 
 		item = item.copy();
 
-		if (item.stackSize == 0)
+		if (item.stackSize == 0) {
 			return null;
+		}
 
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
@@ -394,32 +414,36 @@ public class ServoItem extends ServoBase {
 		if (tile instanceof ISidedInventory) {
 			cacheType = TileItemDuct.CacheType.ISIDEDINV;
 			cachedSidedInv = (ISidedInventory) tile;
-		} else
+		} else {
 			cacheType = TileItemDuct.CacheType.IINV;
+		}
 	}
 
 	public IInventory cachedInv;
-    public ISidedInventory cachedSidedInv;
-    public TileItemDuct.CacheType cacheType;
+	public ISidedInventory cachedSidedInv;
+	public TileItemDuct.CacheType cacheType;
 
 	public ItemStack insertItem(ItemStack item) {
 
-		if (!filter.matchesFilter(item))
+		if (!filter.matchesFilter(item)) {
 			return item;
+		}
 
 		ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
 		TravelingItem routeForItem = getRouteForItem(sending);
 		if (routeForItem == null) {
 			return item;
 		}
-        item.stackSize -= routeForItem.stack.stackSize;
+		item.stackSize -= routeForItem.stack.stackSize;
 		itemDuct.insertNewItem(routeForItem);
 		return item.stackSize > 0 ? item : null;
 	}
 
 	public TravelingItem getRouteForItem(ItemStack item) {
 
-        if (!verifyCache()) return null;
+		if (!verifyCache()) {
+			return null;
+		}
 		return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
 	}
 

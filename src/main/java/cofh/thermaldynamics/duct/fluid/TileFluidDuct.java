@@ -11,6 +11,7 @@ import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -51,8 +52,9 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public boolean tickPass(int pass) {
 
-		if (!super.tickPass(pass))
+		if (!super.tickPass(pass)) {
 			return false;
+		}
 
 		if (fluidGrid == null || !cachesExist()) {
 			return true;
@@ -84,21 +86,25 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 	public int transfer(int bSide, int available) {
 
-		if (neighborTypes[bSide] != NeighborTypes.OUTPUT || connectionTypes[bSide] == ConnectionTypes.BLOCKED)
+		if (neighborTypes[bSide] != NeighborTypes.OUTPUT || connectionTypes[bSide] == ConnectionTypes.BLOCKED) {
 			return 0;
-		if (cache[bSide] == null || fluidGrid.myTank.getFluid() == null)
+		}
+		if (cache[bSide] == null || fluidGrid.myTank.getFluid() == null) {
 			return 0;
-		if (!filterCache[bSide].allowFluid(fluidGrid.myTank.getFluid()))
+		}
+		if (!filterCache[bSide].allowFluid(fluidGrid.myTank.getFluid())) {
 			return 0;
+		}
 
 		FluidStack tempFluid = fluidGrid.myTank.getFluid().copy();
 		tempFluid.amount = available;
 		int amountSent = cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, false);
 
-		if (amountSent > 0)
+		if (amountSent > 0) {
 			return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], fluidGrid.myTank.drain(amountSent, true), true);
-		else
+		} else {
 			return 0;
+		}
 	}
 
 	@Override
@@ -133,12 +139,14 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public boolean isConnectable(TileEntity theTile, int side) {
 
-        return theTile instanceof TileFluidDuct;
+		return theTile instanceof TileFluidDuct;
 	}
 
 	public FluidStack getConnectionFluid() {
 
-        if(ServerHelper.isClientWorld(worldObj)) return myRenderFluid;
+		if (ServerHelper.isClientWorld(worldObj)) {
+			return myRenderFluid;
+		}
 		return fluidGrid == null ? myConnectionFluid : fluidGrid.getFluid();
 	}
 
@@ -177,8 +185,9 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public void cacheImportant(TileEntity tile, int side) {
 
-		if (attachments[side] instanceof IFilterAttachment)
+		if (attachments[side] instanceof IFilterAttachment) {
 			filterCache[side] = ((IFilterAttachment) attachments[side]).getFluidFilter();
+		}
 		cache[side] = (IFluidHandler) tile;
 	}
 
@@ -236,8 +245,9 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 	public void sendRenderPacket() {
 
-		if (fluidGrid == null)
+		if (fluidGrid == null) {
 			return;
+		}
 		if (!getDuctType().opaque) {
 			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
 			myPayload.addByte(0);
@@ -259,7 +269,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 
-        if (isOpen(from)) {
+		if (isOpen(from)) {
 			return fluidGrid.myTank.fill(resource, doFill);
 		}
 		return 0;
@@ -277,7 +287,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 
-        if (isOpen(from)) {
+		if (isOpen(from)) {
 			return fluidGrid.myTank.drain(maxDrain, doDrain);
 		}
 		return null;
@@ -295,14 +305,14 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		return isOpen(from);
 	}
 
-    public boolean isOpen(ForgeDirection from) {
+	public boolean isOpen(ForgeDirection from) {
 
-        return fluidGrid != null && (from == ForgeDirection.UNKNOWN || (
-                (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.INPUT)
-                        && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED));
-    }
+		return fluidGrid != null
+				&& (from == ForgeDirection.UNKNOWN || ((neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.INPUT) && connectionTypes[from
+						.ordinal()] != ConnectionTypes.BLOCKED));
+	}
 
-    @Override
+	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 
 		return fluidGrid != null ? new FluidTankInfo[] { fluidGrid.myTank.getInfo() } : CoFHProps.EMPTY_TANK_INFO;

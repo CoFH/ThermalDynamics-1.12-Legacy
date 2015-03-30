@@ -17,14 +17,19 @@ import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import gnu.trove.iterator.TObjectIntIterator;
+
 import java.util.Iterator;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 
 public class RetrieverItem extends ServoItem {
+
+	boolean baseTileHasOtherOutputs = false;
 
 	public RetrieverItem(TileTDBase tile, byte side) {
 
@@ -55,7 +60,7 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
-    @SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public boolean render(int pass, RenderBlocks renderBlocks) {
 
 		if (pass == 1) {
@@ -67,24 +72,22 @@ public class RetrieverItem extends ServoItem {
 		return true;
 	}
 
-    boolean baseTileHasOtherOutputs = false;
+	@Override
+	public void postNeighbourChange() {
 
-    @Override
-    public void postNeighbourChange() {
+		baseTileHasOtherOutputs = false;
+		for (int i = 0; i < 6; i++) {
+			if ((tile.neighborTypes[i] == TileTDBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileTDBase.NeighborTypes.INPUT)
+					&& (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+				baseTileHasOtherOutputs = true;
+				break;
+			}
+		}
+		super.postNeighbourChange();
 
-        baseTileHasOtherOutputs = false;
-        for (int i = 0; i < 6; i++) {
-            if((tile.neighborTypes[i] == TileTDBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileTDBase.NeighborTypes.INPUT) &&
-                    (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
-                baseTileHasOtherOutputs = true;
-                break;
-            }
-        }
-        super.postNeighbourChange();
+	}
 
-    }
-
-    @Override
+	@Override
 	public void handleItemSending() {
 
 		SimulatedInv simulatedInv = cacheType == TileItemDuct.CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cachedSidedInv) : SimulatedInv.wrapInv(cachedInv);
@@ -98,15 +101,15 @@ public class RetrieverItem extends ServoItem {
 			}
 		}
 
-//        if(routeList.type == ListWrapper.SortType.ROUNDROBIN && !baseTileHasOtherOutputs){
-//            if(routeList.size() == 1)
-//                return;
-//
-//            Route route = routeList.peekRR();
-//            if(route.endPoint == tile){
-//                routeList.advanceCursor();
-//            }
-//        }
+		// if(routeList.type == ListWrapper.SortType.ROUNDROBIN && !baseTileHasOtherOutputs){
+		// if(routeList.size() == 1)
+		// return;
+		//
+		// Route route = routeList.peekRR();
+		// if(route.endPoint == tile){
+		// routeList.advanceCursor();
+		// }
+		// }
 
 		for (Route route : routeList) {
 			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
@@ -114,14 +117,15 @@ public class RetrieverItem extends ServoItem {
 			for (int k = 0; k < 6; k++) {
 				int i = (endPoint.internalSideCounter + k) % 6;
 
-				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM)
+				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM) {
 					continue;
+				}
 
-				if (!endPoint.cachesExist()
-						|| endPoint.cache[i] == null
+				if (!endPoint.cachesExist() || endPoint.cache[i] == null
 						|| (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT)
-						|| !endPoint.connectionTypes[i].allowTransfer)
+						|| !endPoint.connectionTypes[i].allowTransfer) {
 					continue;
+				}
 
 				if (endPoint.cache2[i] != null) {
 					ISidedInventory inv = endPoint.cache2[i];
@@ -130,34 +134,42 @@ public class RetrieverItem extends ServoItem {
 						int slot = accessibleSlotsFromSide[j];
 
 						ItemStack item = inv.getStackInSlot(slot);
-						if (item == null)
+						if (item == null) {
 							continue;
+						}
 
 						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
-						if (item == null || item.stackSize == 0)
+						if (item == null || item.stackSize == 0) {
 							continue;
+						}
 
-						if (!inv.canExtractItem(slot, item, i ^ 1))
+						if (!inv.canExtractItem(slot, item, i ^ 1)) {
 							continue;
+						}
 
-						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item))
+						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item)) {
 							continue;
+						}
 
 						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
-						if (remainder != null)
+						if (remainder != null) {
 							item.stackSize -= remainder.stackSize;
-						if (item.stackSize == 0)
+						}
+						if (item.stackSize == 0) {
 							continue;
+						}
 
 						Route route1 = endPoint.getRoute(itemDuct);
-						if (route1 == null)
+						if (route1 == null) {
 							continue;
+						}
 
 						int maxStackSize = item.stackSize;
 						item = inv.decrStackSize(slot, maxStackSize);
-						if (item == null || item.stackSize == 0)
+						if (item == null || item.stackSize == 0) {
 							continue;
+						}
 
 						// No turning back now
 						route1 = route1.copy();
@@ -169,8 +181,9 @@ public class RetrieverItem extends ServoItem {
 								ItemStack inSlot = inv.getStackInSlot(slot);
 								if (ItemHelper.itemsEqualWithMetadata(inSlot, item, true) && inv.canExtractItem(slot, inSlot, i ^ 1)) {
 									ItemStack extract = inv.decrStackSize(slot, maxStackSize - item.stackSize);
-									if (extract != null)
+									if (extract != null) {
 										item.stackSize += extract.stackSize;
+									}
 								}
 							}
 						}
@@ -182,31 +195,38 @@ public class RetrieverItem extends ServoItem {
 					IInventory inv = endPoint.cache[i];
 					for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
 						ItemStack item = inv.getStackInSlot(slot);
-						if (item == null)
+						if (item == null) {
 							continue;
+						}
 
 						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
-						if (item == null || item.stackSize == 0)
+						if (item == null || item.stackSize == 0) {
 							continue;
+						}
 
-						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item))
+						if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item)) {
 							continue;
+						}
 
 						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
-						if (remainder != null)
+						if (remainder != null) {
 							item.stackSize -= remainder.stackSize;
-						if (item.stackSize <= 0)
+						}
+						if (item.stackSize <= 0) {
 							continue;
+						}
 
 						Route route1 = endPoint.getRoute(itemDuct);
-						if (route1 == null)
+						if (route1 == null) {
 							continue;
+						}
 
 						int maxStackSize = item.stackSize;
 						item = inv.decrStackSize(slot, maxStackSize);
-						if (item == null || item.stackSize == 0)
+						if (item == null || item.stackSize == 0) {
 							continue;
+						}
 
 						// No turning back now
 						route1 = route1.copy();
@@ -216,8 +236,9 @@ public class RetrieverItem extends ServoItem {
 							for (; item.stackSize < maxStackSize && slot < inv.getSizeInventory(); slot++) {
 								if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
 									ItemStack extract = inv.decrStackSize(slot, maxStackSize - item.stackSize);
-									if (extract != null)
+									if (extract != null) {
 										item.stackSize += extract.stackSize;
+									}
 								}
 							}
 						}
@@ -235,13 +256,14 @@ public class RetrieverItem extends ServoItem {
 
 		for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext();) {
 			ItemStack stuffedItem = iterator.next();
-			if (!filter.matchesFilter(stuffedItem))
+			if (!filter.matchesFilter(stuffedItem)) {
 				continue;
+			}
 
-
-            stuffedItem.stackSize = itemDuct.insertIntoInventory(stuffedItem, side);
-			if (stuffedItem.stackSize <= 0)
+			stuffedItem.stackSize = itemDuct.insertIntoInventory(stuffedItem, side);
+			if (stuffedItem.stackSize <= 0) {
 				iterator.remove();
+			}
 		}
 		super.handleStuffedItems();
 	}

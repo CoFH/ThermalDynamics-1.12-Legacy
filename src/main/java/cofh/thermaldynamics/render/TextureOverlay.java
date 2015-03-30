@@ -76,8 +76,9 @@ public class TextureOverlay {
 			}
 			if ("trans".equals(texture)) {
 				for (int j = 0; j < newimage.data.length; j++) {
-					if (((newimage.data[j] >> 24) & 0xFF) != 0)
+					if (((newimage.data[j] >> 24) & 0xFF) != 0) {
 						image.data[j] = 0;
+					}
 				}
 			} else {
 				for (int j = 0; j < newimage.data.length; j++) {
@@ -97,9 +98,9 @@ public class TextureOverlay {
 	public static IIcon generateConnectionTexture(IIconRegister register, String connection) {
 
 		TextureDataHolder image;
-        image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
+		image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
 
-        String name = "thermaldynamics:Conn_" + connection;
+		String name = "thermaldynamics:Conn_" + connection;
 
 		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
 		if (entry != null) {
@@ -114,9 +115,9 @@ public class TextureOverlay {
 	public static IIcon generateFrameTexture(IIconRegister register, String frame) {
 
 		TextureDataHolder image;
-        image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
+		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
 
-        String name = "thermaldynamics:Frame_" + frame;
+		String name = "thermaldynamics:Frame_" + frame;
 
 		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
 		if (entry != null) {
@@ -131,9 +132,9 @@ public class TextureOverlay {
 	public static IIcon generateFrameBandTexture(IIconRegister register, String frame) {
 
 		TextureDataHolder image;
-        image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
+		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
 
-        String name = "thermaldynamics:Band_" + frame;
+		String name = "thermaldynamics:Band_" + frame;
 
 		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
 		if (entry != null) {

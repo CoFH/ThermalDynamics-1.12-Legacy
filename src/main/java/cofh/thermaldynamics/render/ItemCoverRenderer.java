@@ -6,6 +6,7 @@ import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.attachments.facades.Cover;
 import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
 import cofh.thermaldynamics.duct.attachments.facades.CoverRenderer;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
@@ -16,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.lwjgl.opengl.GL11;
 
 public class ItemCoverRenderer implements IItemRenderer {
@@ -39,8 +41,9 @@ public class ItemCoverRenderer implements IItemRenderer {
 	public void renderItem(ItemRenderType type, ItemStack stack, Object... data) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
-		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8))
+		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return;
+		}
 
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
@@ -48,8 +51,9 @@ public class ItemCoverRenderer implements IItemRenderer {
 		if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
 			nbt.removeTag("Meta");
 			nbt.removeTag("Block");
-			if (nbt.hasNoTags())
+			if (nbt.hasNoTags()) {
 				stack.setTagCompound(null);
+			}
 		}
 
 		GL11.glPushMatrix();

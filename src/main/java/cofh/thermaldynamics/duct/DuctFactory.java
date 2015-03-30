@@ -9,6 +9,7 @@ import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
+
 import net.minecraft.world.World;
 
 public abstract class DuctFactory {

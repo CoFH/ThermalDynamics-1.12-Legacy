@@ -6,91 +6,102 @@ import java.util.LinkedList;
 import net.minecraft.world.World;
 
 public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
-    public MultiBlockGridWithRoutes(World world) {
-        super(world);
-    }
 
-    @Override
-    public void doTickProcessing(long deadline) {
-        for (int i = 0; !calculatingRoutes.isEmpty(); ++i) {
-            RouteCache routeCache = calculatingRoutes.peek();
-            if (routeCache != null && !routeCache.processStep()) {
-                calculatingRoutes.remove(routeCache);
-            }
-            if (i == 15) {
-            	if (System.nanoTime() > deadline)
-            		return;
-            	i = 0;
-            }
-        }
-    }
+	public MultiBlockGridWithRoutes(World world) {
 
-    @Override
-    public boolean isTickProcessing() {
-        return !calculatingRoutes.isEmpty();
-    }
+		super(world);
+	}
 
-    public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<IMultiBlockRoute, RouteCache>();
-    public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<RouteCache>();
+	@Override
+	public void doTickProcessing(long deadline) {
 
-    @Override
-    public void onMinorGridChange() {
-        onMajorGridChange();
-    }
+		for (int i = 0; !calculatingRoutes.isEmpty(); ++i) {
+			RouteCache routeCache = calculatingRoutes.peek();
+			if (routeCache != null && !routeCache.processStep()) {
+				calculatingRoutes.remove(routeCache);
+			}
+			if (i == 15) {
+				if (System.nanoTime() > deadline) {
+					return;
+				}
+				i = 0;
+			}
+		}
+	}
 
-    @Override
-    public void onMajorGridChange() {
-        if (!routeCacheMap.isEmpty()) {
-            for (RouteCache routeCache : routeCacheMap.values())
-                routeCache.invalidate();
-            routeCacheMap.clear();
-        }
+	@Override
+	public boolean isTickProcessing() {
 
-        if (!calculatingRoutes.isEmpty())
-            calculatingRoutes.clear();
-    }
+		return !calculatingRoutes.isEmpty();
+	}
 
-    public RouteCache getRoutesFromOutputNonUrgent(IMultiBlockRoute start) {
-        RouteCache cache;
-        cache = routeCacheMap.get(start);
-        if (cache != null) {
-            return cache;
-        }
+	public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<IMultiBlockRoute, RouteCache>();
+	public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<RouteCache>();
 
-        cache = new RouteCache(start);
-        calculatingRoutes.add(cache);
+	@Override
+	public void onMinorGridChange() {
 
-        routeCacheMap.put(start, cache);
-        return cache;
-    }
+		onMajorGridChange();
+	}
 
+	@Override
+	public void onMajorGridChange() {
 
-    public RouteCache getRoutesFromOutputRange(IMultiBlockRoute start, int maxRange) {
-        RouteCache cache = routeCacheMap.get(start);
-        if (cache == null) {
-            cache = new RouteCache(start, maxRange);
-            cache.generateCache();
-            routeCacheMap.put(start, cache);
-        } else if (cache.maxPathLength < maxRange) {
-            cache.maxPathLength = maxRange;
-            cache.generateCache();
-        }
+		if (!routeCacheMap.isEmpty()) {
+			for (RouteCache routeCache : routeCacheMap.values()) {
+				routeCache.invalidate();
+			}
+			routeCacheMap.clear();
+		}
 
-        return cache;
-    }
+		if (!calculatingRoutes.isEmpty()) {
+			calculatingRoutes.clear();
+		}
+	}
 
-    public RouteCache getRoutesFromOutput(IMultiBlockRoute start) {
-        RouteCache cache = routeCacheMap.get(start);
-        if (cache == null) {
-            cache = new RouteCache(start);
-            cache.generateCache();
-            routeCacheMap.put(start, cache);
-        } else if (!cache.isFinishedGenerating() || cache.maxPathLength < Integer.MAX_VALUE) {
-            cache.maxPathLength = Integer.MAX_VALUE;
-            cache.generateCache();
-        }
+	public RouteCache getRoutesFromOutputNonUrgent(IMultiBlockRoute start) {
 
-        return cache;
-    }
+		RouteCache cache;
+		cache = routeCacheMap.get(start);
+		if (cache != null) {
+			return cache;
+		}
+
+		cache = new RouteCache(start);
+		calculatingRoutes.add(cache);
+
+		routeCacheMap.put(start, cache);
+		return cache;
+	}
+
+	public RouteCache getRoutesFromOutputRange(IMultiBlockRoute start, int maxRange) {
+
+		RouteCache cache = routeCacheMap.get(start);
+		if (cache == null) {
+			cache = new RouteCache(start, maxRange);
+			cache.generateCache();
+			routeCacheMap.put(start, cache);
+		} else if (cache.maxPathLength < maxRange) {
+			cache.maxPathLength = maxRange;
+			cache.generateCache();
+		}
+
+		return cache;
+	}
+
+	public RouteCache getRoutesFromOutput(IMultiBlockRoute start) {
+
+		RouteCache cache = routeCacheMap.get(start);
+		if (cache == null) {
+			cache = new RouteCache(start);
+			cache.generateCache();
+			routeCacheMap.put(start, cache);
+		} else if (!cache.isFinishedGenerating() || cache.maxPathLength < Integer.MAX_VALUE) {
+			cache.maxPathLength = Integer.MAX_VALUE;
+			cache.generateCache();
+		}
+
+		return cache;
+	}
 
 }

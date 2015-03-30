@@ -1,157 +1,170 @@
 package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.block.TileTDBase;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class RouteCache {
-    public IMultiBlockRoute origin;
-    public LinkedList<Route> outputRoutes;
-    public LinkedList<Route> stuffableRoutes;
-    public HashSet<IMultiBlockRoute> visited;
-    public HashSet<IMultiBlockRoute> outputvisited;
-    private LinkedList<Route> validRoutes;
-    public int maxPathLength;
-    private boolean isFinishedGenerating;
-    public boolean invalid = false;
 
-    public RouteCache(IMultiBlockRoute origin) {
-        this(origin, origin.getMaxRange());
-    }
+	public IMultiBlockRoute origin;
+	public LinkedList<Route> outputRoutes;
+	public LinkedList<Route> stuffableRoutes;
+	public HashSet<IMultiBlockRoute> visited;
+	public HashSet<IMultiBlockRoute> outputvisited;
+	private LinkedList<Route> validRoutes;
+	public int maxPathLength;
+	private boolean isFinishedGenerating;
+	public boolean invalid = false;
 
-    public RouteCache(IMultiBlockRoute origin, int maxPathLength) {
-        this.origin = origin;
-        this.maxPathLength = maxPathLength;
-        init();
-    }
+	public RouteCache(IMultiBlockRoute origin) {
 
-    public void init() {
-        outputRoutes = new LinkedList<Route>();
-        if (origin.isOutput()) {
-            Route singleOutput = new Route(origin);
+		this(origin, origin.getMaxRange());
+	}
 
-            singleOutput.routeFinished = true;
-            outputRoutes.add(singleOutput);
-        }
-        stuffableRoutes = new LinkedList<Route>();
-        validRoutes = new LinkedList<Route>();
-        validRoutes.add(new Route(origin));
-        visited = new HashSet<IMultiBlockRoute>();
-        visited.add(origin);
-        outputvisited = new HashSet<IMultiBlockRoute>();
-        if (origin.isOutput()) {
-            outputvisited.add(origin);
-        }
-    }
+	public RouteCache(IMultiBlockRoute origin, int maxPathLength) {
 
-    public synchronized void generateCache() {
+		this.origin = origin;
+		this.maxPathLength = maxPathLength;
+		init();
+	}
 
-        while (processStep()) ;
+	public void init() {
 
-    }
+		outputRoutes = new LinkedList<Route>();
+		if (origin.isOutput()) {
+			Route singleOutput = new Route(origin);
 
-    public boolean processStep() {
-        if (isFinishedGenerating || invalid)
-            return false;
+			singleOutput.routeFinished = true;
+			outputRoutes.add(singleOutput);
+		}
+		stuffableRoutes = new LinkedList<Route>();
+		validRoutes = new LinkedList<Route>();
+		validRoutes.add(new Route(origin));
+		visited = new HashSet<IMultiBlockRoute>();
+		visited.add(origin);
+		outputvisited = new HashSet<IMultiBlockRoute>();
+		if (origin.isOutput()) {
+			outputvisited.add(origin);
+		}
+	}
 
-        boolean continueLoop = false;
+	public synchronized void generateCache() {
 
-        LinkedList<Route> newRoutes = new LinkedList<Route>();
-        for (Route curRoute : validRoutes) {
-            moveForwards(curRoute, newRoutes);
-            if (!curRoute.routeFinished) {
-                continueLoop = true;
-            }
-        }
-        validRoutes.addAll(newRoutes);
+		while (processStep()) {
+			;
+		}
 
-        if (!continueLoop)
-            finished();
+	}
 
-        return continueLoop;
-    }
+	public boolean processStep() {
 
+		if (isFinishedGenerating || invalid) {
+			return false;
+		}
 
-    private void finished() {
-        visited.clear();
-        outputvisited.clear();
-        validRoutes.clear();
-        isFinishedGenerating = true;
-        Collections.sort(outputRoutes);
-    }
+		boolean continueLoop = false;
 
-    public void moveForwards(Route route, LinkedList<Route> newRoutes) {
-        boolean foundRoute = false;
-        IMultiBlockRoute foundPath = null;
+		LinkedList<Route> newRoutes = new LinkedList<Route>();
+		for (Route curRoute : validRoutes) {
+			moveForwards(curRoute, newRoutes);
+			if (!curRoute.routeFinished) {
+				continueLoop = true;
+			}
+		}
+		validRoutes.addAll(newRoutes);
 
-        if (route.routeFinished)
-            return;
+		if (!continueLoop) {
+			finished();
+		}
 
+		return continueLoop;
+	}
 
-        if (route.pathDirections.size() > maxPathLength) {
-            route.routeFinished = true;
-            return;
-        }
+	private void finished() {
 
+		visited.clear();
+		outputvisited.clear();
+		validRoutes.clear();
+		isFinishedGenerating = true;
+		Collections.sort(outputRoutes);
+	}
 
-        byte foundDir = -1;
-        for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-            if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i) == TileTDBase.ConnectionTypes.NORMAL) {
-                IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
+	public void moveForwards(Route route, LinkedList<Route> newRoutes) {
 
-                if (validTile != null) {
-                    if (!visited.contains(validTile)) {
-                        visited.add(validTile);
+		boolean foundRoute = false;
+		IMultiBlockRoute foundPath = null;
 
-                        validTile.onNeighborBlockChange();
+		if (route.routeFinished) {
+			return;
+		}
 
-                        if (validTile.canStuffItem())
-                            stuffableRoutes.add(new Route(route, validTile, i, true));
+		if (route.pathDirections.size() > maxPathLength) {
+			route.routeFinished = true;
+			return;
+		}
 
-                        if (!foundRoute) {
-                            foundPath = validTile;
-                            foundDir = i;
-                            foundRoute = true;
-                        } else {
-                            newRoutes.add(new Route(route, validTile, i, false));
-                        }
-                    }
+		byte foundDir = -1;
+		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK
+					&& route.endPoint.getConnectionType(i) == TileTDBase.ConnectionTypes.NORMAL) {
+				IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
 
-                    if (validTile.isOutput() && !outputvisited.contains(validTile)) {
-                        outputRoutes.add(new Route(route, validTile, i, true));
-                        outputvisited.add(validTile);
-                    }
-                }
-            }
-        }
+				if (validTile != null) {
+					if (!visited.contains(validTile)) {
+						visited.add(validTile);
 
+						validTile.onNeighborBlockChange();
 
-        if (!foundRoute) {
-            route.routeFinished = true;
-        } else {
-            route.pathDirections.add(foundDir);
-            route.pathWeight += foundPath.getWeight();
-            route.endPoint = foundPath;
-        }
-    }
+						if (validTile.canStuffItem()) {
+							stuffableRoutes.add(new Route(route, validTile, i, true));
+						}
 
+						if (!foundRoute) {
+							foundPath = validTile;
+							foundDir = i;
+							foundRoute = true;
+						} else {
+							newRoutes.add(new Route(route, validTile, i, false));
+						}
+					}
 
-    public synchronized boolean isFinishedGenerating() {
-        return isFinishedGenerating;
-    }
+					if (validTile.isOutput() && !outputvisited.contains(validTile)) {
+						outputRoutes.add(new Route(route, validTile, i, true));
+						outputvisited.add(validTile);
+					}
+				}
+			}
+		}
 
+		if (!foundRoute) {
+			route.routeFinished = true;
+		} else {
+			route.pathDirections.add(foundDir);
+			route.pathWeight += foundPath.getWeight();
+			route.endPoint = foundPath;
+		}
+	}
 
-    public void reset() {
-        isFinishedGenerating = false;
-        init();
-    }
+	public synchronized boolean isFinishedGenerating() {
 
-    public void invalidate() {
-        invalid = true;
-        outputRoutes.clear();
-        stuffableRoutes.clear();
-        origin = null;
-    }
+		return isFinishedGenerating;
+	}
+
+	public void reset() {
+
+		isFinishedGenerating = false;
+		init();
+	}
+
+	public void invalidate() {
+
+		invalid = true;
+		outputRoutes.clear();
+		stuffableRoutes.clear();
+		origin = null;
+	}
 }

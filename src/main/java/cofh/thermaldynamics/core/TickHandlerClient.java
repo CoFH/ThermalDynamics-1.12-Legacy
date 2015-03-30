@@ -5,8 +5,10 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.HashSet;
 import java.util.Iterator;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 
@@ -34,10 +36,11 @@ public class TickHandlerClient {
 			if (!mc.isGamePaused() && !tickBlocks.isEmpty()) {
 				for (Iterator<TileItemDuct> iterator = tickBlocks.iterator(); iterator.hasNext();) {
 					TileItemDuct aCond = iterator.next();
-					if (aCond.isInvalid())
+					if (aCond.isInvalid()) {
 						iterator.remove();
-					else
+					} else {
 						aCond.tickItemsClient();
+					}
 				}
 				tickBlocks.removeAll(tickBlocksToRemove);
 				tickBlocksToRemove.clear();

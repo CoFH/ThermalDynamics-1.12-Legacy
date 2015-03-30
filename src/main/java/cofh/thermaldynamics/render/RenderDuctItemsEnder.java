@@ -9,10 +9,12 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
@@ -28,8 +30,9 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		@Override
 		public void call(int shader, boolean newFrame) {
 
-			if (!newFrame)
+			if (!newFrame) {
 				return;
+			}
 
 			Minecraft mc = Minecraft.getMinecraft();
 			float fov = mc.gameSettings.fovSetting * 2f;
@@ -67,10 +70,11 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 
 	public static void drawEnderStarfield(double x, double y, double z, int[] connections, float frame, int alpha, int[] alphaSub) {
 
-		if (ShaderHelper.useShaders() || ShaderStarfield.starfieldShader == 0)
+		if (ShaderHelper.useShaders() || ShaderStarfield.starfieldShader == 0) {
 			CCRenderState.changeTexture(ShaderStarfield.starsTexture);
-		else
+		} else {
 			CCRenderState.changeTexture(RenderHelper.MC_BLOCK_SHEET);
+		}
 
 		CCModel[] models = RenderDuct.modelFluid[5];
 
@@ -98,8 +102,8 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 					ShaderHelper.releaseShader();
 				}
 			}
-            ShaderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
-            ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
+			ShaderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
+			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 			CCRenderState.startDrawing();
 			models[6].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
 			CCRenderState.draw();

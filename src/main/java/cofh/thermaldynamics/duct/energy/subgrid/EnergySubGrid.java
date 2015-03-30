@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.energy.subgrid;
 import cofh.api.energy.EnergyStorage;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.world.World;
 
 public class EnergySubGrid extends MultiBlockGrid {

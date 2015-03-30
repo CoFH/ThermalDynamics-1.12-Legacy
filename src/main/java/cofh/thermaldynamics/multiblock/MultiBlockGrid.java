@@ -3,6 +3,7 @@ package cofh.thermaldynamics.multiblock;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.debughelper.NoComodSet;
+
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -32,7 +33,7 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		} else {
 			boolean flag = false;
-			for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++)
+			for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++) {
 				if (aMultiBlock.isSideConnected(s)) {
 					if (flag) {
 						onMajorGridChange();
@@ -41,6 +42,7 @@ public abstract class MultiBlockGrid {
 						flag = true;
 					}
 				}
+			}
 		}
 
 		balanceGrid();
@@ -77,7 +79,7 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		}
 
-        onMinorGridChange();
+		onMinorGridChange();
 		theGrid.destroy();
 	}
 
@@ -150,8 +152,9 @@ public abstract class MultiBlockGrid {
 
 		byte s = 0;
 		for (byte i = 0; i < 6; i++) {
-			if (oldBlock.isSideConnected(i))
+			if (oldBlock.isSideConnected(i)) {
 				s++;
+			}
 		}
 
 		if (s <= 1) {

@@ -57,7 +57,6 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 	@Override
 	public void tickItems() {
 
-
 		if (itemsToAdd.size() > 0) {
 			for (TravelingItem travelingItem : itemsToAdd) {
 				myItems.add(travelingItem);
@@ -67,8 +66,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 		}
 		if (myItems.size() > 0) {
 			for (TravelingItem travelingItem : myItems) {
-                if (internalGrid.repoll)
-                    internalGrid.poll(travelingItem);
+				if (internalGrid.repoll) {
+					internalGrid.poll(travelingItem);
+				}
 				if (travelingItem.reRoute || travelingItem.myPath == null) {
 					travelingItem.bounceItem(this);
 				} else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST
@@ -86,9 +86,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 			}
 		}
 
-        if(hasChanged) {
-            internalGrid.shouldRepoll = true;
-        }
+		if (hasChanged) {
+			internalGrid.shouldRepoll = true;
+		}
 
 		updateRender();
 	}
@@ -100,8 +100,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 				&& energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
 			energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
 			multiAdvance(travelingItem, true);
-		} else
+		} else {
 			super.insertNewItem(travelingItem);
+		}
 	}
 
 	public void multiAdvance(TravelingItem travelingItem, boolean newInsert) {
@@ -137,8 +138,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 				if (travelingItem.stack.stackSize > 0) {
 					travelingItem.reRoute = true;
 					transferItem(travelingItem, duct, newInsert);
-				} else if (!newInsert)
+				} else if (!newInsert) {
 					itemsToRemove.add(travelingItem);
+				}
 				return;
 			} else {
 				travelingItem.reRoute = true;
@@ -174,10 +176,12 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 		if (b == TileInfoPackets.ENDER_POWER) {
 			powered = payload.getBool();
 			centerLine = 0;
-			for (int i = 0; i < centerLineSub.length; i++)
+			for (int i = 0; i < centerLineSub.length; i++) {
 				centerLineSub[i] = 0;
-		} else
+			}
+		} else {
 			super.handlePacketType(payload, b);
+		}
 	}
 
 	@Override
@@ -209,16 +213,17 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 		powered = payload.getBool();
 	}
 
-    public void updateRender() {
-        if (enderEnergy.internalGrid != null) {
-            if (enderEnergy.internalGrid.isPowered() != powered) {
-                powered = enderEnergy.internalGrid.isPowered();
-                sendPowerPacket();
-            }
-        }
-        if (!powered && hasChanged) {
-            hasChanged = false;
-            sendTravelingItemsPacket();
-        }
-    }
+	public void updateRender() {
+
+		if (enderEnergy.internalGrid != null) {
+			if (enderEnergy.internalGrid.isPowered() != powered) {
+				powered = enderEnergy.internalGrid.isPowered();
+				sendPowerPacket();
+			}
+		}
+		if (!powered && hasChanged) {
+			hasChanged = false;
+			sendTravelingItemsPacket();
+		}
+	}
 }

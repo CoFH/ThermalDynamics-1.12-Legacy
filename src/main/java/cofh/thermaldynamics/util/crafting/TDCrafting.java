@@ -11,9 +11,11 @@ import cofh.thermalfoundation.fluid.TFFluids;
 import cofh.thermalfoundation.item.TFItems;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

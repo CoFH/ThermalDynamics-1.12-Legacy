@@ -8,7 +8,9 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.render.RenderDuct;
+
 import java.util.Iterator;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -44,20 +46,24 @@ public class RetrieverFluid extends ServoFluid {
 			return;
 		}
 		if (fluidDuct.fluidGrid.myTank.getFluid() != null) {
-			if (!fluidPassesFiltering(fluidDuct.fluidGrid.myTank.getFluid()))
+			if (!fluidPassesFiltering(fluidDuct.fluidGrid.myTank.getFluid())) {
 				return;
+			}
 		}
 		for (Iterator iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext();) {
 			TileFluidDuct fluidDuct = (TileFluidDuct) iterator.next();
 			for (int k = 0; k < 6; k++) {
 				int i = (k + fluidDuct.internalSideCounter) % 6;
 				if (fluidDuct.cache[i] == null
-						|| (fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT))
+						|| (fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT)) {
 					continue;
+				}
 
-				if (fluidDuct.attachments[i] != null)
-					if (fluidDuct.attachments[i].getId() == this.getId())
+				if (fluidDuct.attachments[i] != null) {
+					if (fluidDuct.attachments[i].getId() == this.getId()) {
 						continue;
+					}
+				}
 
 				FluidStack fluid = fluidDuct.cache[i].drain(ForgeDirection.VALID_DIRECTIONS[i ^ 1], maxInput, false);
 

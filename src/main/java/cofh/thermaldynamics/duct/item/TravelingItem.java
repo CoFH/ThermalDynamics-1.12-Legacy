@@ -10,6 +10,7 @@ import cofh.thermaldynamics.core.TickHandlerClient;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -32,9 +33,9 @@ public class TravelingItem {
 	public boolean mustGoToDest = false;
 	public boolean hasDest = false;
 	public boolean reRoute = false;
-    public StackMap.ItemEntry stackItemEntry;
+	public StackMap.ItemEntry stackItemEntry;
 
-    public boolean shouldDie = false;
+	public boolean shouldDie = false;
 	public int step = 1;
 
 	public TravelingItem(ItemStack theItem, IMultiBlock start, Route itemPath, byte oldDirection, byte speed) {
@@ -133,7 +134,7 @@ public class TravelingItem {
 
 		TileItemDuct.RouteInfo curInfo;
 
-        reRoute = false;
+		reRoute = false;
 
 		if (hasDest) {
 			for (Route aRoute : routes.outputRoutes) {
@@ -151,8 +152,9 @@ public class TravelingItem {
 				}
 			}
 
-            if(homeTile.ticksExisted < TileItemDuct.maxTicksExistedBeforeFindAlt)
-                return;
+			if (homeTile.ticksExisted < TileItemDuct.maxTicksExistedBeforeFindAlt) {
+				return;
+			}
 		}
 
 		if (!hasDest || (!mustGoToDest && hasDest)) {
@@ -175,8 +177,9 @@ public class TravelingItem {
 			}
 		}
 
-        if(homeTile.ticksExisted <= TileItemDuct.maxTicksExistedBeforeStuff)
-            return;
+		if (homeTile.ticksExisted <= TileItemDuct.maxTicksExistedBeforeStuff) {
+			return;
+		}
 
 		// Failed to find an exit
 		if (homeTile.acceptingStuff()) {
@@ -200,7 +203,7 @@ public class TravelingItem {
 				oldDirection = (byte) (direction ^ 1);
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
-			} else if(homeTile.ticksExisted == TileItemDuct.maxTicksExistedBeforeDump) {
+			} else if (homeTile.ticksExisted == TileItemDuct.maxTicksExistedBeforeDump) {
 				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
 				homeTile.removeItem(this, true);
 			}
@@ -209,14 +212,16 @@ public class TravelingItem {
 
 	public Route getStuffedRoute(RouteCache homeTile) {
 
-		if (homeTile.stuffableRoutes.isEmpty())
+		if (homeTile.stuffableRoutes.isEmpty()) {
 			return null;
+		}
 
 		Route backup = null;
 		for (Route aRoute : homeTile.stuffableRoutes) {
 			if (aRoute.endPoint.acceptingStuff()) {
-				if (backup == null)
+				if (backup == null) {
 					backup = aRoute.copy();
+				}
 
 				if (aRoute.endPoint.x() == startX && aRoute.endPoint.y() == startY && aRoute.endPoint.z() == startZ) {
 					return aRoute.copy();
@@ -228,13 +233,14 @@ public class TravelingItem {
 	}
 
 	public void tickClientForward(TileItemDuct homeTile) {
+
 		progress += step;
 
 		if (progress >= homeTile.getPipeLength()) {
 			progress %= homeTile.getPipeLength();
 
 			if (shouldDie) {
-				homeTile.removeItem(this,true);
+				homeTile.removeItem(this, true);
 			} else {
 				homeTile.removeItem(this, false);
 				shouldDie = true;
@@ -288,9 +294,9 @@ public class TravelingItem {
 		theNBT.setInteger("startY", startY);
 		theNBT.setInteger("startZ", startZ);
 
-        if(myPath != null){
-            theNBT.setByteArray("route", myPath.toByteArray());
-        }
+		if (myPath != null) {
+			theNBT.setByteArray("route", myPath.toByteArray());
+		}
 	}
 
 	public TravelingItem(NBTTagCompound theNBT) {
@@ -315,35 +321,40 @@ public class TravelingItem {
 		startY = theNBT.getInteger("startY");
 		startZ = theNBT.getInteger("startZ");
 
-        if (theNBT.hasKey("route", 7)) {
-            myPath = new Route(theNBT.getByteArray("route"));
-        }
-    }
+		if (theNBT.hasKey("route", 7)) {
+			myPath = new Route(theNBT.getByteArray("route"));
+		}
+	}
 
 	// DOWN, UP, NORTH, SOUTH, WEST, EAST
 
 	public BlockCoord getDest() {
 
-		if (myPath == null)
+		if (myPath == null) {
 			return null;
+		}
 
 		if (myPath.dest == null) {
-            if(myPath.endPoint == null) {
-                if(!hasDest) return null;
-                myPath.dest = (new BlockCoord(destX, destY, destZ).offset(myPath.getLastSide()));
-            } else
-                myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
+			if (myPath.endPoint == null) {
+				if (!hasDest) {
+					return null;
+				}
+				myPath.dest = (new BlockCoord(destX, destY, destZ).offset(myPath.getLastSide()));
+			} else {
+				myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
+			}
 
-
-        }
+		}
 		return myPath.dest;
 	}
 
-    public StackMap.ItemEntry getStackEntry(){
-        if (stackItemEntry == null || stackItemEntry.side != myPath.getLastSide())
-            stackItemEntry = new StackMap.ItemEntry(stack, myPath.getLastSide());
+	public StackMap.ItemEntry getStackEntry() {
 
-        return stackItemEntry;
-    }
+		if (stackItemEntry == null || stackItemEntry.side != myPath.getLastSide()) {
+			stackItemEntry = new StackMap.ItemEntry(stack, myPath.getLastSide());
+		}
+
+		return stackItemEntry;
+	}
 
 }

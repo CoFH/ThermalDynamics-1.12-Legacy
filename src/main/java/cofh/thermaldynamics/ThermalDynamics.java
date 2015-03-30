@@ -34,19 +34,22 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+
 import java.io.File;
 import java.util.LinkedList;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.RecipeSorter;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies,
-guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
+		guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
 public class ThermalDynamics extends BaseMod {
 
 	public static final String modId = "ThermalDynamics";
@@ -140,8 +143,9 @@ public class ThermalDynamics extends BaseMod {
 	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 
-		if (DebugHelper.debug)
+		if (DebugHelper.debug) {
 			event.registerServerCommand(new CommandThermalDebug());
+		}
 	}
 
 	LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();
@@ -188,10 +192,11 @@ public class ThermalDynamics extends BaseMod {
 
 		for (FMLMissingMappingsEvent.MissingMapping map : event.get()) {
 			if ((modId + ":TestDuct").equals(map.name)) {
-				if (map.type == GameRegistry.Type.BLOCK)
+				if (map.type == GameRegistry.Type.BLOCK) {
 					map.remap(blockDuct[0]);
-				else
+				} else {
 					map.remap(Item.getItemFromBlock(blockDuct[0]));
+				}
 			}
 		}
 	}

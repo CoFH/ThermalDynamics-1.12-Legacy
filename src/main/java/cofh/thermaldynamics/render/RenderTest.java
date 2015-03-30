@@ -3,6 +3,7 @@ package cofh.thermaldynamics.render;
 import cofh.core.render.ShaderHelper;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraftforge.client.event.RenderLivingEvent;
 
 public class RenderTest {

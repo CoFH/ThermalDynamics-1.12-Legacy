@@ -7,89 +7,92 @@ import java.util.Set;
 
 public class NoComodSet<E> extends AbstractSet<E> {
 
-    public final Set<E> set;
+	public final Set<E> set;
 
-    int modCount = 0;
+	int modCount = 0;
 
-    public NoComodSet() {
+	public NoComodSet() {
 
-        this(new HashSet<E>());
-    }
+		this(new HashSet<E>());
+	}
 
-    public NoComodSet(Set<E> set) {
+	public NoComodSet(Set<E> set) {
 
-        this.set = set;
-    }
+		this.set = set;
+	}
 
-    public boolean add(E aMultiBlock) {
+	@Override
+	public boolean add(E aMultiBlock) {
 
-        updateModCount();
-        return set.add(aMultiBlock);
-    }
+		updateModCount();
+		return set.add(aMultiBlock);
+	}
 
-    public void updateModCount() {
+	public void updateModCount() {
 
-        modCount++;
-    }
+		modCount++;
+	}
 
-    @Override
-    public void clear() {
+	@Override
+	public void clear() {
 
-        updateModCount();
-        set.clear();
-    }
+		updateModCount();
+		set.clear();
+	}
 
-    @Override
-    public boolean contains(Object o) {
+	@Override
+	public boolean contains(Object o) {
 
-        return set.contains(o);
-    }
+		return set.contains(o);
+	}
 
-    @Override
-    public boolean remove(Object o) {
+	@Override
+	public boolean remove(Object o) {
 
-        updateModCount();
-        return set.remove(o);
-    }
+		updateModCount();
+		return set.remove(o);
+	}
 
+	@Override
+	@SuppressWarnings("NullableProblems")
+	public Iterator<E> iterator() {
 
-    @Override
-    @SuppressWarnings("NullableProblems")
-    public Iterator<E> iterator() {
+		return new NoComodIterator(set.iterator());
+	}
 
-        return new NoComodIterator(set.iterator());
-    }
+	@Override
+	public int size() {
 
-    @Override
-    public int size() {
+		return set.size();
+	}
 
-        return set.size();
-    }
+	public class NoComodIterator implements Iterator<E> {
 
-    public class NoComodIterator implements Iterator<E> {
+		private final Iterator<E> iterator;
+		int expectedModCount;
 
-        private final Iterator<E> iterator;
-        int expectedModCount;
+		public NoComodIterator(Iterator<E> iterator) {
 
-        public NoComodIterator(Iterator<E> iterator) {
+			this.iterator = iterator;
+			expectedModCount = modCount;
+		}
 
-            this.iterator = iterator;
-            expectedModCount = modCount;
-        }
+		@Override
+		public boolean hasNext() {
 
-        @Override
-        public boolean hasNext() {
-            return expectedModCount == modCount && iterator.hasNext();
-        }
+			return expectedModCount == modCount && iterator.hasNext();
+		}
 
-        @Override
-        public E next() {
-            return iterator.next();
-        }
+		@Override
+		public E next() {
 
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
-    }
+			return iterator.next();
+		}
+
+		@Override
+		public void remove() {
+
+			iterator.remove();
+		}
+	}
 }

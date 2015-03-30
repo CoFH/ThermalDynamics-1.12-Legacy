@@ -10,8 +10,10 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -21,6 +23,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
+
 import org.lwjgl.opengl.GL11;
 
 public class Cover extends Attachment {
@@ -91,8 +94,9 @@ public class Cover extends Attachment {
 	@SideOnly(Side.CLIENT)
 	public boolean render(int pass, RenderBlocks renderBlocks) {
 
-		if (!block.canRenderInPass(pass))
+		if (!block.canRenderInPass(pass)) {
 			return false;
+		}
 
 		return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false);
 	}
@@ -156,8 +160,9 @@ public class Cover extends Attachment {
 
 		super.readFromNBT(tag);
 		block = Block.getBlockFromName(tag.getString("block"));
-		if (block == null)
+		if (block == null) {
 			block = Blocks.air;
+		}
 		meta = tag.getByte("meta");
 	}
 
@@ -200,8 +205,9 @@ public class Cover extends Attachment {
 			RenderBlocks renderBlocks = CoverRenderer.renderBlocks;
 			renderBlocks.blockAccess = player.getEntityWorld();
 			for (int i = 0; i < 2; i++) {
-				if (block.canRenderInPass(i))
+				if (block.canRenderInPass(i)) {
 					CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true);
+				}
 			}
 			tess.draw();
 		}

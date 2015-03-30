@@ -6,12 +6,12 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 public class SubTileEnergyEnder extends SubTileEnergy {
 
 	public EnergySubGridEnder internalGrid;
-    public TileItemDuctEnder parentTile;
+	public TileItemDuctEnder parentTile;
 
 	public SubTileEnergyEnder(TileItemDuctEnder parent) {
 
 		super(parent);
-        parentTile = parent;
+		parentTile = parent;
 	}
 
 	@Override

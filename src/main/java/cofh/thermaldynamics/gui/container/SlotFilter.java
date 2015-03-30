@@ -2,6 +2,7 @@ package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterConfig;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -34,8 +35,9 @@ public class SlotFilter extends SlotFalseCopy {
 	public void putStack(ItemStack stack) {
 
 		synchronized (filter.getFilterStacks()) {
-			if (stack != null)
+			if (stack != null) {
 				stack.stackSize = 1;
+			}
 			filter.getFilterStacks()[getSlotIndex()] = stack;
 			onSlotChanged();
 		}

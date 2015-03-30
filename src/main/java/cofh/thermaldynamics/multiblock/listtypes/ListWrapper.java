@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.multiblock.listtypes;
 
 import cofh.lib.util.helpers.MathHelper;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -26,11 +27,11 @@ public class ListWrapper<T> implements Iterable<T> {
 		if (list.size() <= 1) {
 			return list.listIterator();
 		}
-		if (type == SortType.NORMAL)
+		if (type == SortType.NORMAL) {
 			return list.iterator();
-		else if (type == SortType.REVERSE)
+		} else if (type == SortType.REVERSE) {
 			return list.descendingIterator();
-		else if (type == SortType.ROUNDROBIN) {
+		} else if (type == SortType.ROUNDROBIN) {
 			return new RRobinIter();
 		} else if (type == SortType.SHUFFLE) {
 			if (array == null || list.size() != array.length) {
@@ -42,28 +43,32 @@ public class ListWrapper<T> implements Iterable<T> {
 		return list.iterator();
 	}
 
-    public void advanceCursor() {
-        cursor++;
-        if (cursor >= list.size()) {
-            cursor = 0;
-        }
-    }
+	public void advanceCursor() {
 
-    public T peekRR() {
-        if (cursor + 1 >= list.size()) {
-            return list.get(0);
-        } else
-            return list.get(cursor + 1);
-    }
+		cursor++;
+		if (cursor >= list.size()) {
+			cursor = 0;
+		}
+	}
 
-    public int size() {
-        return list.size();
-    }
+	public T peekRR() {
 
-    public class RRobinIter implements Iterator<T> {
+		if (cursor + 1 >= list.size()) {
+			return list.get(0);
+		} else {
+			return list.get(cursor + 1);
+		}
+	}
+
+	public int size() {
+
+		return list.size();
+	}
+
+	public class RRobinIter implements Iterator<T> {
 
 		public ListIterator<T> tListIterator;
-        final int stopCursor = cursor - 1;
+		final int stopCursor = cursor - 1;
 
 		public RRobinIter() {
 
@@ -73,12 +78,13 @@ public class ListWrapper<T> implements Iterable<T> {
 		@Override
 		public boolean hasNext() {
 
-            if (!tListIterator.hasNext()) {
-                if (stopCursor < 0)
-                    return false;
-                else
-                    tListIterator = list.listIterator(0);
-            }
+			if (!tListIterator.hasNext()) {
+				if (stopCursor < 0) {
+					return false;
+				} else {
+					tListIterator = list.listIterator(0);
+				}
+			}
 
 			return tListIterator.nextIndex() != stopCursor;
 		}
@@ -86,7 +92,7 @@ public class ListWrapper<T> implements Iterable<T> {
 		@Override
 		public T next() {
 
-            advanceCursor();
+			advanceCursor();
 			return tListIterator.next();
 		}
 
