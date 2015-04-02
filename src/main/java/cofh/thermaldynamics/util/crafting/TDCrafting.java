@@ -26,11 +26,13 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 public class TDCrafting {
 
+	public static boolean enableCoverRecipes = true;
 	public static boolean useHardenedGlass = true;
 	public static boolean useTransposerRecipes = true;
 
 	public static void loadRecipes() {
 
+		enableCoverRecipes = ThermalDynamics.config.get("Attachment.Cover", "Recipe", true);
 		useHardenedGlass = ThermalDynamics.config.get("Duct.Recipes", "UseHardenedGlass", true);
 		useTransposerRecipes = ThermalDynamics.config.get("Duct.Recipes", "UseFluidTransposer", true);
 		String glassHardened = useHardenedGlass ? "blockGlassHardened" : "blockGlass";
@@ -116,7 +118,10 @@ public class TDCrafting {
 
 		/* STRUCTURE */
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead"));
-		GameRegistry.addRecipe(RecipeCover.instance);
+
+		if (enableCoverRecipes) {
+			GameRegistry.addRecipe(RecipeCover.instance);
+		}
 
 		/* ATTACHMENTS */
 		String[] materials = { "Iron", "Invar", "Electrum", "Signalum", "Enderium" };

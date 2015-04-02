@@ -63,7 +63,6 @@ public class ItemCover extends ItemAttachment {
 				list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
 			}
 		}
-
 	}
 
 	private static float[] hitX = { 0.5F, 0.5F, 0.5F, 0.5F, 0, 1 };

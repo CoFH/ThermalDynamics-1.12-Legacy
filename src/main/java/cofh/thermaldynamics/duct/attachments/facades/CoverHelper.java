@@ -53,7 +53,6 @@ public class CoverHelper {
 				return true;
 			}
 		}
-
 		return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
 	}
 
@@ -69,7 +68,6 @@ public class CoverHelper {
 		if (stack.getItem() instanceof ItemBlock) {
 			return getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()));
 		}
-
 		Block fluidBlock = getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack));
 		if (fluidBlock != null) {
 			return getCoverStack(fluidBlock, 0);
@@ -91,10 +89,10 @@ public class CoverHelper {
 	public static ItemStack getCoverItemStack(ItemStack stack, boolean removeInvalidData) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
+
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return null;
 		}
-
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
@@ -108,7 +106,7 @@ public class CoverHelper {
 			}
 			return null;
 		}
-
 		return new ItemStack(block, 1, meta);
 	}
+
 }
