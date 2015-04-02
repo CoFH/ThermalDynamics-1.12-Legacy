@@ -12,7 +12,9 @@ import cofh.thermaldynamics.render.RenderDuct;
 import java.util.Iterator;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -113,6 +115,14 @@ public class RetrieverFluid extends ServoFluid {
 	public TileTDBase.NeighborTypes getNeighborType() {
 
 		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
+	}
+
+	/* IPortableData */
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+
+		super.writePortableData(player, tag);
+		tag.setString("DisplayType", "item.thermaldynamics.retriever.0.name");
 	}
 
 }

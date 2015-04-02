@@ -10,7 +10,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class FilterBase extends ConnectionBase {
 
@@ -38,22 +40,29 @@ public abstract class FilterBase extends ConnectionBase {
 	}
 
 	@Override
+	public ItemStack getPickBlock() {
+
+		return new ItemStack(ThermalDynamics.itemFilter, 1, type);
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean render(int pass, RenderBlocks renderBlocks) {
 
 		if (pass == 1) {
 			return false;
 		}
-
 		Translation trans = RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
 		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(trans, RenderUtils.getIconTransformation(RenderDuct.filterTexture[type]));
 		return true;
 	}
 
+	/* IPortableData */
 	@Override
-	public ItemStack getPickBlock() {
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
 
-		return new ItemStack(ThermalDynamics.itemFilter, 1, type);
+		super.writePortableData(player, tag);
+		tag.setString("DisplayType", "item.thermaldynamics.filter.0.name");
 	}
 
 }

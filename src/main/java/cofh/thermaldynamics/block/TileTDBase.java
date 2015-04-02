@@ -1106,12 +1106,10 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		if (rayTrace == null) {
 			return;
 		}
-
 		int subHit = rayTrace.subHit;
 		if (subHit <= 13 || subHit >= 20) {
 			return;
 		}
-
 		if (!(attachments[subHit - 14] instanceof IPortableData)) {
 			return;
 		}
@@ -1134,11 +1132,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		if (subHit <= 13 || subHit >= 20) {
 			return;
 		}
-
 		if (!(attachments[subHit - 14] instanceof IPortableData)) {
 			return;
 		}
-
 		IPortableData iPortableData = (IPortableData) attachments[subHit - 14];
 		iPortableData.writePortableData(player, tag);
 		if (!tag.hasNoTags()) {

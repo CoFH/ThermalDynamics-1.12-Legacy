@@ -23,9 +23,11 @@ import gnu.trove.iterator.TObjectIntIterator;
 import java.util.Iterator;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class RetrieverItem extends ServoItem {
 
@@ -272,6 +274,14 @@ public class RetrieverItem extends ServoItem {
 	public TileTDBase.NeighborTypes getNeighborType() {
 
 		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
+	}
+
+	/* IPortableData */
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+
+		super.writePortableData(player, tag);
+		tag.setString("DisplayType", "item.thermaldynamics.retriever.0.name");
 	}
 
 }

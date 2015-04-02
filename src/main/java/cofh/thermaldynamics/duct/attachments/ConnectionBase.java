@@ -42,6 +42,8 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public ControlMode rsMode = ControlMode.HIGH;
 	public FilterLogic filter;
 
+	int prevFlag = -1;
+
 	public ConnectionBase(TileTDBase tile, byte side) {
 
 		super(tile, side);
@@ -243,12 +245,12 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public void sendFilterConfigPacketLevel(int levelType, int level) {
 
 		PacketTileInfo packet = getNewPacket(NETWORK_ID.FILTERLEVEL);
+
 		packet.addByte(levelType);
 		packet.addShort(level);
+
 		PacketHandler.sendToServer(packet);
 	}
-
-	int prevFlag = -1;
 
 	@Override
 	public void sendGuiNetworkData(Container container, List players, boolean newGuy) {
@@ -346,9 +348,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		if (canAlterRS() && tag.hasKey("RSControl")) {
 			setControl(RedstoneControlHelper.getControlFromNBT(tag));
 		}
-
 		filter.readFromNBT(tag);
-
 		onNeighborChange();
 	}
 
@@ -358,7 +358,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		if (canAlterRS()) {
 			RedstoneControlHelper.setItemStackTagRS(tag, this);
 		}
-
 		filter.writeToNBT(tag);
 	}
+
 }

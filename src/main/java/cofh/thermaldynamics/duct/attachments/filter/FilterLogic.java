@@ -317,7 +317,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				levels[i] = defaultLevels[i];
 			}
 		}
-
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {

@@ -13,6 +13,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -127,6 +128,14 @@ public abstract class ServoBase extends ConnectionBase {
 	public boolean doesTick() {
 
 		return true;
+	}
+
+	/* IPortableData */
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+
+		super.writePortableData(player, tag);
+		tag.setString("DisplayType", "item.thermaldynamics.servo.0.name");
 	}
 
 }
