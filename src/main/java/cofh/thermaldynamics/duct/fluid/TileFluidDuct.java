@@ -39,7 +39,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	IFluidHandler[] importantCache = new IFluidHandler[6];
 
 	public FluidStack mySavedFluid;
-	public FluidStack myRenderFluid = new FluidStack(0, 0);
+	public FluidStack myRenderFluid;
 	public FluidStack fluidForGrid;
 	public FluidStack myConnectionFluid;
 
