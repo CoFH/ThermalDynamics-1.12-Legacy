@@ -58,7 +58,6 @@ public class Route implements Comparable<Route> {
 		routeFinished = prevRoute.routeFinished;
 	}
 
-	@SuppressWarnings("NullableProblems")
 	@Override
 	public int compareTo(Route otherRoute) {
 

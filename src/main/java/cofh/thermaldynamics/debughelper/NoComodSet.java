@@ -54,7 +54,6 @@ public class NoComodSet<E> extends AbstractSet<E> {
 	}
 
 	@Override
-	@SuppressWarnings("NullableProblems")
 	public Iterator<E> iterator() {
 
 		return new NoComodIterator(set.iterator());
