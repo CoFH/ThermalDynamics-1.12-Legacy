@@ -20,6 +20,7 @@ import cofh.thermaldynamics.item.ItemServo;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
+import cofh.thermalfoundation.plugins.TFPlugins;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.CustomProperty;
@@ -70,7 +71,7 @@ public class ThermalDynamics extends BaseMod {
 	public static final ConfigHandler config = new ConfigHandler(version);
 	public static final GuiHandler guiHandler = new GuiHandler();
 
-	public static final CreativeTabs tab = new TDCreativeTab();
+	public static CreativeTabs tab;
 
 	/* INIT SEQUENCE */
 	public ThermalDynamics() {
@@ -84,6 +85,7 @@ public class ThermalDynamics extends BaseMod {
 		UpdateManager.registerUpdater(new UpdateManager(this, releaseURL, CoFHProps.DOWNLOAD_URL));
 		proxy.registerPacketInformation();
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
+		tab = new TDCreativeTab();
 
 		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
 
@@ -138,6 +140,7 @@ public class ThermalDynamics extends BaseMod {
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
+		TFPlugins.loadComplete();
 	}
 
 	@EventHandler
