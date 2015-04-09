@@ -633,7 +633,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	@Override
 	public boolean existsYet() {
 
-		return worldObj != null && getBlockType() instanceof BlockDuct;
+		return worldObj != null && worldObj.blockExists(xCoord, yCoord, zCoord) && worldObj.getBlock(xCoord, yCoord, zCoord) instanceof BlockDuct;
 	}
 
 	@Override
