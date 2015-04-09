@@ -152,8 +152,10 @@
 			target="1.6" source="1.6"
 			classpathref="mcp.classpath" debug="true" debuglevel="lines,source" includeAntRuntime="false">
 			<include name="**/*.java"/>
-			<include name="../../api/java/**/*.java"/>
 		      <classpath>
+				<fileset dir="${download.dir}/ThermalFoundation-master/src/api/java">
+					<include name="**/*.java"/>
+				</fileset>
 				<fileset file="${download.dir}/codechickenlib.jar"/>
 				<fileset file="${download.dir}/NEI.jar"/>
 		      	<fileset file="${download.dir}/CoFHLib.jar"/>
