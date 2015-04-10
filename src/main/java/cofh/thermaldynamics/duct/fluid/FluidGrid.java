@@ -56,7 +56,7 @@ public class FluidGrid extends MultiBlockGrid {
 
 	public int getMaxFluidPerDuct() {
 
-		return 1000;
+		return 3000;
 	}
 
 	@Override
