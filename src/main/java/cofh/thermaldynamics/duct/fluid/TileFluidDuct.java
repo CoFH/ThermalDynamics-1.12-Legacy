@@ -227,7 +227,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (fluidGrid != null) {
 			packet.addFluidStack(fluidGrid.getRenderFluid());
 		} else {
-			packet.addFluidStack(myConnectionFluid != null ? myConnectionFluid : new FluidStack(0, 0));
+			packet.addFluidStack(myConnectionFluid);
 		}
 		return packet;
 	}

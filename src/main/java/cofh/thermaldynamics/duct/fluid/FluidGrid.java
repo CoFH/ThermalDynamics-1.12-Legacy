@@ -18,7 +18,7 @@ public class FluidGrid extends MultiBlockGrid {
 	TimeTracker myTracker = new TimeTracker();
 	boolean recentRenderUpdate = false;
 	int renderFluidLevel = 0;
-	FluidStack myRenderFluid;
+	FluidStack myRenderFluid = null;
 
 	public FluidGrid(World world) {
 
