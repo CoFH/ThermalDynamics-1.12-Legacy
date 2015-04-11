@@ -5,7 +5,7 @@
         "description": "Thermal meets Dynamic - provides options for transporting items, fluids, and Redstone Flux!",
         "version": "${version}",
         "credits": "Team CoFH",
-        "logoFile": "/assets/thermaldynamics/textures/logo.png",
+        "logoFile": "assets/thermaldynamics/textures/logo.png",
         "mcversion": "${mcversion}",
         "url": "http://www.teamcofh.com",
         "updateUrl": "",
