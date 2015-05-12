@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.multiblock;
 
+import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.debughelper.NoComodSet;
@@ -17,7 +18,7 @@ public abstract class MultiBlockGrid {
     public boolean signallumUpToDate;
     public boolean signallumPowered;
     public ArrayList<Signaller> signallersIn;
-    public ArrayList<Signaller> signallersOut;
+    public ArrayList<Attachment> signallersOut;
 
     public MultiBlockGrid(WorldGridList worldGrid) {
 
@@ -123,6 +124,7 @@ public abstract class MultiBlockGrid {
         signallumUpToDate = true;
 
         if(signallersIn == null){
+            signallersOut =  null;
             for (IMultiBlock multiBlock : nodeSet) {
                 multiBlock.addSignallers();
             }
@@ -131,8 +133,8 @@ public abstract class MultiBlockGrid {
         if(signallersIn == null) {
             signallumPowered = false;
             if(signallersOut != null){
-                for (Signaller signaller : signallersOut) {
-                    signaller.setPowered(false);
+                for (Attachment signaller : signallersOut) {
+                    signaller.checkSignal();
                 }
             }
             return;
@@ -140,6 +142,7 @@ public abstract class MultiBlockGrid {
 
         if(signallersOut == null)
             return;
+
 
         boolean powered = false;
         for (Signaller signaller : signallersIn) {
@@ -149,29 +152,28 @@ public abstract class MultiBlockGrid {
             }
         }
 
-        if(powered != signallumPowered){
-            signallumPowered = powered;
-            for (Signaller signaller : signallersOut) {
-                signaller.setPowered(powered);
-            }
-        }
 
+        signallumPowered = powered;
+        ArrayList<Attachment> signallersOut = this.signallersOut;
+
+        for (Attachment output : signallersOut) {
+            output.checkSignal();
+        }
     }
 
-    public void addSignaller(Signaller signaller){
+    public void addSignalInput(Signaller signaller){
         if(signaller.isInput()) {
             if (signallersIn == null)
                 signallersIn = new ArrayList<Signaller>();
 
             signallersIn.add(signaller);
-        }else{
-            if (signallersOut == null)
-                signallersOut = new ArrayList<Signaller>();
-
-            signallersOut.add(signaller);
         }
+    }
 
-
+    public void addSignalOutput(Attachment attachment){
+        if (signallersOut == null)
+            signallersOut = new ArrayList<Attachment>();
+        signallersOut.add(attachment);
     }
 
 	/*

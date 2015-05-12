@@ -2,15 +2,19 @@ package cofh.thermaldynamics.duct.attachments.signaller;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.render.RenderUtils;
+import cofh.lib.util.helpers.ServerHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Translation;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
-import com.google.common.collect.Lists;
+import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Facing;
@@ -65,12 +69,15 @@ public class Signaller extends Attachment {
 
     @Override
     public ItemStack getPickBlock() {
-        return null;
+        return new ItemStack(ThermalDynamics.itemSignaller);
     }
 
     @Override
     public List<ItemStack> getDrops() {
-        return Lists.newArrayList();
+
+        LinkedList<ItemStack> drops = new LinkedList<ItemStack>();
+        drops.add(getPickBlock());
+        return drops;
     }
 
 
@@ -91,6 +98,10 @@ public class Signaller extends Attachment {
             if (tile.myGrid != null) {
                 tile.myGrid.signallumUpToDate = false;
             }
+        }
+
+        if (tile.myGrid != null) {
+            tile.myGrid.signallumUpToDate = false;
         }
     }
 
@@ -115,14 +126,30 @@ public class Signaller extends Attachment {
 
     public void setPowered(boolean powered) {
 
-        this.powered = powered;
-        tile.world().notifyBlocksOfNeighborChange(tile.xCoord, tile.yCoord, tile.zCoord, tile.getBlockType());
-//        tile.world().notifyBlockOfNeighborChange(
-//                tile.x() + Facing.offsetsXForSide[side],
-//                tile.y() + Facing.offsetsYForSide[side],
-//                tile.z() + Facing.offsetsZForSide[side],
-//                tile.getBlockType());
 
+        if(this.powered != powered) {
+            this.powered = powered;
+
+            tile.world().notifyBlockOfNeighborChange(
+                    tile.xCoord + Facing.offsetsXForSide[side],
+                    tile.yCoord + Facing.offsetsYForSide[side],
+                    tile.zCoord + Facing.offsetsZForSide[side],
+                    tile.getBlockType());
+        }
+
+    }
+
+    @Override
+    public void checkSignal() {
+
+        MultiBlockGrid grid = tile.myGrid;
+        if (grid == null) return;
+        setPowered(!powered);
+    }
+
+    @Override
+    public boolean respondsToSignallum() {
+        return true;
     }
 
     @Override
@@ -153,7 +180,10 @@ public class Signaller extends Attachment {
     }
 
     @Override
-    public boolean onWrenched() {
+    public boolean openGui(EntityPlayer player) {
+
+        if(ServerHelper.isClientWorld(tile.world()))
+            return true;
 
         type = type ^ 1;
         if (tile.myGrid != null)

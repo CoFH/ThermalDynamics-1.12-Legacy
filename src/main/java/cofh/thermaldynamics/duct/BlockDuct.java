@@ -402,7 +402,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
     @Override
     public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
 
-        return isProvidingWeakPower(world, x, y, z, side);
+        return 0;
     }
 
     @Override

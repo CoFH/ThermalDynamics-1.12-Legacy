@@ -183,4 +183,12 @@ public abstract class Attachment {
     public boolean shouldRSConnect() {
         return false;
     }
+
+    public boolean respondsToSignallum(){
+        return false;
+    }
+
+    public void checkSignal(){
+
+    }
 }

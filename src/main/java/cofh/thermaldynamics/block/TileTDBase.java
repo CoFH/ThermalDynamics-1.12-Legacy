@@ -1151,10 +1151,19 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
     @Override
     public void addSignallers() {
         for (Attachment attachment : attachments) {
-            if (attachment != null && attachment.getId() == AttachmentRegistry.SIGNALLER) {
-                myGrid.addSignaller((Signaller) attachment);
+            if (attachment != null) {
+                if (attachment.getId() == AttachmentRegistry.SIGNALLER) {
+                    Signaller signaller = (Signaller) attachment;
+                    if (signaller.isInput())
+                        myGrid.addSignalInput(signaller);
+                    else
+                        myGrid.addSignalOutput(attachment);
+                } else if (attachment.respondsToSignallum()) {
+                    myGrid.addSignalOutput(attachment);
+                }
             }
         }
     }
+
 
 }

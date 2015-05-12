@@ -7,6 +7,7 @@ import cofh.lib.util.position.ChunkCoord;
 import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import com.google.common.collect.Iterables;
 import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.HashSet;
 import java.util.List;
@@ -56,7 +57,8 @@ public class GlowGrid extends MultiBlockGrid {
         upToDate = true;
 
         boolean shouldBeLit = false;
-        for (Object object : idleSet) {
+
+        for (Object object : Iterables.concat(nodeSet,idleSet)) {
             TileGlowDuct lamp = (TileGlowDuct) object;
             if (lamp.lit) {
                 shouldBeLit = true;
@@ -94,7 +96,7 @@ public class GlowGrid extends MultiBlockGrid {
             }
         }
 
-        for (Object block : idleSet) {
+        for (Object block : Iterables.concat(nodeSet,idleSet)) {
             ((TileGlowDuct) block).checkLight();
         }
     }
@@ -102,7 +104,7 @@ public class GlowGrid extends MultiBlockGrid {
 
     public void buildMap() {
         chunks = new HashSet<ChunkCoord>();
-        for (IMultiBlock iMultiBlock : idleSet) {
+        for (IMultiBlock iMultiBlock : Iterables.concat(nodeSet,idleSet)) {
             buildMapEntry(iMultiBlock);
         }
     }
