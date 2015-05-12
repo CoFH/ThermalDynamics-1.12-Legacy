@@ -6,6 +6,7 @@ import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuperConductor;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
+import cofh.thermaldynamics.duct.fluid.TileFluidDuctSuper;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
@@ -94,6 +95,13 @@ public abstract class DuctFactory {
 			return new TileFluidDuctFlux();
 		}
 	};
+
+    public static DuctFactory fluid_super = new DuctFactory() {
+        @Override
+        public TileTDBase createTileEntity(Duct duct, World worldObj) {
+            return new TileFluidDuctSuper();
+        }
+    };
 
 	public abstract TileTDBase createTileEntity(Duct duct, World worldObj);
 }

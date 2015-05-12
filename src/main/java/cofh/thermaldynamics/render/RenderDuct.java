@@ -72,6 +72,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public static CCModel[] modelOpaqueTubes;
 	public static CCModel[] modelTransTubes;
 	private static CCModel[] modelFluidTubes;
+    private static CCModel[] modelLargeTubes;
 
 	public static void initialize() {
 
@@ -124,6 +125,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		modelOpaqueTubes = ModelHelper.StandardTubes.genModels(0.1875F, true);
 		modelTransTubes = ModelHelper.StandardTubes.genModels(0.1875F, false);
 		modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false);
+        modelLargeTubes = ModelHelper.StandardTubes.genModels(0.21875f, true);
 
 		modelFrameConnection = (new ModelHelper.OctagonalTubeGen(0.375, 0.1812, true)).generateModels();
 		modelFrame = (new ModelHelper.OctagonalTubeGen(0.375 * 0.99, 0.1812, false)).generateModels();
@@ -199,7 +201,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		if (ductType.frameType == 1) {
 			renderSideTubes(0, connection, x - 0.5, y - 0.5, z - 0.5, sideDucts);
 		}
-		if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
+		else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
@@ -214,6 +216,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 				modelFrameConnection[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 			}
 		}
+        else if(ductType.frameType == 3 && ductType.iconFrameTexture != null){
+            modelLargeTubes[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
+        }
 		return true;
 	}
 

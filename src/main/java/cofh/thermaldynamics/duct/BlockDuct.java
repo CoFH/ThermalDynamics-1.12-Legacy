@@ -21,6 +21,7 @@ import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
+import cofh.thermaldynamics.duct.fluid.TileFluidDuctSuper;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
@@ -370,6 +371,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
 		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
 		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
+        GameRegistry.registerTileEntity(TileFluidDuctSuper.class, "thermaldynamics.FluidDuctSuper");
 
 		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ItemDuct");
 		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");

@@ -12,9 +12,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class TextureOverlay {
 
-	private static final String PATH_BASE = "thermaldynamics:textures/blocks/duct/base/";
-	private static final String PATH_CONNECTION = "thermaldynamics:textures/blocks/duct/connection/";
-	private static final String PATH_FRAME = "thermaldynamics:textures/blocks/duct/base/";
+	public static final String PATH_BASE = "thermaldynamics:textures/blocks/duct/base/";
+    public static final String PATH_CONNECTION = "thermaldynamics:textures/blocks/duct/connection/";
+    public static final String PATH_FRAME = "thermaldynamics:textures/blocks/duct/base/";
 
 	public static ResourceLocation toLoc(String path, String name) {
 

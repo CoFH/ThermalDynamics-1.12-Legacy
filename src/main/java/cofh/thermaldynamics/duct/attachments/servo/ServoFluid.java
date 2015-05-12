@@ -70,19 +70,12 @@ public class ServoFluid extends ServoBase {
 			return;
 		}
 
-		int maxInput = Math.min(fluidDuct.fluidGrid.myTank.getSpace(), (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]));
-		if (maxInput == 0) {
-			return;
-		}
-		FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false);
+		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
 
-		if (fluidPassesFiltering(returned)) {
-			if (fluidDuct.fluidGrid.myTank.getFluid() == null || fluidDuct.fluidGrid.myTank.getFluid().fluidID == 0) {
-				fluidDuct.fluidGrid.myTank.setFluid(theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, true));
-			} else if (fluidDuct.fluidGrid.myTank.getFluid().isFluidEqual(returned)) {
-				fluidDuct.fluidGrid.myTank.getFluid().amount += theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, true).amount;
-			}
-		}
+        maxInput = fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[side], theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false), false);
+
+		FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, true);
+        fluidDuct.fill(ForgeDirection.getOrientation(side), returned, true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {

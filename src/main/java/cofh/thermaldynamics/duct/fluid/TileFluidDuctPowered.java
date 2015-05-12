@@ -14,11 +14,6 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 
 	SubTileEnergy energy;
 
-	public TileFluidDuctPowered() {
-
-		super();
-	}
-
 	public void setSubEnergy(SubTileEnergy energy) {
 
 		this.energy = energy;
@@ -78,7 +73,6 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 	public boolean canConnectEnergy(ForgeDirection from) {
 
 		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
-		// (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.STRUCTURE);
 	}
 
 }
