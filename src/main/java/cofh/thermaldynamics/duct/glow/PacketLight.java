@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.lamp;
+package cofh.thermaldynamics.duct.glow;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.position.BlockPosition;
@@ -17,7 +17,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
-public class PacketLamp  extends PacketCoFHBase {
+public class PacketLight extends PacketCoFHBase {
 
     public ByteArrayInputStream stream;
     public byte[] data;
@@ -40,12 +40,12 @@ public class PacketLamp  extends PacketCoFHBase {
         return map;
     }
 
-    public PacketLamp() {
+    public PacketLight() {
 
         super();
     }
 
-    public PacketLamp(boolean lit, LampGrid grid) {
+    public PacketLight(boolean lit, GlowGrid grid) {
         addBool(lit);
 
         addInt(grid.idleSet.size());

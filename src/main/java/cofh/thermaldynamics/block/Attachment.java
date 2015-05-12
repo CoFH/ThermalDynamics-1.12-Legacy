@@ -175,4 +175,12 @@ public abstract class Attachment {
 	public void postNeighbourChange() {
 
 	}
+
+    public int getRSOutput() {
+        return 0;
+    }
+
+    public boolean shouldRSConnect() {
+        return false;
+    }
 }

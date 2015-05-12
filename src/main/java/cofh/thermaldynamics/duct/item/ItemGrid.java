@@ -27,6 +27,8 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	@Override
 	public void tickGrid() {
 
+        super.tickGrid();
+
 		repoll = shouldRepoll;
 		if (shouldRepoll) {
 			if (!travelingItems.isEmpty()) {

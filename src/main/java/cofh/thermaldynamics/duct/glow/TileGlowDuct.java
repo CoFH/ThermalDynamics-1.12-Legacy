@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.lamp;
+package cofh.thermaldynamics.duct.glow;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.ServerHelper;
@@ -11,19 +11,19 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileGlowDuct extends TileTDBase {
-    public LampGrid lampGrid = null;
+    public GlowGrid gridGlow = null;
 
     @Override
     public MultiBlockGrid getNewGrid() {
 
-        return new LampGrid(worldObj);
+        return new GlowGrid(worldObj);
     }
 
     @Override
     public void setGrid(MultiBlockGrid newGrid) {
 
         super.setGrid(newGrid);
-        lampGrid = (LampGrid) newGrid;
+        gridGlow = (GlowGrid) newGrid;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class TileGlowDuct extends TileTDBase {
 
     public boolean isLit() {
 
-        return ServerHelper.isClientWorld(worldObj) || lampGrid == null ? lit : lampGrid.lit;
+        return ServerHelper.isClientWorld(worldObj) || gridGlow == null ? lit : gridGlow.lit;
     }
 
     @Override
@@ -88,15 +88,15 @@ public class TileGlowDuct extends TileTDBase {
 
         lit = worldObj.isBlockIndirectlyGettingPowered(x(), y(), z());
 
-        if (lampGrid != null && lampGrid.lit != lit)
-            lampGrid.upToDate = false;
+        if (gridGlow != null && gridGlow.lit != lit)
+            gridGlow.upToDate = false;
     }
 
     @Override
     public PacketCoFHBase getPacket() {
 
         PacketCoFHBase packet = super.getPacket();
-        packet.addBool(lit || (lampGrid != null && lampGrid.lit));
+        packet.addBool(lit || (gridGlow != null && gridGlow.lit));
         return packet;
     }
 

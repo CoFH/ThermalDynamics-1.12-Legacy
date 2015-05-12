@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.lamp;
+package cofh.thermaldynamics.duct.glow;
 
 import cofh.core.network.PacketHandler;
 import cofh.thermaldynamics.duct.Duct;
@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 
 public class DuctGlow extends Duct {
     static {
-        PacketHandler.instance.registerPacket(PacketLamp.class);
+        PacketHandler.instance.registerPacket(PacketLight.class);
         GameRegistry.registerTileEntity(TileGlowDuct.class, "thermaldynamics.GlowDuct");
     }
 

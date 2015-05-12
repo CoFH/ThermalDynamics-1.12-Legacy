@@ -19,6 +19,7 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.facades.Cover;
+import cofh.thermaldynamics.duct.attachments.signaller.Signaller;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
@@ -1146,4 +1147,14 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 		markChunkDirty();
 	}
+
+    @Override
+    public void addSignallers() {
+        for (Attachment attachment : attachments) {
+            if (attachment != null && attachment.getId() == AttachmentRegistry.SIGNALLER) {
+                myGrid.addSignaller((Signaller) attachment);
+            }
+        }
+    }
+
 }

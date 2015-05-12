@@ -50,4 +50,6 @@ public interface IMultiBlock {
 	public IMultiBlock[] getSubTiles();
 
 	public void onNeighborBlockChange();
+
+    public void addSignallers();
 }

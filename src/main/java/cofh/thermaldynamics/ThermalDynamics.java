@@ -11,6 +11,7 @@ import cofh.thermaldynamics.debughelper.CommandThermalDebug;
 import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.attachments.signaller.ItemSignaler;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.item.ItemCover;
@@ -100,6 +101,7 @@ public class ThermalDynamics extends BaseMod {
 		itemFilter = addItem(new ItemFilter());
 		itemCover = addItem(new ItemCover());
 		itemRetriever = addItem(new ItemRetriever());
+        itemSignaller =addItem(new ItemSignaler());
 
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
@@ -189,6 +191,7 @@ public class ThermalDynamics extends BaseMod {
 	public static ItemFilter itemFilter;
 	public static ItemCover itemCover;
 	public static ItemRetriever itemRetriever;
+    public static ItemSignaler itemSignaller;
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {

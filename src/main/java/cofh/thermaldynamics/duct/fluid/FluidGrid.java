@@ -79,6 +79,8 @@ public class FluidGrid extends MultiBlockGrid {
 	@Override
 	public void tickGrid() {
 
+        super.tickGrid();
+
 		if (worldGrid.worldObj.getTotalWorldTime() % TDProps.FLUID_UPDATE_DELAY == 0) {
 			updateAllRenders();
 		}

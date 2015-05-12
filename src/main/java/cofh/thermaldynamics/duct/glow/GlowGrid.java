@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.lamp;
+package cofh.thermaldynamics.duct.glow;
 
 import cofh.core.CoFHProps;
 import cofh.core.network.PacketCoFHBase;
@@ -13,15 +13,15 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
-public class LampGrid extends MultiBlockGrid {
+public class GlowGrid extends MultiBlockGrid {
     public HashSet<ChunkCoord> chunks;
     public boolean upToDate = false;
 
-    public LampGrid(WorldGridList worldGrid) {
+    public GlowGrid(WorldGridList worldGrid) {
         super(worldGrid);
     }
 
-    public LampGrid(World worldObj) {
+    public GlowGrid(World worldObj) {
         super(worldObj);
     }
 
@@ -32,18 +32,25 @@ public class LampGrid extends MultiBlockGrid {
 
     @Override
     public void onMajorGridChange() {
+
+        super.onMajorGridChange();
         upToDate = false;
         chunks = null;
     }
 
     @Override
     public void onMinorGridChange() {
+
+        super.onMinorGridChange();
         upToDate = false;
     }
 
     @Override
     public void tickGrid() {
-        if (upToDate || worldGrid.worldObj.getTotalWorldTime() % 4 != 0)
+
+        super.tickGrid();
+
+        if (upToDate || worldGrid.worldObj.getTotalWorldTime() % 20 != 0)
             return;
 
         upToDate = true;
@@ -71,7 +78,7 @@ public class LampGrid extends MultiBlockGrid {
             buildMap();
         }
 
-        PacketCoFHBase packet = new PacketLamp(lit, this);
+        PacketCoFHBase packet = new PacketLight(lit, this);
         int dimension = worldGrid.worldObj.provider.dimensionId;
         for (EntityPlayerMP player : (List<EntityPlayerMP>) FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
             if (dimension == player.dimension) {

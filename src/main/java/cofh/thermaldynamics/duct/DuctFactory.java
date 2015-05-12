@@ -11,7 +11,7 @@ import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
 
-import cofh.thermaldynamics.duct.lamp.TileGlowDuct;
+import cofh.thermaldynamics.duct.glow.TileGlowDuct;
 import net.minecraft.world.World;
 
 public abstract class DuctFactory {

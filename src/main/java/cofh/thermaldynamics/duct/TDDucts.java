@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct.Type;
-import cofh.thermaldynamics.duct.lamp.DuctGlow;
+import cofh.thermaldynamics.duct.glow.DuctGlow;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

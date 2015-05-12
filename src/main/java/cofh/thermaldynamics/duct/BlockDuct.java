@@ -143,6 +143,8 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 			}
 		}
 
+        IconRegistry.addIcon("Signaller", "thermaldynamics:duct/attachment/signallers/Signaller", ir);
+
 		IconRegistry.addIcon("CoverBase", "thermaldynamics:duct/attachment/cover/support", ir);
 
 		for (int i = 0; i < 5; i++) {
@@ -384,7 +386,41 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 	@Override
 	public boolean postInit() {
 
-		return true;
-	}
+        return true;
+    }
 
+    @Override
+    public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
+        if (theTile != null && theTile.attachments[side ^ 1] != null) {
+            return theTile.attachments[side ^ 1].getRSOutput();
+        }
+        return 0;
+    }
+
+    @Override
+    public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
+
+        return isProvidingWeakPower(world, x, y, z, side);
+    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
+        if(side == -1)
+            return false;
+
+        int s;
+        if (side == 0) {
+            s = 2;
+        } else if (side == 1) {
+            s = 5;
+        } else if (side == 2) {
+            s = 3;
+        } else
+            s = 4;
+
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
+        return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
+    }
 }

@@ -41,12 +41,14 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 	@Override
 	public void onMinorGridChange() {
 
+        super.onMinorGridChange();
 		onMajorGridChange();
 	}
 
 	@Override
 	public void onMajorGridChange() {
 
+        super.onMajorGridChange();
 		if (!routeCacheMap.isEmpty()) {
 			for (RouteCache routeCache : routeCacheMap.values()) {
 				routeCache.invalidate();
