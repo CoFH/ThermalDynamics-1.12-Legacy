@@ -11,6 +11,7 @@ import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
 
+import cofh.thermaldynamics.duct.lamp.TileGlowDuct;
 import net.minecraft.world.World;
 
 public abstract class DuctFactory {
@@ -95,6 +96,13 @@ public abstract class DuctFactory {
 			return new TileFluidDuctFlux();
 		}
 	};
+
+    public static DuctFactory glow = new DuctFactory() {
+        @Override
+        public TileTDBase createTileEntity(Duct duct, World worldObj) {
+            return new TileGlowDuct();
+        }
+    };
 
     public static DuctFactory fluid_super = new DuctFactory() {
         @Override

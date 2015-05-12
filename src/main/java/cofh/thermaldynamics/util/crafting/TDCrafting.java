@@ -123,6 +123,8 @@ public class TDCrafting {
 		/* STRUCTURE */
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead"));
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.glowDuct.itemStack, 6), " R ", "LIL", 'L', "ingotLumium", 'I', "ingotLead", 'R', "dustRedstone"));
+
 		if (enableCoverRecipes) {
 			GameRegistry.addRecipe(RecipeCover.instance);
 		}

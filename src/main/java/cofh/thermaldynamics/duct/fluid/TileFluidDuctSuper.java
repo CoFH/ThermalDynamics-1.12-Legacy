@@ -27,9 +27,4 @@ public class TileFluidDuctSuper extends TileFluidDuct {
         }
         return 0;
     }
-
-    @Override
-    public int getLightValue() {
-        return 15;
-    }
 }

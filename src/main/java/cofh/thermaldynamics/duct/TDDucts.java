@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct.Type;
-
+import cofh.thermaldynamics.duct.lamp.DuctGlow;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -195,6 +195,8 @@ public class TDDucts {
 	static void addSupportDucts() {
 
 		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
+
+        glowDuct = registerDuct(new DuctGlow(OFFSET_STRUCTURE + 1, 0, "glowstone", Type.STRUCTURAL, DuctFactory.glow, "lumium", "lumium", null, 0 ));
 	}
 
 	public static int OFFSET_ENERGY = 0 * 16;
@@ -244,6 +246,8 @@ public class TDDucts {
 
 	/* STRUCTURE */
 	public static Duct structure;
+
+    public static DuctGlow glowDuct;
 
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,
