@@ -81,23 +81,19 @@ public class Signaller extends Attachment {
     }
 
 
-    boolean powered;
+    int powerLevel;
 
     @Override
     public void onNeighborChange() {
         super.onNeighborChange();
 
         if (type == 0) {
-            powered = tile.world().getIndirectPowerOutput(
+            powerLevel = tile.world().getIndirectPowerLevelTo(
                     tile.x() + Facing.offsetsXForSide[side],
                     tile.y() + Facing.offsetsYForSide[side],
                     tile.z() + Facing.offsetsZForSide[side],
                     side
             );
-
-            if (tile.myGrid != null) {
-                tile.myGrid.signallumUpToDate = false;
-            }
         }
 
         if (tile.myGrid != null) {
@@ -113,22 +109,21 @@ public class Signaller extends Attachment {
         return type == 1;
     }
 
-    public boolean isPowered() {
+    public int getPowerLevel() {
         if (type == 1 && tile.myGrid != null)
-            return tile.myGrid.signallumPowered;
-        return powered;
+            return tile.myGrid.signallumLevel;
+        return powerLevel;
     }
 
     @Override
     public int getRSOutput() {
-        return isOutput() && isPowered() ? 15 : 0;
+        return isOutput() ? getPowerLevel() : 0;
     }
 
-    public void setPowered(boolean powered) {
+    public void setPowerLevel(int powerLevel) {
 
-
-        if(this.powered != powered) {
-            this.powered = powered;
+        if(this.powerLevel != powerLevel) {
+            this.powerLevel = powerLevel;
 
             tile.world().notifyBlockOfNeighborChange(
                     tile.xCoord + Facing.offsetsXForSide[side],
@@ -144,7 +139,7 @@ public class Signaller extends Attachment {
 
         MultiBlockGrid grid = tile.myGrid;
         if (grid == null) return;
-        setPowered(!powered);
+        setPowerLevel(grid.signallumLevel);
     }
 
     @Override

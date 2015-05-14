@@ -16,7 +16,7 @@ public abstract class MultiBlockGrid {
 	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
 	public WorldGridList worldGrid;
     public boolean signallumUpToDate;
-    public boolean signallumPowered;
+    public int signallumLevel;
     public ArrayList<Signaller> signallersIn;
     public ArrayList<Attachment> signallersOut;
 
@@ -131,7 +131,7 @@ public abstract class MultiBlockGrid {
         }
 
         if(signallersIn == null) {
-            signallumPowered = false;
+            signallumLevel = 0;
             if(signallersOut != null){
                 for (Attachment signaller : signallersOut) {
                     signaller.checkSignal();
@@ -144,16 +144,15 @@ public abstract class MultiBlockGrid {
             return;
 
 
-        boolean powered = false;
+        int powered = 0;
         for (Signaller signaller : signallersIn) {
-            if (signaller.isPowered()) {
-                powered = true;
+             powered = Math.max(powered, signaller.getPowerLevel());
+             if(powered == 15)
                 break;
-            }
+
         }
 
-
-        signallumPowered = powered;
+        signallumLevel = powered;
         ArrayList<Attachment> signallersOut = this.signallersOut;
 
         for (Attachment output : signallersOut) {

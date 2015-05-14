@@ -136,7 +136,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
     public boolean getPowerState() {
         if(tile.myGrid != null){
-            if(tile.myGrid.signallumPowered)
+            if(tile.myGrid.signallumLevel > 0)
                 return true;
         }
 
