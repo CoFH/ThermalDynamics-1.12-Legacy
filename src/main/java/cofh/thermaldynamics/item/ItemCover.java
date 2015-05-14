@@ -105,16 +105,6 @@ public class ItemCover extends ItemAttachment {
 		return builder.toString();
 	}
 
-	// @SuppressWarnings("unchecked")
-	// @Override
-	// public void addInformation(ItemStack stack, EntityPlayer p_77624_2_, List list, boolean p_77624_4_) {
-	// super.addInformation(stack, p_77624_2_, list, p_77624_4_);
-	// ItemStack b = getFacadeItemStack(stack);
-	// if (b == null) return;
-	//
-	// list.add(b.getDisplayName());
-	// }
-
 	@Override
 	public boolean preInit() {
 
@@ -127,5 +117,4 @@ public class ItemCover extends ItemAttachment {
 	public void registerIcons(IIconRegister ir) {
 
 	}
-
 }

@@ -198,4 +198,11 @@ public class Signaller extends Attachment {
     public boolean shouldRSConnect() {
         return true;
     }
+
+
+    public boolean canAddToTile(TileTDBase tileMultiBlock) {
+
+        return tileMultiBlock.getDuctType().frameType != 2;
+    }
+
 }

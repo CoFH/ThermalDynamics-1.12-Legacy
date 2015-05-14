@@ -196,7 +196,7 @@ public class TDDucts {
 
 		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
 
-        glowDuct = registerDuct(new DuctGlow(OFFSET_STRUCTURE + 1, 0, "glowstone", Type.STRUCTURAL, DuctFactory.glow, "lumium", "lumium", null, 0 ));
+        glowDuct = registerDuct(new DuctGlow(OFFSET_STRUCTURE + 1, 0, "structureGlow", Type.STRUCTURAL, DuctFactory.glow, "lumium", "lumium", null, 0 ));
 	}
 
 	public static int OFFSET_ENERGY = 0 * 16;
