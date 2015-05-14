@@ -47,13 +47,13 @@ public class RetrieverFluid extends ServoFluid {
                 return;
             }
         }
-        for (Iterator iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
             TileFluidDuct fluidDuct = (TileFluidDuct) iterator.next();
 
             if(!fluidDuct.cachesExist())
                 continue;
 
-            for (int k = 0; k < 6; k++) {
+            for (int k = 0; k < 6 && maxInput > 0; k++) {
                 int i = (k + fluidDuct.internalSideCounter) % 6;
                 if (fluidDuct.cache[i] == null
                         || (fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT)) {
@@ -76,13 +76,11 @@ public class RetrieverFluid extends ServoFluid {
                 if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid)
                         && fluidDuct.cache[i].canDrain(ForgeDirection.VALID_DIRECTIONS[i ^ 1], fluid.getFluid())) {
 
-                    fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[i], fluid, true);
+                    maxInput -= fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[i], fluid, true);
 
                     if (this.fluidDuct.fluidGrid.toDistribute > 0 && this.fluidDuct.fluidGrid.myTank.getFluid() != null) {
                         this.fluidDuct.transfer(side, Math.min(this.fluidDuct.fluidGrid.myTank.getFluid().amount, this.fluidDuct.fluidGrid.toDistribute), false, this.fluidDuct.fluidGrid.myTank.getFluid());
                     }
-
-                    return;
                 }
             }
         }
