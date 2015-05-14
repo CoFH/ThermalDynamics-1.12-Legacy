@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Facing;
@@ -88,12 +89,22 @@ public class Signaller extends Attachment {
         super.onNeighborChange();
 
         if (type == 0) {
+            int dx = tile.xCoord + Facing.offsetsXForSide[side];
+            int dy = tile.yCoord + Facing.offsetsYForSide[side];
+            int dz = tile.zCoord + Facing.offsetsZForSide[side];
             powerLevel = tile.world().getIndirectPowerLevelTo(
-                    tile.x() + Facing.offsetsXForSide[side],
-                    tile.y() + Facing.offsetsYForSide[side],
-                    tile.z() + Facing.offsetsZForSide[side],
+                    dx,
+                    dy,
+                    dz,
                     side
             );
+
+            if(tile.world().getBlock(dx,dy,dz) == Blocks.redstone_wire) {
+                powerLevel = Math.max(powerLevel, tile.world().getBlockMetadata(dx, dy, dz));
+            }
+
+            if(powerLevel > 0)  // Make the signallers ON/OFF
+                powerLevel = 15;
         }
 
         if (tile.myGrid != null) {

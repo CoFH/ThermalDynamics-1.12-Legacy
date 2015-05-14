@@ -101,7 +101,7 @@ public class ThermalDynamics extends BaseMod {
 		itemFilter = addItem(new ItemFilter());
 		itemCover = addItem(new ItemCover());
 		itemRetriever = addItem(new ItemRetriever());
-        itemSignaller =addItem(new ItemSignaler());
+        itemSignaller = addItem(new ItemSignaler());
 
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();

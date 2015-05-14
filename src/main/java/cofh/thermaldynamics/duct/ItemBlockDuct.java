@@ -143,9 +143,13 @@ public class ItemBlockDuct extends ItemBlockBase {
 			}
 			break;
 		case STRUCTURAL:
-			list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
-			list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
-			break;
+            if (duct == TDDucts.structure) {
+                list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+                list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
+            } else if (duct == TDDucts.glowDuct) {
+                list.add(StringHelper.localize("info.thermaldynamics.duct.luxDuct"));
+            }
+            break;
 		case CRAFTING:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.crafting"));
 			break;
