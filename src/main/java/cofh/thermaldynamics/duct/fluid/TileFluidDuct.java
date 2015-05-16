@@ -359,7 +359,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		super.writeToNBT(nbt);
 
 		if (fluidGrid != null && fluidGrid.hasValidFluid()) {
-
 			mySavedFluid = fluidGrid.getNodeShare(this);
 			mySavedFluid.writeToNBT(nbt);
 
@@ -380,10 +379,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		fluidForGrid = FluidStack.loadFluidStackFromNBT(nbt);
 		if (nbt.hasKey("ConnFluid")) {
 			myConnectionFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("ConnFluid"));
-		}
-
-		if (fluidForGrid != null && fluidForGrid.fluidID == 0) {
-			fluidForGrid = null;
 		}
 	}
 

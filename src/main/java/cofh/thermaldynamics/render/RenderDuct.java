@@ -294,7 +294,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 	public void renderFluid(FluidStack stack, int[] connection, int level, double x, double y, double z) {
 
-		if (stack == null || stack.amount <= 0 || level <= 0 || stack.fluidID <= 0) {
+		if (stack == null || stack.amount <= 0 || level <= 0) {
 			return;
 		}
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

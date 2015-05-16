@@ -5,7 +5,6 @@ import cofh.lib.util.helpers.MathHelper;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidTankGrid extends FluidTankAdv {
@@ -48,7 +47,7 @@ public class FluidTankGrid extends FluidTankAdv {
 		int viscosity = 0;
 
 		if (fluid != null) {
-			viscosity = FluidRegistry.getFluid(fluid.fluidID).getViscosity();
+			viscosity = fluid.getFluid().getViscosity();
 			fluidThroughput = MathHelper.clampI(120000 / viscosity, 80, 600);
 
 			if (fluidFlowrate.containsKey(fluid.getFluid().getName())) {
