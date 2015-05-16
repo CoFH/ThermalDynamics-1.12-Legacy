@@ -72,15 +72,15 @@ public class ServoFluid extends ServoBase {
 
 		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
 
-        maxInput = fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[side], theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false), false);
+		maxInput = fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[side], theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false), false);
 
 		FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, true);
-        fluidDuct.fill(ForgeDirection.getOrientation(side), returned, true);
+		fluidDuct.fill(ForgeDirection.getOrientation(side), returned, true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {
 
-		return theFluid != null && theFluid.fluidID != 0 && filter.allowFluid(theFluid);
+		return theFluid != null && filter.allowFluid(theFluid);
 	}
 
 	@Override
