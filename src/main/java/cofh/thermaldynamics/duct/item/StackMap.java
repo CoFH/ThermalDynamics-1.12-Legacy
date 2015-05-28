@@ -19,6 +19,9 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 
 	public boolean addItemEntry(ItemEntry entry, int amount) {
 
+		if (entry == null) {
+			return false;
+		}
 		adjustOrPutValue(entry, amount, amount);
 		return true;
 	}

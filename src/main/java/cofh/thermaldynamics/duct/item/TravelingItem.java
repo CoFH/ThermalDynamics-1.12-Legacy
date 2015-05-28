@@ -252,7 +252,6 @@ public class TravelingItem {
 					if (!TickHandlerClient.tickBlocks.contains(itemDuct) && !TickHandlerClient.tickBlocksToAdd.contains(itemDuct)) {
 						TickHandlerClient.tickBlocksToAdd.add(itemDuct);
 					}
-
 				}
 			}
 		}
@@ -333,7 +332,6 @@ public class TravelingItem {
 		if (myPath == null) {
 			return null;
 		}
-
 		if (myPath.dest == null) {
 			if (myPath.endPoint == null) {
 				if (!hasDest) {
@@ -350,10 +348,12 @@ public class TravelingItem {
 
 	public StackMap.ItemEntry getStackEntry() {
 
+		if (stack == null) {
+			return null;
+		}
 		if (stackItemEntry == null || stackItemEntry.side != myPath.getLastSide()) {
 			stackItemEntry = new StackMap.ItemEntry(stack, myPath.getLastSide());
 		}
-
 		return stackItemEntry;
 	}
 

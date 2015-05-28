@@ -27,7 +27,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	@Override
 	public void tickGrid() {
 
-        super.tickGrid();
+		super.tickGrid();
 
 		repoll = shouldRepoll;
 		if (shouldRepoll) {
@@ -75,14 +75,12 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 		if (item.myPath == null) {
 			return;
 		}
-
 		BlockCoord dest = item.getDest();
 		StackMap list = travelingItems.get(dest);
 		if (list == null) {
 			list = new StackMap();
 			travelingItems.put(dest, list);
 		}
-
 		list.addItemEntry(item.getStackEntry(), item.stack.stackSize);
 	}
 
