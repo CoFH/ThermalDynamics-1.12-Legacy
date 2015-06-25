@@ -1,11 +1,9 @@
-package cofh.thermaldynamics.duct.attachments.facades;
+package cofh.thermaldynamics.duct.attachments.cover;
 
-import static cofh.thermaldynamics.duct.attachments.facades.CoverBlockAccess.Result.*;
-
+import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
 import cofh.api.block.IBlockAppearance;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;

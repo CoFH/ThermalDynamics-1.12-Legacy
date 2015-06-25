@@ -3,10 +3,9 @@ package cofh.thermaldynamics.render;
 import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
 import cofh.repack.codechicken.lib.render.CCRenderState;
-import cofh.thermaldynamics.duct.attachments.facades.Cover;
-import cofh.thermaldynamics.duct.attachments.facades.CoverHelper;
-import cofh.thermaldynamics.duct.attachments.facades.CoverRenderer;
-
+import cofh.thermaldynamics.duct.attachments.cover.Cover;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
+import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
@@ -17,7 +16,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import org.lwjgl.opengl.GL11;
 
 public class ItemCoverRenderer implements IItemRenderer {

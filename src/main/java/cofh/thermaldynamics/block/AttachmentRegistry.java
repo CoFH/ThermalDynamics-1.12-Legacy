@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.block;
 
-import cofh.thermaldynamics.duct.attachments.facades.Cover;
+import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
 import cofh.thermaldynamics.duct.attachments.retriever.RetrieverFluid;

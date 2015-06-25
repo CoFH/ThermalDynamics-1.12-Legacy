@@ -13,7 +13,7 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.core.TDProps;
-import cofh.thermaldynamics.duct.attachments.facades.Cover;
+import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuperConductor;
@@ -29,11 +29,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -291,7 +289,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 					ret.addAll(cover.getDrops());
 				}
 			}
-			multiBlock.dropAdditonal(ret);
+			multiBlock.dropAdditional(ret);
 		}
 
 		if (nbt != null) {

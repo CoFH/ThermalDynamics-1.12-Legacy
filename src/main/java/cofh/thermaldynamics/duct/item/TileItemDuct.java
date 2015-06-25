@@ -151,7 +151,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 *
+	 * 
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override
@@ -638,12 +638,12 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	}
 
 	@Override
-	public void dropAdditonal(ArrayList<ItemStack> ret) {
+	public void dropAdditional(ArrayList<ItemStack> ret) {
 
 		for (TravelingItem travelingItem : Iterables.concat(myItems, itemsToAdd)) {
 			ret.add(travelingItem.stack);
 		}
-		super.dropAdditonal(ret);
+		super.dropAdditional(ret);
 	}
 
 	@Override
@@ -973,7 +973,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		if (toInsert <= 0) {
 			return stack;
 		}
-
 		if (stack.stackSize < toInsert) {
 			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
 		} else {

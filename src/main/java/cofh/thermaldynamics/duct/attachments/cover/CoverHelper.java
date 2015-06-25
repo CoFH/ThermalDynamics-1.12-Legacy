@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.attachments.facades;
+package cofh.thermaldynamics.duct.attachments.cover;
 
 import cofh.thermaldynamics.ThermalDynamics;
 
@@ -59,6 +59,9 @@ public class CoverHelper {
 	public static boolean isValid(Block block, int meta) {
 
 		// noinspection deprecation
+		if (block == null) {
+			return false;
+		}
 		return !(block.hasTileEntity(meta) || block.hasTileEntity());
 
 	}

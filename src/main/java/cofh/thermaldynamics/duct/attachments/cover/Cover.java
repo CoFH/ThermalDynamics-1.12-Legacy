@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.attachments.facades;
+package cofh.thermaldynamics.duct.attachments.cover;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.render.RenderHelper;
