@@ -27,10 +27,12 @@ import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -44,6 +46,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
@@ -80,7 +83,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE,
 			NeighborTypes.NONE };
 	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL,
-			ConnectionTypes.NORMAL, ConnectionTypes.NORMAL };
+			ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.BLOCKED };
 	public byte internalSideCounter = 0;
 
 	public Attachment attachments[] = new Attachment[] { null, null, null, null, null, null };
@@ -1145,22 +1148,23 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		markChunkDirty();
 	}
 
-    @Override
-    public void addSignallers() {
-        for (Attachment attachment : attachments) {
-            if (attachment != null) {
-                if (attachment.getId() == AttachmentRegistry.SIGNALLER) {
-                    Signaller signaller = (Signaller) attachment;
-                    if (signaller.isInput())
-                        myGrid.addSignalInput(signaller);
-                    else
-                        myGrid.addSignalOutput(attachment);
-                } else if (attachment.respondsToSignallum()) {
-                    myGrid.addSignalOutput(attachment);
-                }
-            }
-        }
-    }
+	@Override
+	public void addSignallers() {
 
+		for (Attachment attachment : attachments) {
+			if (attachment != null) {
+				if (attachment.getId() == AttachmentRegistry.SIGNALLER) {
+					Signaller signaller = (Signaller) attachment;
+					if (signaller.isInput()) {
+						myGrid.addSignalInput(signaller);
+					} else {
+						myGrid.addSignalOutput(attachment);
+					}
+				} else if (attachment.respondsToSignallum()) {
+					myGrid.addSignalOutput(attachment);
+				}
+			}
+		}
+	}
 
 }
