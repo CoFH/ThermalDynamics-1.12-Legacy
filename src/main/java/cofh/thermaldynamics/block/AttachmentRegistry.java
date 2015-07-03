@@ -3,11 +3,11 @@ package cofh.thermaldynamics.block;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
+import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.duct.attachments.retriever.RetrieverFluid;
 import cofh.thermaldynamics.duct.attachments.retriever.RetrieverItem;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.attachments.signaller.Signaller;
 
 public class AttachmentRegistry {
 
@@ -18,7 +18,7 @@ public class AttachmentRegistry {
 	public final static byte FILTER_ITEM = 4;
 	public final static byte RETRIEVER_FLUID = 5;
 	public final static byte RETRIEVER_ITEM = 6;
-    public final static byte SIGNALLER = 7;
+	public final static byte RELAY = 7;
 
 	public static Attachment createAttachment(TileTDBase tile, byte side, int id) {
 
@@ -36,9 +36,9 @@ public class AttachmentRegistry {
 			return new RetrieverFluid(tile, side);
 		} else if (id == RETRIEVER_ITEM) {
 			return new RetrieverItem(tile, side);
-		} else if (id == SIGNALLER) {
-            return new Signaller(tile, side);
-        }
+		} else if (id == RELAY) {
+			return new Relay(tile, side);
+		}
 		throw new RuntimeException("Illegal Attachment ID");
 	}
 

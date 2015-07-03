@@ -11,11 +11,11 @@ import cofh.thermaldynamics.debughelper.CommandThermalDebug;
 import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.duct.attachments.signaller.ItemSignaler;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.item.ItemCover;
 import cofh.thermaldynamics.item.ItemFilter;
+import cofh.thermaldynamics.item.ItemRelay;
 import cofh.thermaldynamics.item.ItemRetriever;
 import cofh.thermaldynamics.item.ItemServo;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
@@ -101,7 +101,7 @@ public class ThermalDynamics extends BaseMod {
 		itemFilter = addItem(new ItemFilter());
 		itemCover = addItem(new ItemCover());
 		itemRetriever = addItem(new ItemRetriever());
-        itemSignaller = addItem(new ItemSignaler());
+		itemSignaller = addItem(new ItemRelay());
 
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
@@ -191,7 +191,7 @@ public class ThermalDynamics extends BaseMod {
 	public static ItemFilter itemFilter;
 	public static ItemCover itemCover;
 	public static ItemRetriever itemRetriever;
-    public static ItemSignaler itemSignaller;
+	public static ItemRelay itemSignaller;
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {

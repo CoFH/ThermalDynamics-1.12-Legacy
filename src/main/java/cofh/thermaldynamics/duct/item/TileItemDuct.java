@@ -151,7 +151,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 * 
+	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override

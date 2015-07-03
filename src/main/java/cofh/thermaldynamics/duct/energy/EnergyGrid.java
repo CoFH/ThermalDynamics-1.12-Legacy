@@ -55,7 +55,7 @@ public class EnergyGrid extends MultiBlockGrid {
 	@Override
 	public void tickGrid() {
 
-        super.tickGrid();
+		super.tickGrid();
 		if (!nodeSet.isEmpty() && myStorage.getEnergyStored() > 0) {
 			currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
 			extraEnergy = myStorage.getEnergyStored() % nodeSet.size();

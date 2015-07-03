@@ -107,8 +107,10 @@ public class ItemBlockDuct extends ItemBlockBase {
 			break;
 		case FLUID:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
-			list.add(StringHelper.getNoticeText("info.thermaldynamics.transferFluid"));
 
+			if (duct.type != 3) {
+				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferFluid"));
+			}
 			if (duct.type == 0) {
 				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
 			} else if (duct.type == 1) {
@@ -117,6 +119,9 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
 						+ StringHelper.LIGHT_GRAY + " RF/t.");
+			} else if (duct.type == 3) {
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info") + StringHelper.LIGHT_GRAY + " (" + StringHelper.BRIGHT_BLUE
+						+ StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + ")");
 			}
 			break;
 		case ITEM:
@@ -143,13 +148,14 @@ public class ItemBlockDuct extends ItemBlockBase {
 			}
 			break;
 		case STRUCTURAL:
-            if (duct == TDDucts.structure) {
-                list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
-                list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
-            } else if (duct == TDDucts.glowDuct) {
-                list.add(StringHelper.localize("info.thermaldynamics.duct.luxDuct"));
-            }
-            break;
+			if (duct == TDDucts.structure) {
+				list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
+			} else if (duct == TDDucts.lightDuct) {
+				list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+				list.add(StringHelper.localize("info.thermaldynamics.duct.light"));
+			}
+			break;
 		case CRAFTING:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.crafting"));
 			break;

@@ -1,10 +1,8 @@
 package cofh.thermaldynamics.render;
 
 import cofh.core.render.RenderUtils;
-import cofh.repack.codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
@@ -23,20 +21,13 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer {
 
 		GL11.glPushMatrix();
 
-		// something in the following prevents rendering from being messed up
-		// todo: find out what at some point
-		CCRenderState.reset();
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-		CCRenderState.reset();
-		CCRenderState.useNormals = true;
 		GL11.glColor4f(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_LIGHTING);
-
+		GL11.glDisable(GL11.GL_LIGHTING);
 		RenderDuct.instance.getDuctConnections(duct);
 		RenderDuct.instance.renderFluid(duct.myRenderFluid, RenderDuct.connections, duct.getRenderFluidLevel(), x, y, z);
-		CCRenderState.reset();
+
 		GL11.glPopMatrix();
 
 	}

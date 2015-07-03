@@ -86,11 +86,10 @@ public class Duct {
 			iconFluidTexture = TextureTransparent.registerTransparentIcon(ir, fluidTexture, fluidTransparency);
 		}
 		if (frameTexture != null) {
-            if(frameTexture.endsWith("_large")){
-                frameType = 3;
-                iconFrameTexture = ir.registerIcon("thermaldynamics:duct/base/"+frameTexture);
-            }
-			else if (SIDE_DUCTS.equals(frameTexture)) {
+			if (frameTexture.endsWith("_large")) {
+				frameType = 3;
+				iconFrameTexture = ir.registerIcon("thermaldynamics:duct/base/" + frameTexture);
+			} else if (SIDE_DUCTS.equals(frameTexture)) {
 				frameType = 1;
 			} else {
 				iconFrameTexture = TextureOverlay.generateFrameTexture(ir, frameTexture);

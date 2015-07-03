@@ -14,7 +14,6 @@ public class TileStructuralDuct extends TileTDBase {
 				&& theTile.getBlockMetadata() == this.getBlockMetadata();
 	}
 
-
 	@Override
 	public boolean cachesExist() {
 

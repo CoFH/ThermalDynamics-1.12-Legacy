@@ -120,30 +120,34 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		}
 	}
 
-    @Override
-    public void checkSignal() {
-        boolean wasPowered = isPowered;
-        isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
-        if (wasPowered != isPowered) {
-            tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
-        }
-    }
+	@Override
+	public void checkSignal() {
 
-    @Override
-    public boolean respondsToSignallum() {
-        return true;
-    }
+		boolean wasPowered = isPowered;
+		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
+		if (wasPowered != isPowered) {
+			tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+		}
+	}
 
-    public boolean getPowerState() {
-        if(tile.myGrid != null){
-            if(tile.myGrid.signallumLevel > 0)
-                return true;
-        }
+	@Override
+	public boolean respondsToSignallum() {
 
-        return tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
-    }
+		return true;
+	}
 
-    @Override
+	public boolean getPowerState() {
+
+		if (tile.myGrid != null) {
+			if (tile.myGrid.redstoneLevel > 0) {
+				return true;
+			}
+		}
+
+		return tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
+	}
+
+	@Override
 	public boolean isStuffed() {
 
 		return false;

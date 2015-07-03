@@ -4,21 +4,21 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileEnergyDuctSuperConductor extends TileEnergyDuct {
+public class TileEnergyDuctSuper extends TileEnergyDuct {
 
-	private EnergyGridSuperConductor internalGridSC;
+	private EnergyGridSuper internalGridSC;
 
 	@Override
 	public void setGrid(MultiBlockGrid newGrid) {
 
 		super.setGrid(newGrid);
-		internalGridSC = (EnergyGridSuperConductor) newGrid;
+		internalGridSC = (EnergyGridSuper) newGrid;
 	}
 
 	@Override
 	public MultiBlockGrid getNewGrid() {
 
-		return new EnergyGridSuperConductor(worldObj, getDuctType().type);
+		return new EnergyGridSuper(worldObj, getDuctType().type);
 	}
 
 	@Override
@@ -26,9 +26,8 @@ public class TileEnergyDuctSuperConductor extends TileEnergyDuct {
 
 		if (this.internalGridSC != null && canConnectEnergy(from)) {
 			return internalGridSC.sendEnergy(maxReceive, simulate);
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 
 }

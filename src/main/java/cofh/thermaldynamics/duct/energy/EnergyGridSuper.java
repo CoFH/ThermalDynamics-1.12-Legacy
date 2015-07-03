@@ -5,12 +5,14 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraft.world.World;
 
-public class EnergyGridSuperConductor extends EnergyGrid {
+public class EnergyGridSuper extends EnergyGrid {
 
 	int nodeTracker;
 	boolean isSendingEnergy;
 
-	public EnergyGridSuperConductor(World world, int type) {
+	TileEnergyDuct[] nodeList = null;
+
+	public EnergyGridSuper(World world, int type) {
 
 		super(world, type);
 		myStorage.setMaxExtract(myStorage.getMaxEnergyStored());
@@ -29,8 +31,6 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 			}
 		}
 	}
-
-	TileEnergyDuct[] nodeList = null;
 
 	public int sendEnergy(int energy, boolean simulate) {
 
@@ -84,7 +84,7 @@ public class EnergyGridSuperConductor extends EnergyGrid {
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return grid instanceof EnergyGridSuperConductor;
+		return grid instanceof EnergyGridSuper;
 	}
 
 	@Override

@@ -90,9 +90,10 @@ public class TDCrafting {
 		GameRegistry.addRecipe(new ShapelessOreRecipe(ItemHelper.cloneStack(TDDucts.fluidFluxOpaque.itemStack, 3), TDDucts.fluidHardenedOpaque.itemStack,
 				TDDucts.fluidHardenedOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, "ingotSignalum", "ingotElectrum"));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidSuper.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', glassHardened, 'P', "ingotPlatinum", 'l', "nuggetLead"));
-        GameRegistry
-                .addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidSuperOpaque.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', "ingotLead", 'P', "ingotPlatinum", 'l', "nuggetLead"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidSuper.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G',
+				glassHardened, 'P', "ingotPlatinum", 'l', "nuggetLead"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.fluidSuperOpaque.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G',
+				"ingotLead", 'P', "ingotPlatinum", 'l', "nuggetLead"));
 
 		/* FLUID - TE Integration */
 		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(TFItems.nuggetCopper, 3));
@@ -123,18 +124,17 @@ public class TDCrafting {
 		/* STRUCTURE */
 		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead"));
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.glowDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead", 'R', "dustRedstone"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead", 'R',
+				"dustRedstone"));
 
 		if (enableCoverRecipes) {
 			GameRegistry.addRecipe(RecipeCover.instance);
 		}
 
-        /* SIGNALLER */
+		/* SIGNALLER */
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ThermalDynamics.itemSignaller, 2),
-                "iGi", "IRI",
-                'R', "dustRedstone", 'G', "gearSignalum",
-                'I', "ingotLead", 'i', "nuggetSignalum"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ThermalDynamics.itemSignaller, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gearSignalum",
+				'I', "ingotLead", 'i', "nuggetSignalum"));
 
 		/* ATTACHMENTS */
 		String[] materials = { "Iron", "Invar", "Electrum", "Signalum", "Enderium" };

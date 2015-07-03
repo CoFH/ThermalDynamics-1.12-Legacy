@@ -21,6 +21,7 @@ import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -31,6 +32,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
@@ -43,7 +45,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	static IIcon textureCenterLine;
 
 	public static IIcon coverBase;
-    public static IIcon signalTexture;
+	public static IIcon signalTexture;
 	public static IIcon[] servoTexture = new IIcon[10];
 	public static IIcon[] retrieverTexture = new IIcon[10];
 	public static IIcon[] filterTexture = new IIcon[5];
@@ -71,7 +73,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public static CCModel[] modelOpaqueTubes;
 	public static CCModel[] modelTransTubes;
 	private static CCModel[] modelFluidTubes;
-    private static CCModel[] modelLargeTubes;
+	private static CCModel[] modelLargeTubes;
 
 	public static void initialize() {
 
@@ -86,7 +88,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		}
 		coverBase = IconRegistry.getIcon("CoverBase");
 		sideDucts = IconRegistry.getIcon("SideDucts");
-        signalTexture = IconRegistry.getIcon("Signaller");
+		signalTexture = IconRegistry.getIcon("Signaller");
 
 		textureCenterLine = TFFluids.fluidSteam.getIcon();
 	}
@@ -104,7 +106,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 			for (int s = 0; s < 7; s++) {
 				modelFluid[i - 1][s] = CCModel.quadModel(24).generateBlock(0, boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5])
-						.computeNormals().computeLighting(LightModel.standardLightModel);
+						.computeNormals();
 			}
 		}
 	}
@@ -124,8 +126,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		modelOpaqueTubes = ModelHelper.StandardTubes.genModels(0.1875F, true);
 		modelTransTubes = ModelHelper.StandardTubes.genModels(0.1875F, false);
-		modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false);
-        modelLargeTubes = ModelHelper.StandardTubes.genModels(0.21875f, true);
+		modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false, false);
+		modelLargeTubes = ModelHelper.StandardTubes.genModels(0.21875f, true);
 
 		modelFrameConnection = (new ModelHelper.OctagonalTubeGen(0.375, 0.1812, true)).generateModels();
 		modelFrame = (new ModelHelper.OctagonalTubeGen(0.375 * 0.99, 0.1812, false)).generateModels();
@@ -200,8 +202,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		if (ductType.frameType == 1) {
 			renderSideTubes(0, connection, x - 0.5, y - 0.5, z - 0.5, sideDucts);
-		}
-		else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
+		} else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
@@ -215,10 +216,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 			if (modelFrameConnection[c].verts.length != 0) {
 				modelFrameConnection[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 			}
+		} else if (ductType.frameType == 3 && ductType.iconFrameTexture != null) {
+			modelLargeTubes[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 		}
-        else if(ductType.frameType == 3 && ductType.iconFrameTexture != null){
-            modelLargeTubes[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
-        }
 		return true;
 	}
 

@@ -19,7 +19,7 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.attachments.signaller.Signaller;
+import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
@@ -1153,8 +1153,8 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 		for (Attachment attachment : attachments) {
 			if (attachment != null) {
-				if (attachment.getId() == AttachmentRegistry.SIGNALLER) {
-					Signaller signaller = (Signaller) attachment;
+				if (attachment.getId() == AttachmentRegistry.RELAY) {
+					Relay signaller = (Relay) attachment;
 					if (signaller.isInput()) {
 						myGrid.addSignalInput(signaller);
 					} else {

@@ -176,19 +176,22 @@ public abstract class Attachment {
 
 	}
 
-    public int getRSOutput() {
-        return 0;
-    }
+	public int getRSOutput() {
 
-    public boolean shouldRSConnect() {
-        return false;
-    }
+		return 0;
+	}
 
-    public boolean respondsToSignallum(){
-        return false;
-    }
+	public boolean shouldRSConnect() {
 
-    public void checkSignal(){
+		return false;
+	}
 
-    }
+	public boolean respondsToSignallum() {
+
+		return false;
+	}
+
+	public void checkSignal() {
+
+	}
 }

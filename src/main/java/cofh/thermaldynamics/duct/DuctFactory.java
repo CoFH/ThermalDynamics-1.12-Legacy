@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
-import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuperConductor;
+import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
@@ -10,8 +10,8 @@ import cofh.thermaldynamics.duct.fluid.TileFluidDuctSuper;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
+import cofh.thermaldynamics.duct.light.TileLightDuct;
 
-import cofh.thermaldynamics.duct.glow.TileGlowDuct;
 import net.minecraft.world.World;
 
 public abstract class DuctFactory {
@@ -66,7 +66,7 @@ public abstract class DuctFactory {
 		@Override
 		public TileTDBase createTileEntity(Duct duct, World worldObj) {
 
-			return new TileEnergyDuctSuperConductor();
+			return new TileEnergyDuctSuper();
 		}
 	};
 
@@ -97,19 +97,23 @@ public abstract class DuctFactory {
 		}
 	};
 
-    public static DuctFactory glow = new DuctFactory() {
-        @Override
-        public TileTDBase createTileEntity(Duct duct, World worldObj) {
-            return new TileGlowDuct();
-        }
-    };
+	public static DuctFactory glow = new DuctFactory() {
 
-    public static DuctFactory fluid_super = new DuctFactory() {
-        @Override
-        public TileTDBase createTileEntity(Duct duct, World worldObj) {
-            return new TileFluidDuctSuper();
-        }
-    };
+		@Override
+		public TileTDBase createTileEntity(Duct duct, World worldObj) {
+
+			return new TileLightDuct();
+		}
+	};
+
+	public static DuctFactory fluid_super = new DuctFactory() {
+
+		@Override
+		public TileTDBase createTileEntity(Duct duct, World worldObj) {
+
+			return new TileFluidDuctSuper();
+		}
+	};
 
 	public abstract TileTDBase createTileEntity(Duct duct, World worldObj);
 }

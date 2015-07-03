@@ -2,7 +2,8 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct.Type;
-import cofh.thermaldynamics.duct.glow.DuctGlow;
+import cofh.thermaldynamics.duct.light.DuctLight;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -148,11 +149,11 @@ public class TDDucts {
 		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null,
 				null, 0);
 
-        fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "lumium", "lumium", null, 0, "platinum_large",
-                null, 0);
+		fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "lumium", "lumium", null, 0, "platinum_large",
+				null, 0);
 
-        fluidSuperOpaque = addDuct(OFFSET_FLUID + 7, true, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "lumium", "lumium", null, 0, "platinum_large",
-                null, 0);
+		fluidSuperOpaque = addDuct(OFFSET_FLUID + 7, true, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "lumium", "lumium", null, 0,
+				"platinum_large", null, 0);
 
 		fluidHardened.setRarity(1);
 		fluidHardenedOpaque.setRarity(1);
@@ -160,8 +161,8 @@ public class TDDucts {
 		fluidFlux.setRarity(1);
 		fluidFluxOpaque.setRarity(1);
 
-        fluidSuper.setRarity(2);
-        fluidSuperOpaque.setRarity(2);
+		fluidSuper.setRarity(2);
+		fluidSuperOpaque.setRarity(2);
 	}
 
 	static void addItemDucts() {
@@ -196,7 +197,7 @@ public class TDDucts {
 
 		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
 
-        glowDuct = registerDuct(new DuctGlow(OFFSET_STRUCTURE + 1, 0, "structureGlow", Type.STRUCTURAL, DuctFactory.glow, "lumium", "lumium", null, 0 ));
+		lightDuct = registerDuct(new DuctLight(OFFSET_STRUCTURE + 1, 0, "structureGlow", Type.STRUCTURAL, DuctFactory.glow, "lumium", "lumium", null, 0));
 	}
 
 	public static int OFFSET_ENERGY = 0 * 16;
@@ -228,8 +229,8 @@ public class TDDucts {
 	public static Duct fluidFlux;
 	public static Duct fluidFluxOpaque;
 
-    public static Duct fluidSuper;
-    public static Duct fluidSuperOpaque;
+	public static Duct fluidSuper;
+	public static Duct fluidSuperOpaque;
 
 	/* ITEM */
 	public static DuctItem itemBasic;
@@ -247,7 +248,7 @@ public class TDDucts {
 	/* STRUCTURE */
 	public static Duct structure;
 
-    public static DuctGlow glowDuct;
+	public static DuctLight lightDuct;
 
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,

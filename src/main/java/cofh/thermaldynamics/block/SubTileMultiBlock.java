@@ -201,8 +201,8 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 		}
 	}
 
-    @Override
-    public void addSignallers() {
+	@Override
+	public void addSignallers() {
 
-    }
+	}
 }

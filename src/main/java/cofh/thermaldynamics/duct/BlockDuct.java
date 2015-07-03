@@ -16,7 +16,7 @@ import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
-import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuperConductor;
+import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
@@ -29,9 +29,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -141,7 +143,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 			}
 		}
 
-        IconRegistry.addIcon("Signaller", "thermaldynamics:duct/attachment/signallers/Signaller", ir);
+		IconRegistry.addIcon("Signaller", "thermaldynamics:duct/attachment/signallers/Signaller", ir);
 
 		IconRegistry.addIcon("CoverBase", "thermaldynamics:duct/attachment/cover/support", ir);
 
@@ -363,7 +365,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 			return true;
 		}
 		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.FluxDuct");
-		GameRegistry.registerTileEntity(TileEnergyDuctSuperConductor.class, "thermaldynamics.FluxDuctSuperConductor");
+		GameRegistry.registerTileEntity(TileEnergyDuctSuper.class, "thermaldynamics.FluxDuctSuperConductor");
 
 		EnergyGrid.initialize();
 		SubTileEnergyRedstone.initialize();
@@ -371,7 +373,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
 		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
 		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
-        GameRegistry.registerTileEntity(TileFluidDuctSuper.class, "thermaldynamics.FluidDuctSuper");
+		GameRegistry.registerTileEntity(TileFluidDuctSuper.class, "thermaldynamics.FluidDuctSuper");
 
 		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ItemDuct");
 		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");
@@ -384,41 +386,44 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 	@Override
 	public boolean postInit() {
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+	@Override
+	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
 
-        TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
-        if (theTile != null && theTile.attachments[side ^ 1] != null) {
-            return theTile.attachments[side ^ 1].getRSOutput();
-        }
-        return 0;
-    }
+		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
+		if (theTile != null && theTile.attachments[side ^ 1] != null) {
+			return theTile.attachments[side ^ 1].getRSOutput();
+		}
+		return 0;
+	}
 
-    @Override
-    public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
+	@Override
+	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
 
-        return 0;
-    }
+		return 0;
+	}
 
-    @Override
-    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
-        if(side == -1)
-            return false;
+	@Override
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
 
-        int s;
-        if (side == 0) {
-            s = 2;
-        } else if (side == 1) {
-            s = 5;
-        } else if (side == 2) {
-            s = 3;
-        } else
-            s = 4;
+		if (side == -1) {
+			return false;
+		}
 
-        TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
-        return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
-    }
+		int s;
+		if (side == 0) {
+			s = 2;
+		} else if (side == 1) {
+			s = 5;
+		} else if (side == 2) {
+			s = 3;
+		} else {
+			s = 4;
+		}
+
+		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
+		return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
+	}
 }

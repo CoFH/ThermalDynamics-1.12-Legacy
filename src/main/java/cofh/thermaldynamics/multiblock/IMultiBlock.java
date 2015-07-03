@@ -51,5 +51,5 @@ public interface IMultiBlock {
 
 	public void onNeighborBlockChange();
 
-    public void addSignallers();
+	public void addSignallers();
 }

@@ -4,9 +4,10 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.debughelper.NoComodSet;
+import cofh.thermaldynamics.duct.attachments.relay.Relay;
 
-import cofh.thermaldynamics.duct.attachments.signaller.Signaller;
 import java.util.ArrayList;
+
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -15,12 +16,12 @@ public abstract class MultiBlockGrid {
 	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<IMultiBlock>();
 	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
 	public WorldGridList worldGrid;
-    public boolean signallumUpToDate;
-    public int signallumLevel;
-    public ArrayList<Signaller> signallersIn;
-    public ArrayList<Attachment> signallersOut;
+	public boolean signalsUpToDate;
+	public int redstoneLevel;
+	public ArrayList<Relay> relaysIn;
+	public ArrayList<Attachment> relaysOut;
 
-    public MultiBlockGrid(WorldGridList worldGrid) {
+	public MultiBlockGrid(WorldGridList worldGrid) {
 
 		this.worldGrid = worldGrid;
 		worldGrid.newGrids.add(this);
@@ -118,62 +119,68 @@ public abstract class MultiBlockGrid {
 	 */
 	public void tickGrid() {
 
-        if(signallumUpToDate)
-            return;
+		if (signalsUpToDate) {
+			return;
+		}
 
-        signallumUpToDate = true;
+		signalsUpToDate = true;
 
-        if(signallersIn == null){
-            signallersOut =  null;
-            for (IMultiBlock multiBlock : nodeSet) {
-                multiBlock.addSignallers();
-            }
-        }
+		if (relaysIn == null) {
+			relaysOut = null;
+			for (IMultiBlock multiBlock : nodeSet) {
+				multiBlock.addSignallers();
+			}
+		}
 
-        if(signallersIn == null) {
-            signallumLevel = 0;
-            if(signallersOut != null){
-                for (Attachment signaller : signallersOut) {
-                    signaller.checkSignal();
-                }
-            }
-            return;
-        }
+		if (relaysIn == null) {
+			redstoneLevel = 0;
+			if (relaysOut != null) {
+				for (Attachment signaller : relaysOut) {
+					signaller.checkSignal();
+				}
+			}
+			return;
+		}
 
-        if(signallersOut == null)
-            return;
+		if (relaysOut == null) {
+			return;
+		}
 
+		int powered = 0;
+		for (Relay signaller : relaysIn) {
+			powered = Math.max(powered, signaller.getPowerLevel());
+			if (powered == 15) {
+				break;
+			}
 
-        int powered = 0;
-        for (Signaller signaller : signallersIn) {
-             powered = Math.max(powered, signaller.getPowerLevel());
-             if(powered == 15)
-                break;
+		}
 
-        }
+		redstoneLevel = powered;
+		ArrayList<Attachment> signallersOut = this.relaysOut;
 
-        signallumLevel = powered;
-        ArrayList<Attachment> signallersOut = this.signallersOut;
+		for (Attachment output : signallersOut) {
+			output.checkSignal();
+		}
+	}
 
-        for (Attachment output : signallersOut) {
-            output.checkSignal();
-        }
-    }
+	public void addSignalInput(Relay signaller) {
 
-    public void addSignalInput(Signaller signaller){
-        if(signaller.isInput()) {
-            if (signallersIn == null)
-                signallersIn = new ArrayList<Signaller>();
+		if (signaller.isInput()) {
+			if (relaysIn == null) {
+				relaysIn = new ArrayList<Relay>();
+			}
 
-            signallersIn.add(signaller);
-        }
-    }
+			relaysIn.add(signaller);
+		}
+	}
 
-    public void addSignalOutput(Attachment attachment){
-        if (signallersOut == null)
-            signallersOut = new ArrayList<Attachment>();
-        signallersOut.add(attachment);
-    }
+	public void addSignalOutput(Attachment attachment) {
+
+		if (relaysOut == null) {
+			relaysOut = new ArrayList<Attachment>();
+		}
+		relaysOut.add(attachment);
+	}
 
 	/*
 	 * Called whenever a set changes so that grids that rely on set sizes can rebalance.
@@ -232,20 +239,20 @@ public abstract class MultiBlockGrid {
 
 	public void onMinorGridChange() {
 
-        resetSignallers();
+		resetRelays();
 	}
 
-    public void onMajorGridChange() {
+	public void onMajorGridChange() {
 
-        resetSignallers();
+		resetRelays();
 	}
 
-    public void resetSignallers() {
+	public void resetRelays() {
 
-        signallersIn = null;
-        signallersOut = null;
-        signallumUpToDate = false;
-    }
+		relaysIn = null;
+		relaysOut = null;
+		signalsUpToDate = false;
+	}
 
 	public int size() {
 
@@ -272,4 +279,5 @@ public abstract class MultiBlockGrid {
 	}
 
 	public abstract boolean canAddBlock(IMultiBlock aBlock);
+
 }

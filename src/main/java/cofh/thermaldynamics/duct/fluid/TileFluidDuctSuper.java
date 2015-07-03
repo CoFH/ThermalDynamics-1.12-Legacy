@@ -1,30 +1,34 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 public class TileFluidDuctSuper extends TileFluidDuct {
-    private FluidGridSuper internalGridFS;
 
-    @Override
-    public void setGrid(MultiBlockGrid newGrid) {
+	private FluidGridSuper internalGridFS;
 
-        super.setGrid(newGrid);
-        internalGridFS = (FluidGridSuper) newGrid;
-    }
+	@Override
+	public void setGrid(MultiBlockGrid newGrid) {
 
-    @Override
-    public MultiBlockGrid getNewGrid() {
+		super.setGrid(newGrid);
+		internalGridFS = (FluidGridSuper) newGrid;
+	}
 
-        return new FluidGridSuper(worldObj);
-    }
+	@Override
+	public MultiBlockGrid getNewGrid() {
 
-    @Override
-    public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        if (resource != null && isOpen(from) && matchesFilter(from, resource)) {
-            return internalGridFS.sendFluid(resource, !doFill);
-        }
-        return 0;
-    }
+		return new FluidGridSuper(worldObj);
+	}
+
+	@Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+
+		if (resource != null && isOpen(from) && matchesFilter(from, resource)) {
+			return internalGridFS.sendFluid(resource, !doFill);
+		}
+		return 0;
+	}
+
 }

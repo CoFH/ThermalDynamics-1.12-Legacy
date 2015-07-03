@@ -8,8 +8,10 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

@@ -41,6 +41,11 @@ public class ModelHelper {
 
 		public static CCModel[] genModels(float w, boolean opaque) {
 
+			return genModels(w, opaque, true);
+		}
+
+		public static CCModel[] genModels(float w, boolean opaque, boolean lighting) {
+
 			StandardTubes tubes = new StandardTubes(w, opaque);
 			CCModel[] models = new CCModel[64];
 			for (int i = 0; i < 64; i++) {
@@ -52,10 +57,9 @@ public class ModelHelper {
 				for (int j = 0; j < n; j++) {
 					models[i].verts[j] = model.get(j);
 				}
-
 				CCModel.generateBackface(models[i], 0, models[i], n, n);
 
-				finalizeModel(models[i]);
+				finalizeModel(models[i], lighting);
 			}
 			return models;
 		}
@@ -148,7 +152,16 @@ public class ModelHelper {
 
 	public static void finalizeModel(CCModel model1) {
 
-		model1.shrinkUVs(RenderHelper.RENDER_OFFSET).computeNormals().computeLighting(LightModel.standardLightModel);
+		finalizeModel(model1, true);
+	}
+
+	public static void finalizeModel(CCModel model1, boolean lighting) {
+
+		if (lighting) {
+			model1.shrinkUVs(RenderHelper.RENDER_OFFSET).computeNormals().computeLighting(LightModel.standardLightModel);
+		} else {
+			model1.shrinkUVs(RenderHelper.RENDER_OFFSET).computeNormals();
+		}
 	}
 
 	public static CCModel expandModel(CCModel model, double size) {
