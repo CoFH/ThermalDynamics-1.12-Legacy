@@ -149,11 +149,11 @@ public class TDDucts {
 		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null,
 				null, 0);
 
-		fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "platinum_large",
-				null, 0);
+		fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large", null,
+				0);
 
-		fluidSuperOpaque = addDuct(OFFSET_FLUID + 7, true, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0,
-				"platinum_large", null, 0);
+		fluidSuperOpaque = addDuct(OFFSET_FLUID + 7, true, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large",
+				null, 0);
 
 		fluidHardened.setRarity(1);
 		fluidHardenedOpaque.setRarity(1);
