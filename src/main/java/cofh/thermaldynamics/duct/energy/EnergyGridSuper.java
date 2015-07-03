@@ -58,15 +58,12 @@ public class EnergyGridSuper extends EnergyGrid {
 				nodeTracker = i + 1;
 			}
 		}
-
 		if (energy > 0) {
 			nodeTracker++;
 		}
-
 		if (nodeTracker >= list.length) {
 			nodeTracker = 0;
 		}
-
 		if (simulate) {
 			nodeTracker = tempTracker;
 		}

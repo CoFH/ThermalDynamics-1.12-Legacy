@@ -120,8 +120,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
 						+ StringHelper.LIGHT_GRAY + " RF/t.");
 			} else if (duct.type == 3) {
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info") + StringHelper.LIGHT_GRAY + " (" + StringHelper.BRIGHT_BLUE
-						+ StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + ")");
+				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info"));
 			}
 			break;
 		case ITEM:

@@ -3,107 +3,100 @@ package cofh.thermaldynamics.duct.fluid;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidGridSuper extends FluidGrid {
-    public FluidGridSuper(World world) {
-        super(world);
-    }
 
+	public FluidGridSuper(World world) {
 
-    int nodeTracker;
-    boolean isSendingFluid;
+		super(world);
+	}
 
+	int nodeTracker;
+	boolean isSendingFluid;
 
-    @Override
-    public void tickGrid() {
+	TileFluidDuct[] nodeList = null;
 
-        super.tickGrid();
-        int i = 0;
-        if (nodeList == null) {
-            nodeList = new TileFluidDuct[nodeSet.size()];
-            for (IMultiBlock multiBlock : nodeSet) {
-                nodeList[i] = (TileFluidDuct) multiBlock;
-                i++;
-            }
-        }
-    }
+	@Override
+	public void tickGrid() {
 
-    TileFluidDuct[] nodeList = null;
+		super.tickGrid();
+		int i = 0;
+		if (nodeList == null) {
+			nodeList = new TileFluidDuct[nodeSet.size()];
+			for (IMultiBlock multiBlock : nodeSet) {
+				nodeList[i] = (TileFluidDuct) multiBlock;
+				i++;
+			}
+		}
+	}
 
-    public int sendFluid(FluidStack fluid, boolean simulate) {
+	public int sendFluid(FluidStack fluid, boolean simulate) {
 
-        if (fluid == null || !FluidHelper.isFluidEqualOrNull(myTank.getFluid(), fluid) || isSendingFluid) return 0;
+		if (fluid == null || !FluidHelper.isFluidEqualOrNull(myTank.getFluid(), fluid) || isSendingFluid) {
+			return 0;
+		}
+		int fluidToSend = fluid.amount;
+		int addedToGrid = myTank.fill(fluid, !simulate);
 
-        fluid = fluid.copy();
+		fluidToSend -= addedToGrid;
 
-        int startAmount = fluid.amount;
+		if (fluidToSend <= 0) {
+			return fluid.amount;
+		}
+		int tempTracker = nodeTracker;
 
-        int addedToTank = myTank.fill(fluid, !simulate);
+		TileFluidDuct[] list = nodeList;
+		if (list == null || list.length == 0) {
+			return fluid.amount - fluidToSend;
+		}
+		isSendingFluid = true;
+		for (int i = nodeTracker; i < list.length && fluidToSend > 0; i++) {
+			fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
+			if (fluidToSend == 0) {
+				nodeTracker = i + 1;
+			}
+		}
+		for (int i = 0; i < list.length && i < nodeTracker && fluidToSend > 0; i++) {
+			fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
+			if (fluidToSend == 0) {
+				nodeTracker = i + 1;
+			}
+		}
+		if (fluidToSend > 0) {
+			nodeTracker++;
+		}
+		if (nodeTracker >= list.length) {
+			nodeTracker = 0;
+		}
+		if (simulate) {
+			nodeTracker = tempTracker;
+		}
+		isSendingFluid = false;
 
-        startAmount -= addedToTank;
+		return fluid.amount - fluidToSend;
+	}
 
-        if (startAmount == 0)
-            return fluid.amount;
+	@Override
+	public void onMajorGridChange() {
 
-        int tempTracker = nodeTracker;
+		super.onMajorGridChange();
+		nodeList = null;
+	}
 
-        TileFluidDuct[] list = nodeList;
-        if (list == null || list.length == 0) {
-            return fluid.amount - startAmount;
-        }
+	@Override
+	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-        int fluidToSend = startAmount;
+		return grid instanceof FluidGridSuper;
+	}
 
-        isSendingFluid = true;
-        for (int i = nodeTracker; i < list.length && fluidToSend > 0; i++) {
-            fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
-            if (fluidToSend == 0) {
-                nodeTracker = i + 1;
-            }
-        }
-        for (int i = 0; i < list.length && i < nodeTracker && fluidToSend > 0; i++) {
-            fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
-            if (fluidToSend == 0) {
-                nodeTracker = i + 1;
-            }
-        }
+	@Override
+	public void destroy() {
 
-        if (fluidToSend > 0) {
-            nodeTracker++;
-        }
-
-        if (nodeTracker >= list.length) {
-            nodeTracker = 0;
-        }
-
-        if (simulate) {
-            nodeTracker = tempTracker;
-        }
-        isSendingFluid = false;
-
-        return fluid.amount - fluidToSend;
-    }
-
-    @Override
-    public void onMajorGridChange() {
-
-        super.onMajorGridChange();
-        nodeList = null;
-    }
-
-    @Override
-    public boolean canGridsMerge(MultiBlockGrid grid) {
-
-        return grid instanceof FluidGridSuper;
-    }
-
-    @Override
-    public void destroy() {
-
-        nodeList = null;
-        super.destroy();
-    }
+		nodeList = null;
+		super.destroy();
+	}
 
 }
