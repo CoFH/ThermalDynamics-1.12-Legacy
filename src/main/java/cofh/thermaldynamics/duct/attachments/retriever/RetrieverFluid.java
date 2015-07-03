@@ -81,7 +81,7 @@ public class RetrieverFluid extends ServoFluid {
 
 					if (this.fluidDuct.fluidGrid.toDistribute > 0 && this.fluidDuct.fluidGrid.myTank.getFluid() != null) {
 						this.fluidDuct.transfer(side, Math.min(this.fluidDuct.fluidGrid.myTank.getFluid().amount, this.fluidDuct.fluidGrid.toDistribute),
-								false, this.fluidDuct.fluidGrid.myTank.getFluid());
+								false, this.fluidDuct.fluidGrid.myTank.getFluid(), true);
 					}
 				}
 			}

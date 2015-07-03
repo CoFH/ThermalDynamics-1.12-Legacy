@@ -64,7 +64,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			int sent = 0;
 
 			for (int i = this.internalSideCounter; i < this.neighborTypes.length && sent < available; i++) {
-				sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid());
+                sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid(), true);
 
 				if (sent >= available) {
 					this.tickInternalSideCounter(i + 1);
@@ -73,7 +73,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 			}
 			for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
-				sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid());
+				sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid(), true);
 
 				if (sent >= available) {
 					this.tickInternalSideCounter(i + 1);
@@ -84,7 +84,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		return true;
 	}
 
-	public int transfer(int available, boolean simulate, FluidStack base) {
+	public int transfer(int available, boolean simulate, FluidStack base, boolean drainGridTank) {
 
 		if (!cachesExist()) {
 			return 0;
@@ -92,7 +92,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		int sent = 0;
 
 		for (int i = this.internalSideCounter; i < this.neighborTypes.length && sent < available; i++) {
-			sent += transfer(i, available - sent, simulate, base);
+			sent += transfer(i, available - sent, simulate, base, drainGridTank);
 
 			if (sent >= available) {
 				this.tickInternalSideCounter(i + 1);
@@ -101,7 +101,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 		}
 		for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
-			sent += transfer(i, available - sent, simulate, base);
+			sent += transfer(i, available - sent, simulate, base, drainGridTank);
 
 			if (sent >= available) {
 				this.tickInternalSideCounter(i + 1);
@@ -111,7 +111,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		return sent;
 	}
 
-	public int transfer(int bSide, int available, boolean simulate, FluidStack fluid) {
+	public int transfer(int bSide, int available, boolean simulate, FluidStack fluid, boolean drainGridTank) {
 
 		if (neighborTypes[bSide] != NeighborTypes.OUTPUT || connectionTypes[bSide] == ConnectionTypes.BLOCKED) {
 			return 0;
@@ -130,10 +130,12 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (amountSent > 0) {
 			if (simulate) {
 				return amountSent;
-			} else {
-				return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], fluidGrid.myTank.drain(amountSent, true), true);
-			}
-		} else {
+            } else {
+                if (drainGridTank)
+                    tempFluid = fluidGrid.myTank.drain(amountSent, true);
+                return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, true);
+            }
+        } else {
 			return 0;
 		}
 	}

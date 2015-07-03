@@ -36,10 +36,13 @@ public class FluidGridSuper extends FluidGrid {
 
         if (fluid == null || !FluidHelper.isFluidEqualOrNull(myTank.getFluid(), fluid) || isSendingFluid) return 0;
 
+        fluid = fluid.copy();
 
         int startAmount = fluid.amount;
 
-        startAmount -= myTank.fill(fluid, !simulate);
+        int addedToTank = myTank.fill(fluid, !simulate);
+
+        startAmount -= addedToTank;
 
         if (startAmount == 0)
             return fluid.amount;
@@ -51,23 +54,23 @@ public class FluidGridSuper extends FluidGrid {
             return fluid.amount - startAmount;
         }
 
-        int fluidSent = startAmount;
+        int fluidToSend = startAmount;
 
         isSendingFluid = true;
-        for (int i = nodeTracker; i < list.length && fluidSent > 0; i++) {
-            fluidSent -= list[i].transfer(fluidSent, simulate, fluid);
-            if (fluidSent == 0) {
+        for (int i = nodeTracker; i < list.length && fluidToSend > 0; i++) {
+            fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
+            if (fluidToSend == 0) {
                 nodeTracker = i + 1;
             }
         }
-        for (int i = 0; i < list.length && i < nodeTracker && fluidSent > 0; i++) {
-            fluidSent -= list[i].transfer(fluidSent, simulate, fluid);
-            if (fluidSent == 0) {
+        for (int i = 0; i < list.length && i < nodeTracker && fluidToSend > 0; i++) {
+            fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
+            if (fluidToSend == 0) {
                 nodeTracker = i + 1;
             }
         }
 
-        if (fluidSent > 0) {
+        if (fluidToSend > 0) {
             nodeTracker++;
         }
 
@@ -79,7 +82,8 @@ public class FluidGridSuper extends FluidGrid {
             nodeTracker = tempTracker;
         }
         isSendingFluid = false;
-        return fluid.amount - fluidSent;
+
+        return fluid.amount - fluidToSend;
     }
 
     @Override
