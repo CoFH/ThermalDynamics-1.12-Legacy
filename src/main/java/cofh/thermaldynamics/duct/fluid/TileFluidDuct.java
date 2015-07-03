@@ -25,9 +25,9 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 	public IFluidHandler[] cache;
 	public IFilterFluid[] filterCache;
-    private int input;
+	private int input;
 
-    public TileFluidDuct() {
+	public TileFluidDuct() {
 
 	}
 
@@ -56,7 +56,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (!super.tickPass(pass)) {
 			return false;
 		}
-
 		if (fluidGrid == null || !cachesExist()) {
 			return true;
 		}
@@ -85,31 +84,32 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		return true;
 	}
 
-    public int transfer(int available, boolean simulate, FluidStack base){
-        if(!cachesExist())
-            return 0;
+	public int transfer(int available, boolean simulate, FluidStack base) {
 
-        int sent = 0;
+		if (!cachesExist()) {
+			return 0;
+		}
+		int sent = 0;
 
-        for (int i = this.internalSideCounter; i < this.neighborTypes.length && sent < available; i++) {
-            sent += transfer(i, available - sent, simulate, base);
+		for (int i = this.internalSideCounter; i < this.neighborTypes.length && sent < available; i++) {
+			sent += transfer(i, available - sent, simulate, base);
 
-            if (sent >= available) {
-                this.tickInternalSideCounter(i + 1);
-                break;
-            }
+			if (sent >= available) {
+				this.tickInternalSideCounter(i + 1);
+				break;
+			}
 
-        }
-        for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
-            sent += transfer(i, available - sent, simulate, base);
+		}
+		for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
+			sent += transfer(i, available - sent, simulate, base);
 
-            if (sent >= available) {
-                this.tickInternalSideCounter(i + 1);
-                break;
-            }
-        }
-        return sent;
-    }
+			if (sent >= available) {
+				this.tickInternalSideCounter(i + 1);
+				break;
+			}
+		}
+		return sent;
+	}
 
 	public int transfer(int bSide, int available, boolean simulate, FluidStack fluid) {
 
@@ -128,10 +128,11 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		int amountSent = cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, false);
 
 		if (amountSent > 0) {
-            if(simulate)
-                return amountSent;
-            else
-			    return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], fluidGrid.myTank.drain(amountSent, true), true);
+			if (simulate) {
+				return amountSent;
+			} else {
+				return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], fluidGrid.myTank.drain(amountSent, true), true);
+			}
 		} else {
 			return 0;
 		}
@@ -149,7 +150,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (fluidGrid != null) {
 			return FluidHelper.getFluidLuminosity(fluidGrid.getFluid());
 		}
-
 		return super.getLightValue();
 	}
 
@@ -279,6 +279,8 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			return;
 		}
 		if (!getDuctType().opaque) {
+			worldObj.func_147451_t(xCoord, yCoord, zCoord);
+
 			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
 			myPayload.addByte(0);
 			myPayload.addByte(TileFluidPackets.UPDATE_RENDER);
@@ -287,8 +289,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		}
 	}
 
-
-    public class TileFluidPackets {
+	public class TileFluidPackets {
 
 		public static final byte GUI_BUTTON = 0;
 		public static final byte SET_FILTER = 1;
@@ -300,21 +301,22 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 
-        if (isOpen(from) && matchesFilter(from, resource)) {
-            return fluidGrid.myTank.fill(resource, doFill);
+		if (isOpen(from) && matchesFilter(from, resource)) {
+			return fluidGrid.myTank.fill(resource, doFill);
 		}
 		return 0;
 	}
 
-    public boolean matchesFilter(ForgeDirection from, FluidStack resource) {
-        return filterCache == null || from == ForgeDirection.UNKNOWN || filterCache[from.ordinal()].allowFluid(resource);
-    }
+	public boolean matchesFilter(ForgeDirection from, FluidStack resource) {
 
-    @Override
+		return filterCache == null || from == ForgeDirection.UNKNOWN || filterCache[from.ordinal()].allowFluid(resource);
+	}
+
+	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
 
-        if (isOpen(from)) {
-            return fluidGrid.myTank.drain(resource, doDrain);
+		if (isOpen(from)) {
+			return fluidGrid.myTank.drain(resource, doDrain);
 		}
 		return null;
 	}

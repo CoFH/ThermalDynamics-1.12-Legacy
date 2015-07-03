@@ -52,7 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
 
 	static {
-		GameRegistry.registerTileEntity(TileTDBase.class, "thermaldynamics.multiblock");
+		GameRegistry.registerTileEntityWithAlternatives(TileTDBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
 	}
 
 	public static Cuboid6[] subSelection = new Cuboid6[12];
