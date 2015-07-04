@@ -151,7 +151,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 *
+	 * 
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override
@@ -862,14 +862,12 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 			}
 		}
-
 		for (byte i = 0; i < 6; i++) {
 			if (attachments[i] instanceof IStuffable) {
 				return i;
 			}
 		}
-
-		throw new RuntimeException("IStuffable disapeared during calculation");
+		throw new RuntimeException("IStuffable disappeared during calculation!");
 	}
 
 	@Override

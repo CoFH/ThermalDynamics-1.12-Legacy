@@ -40,13 +40,11 @@ public class SimulatedInv implements IInventory {
 	public void setTarget(IInventory target) {
 
 		this.target = target;
-
 		size = target.getSizeInventory();
 
 		if (items == null || items.length < size || (size < REBUILD_THRESHOLD && items.length >= REBUILD_THRESHOLD)) {
 			items = new ItemStack[target.getSizeInventory()];
 		}
-
 		ItemStack stackInSlot;
 		for (int i = 0; i < size; i++) {
 			stackInSlot = target.getStackInSlot(i);
@@ -71,7 +69,7 @@ public class SimulatedInv implements IInventory {
 	}
 
 	@Override
-	public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
+	public ItemStack decrStackSize(int slot, int amount) {
 
 		return null;
 	}
@@ -178,4 +176,5 @@ public class SimulatedInv implements IInventory {
 			sided = null;
 		}
 	}
+
 }
