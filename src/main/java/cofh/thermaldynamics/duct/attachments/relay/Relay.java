@@ -81,7 +81,7 @@ public class Relay extends Attachment {
 	@Override
 	public ItemStack getPickBlock() {
 
-		return new ItemStack(ThermalDynamics.itemSignaller);
+		return new ItemStack(ThermalDynamics.itemRelay);
 	}
 
 	@Override

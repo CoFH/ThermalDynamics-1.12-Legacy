@@ -9,6 +9,7 @@ import cofh.thermaldynamics.core.Proxy;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
 import cofh.thermaldynamics.debughelper.DebugHelper;
+import cofh.thermaldynamics.debughelper.PacketDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.gui.GuiHandler;
@@ -21,7 +22,6 @@ import cofh.thermaldynamics.item.ItemServo;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
-import cofh.thermalfoundation.plugins.TFPlugins;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.CustomProperty;
@@ -56,7 +56,7 @@ public class ThermalDynamics extends BaseMod {
 
 	public static final String modId = "ThermalDynamics";
 	public static final String modName = "Thermal Dynamics";
-	public static final String version = "1.7.10R1.1.0B1";
+	public static final String version = "1.7.10R1.1.0B2";
 	public static final String dependencies = "required-after:ThermalFoundation@[" + ThermalFoundation.version + ",)";
 	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/ThermalDynamics";
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
@@ -68,8 +68,8 @@ public class ThermalDynamics extends BaseMod {
 	public static Proxy proxy;
 
 	public static final Logger log = LogManager.getLogger(modId);
-
 	public static final ConfigHandler config = new ConfigHandler(version);
+	public static final ConfigHandler configClient = new ConfigHandler(version);
 	public static final GuiHandler guiHandler = new GuiHandler();
 
 	public static CreativeTabs tab;
@@ -84,8 +84,8 @@ public class ThermalDynamics extends BaseMod {
 	public void preInit(FMLPreInitializationEvent event) {
 
 		UpdateManager.registerUpdater(new UpdateManager(this, releaseURL, CoFHProps.DOWNLOAD_URL));
-		proxy.registerPacketInformation();
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
+		configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 		tab = new TDCreativeTab();
 
 		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
@@ -101,16 +101,11 @@ public class ThermalDynamics extends BaseMod {
 		itemFilter = addItem(new ItemFilter());
 		itemCover = addItem(new ItemCover());
 		itemRetriever = addItem(new ItemRetriever());
-		itemSignaller = addItem(new ItemRelay());
+		itemRelay = addItem(new ItemRelay());
 
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
 		}
-
-		// TODO: Temp
-		config.removeCategory("Recipes");
-
-		config.save();
 	}
 
 	@EventHandler
@@ -124,7 +119,8 @@ public class ThermalDynamics extends BaseMod {
 		}
 		FMLCommonHandler.instance().bus().register(TickHandler.INSTANCE);
 
-		DebugHelper.init();
+		PacketDebug.initialize();
+		DebugHelper.initialize();
 	}
 
 	@EventHandler
@@ -133,16 +129,18 @@ public class ThermalDynamics extends BaseMod {
 		for (IInitializer initializer : initializerList) {
 			initializer.postInit();
 		}
-		proxy.registerRenderInformation();
 		TDCrafting.loadRecipes();
 
-		config.cleanUp(false, true);
+		proxy.registerRenderInformation();
 	}
 
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
-		TFPlugins.loadComplete();
+		config.cleanUp(false, true);
+		configClient.cleanUp(false, true);
+
+		log.info("Load Complete.");
 	}
 
 	@EventHandler
@@ -191,7 +189,7 @@ public class ThermalDynamics extends BaseMod {
 	public static ItemFilter itemFilter;
 	public static ItemCover itemCover;
 	public static ItemRetriever itemRetriever;
-	public static ItemRelay itemSignaller;
+	public static ItemRelay itemRelay;
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {

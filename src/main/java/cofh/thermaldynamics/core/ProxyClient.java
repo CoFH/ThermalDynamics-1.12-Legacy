@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.core;
 
+import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.debughelper.CommandServerDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
@@ -28,18 +29,26 @@ public class ProxyClient extends Proxy {
 	public void registerRenderInformation() {
 
 		FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
+
 		for (BlockDuct duct : ThermalDynamics.blockDuct) {
 			MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
 		}
-
 		MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, ItemCoverRenderer.instance);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
-
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
 
 		ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
+
+		String comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";
+		RenderDuct.smallInnerModelScaling = MathHelper.clampF((float) ThermalDynamics.configClient.get("Render", "InnerModelScaling", 0.99, comment), 0.50F,
+				0.99F);
+
+		comment = "This value affects the size of the inner duct model, such as fluids, on the large (octagonal) ducts. Lower it if you experience texture z-fighting.";
+		RenderDuct.largeInnerModelScaling = MathHelper.clampF((float) ThermalDynamics.configClient.get("Render", "LargeInnerModelScaling", 0.99, comment),
+				0.50F, 0.99F);
+
 	}
 
 	@Override

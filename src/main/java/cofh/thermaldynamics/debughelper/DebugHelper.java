@@ -32,7 +32,7 @@ public class DebugHelper {
 
 	public static final Logger log = LogManager.getLogger("ThermalDebug");
 
-	public static void init() {
+	public static void initialize() {
 
 		if (!debug) {
 			return;

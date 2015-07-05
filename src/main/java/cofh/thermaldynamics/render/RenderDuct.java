@@ -62,6 +62,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	static CCModel[] modelFrameConnection = new CCModel[64];
 	static CCModel[] modelFrame = new CCModel[64];
 
+	public static float smallInnerModelScaling = 0.99F;
+	public static float largeInnerModelScaling = 0.99F;
+
 	static {
 		TDProps.renderDuctId = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(instance);
@@ -126,11 +129,11 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		modelOpaqueTubes = ModelHelper.StandardTubes.genModels(0.1875F, true);
 		modelTransTubes = ModelHelper.StandardTubes.genModels(0.1875F, false);
-		modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * 0.99F, false, false);
+		modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * smallInnerModelScaling, false, false);
 		modelLargeTubes = ModelHelper.StandardTubes.genModels(0.21875f, true);
 
 		modelFrameConnection = (new ModelHelper.OctagonalTubeGen(0.375, 0.1812, true)).generateModels();
-		modelFrame = (new ModelHelper.OctagonalTubeGen(0.375 * 0.99, 0.1812, false)).generateModels();
+		modelFrame = (new ModelHelper.OctagonalTubeGen(0.375 * largeInnerModelScaling, 0.1812, false)).generateModels();
 
 		CCModel.generateBackface(modelCenter, 0, modelCenter, 24, 24);
 		CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);

@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.core;
 
-import cofh.thermaldynamics.debughelper.PacketDebug;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,11 +18,6 @@ public class Proxy {
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
 
-	}
-
-	public void registerPacketInformation() {
-
-		PacketDebug.initialize();
 	}
 
 	public void registerRenderInformation() {

@@ -138,7 +138,7 @@ public class TDCrafting {
 
 		/* SIGNALLER */
 
-		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemSignaller, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gearSignalum", 'I',
+		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gearSignalum", 'I',
 				"ingotLead", 'i', "nuggetSignalum"));
 
 		/* ATTACHMENTS */
