@@ -72,10 +72,12 @@ public class RetrieverFluid extends ServoFluid {
 				if (input == 0) {
 					continue;
 				}
-				FluidStack fluid = fluidDuct.cache[i].drain(ForgeDirection.VALID_DIRECTIONS[i ^ 1], input, true);
+				FluidStack fluid = fluidDuct.cache[i].drain(ForgeDirection.VALID_DIRECTIONS[i ^ 1], input, false);
 
 				if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid)
 						&& fluidDuct.cache[i].canDrain(ForgeDirection.VALID_DIRECTIONS[i ^ 1], fluid.getFluid())) {
+
+                    fluid = fluidDuct.cache[i].drain(ForgeDirection.VALID_DIRECTIONS[i ^ 1], input, true);
 
 					maxInput -= fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[i], fluid, true);
 
