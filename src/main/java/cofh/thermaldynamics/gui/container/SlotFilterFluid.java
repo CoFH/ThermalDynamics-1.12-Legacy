@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.gui.container;
 
+import cofh.api.item.ISpecialFilterFluid;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterConfig;
 
@@ -23,7 +24,7 @@ public class SlotFilterFluid extends SlotFilter {
 	@Override
 	public boolean isItemValid(ItemStack stack) {
 
-		return stack != null && FluidHelper.getFluidForFilledItem(stack) != null;
+		return stack != null && (FluidHelper.getFluidForFilledItem(stack) != null || stack.getItem() instanceof ISpecialFilterFluid);
 	}
 
 }
