@@ -9,6 +9,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
 import java.util.LinkedList;
@@ -61,13 +62,18 @@ public class Relay extends Attachment {
 		return TileTDBase.subSelection[side].copy();
 	}
 
-	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+    @Override
+    public TileTDBase.NeighborTypes getNeighborType() {
 
-		return TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
-	}
+        return null;
+    }
 
-	@Override
+    @Override
+    public BlockDuct.ConnectionTypes getRenderConnectionType() {
+        return BlockDuct.ConnectionTypes.DUCT;
+    }
+
+    @Override
 	public boolean isNode() {
 
 		return true;
