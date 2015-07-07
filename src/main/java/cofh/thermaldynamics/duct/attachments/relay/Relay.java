@@ -11,20 +11,26 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
-
 import java.util.LinkedList;
 import java.util.List;
-
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Facing;
 
 public class Relay extends Attachment {
 
-	public Relay(TileTDBase tile, byte side) {
+    public static final byte NON_THRESHOLD = -1;
+    int type = 0;
+    int powerLevel;
+    boolean invert = false;
+    byte threshold = 0;
+
+    public Relay(TileTDBase tile, byte side) {
 
 		super(tile, side);
 	}
@@ -35,7 +41,7 @@ public class Relay extends Attachment {
 		this.type = type;
 	}
 
-	int type = 0;
+
 
 	@Override
 	public String getName() {
@@ -92,26 +98,16 @@ public class Relay extends Attachment {
 		return drops;
 	}
 
-	int powerLevel;
-
 	@Override
 	public void onNeighborChange() {
 
 		super.onNeighborChange();
 
 		if (type == 0) {
-			int dx = tile.xCoord + Facing.offsetsXForSide[side];
-			int dy = tile.yCoord + Facing.offsetsYForSide[side];
-			int dz = tile.zCoord + Facing.offsetsZForSide[side];
-			powerLevel = tile.world().getIndirectPowerLevelTo(dx, dy, dz, side);
+            int powerLevel = getRawRedstoneLevel();
+            powerLevel = adjustPowerLevel(powerLevel);
 
-			if (tile.world().getBlock(dx, dy, dz) == Blocks.redstone_wire) {
-				powerLevel = Math.max(powerLevel, tile.world().getBlockMetadata(dx, dy, dz));
-			}
-
-			if (powerLevel > 0) {
-				powerLevel = 15;
-			}
+            this.powerLevel = powerLevel;
 		}
 
 		if (tile.myGrid != null) {
@@ -119,7 +115,53 @@ public class Relay extends Attachment {
 		}
 	}
 
-	public boolean isInput() {
+    public int adjustPowerLevel(int powerLevel) {
+
+        if(threshold != NON_THRESHOLD){
+            powerLevel = powerLevel > threshold ? 15 : 0;
+        }
+
+        if(invert)
+            powerLevel = 15 - powerLevel;
+        return powerLevel;
+    }
+
+    public int getRawRedstoneLevel() {
+        int dx = tile.xCoord + Facing.offsetsXForSide[side];
+        int dy = tile.yCoord + Facing.offsetsYForSide[side];
+        int dz = tile.zCoord + Facing.offsetsZForSide[side];
+        int level = 0;
+
+        Block block = tile.world().getBlock(dx, dy, dz);
+
+        if (type == 0) { // should calc vanilla redstone level
+            level = Math.max(level, tile.world().getIndirectPowerLevelTo(dx, dy, dz, side));
+
+            if (block == Blocks.redstone_wire) {
+                level = Math.max(level, tile.world().getBlockMetadata(dx, dy, dz));
+            }
+        }
+
+        if (type == 2) { // should calc comparator redstone level
+            if (block.hasComparatorInputOverride()) {
+                level = block.getComparatorInputOverride(tile.world(), dx, dy, dz, Direction.facingToDirection[side ^ 1]);
+            } else if (block.isNormalCube(tile.world(), dx, dy, dz)) {
+                dx += Facing.offsetsXForSide[side];
+                dy += Facing.offsetsYForSide[side];
+                dz += Facing.offsetsZForSide[side];
+
+                Block otherBlock = tile.world().getBlock(dx, dy, dz);
+
+                if (otherBlock.hasComparatorInputOverride()) {
+                    level = otherBlock.getComparatorInputOverride(tile.world(), dx, dy, dz, Direction.facingToDirection[side ^ 1]);
+                }
+            }
+        }
+
+        return level;
+    }
+
+    public boolean isInput() {
 
 		return type == 0;
 	}
@@ -132,7 +174,7 @@ public class Relay extends Attachment {
 	public int getPowerLevel() {
 
 		if (type == 1 && tile.myGrid != null) {
-			return tile.myGrid.redstoneLevel;
+			return adjustPowerLevel(tile.myGrid.redstoneLevel);
 		}
 		return powerLevel;
 	}
@@ -175,15 +217,18 @@ public class Relay extends Attachment {
 
 		super.writeToNBT(tag);
 		tag.setByte("type", (byte) type);
-
+        tag.setBoolean("invert", invert);
+        tag.setByte("threshold", threshold);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 
 		super.readFromNBT(tag);
-		type = tag.getByte("type");
-	}
+        type = tag.getByte("type");
+        if (tag.hasKey("invert", 1)) invert = tag.getBoolean("invert");
+        if (tag.hasKey("threshold", 1)) threshold = tag.getByte("threshold");
+    }
 
 	@Override
 	public void addDescriptionToPacket(PacketCoFHBase packet) {
