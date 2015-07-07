@@ -58,15 +58,22 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public static Cuboid6[] subSelection = new Cuboid6[12];
 	public static Cuboid6 selection;
 
+    public static Cuboid6[] subSelection_large = new Cuboid6[12];
+    public static Cuboid6 selectionlarge;
+
 	static {
 		genSelectionBoxes(subSelection, 0, 0.25, 0.2, 0.8);
 		genSelectionBoxes(subSelection, 6, 0.3, 0.3, 0.7);
 		selection = new Cuboid6(0.3, 0.3, 0.3, 0.7, 0.7, 0.7);
+
+        genSelectionBoxes(subSelection_large, 0, 0.1, 0.1, 0.9);
+        genSelectionBoxes(subSelection_large, 6, 0.1, 0.1, 0.9);
+        selectionlarge = new Cuboid6(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 	}
 
 	public int facadeMask;
 
-	private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
+    private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
 
 		subSelection[i] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
 		subSelection[i + 1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
@@ -742,38 +749,45 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
 
-		Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
+        if (!getDuctType().isLargeTube())
+            addTraceableCuboids(cuboids, selection, subSelection);
+        else
+            addTraceableCuboids(cuboids, selectionlarge, subSelection_large);
+    }
 
-		for (int i = 0; i < 6; i++) {
-			// Add ATTACHMENT sides
-			if (attachments[i] != null) {
-				cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid().add(pos)));
+    public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
+        Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
 
-				if (neighborTypes[i] != NeighborTypes.NONE) {
-					cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
-				}
-			}
-			if (covers[i] != null) {
-				cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid().add(pos)));
-			}
+        for (int i = 0; i < 6; i++) {
+            // Add ATTACHMENT sides
+            if (attachments[i] != null) {
+                cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid().add(pos)));
 
-			{
-				// Add TILE sides
-				if (neighborTypes[i] == NeighborTypes.OUTPUT) {
-					cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
-				} else if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-					cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy().add(pos)));
-				} else if (neighborTypes[i] == NeighborTypes.STRUCTURE) {
-					cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy().add(pos)));
-				}
+                if (neighborTypes[i] != NeighborTypes.NONE) {
+                    cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
+                }
+            }
+            if (covers[i] != null) {
+                cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid().add(pos)));
+            }
 
-			}
-		}
+            {
+                // Add TILE sides
+                if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+                    cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
+                } else if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
+                    cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy().add(pos)));
+                } else if (neighborTypes[i] == NeighborTypes.STRUCTURE) {
+                    cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy().add(pos)));
+                }
 
-		cuboids.add(new IndexedCuboid6(13, selection.copy().add(pos)));
-	}
+            }
+        }
 
-	@Override
+        cuboids.add(new IndexedCuboid6(13, centerSelection.copy().add(pos)));
+    }
+
+    @Override
 	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
 
 		return subHit == 13 || (subHit > 5 && subHit < 13 && !Utils.isHoldingUsableWrench(thePlayer, xCoord, yCoord, zCoord));
@@ -782,12 +796,16 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	@Override
 	public CustomHitBox getCustomHitBox(int subHit, EntityPlayer thePlayer) {
 
-		CustomHitBox hb = new CustomHitBox(.4, .4, .4, xCoord + .3, yCoord + .3, zCoord + .3);
+
+        double v1 = getDuctType().isLargeTube() ? 0.075 : .3;
+        double v =  (1 - v1 * 2);
+
+        CustomHitBox hb = new CustomHitBox(v, v, v, xCoord + v1, yCoord + v1, zCoord + v1);
 
 		for (int i = 0; i < neighborTypes.length; i++) {
 			if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
 				hb.drawSide(i, true);
-				hb.setSideLength(i, .3);
+				hb.setSideLength(i, v1);
 			} else if (neighborTypes[i] != NeighborTypes.NONE) {
 				hb.drawSide(i, true);
 				hb.setSideLength(i, .04);
