@@ -16,7 +16,7 @@ public abstract class MultiBlockGrid {
     public WorldGridList worldGrid;
     public boolean signalsUpToDate;
     public int redstoneLevel;
-    private byte nextRedstoneLevel = -128;
+    public byte nextRedstoneLevel = -128;
     public ArrayList<Relay> relaysIn;
     public ArrayList<Attachment> relaysOut;
 
