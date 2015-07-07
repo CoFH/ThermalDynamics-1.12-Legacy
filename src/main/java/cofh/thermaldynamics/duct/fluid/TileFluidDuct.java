@@ -223,7 +223,15 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		cache[side] = (IFluidHandler) tile;
 	}
 
-	@Override
+
+    @Override
+    public void cacheInputTile(TileEntity theTile, int side) {
+        if (attachments[side] instanceof IFilterAttachment) {
+            filterCache[side] = ((IFilterAttachment) attachments[side]).getFluidFilter();
+        }
+    }
+
+    @Override
 	public void clearCache(int side) {
 
 		filterCache[side] = IFilterFluid.nullFilter;
