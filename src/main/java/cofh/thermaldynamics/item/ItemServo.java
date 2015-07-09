@@ -168,6 +168,8 @@ public class ItemServo extends ItemAttachment {
 		signalumServo = new ItemStack(this, 1, 3);
 		resonantServo = new ItemStack(this, 1, 4);
 
+		ServoBase.initialize();
+
 		return true;
 	}
 

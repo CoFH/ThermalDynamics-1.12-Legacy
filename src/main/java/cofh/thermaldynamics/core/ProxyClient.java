@@ -7,6 +7,7 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
+import cofh.thermaldynamics.item.ItemCover;
 import cofh.thermaldynamics.render.ItemCoverRenderer;
 import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
@@ -49,6 +50,8 @@ public class ProxyClient extends Proxy {
 		RenderDuct.largeInnerModelScaling = MathHelper.clampF((float) ThermalDynamics.configClient.get("Render", "LargeInnerModelScaling", 0.99, comment),
 				0.50F, 0.99F);
 
+		ItemCover.enableCreativeTab = ThermalDynamics.configClient.get("Interface.CreativeTab", "Covers.Enable", ItemCover.enableCreativeTab);
+		ItemCover.showInNEI = ThermalDynamics.configClient.get("Plugins.NEI", "Covers.Show", ItemCover.showInNEI, "Set to TRUE to show Covers in NEI.");
 	}
 
 	@Override

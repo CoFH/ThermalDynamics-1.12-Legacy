@@ -7,6 +7,7 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.debughelper.ErrorHelper;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
@@ -27,6 +28,8 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	public IFilterFluid[] filterCache;
 	private int input;
 
+	public FluidGrid fluidGrid;
+
 	public TileFluidDuct() {
 
 	}
@@ -37,8 +40,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		return new FluidGrid(worldObj);
 	}
 
-	IFluidHandler[] importantCache = new IFluidHandler[6];
-
 	public FluidStack mySavedFluid;
 	public FluidStack myRenderFluid;
 	public FluidStack fluidForGrid;
@@ -47,7 +48,21 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 	@Override
 	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-		return FluidHelper.isFluidHandler(theTile) && !(theTile instanceof IMultiBlock);
+		if (theTile instanceof IMultiBlock) {
+			return false;
+		}
+		if (FluidHelper.isFluidHandler(theTile)) {
+			FluidTankInfo[] tanks = ((IFluidHandler) theTile).getTankInfo(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+			if (tanks == null) {
+				ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getTankInfo() with side=" + (side ^ 1));
+				return false;
+			}
+			if (tanks.length == 0) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -64,7 +79,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			int sent = 0;
 
 			for (int i = this.internalSideCounter; i < this.neighborTypes.length && sent < available; i++) {
-                sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid(), true);
+				sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid(), true);
 
 				if (sent >= available) {
 					this.tickInternalSideCounter(i + 1);
@@ -130,12 +145,13 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (amountSent > 0) {
 			if (simulate) {
 				return amountSent;
-            } else {
-                if (drainGridTank)
-                    tempFluid = fluidGrid.myTank.drain(amountSent, true);
-                return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, true);
-            }
-        } else {
+			} else {
+				if (drainGridTank) {
+					tempFluid = fluidGrid.myTank.drain(amountSent, true);
+				}
+				return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, true);
+			}
+		} else {
 			return 0;
 		}
 	}
@@ -182,8 +198,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		return fluidGrid == null ? myConnectionFluid : fluidGrid.getFluid();
 	}
 
-	public FluidGrid fluidGrid;
-
 	@Override
 	public void setGrid(MultiBlockGrid newGrid) {
 
@@ -223,15 +237,15 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		cache[side] = (IFluidHandler) tile;
 	}
 
+	@Override
+	public void cacheInputTile(TileEntity theTile, int side) {
 
-    @Override
-    public void cacheInputTile(TileEntity theTile, int side) {
-        if (attachments[side] instanceof IFilterAttachment) {
-            filterCache[side] = ((IFilterAttachment) attachments[side]).getFluidFilter();
-        }
-    }
+		if (attachments[side] instanceof IFilterAttachment) {
+			filterCache[side] = ((IFilterAttachment) attachments[side]).getFluidFilter();
+		}
+	}
 
-    @Override
+	@Override
 	public void clearCache(int side) {
 
 		filterCache[side] = IFilterFluid.nullFilter;

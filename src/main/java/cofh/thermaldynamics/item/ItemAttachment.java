@@ -9,7 +9,6 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.duct.attachments.servo.ServoBase;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -30,7 +29,7 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 
 		super();
 		setHasSubtypes(true);
-		this.setCreativeTab(ThermalDynamics.tab);
+		this.setCreativeTab(ThermalDynamics.tabCommon);
 	}
 
 	@Override
@@ -91,8 +90,6 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 
 	@Override
 	public boolean postInit() {
-
-		ServoBase.initialize();
 
 		return true;
 	}

@@ -58,22 +58,22 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public static Cuboid6[] subSelection = new Cuboid6[12];
 	public static Cuboid6 selection;
 
-    public static Cuboid6[] subSelection_large = new Cuboid6[12];
-    public static Cuboid6 selectionlarge;
+	public static Cuboid6[] subSelection_large = new Cuboid6[12];
+	public static Cuboid6 selectionlarge;
 
 	static {
 		genSelectionBoxes(subSelection, 0, 0.25, 0.2, 0.8);
 		genSelectionBoxes(subSelection, 6, 0.3, 0.3, 0.7);
 		selection = new Cuboid6(0.3, 0.3, 0.3, 0.7, 0.7, 0.7);
 
-        genSelectionBoxes(subSelection_large, 0, 0.1, 0.1, 0.9);
-        genSelectionBoxes(subSelection_large, 6, 0.1, 0.1, 0.9);
-        selectionlarge = new Cuboid6(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+		genSelectionBoxes(subSelection_large, 0, 0.1, 0.1, 0.9);
+		genSelectionBoxes(subSelection_large, 6, 0.1, 0.1, 0.9);
+		selectionlarge = new Cuboid6(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 	}
 
 	public int facadeMask;
 
-    private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
+	private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
 
 		subSelection[i] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
 		subSelection[i + 1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
@@ -365,7 +365,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			clearCache(i);
 		}
 
-        neighborTypes[i] = null;
+		neighborTypes[i] = null;
 		if (attachments[i] != null) {
 			attachments[i].onNeighborChange();
 			neighborMultiBlocks[i] = null;
@@ -404,38 +404,38 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			isNode = attachments[i].isNode();
 		}
 
-        if (neighborTypes[i] == null) {
-            theTile = getAdjTileEntitySafe(i);
-            if (theTile == null) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.NONE;
-                connectionTypes[i] = ConnectionTypes.NORMAL;
-            } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-                neighborMultiBlocks[i] = (IMultiBlock) theTile;
-                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-            } else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.OUTPUT;
-                if (!cachesExist()) {
-                    createCaches();
-                }
-                cacheImportant(theTile, i);
-                isNode = true;
-                isOutput = true;
-            } else if (connectionTypes[i].allowTransfer && isStructureTile(theTile, i)) {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.STRUCTURE;
-                if (!cachesExist()) {
-                    createCaches();
-                }
-                cacheStructural(theTile, i);
-                isNode = true;
-            } else {
-                neighborMultiBlocks[i] = null;
-                neighborTypes[i] = NeighborTypes.NONE;
-            }
-        }
-    }
+		if (neighborTypes[i] == null) {
+			theTile = getAdjTileEntitySafe(i);
+			if (theTile == null) {
+				neighborMultiBlocks[i] = null;
+				neighborTypes[i] = NeighborTypes.NONE;
+				connectionTypes[i] = ConnectionTypes.NORMAL;
+			} else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+				neighborMultiBlocks[i] = (IMultiBlock) theTile;
+				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+			} else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
+				neighborMultiBlocks[i] = null;
+				neighborTypes[i] = NeighborTypes.OUTPUT;
+				if (!cachesExist()) {
+					createCaches();
+				}
+				cacheImportant(theTile, i);
+				isNode = true;
+				isOutput = true;
+			} else if (connectionTypes[i].allowTransfer && isStructureTile(theTile, i)) {
+				neighborMultiBlocks[i] = null;
+				neighborTypes[i] = NeighborTypes.STRUCTURE;
+				if (!cachesExist()) {
+					createCaches();
+				}
+				cacheStructural(theTile, i);
+				isNode = true;
+			} else {
+				neighborMultiBlocks[i] = null;
+				neighborTypes[i] = NeighborTypes.NONE;
+			}
+		}
+	}
 
 	public void cacheInputTile(TileEntity theTile, int side) {
 
@@ -749,70 +749,44 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
 
-        if (!getDuctType().isLargeTube())
-            addTraceableCuboids(cuboids, selection, subSelection);
-        else
-            addTraceableCuboids(cuboids, selectionlarge, subSelection_large);
-    }
-
-    public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
-        Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
-
-        for (int i = 0; i < 6; i++) {
-            // Add ATTACHMENT sides
-            if (attachments[i] != null) {
-                cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid().add(pos)));
-
-                if (neighborTypes[i] != NeighborTypes.NONE) {
-                    cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
-                }
-            }
-            if (covers[i] != null) {
-                cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid().add(pos)));
-            }
-
-            {
-                // Add TILE sides
-                if (neighborTypes[i] == NeighborTypes.OUTPUT) {
-                    cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
-                } else if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-                    cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy().add(pos)));
-                } else if (neighborTypes[i] == NeighborTypes.STRUCTURE) {
-                    cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy().add(pos)));
-                }
-
-            }
-        }
-
-        cuboids.add(new IndexedCuboid6(13, centerSelection.copy().add(pos)));
-    }
-
-    @Override
-	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
-
-		return subHit == 13 || (subHit > 5 && subHit < 13 && !Utils.isHoldingUsableWrench(thePlayer, xCoord, yCoord, zCoord));
+		if (!getDuctType().isLargeTube()) {
+			addTraceableCuboids(cuboids, selection, subSelection);
+		} else {
+			addTraceableCuboids(cuboids, selectionlarge, subSelection_large);
+		}
 	}
 
-	@Override
-	public CustomHitBox getCustomHitBox(int subHit, EntityPlayer thePlayer) {
+	public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
 
+		Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
 
-        double v1 = getDuctType().isLargeTube() ? 0.075 : .3;
-        double v =  (1 - v1 * 2);
+		for (int i = 0; i < 6; i++) {
+			// Add ATTACHMENT sides
+			if (attachments[i] != null) {
+				cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid().add(pos)));
 
-        CustomHitBox hb = new CustomHitBox(v, v, v, xCoord + v1, yCoord + v1, zCoord + v1);
+				if (neighborTypes[i] != NeighborTypes.NONE) {
+					cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
+				}
+			}
+			if (covers[i] != null) {
+				cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid().add(pos)));
+			}
 
-		for (int i = 0; i < neighborTypes.length; i++) {
-			if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-				hb.drawSide(i, true);
-				hb.setSideLength(i, v1);
-			} else if (neighborTypes[i] != NeighborTypes.NONE) {
-				hb.drawSide(i, true);
-				hb.setSideLength(i, .04);
+			{
+				// Add TILE sides
+				if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+					cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
+				} else if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
+					cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy().add(pos)));
+				} else if (neighborTypes[i] == NeighborTypes.STRUCTURE) {
+					cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy().add(pos)));
+				}
+
 			}
 		}
 
-		return hb;
+		cuboids.add(new IndexedCuboid6(13, centerSelection.copy().add(pos)));
 	}
 
 	@Override
@@ -1118,6 +1092,58 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		return "tile.thermaldynamics.duct";
 	}
 
+	public void cofh_invalidate() {
+
+		markChunkDirty();
+	}
+
+	@Override
+	public void addRelays() {
+
+		for (Attachment attachment : attachments) {
+			if (attachment != null) {
+				if (attachment.getId() == AttachmentRegistry.RELAY) {
+					Relay signaller = (Relay) attachment;
+					if (signaller.isInput()) {
+						myGrid.addSignalInput(signaller);
+					} else {
+						myGrid.addSignalOutput(attachment);
+					}
+				} else if (attachment.respondsToSignallum()) {
+					myGrid.addSignalOutput(attachment);
+				}
+			}
+		}
+	}
+
+	/* ICustomHitBox */
+	@Override
+	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
+
+		return subHit == 13 || (subHit > 5 && subHit < 13 && !Utils.isHoldingUsableWrench(thePlayer, xCoord, yCoord, zCoord));
+	}
+
+	@Override
+	public CustomHitBox getCustomHitBox(int subHit, EntityPlayer thePlayer) {
+
+		double v1 = getDuctType().isLargeTube() ? 0.075 : .3;
+		double v = (1 - v1 * 2);
+
+		CustomHitBox hb = new CustomHitBox(v, v, v, xCoord + v1, yCoord + v1, zCoord + v1);
+
+		for (int i = 0; i < neighborTypes.length; i++) {
+			if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
+				hb.drawSide(i, true);
+				hb.setSideLength(i, v1);
+			} else if (neighborTypes[i] != NeighborTypes.NONE) {
+				hb.drawSide(i, true);
+				hb.setSideLength(i, .04);
+			}
+		}
+		return hb;
+	}
+
+	/* IPortableData */
 	@Override
 	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
 
@@ -1161,30 +1187,6 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		iPortableData.writePortableData(player, tag);
 		if (!tag.hasNoTags()) {
 			tag.setString("AttachmentType", iPortableData.getDataType());
-		}
-	}
-
-	public void cofh_invalidate() {
-
-		markChunkDirty();
-	}
-
-	@Override
-	public void addSignallers() {
-
-		for (Attachment attachment : attachments) {
-			if (attachment != null) {
-				if (attachment.getId() == AttachmentRegistry.RELAY) {
-					Relay signaller = (Relay) attachment;
-					if (signaller.isInput()) {
-						myGrid.addSignalInput(signaller);
-					} else {
-						myGrid.addSignalOutput(attachment);
-					}
-				} else if (attachment.respondsToSignallum()) {
-					myGrid.addSignalOutput(attachment);
-				}
-			}
 		}
 	}
 

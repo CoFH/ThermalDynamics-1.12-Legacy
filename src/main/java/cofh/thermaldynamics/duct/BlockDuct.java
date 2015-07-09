@@ -66,7 +66,7 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 		setResistance(10.0F);
 		setStepSound(soundTypeMetal);
 		setBlockName("thermaldynamics.duct");
-		setCreativeTab(ThermalDynamics.tab);
+		setCreativeTab(ThermalDynamics.tabCommon);
 		this.offset = offset * 16;
 	}
 

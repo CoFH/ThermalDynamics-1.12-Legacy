@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.item;
 
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -24,14 +24,22 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ItemCover extends ItemAttachment {
 
-	public static boolean showInNEI = DebugHelper.debug;
+	private static float[] hitX = { 0.5F, 0.5F, 0.5F, 0.5F, 0, 1 };
+	private static float[] hitY = { 0, 1, 0.5F, 0.5F, 0.5F, 0.5F };
+	private static float[] hitZ = { 0.5F, 0.5F, 0, 1, 0.5F, 0.5F };
+
+	public static boolean enableCreativeTab = true;
+	public static boolean showInNEI = false;
+
+	public static ArrayList<ItemStack> coverList = new ArrayList<ItemStack>();
 
 	public ItemCover() {
 
-		this.setCreativeTab(null);
+		this.setCreativeTab(ThermalDynamics.tabCovers);
 		this.setUnlocalizedName("thermaldynamics.cover");
 		this.setTextureName("thermaldynamics:cover");
-		if (!showInNEI) {
+
+		if (!enableCreativeTab) {
 			setCreativeTab(null);
 		}
 	}
@@ -39,35 +47,30 @@ public class ItemCover extends ItemAttachment {
 	@Override
 	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
-		if (showInNEI) {
-			Iterator iterator = Item.itemRegistry.iterator();
-
-			ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-
-			while (iterator.hasNext()) {
-				Item anItem = (Item) iterator.next();
-
-				if (anItem != null && anItem != this) {
-					anItem.getSubItems(anItem, null, stacks);
-				}
-			}
-			for (ItemStack stack : stacks) {
-				if (!(stack.getItem() instanceof ItemBlock)) {
-					continue;
-				}
-
-				if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
-					continue;
-				}
-
-				list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
-			}
+		// Iterator iterator = Item.itemRegistry.iterator();
+		//
+		// ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+		//
+		// while (iterator.hasNext()) {
+		// Item anItem = (Item) iterator.next();
+		//
+		// if (anItem != null && anItem != this) {
+		// anItem.getSubItems(anItem, null, stacks);
+		// }
+		// }
+		// for (ItemStack stack : stacks) {
+		// if (!(stack.getItem() instanceof ItemBlock)) {
+		// continue;
+		// }
+		// if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
+		// continue;
+		// }
+		// list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+		// }
+		for (int i = 0; i < coverList.size(); i++) {
+			list.add(coverList.get(i));
 		}
 	}
-
-	private static float[] hitX = { 0.5F, 0.5F, 0.5F, 0.5F, 0, 1 };
-	private static float[] hitY = { 0, 1, 0.5F, 0.5F, 0.5F, 0.5F };
-	private static float[] hitZ = { 0.5F, 0.5F, 0, 1, 0.5F, 0.5F };
 
 	@Override
 	public Attachment getAttachment(int side, ItemStack stack, TileTDBase tile) {
@@ -113,8 +116,36 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
+	public boolean postInit() {
+
+		coverList.clear();
+		Iterator iterator = Item.itemRegistry.iterator();
+
+		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+
+		while (iterator.hasNext()) {
+			Item anItem = (Item) iterator.next();
+
+			if (anItem != null && anItem != this) {
+				anItem.getSubItems(anItem, null, stacks);
+			}
+		}
+		for (ItemStack stack : stacks) {
+			if (!(stack.getItem() instanceof ItemBlock)) {
+				continue;
+			}
+			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
+				continue;
+			}
+			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+		}
+		return true;
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister ir) {
 
 	}
+
 }

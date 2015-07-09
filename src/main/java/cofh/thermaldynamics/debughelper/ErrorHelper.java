@@ -14,4 +14,5 @@ public class ErrorHelper {
 			ThermalDynamics.log.error(message);
 		}
 	}
+
 }

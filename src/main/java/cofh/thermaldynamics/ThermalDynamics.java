@@ -14,6 +14,7 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
+import cofh.thermaldynamics.gui.TDCreativeTabCovers;
 import cofh.thermaldynamics.item.ItemCover;
 import cofh.thermaldynamics.item.ItemFilter;
 import cofh.thermaldynamics.item.ItemRelay;
@@ -72,7 +73,8 @@ public class ThermalDynamics extends BaseMod {
 	public static final ConfigHandler configClient = new ConfigHandler(version);
 	public static final GuiHandler guiHandler = new GuiHandler();
 
-	public static CreativeTabs tab;
+	public static CreativeTabs tabCommon;
+	public static CreativeTabs tabCovers;
 
 	/* INIT SEQUENCE */
 	public ThermalDynamics() {
@@ -86,7 +88,9 @@ public class ThermalDynamics extends BaseMod {
 		UpdateManager.registerUpdater(new UpdateManager(this, releaseURL, CoFHProps.DOWNLOAD_URL));
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
 		configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
-		tab = new TDCreativeTab();
+
+		tabCommon = new TDCreativeTab();
+		tabCovers = new TDCreativeTabCovers();
 
 		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
 
@@ -149,6 +153,11 @@ public class ThermalDynamics extends BaseMod {
 		if (DebugHelper.debug) {
 			event.registerServerCommand(new CommandThermalDebug());
 		}
+	}
+
+	/* LOADING FUNCTIONS */
+	void configOptions() {
+
 	}
 
 	LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();

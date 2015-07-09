@@ -55,6 +55,10 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	public List<TravelingItem> itemsToAdd = new LinkedList<TravelingItem>();
 
 	public byte pathWeightType = 0;
+	public byte ticksExisted = 0;
+	public final static byte maxTicksExistedBeforeFindAlt = 2;
+	public final static byte maxTicksExistedBeforeStuff = 6;
+	public final static byte maxTicksExistedBeforeDump = 10;
 
 	// Type Helper Arrays
 	static int[] _PIPE_LEN = { 40, 10, 60, 40 };
@@ -151,7 +155,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 * 
+	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override
@@ -198,11 +202,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 		return new ItemGrid(worldObj);
 	}
-
-	public byte ticksExisted = 0;
-	public final static byte maxTicksExistedBeforeFindAlt = 2;
-	public final static byte maxTicksExistedBeforeStuff = 6;
-	public final static byte maxTicksExistedBeforeDump = 10;
 
 	@Override
 	public boolean tickPass(int pass) {

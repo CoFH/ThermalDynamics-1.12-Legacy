@@ -138,7 +138,7 @@ public abstract class MultiBlockGrid {
         if (relaysIn == null) {
             relaysOut = null;
             for (IMultiBlock multiBlock : nodeSet) {
-                multiBlock.addSignallers();
+                multiBlock.addRelays();
             }
         }
 
