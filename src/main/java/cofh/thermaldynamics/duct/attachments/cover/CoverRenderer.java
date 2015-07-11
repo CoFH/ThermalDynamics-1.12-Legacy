@@ -101,16 +101,19 @@ public class CoverRenderer {
 				}
 
 				if (addNormals) {
-					normal = (new Vector3(quad[1][0] - quad[0][0], quad[1][1] - quad[0][1], quad[1][2] - quad[0][2]));
+//					normal = (new Vector3(quad[1][0] - quad[0][0], quad[1][1] - quad[0][1], quad[1][2] - quad[0][2]));
+//
+//					normal.crossProduct(new Vector3(quad[2][0] - quad[0][0], quad[2][1] - quad[0][1], quad[2][2] - quad[0][2]));
+//
+//					normal.normalize();
+//
+//					byte b0 = (byte) ((int) (normal.x * 127.0F));
+//					byte b1 = (byte) ((int) (normal.y * 127.0F));
+//					byte b2 = (byte) ((int) (normal.z * 127.0F));
+//					intNormal = (b0 & 255) | (b1 & 255) << 8 | (b2 & 255) << 16;
 
-					normal.crossProduct(new Vector3(quad[2][0] - quad[0][0], quad[2][1] - quad[0][1], quad[2][2] - quad[0][2]));
+                    intNormal = -64 << 8;
 
-					normal.normalize();
-
-					byte b0 = (byte) ((int) (normal.x * 127.0F));
-					byte b1 = (byte) ((int) (normal.y * 127.0F));
-					byte b2 = (byte) ((int) (normal.z * 127.0F));
-					intNormal = (b0 & 255) | (b1 & 255) << 8 | (b2 & 255) << 16;
 				}
 
 				for (int k2 = 0; k2 < 4; k2++) {
@@ -155,7 +158,8 @@ public class CoverRenderer {
 					}
 
 					if (addNormals) {
-						rb[i + 6] = intNormal;
+
+                        rb[i + 6] = intNormal;
 					}
 					if (addTrans) {
 						if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {

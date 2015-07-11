@@ -65,6 +65,8 @@ public class RenderItemCover implements IItemRenderer {
 		RenderHelper.setBlockTextureSheet();
 		RenderUtils.preItemRender();
 
+        RenderHelper.enableGUIStandardItemLighting();
+
 		CCRenderState.startDrawing();
 		GL11.glTranslated(offset, offset - 128, offset);
 
@@ -85,6 +87,8 @@ public class RenderItemCover implements IItemRenderer {
 
 		RenderHelper.setItemTextureSheet();
 		RenderUtils.postItemRender();
+
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 
 		GL11.glPopMatrix();
 	}
