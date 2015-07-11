@@ -27,7 +27,7 @@ public class TDCreativeTabCovers extends CreativeTabs {
 	public ItemStack getIconItemStack() {
 
 		updateIcon();
-		return ItemCover.coverList.get(iconIndex);
+		return ItemCover.getCoverList().get(iconIndex);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class TDCreativeTabCovers extends CreativeTabs {
 		World world = CoFHCore.proxy.getClientWorld();
 
 		if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
-			int next = MathHelper.RANDOM.nextInt(ItemCover.coverList.size() - 1);
+			int next = MathHelper.RANDOM.nextInt(ItemCover.getCoverList().size() - 1);
 			iconIndex = next >= iconIndex ? next + 1 : next;
 			iconTracker.markTime(world);
 		}

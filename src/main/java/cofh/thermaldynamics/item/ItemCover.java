@@ -31,7 +31,7 @@ public class ItemCover extends ItemAttachment {
 	public static boolean enableCreativeTab = true;
 	public static boolean showInNEI = false;
 
-	public static ArrayList<ItemStack> coverList = new ArrayList<ItemStack>();
+    private static List<ItemStack> coverList;
 
 	public ItemCover() {
 
@@ -44,33 +44,38 @@ public class ItemCover extends ItemAttachment {
 		}
 	}
 
-	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
-		// Iterator iterator = Item.itemRegistry.iterator();
-		//
-		// ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
-		//
-		// while (iterator.hasNext()) {
-		// Item anItem = (Item) iterator.next();
-		//
-		// if (anItem != null && anItem != this) {
-		// anItem.getSubItems(anItem, null, stacks);
-		// }
-		// }
-		// for (ItemStack stack : stacks) {
-		// if (!(stack.getItem() instanceof ItemBlock)) {
-		// continue;
-		// }
-		// if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
-		// continue;
-		// }
-		// list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
-		// }
-		for (int i = 0; i < coverList.size(); i++) {
-			list.add(coverList.get(i));
-		}
-	}
+
+    @Override
+    public void getSubItems(Item item, CreativeTabs tab, List list) {
+
+        // Iterator iterator = Item.itemRegistry.iterator();
+        //
+        // ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+        //
+        // while (iterator.hasNext()) {
+        // Item anItem = (Item) iterator.next();
+        //
+        // if (anItem != null && anItem != this) {
+        // anItem.getSubItems(anItem, null, stacks);
+        // }
+        // }
+        // for (ItemStack stack : stacks) {
+        // if (!(stack.getItem() instanceof ItemBlock)) {
+        // continue;
+        // }
+        // if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
+        // continue;
+        // }
+        // list.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+        // }
+
+
+        List<ItemStack> coverList = getCoverList();
+        for (int i = 0; i < coverList.size(); i++) {
+            list.add(coverList.get(i));
+        }
+    }
 
 	@Override
 	public Attachment getAttachment(int side, ItemStack stack, TileTDBase tile) {
@@ -115,31 +120,34 @@ public class ItemCover extends ItemAttachment {
 		return true;
 	}
 
-	@Override
-	public boolean postInit() {
 
-		coverList.clear();
-		Iterator iterator = Item.itemRegistry.iterator();
+    public static List<ItemStack> getCoverList() {
+        if (coverList != null)
+            return coverList;
 
-		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+        Iterator iterator = Item.itemRegistry.iterator();
 
-		while (iterator.hasNext()) {
-			Item anItem = (Item) iterator.next();
+        ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 
-			if (anItem != null && anItem != this) {
-				anItem.getSubItems(anItem, null, stacks);
-			}
-		}
-		for (ItemStack stack : stacks) {
-			if (!(stack.getItem() instanceof ItemBlock)) {
-				continue;
-			}
-			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
-				continue;
-			}
-			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
-		}
-		return true;
+        while (iterator.hasNext()) {
+            Item anItem = (Item) iterator.next();
+
+            if (anItem instanceof ItemBlock) {
+                anItem.getSubItems(anItem, null, stacks);
+            }
+        }
+        for (ItemStack stack : stacks) {
+            if (!(stack.getItem() instanceof ItemBlock)) {
+                continue;
+            }
+            if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
+                continue;
+            }
+            coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+        }
+
+
+        return coverList;
 	}
 
 	@Override
