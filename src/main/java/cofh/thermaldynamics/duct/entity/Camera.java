@@ -10,6 +10,12 @@ public class Camera extends EntityLivingBase {
         super(null);
         this.width = 0;
         this.height = 0;
+        invulnerable = true;
+    }
+
+    @Override
+    protected boolean canTriggerWalking() {
+        return false;
     }
 
     @Override
@@ -58,7 +64,6 @@ public class Camera extends EntityLivingBase {
 
         prevRotationYaw = player.prevRotationYaw;
         prevRotationPitch = player.prevRotationPitch;
-
     }
 
     @Override

@@ -19,6 +19,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -69,4 +71,9 @@ public class ProxyClient extends Proxy {
 		RenderDuct.initialize();
 	}
 
+    @Override
+    public EntityPlayer getClientPlayerSafe() {
+
+        return Minecraft.getMinecraft().thePlayer;
+    }
 }

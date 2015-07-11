@@ -118,7 +118,7 @@ public class TDDucts {
         };
 
         addDuct(4*16, false, 1, 4, "entityTransport", Type.ENTITY, duct_transport, null, null,
-                null, 255, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 96);
+                null, 255, "electrum", "thermaldynamics:duct/base/greenGlass", 96);
     }
 
     static void addEnergyDucts() {

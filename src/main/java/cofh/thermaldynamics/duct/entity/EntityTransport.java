@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.lib.util.position.BlockPosition;
 import cofh.repack.codechicken.lib.vec.Vector3;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
@@ -31,17 +32,27 @@ public class EntityTransport extends Entity {
     BlockPosition pos;
 
     @Override
+    public boolean isEntityInvulnerable() {
+        return true;
+    }
+
+    @Override
     public double getYOffset() {
         return super.getYOffset();
     }
 
     @Override
     public double getMountedYOffset() {
+
         Entity riddenByEntity = this.riddenByEntity;
         if(riddenByEntity == null)
             return super.getMountedYOffset();
         else {
-            double c = (riddenByEntity.boundingBox.maxY + riddenByEntity.boundingBox.minY) / 2;
+
+            if (riddenByEntity == ThermalDynamics.proxy.getClientPlayerSafe()) {
+                return -riddenByEntity.getYOffset();
+            }
+
             double h = riddenByEntity.boundingBox.maxY - riddenByEntity.boundingBox.minY;
             return -riddenByEntity.getYOffset() - h / 2;
         }
@@ -53,6 +64,7 @@ public class EntityTransport extends Entity {
         this.height = 0.1F;
         this.width = 0.1F;
         this.noClip = true;
+        this.isImmuneToFire =  true;
     }
 
 
@@ -130,13 +142,26 @@ public class EntityTransport extends Entity {
                 BlockPosition p = pos.copy().step(direction);
 
                 TileEntity tileEntity = worldObj.getTileEntity(p.x, p.y, p.z);
-                if (tileEntity instanceof TileTransportDuct && ((TileTransportDuct) tileEntity).neighborTypes[direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
-                    pos = p;
-                    oldDirection = direction;
-                    progress %= PIPE_LENGTH;
-                } else {
+                if (!(tileEntity instanceof TileTransportDuct)) {
                     pos = null;
                     return;
+                }
+                TileTDBase.NeighborTypes[] neighbours = ((TileTransportDuct) tileEntity).neighborTypes;
+                if (neighbours[direction ^ 1] != TileTDBase.NeighborTypes.MULTIBLOCK) {
+                    pos = null;
+                    return;
+                }
+
+                pos = p;
+                oldDirection = direction;
+                progress %= PIPE_LENGTH;
+
+                if(neighbours[direction] != TileTDBase.NeighborTypes.MULTIBLOCK) {
+                    for (byte i = 0; i < neighbours.length; i++) {
+                        if(neighbours[i] == TileTDBase.NeighborTypes.MULTIBLOCK){
+                            direction = i;
+                        }
+                    }
                 }
             }
         }

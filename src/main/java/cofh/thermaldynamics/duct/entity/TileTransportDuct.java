@@ -1,14 +1,18 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.IMultiBlockRoute;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
+import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -89,8 +93,9 @@ public class TileTransportDuct extends TileTDBase implements IMultiBlockRoute {
             if (neighborMultiBlocks[i] != null)
                 return false;
 
+            ItemStack heldItem = player.getHeldItem();
+
             if (connectionTypes[i] == ConnectionTypes.FORCED) {
-                ItemStack heldItem = player.getHeldItem();
                 if (heldItem != null && heldItem.getItem() == Items.spawn_egg) {
 
                     Entity entity = EntityList.createEntityByID(heldItem.getItemDamage(), world());
@@ -121,6 +126,8 @@ public class TileTransportDuct extends TileTDBase implements IMultiBlockRoute {
                 }
 
             }
+
+            if(heldItem != null) return false;
 
             connectionTypes[i] = connectionTypes[i] == ConnectionTypes.FORCED ? ConnectionTypes.NORMAL : ConnectionTypes.FORCED;
 
@@ -232,4 +239,24 @@ public class TileTransportDuct extends TileTDBase implements IMultiBlockRoute {
     public boolean acceptingStuff() {
         return false;
     }
+
+    @Override
+    public BlockDuct.ConnectionTypes getConnectionType(int side) {
+
+        if (connectionTypes[side] == ConnectionTypes.FORCED) {
+            return BlockDuct.ConnectionTypes.DUCT;
+        }
+        return super.getConnectionType(side);
+    }
+
+    @Override
+    public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
+
+        EntityPlayer player = ThermalDynamics.proxy.getClientPlayerSafe();
+        if (player != null && player.ridingEntity != null && player.ridingEntity.getClass() == EntityTransport.class) {
+            return;
+        }
+        super.addTraceableCuboids(cuboids);
+    }
+
 }
