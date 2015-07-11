@@ -125,6 +125,8 @@ public class ItemCover extends ItemAttachment {
         if (coverList != null)
             return coverList;
 
+        coverList = new ArrayList<ItemStack>();
+
         Iterator iterator = Item.itemRegistry.iterator();
 
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
