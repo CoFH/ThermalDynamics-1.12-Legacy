@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.render;
+package cofh.thermaldynamics.render.item;
 
 import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
@@ -20,9 +20,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
-public class ItemCoverRenderer implements IItemRenderer {
+public class RenderItemCover implements IItemRenderer {
 
-	public static IItemRenderer instance = new ItemCoverRenderer();
+	public static IItemRenderer instance = new RenderItemCover();
 
 	/* IItemRenderer */
 	@Override
@@ -115,31 +115,31 @@ public class ItemCoverRenderer implements IItemRenderer {
 		}
 
 		@Override
-		public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
+		public Block getBlock(int x, int y, int z) {
 
-			return isLoc(p_147439_1_, p_147439_2_, p_147439_3_) ? block : Blocks.air;
+			return isLoc(x, y, z) ? block : Blocks.air;
 		}
 
 		@Override
-		public TileEntity getTileEntity(int p_147438_1_, int p_147438_2_, int p_147438_3_) {
+		public TileEntity getTileEntity(int x, int y, int z) {
 
 			return null;
 		}
 
 		@Override
-		public int getLightBrightnessForSkyBlocks(int p_72802_1_, int p_72802_2_, int p_72802_3_, int p_72802_4_) {
+		public int getLightBrightnessForSkyBlocks(int x, int y, int z, int light) {
 
 			return 15728880;
 		}
 
 		@Override
-		public int getBlockMetadata(int p_72805_1_, int p_72805_2_, int p_72805_3_) {
+		public int getBlockMetadata(int x, int y, int z) {
 
-			return isLoc(p_72805_1_, p_72805_2_, p_72805_3_) ? meta : 0;
+			return isLoc(x, y, z) ? meta : 0;
 		}
 
 		@Override
-		public int isBlockProvidingPowerTo(int p_72879_1_, int p_72879_2_, int p_72879_3_, int p_72879_4_) {
+		public int isBlockProvidingPowerTo(int x, int y, int z, int from) {
 
 			return 0;
 		}

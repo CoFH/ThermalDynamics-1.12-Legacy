@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.CoFHCore;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
-import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
@@ -12,7 +12,9 @@ import cofh.thermaldynamics.multiblock.IMultiBlockRoute;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
+
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,239 +26,261 @@ import net.minecraft.util.MovingObjectPosition;
 
 public class TileTransportDuct extends TileTDBase implements IMultiBlockRoute {
 
-    public TransportGrid internalGrid;
+	public TransportGrid internalGrid;
 
-    @Override
-    public void setGrid(MultiBlockGrid newGrid) {
+	@Override
+	public void setGrid(MultiBlockGrid newGrid) {
 
-        super.setGrid(newGrid);
-        internalGrid = (TransportGrid) newGrid;
-    }
+		super.setGrid(newGrid);
+		internalGrid = (TransportGrid) newGrid;
+	}
 
-    @Override
-    public MultiBlockGrid getNewGrid() {
-        return new TransportGrid(worldObj);
-    }
+	@Override
+	public MultiBlockGrid getNewGrid() {
 
-    @Override
-    public boolean cachesExist() {
-        return true;
-    }
+		return new TransportGrid(worldObj);
+	}
 
-    @Override
-    public void createCaches() {
+	@Override
+	public boolean cachesExist() {
 
-    }
+		return true;
+	}
 
-    @Override
-    public void cacheImportant(TileEntity tile, int side) {
+	@Override
+	public void createCaches() {
 
-    }
+	}
 
-    @Override
-    public void clearCache(int side) {
+	@Override
+	public void cacheImportant(TileEntity tile, int side) {
 
-    }
+	}
 
-    @Override
-    public void handleTileSideUpdate(int i) {
-        super.handleTileSideUpdate(i);
+	@Override
+	public void clearCache(int side) {
 
-        if (connectionTypes[i] == ConnectionTypes.FORCED) {
-            neighborMultiBlocks[i] = null;
-            neighborTypes[i] = NeighborTypes.OUTPUT;
-            isNode = true;
-            isOutput = true;
-        }
-    }
+	}
 
-    @Override
-    public boolean openGui(EntityPlayer player) {
-        if (super.openGui(player) || worldObj.isRemote)
-            return true;
+	@Override
+	public void handleTileSideUpdate(int i) {
 
-        if(internalGrid == null) return false;
+		super.handleTileSideUpdate(i);
 
-        MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-        if (movingObjectPosition == null) {
-            return false;
-        }
+		if (connectionTypes[i] == ConnectionTypes.FORCED) {
+			neighborMultiBlocks[i] = null;
+			neighborTypes[i] = NeighborTypes.OUTPUT;
+			isNode = true;
+			isOutput = true;
+		}
+	}
 
-        int subHit = movingObjectPosition.subHit;
-        int hitSide = movingObjectPosition.sideHit;
+	@Override
+	public boolean openGui(EntityPlayer player) {
 
-        if (subHit >= 0 && subHit <= 13) {
-            int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
+		if (super.openGui(player) || worldObj.isRemote) {
+			return true;
+		}
 
-            onNeighborBlockChange();
+		if (internalGrid == null) {
+			return false;
+		}
 
-            if (neighborMultiBlocks[i] != null)
-                return false;
+		MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+		if (movingObjectPosition == null) {
+			return false;
+		}
 
-            ItemStack heldItem = player.getHeldItem();
+		int subHit = movingObjectPosition.subHit;
+		int hitSide = movingObjectPosition.sideHit;
 
-            if (connectionTypes[i] == ConnectionTypes.FORCED) {
-                if (heldItem != null && heldItem.getItem() == Items.spawn_egg) {
+		if (subHit >= 0 && subHit <= 13) {
+			int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
 
-                    Entity entity = EntityList.createEntityByID(heldItem.getItemDamage(), world());
+			onNeighborBlockChange();
 
-                    if(entity == null || !(entity instanceof EntityLivingBase))
-                        return false;
+			if (neighborMultiBlocks[i] != null) {
+				return false;
+			}
 
-                    EntityTransport route = findRoute(entity, i ^ 1, (byte) 1);
+			ItemStack heldItem = player.getHeldItem();
 
-                    if (route != null) {
-                        entity.setPosition(x(), y(), z());
-                        world().spawnEntityInWorld(entity);
+			if (connectionTypes[i] == ConnectionTypes.FORCED) {
+				if (heldItem != null && heldItem.getItem() == Items.spawn_egg) {
 
-                        route.start((EntityLivingBase) entity);
-                    }
+					Entity entity = EntityList.createEntityByID(heldItem.getItemDamage(), world());
 
-                    return true;
-                }
+					if (entity == null || !(entity instanceof EntityLivingBase)) {
+						return false;
+					}
 
-                if (heldItem != null && heldItem.getItem() == Items.minecart) {
-                    EntityTransport route = findRoute(player, i ^ 1, (byte) 1);
+					EntityTransport route = findRoute(entity, i ^ 1, (byte) 1);
 
-                    if (route != null) {
-                        route.start(player);
-                    }
+					if (route != null) {
+						entity.setPosition(x(), y(), z());
+						world().spawnEntityInWorld(entity);
 
-                    return true;
-                }
+						route.start((EntityLivingBase) entity);
+					}
 
-            }
+					return true;
+				}
 
-            if(heldItem != null) return false;
+				if (heldItem != null && heldItem.getItem() == Items.minecart) {
+					EntityTransport route = findRoute(player, i ^ 1, (byte) 1);
 
-            connectionTypes[i] = connectionTypes[i] == ConnectionTypes.FORCED ? ConnectionTypes.NORMAL : ConnectionTypes.FORCED;
+					if (route != null) {
+						route.start(player);
+					}
 
-            onNeighborBlockChange();
+					return true;
+				}
 
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+			}
 
-            if (myGrid != null) {
-                myGrid.destroyAndRecreate();
-            }
+			if (heldItem != null) {
+				return false;
+			}
 
-            for (SubTileMultiBlock subTile : subTiles) {
-                subTile.destroyAndRecreate();
-            }
+			connectionTypes[i] = connectionTypes[i] == ConnectionTypes.FORCED ? ConnectionTypes.NORMAL : ConnectionTypes.FORCED;
 
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-            return true;
-        }
+			onNeighborBlockChange();
 
-        return false;
-    }
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
 
-    public RouteCache getCache() {
+			if (myGrid != null) {
+				myGrid.destroyAndRecreate();
+			}
 
-        return getCache(true);
-    }
+			for (SubTileMultiBlock subTile : subTiles) {
+				subTile.destroyAndRecreate();
+			}
 
-    public RouteCache getCache(boolean urgent) {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			return true;
+		}
 
-        return urgent ? internalGrid.getRoutesFromOutput(this) : internalGrid.getRoutesFromOutputNonUrgent(this);
-    }
+		return false;
+	}
 
-    public Route getRoute(Entity entity, int side, byte speed) {
-        if (entity == null || entity.isDead) {
-            return null;
-        }
+	public RouteCache getCache() {
 
-        for (Route outputRoute : getCache().outputRoutes) {
-            if(outputRoute.endPoint == this)
-                continue;
+		return getCache(true);
+	}
 
-            Route route = outputRoute.copy();
-            byte outSide = outputRoute.endPoint.getStuffedSide();
-            route.pathDirections.add(outSide);
-            return route;
-        }
-        return null;
-    }
+	public RouteCache getCache(boolean urgent) {
 
-    public EntityTransport findRoute(Entity entity, int side, byte speed) {
-        Route route = getRoute(entity, side, speed);
-        return route != null ? new EntityTransport(this, route, (byte) side, speed) : null;
-    }
+		return urgent ? internalGrid.getRoutesFromOutput(this) : internalGrid.getRoutesFromOutputNonUrgent(this);
+	}
 
-    @Override
-    public int getWeight() {
-        return 1;
-    }
+	public Route getRoute(Entity entity, int side, byte speed) {
 
-    @Override
-    public boolean canStuffItem() {
-        return false;
-    }
+		if (entity == null || entity.isDead) {
+			return null;
+		}
 
-    @Override
-    public boolean isOutput() {
-        return isOutput;
-    }
+		for (Route outputRoute : getCache().outputRoutes) {
+			if (outputRoute.endPoint == this) {
+				continue;
+			}
 
-    @Override
-    public int getMaxRange() {
-        return Integer.MAX_VALUE;
-    }
+			Route route = outputRoute.copy();
+			byte outSide = outputRoute.endPoint.getStuffedSide();
+			route.pathDirections.add(outSide);
+			return route;
+		}
+		return null;
+	}
 
-    @Override
-    public NeighborTypes getCachedSideType(byte side) {
+	public EntityTransport findRoute(Entity entity, int side, byte speed) {
 
-        return neighborTypes[side];
-    }
+		Route route = getRoute(entity, side, speed);
+		return route != null ? new EntityTransport(this, route, (byte) side, speed) : null;
+	}
 
-    @Override
-    public ConnectionTypes getConnectionType(byte side) {
+	@Override
+	public int getWeight() {
 
-        return connectionTypes[side];
-    }
+		return 1;
+	}
 
-    @Override
-    public IMultiBlock getCachedTile(byte side) {
+	@Override
+	public boolean canStuffItem() {
 
-        return neighborMultiBlocks[side];
-    }
+		return false;
+	}
 
-    @Override
-    public TileItemDuct.RouteInfo canRouteItem(ItemStack stack) {
-        return TileItemDuct.noRoute;
-    }
+	@Override
+	public boolean isOutput() {
 
-    @Override
-    public byte getStuffedSide() {
-        for (byte i = 0; i < 6; i++) {
-            if(neighborTypes[i] == NeighborTypes.OUTPUT)
-                return i;
-        }
+		return isOutput;
+	}
 
-        return 0;
-    }
+	@Override
+	public int getMaxRange() {
 
-    @Override
-    public boolean acceptingStuff() {
-        return false;
-    }
+		return Integer.MAX_VALUE;
+	}
 
-    @Override
-    public BlockDuct.ConnectionTypes getConnectionType(int side) {
+	@Override
+	public NeighborTypes getCachedSideType(byte side) {
 
-        if (connectionTypes[side] == ConnectionTypes.FORCED) {
-            return BlockDuct.ConnectionTypes.DUCT;
-        }
-        return super.getConnectionType(side);
-    }
+		return neighborTypes[side];
+	}
 
-    @Override
-    public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
+	@Override
+	public ConnectionTypes getConnectionType(byte side) {
 
-        EntityPlayer player = ThermalDynamics.proxy.getClientPlayerSafe();
-        if (player != null && player.ridingEntity != null && player.ridingEntity.getClass() == EntityTransport.class) {
-            return;
-        }
-        super.addTraceableCuboids(cuboids);
-    }
+		return connectionTypes[side];
+	}
+
+	@Override
+	public IMultiBlock getCachedTile(byte side) {
+
+		return neighborMultiBlocks[side];
+	}
+
+	@Override
+	public TileItemDuct.RouteInfo canRouteItem(ItemStack stack) {
+
+		return TileItemDuct.noRoute;
+	}
+
+	@Override
+	public byte getStuffedSide() {
+
+		for (byte i = 0; i < 6; i++) {
+			if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	@Override
+	public boolean acceptingStuff() {
+
+		return false;
+	}
+
+	@Override
+	public BlockDuct.ConnectionTypes getConnectionType(int side) {
+
+		if (connectionTypes[side] == ConnectionTypes.FORCED) {
+			return BlockDuct.ConnectionTypes.DUCT;
+		}
+		return super.getConnectionType(side);
+	}
+
+	@Override
+	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
+
+		EntityPlayer player = CoFHCore.proxy.getClientPlayer();
+		if (player != null && player.ridingEntity != null && player.ridingEntity.getClass() == EntityTransport.class) {
+			return;
+		}
+		super.addTraceableCuboids(cuboids);
+	}
 
 }
