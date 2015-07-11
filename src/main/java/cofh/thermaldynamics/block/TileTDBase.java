@@ -365,79 +365,89 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			clearCache(i);
 		}
 
-		neighborTypes[i] = null;
-		if (attachments[i] != null) {
-			attachments[i].onNeighborChange();
-			neighborMultiBlocks[i] = null;
+        handleAttachmentUpdate(i);
+        handleTileSideUpdate(i);
+    }
 
-			neighborTypes[i] = attachments[i].getNeighborType();
-			if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-				theTile = getAdjTileEntitySafe(i);
-				if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-					neighborMultiBlocks[i] = (IMultiBlock) theTile;
-				} else {
-					neighborTypes[i] = NeighborTypes.NONE;
-				}
-			} else if (neighborTypes[i] == NeighborTypes.OUTPUT) {
-				theTile = getAdjTileEntitySafe(i);
-				if (isSignificantTile(theTile, i)) {
-					if (!cachesExist()) {
-						createCaches();
-					}
-					cacheImportant(theTile, i);
-				}
-				isOutput = true;
-			} else if (neighborTypes[i] == NeighborTypes.INPUT) {
-				theTile = getAdjTileEntitySafe(i);
-				if (theTile != null) {
-					if (!cachesExist()) {
-						createCaches();
-					}
-					cacheInputTile(theTile, i);
-				}
-				isInput = true;
-			} else {
-				neighborMultiBlocks[i] = null;
-			}
+    public void handleAttachmentUpdate(int i) {
+        TileEntity theTile;
+        neighborTypes[i] = null;
+        if (attachments[i] != null) {
+            attachments[i].onNeighborChange();
+            neighborMultiBlocks[i] = null;
 
-			connectionTypes[i] = ConnectionTypes.NORMAL;
-			isNode = attachments[i].isNode();
-		}
+            neighborTypes[i] = attachments[i].getNeighborType();
+            if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
+                theTile = getAdjTileEntitySafe(i);
+                if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+                    neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                } else {
+                    neighborTypes[i] = NeighborTypes.NONE;
+                }
+            } else if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+                theTile = getAdjTileEntitySafe(i);
+                if (isSignificantTile(theTile, i)) {
+                    if (!cachesExist()) {
+                        createCaches();
+                    }
+                    cacheImportant(theTile, i);
+                }
+                isOutput = true;
+            } else if (neighborTypes[i] == NeighborTypes.INPUT) {
+                theTile = getAdjTileEntitySafe(i);
+                if (theTile != null) {
+                    if (!cachesExist()) {
+                        createCaches();
+                    }
+                    cacheInputTile(theTile, i);
+                }
+                isInput = true;
+            } else {
+                neighborMultiBlocks[i] = null;
+            }
 
-		if (neighborTypes[i] == null) {
-			theTile = getAdjTileEntitySafe(i);
-			if (theTile == null) {
-				neighborMultiBlocks[i] = null;
-				neighborTypes[i] = NeighborTypes.NONE;
-				connectionTypes[i] = ConnectionTypes.NORMAL;
-			} else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-				neighborMultiBlocks[i] = (IMultiBlock) theTile;
-				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-			} else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
-				neighborMultiBlocks[i] = null;
-				neighborTypes[i] = NeighborTypes.OUTPUT;
-				if (!cachesExist()) {
-					createCaches();
-				}
-				cacheImportant(theTile, i);
-				isNode = true;
-				isOutput = true;
-			} else if (connectionTypes[i].allowTransfer && isStructureTile(theTile, i)) {
-				neighborMultiBlocks[i] = null;
-				neighborTypes[i] = NeighborTypes.STRUCTURE;
-				if (!cachesExist()) {
-					createCaches();
-				}
-				cacheStructural(theTile, i);
-				isNode = true;
-			} else {
-				neighborMultiBlocks[i] = null;
-				neighborTypes[i] = NeighborTypes.NONE;
-			}
-		}
-	}
+            connectionTypes[i] = ConnectionTypes.NORMAL;
+            isNode = attachments[i].isNode();
+        }
+    }
 
-	public void cacheInputTile(TileEntity theTile, int side) {
+    public void handleTileSideUpdate(int i) {
+        TileEntity theTile;
+        if (neighborTypes[i] == null) {
+            theTile = getAdjTileEntitySafe(i);
+            if (theTile == null) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.NONE;
+                if(connectionTypes[i] != ConnectionTypes.FORCED)
+                    connectionTypes[i] = ConnectionTypes.NORMAL;
+            } else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
+                neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+            } else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.OUTPUT;
+                if (!cachesExist()) {
+                    createCaches();
+                }
+                cacheImportant(theTile, i);
+                isNode = true;
+                isOutput = true;
+            } else if (connectionTypes[i].allowTransfer && isStructureTile(theTile, i)) {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.STRUCTURE;
+                if (!cachesExist()) {
+                    createCaches();
+                }
+                cacheStructural(theTile, i);
+                isNode = true;
+            } else {
+                neighborMultiBlocks[i] = null;
+                neighborTypes[i] = NeighborTypes.NONE;
+            }
+        }
+    }
+
+    public void cacheInputTile(TileEntity theTile, int side) {
 
 	}
 
@@ -992,18 +1002,23 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public static BlockDuct.ConnectionTypes getDefaultConnectionType(NeighborTypes neighborType, ConnectionTypes connectionType) {
 
-		if (neighborType == NeighborTypes.STRUCTURE) {
-			return BlockDuct.ConnectionTypes.STRUCTURE;
-		} else if (neighborType == NeighborTypes.INPUT) {
-			return BlockDuct.ConnectionTypes.DUCT;
-		} else if (neighborType == NeighborTypes.NONE || connectionType == ConnectionTypes.BLOCKED || connectionType == ConnectionTypes.REJECTED) {
-			return BlockDuct.ConnectionTypes.NONE;
-		} else if (neighborType == NeighborTypes.OUTPUT) {
-			return BlockDuct.ConnectionTypes.TILECONNECTION;
-		} else {
-			return BlockDuct.ConnectionTypes.DUCT;
-		}
-	}
+        if (neighborType == NeighborTypes.STRUCTURE) {
+            return BlockDuct.ConnectionTypes.STRUCTURE;
+        } else if (neighborType == NeighborTypes.INPUT) {
+            return BlockDuct.ConnectionTypes.DUCT;
+        } else if (neighborType == NeighborTypes.NONE) {
+            if (connectionType == ConnectionTypes.FORCED)
+                return BlockDuct.ConnectionTypes.DUCT;
+
+            return BlockDuct.ConnectionTypes.NONE;
+        } else if (connectionType == ConnectionTypes.BLOCKED || connectionType == ConnectionTypes.REJECTED) {
+            return BlockDuct.ConnectionTypes.NONE;
+        } else if (neighborType == NeighborTypes.OUTPUT) {
+            return BlockDuct.ConnectionTypes.TILECONNECTION;
+        } else {
+            return BlockDuct.ConnectionTypes.DUCT;
+        }
+    }
 
 	public void randomDisplayTick() {
 
@@ -1061,7 +1076,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	}
 
 	public static enum ConnectionTypes {
-		NORMAL(true), ONEWAY(true), REJECTED(false), BLOCKED(false);
+		NORMAL(true), ONEWAY(true), REJECTED(false), BLOCKED(false), FORCED(true);
 
 		ConnectionTypes(boolean allowTransfer) {
 
