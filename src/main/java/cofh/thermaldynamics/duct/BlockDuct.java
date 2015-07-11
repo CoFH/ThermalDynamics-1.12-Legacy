@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct;
 
 import cofh.api.block.IBlockAppearance;
 import cofh.api.core.IInitializer;
+import cofh.core.CoFHProps;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.render.IconRegistry;
 import cofh.core.render.hitbox.ICustomHitBox;
@@ -13,11 +14,15 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.core.TDProps;
+import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
+import cofh.thermaldynamics.duct.entity.EntityTransport;
+import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
@@ -25,15 +30,15 @@ import cofh.thermaldynamics.duct.fluid.TileFluidDuctSuper;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -380,8 +385,16 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
 
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
-		return true;
-	}
+
+
+        if (DebugHelper.debug) {
+            GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
+            EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
+            MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
+            FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
+        }
+        return true;
+    }
 
 	@Override
 	public boolean postInit() {

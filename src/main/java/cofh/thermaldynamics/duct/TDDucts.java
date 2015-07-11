@@ -1,13 +1,17 @@
 package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
+import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.Duct.Type;
+import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import cofh.thermaldynamics.duct.light.DuctLight;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import net.minecraft.world.World;
 
 public class TDDucts {
 
@@ -99,11 +103,25 @@ public class TDDucts {
 		addFluidDucts();
 		addItemDucts();
 		addSupportDucts();
-
+        if (DebugHelper.debug)
+            addIndevDucts();
 		return true;
 	}
 
-	static void addEnergyDucts() {
+    private static void addIndevDucts() {
+        DuctFactory duct_transport = new DuctFactory(){
+
+            @Override
+            public TileTDBase createTileEntity(Duct duct, World worldObj) {
+                return new TileTransportDuct();
+            }
+        };
+
+        addDuct(4*16, false, 1, 4, "entityTransport", Type.ENTITY, duct_transport, null, null,
+                null, 255, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 96);
+    }
+
+    static void addEnergyDucts() {
 
 		energyBasic = addDuct(OFFSET_ENERGY + 0, false, 1, 0, "energyBasic", Type.ENERGY, DuctFactory.energy, "lead", "lead", Duct.REDSTONE_BLOCK, 255, null,
 				null, 0);

@@ -10,6 +10,7 @@ import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.repack.codechicken.lib.vec.BlockCoord;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
+import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 
@@ -62,6 +63,9 @@ public abstract class BlockTDBase extends BlockCoFHBase implements ITileEntityPr
 
 	@Override
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity) {
+
+        if(entity instanceof EntityTransport)
+            return;
 
 		float min = getSize(world, x, y, z);
 		float max = 1 - min;
