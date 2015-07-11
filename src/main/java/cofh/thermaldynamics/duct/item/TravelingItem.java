@@ -337,9 +337,9 @@ public class TravelingItem {
 				if (!hasDest) {
 					return null;
 				}
-				myPath.dest = (new BlockCoord(destX, destY, destZ).offset(myPath.getLastSide()));
+				myPath.dest = (new BlockCoord(destX, destY, destZ).offset(getLastSide()));
 			} else {
-				myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(myPath.getLastSide());
+				myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(getLastSide());
 			}
 
 		}
@@ -351,10 +351,14 @@ public class TravelingItem {
 		if (stack == null) {
 			return null;
 		}
-		if (stackItemEntry == null || stackItemEntry.side != myPath.getLastSide()) {
-			stackItemEntry = new StackMap.ItemEntry(stack, myPath.getLastSide());
+		if (stackItemEntry == null || stackItemEntry.side != getLastSide()) {
+			stackItemEntry = new StackMap.ItemEntry(stack, getLastSide());
 		}
 		return stackItemEntry;
 	}
+
+    public int getLastSide() {
+        return myPath.pathDirections.isEmpty() ? direction : myPath.getLastSide();
+    }
 
 }
