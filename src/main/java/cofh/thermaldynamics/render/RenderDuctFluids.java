@@ -21,10 +21,10 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer {
 
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		// GL11.glColor4f(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		RenderDuct.instance.getDuctConnections(duct);
 		RenderDuct.instance.renderFluid(duct.myRenderFluid, RenderDuct.connections, duct.getRenderFluidLevel(), x, y, z);
+		GL11.glEnable(GL11.GL_LIGHTING);
 
 		GL11.glPopMatrix();
 
