@@ -217,7 +217,6 @@ public class FluidGrid extends MultiBlockGrid {
 			recentRenderUpdate = false;
 		}
 		if (myTank.getFluid() != null && myTank.getCapacity() > 0) {
-
 			double fullPercent = 10000 * myTank.getFluid().amount / myTank.getCapacity();
 
 			if (fullPercent >= 0 && fullPercent <= (renderFluidLevel == FluidRenderType.LOW_MED ? 500 : 700)) {

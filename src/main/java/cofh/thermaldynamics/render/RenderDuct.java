@@ -310,15 +310,11 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
 		IIcon fluidTex = RenderHelper.getFluidTexture(stack);
 
-		if (level > 6) {
-			level = 6;
-		}
-
 		if (fluid.isGaseous(stack)) {
-			CCRenderState.setColour(RenderUtils.getFluidRenderColor(stack) << 8 | 32 + 36 * level);
+			CCRenderState.alphaOverride = 32 + 32 * level;
 			level = 6;
 		}
-		if (level != 6) {
+		if (level < 6) {
 			CCModel[] models = modelFluid[level - 1];
 
 			for (int s = 0; s < 6; s++) {
@@ -433,17 +429,17 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.setBlockTextureSheet();
 		RenderUtils.preItemRender();
 
-		GL11.glDepthMask(true);
+		// GL11.glDepthMask(true);
 		CCRenderState.startDrawing();
 		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
 		CCRenderState.draw();
 
-		GL11.glDepthMask(false);
+		// GL11.glDepthMask(false);
 		CCRenderState.startDrawing();
 		renderWorldExtra(true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
 		CCRenderState.draw();
 
-		GL11.glDepthMask(true);
+		// GL11.glDepthMask(true);
 
 		CCRenderState.useNormals = false;
 		RenderHelper.setItemTextureSheet();
