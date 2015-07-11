@@ -357,8 +357,9 @@ public class TravelingItem {
 		return stackItemEntry;
 	}
 
-    public int getLastSide() {
-        return myPath.pathDirections.isEmpty() ? direction : myPath.getLastSide();
-    }
+	public int getLastSide() {
+
+		return myPath.pathDirections.isEmpty() ? direction : myPath.getLastSide();
+	}
 
 }

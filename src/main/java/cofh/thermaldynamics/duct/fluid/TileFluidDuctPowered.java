@@ -23,9 +23,9 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 	@Override
 	public BlockDuct.ConnectionTypes getConnectionType(int side) {
 
-        if(attachments[side] != null)
-            return attachments[side].getRenderConnectionType();
-        else if (neighborTypes[side] == NeighborTypes.STRUCTURE) {
+		if (attachments[side] != null) {
+			return attachments[side].getRenderConnectionType();
+		} else if (neighborTypes[side] == NeighborTypes.STRUCTURE) {
 			return connectionTypes[side] != ConnectionTypes.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
 		} else {
 			return super.getConnectionType(side);

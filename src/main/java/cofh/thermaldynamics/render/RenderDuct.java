@@ -197,10 +197,10 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 			}
 		}
 
-        if(iconBaseTexture != null) {
-            RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
-            (ductType.opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(trans, icon);
-        }
+		if (iconBaseTexture != null) {
+			RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
+			(ductType.opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(trans, icon);
+		}
 
 		if (ductType.iconFluidTexture != null && ductType.fluidTransparency == (byte) 255) {
 			modelFluidTubes[c].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFluidTexture));

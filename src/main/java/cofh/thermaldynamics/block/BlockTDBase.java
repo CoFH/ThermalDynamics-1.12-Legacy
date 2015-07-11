@@ -64,8 +64,9 @@ public abstract class BlockTDBase extends BlockCoFHBase implements ITileEntityPr
 	@Override
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity) {
 
-        if(entity instanceof EntityTransport)
-            return;
+		if (entity instanceof EntityTransport) {
+			return;
+		}
 
 		float min = getSize(world, x, y, z);
 		float max = 1 - min;

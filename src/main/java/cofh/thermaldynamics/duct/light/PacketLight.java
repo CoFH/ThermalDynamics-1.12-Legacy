@@ -4,8 +4,8 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.position.BlockPosition;
 import cofh.lib.util.position.ChunkCoord;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
-
 import com.google.common.collect.Iterables;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -53,7 +53,7 @@ public class PacketLight extends PacketCoFHBase {
 
 		addBool(lit);
 
-		addInt(grid.idleSet.size() + grid.nodeSet.size() );
+		addInt(grid.idleSet.size() + grid.nodeSet.size());
 
 		for (IMultiBlock iMultiBlock : Iterables.concat(grid.nodeSet, grid.idleSet)) {
 			addInt(iMultiBlock.x());

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import net.minecraft.world.World;
 
 public class TDDucts {
@@ -103,25 +104,29 @@ public class TDDucts {
 		addFluidDucts();
 		addItemDucts();
 		addSupportDucts();
-        if (DebugHelper.debug)
-            addIndevDucts();
+
+		if (DebugHelper.debug) {
+			addIndevDucts();
+		}
 		return true;
 	}
 
-    private static void addIndevDucts() {
-        DuctFactory duct_transport = new DuctFactory(){
+	private static void addIndevDucts() {
 
-            @Override
-            public TileTDBase createTileEntity(Duct duct, World worldObj) {
-                return new TileTransportDuct();
-            }
-        };
+		DuctFactory duct_transport = new DuctFactory() {
 
-        addDuct(4*16, false, 1, 4, "entityTransport", Type.ENTITY, duct_transport, null, null,
-                null, 255, "electrum", "thermaldynamics:duct/base/greenGlass", 96);
-    }
+			@Override
+			public TileTDBase createTileEntity(Duct duct, World worldObj) {
 
-    static void addEnergyDucts() {
+				return new TileTransportDuct();
+			}
+		};
+
+		addDuct(4 * 16, false, 1, 4, "entityTransport", Type.ENTITY, duct_transport, null, null, null, 255, "electrum", "thermaldynamics:duct/base/greenGlass",
+				96);
+	}
+
+	static void addEnergyDucts() {
 
 		energyBasic = addDuct(OFFSET_ENERGY + 0, false, 1, 0, "energyBasic", Type.ENERGY, DuctFactory.energy, "lead", "lead", Duct.REDSTONE_BLOCK, 255, null,
 				null, 0);

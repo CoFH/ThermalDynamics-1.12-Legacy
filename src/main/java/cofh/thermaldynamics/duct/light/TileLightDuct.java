@@ -4,6 +4,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -88,20 +89,16 @@ public class TileLightDuct extends TileTDBase {
 			return;
 		}
 
-        lit = false;
-        ForgeDirection[] valid_directions = ForgeDirection.VALID_DIRECTIONS;
-        for (int i = 0; !lit && i < valid_directions.length; i++) {
-            if(attachments[i] != null && attachments[i].shouldRSConnect())
-                continue;
+		lit = false;
+		ForgeDirection[] valid_directions = ForgeDirection.VALID_DIRECTIONS;
+		for (int i = 0; !lit && i < valid_directions.length; i++) {
+			if (attachments[i] != null && attachments[i].shouldRSConnect()) {
+				continue;
+			}
 
-            ForgeDirection dir = valid_directions[i];
-            lit = worldObj.getIndirectPowerOutput(
-                    x() + dir.offsetX,
-                    y() + dir.offsetY,
-                    z() + dir.offsetZ,
-                    i
-            );
-        }
+			ForgeDirection dir = valid_directions[i];
+			lit = worldObj.getIndirectPowerOutput(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ, i);
+		}
 
 		if (gridGlow != null && gridGlow.lit != lit) {
 			gridGlow.upToDate = false;

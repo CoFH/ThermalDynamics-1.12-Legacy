@@ -1,9 +1,9 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.api.item.ISpecialFilterFluid;
-import cofh.api.item.ISpecialFilterItem;
 import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
 
+import cofh.api.item.ISpecialFilterFluid;
+import cofh.api.item.ISpecialFilterItem;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;
@@ -50,8 +50,8 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	HashSet<String> modNames;
 	HashSet<Fluid> fluidsSimple;
 	HashSet<FluidStack> fluidsNBT;
-    LinkedList<CustomFilterItem> customFilterItems;
-    LinkedList<CustomFilterFluid> customFilterFluids;
+	LinkedList<CustomFilterItem> customFilterItems;
+	LinkedList<CustomFilterFluid> customFilterFluids;
 
 	public static int[] options = { 0, 1, 6, 6, 6 };
 	private final Duct.Type transferType;
@@ -106,78 +106,80 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				modNames = null;
 			}
 
-            customFilterItems = null;
+			customFilterItems = null;
 
 		} else if (isFluid()) {
 			fluidsSimple.clear();
 			fluidsNBT.clear();
 
-            customFilterFluids = null;
+			customFilterFluids = null;
 		}
 		synchronized (items) {
 			boolean flag = true;
-            for (ItemStack item : items) {
-                if (item != null) {
-                    if (isItem()) {
-                        if (item.getItem() instanceof ISpecialFilterItem) {
-                            if (customFilterItems == null)
-                                customFilterItems = new LinkedList<CustomFilterItem>();
+			for (ItemStack item : items) {
+				if (item != null) {
+					if (isItem()) {
+						if (item.getItem() instanceof ISpecialFilterItem) {
+							if (customFilterItems == null) {
+								customFilterItems = new LinkedList<CustomFilterItem>();
+							}
 
-                            customFilterItems.add(new CustomFilterItem(item));
-                        }
+							customFilterItems.add(new CustomFilterItem(item));
+						}
 
-                        if (!flags[flagIgnoreMod]) {
-                            modNames.add(CoreUtils.getModName(item.getItem()));
-                        }
-                        if (!flags[flagIgnoreOreDictionary]) {
-                            ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
-                            if (allOreIDs != null) {
-                                for (Integer integer : allOreIDs) {
-                                    if (!oreIds.contains(integer)) {
-                                        oreIds.add(integer.intValue());
-                                    }
-                                }
-                            }
-                        }
-                        ItemStack d = item.copy();
-                        if (flags[flagIgnoreMetadata]) {
-                            d.setItemDamage(0);
-                        }
-                        if (flags[flagIgnoreNBT]) {
-                            d.setTagCompound(null);
-                        }
+						if (!flags[flagIgnoreMod]) {
+							modNames.add(CoreUtils.getModName(item.getItem()));
+						}
+						if (!flags[flagIgnoreOreDictionary]) {
+							ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
+							if (allOreIDs != null) {
+								for (Integer integer : allOreIDs) {
+									if (!oreIds.contains(integer)) {
+										oreIds.add(integer.intValue());
+									}
+								}
+							}
+						}
+						ItemStack d = item.copy();
+						if (flags[flagIgnoreMetadata]) {
+							d.setItemDamage(0);
+						}
+						if (flags[flagIgnoreNBT]) {
+							d.setTagCompound(null);
+						}
 
-                        for (ItemStack i : quickItems) {
-                            if (ItemHelper.itemsEqualWithMetadata(d, i)) {
-                                flag = false;
-                                break;
-                            }
-                        }
-                        if (flag) {
-                            quickItems.add(d);
-                        }
+						for (ItemStack i : quickItems) {
+							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
+								flag = false;
+								break;
+							}
+						}
+						if (flag) {
+							quickItems.add(d);
+						}
 
-                    } else if (isFluid()) {
-                        if (item.getItem() instanceof ISpecialFilterFluid) {
-                            if (customFilterFluids == null)
-                                customFilterFluids = new LinkedList<CustomFilterFluid>();
+					} else if (isFluid()) {
+						if (item.getItem() instanceof ISpecialFilterFluid) {
+							if (customFilterFluids == null) {
+								customFilterFluids = new LinkedList<CustomFilterFluid>();
+							}
 
-                            customFilterFluids.add(new CustomFilterFluid(item));
-                        }
+							customFilterFluids.add(new CustomFilterFluid(item));
+						}
 
-                        FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
-                        if (fluidStack != null) {
-                            fluidStack.amount = 1;
+						FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
+						if (fluidStack != null) {
+							fluidStack.amount = 1;
 
-                            if (fluidStack.tag == null || flags[flagIgnoreNBT]) {
-                                fluidsSimple.add(fluidStack.getFluid());
-                            } else {
-                                fluidsNBT.add(fluidStack);
-                            }
-                        }
-                    }
-                }
-            }
+							if (fluidStack.tag == null || flags[flagIgnoreNBT]) {
+								fluidsSimple.add(fluidStack.getFluid());
+							} else {
+								fluidsNBT.add(fluidStack);
+							}
+						}
+					}
+				}
+			}
 			recalc = false;
 		}
 
@@ -200,12 +202,13 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			calcItems();
 		}
 
-        if(customFilterItems != null) {
-            for (CustomFilterItem customFilterItem : customFilterItems) {
-                if (customFilterItem.filter.matchesItem(customFilterItem.filterStack, item))
-                    return !flags[flagBlackList];
-            }
-        }
+		if (customFilterItems != null) {
+			for (CustomFilterItem customFilterItem : customFilterItems) {
+				if (customFilterItem.filter.matchesItem(customFilterItem.filterStack, item)) {
+					return !flags[flagBlackList];
+				}
+			}
+		}
 
 		if (!flags[flagIgnoreMod]) {
 			if (modNames.contains(CoreUtils.getModName(item.getItem()))) {
@@ -379,11 +382,13 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			calcItems();
 		}
 
-        if(customFilterFluids != null)
-            for (CustomFilterFluid customFilterFluids : this.customFilterFluids) {
-                if (customFilterFluids.filter.matchesFluid(customFilterFluids.filterStack, fluid))
-                    return !flags[flagBlackList];
-            }
+		if (customFilterFluids != null) {
+			for (CustomFilterFluid customFilterFluids : this.customFilterFluids) {
+				if (customFilterFluids.filter.matchesFluid(customFilterFluids.filterStack, fluid)) {
+					return !flags[flagBlackList];
+				}
+			}
+		}
 
 		if (fluid.tag == null || flags[flagIgnoreNBT]) {
 			return !flags[flagBlackList] == fluidsSimple.contains(fluid.getFluid());
@@ -554,24 +559,28 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		return levels[i];
 	}
 
-    private static class CustomFilterItem {
-        public ISpecialFilterItem filter;
-        public ItemStack filterStack;
+	private static class CustomFilterItem {
 
-        public CustomFilterItem(ItemStack filterStack) {
-            this.filter = (ISpecialFilterItem) filterStack.getItem();
-            this.filterStack = filterStack;
-        }
-    }
+		public ISpecialFilterItem filter;
+		public ItemStack filterStack;
 
-    private static class CustomFilterFluid {
-        public ISpecialFilterFluid filter;
-        public ItemStack filterStack;
+		public CustomFilterItem(ItemStack filterStack) {
 
-        public CustomFilterFluid(ItemStack filterStack) {
-            this.filter = (ISpecialFilterFluid) filterStack.getItem();
-            this.filterStack = filterStack;
-        }
-    }
+			this.filter = (ISpecialFilterItem) filterStack.getItem();
+			this.filterStack = filterStack;
+		}
+	}
+
+	private static class CustomFilterFluid {
+
+		public ISpecialFilterFluid filter;
+		public ItemStack filterStack;
+
+		public CustomFilterFluid(ItemStack filterStack) {
+
+			this.filter = (ISpecialFilterFluid) filterStack.getItem();
+			this.filterStack = filterStack;
+		}
+	}
 
 }

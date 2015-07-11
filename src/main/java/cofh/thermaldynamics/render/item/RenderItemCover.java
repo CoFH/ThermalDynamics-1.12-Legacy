@@ -44,7 +44,6 @@ public class RenderItemCover implements IItemRenderer {
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return;
 		}
-
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
@@ -82,7 +81,6 @@ public class RenderItemCover implements IItemRenderer {
 			}
 		}
 		CCRenderState.draw();
-
 		CCRenderState.useNormals = false;
 
 		RenderHelper.setItemTextureSheet();
@@ -145,13 +143,13 @@ public class RenderItemCover implements IItemRenderer {
 		}
 
 		@Override
-		public boolean isAirBlock(int p_147437_1_, int p_147437_2_, int p_147437_3_) {
+		public boolean isAirBlock(int x, int y, int z) {
 
-			return isLoc(p_147437_1_, p_147437_2_, p_147437_3_);
+			return isLoc(x, y, z);
 		}
 
 		@Override
-		public BiomeGenBase getBiomeGenForCoords(int p_72807_1_, int p_72807_2_) {
+		public BiomeGenBase getBiomeGenForCoords(int x, int z) {
 
 			return BiomeGenBase.plains;
 		}

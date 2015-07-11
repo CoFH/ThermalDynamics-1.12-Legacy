@@ -5,281 +5,284 @@ import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.debughelper.NoComodSet;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
+
 import java.util.ArrayList;
+
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class MultiBlockGrid {
 
-    public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<IMultiBlock>();
-    public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
-    public WorldGridList worldGrid;
-    public boolean signalsUpToDate;
-    public int redstoneLevel;
-    public byte nextRedstoneLevel = -128;
-    public ArrayList<Relay> relaysIn;
-    public ArrayList<Attachment> relaysOut;
-
-    public MultiBlockGrid(WorldGridList worldGrid) {
-
-        this.worldGrid = worldGrid;
-        worldGrid.newGrids.add(this);
-    }
-
-    public MultiBlockGrid(World worldObj) {
-
-        this(TickHandler.getTickHandler(worldObj));
-    }
-
-    public void addIdle(IMultiBlock aMultiBlock) {
-
-        idleSet.add(aMultiBlock);
-
-        if (nodeSet.contains(aMultiBlock)) {
-            nodeSet.remove(aMultiBlock);
-            onMajorGridChange();
-        } else {
-            boolean flag = false;
-            for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++) {
-                if (aMultiBlock.isSideConnected(s)) {
-                    if (flag) {
-                        onMajorGridChange();
-                        break;
-                    } else {
-                        flag = true;
-                    }
-                }
-            }
-        }
-
-        balanceGrid();
-    }
-
-    public void addNode(IMultiBlock aMultiBlock) {
-
-        nodeSet.add(aMultiBlock);
-        if (idleSet.contains(aMultiBlock)) {
-            idleSet.remove(aMultiBlock);
-        }
-
-        onMajorGridChange();
-        balanceGrid();
-    }
-
-    public void mergeGrids(MultiBlockGrid theGrid) {
-
-        if (!theGrid.nodeSet.isEmpty()) {
-            for (IMultiBlock aBlock : theGrid.nodeSet) {
-                aBlock.setGrid(this);
-                addBlock(aBlock);
-            }
-
-            onMajorGridChange();
-        }
-
-        if (!theGrid.idleSet.isEmpty()) {
-            for (IMultiBlock aBlock : theGrid.idleSet) {
-                aBlock.setGrid(this);
-                addBlock(aBlock);
-            }
-
-            onMajorGridChange();
-        }
-
-        onMinorGridChange();
-        theGrid.destroy();
-    }
-
-    public void destroy() {
-
-        nodeSet.clear();
-        idleSet.clear();
-
-        worldGrid.oldGrids.add(this);
-    }
-
-    public boolean canGridsMerge(MultiBlockGrid grid) {
-
-        return grid.getClass() == this.getClass();
-    }
-
-    public void resetMultiBlocks() {
-
-        for (IMultiBlock aBlock : nodeSet) {
-            aBlock.setValidForForming();
-        }
-        for (IMultiBlock aBlock : idleSet) {
-            aBlock.setValidForForming();
-        }
-    }
+	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<IMultiBlock>();
+	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
+	public WorldGridList worldGrid;
+	public boolean signalsUpToDate;
+	public int redstoneLevel;
+	public byte nextRedstoneLevel = -128;
+	public ArrayList<Relay> relaysIn;
+	public ArrayList<Attachment> relaysOut;
+
+	public MultiBlockGrid(WorldGridList worldGrid) {
+
+		this.worldGrid = worldGrid;
+		worldGrid.newGrids.add(this);
+	}
+
+	public MultiBlockGrid(World worldObj) {
+
+		this(TickHandler.getTickHandler(worldObj));
+	}
+
+	public void addIdle(IMultiBlock aMultiBlock) {
+
+		idleSet.add(aMultiBlock);
+
+		if (nodeSet.contains(aMultiBlock)) {
+			nodeSet.remove(aMultiBlock);
+			onMajorGridChange();
+		} else {
+			boolean flag = false;
+			for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++) {
+				if (aMultiBlock.isSideConnected(s)) {
+					if (flag) {
+						onMajorGridChange();
+						break;
+					} else {
+						flag = true;
+					}
+				}
+			}
+		}
+
+		balanceGrid();
+	}
+
+	public void addNode(IMultiBlock aMultiBlock) {
+
+		nodeSet.add(aMultiBlock);
+		if (idleSet.contains(aMultiBlock)) {
+			idleSet.remove(aMultiBlock);
+		}
+
+		onMajorGridChange();
+		balanceGrid();
+	}
+
+	public void mergeGrids(MultiBlockGrid theGrid) {
+
+		if (!theGrid.nodeSet.isEmpty()) {
+			for (IMultiBlock aBlock : theGrid.nodeSet) {
+				aBlock.setGrid(this);
+				addBlock(aBlock);
+			}
+
+			onMajorGridChange();
+		}
+
+		if (!theGrid.idleSet.isEmpty()) {
+			for (IMultiBlock aBlock : theGrid.idleSet) {
+				aBlock.setGrid(this);
+				addBlock(aBlock);
+			}
+
+			onMajorGridChange();
+		}
+
+		onMinorGridChange();
+		theGrid.destroy();
+	}
+
+	public void destroy() {
+
+		nodeSet.clear();
+		idleSet.clear();
+
+		worldGrid.oldGrids.add(this);
+	}
+
+	public boolean canGridsMerge(MultiBlockGrid grid) {
+
+		return grid.getClass() == this.getClass();
+	}
+
+	public void resetMultiBlocks() {
+
+		for (IMultiBlock aBlock : nodeSet) {
+			aBlock.setValidForForming();
+		}
+		for (IMultiBlock aBlock : idleSet) {
+			aBlock.setValidForForming();
+		}
+	}
 
-    /*
-     * Called at the end of a world tick
-     */
-    public void tickGrid() {
+	/*
+	 * Called at the end of a world tick
+	 */
+	public void tickGrid() {
 
-        if (nextRedstoneLevel != -128) {
-            redstoneLevel = nextRedstoneLevel;
-            nextRedstoneLevel = -128;
+		if (nextRedstoneLevel != -128) {
+			redstoneLevel = nextRedstoneLevel;
+			nextRedstoneLevel = -128;
+
+			ArrayList<Attachment> signallersOut = this.relaysOut;
+			if (signallersOut != null) {
+				for (Attachment output : signallersOut) {
+					output.checkSignal();
+				}
+			}
+		}
+
+		if (signalsUpToDate) {
+			return;
+		}
+
+		signalsUpToDate = true;
+
+		if (relaysIn == null) {
+			relaysOut = null;
+			for (IMultiBlock multiBlock : nodeSet) {
+				multiBlock.addRelays();
+			}
+		}
 
-            ArrayList<Attachment> signallersOut = this.relaysOut;
-            if (signallersOut != null)
-                for (Attachment output : signallersOut) {
-                    output.checkSignal();
-                }
-        }
-
-        if (signalsUpToDate) {
-            return;
-        }
-
-        signalsUpToDate = true;
-
-        if (relaysIn == null) {
-            relaysOut = null;
-            for (IMultiBlock multiBlock : nodeSet) {
-                multiBlock.addRelays();
-            }
-        }
+		if (relaysIn == null) {
+			nextRedstoneLevel = 0;
+			return;
+		}
 
-        if (relaysIn == null) {
-            nextRedstoneLevel = 0;
-            return;
-        }
+		if (relaysOut == null) {
+			nextRedstoneLevel = 0;
+			return;
+		}
 
-        if (relaysOut == null) {
-            nextRedstoneLevel = 0;
-            return;
-        }
+		int powered = 0;
+		for (Relay signaller : relaysIn) {
+			powered = Math.max(powered, signaller.getPowerLevel());
+			if (powered == 15) {
+				break;
+			}
 
-        int powered = 0;
-        for (Relay signaller : relaysIn) {
-            powered = Math.max(powered, signaller.getPowerLevel());
-            if (powered == 15) {
-                break;
-            }
+		}
 
-        }
+		nextRedstoneLevel = (byte) powered;
 
-        nextRedstoneLevel = (byte) powered;
+	}
 
-    }
+	public void addSignalInput(Relay signaller) {
 
-    public void addSignalInput(Relay signaller) {
+		if (signaller.isInput()) {
+			if (relaysIn == null) {
+				relaysIn = new ArrayList<Relay>();
+			}
 
-        if (signaller.isInput()) {
-            if (relaysIn == null) {
-                relaysIn = new ArrayList<Relay>();
-            }
+			relaysIn.add(signaller);
+		}
+	}
 
-            relaysIn.add(signaller);
-        }
-    }
+	public void addSignalOutput(Attachment attachment) {
 
-    public void addSignalOutput(Attachment attachment) {
+		if (relaysOut == null) {
+			relaysOut = new ArrayList<Attachment>();
+		}
+		relaysOut.add(attachment);
+	}
 
-        if (relaysOut == null) {
-            relaysOut = new ArrayList<Attachment>();
-        }
-        relaysOut.add(attachment);
-    }
+	/*
+	 * Called whenever a set changes so that grids that rely on set sizes can rebalance.
+	 */
+	public void balanceGrid() {
 
-    /*
-     * Called whenever a set changes so that grids that rely on set sizes can rebalance.
-     */
-    public void balanceGrid() {
+	}
 
-    }
+	public void addBlock(IMultiBlock aBlock) {
 
-    public void addBlock(IMultiBlock aBlock) {
+		if (aBlock.isNode()) {
+			addNode(aBlock);
+		} else {
+			addIdle(aBlock);
+		}
+	}
 
-        if (aBlock.isNode()) {
-            addNode(aBlock);
-        } else {
-            addIdle(aBlock);
-        }
-    }
+	public void destroyAndRecreate() {
 
-    public void destroyAndRecreate() {
+		worldGrid.gridsToRecreate.add(this);
+	}
 
-        worldGrid.gridsToRecreate.add(this);
-    }
+	public void removeBlock(IMultiBlock oldBlock) {
 
-    public void removeBlock(IMultiBlock oldBlock) {
+		destroyNode(oldBlock);
 
-        destroyNode(oldBlock);
+		if (oldBlock.isNode()) {
+			nodeSet.remove(oldBlock);
+			onMajorGridChange();
+		} else {
+			idleSet.remove(oldBlock);
+		}
 
-        if (oldBlock.isNode()) {
-            nodeSet.remove(oldBlock);
-            onMajorGridChange();
-        } else {
-            idleSet.remove(oldBlock);
-        }
+		if (nodeSet.isEmpty() && idleSet.isEmpty()) {
+			worldGrid.oldGrids.add(this);
+			return;
+		}
 
-        if (nodeSet.isEmpty() && idleSet.isEmpty()) {
-            worldGrid.oldGrids.add(this);
-            return;
-        }
+		byte s = 0;
+		for (byte i = 0; i < 6; i++) {
+			if (oldBlock.isSideConnected(i)) {
+				s++;
+			}
+		}
 
-        byte s = 0;
-        for (byte i = 0; i < 6; i++) {
-            if (oldBlock.isSideConnected(i)) {
-                s++;
-            }
-        }
+		if (s <= 1) {
+			balanceGrid();
+			onMinorGridChange();
+			return;
+		}
 
-        if (s <= 1) {
-            balanceGrid();
-            onMinorGridChange();
-            return;
-        }
+		onMajorGridChange();
 
-        onMajorGridChange();
+		worldGrid.gridsToRecreate.add(this);
+	}
 
-        worldGrid.gridsToRecreate.add(this);
-    }
+	public void onMinorGridChange() {
 
-    public void onMinorGridChange() {
+		resetRelays();
+	}
 
-        resetRelays();
-    }
+	public void onMajorGridChange() {
 
-    public void onMajorGridChange() {
+		resetRelays();
+	}
 
-        resetRelays();
-    }
+	public void resetRelays() {
 
-    public void resetRelays() {
+		relaysIn = null;
+		relaysOut = null;
+		signalsUpToDate = false;
+	}
 
-        relaysIn = null;
-        relaysOut = null;
-        signalsUpToDate = false;
-    }
+	public int size() {
 
-    public int size() {
+		return nodeSet.size() + idleSet.size();
+	}
 
-        return nodeSet.size() + idleSet.size();
-    }
+	public void doTickProcessing(long deadline) {
 
-    public void doTickProcessing(long deadline) {
+	}
 
-    }
+	public boolean isTickProcessing() {
 
-    public boolean isTickProcessing() {
+		return false;
+	}
 
-        return false;
-    }
+	public void destroyNode(IMultiBlock node) {
 
-    public void destroyNode(IMultiBlock node) {
+		node.setGrid(null);
+	}
 
-        node.setGrid(null);
-    }
+	public boolean isFirstMultiblock(IMultiBlock block) {
 
-    public boolean isFirstMultiblock(IMultiBlock block) {
+		return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block : !idleSet.isEmpty() && idleSet.iterator().next() == block;
+	}
 
-        return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block : !idleSet.isEmpty() && idleSet.iterator().next() == block;
-    }
-
-    public abstract boolean canAddBlock(IMultiBlock aBlock);
+	public abstract boolean canAddBlock(IMultiBlock aBlock);
 
 }

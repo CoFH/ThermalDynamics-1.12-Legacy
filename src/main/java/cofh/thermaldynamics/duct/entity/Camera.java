@@ -6,68 +6,76 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public class Camera extends EntityLivingBase {
-    public Camera() {
-        super(null);
-        this.width = 0;
-        this.height = 0;
-        invulnerable = true;
-    }
 
-    @Override
-    protected boolean canTriggerWalking() {
-        return false;
-    }
+	public Camera() {
 
-    @Override
-    public ItemStack getHeldItem() {
-        return null;
-    }
+		super(null);
+		this.width = 0;
+		this.height = 0;
+		invulnerable = true;
+	}
 
-    @Override
-    public ItemStack getEquipmentInSlot(int p_71124_1_) {
-        return null;
-    }
+	@Override
+	protected boolean canTriggerWalking() {
 
-    @Override
-    public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
+		return false;
+	}
 
-    }
+	@Override
+	public ItemStack getHeldItem() {
 
-    @Override
-    public ItemStack[] getLastActiveItems() {
-        return new ItemStack[0];
-    }
+		return null;
+	}
 
-    public void copyFromEntityTransport(EntityTransport other, EntityPlayer player){
-        if(other.pos != null)
-            other.setPosition(0);
+	@Override
+	public ItemStack getEquipmentInSlot(int p_71124_1_) {
 
-        worldObj = Minecraft.getMinecraft().theWorld;
+		return null;
+	}
 
+	@Override
+	public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
 
-        double dx = 0, dy = -(player.posY - player.boundingBox.minY), dz = 0;
+	}
 
-        posX = other.posX + dx;
-        posY = other.posY + dy;
-        posZ = other.posZ + dz;
+	@Override
+	public ItemStack[] getLastActiveItems() {
 
-        lastTickPosX = other.lastTickPosX + dx;
-        lastTickPosY = other.lastTickPosY+ dy;
-        lastTickPosZ = other.lastTickPosZ+ dz;
+		return new ItemStack[0];
+	}
 
-        prevPosX = other.prevPosX + dx;
-        prevPosY = other.prevPosY+ dy;
-        prevPosZ = other.prevPosZ+ dz;
+	public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {
 
-        rotationYaw = player.rotationYaw;
-        rotationPitch = player.rotationPitch;
+		if (other.pos != null) {
+			other.setPosition(0);
+		}
 
-        prevRotationYaw = player.prevRotationYaw;
-        prevRotationPitch = player.prevRotationPitch;
-    }
+		worldObj = Minecraft.getMinecraft().theWorld;
 
-    @Override
-    public float getEyeHeight() {
-        return 0;
-    }
+		double dx = 0, dy = -(player.posY - player.boundingBox.minY), dz = 0;
+
+		posX = other.posX + dx;
+		posY = other.posY + dy;
+		posZ = other.posZ + dz;
+
+		lastTickPosX = other.lastTickPosX + dx;
+		lastTickPosY = other.lastTickPosY + dy;
+		lastTickPosZ = other.lastTickPosZ + dz;
+
+		prevPosX = other.prevPosX + dx;
+		prevPosY = other.prevPosY + dy;
+		prevPosZ = other.prevPosZ + dz;
+
+		rotationYaw = player.rotationYaw;
+		rotationPitch = player.rotationPitch;
+
+		prevRotationYaw = player.prevRotationYaw;
+		prevRotationPitch = player.prevRotationPitch;
+	}
+
+	@Override
+	public float getEyeHeight() {
+
+		return 0;
+	}
 }

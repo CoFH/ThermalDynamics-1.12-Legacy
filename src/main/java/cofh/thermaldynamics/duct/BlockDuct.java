@@ -36,9 +36,11 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -386,15 +388,14 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
 
-
-        if (DebugHelper.debug) {
-            GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
-            EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
-            MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
-            FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
-        }
-        return true;
-    }
+		if (DebugHelper.debug) {
+			GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
+			EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
+			MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
+			FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
+		}
+		return true;
+	}
 
 	@Override
 	public boolean postInit() {
