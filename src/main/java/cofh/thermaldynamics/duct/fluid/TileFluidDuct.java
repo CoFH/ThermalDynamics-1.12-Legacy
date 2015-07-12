@@ -7,7 +7,6 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.debughelper.ErrorHelper;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
@@ -52,14 +51,14 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			return false;
 		}
 		if (FluidHelper.isFluidHandler(theTile)) {
-			FluidTankInfo[] tanks = ((IFluidHandler) theTile).getTankInfo(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
-			if (tanks == null) {
-				ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getTankInfo() with side=" + (side ^ 1));
-				return false;
-			}
-			if (tanks.length == 0) {
-				return false;
-			}
+			// FluidTankInfo[] tanks = ((IFluidHandler) theTile).getTankInfo(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+			// if (tanks == null) {
+			// ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getTankInfo() with side=" + (side ^ 1));
+			// return false;
+			// }
+			// if (tanks.length == 0) {
+			// return false;
+			// }
 			return true;
 		}
 		return false;

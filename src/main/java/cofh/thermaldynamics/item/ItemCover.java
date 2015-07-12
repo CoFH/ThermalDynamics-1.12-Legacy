@@ -38,10 +38,6 @@ public class ItemCover extends ItemAttachment {
 		this.setCreativeTab(ThermalDynamics.tabCovers);
 		this.setUnlocalizedName("thermaldynamics.cover");
 		this.setTextureName("thermaldynamics:cover");
-
-		if (!enableCreativeTab) {
-			setCreativeTab(null);
-		}
 	}
 
 	@Override

@@ -3,9 +3,11 @@ package cofh.thermaldynamics;
 import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
+import cofh.lib.util.helpers.MathHelper;
 import cofh.mod.BaseMod;
 import cofh.mod.updater.UpdateManager;
 import cofh.thermaldynamics.core.Proxy;
+import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
 import cofh.thermaldynamics.debughelper.DebugHelper;
@@ -57,7 +59,7 @@ public class ThermalDynamics extends BaseMod {
 
 	public static final String modId = "ThermalDynamics";
 	public static final String modName = "Thermal Dynamics";
-	public static final String version = "1.7.10R1.1.0B3";
+	public static final String version = "1.7.10R1.1.0B4";
 	public static final String dependencies = "required-after:ThermalFoundation@[" + ThermalFoundation.version + ",)";
 	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/ThermalDynamics";
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
@@ -90,9 +92,10 @@ public class ThermalDynamics extends BaseMod {
 		configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 
 		tabCommon = new TDCreativeTab();
-		tabCovers = new TDCreativeTabCovers();
 
 		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
+
+		configOptions();
 
 		TDDucts.addDucts();
 
@@ -158,6 +161,21 @@ public class ThermalDynamics extends BaseMod {
 	/* LOADING FUNCTIONS */
 	void configOptions() {
 
+		String comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";
+		TDProps.smallInnerModelScaling = MathHelper
+				.clampF((float) ThermalDynamics.configClient.get("Render", "InnerModelScaling", 0.99, comment), 0.50F, 0.99F);
+
+		comment = "This value affects the size of the inner duct model, such as fluids, on the large (octagonal) ducts. Lower it if you experience texture z-fighting.";
+		TDProps.largeInnerModelScaling = MathHelper.clampF((float) ThermalDynamics.configClient.get("Render", "LargeInnerModelScaling", 0.99, comment), 0.50F,
+				0.99F);
+
+		/* Interface */
+		ItemCover.enableCreativeTab = ThermalDynamics.configClient.get("Interface.CreativeTab", "Covers.Enable", ItemCover.enableCreativeTab);
+
+		if (ItemCover.enableCreativeTab) {
+			tabCovers = new TDCreativeTabCovers();
+		}
+		ItemCover.showInNEI = ThermalDynamics.configClient.get("Plugins.NEI", "Covers.Show", ItemCover.showInNEI, "Set to TRUE to show Covers in NEI.");
 	}
 
 	LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();

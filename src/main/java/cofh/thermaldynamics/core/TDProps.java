@@ -18,6 +18,10 @@ public class TDProps {
 	public static final int ENDER_TRANSMIT_COST = 50;
 	public static final int MAX_STUFFED_ITEMSTACKS_DROP = 30;
 
+	/* Duct Render Constants */
+	public static float smallInnerModelScaling = 0.99F;
+	public static float largeInnerModelScaling = 0.99F;
+
 	/* Render Ids */
 	public static int renderDuctId = -1;
 
