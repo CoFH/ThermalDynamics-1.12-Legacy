@@ -96,6 +96,17 @@ public class CommandThermalDebug extends CommandBase {
 			return;
 		}
 
+        if ("coaster".equals(args[0])) {
+
+            if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+                return;
+            }
+
+            EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
+
+            return;
+        }
+
 		if ("addRandNBT".equals(args[0])) {
 			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
 				return;

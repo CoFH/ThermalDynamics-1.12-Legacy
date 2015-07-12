@@ -3,6 +3,8 @@ package cofh.thermaldynamics.core;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.debughelper.CommandServerDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.entity.EntityTransport;
+import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
@@ -12,6 +14,7 @@ import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -39,6 +42,8 @@ public class ProxyClient extends Proxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
 
 		ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new RenderTransport());
 	}
 
 	@Override

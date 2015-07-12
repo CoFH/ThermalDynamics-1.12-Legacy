@@ -8,6 +8,7 @@ import cofh.thermaldynamics.multiblock.Route;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Facing;
@@ -26,7 +27,7 @@ public class EntityTransport extends Entity {
 	public static final int PIPE_LENGTH2 = 1;
 
 	public byte progress;
-	public byte direction;
+	public byte direction = 7;
 	public byte oldDirection;
 	public byte step = 1;
 	public boolean reRoute = false;
@@ -99,7 +100,17 @@ public class EntityTransport extends Entity {
 		passenger.mountEntity(this);
 	}
 
-	@Override
+    @Override
+    public boolean isInvisible() {
+        return true;
+    }
+
+    @Override
+    public boolean isInvisibleToPlayer(EntityPlayer p_98034_1_) {
+        return true;
+    }
+
+    @Override
 	public void onUpdate() {
 
 		// super.onUpdate();
@@ -115,7 +126,7 @@ public class EntityTransport extends Entity {
 			loadWatcherData();
 		}
 
-		if (pos == null) {
+		if (direction == 7 || pos == null) {
 			return;
 		}
 
@@ -166,14 +177,6 @@ public class EntityTransport extends Entity {
 				pos = p;
 				oldDirection = direction;
 				progress %= PIPE_LENGTH;
-
-				if (neighbours[direction] != TileTDBase.NeighborTypes.MULTIBLOCK) {
-					for (byte i = 0; i < neighbours.length; i++) {
-						if (neighbours[i] == TileTDBase.NeighborTypes.MULTIBLOCK) {
-							direction = i;
-						}
-					}
-				}
 			}
 		}
 

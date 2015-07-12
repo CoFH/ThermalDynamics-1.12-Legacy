@@ -59,7 +59,7 @@ public class TransportHandler {
 	public void renderTravellers(RenderLivingEvent.Pre event) {
 
 		EntityLivingBase entity = event.entity;
-		Entity ridingEntity = entity.ridingEntity;
+        Entity ridingEntity = entity.ridingEntity;
 		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
 			event.setCanceled(true);
 
@@ -86,7 +86,56 @@ public class TransportHandler {
 		}
 	}
 
+    @SideOnly(Side.CLIENT)
 	Camera camera;
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void controlPlayer(TickEvent.ClientTickEvent event){
+
+        if(event.phase == TickEvent.Phase.END)
+            return;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityClientPlayerMP thePlayer = mc.thePlayer;
+        if (thePlayer == null) {
+            return;
+        }
+
+        Entity ridingEntity = thePlayer.ridingEntity;
+        if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
+            double rotationYaw = 0, rotationPitch = 0;
+            byte d = ((EntityTransport) ridingEntity).direction;
+            switch (d) {
+                case 0:
+                    rotationPitch = 90;
+                    break;
+                case 1:
+                    rotationPitch = -90;
+                    break;
+                case 2:
+                    rotationYaw = 180;
+                    break;
+                case 3:
+                    rotationYaw = 0;
+                    break;
+                case 4:
+                    rotationYaw = 90;
+                    break;
+                case 5:
+                    rotationYaw = 270;
+                    break;
+
+                default:
+                    return;
+            }
+
+
+            thePlayer.rotationPitch += Math.sin((rotationPitch - thePlayer.rotationPitch) / 180 * Math.PI) * 20;
+            if (rotationPitch == 0)
+                thePlayer.rotationYaw += Math.sin((rotationYaw - thePlayer.rotationYaw) / 180 * Math.PI) * 20;
+        }
+    }
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
