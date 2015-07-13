@@ -129,8 +129,7 @@ public class TDCrafting {
 		/* STRUCTURE */
 		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead"));
 
-		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead", 'R',
-				"dustRedstone"));
+		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead"));
 
 		if (enableCoverRecipes) {
 			GameRegistry.addRecipe(RecipeCover.instance);
@@ -138,8 +137,8 @@ public class TDCrafting {
 
 		/* SIGNALLER */
 
-		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gearSignalum", 'I',
-				"ingotLead", 'i', "nuggetSignalum"));
+		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "ingotSignalum", 'I',
+				"ingotLead", 'i', "nuggetIron"));
 
 		/* ATTACHMENTS */
 		String[] materials = { "Iron", "Invar", "Electrum", "Signalum", "Enderium" };
