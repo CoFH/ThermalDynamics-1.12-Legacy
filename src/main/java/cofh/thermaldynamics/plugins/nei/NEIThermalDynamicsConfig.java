@@ -23,6 +23,7 @@ public class NEIThermalDynamicsConfig implements IConfigureNEI {
 		/* ItemDuct Variants */
 		for (Duct d : TDDucts.getSortedDucts()) {
 			if (d instanceof DuctItem) {
+				API.addItemListEntry(((DuctItem) d).itemStack);
 				API.addItemListEntry(((DuctItem) d).getDenseItemStack());
 				API.addItemListEntry(((DuctItem) d).getVacuumItemStack());
 			}

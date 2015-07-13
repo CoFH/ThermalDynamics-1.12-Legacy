@@ -170,24 +170,19 @@ public class ServoItem extends ServoBase {
 		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) {
 			return;
 		}
-
 		if (!verifyCache()) {
 			return;
 		}
-
 		if (cache.outputRoutes.isEmpty()) {
 			return;
 		}
-
 		if (pass == 1) {
 			if (isStuffed()) {
 				handleStuffedItems();
-
 			} else if (stuffed) {
 				onNeighborChange();
 			}
 		} else if (pass == 2 && !stuffed) {
-
 			if (!isValidInput) {
 				return;
 			}
@@ -233,7 +228,6 @@ public class ServoItem extends ServoBase {
 				if (travelingItem == null) {
 					continue;
 				}
-
 				int totalSize = travelingItem.stack.stackSize;
 
 				travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);

@@ -45,7 +45,6 @@ public class TickHandlerClient {
 				tickBlocks.removeAll(tickBlocksToRemove);
 				tickBlocksToRemove.clear();
 			}
-
 			if (mc.currentScreen instanceof GuiMainMenu) {
 				if (needsMenu) {
 					onMainMenu();

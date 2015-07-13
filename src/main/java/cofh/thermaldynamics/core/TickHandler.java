@@ -32,6 +32,24 @@ public class TickHandler {
 		}
 	}
 
+	public static WorldGridList getTickHandler(World world) {
+
+		if (ServerHelper.isClientWorld(world)) {
+			throw new IllegalStateException("World Grid called client-side");
+		}
+
+		synchronized (handlers) {
+			WorldGridList worldGridList = handlers.get(world);
+			if (worldGridList != null) {
+				return worldGridList;
+			}
+
+			worldGridList = new WorldGridList(world);
+			handlers.put(world, worldGridList);
+			return worldGridList;
+		}
+	}
+
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 
@@ -56,24 +74,6 @@ public class TickHandler {
 			}
 		}
 
-	}
-
-	public static WorldGridList getTickHandler(World world) {
-
-		if (ServerHelper.isClientWorld(world)) {
-			throw new IllegalStateException("World Grid called client-side");
-		}
-
-		synchronized (handlers) {
-			WorldGridList worldGridList = handlers.get(world);
-			if (worldGridList != null) {
-				return worldGridList;
-			}
-
-			worldGridList = new WorldGridList(world);
-			handlers.put(world, worldGridList);
-			return worldGridList;
-		}
 	}
 
 	@SubscribeEvent
