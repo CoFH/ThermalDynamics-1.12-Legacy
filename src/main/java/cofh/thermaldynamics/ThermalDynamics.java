@@ -144,6 +144,8 @@ public class ThermalDynamics extends BaseMod {
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
+		ItemCover.createCoverList();
+
 		config.cleanUp(false, true);
 		configClient.cleanUp(false, true);
 

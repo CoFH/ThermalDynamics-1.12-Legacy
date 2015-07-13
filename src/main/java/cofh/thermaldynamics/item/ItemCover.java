@@ -92,11 +92,8 @@ public class ItemCover extends ItemAttachment {
 		return true;
 	}
 
-	public static List<ItemStack> getCoverList() {
+	public static void createCoverList() {
 
-		if (coverList != null && coverList.size() > 0) {
-			return coverList;
-		}
 		coverList = new ArrayList<ItemStack>();
 
 		Iterator iterator = Item.itemRegistry.iterator();
@@ -117,6 +114,13 @@ public class ItemCover extends ItemAttachment {
 				continue;
 			}
 			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage())));
+		}
+	}
+
+	public static List<ItemStack> getCoverList() {
+
+		if (coverList == null || coverList.size() <= 0) {
+			createCoverList();
 		}
 		return coverList;
 	}
