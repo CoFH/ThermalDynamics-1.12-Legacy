@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.render;
 
+import cofh.core.render.RenderUtils;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -15,7 +16,7 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer {
 	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
 
 		TileFluidDuct duct = (TileFluidDuct) tile;
-		// RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+		RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
 
 		GL11.glPushMatrix();
 
