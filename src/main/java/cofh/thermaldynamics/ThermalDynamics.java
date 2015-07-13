@@ -1,6 +1,5 @@
 package cofh.thermaldynamics;
 
-import cofh.CoFHCore;
 import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
@@ -145,9 +144,9 @@ public class ThermalDynamics extends BaseMod {
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
-		if (CoFHCore.proxy.isClient()) {
-			ItemCover.createCoverList();
-		}
+		// if (CoFHCore.proxy.isClient()) {
+		// ItemCover.createCoverList();
+		// }
 		config.cleanUp(false, true);
 		configClient.cleanUp(false, true);
 
