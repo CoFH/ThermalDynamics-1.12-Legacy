@@ -48,7 +48,7 @@ public class TDCreativeTabCovers extends CreativeTabs {
 
 		World world = CoFHCore.proxy.getClientWorld();
 
-		if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80) && ItemCover.getCoverList().size() > 0) {
+		if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
 			int next = MathHelper.RANDOM.nextInt(ItemCover.getCoverList().size() - 1);
 			iconIndex = next >= iconIndex ? next + 1 : next;
 			iconTracker.markTime(world);

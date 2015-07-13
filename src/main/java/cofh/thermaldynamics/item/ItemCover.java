@@ -94,7 +94,7 @@ public class ItemCover extends ItemAttachment {
 
 	public static List<ItemStack> getCoverList() {
 
-		if (coverList != null) {
+		if (coverList != null && coverList.size() > 0) {
 			return coverList;
 		}
 		coverList = new ArrayList<ItemStack>();
