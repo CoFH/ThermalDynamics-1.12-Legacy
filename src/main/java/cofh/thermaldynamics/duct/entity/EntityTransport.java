@@ -23,8 +23,8 @@ public class EntityTransport extends Entity {
 	public static final int DATAWATCHER_POSZ = 20;
 	public static final int DATAWATCHER_STEP = 21;
 
-	public static final int PIPE_LENGTH = 2;
-	public static final int PIPE_LENGTH2 = 1;
+	public static final int PIPE_LENGTH = 100;
+	public static final int PIPE_LENGTH2 = 50;
 
 	public byte progress;
 	public byte direction = 7;

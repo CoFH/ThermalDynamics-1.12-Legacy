@@ -127,7 +127,7 @@ public class TileTransportDuct extends TileTDBase implements IMultiBlockRoute {
 				}
 
 				if (heldItem != null && heldItem.getItem() == Items.minecart) {
-					EntityTransport route = findRoute(player, i ^ 1, (byte) 1);
+					EntityTransport route = findRoute(player, i ^ 1, (byte) 50);
 
 					if (route != null) {
 						route.start(player);
