@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.world.World;
 
 public class TDDucts {
@@ -122,9 +123,15 @@ public class TDDucts {
 			}
 		};
 
-		addDuct(4 * 16, false, 1, 4, "entityTransport", Type.ENTITY, duct_transport, null, null, null, 255, "electrum", "thermaldynamics:duct/base/greenGlass",
-				96);
-	}
+        registerDuct(new Duct(4 * 16, false, 1, 4, "entityTransport", Type.ENTITY, duct_transport, null, null, null, 255, "electrum", "thermaldynamics:duct/base/greenGlass",
+                96) {
+            @Override
+            public void registerIcons(IIconRegister ir) {
+                super.registerIcons(ir);
+                frameType = 4;
+            }
+        });
+    }
 
 	static void addEnergyDucts() {
 

@@ -281,7 +281,7 @@ public class Relay extends Attachment {
 	@Override
 	public boolean canAddToTile(TileTDBase tileMultiBlock) {
 
-		return tileMultiBlock.getDuctType().frameType != 2;
+		return !tileMultiBlock.getDuctType().isLargeTube();
 	}
 
 }

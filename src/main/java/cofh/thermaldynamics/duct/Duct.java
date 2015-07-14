@@ -72,7 +72,7 @@ public class Duct {
 
 	public boolean isLargeTube() {
 
-		return frameType == 2;
+		return frameType == 2 || frameType == 4;
 	}
 
 	public void registerIcons(IIconRegister ir) {
