@@ -1,11 +1,14 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.CoFHCore;
+import cofh.lib.util.helpers.SoundHelper;
 import cofh.lib.util.position.BlockPosition;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.Route;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +34,11 @@ public class EntityTransport extends Entity {
 	public byte oldDirection;
 	public byte step = 1;
 	public boolean reRoute = false;
+
 	Route myPath;
 	BlockPosition pos;
+
+    boolean initSound;
 
 	@Override
 	public boolean isEntityInvulnerable() {
@@ -113,7 +119,6 @@ public class EntityTransport extends Entity {
     @Override
 	public void onUpdate() {
 
-		// super.onUpdate();
 		if (!this.worldObj.isRemote) {
 			if (riddenByEntity == null || riddenByEntity.isDead) {
 				setDead();
@@ -121,10 +126,16 @@ public class EntityTransport extends Entity {
 			}
 		}
 
-		if (worldObj.isRemote && this.dataWatcher.hasChanges()) {
-			this.dataWatcher.func_111144_e();
-			loadWatcherData();
-		}
+		if (worldObj.isRemote) {
+            if(!initSound){
+                initSound = true;
+                SoundHelper.playSound(getSound());
+            }
+            if (this.dataWatcher.hasChanges()) {
+                this.dataWatcher.func_111144_e();
+                loadWatcherData();
+            }
+        }
 
 		if (direction == 7 || pos == null) {
 			return;
@@ -187,7 +198,12 @@ public class EntityTransport extends Entity {
 		}
 	}
 
-	@Override
+    @SideOnly(Side.CLIENT)
+    public ISound getSound() {
+        return new SoundWoosh(this);
+    }
+
+    @Override
 	public void onEntityUpdate() {
 
 		// super.onEntityUpdate();
@@ -398,5 +414,4 @@ public class EntityTransport extends Entity {
 
 		return false;
 	}
-
 }
