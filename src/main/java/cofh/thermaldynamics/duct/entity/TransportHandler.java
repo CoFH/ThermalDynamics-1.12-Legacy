@@ -63,7 +63,7 @@ public class TransportHandler {
 		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
 			event.setCanceled(true);
 
-			if (entity == Minecraft.getMinecraft().thePlayer) {
+			if (entity == Minecraft.getMinecraft().thePlayer || true) {
 				return;
 			}
 
@@ -97,10 +97,13 @@ public class TransportHandler {
             return;
 
         Minecraft mc = Minecraft.getMinecraft();
+
         EntityClientPlayerMP thePlayer = mc.thePlayer;
         if (thePlayer == null) {
             return;
         }
+
+        if(mc.gameSettings.thirdPersonView != 0) return;
 
         Entity ridingEntity = thePlayer.ridingEntity;
         if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
@@ -137,6 +140,7 @@ public class TransportHandler {
         }
     }
 
+
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void controlCamera(TickEvent.RenderTickEvent event) {
@@ -151,6 +155,7 @@ public class TransportHandler {
 		if (ridingEntity == null) {
 			if (mc.renderViewEntity != null && (mc.renderViewEntity == camera)) {
 				mc.renderViewEntity = thePlayer;
+                camera.worldObj = null;
 			}
 		} else if (ridingEntity.getClass() == EntityTransport.class) {
 			EntityTransport ridingEntity1 = (EntityTransport) ridingEntity;
