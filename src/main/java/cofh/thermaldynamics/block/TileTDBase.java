@@ -539,7 +539,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		}
 	}
 
-	private void checkIsNode() {
+	public void checkIsNode() {
 
 		isNode = false;
 		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
