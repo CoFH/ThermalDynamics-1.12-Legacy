@@ -234,7 +234,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
                     c = c | (1 << s);
                     if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
                         modelTransportConnection[64 + s].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
-                        modelTransport[70 + s].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
+//                        modelTransport[70 + s].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
                     }
                 }
             }
@@ -316,9 +316,9 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
                 if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
                     c = c | (1 << s);
 
-                    if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
-                        modelTransport[70 + s].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
-                    }
+//                    if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
+//                        modelTransport[70 + s].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
+//                    }
                 }
             }
 

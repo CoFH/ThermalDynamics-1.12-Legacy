@@ -34,9 +34,9 @@ public abstract class TileTransportDuctBase extends TileTDBase  {
 	@Override
 	public BlockDuct.ConnectionTypes getConnectionType(int side) {
 
-		if (connectionTypes[side] == ConnectionTypes.FORCED) {
-			return BlockDuct.ConnectionTypes.DUCT;
-		}
+//		if (connectionTypes[side] == ConnectionTypes.FORCED) {
+//			return BlockDuct.ConnectionTypes.DUCT;
+//		}
 		return super.getConnectionType(side);
 	}
 

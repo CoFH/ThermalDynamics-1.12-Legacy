@@ -12,6 +12,7 @@ import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Transformation;
 import cofh.repack.codechicken.lib.vec.Vector3;
 
+import cofh.thermaldynamics.core.TDProps;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -454,7 +455,7 @@ public class ModelHelper {
 		public CCModel generateConnection() {
 
 			CCModel model = CCModel.newModel(7, 64);
-			double v = (size);
+			double v = 0.375 * TDProps.largeInnerModelScaling;
 			double o = 1.01;
 
 			for (int k = 0; k < 8; k++) {
