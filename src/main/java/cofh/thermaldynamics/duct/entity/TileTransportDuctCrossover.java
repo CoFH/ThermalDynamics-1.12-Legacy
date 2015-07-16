@@ -20,6 +20,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 
     final BlockPosition[] rangePos = new BlockPosition[6];
     final static BlockPosition clientValue = new BlockPosition(0, 0, 0, ForgeDirection.DOWN);
+    public static final int PAUSE_LEVEL = 60;
 
     public void handleTileSideUpdate(int i) {
         if (rangePos[i] == null || rangePos[i].orientation == ForgeDirection.UNKNOWN) {
@@ -38,12 +39,19 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
         int j = rangePos[i].orientation.ordinal();
         TileEntity theTile;
 
-        theTile = worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z) ? worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z) : null;
+        if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
+            theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
 
-        if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileTDBase) theTile).isBlockedSide(j ^ 1)) {
-            neighborMultiBlocks[i] = (IMultiBlock) theTile;
-            neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-        } else{
+            if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileTDBase) theTile).isBlockedSide(j ^ 1)) {
+                neighborMultiBlocks[i] = (IMultiBlock) theTile;
+                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+            } else {
+                rangePos[i] = null;
+                super.handleTileSideUpdate(i);
+                isOutput = false;
+                return;
+            }
+        } else {
             neighborMultiBlocks[i] = null;
             neighborTypes[i] = NeighborTypes.OUTPUT;
         }
@@ -174,7 +182,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
         if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
             if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
                 t.progress = EntityTransport.PIPE_LENGTH2;
-                t.pause = 40;
+                t.pause = PAUSE_LEVEL;
                 return true;
             }
         }
@@ -187,7 +195,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
         if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
             if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
                 t.progress = EntityTransport.PIPE_LENGTH2;
-                t.pause = 40;
+                t.pause = PAUSE_LEVEL;
                 return true;
             }
         }
