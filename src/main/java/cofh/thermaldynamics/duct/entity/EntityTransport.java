@@ -167,15 +167,16 @@ public class EntityTransport extends Entity {
             else {
                 setPosition(0);
 
-                if (pause == 0) {
-                    CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
-                } else
-                    CoFHCore.proxy.addIndexedChatMessage(
-                            new ChatComponentText("Charging - " + (40 - pause) + " / 40")
-                            , -515781222);
+                if (riddenByEntity == CoFHCore.proxy.getClientPlayer())
+                    if (pause == 0) {
+                        CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
+                    } else
+                        CoFHCore.proxy.addIndexedChatMessage(
+                                new ChatComponentText("Charging - " + (TileTransportDuctCrossover.PAUSE_LEVEL - pause) + " / " + TileTransportDuctCrossover.PAUSE_LEVEL)
+                                , -515781222);
 
                 for (int i = 0; i < 10; i++) {
-                    worldObj.spawnParticle("portal", pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, MathHelper.RANDOM.nextGaussian(), MathHelper.RANDOM.nextGaussian(), MathHelper.RANDOM.nextGaussian());
+                    worldObj.spawnParticle("portal", pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, MathHelper.RANDOM.nextGaussian()* 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
                 }
             }
 
@@ -186,7 +187,7 @@ public class EntityTransport extends Entity {
             homeTile.advanceEntity(this);
             updateWatcherData();
         } else {
-            if (wasPause)
+            if (wasPause && riddenByEntity == CoFHCore.proxy.getClientPlayer())
                 CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
             homeTile.advanceEntityClient(this);
         }

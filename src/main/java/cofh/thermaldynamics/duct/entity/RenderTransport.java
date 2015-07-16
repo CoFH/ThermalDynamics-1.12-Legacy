@@ -29,15 +29,10 @@ public class RenderTransport extends RenderEntity {
                 player = (EntityPlayer) entity.riddenByEntity;
             }
 
-
-
             if(player == Minecraft.getMinecraft().thePlayer){
                 if(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
                     return;
             }
-
-            if (player == null)
-            player = Minecraft.getMinecraft().thePlayer;
 
             if (player == null) return;
 

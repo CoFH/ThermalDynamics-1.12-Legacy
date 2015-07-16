@@ -63,7 +63,7 @@ public class TransportHandler {
 		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
 			event.setCanceled(true);
 
-			if (entity == Minecraft.getMinecraft().thePlayer || true) {
+			if (entity == Minecraft.getMinecraft().thePlayer) {
 				return;
 			}
 

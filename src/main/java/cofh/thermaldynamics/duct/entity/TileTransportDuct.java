@@ -50,7 +50,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute {
                         return false;
                     }
 
-                    EntityTransport route = findRoute(entity, i ^ 1, (byte) 1);
+                    EntityTransport route = findRoute(entity, i ^ 1, (byte) 50);
 
                     if (route != null) {
                         entity.setPosition(x(), y(), z());
