@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.CoFHCore;
+import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.helpers.SoundHelper;
 import cofh.lib.util.position.BlockPosition;
 import cofh.repack.codechicken.lib.vec.Vector3;
@@ -14,97 +15,100 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
 
 public class EntityTransport extends Entity {
 
-	public static final int DATAWATCHER_DIRECTIONS = 16;
-	public static final int DATAWATCHER_PROGRESS = 17;
-	public static final int DATAWATCHER_POSX = 18;
-	public static final int DATAWATCHER_POSY = 19;
-	public static final int DATAWATCHER_POSZ = 20;
-	public static final int DATAWATCHER_STEP = 21;
+    public static final byte DATAWATCHER_DIRECTIONS = 16;
+    public static final byte DATAWATCHER_PROGRESS = 17;
+    public static final byte DATAWATCHER_POSX = 18;
+    public static final byte DATAWATCHER_POSY = 19;
+    public static final byte DATAWATCHER_POSZ = 20;
+    public static final byte DATAWATCHER_STEP = 21;
+    public static final byte DATAWATCHER_PAUSE = 22;
 
-	public static final int PIPE_LENGTH = 100;
-	public static final int PIPE_LENGTH2 = 50;
+    public static final int PIPE_LENGTH = 100;
+    public static final int PIPE_LENGTH2 = 50;
 
-	public byte progress;
-	public byte direction = 7;
-	public byte oldDirection;
-	public byte step = 1;
-	public boolean reRoute = false;
+    public byte progress;
+    public byte direction = 7;
+    public byte oldDirection;
+    public byte step = 1;
+    public boolean reRoute = false;
+    public byte pause = 0;
 
-	Route myPath;
-	BlockPosition pos;
+    Route myPath;
+    BlockPosition pos;
 
     boolean initSound;
 
-	@Override
-	public boolean isEntityInvulnerable() {
+    @Override
+    public boolean isEntityInvulnerable() {
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public double getYOffset() {
+    @Override
+    public double getYOffset() {
 
-		return super.getYOffset();
-	}
+        return super.getYOffset();
+    }
 
-	@Override
-	public double getMountedYOffset() {
+    @Override
+    public double getMountedYOffset() {
 
-		Entity riddenByEntity = this.riddenByEntity;
-		if (riddenByEntity == null) {
-			return super.getMountedYOffset();
-		} else {
+        Entity riddenByEntity = this.riddenByEntity;
+        if (riddenByEntity == null) {
+            return super.getMountedYOffset();
+        } else {
 
-			if (riddenByEntity == CoFHCore.proxy.getClientPlayer()) {
-				return -riddenByEntity.getYOffset();
-			}
+            if (riddenByEntity == CoFHCore.proxy.getClientPlayer()) {
+                return -riddenByEntity.getYOffset();
+            }
 
-			double h = riddenByEntity.boundingBox.maxY - riddenByEntity.boundingBox.minY;
-			return -riddenByEntity.getYOffset() - h / 2;
-		}
-	}
+            double h = riddenByEntity.boundingBox.maxY - riddenByEntity.boundingBox.minY;
+            return -riddenByEntity.getYOffset() - h / 2;
+        }
+    }
 
-	public EntityTransport(World p_i1582_1_) {
+    public EntityTransport(World p_i1582_1_) {
 
-		super(p_i1582_1_);
-		step = 0;
-		this.height = 0.1F;
-		this.width = 0.1F;
-		this.noClip = true;
-		this.isImmuneToFire = true;
-	}
+        super(p_i1582_1_);
+        step = 0;
+        this.height = 0.1F;
+        this.width = 0.1F;
+        this.noClip = true;
+        this.isImmuneToFire = true;
+    }
 
-	public EntityTransport(TileTransportDuct origin, Route route, byte startDirection, byte step) {
+    public EntityTransport(TileTransportDuctBase origin, Route route, byte startDirection, byte step) {
 
-		this(origin.world());
+        this(origin.world());
 
-		this.step = step;
-		pos = new BlockPosition(origin);
-		myPath = route;
+        this.step = step;
+        pos = new BlockPosition(origin);
+        myPath = route;
 
-		progress = 0;
-		this.direction = route.getNextDirection();
-		this.oldDirection = startDirection;
+        progress = 0;
+        this.direction = route.getNextDirection();
+        this.oldDirection = startDirection;
 
-		setPosition(0);
-	}
+        setPosition(0);
+    }
 
-	@Override
-	public boolean shouldRiderSit() {
+    @Override
+    public boolean shouldRiderSit() {
 
-		return true;
-	}
+        return true;
+    }
 
-	public void start(EntityLivingBase passenger) {
+    public void start(EntityLivingBase passenger) {
 
-		worldObj.spawnEntityInWorld(this);
-		passenger.mountEntity(this);
-	}
+        worldObj.spawnEntityInWorld(this);
+        passenger.mountEntity(this);
+    }
 
     @Override
     public boolean isInvisible() {
@@ -117,17 +121,19 @@ public class EntityTransport extends Entity {
     }
 
     @Override
-	public void onUpdate() {
+    public void onUpdate() {
 
-		if (!this.worldObj.isRemote) {
-			if (riddenByEntity == null || riddenByEntity.isDead) {
-				setDead();
-				return;
-			}
-		}
+        if (!this.worldObj.isRemote) {
+            if (riddenByEntity == null || riddenByEntity.isDead) {
+                setDead();
+                return;
+            }
+        }
 
-		if (worldObj.isRemote) {
-            if(!initSound){
+        boolean wasPause = pause > 0;
+
+        if (worldObj.isRemote) {
+            if (!initSound) {
                 initSound = true;
                 SoundHelper.playSound(getSound());
             }
@@ -137,66 +143,80 @@ public class EntityTransport extends Entity {
             }
         }
 
-		if (direction == 7 || pos == null) {
-			return;
-		}
+        if (direction == 7 || pos == null) {
+            return;
+        }
 
-		TileEntity tile = worldObj.getTileEntity(pos.x, pos.y, pos.z);
+        TileEntity tile = worldObj.getTileEntity(pos.x, pos.y, pos.z);
 
-		if (tile == null || !(tile instanceof TileTransportDuct)) {
-			if (worldObj.isRemote) {
-				pos = null;
-			} else {
-				dropPassenger();
-			}
-			return;
-		}
+        if (tile == null || !(tile instanceof TileTransportDuctBase)) {
+            if (worldObj.isRemote) {
+                pos = null;
+            } else {
+                dropPassenger();
+            }
+            return;
+        }
 
-		TileTransportDuct homeTile = ((TileTransportDuct) tile);
+        TileTransportDuctBase homeTile = ((TileTransportDuctBase) tile);
 
-		if (!worldObj.isRemote) {
-			progress += step;
+        if (pause > 0) {
+            pause--;
+            if (!worldObj.isRemote)
+                updateWatcherData();
+            else {
+                setPosition(0);
 
-			if (myPath == null) {
-				bouncePassenger(homeTile);
-			} else if (progress >= PIPE_LENGTH) {
-				progress %= PIPE_LENGTH;
-				advanceTile(homeTile);
-			} else if (progress >= PIPE_LENGTH2 && progress - step < PIPE_LENGTH2) {
-				if (reRoute || homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.NONE) {
-					bouncePassenger(homeTile);
-				}
-			}
+                if (pause == 0) {
+                    CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
+                } else
+                    CoFHCore.proxy.addIndexedChatMessage(
+                            new ChatComponentText("Charging - " + (40 - pause) + " / 40")
+                            , -515781222);
 
-			updateWatcherData();
-		} else {
-			progress += step;
-			if (progress >= PIPE_LENGTH) {
-				BlockPosition p = pos.copy().step(direction);
+                for (int i = 0; i < 10; i++) {
+                    worldObj.spawnParticle("portal", pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, MathHelper.RANDOM.nextGaussian(), MathHelper.RANDOM.nextGaussian(), MathHelper.RANDOM.nextGaussian());
+                }
+            }
 
-				TileEntity tileEntity = worldObj.getTileEntity(p.x, p.y, p.z);
-				if (!(tileEntity instanceof TileTransportDuct)) {
-					pos = null;
-					return;
-				}
-				TileTDBase.NeighborTypes[] neighbours = ((TileTransportDuct) tileEntity).neighborTypes;
-				if (neighbours[direction ^ 1] != TileTDBase.NeighborTypes.MULTIBLOCK) {
-					pos = null;
-					return;
-				}
+            return;
+        }
 
-				pos = p;
-				oldDirection = direction;
-				progress %= PIPE_LENGTH;
-			}
-		}
+        if (!worldObj.isRemote) {
+            homeTile.advanceEntity(this);
+            updateWatcherData();
+        } else {
+            if (wasPause)
+                CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
+            homeTile.advanceEntityClient(this);
+        }
 
-		setPosition(0);
+        setPosition(0);
 
-		if (riddenByEntity != null && !riddenByEntity.isDead) {
-			updateRiderPosition();
-		}
-	}
+        if (riddenByEntity != null && !riddenByEntity.isDead) {
+            updateRiderPosition();
+        }
+    }
+
+    public boolean trySimpleAdvance() {
+        BlockPosition p = pos.copy().step(direction);
+
+        TileEntity tileEntity = worldObj.getTileEntity(p.x, p.y, p.z);
+        if (!(tileEntity instanceof TileTransportDuctBase)) {
+            pos = null;
+            return false;
+        }
+        TileTDBase.NeighborTypes[] neighbours = ((TileTransportDuctBase) tileEntity).neighborTypes;
+        if (neighbours[direction ^ 1] != TileTDBase.NeighborTypes.MULTIBLOCK) {
+            pos = null;
+            return false;
+        }
+
+        pos = p;
+        oldDirection = direction;
+        progress %= PIPE_LENGTH;
+        return true;
+    }
 
     @SideOnly(Side.CLIENT)
     public ISound getSound() {
@@ -204,214 +224,231 @@ public class EntityTransport extends Entity {
     }
 
     @Override
-	public void onEntityUpdate() {
+    public void onEntityUpdate() {
 
-		// super.onEntityUpdate();
+        // super.onEntityUpdate();
 
-	}
+    }
 
-	public void setPosition(double frame) {
+    public void setPosition(double frame) {
 
-		if (pos == null) {
-			return;
-		}
+        if (pos == null) {
+            return;
+        }
 
-		Vector3 oldPos = getPos(frame - 1);
-		lastTickPosX = prevPosX = oldPos.x;
-		lastTickPosY = prevPosY = oldPos.y;
-		lastTickPosZ = prevPosZ = oldPos.z;
+        if (pause > 0) {
+            Vector3 newPos = getPos(frame);
+            setPosition(newPos.x, newPos.y, newPos.z);
+            lastTickPosX = prevPosX = posX;
+            lastTickPosY = prevPosY = posY;
+            lastTickPosZ = prevPosZ = posZ;
+            motionX = motionY = motionZ = 0;
+            return;
+        }
 
-		Vector3 newPos = getPos(frame);
-		setPosition(newPos.x, newPos.y, newPos.z);
+        Vector3 oldPos = getPos(frame - 1);
+        lastTickPosX = prevPosX = oldPos.x;
+        lastTickPosY = prevPosY = oldPos.y;
+        lastTickPosZ = prevPosZ = oldPos.z;
 
-		motionX = newPos.x - oldPos.x;
-		motionY = newPos.y - oldPos.y;
-		motionZ = newPos.z - oldPos.z;
-	}
+        Vector3 newPos = getPos(frame);
+        setPosition(newPos.x, newPos.y, newPos.z);
 
-	private void dropPassenger() {
+        motionX = newPos.x - oldPos.x;
+        motionY = newPos.y - oldPos.y;
+        motionZ = newPos.z - oldPos.z;
+    }
 
-		if (!worldObj.isRemote) {
-			moveToSafePosition();
-			riddenByEntity.mountEntity(null);
-			setDead();
-		}
-	}
+    public void dropPassenger() {
 
-	public void moveToSafePosition() {
+        if (!worldObj.isRemote) {
+            moveToSafePosition();
+            riddenByEntity.mountEntity(null);
+            setDead();
+        }
+    }
 
-		if (direction >= 0 && direction < 6) {
-			setPosition(pos.x + Facing.offsetsXForSide[direction] + 0.5, pos.y + Facing.offsetsYForSide[direction], pos.z + Facing.offsetsZForSide[direction]
-					+ 0.5);
-		}
-	}
+    public void moveToSafePosition() {
 
-	@Override
-	protected boolean canTriggerWalking() {
+        if (direction >= 0 && direction < 6) {
+            setPosition(pos.x + Facing.offsetsXForSide[direction] + 0.5, pos.y + Facing.offsetsYForSide[direction], pos.z + Facing.offsetsZForSide[direction]
+                    + 0.5);
+        }
+    }
 
-		return false;
-	}
+    @Override
+    protected boolean canTriggerWalking() {
 
-	public void advanceTile(TileTransportDuct homeTile) {
+        return false;
+    }
 
-		if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.MULTIBLOCK
-				&& homeTile.connectionTypes[direction] == TileTDBase.ConnectionTypes.NORMAL) {
-			TileTransportDuct newHome = (TileTransportDuct) homeTile.getConnectedSide(direction);
-			if (newHome != null) {
-				if (newHome.neighborTypes[direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
-					pos = new BlockPosition(newHome);
+    public void advanceTile(TileTransportDuctBaseRoute homeTile) {
 
-					if (myPath.hasNextDirection()) {
-						oldDirection = direction;
-						direction = myPath.getNextDirection();
-					} else {
-						reRoute = true;
-					}
-				}
-			}
-		} else if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
-			dropPassenger();
-		} else {
-			bouncePassenger(homeTile);
-		}
-	}
+        if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.MULTIBLOCK
+                && homeTile.connectionTypes[direction] == TileTDBase.ConnectionTypes.NORMAL) {
+            TileTransportDuctBase newHome = (TileTransportDuctBase) homeTile.getPhysicalConnectedSide(direction);
+            if (newHome != null && newHome.neighborTypes[direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
+                pos = new BlockPosition(newHome);
 
-	public void bouncePassenger(TileTransportDuct homeTile) {
+                if (myPath.hasNextDirection()) {
+                    oldDirection = direction;
+                    direction = myPath.getNextDirection();
+                } else {
+                    reRoute = true;
+                }
+            } else
+                reRoute = true;
+        } else if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
+            dropPassenger();
+        } else {
+            bouncePassenger(homeTile);
+        }
+    }
 
-		myPath = homeTile.getRoute(this, direction, step);
+    public void bouncePassenger(TileTransportDuctBaseRoute homeTile) {
 
-		if (myPath == null) {
-			dropPassenger();
-		} else {
-			oldDirection = direction;
-			direction = myPath.getNextDirection();
-			reRoute = false;
-		}
-	}
+        myPath = homeTile.getRoute(this, direction, step);
 
-	@Override
-	protected void entityInit() {
+        if (myPath == null) {
+            dropPassenger();
+        } else {
+            oldDirection = direction;
+            direction = myPath.getNextDirection();
+            reRoute = false;
+        }
+    }
 
-		this.dataWatcher.addObject(DATAWATCHER_DIRECTIONS, (byte) 0);
-		this.dataWatcher.addObject(DATAWATCHER_PROGRESS, (byte) 0);
-		this.dataWatcher.addObject(DATAWATCHER_POSX, 0);
-		this.dataWatcher.addObject(DATAWATCHER_POSY, 0);
-		this.dataWatcher.addObject(DATAWATCHER_POSZ, 0);
-		this.dataWatcher.addObject(DATAWATCHER_STEP, (byte) 1);
-	}
+    @Override
+    protected void entityInit() {
 
-	public void updateWatcherData() {
+        this.dataWatcher.addObject(DATAWATCHER_DIRECTIONS, (byte) 0);
+        this.dataWatcher.addObject(DATAWATCHER_PROGRESS, (byte) 0);
+        this.dataWatcher.addObject(DATAWATCHER_POSX, 0);
+        this.dataWatcher.addObject(DATAWATCHER_POSY, 0);
+        this.dataWatcher.addObject(DATAWATCHER_POSZ, 0);
+        this.dataWatcher.addObject(DATAWATCHER_STEP, (byte) 1);
+        this.dataWatcher.addObject(DATAWATCHER_PAUSE, (byte) 0);
+    }
 
-		byte p_75692_2_ = (byte) (direction | (oldDirection << 3));
-		this.dataWatcher.updateObject(DATAWATCHER_DIRECTIONS, p_75692_2_);
-		this.dataWatcher.updateObject(DATAWATCHER_PROGRESS, progress);
-		this.dataWatcher.updateObject(DATAWATCHER_POSX, pos.x);
-		this.dataWatcher.updateObject(DATAWATCHER_POSY, pos.y);
-		this.dataWatcher.updateObject(DATAWATCHER_POSZ, pos.z);
-		this.dataWatcher.updateObject(DATAWATCHER_STEP, step);
+    public void updateWatcherData() {
 
-	}
+        byte p_75692_2_ = (byte) (direction | (oldDirection << 3));
+        this.dataWatcher.updateObject(DATAWATCHER_DIRECTIONS, p_75692_2_);
+        this.dataWatcher.updateObject(DATAWATCHER_PROGRESS, progress);
+        this.dataWatcher.updateObject(DATAWATCHER_POSX, pos.x);
+        this.dataWatcher.updateObject(DATAWATCHER_POSY, pos.y);
+        this.dataWatcher.updateObject(DATAWATCHER_POSZ, pos.z);
+        this.dataWatcher.updateObject(DATAWATCHER_STEP, step);
+        this.dataWatcher.updateObject(DATAWATCHER_PAUSE, pause);
 
-	public void loadWatcherData() {
+    }
 
-		byte b = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_DIRECTIONS);
-		direction = (byte) (b & 7);
-		oldDirection = (byte) (b >> 3);
-		progress = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_PROGRESS);
-		pos = new BlockPosition(this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSX), this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSY),
-				this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSZ));
-		step = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_STEP);
-	}
+    public void loadWatcherData() {
 
-	@Override
-	protected void readEntityFromNBT(NBTTagCompound tag) {
+        byte b = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_DIRECTIONS);
+        direction = (byte) (b & 7);
+        oldDirection = (byte) (b >> 3);
+        progress = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_PROGRESS);
+        pos = new BlockPosition(this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSX), this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSY),
+                this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSZ));
+        step = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_STEP);
+        pause = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_PAUSE);
+    }
 
-		if (tag.hasKey("route", 7)) {
-			myPath = new Route(tag.getByteArray("route"));
-		}
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound tag) {
 
-		pos = new BlockPosition(tag.getInteger("posx"), tag.getInteger("posy"), tag.getInteger("posz"));
+        if (tag.hasKey("route", 7)) {
+            myPath = new Route(tag.getByteArray("route"));
+        }
 
-		progress = tag.getByte("progress");
-		direction = tag.getByte("direction");
-		oldDirection = tag.getByte("oldDirection");
-		step = tag.getByte("step");
-		reRoute = tag.getBoolean("reRoute");
-	}
+        pos = new BlockPosition(tag.getInteger("posx"), tag.getInteger("posy"), tag.getInteger("posz"));
 
-	@Override
-	protected void writeEntityToNBT(NBTTagCompound tag) {
+        progress = tag.getByte("progress");
+        direction = tag.getByte("direction");
+        oldDirection = tag.getByte("oldDirection");
+        step = tag.getByte("step");
+        reRoute = tag.getBoolean("reRoute");
+    }
 
-		if (myPath != null) {
-			tag.setByteArray("route", myPath.toByteArray());
-		}
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound tag) {
 
-		tag.setInteger("posx", pos.x);
-		tag.setInteger("posy", pos.y);
-		tag.setInteger("posz", pos.z);
+        if (myPath != null) {
+            tag.setByteArray("route", myPath.toByteArray());
+        }
 
-		tag.setByte("progress", progress);
-		tag.setByte("direction", direction);
-		tag.setByte("oldDirection", oldDirection);
-		tag.setByte("step", step);
-		tag.setBoolean("reRoute", reRoute);
-	}
+        tag.setInteger("posx", pos.x);
+        tag.setInteger("posy", pos.y);
+        tag.setInteger("posz", pos.z);
 
-	public Vector3 getPos(double framePos) {
+        tag.setByte("progress", progress);
+        tag.setByte("direction", direction);
+        tag.setByte("oldDirection", oldDirection);
+        tag.setByte("step", step);
+        tag.setBoolean("reRoute", reRoute);
+    }
 
-		return getPos(progress, framePos);
-	}
+    public Vector3 getPos(double framePos) {
 
-	public Vector3 getPos(byte progress, double framePos) {
+        return getPos(progress, framePos);
+    }
 
-		double v = (progress + step * framePos) / (PIPE_LENGTH) - 0.5;
-		int dir = v < 0 ? oldDirection : direction;
+    public Vector3 getPos(byte progress, double framePos) {
 
-		Vector3 vec = Vector3.center.copy();
-		vec.add(v * Facing.offsetsXForSide[dir], v * Facing.offsetsYForSide[dir], v * Facing.offsetsZForSide[dir]);
-		vec.add(pos.x, pos.y, pos.z);
+        double v = (progress + step * framePos) / (PIPE_LENGTH) - 0.5;
+        int dir = v < 0 ? oldDirection : direction;
 
-		return vec;
-	}
+        Vector3 vec = Vector3.center.copy();
+        vec.add(v * Facing.offsetsXForSide[dir], v * Facing.offsetsYForSide[dir], v * Facing.offsetsZForSide[dir]);
+        vec.add(pos.x, pos.y, pos.z);
 
-	@Override
-	public boolean handleWaterMovement() {
+        return vec;
+    }
 
-		return false;
-	}
+    @Override
+    public boolean handleWaterMovement() {
 
-	@Override
-	public boolean canBeCollidedWith() {
+        return false;
+    }
 
-		return false;
-	}
+    @Override
+    public boolean canBeCollidedWith() {
 
-	@Override
-	public boolean handleLavaMovement() {
+        return false;
+    }
 
-		return false;
-	}
+    @Override
+    public boolean handleLavaMovement() {
 
-	@Override
-	public void moveEntity(double p_70091_1_, double p_70091_3_, double p_70091_5_) {
+        return false;
+    }
 
-		setPosition(0);
-	}
+    @Override
+    public void moveEntity(double p_70091_1_, double p_70091_3_, double p_70091_5_) {
 
-	@Override
-	public void addVelocity(double p_70024_1_, double p_70024_3_, double p_70024_5_) {
+        setPosition(0);
+    }
 
-	}
+    @Override
+    public void addVelocity(double p_70024_1_, double p_70024_3_, double p_70024_5_) {
 
-	@Override
-	public boolean isPushedByWater() {
+    }
 
-		return false;
-	}
+    @Override
+    public boolean isPushedByWater() {
 
-	@Override
-	public boolean canBePushed() {
+        return false;
+    }
 
-		return false;
-	}
+    @Override
+    public boolean canBePushed() {
+
+        return false;
+    }
+
+    @Override
+    public boolean isInRangeToRenderDist(double p_70112_1_) {
+        return p_70112_1_ < 4096;
+    }
 }

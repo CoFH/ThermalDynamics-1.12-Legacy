@@ -37,7 +37,7 @@ public class TransportHandler {
 
 			TileEntity tileEntity = event.entity.worldObj.getTileEntity(p.x, p.y, p.z);
 
-			if (tileEntity != null && !tileEntity.isInvalid() && tileEntity instanceof TileTransportDuct) {
+			if (tileEntity != null && !tileEntity.isInvalid() && tileEntity instanceof TileTransportDuctBase) {
 				event.setCanceled(true);
 			}
 		}

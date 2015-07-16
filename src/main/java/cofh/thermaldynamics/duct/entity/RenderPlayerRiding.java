@@ -55,7 +55,7 @@ public class RenderPlayerRiding extends RenderPlayer {
         int d = transport.direction;
         int od = transport.oldDirection;
 
-        float stepTime = (transport.progress + transport.step * ShaderHelper.midGameTick) / (EntityTransport.PIPE_LENGTH);
+        float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.PIPE_LENGTH);
 
         float  yaw = 0, pitch = 0;
 
@@ -205,8 +205,8 @@ public class RenderPlayerRiding extends RenderPlayer {
                         transport.pos.x + Facing.offsetsXForSide[d ^ 1],
                         transport.pos.y + Facing.offsetsYForSide[d ^ 1],
                         transport.pos.z + Facing.offsetsZForSide[d ^ 1]);
-                if (tile instanceof TileTransportDuct) {
-                    if(((TileTransportDuct) tile).neighborTypes[d ^ 1] == TileTDBase.NeighborTypes.NONE){
+                if (tile instanceof TileTransportDuctBase) {
+                    if(((TileTransportDuctBase) tile).neighborTypes[d ^ 1] == TileTDBase.NeighborTypes.NONE){
                         GL11.glTranslatef(0, -0.3F * (1 - stepTime * 2 ), 0);
                     }
                 }else

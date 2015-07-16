@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.core.render.ShaderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +47,7 @@ public class Camera extends EntityLivingBase {
 	public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {
 
 		if (other.pos != null) {
-			other.setPosition(ShaderHelper.midGameTick);
+			other.setPosition(0);
 		}
 
 		worldObj = Minecraft.getMinecraft().theWorld;

@@ -32,6 +32,6 @@ public class TransportGrid extends MultiBlockGridWithRoutes {
 	@Override
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
-		return aBlock instanceof TileTransportDuct;
+		return aBlock instanceof TileTransportDuctBase;
 	}
 }

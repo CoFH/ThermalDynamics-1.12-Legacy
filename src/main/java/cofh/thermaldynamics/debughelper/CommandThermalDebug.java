@@ -96,13 +96,40 @@ public class CommandThermalDebug extends CommandBase {
 			return;
 		}
 
-        if ("coaster".equals(args[0])) {
+        if ("longRange".equals(args[0])) {
 
             if (!(p_71515_1_ instanceof EntityPlayerMP)) {
                 return;
             }
 
-            EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
+            EntityPlayerMP playerMP = (EntityPlayerMP) p_71515_1_;
+            BlockPosition pos = new BlockPosition((int) Math.floor(playerMP.posX), (int) Math.floor(playerMP.posY) - 5, (int) Math.floor(playerMP.posZ));
+
+            final World world = playerMP.getEntityWorld();
+
+            pos.setOrientation(ForgeDirection.NORTH);
+
+            int n = Integer.valueOf(args[1]);
+
+            for (int i = 0; i < n; i++) {
+                world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+                pos.getTileEntity(world, TileTDBase.class).blockPlaced();
+                pos.moveForwards(1);
+            }
+
+            for (int i = 0; i < 4; i++) {
+                world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+                pos.getTileEntity(world, TileTDBase.class).blockPlaced();
+                pos.moveRight(1);
+            }
+
+            for (int i = 0; i < n; i++) {
+                if (!world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3)){
+                    world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+                }
+                pos.getTileEntity(world, TileTDBase.class).blockPlaced();
+                pos.moveBackwards(1);
+            }
 
             return;
         }
