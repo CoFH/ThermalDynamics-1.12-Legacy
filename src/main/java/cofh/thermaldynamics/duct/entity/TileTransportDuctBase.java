@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.CoFHCore;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,15 +28,6 @@ public abstract class TileTransportDuctBase extends TileTDBase  {
 	@Override
 	public void clearCache(int side) {
 
-	}
-
-	@Override
-	public BlockDuct.ConnectionTypes getConnectionType(int side) {
-
-//		if (connectionTypes[side] == ConnectionTypes.FORCED) {
-//			return BlockDuct.ConnectionTypes.DUCT;
-//		}
-		return super.getConnectionType(side);
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.position.BlockPosition;
 import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -18,14 +20,8 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 
     @Override
     public void onNeighborBlockChange() {
-        d1 = -1;
-        d2 = -1;
-
-        for (byte i = 0; i < 6; i++) {
-            if (connectionTypes[i] == ConnectionTypes.REJECTED)
-                connectionTypes[i] = ConnectionTypes.NORMAL;
-        }
-
+        d1 = 7;
+        d2 = 7;
         super.onNeighborBlockChange();
 
         connections = 0;
@@ -38,19 +34,10 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
                     d2 = i;
                     connections = 2;
                 } else {
-                    neighborMultiBlocks[i] = null;
-                    neighborTypes[i] = NeighborTypes.NONE;
+                    connections = 3;
                 }
             }
         }
-
-//        if (connections == 2) {
-//            for (int i = 0; i < 6; i++) {
-//                if (i != d1 && i != d2 && connectionTypes[i] == ConnectionTypes.NORMAL) {
-//                    connectionTypes[i] = ConnectionTypes.REJECTED;
-//                }
-//            }
-//        }
     }
 
     @Override
@@ -58,9 +45,6 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
         int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
         d1 = -1;
         d2 = -1;
-
-        if (connectionTypes[i] == ConnectionTypes.REJECTED)
-            connectionTypes[i] = ConnectionTypes.NORMAL;
 
         super.onNeighborTileChange(tileX, tileY, tileZ);
 
@@ -74,25 +58,10 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
                     d2 = j;
                     connections = 2;
                 } else {
-                    connectionTypes[j] = ConnectionTypes.REJECTED;
-                    if(neighborMultiBlocks[j] != null && ((TileTDBase)neighborMultiBlocks[j]).connectionTypes[j ^ 1] != ConnectionTypes.REJECTED ) {
-                        neighborMultiBlocks[j].setNotConnected((byte)(j ^ 1));
-                        ((TileTDBase)neighborMultiBlocks[j]).connectionTypes[j ^ 1] = ConnectionTypes.REJECTED;
-
-                        neighborMultiBlocks[j] = null;
-                    }
-                    neighborTypes[j] = NeighborTypes.NONE;
+                    connections = 3;
                 }
             }
         }
-
-//        if (connections == 2) {
-//            for (int j = 0; j < 6; j++) {
-//                if (j != d1 && j != d2 && connectionTypes[j] == ConnectionTypes.NORMAL) {
-//                    connectionTypes[j] = ConnectionTypes.REJECTED;
-//                }
-//            }
-//        }
     }
 
     @Override
@@ -196,4 +165,44 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
         d1 = nbt.getByte("SimpleConnect1");
         d2 = nbt.getByte("SimpleConnect2");
     }
+
+    @Override
+    public BlockDuct.ConnectionTypes getConnectionType(int side) {
+        BlockDuct.ConnectionTypes connectionType = super.getConnectionType(side);
+        if(connectionType == BlockDuct.ConnectionTypes.NONE || connections == 0)
+            return connectionType;
+
+        if(side != d1 && side != d2) {
+            return BlockDuct.ConnectionTypes.NONE;
+        }
+
+        // TODO: Optimize this - find someplace in the tile update dance to precalculate this
+        TileEntity tile = BlockHelper.getAdjacentTileEntity(this, side);
+        if(tile instanceof TileTransportDuctLongRange){
+            TileTransportDuctLongRange t = (TileTransportDuctLongRange) tile;
+
+            if((t.d1 ^ 1) == side || (t.d2 ^ 1) == side )
+                return connectionType;
+            return BlockDuct.ConnectionTypes.NONE;
+        }
+
+        return connectionType;
+    }
+
+    @Override
+    public PacketCoFHBase getPacket() {
+        PacketCoFHBase packet = super.getPacket();
+        packet.addShort(connections << 6 | d1 << 3 | d2);
+        return packet;
+    }
+
+    @Override
+    public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+        super.handleTilePacket(payload, isServer);
+        int b = payload.getShort();
+        connections = (byte) ((b >> 6) & 7);
+        d1 = (byte) ((b >> 3) & 7);
+        d2 = (byte) (b & 7);
+    }
 }
+
