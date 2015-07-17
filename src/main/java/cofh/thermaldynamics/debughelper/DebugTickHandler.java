@@ -50,6 +50,20 @@ public class DebugTickHandler {
 				+ (event.getChunk().worldObj.isRemote ? "Client" : "Server"));
 	}
 
+    public static volatile long lag = 0;
+
+    @SubscribeEvent
+    public void lag(TickEvent.ServerTickEvent event){
+        if(lag <= 0 || event.phase == TickEvent.Phase.END)
+            return;
+
+        long time = System.nanoTime();
+        int v =0 ;
+        while (System.nanoTime() < (time + lag)) {
+            v++;
+        }
+    }
+
 	@SubscribeEvent
 	public void subTicks(TickEvent.ServerTickEvent event) {
 

@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -89,12 +90,27 @@ public class CommandThermalDebug extends CommandBase {
 		return builder.toString();
 	}
 
+    public static volatile boolean serverOverclock = false;
+
 	@Override
 	public void processCommand(ICommandSender p_71515_1_, String[] args) {
 
 		if (args.length == 0) {
 			return;
 		}
+
+        if("overclock".equals(args[0])) {
+            serverOverclock = !serverOverclock;
+            p_71515_1_.addChatMessage(new ChatComponentText("Server Overclock = " + serverOverclock));
+        }
+
+        if("lag".equals(args[0])){
+            if(args.length == 1){
+                DebugTickHandler.lag = 0;
+            }else {
+                DebugTickHandler.lag = (long) (parseDouble(p_71515_1_, args[1]) * 1000 * 1000);
+            }
+        }
 
         if ("longRange".equals(args[0])) {
 
