@@ -18,58 +18,54 @@ public class RenderTransport extends RenderEntity {
 
     @Override
     public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
-//        super.doRender(entity, p_76986_2_, p_76986_4_, p_76986_6_, p_76986_8_, p_76986_9_);
-        try {
-            if (entity.riddenByEntity == null)
-                return;
 
-            EntityPlayer player = null;
-
-            if (entity.riddenByEntity instanceof EntityPlayer) {
-                player = (EntityPlayer) entity.riddenByEntity;
-            }
-
-            if(player == Minecraft.getMinecraft().thePlayer){
-                if(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
-                    return;
-            }
-
-            if (player == null) return;
-
-            EntityTransport transport = (EntityTransport) entity;
-
-            transport.setPosition(ShaderHelper.midGameTick);
-
-            transport.updateRiderPosition();
-
-            EntityOtherPlayerMP doll = dolls.get(player);
-            if (doll == null) {
-                doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
-                dolls.put(player, doll);
-            }
-
-            List allWatched = player.getDataWatcher().getAllWatched();
-            if (allWatched != null)
-                doll.getDataWatcher().updateWatchedObjectsFromList(allWatched);
-
-            for (int i = 1; i < 5; i++) {
-                doll.setCurrentItemOrArmor(i, player.getEquipmentInSlot(i));
-            }
-
-            renderPlayer.setRenderManager(renderManager);
-
-            transport.setPosition(0);
-
-            GL11.glPushMatrix();
-            RenderPlayerRiding.transport = transport;
-            double dy = (player.boundingBox.minY + player.boundingBox.maxY) / 2 - player.posY - player.getYOffset() * 0.7;
-            renderPlayer.doRender(doll, p_76986_2_, p_76986_4_ + dy, p_76986_6_, p_76986_8_, p_76986_9_);
-            RenderPlayerRiding.transport = null;
-            GL11.glPopMatrix();
-        }catch(Throwable throwable){
-            throwable.printStackTrace();
+        if (entity.riddenByEntity == null)
             return;
+
+        EntityPlayer player = null;
+
+        if (entity.riddenByEntity instanceof EntityPlayer) {
+            player = (EntityPlayer) entity.riddenByEntity;
         }
+
+        if (player == Minecraft.getMinecraft().thePlayer) {
+            if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
+                return;
+        }
+
+        if (player == null) return;
+
+        EntityTransport transport = (EntityTransport) entity;
+
+        transport.setPosition(ShaderHelper.midGameTick);
+
+        transport.updateRiderPosition();
+
+        EntityOtherPlayerMP doll = dolls.get(player);
+        if (doll == null) {
+            doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
+            dolls.put(player, doll);
+        }
+
+        List allWatched = player.getDataWatcher().getAllWatched();
+        if (allWatched != null)
+            doll.getDataWatcher().updateWatchedObjectsFromList(allWatched);
+
+        for (int i = 1; i < 5; i++) {
+            doll.setCurrentItemOrArmor(i, player.getEquipmentInSlot(i));
+        }
+
+        renderPlayer.setRenderManager(renderManager);
+
+        transport.setPosition(0);
+
+        GL11.glPushMatrix();
+        RenderPlayerRiding.transport = transport;
+
+        double dy = player.yOffset - 1.62F;
+        renderPlayer.doRender(doll, p_76986_2_, p_76986_4_ + dy, p_76986_6_, p_76986_8_, p_76986_9_);
+        RenderPlayerRiding.transport = null;
+        GL11.glPopMatrix();
     }
 
     @Override

@@ -1,58 +1,41 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.render.ShaderHelper;
-import cofh.lib.util.position.BlockPosition;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-
 import org.lwjgl.opengl.GL11;
 
 public class TransportHandler {
 
 	public static final TransportHandler INSTANCE = new TransportHandler();
 
-	@SubscribeEvent
-	public void cancelDamgage(LivingAttackEvent event) {
-
-		EntityLivingBase entity = event.entityLiving;
-		Entity ridingEntity = entity.ridingEntity;
-		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
-			EntityTransport ridingEntity1 = (EntityTransport) ridingEntity;
-			BlockPosition p = ridingEntity1.pos;
-			if (p == null) {
-				return;
-			}
-
-			TileEntity tileEntity = event.entity.worldObj.getTileEntity(p.x, p.y, p.z);
-
-			if (tileEntity != null && !tileEntity.isInvalid() && tileEntity instanceof TileTransportDuctBase) {
-				event.setCanceled(true);
-			}
-		}
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void cancelOverlay(RenderBlockOverlayEvent event) {
-
-		EntityLivingBase entity = event.player;
-		Entity ridingEntity = entity.ridingEntity;
-		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
-			event.setCanceled(true);
-		}
-	}
+//	@SubscribeEvent
+//	public void cancelDamgage(LivingAttackEvent event) {
+//
+//		EntityLivingBase entity = event.entityLiving;
+//		Entity ridingEntity = entity.ridingEntity;
+//		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
+//			EntityTransport ridingEntity1 = (EntityTransport) ridingEntity;
+//			BlockPosition p = ridingEntity1.pos;
+//			if (p == null) {
+//				return;
+//			}
+//
+//			TileEntity tileEntity = event.entity.worldObj.getTileEntity(p.x, p.y, p.z);
+//
+//			if (tileEntity != null && !tileEntity.isInvalid() && tileEntity instanceof TileTransportDuctBase) {
+//				event.setCanceled(true);
+//			}
+//		}
+//	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	@SideOnly(Side.CLIENT)
@@ -103,12 +86,15 @@ public class TransportHandler {
             return;
         }
 
-        if(mc.gameSettings.thirdPersonView != 0) return;
-
         Entity ridingEntity = thePlayer.ridingEntity;
         if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
+            EntityTransport transport = (EntityTransport) ridingEntity;
+            transport.updateRider(thePlayer);
+
+            if(mc.gameSettings.thirdPersonView != 0) return;
             double rotationYaw = 0, rotationPitch = 0;
-            byte d = ((EntityTransport) ridingEntity).direction;
+
+            byte d = transport.direction;
             switch (d) {
                 case 0:
                     rotationPitch = 90;

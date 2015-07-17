@@ -39,10 +39,22 @@ public class EntityTransport extends Entity {
     public boolean reRoute = false;
     public byte pause = 0;
 
+
+    public float originalWidth = 0;
+    public float originalHeight = 0;
+    public float originalYOffset = 0;
+    public float originalEyeHeight = 0;
+    public EntityLivingBase rider = null;
+
     Route myPath;
     BlockPosition pos;
 
+
+
     boolean initSound;
+    public static final float DEFAULT_WIDTH = 0.05F;
+    public static final float DEFAULT_HEIGHT = 0.05F;
+    public static final float DEFAULT_YOFFSET = 0;
 
     @Override
     public boolean isEntityInvulnerable() {
@@ -63,13 +75,7 @@ public class EntityTransport extends Entity {
         if (riddenByEntity == null) {
             return super.getMountedYOffset();
         } else {
-
-            if (riddenByEntity == CoFHCore.proxy.getClientPlayer()) {
-                return -riddenByEntity.getYOffset();
-            }
-
-            double h = riddenByEntity.boundingBox.maxY - riddenByEntity.boundingBox.minY;
-            return -riddenByEntity.getYOffset() - h / 2;
+            return -riddenByEntity.getYOffset();
         }
     }
 
@@ -106,8 +112,18 @@ public class EntityTransport extends Entity {
 
     public void start(EntityLivingBase passenger) {
 
+        loadRider(passenger);
         worldObj.spawnEntityInWorld(this);
         passenger.mountEntity(this);
+    }
+
+    public void loadRider(EntityLivingBase passenger) {
+        this.rider = passenger;
+        this.originalWidth = passenger.width;
+        this.originalHeight = passenger.height;
+        this.originalYOffset = passenger.yOffset;
+        if(rider instanceof EntityPlayer)
+            originalEyeHeight = ((EntityPlayer) rider).eyeHeight;
     }
 
     @Override
@@ -122,13 +138,23 @@ public class EntityTransport extends Entity {
 
     @Override
     public void onUpdate() {
+        if (riddenByEntity == null || riddenByEntity.isDead) {
+            setDead();
+            return;
+        }
 
-        if (!this.worldObj.isRemote) {
-            if (riddenByEntity == null || riddenByEntity.isDead) {
+        if(rider == null){
+            if(!(riddenByEntity instanceof EntityLivingBase)) {
+                riddenByEntity.mountEntity(null);
                 setDead();
                 return;
             }
+
+            loadRider((EntityLivingBase) riddenByEntity);
+        }else{
+            updateRider(rider);
         }
+
 
         boolean wasPause = pause > 0;
 
@@ -199,6 +225,29 @@ public class EntityTransport extends Entity {
         }
     }
 
+    public void updateRider(EntityLivingBase rider) {
+        rider.width = DEFAULT_WIDTH;
+        rider.height = DEFAULT_HEIGHT;
+        rider.yOffset = DEFAULT_YOFFSET;
+        if (rider instanceof EntityPlayer)
+            ((EntityPlayer) rider).eyeHeight = 0;
+        rider.setPosition(rider.posX, rider.posY, rider.posZ);
+    }
+
+    @Override
+    public void setDead() {
+        if(rider != null && !rider.isDead){
+            rider.height = originalHeight;
+            rider.width = originalWidth;
+            rider.yOffset = originalYOffset;
+            if (rider instanceof EntityPlayer)
+                ((EntityPlayer) rider).eyeHeight = originalEyeHeight;
+
+            rider.setPosition(rider.posX, rider.posY, rider.posZ);
+        }
+        super.setDead();
+    }
+
     public boolean trySimpleAdvance() {
         BlockPosition p = pos.copy().step(direction);
 
@@ -258,6 +307,8 @@ public class EntityTransport extends Entity {
         motionX = newPos.x - oldPos.x;
         motionY = newPos.y - oldPos.y;
         motionZ = newPos.z - oldPos.z;
+
+        updateRiderPosition();
     }
 
     public void dropPassenger() {
@@ -370,6 +421,11 @@ public class EntityTransport extends Entity {
         oldDirection = tag.getByte("oldDirection");
         step = tag.getByte("step");
         reRoute = tag.getBoolean("reRoute");
+
+        originalWidth = tag.getFloat("originalWidth");
+        originalHeight = tag.getFloat("originalHeight");
+        originalYOffset = tag.getFloat("originalYOffset");
+        originalEyeHeight = tag.getFloat("originalEyeHeight");
     }
 
     @Override
@@ -388,6 +444,11 @@ public class EntityTransport extends Entity {
         tag.setByte("oldDirection", oldDirection);
         tag.setByte("step", step);
         tag.setBoolean("reRoute", reRoute);
+
+        tag.setFloat("originalWidth", originalWidth);
+        tag.setFloat("originalHeight", originalHeight);
+        tag.setFloat("originalYOffset", originalYOffset);
+        tag.setFloat("originalEyeHeight", originalEyeHeight);
     }
 
     public Vector3 getPos(double framePos) {
@@ -452,4 +513,5 @@ public class EntityTransport extends Entity {
     public boolean isInRangeToRenderDist(double p_70112_1_) {
         return p_70112_1_ < 4096;
     }
+
 }

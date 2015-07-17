@@ -50,9 +50,11 @@ public class Camera extends EntityLivingBase {
 			other.setPosition(0);
 		}
 
+        this.getEyeHeight();
+
 		worldObj = Minecraft.getMinecraft().theWorld;
 
-		double dx = 0, dy = -(player.posY - player.boundingBox.minY), dz = 0;
+		double dx = 0, dy = player.yOffset - 1.62F, dz = 0;
 
 		posX = other.posX + dx;
 		posY = other.posY + dy;
