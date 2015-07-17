@@ -26,13 +26,11 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
         if (rangePos[i] == null || rangePos[i].orientation == ForgeDirection.UNKNOWN) {
             rangePos[i] = null;
             super.handleTileSideUpdate(i);
-            isOutput = false;
             return;
         }
 
         if(rangePos[i] == clientValue){
             super.handleTileSideUpdate(i);
-            isOutput = false;
             return;
         }
 
@@ -48,14 +46,17 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
             } else {
                 rangePos[i] = null;
                 super.handleTileSideUpdate(i);
-                isOutput = false;
-                return;
             }
         } else {
             neighborMultiBlocks[i] = null;
             neighborTypes[i] = NeighborTypes.OUTPUT;
         }
-        isOutput = false;
+
+    }
+
+    @Override
+    public boolean isOutput() {
+        return false;
     }
 
     @Override

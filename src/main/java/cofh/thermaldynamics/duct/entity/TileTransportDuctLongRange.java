@@ -24,30 +24,20 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
         d2 = 7;
         super.onNeighborBlockChange();
 
-        connections = 0;
-        for (byte i = 5; i > 0; i--) {
-            if (neighborTypes[i] != NeighborTypes.NONE) {
-                if (connections == 0) {
-                    d1 = i;
-                    connections = 1;
-                } else if (connections == 1) {
-                    d2 = i;
-                    connections = 2;
-                } else {
-                    connections = 3;
-                }
-            }
-        }
+        checkConnections();
     }
 
     @Override
     public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
-        int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
-        d1 = -1;
-        d2 = -1;
+        d1 = 7;
+        d2 = 7;
 
         super.onNeighborTileChange(tileX, tileY, tileZ);
 
+        checkConnections();
+    }
+
+    public void checkConnections() {
         connections = 0;
         for (byte j = 5; j > 0; j--) {
             if (neighborTypes[j] != NeighborTypes.NONE) {
@@ -58,7 +48,10 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
                     d2 = j;
                     connections = 2;
                 } else {
+                    d1 = 7;
+                    d2 = 7;
                     connections = 3;
+                    break;
                 }
             }
         }
@@ -93,7 +86,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
     @Override
     public boolean advanceEntity(EntityTransport t) {
         int v = t.progress;
-        v += t.step + (t.step);
+        v += t.step * 2;
         t.progress = (byte)(v % EntityTransport.PIPE_LENGTH);
         if (v >= EntityTransport.PIPE_LENGTH) {
             if (neighborTypes[t.direction] == TileTDBase.NeighborTypes.MULTIBLOCK
@@ -122,10 +115,12 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
                 }
             } else {
                 t.dropPassenger();
+                return true;
             }
         } else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
             if (neighborTypes[t.direction] == TileTDBase.NeighborTypes.NONE) {
                 t.dropPassenger();
+                return true;
             }
         }
         return false;
@@ -160,7 +155,6 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
     public void readFromNBT(NBTTagCompound nbt) {
 
         super.readFromNBT(nbt);
-
         connections = nbt.getByte("SimpleConnect");
         d1 = nbt.getByte("SimpleConnect1");
         d2 = nbt.getByte("SimpleConnect2");
@@ -178,7 +172,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 
         // TODO: Optimize this - find someplace in the tile update dance to precalculate this
         TileEntity tile = BlockHelper.getAdjacentTileEntity(this, side);
-        if(tile instanceof TileTransportDuctLongRange){
+        if (tile != null && tile.getClass() == TileTransportDuctLongRange.class) {
             TileTransportDuctLongRange t = (TileTransportDuctLongRange) tile;
 
             if((t.d1 ^ 1) == side || (t.d2 ^ 1) == side )
@@ -205,4 +199,3 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
         d2 = (byte) (b & 7);
     }
 }
-
