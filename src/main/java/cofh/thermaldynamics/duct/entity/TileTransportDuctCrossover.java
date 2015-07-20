@@ -20,17 +20,31 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 
     final BlockPosition[] rangePos = new BlockPosition[6];
     final static BlockPosition clientValue = new BlockPosition(0, 0, 0, ForgeDirection.DOWN);
-    public static final int PAUSE_LEVEL = 60;
+    public static final int PAUSE_LEVEL = 120;
 
     public void handleTileSideUpdate(int i) {
+        super.handleTileSideUpdate(i);
+
         if (rangePos[i] == null || rangePos[i].orientation == ForgeDirection.UNKNOWN) {
             rangePos[i] = null;
-            super.handleTileSideUpdate(i);
             return;
         }
 
-        if(rangePos[i] == clientValue){
-            super.handleTileSideUpdate(i);
+        if (neighborTypes[i] != NeighborTypes.OUTPUT) {
+            if (i < 2 || worldObj.blockExists(xCoord + Facing.offsetsXForSide[i], yCoord, zCoord + Facing.offsetsZForSide[i])) {
+                rangePos[i] = null;
+//                if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
+//                    TileEntity theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
+//
+//                    if (theTile instanceof TileTransportDuctCrossover){
+//                        theTile`
+//                    }
+//                }
+            }
+            return;
+        }
+
+        if (rangePos[i] == clientValue) {
             return;
         }
 

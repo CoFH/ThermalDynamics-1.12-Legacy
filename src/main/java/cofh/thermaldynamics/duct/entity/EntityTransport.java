@@ -9,7 +9,6 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.Route;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -139,10 +138,13 @@ public class EntityTransport extends Entity {
 
     @Override
     public void onUpdate() {
-        if (riddenByEntity == null || riddenByEntity.isDead) {
-            setDead();
+        if (!worldObj.isRemote || rider != null) {
+            if (riddenByEntity == null || riddenByEntity.isDead) {
+                setDead();
+                return;
+            }
+        }else if (riddenByEntity == null)
             return;
-        }
 
         if(rider == null){
             if(!(riddenByEntity instanceof EntityLivingBase)) {
@@ -330,7 +332,7 @@ public class EntityTransport extends Entity {
     }
 
     @Override
-	public boolean canTriggerWalking() {
+    public boolean canTriggerWalking() {
 
         return false;
     }
@@ -359,6 +361,9 @@ public class EntityTransport extends Entity {
     }
 
     public void bouncePassenger(TileTransportDuctBaseRoute homeTile) {
+
+        if(homeTile.internalGrid == null)
+            return;
 
         myPath = homeTile.getRoute(this, direction, step);
 

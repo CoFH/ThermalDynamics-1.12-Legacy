@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -46,25 +47,36 @@ public class TransportHandler {
 		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
 			event.setCanceled(true);
 
-			if (entity == Minecraft.getMinecraft().thePlayer) {
+			if (entity instanceof EntityPlayer) {
 				return;
 			}
 
 			float f = ShaderHelper.midGameTick;
-			((EntityTransport) ridingEntity).setPosition(f);
+            EntityTransport transport = (EntityTransport) ridingEntity;
+            transport.setPosition(0);
 			ridingEntity.updateRiderPosition();
 			float rotation = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * f;
 
-			entity.ridingEntity = null;
-			GL11.glPushMatrix();
-			float max = Math.max(entity.height, entity.width);
-			GL11.glTranslated(event.x, event.y, event.z);
 
-			double h = max == 0 ? 1 : 0.5 / max;
-			GL11.glScaled(h, h, h);
-			event.renderer.doRender((Entity) entity, 0, 0, 0, rotation, f);
-			GL11.glPopMatrix();
-			entity.ridingEntity = ridingEntity;
+            GL11.glPushMatrix();
+            float max = Math.max(Math.max(Math.max(entity.height, entity.width), transport.originalWidth), transport.originalHeight);
+
+            GL11.glTranslated(event.x, event.y, event.z);
+
+            if (max > 0.4) {
+                double h = 0.4 / max;
+                GL11.glTranslated(0, -h / 2, 0);
+                GL11.glScaled(h, h, h);
+            } else
+                GL11.glTranslated(0, -1 / 2, 0);
+
+            try {
+                entity.ridingEntity = null;
+                event.renderer.doRender(entity, 0, 0, 0, rotation, f);
+            }finally {
+                entity.ridingEntity = transport;
+            }
+            GL11.glPopMatrix();
 
 		}
 	}
@@ -120,9 +132,9 @@ public class TransportHandler {
             }
 
 
-            thePlayer.rotationPitch += Math.sin((rotationPitch - thePlayer.rotationPitch) / 180 * Math.PI) * 20;
+            thePlayer.rotationPitch += Math.sin((rotationPitch - thePlayer.rotationPitch) / 180 * Math.PI) * 30;
             if (rotationPitch == 0)
-                thePlayer.rotationYaw += Math.sin((rotationYaw - thePlayer.rotationYaw) / 180 * Math.PI) * 20;
+                thePlayer.rotationYaw += Math.sin((rotationYaw - thePlayer.rotationYaw) / 180 * Math.PI) * 30;
         }
     }
 

@@ -7,7 +7,9 @@ import net.minecraft.item.ItemStack;
 
 public class Camera extends EntityLivingBase {
 
-	public Camera() {
+    public static final ItemStack[] emptyItemStacks = new ItemStack[5];
+
+    public Camera() {
 
 		super(null);
 		this.width = 0;
@@ -41,7 +43,7 @@ public class Camera extends EntityLivingBase {
 	@Override
 	public ItemStack[] getLastActiveItems() {
 
-		return new ItemStack[0];
+		return emptyItemStacks;
 	}
 
 	public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {
@@ -50,9 +52,8 @@ public class Camera extends EntityLivingBase {
 			other.setPosition(0);
 		}
 
-        this.getEyeHeight();
-
-		worldObj = Minecraft.getMinecraft().theWorld;
+        if (worldObj == null)
+            worldObj = Minecraft.getMinecraft().theWorld;
 
 		double dx = 0, dy = player.yOffset - 1.62F, dz = 0;
 

@@ -149,7 +149,7 @@ public class TDDucts {
             }
         });
 
-        registerDuct(new Duct(4 * 16 + 2, false, 1, 4, "entityTransportCrossover", Type.ENTITY, new DuctFactory() {
+        registerDuct(new Duct(4 * 16 + 2, false, 1, 4, "entityTransportAcceleration", Type.ENTITY, new DuctFactory() {
 
             @Override
             public TileTDBase createTileEntity(Duct duct, World worldObj) {
