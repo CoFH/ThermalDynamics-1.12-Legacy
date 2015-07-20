@@ -92,31 +92,32 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		if (item == null) {
 			return null;
 		}
-		if (!((neighborTypes[from.ordinal()] == NeighborTypes.INPUT) || (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT && connectionTypes[from
-				.ordinal()].allowTransfer))) {
+        int side = from.ordinal();
+        if (!((neighborTypes[side] == NeighborTypes.INPUT) || (neighborTypes[side] == NeighborTypes.OUTPUT && connectionTypes[side].allowTransfer))) {
 			return item;
 		}
 		if (internalGrid == null) {
 			return item;
 		}
-		Attachment attachment = attachments[from.ordinal()];
-		if (attachment == null) {
-			ItemStack itemCopy = ItemHelper.cloneStack(item);
-			TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)),
-					getCache(false).outputRoutes, this, from.ordinal(), ServoItem.range[0], (byte) 1);
-			if (routeForItem == null) {
-				return item;
-			}
+		Attachment attachment = attachments[side];
+        if (attachment != null && attachment.getId() == AttachmentRegistry.SERVO_ITEM) {
+            return ((ServoItem) attachment).insertItem(item);
+        } else {
+            ItemStack itemCopy = ItemHelper.cloneStack(item);
 
-			itemCopy.stackSize -= routeForItem.stack.stackSize;
-			insertNewItem(routeForItem);
-			return itemCopy.stackSize > 0 ? itemCopy : null;
-		} else if (attachment.getId() != AttachmentRegistry.SERVO_ITEM) {
-			return item;
-		} else {
-			return ((ServoItem) attachment).insertItem(item);
-		}
-	}
+            if (filterCache != null && !filterCache[side].matchesFilter(item)) return item;
+
+            TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)),
+                    getCache(false).outputRoutes, this, side, ServoItem.range[0], (byte) 1);
+            if (routeForItem == null) {
+                return item;
+            }
+
+            itemCopy.stackSize -= routeForItem.stack.stackSize;
+            insertNewItem(routeForItem);
+            return itemCopy.stackSize > 0 ? itemCopy : null;
+        }
+    }
 
 	public Route getRoute(IMultiBlockRoute itemDuct) {
 
