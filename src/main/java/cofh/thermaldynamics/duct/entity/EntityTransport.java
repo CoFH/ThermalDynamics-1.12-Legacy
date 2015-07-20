@@ -9,6 +9,7 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.Route;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -329,7 +330,7 @@ public class EntityTransport extends Entity {
     }
 
     @Override
-    protected boolean canTriggerWalking() {
+	public boolean canTriggerWalking() {
 
         return false;
     }

@@ -16,7 +16,7 @@ public class Camera extends EntityLivingBase {
 	}
 
 	@Override
-	protected boolean canTriggerWalking() {
+	public boolean canTriggerWalking() {
 
 		return false;
 	}
