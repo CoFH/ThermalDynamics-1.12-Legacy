@@ -464,6 +464,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.setBlockTextureSheet();
 		RenderUtils.preItemRender();
 
+        RenderHelper.enableGUIStandardItemLighting();
+
 		// GL11.glDepthMask(true);
 		CCRenderState.startDrawing();
 		renderBase(true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
@@ -480,6 +482,8 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 		RenderHelper.setItemTextureSheet();
 
 		RenderUtils.postItemRender();
+
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 		GL11.glPopMatrix();
 	}
 
