@@ -137,8 +137,8 @@ public class TDCrafting {
 
 		/* SIGNALLER */
 
-		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "ingotSignalum", 'I',
-				"ingotLead", 'i', "nuggetIron"));
+		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I',
+				"ingotLead", 'i', "nuggetSignalum"));
 
 		/* ATTACHMENTS */
 		String[] materials = { "Iron", "Invar", "Electrum", "Signalum", "Enderium" };
