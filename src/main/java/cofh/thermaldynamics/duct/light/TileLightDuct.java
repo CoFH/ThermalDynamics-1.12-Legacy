@@ -133,7 +133,6 @@ public class TileLightDuct extends TileTDBase {
 
 	public void checkLight() {
 
-		// worldObj.func_147451_t(xCoord, yCoord, zCoord);
 		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
 	}
 

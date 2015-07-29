@@ -171,7 +171,15 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return true;
 	}
 
-	@Override
+
+    public PacketTileInfo getNewPacket(byte type) {
+
+        PacketTileInfo packet = getNewPacket();
+        packet.addByte(type);
+        return packet;
+    }
+
+    @Override
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		super.handleInfoPacket(payload, isServer, thePlayer);
@@ -180,15 +188,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		handleInfoPacketType(a, payload, isServer, thePlayer);
 	}
 
-	public PacketTileInfo getNewPacket(byte type) {
-
-		PacketTileInfo packet = PacketTileInfo.newPacket(tile);
-		packet.addByte(1 + side);
-		packet.addByte(type);
-		return packet;
-	}
-
-	@Override
+    @Override
 	public void setControl(ControlMode control) {
 
 		if (!canAlterRS()) {

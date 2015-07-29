@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.block;
 
 import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
@@ -18,6 +19,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovingObjectPosition;
 
 public abstract class Attachment {
@@ -135,7 +137,14 @@ public abstract class Attachment {
 
 	}
 
-	public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+    public PacketTileInfo getNewPacket() {
+
+        PacketTileInfo packet = PacketTileInfo.newPacket(tile);
+        packet.addByte(1 + side);
+        return packet;
+    }
+
+    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
 
 	}
 
@@ -194,4 +203,8 @@ public abstract class Attachment {
 	public void checkSignal() {
 
 	}
+
+    public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+
+    }
 }

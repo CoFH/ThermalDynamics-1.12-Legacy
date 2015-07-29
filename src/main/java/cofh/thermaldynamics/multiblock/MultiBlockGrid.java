@@ -8,6 +8,10 @@ import cofh.thermaldynamics.duct.attachments.relay.Relay;
 
 import java.util.ArrayList;
 
+import java.util.List;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -150,11 +154,6 @@ public abstract class MultiBlockGrid {
 			return;
 		}
 
-		if (relaysOut == null) {
-			nextRedstoneLevel = 0;
-			return;
-		}
-
 		int powered = 0;
 		for (Relay signaller : relaysIn) {
 			powered = Math.max(powered, signaller.getPowerLevel());
@@ -285,4 +284,18 @@ public abstract class MultiBlockGrid {
 
 	public abstract boolean canAddBlock(IMultiBlock aBlock);
 
+    public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+        addInfo(info, "size", size());
+
+        if (relaysIn != null) {
+            int r = redstoneLevel;
+            if (nextRedstoneLevel != -128)
+                r = nextRedstoneLevel;
+            addInfo(info, "redstone", r);
+        }
+    }
+
+    protected void addInfo(List<IChatComponent> info, String type, Object value) {
+        info.add(new ChatComponentTranslation("info.thermaldynamics.info." + type).appendText(value.toString()));
+    }
 }

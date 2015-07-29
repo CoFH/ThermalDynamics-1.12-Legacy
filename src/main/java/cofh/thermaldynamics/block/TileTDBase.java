@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.block;
 
 import cofh.api.tileentity.IPortableData;
+import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
@@ -39,17 +40,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Facing;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import org.apache.commons.lang3.StringUtils;
-
-public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData {
+public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
 
 	static {
 		GameRegistry.registerTileEntityWithAlternatives(TileTDBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
@@ -456,8 +455,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public TileEntity getAdjTileEntitySafe(int i) {
 
-		return (((i < 2) || worldObj.blockExists(x() + Facing.offsetsXForSide[i], y(), z() + Facing.offsetsZForSide[i])) ? BlockHelper.getAdjacentTileEntity(
-				this, i) : null);
+		return (BlockHelper.getAdjacentTileEntity(this, i));
 	}
 
 	public boolean checkForChunkUnload() {
@@ -850,10 +848,10 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public void doDebug(EntityPlayer thePlayer) {
 
-		thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
-		thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
-		thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
-		thePlayer.addChatMessage(new ChatComponentText("Grid Nodes: " + myGrid.nodeSet.size()));
+//		thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
+//		thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
+//		thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
+//
 	}
 
 	public boolean addFacade(Cover cover) {
@@ -1209,4 +1207,31 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		}
 	}
 
+
+    @Override
+    public void getTileInfo(List<IChatComponent> info, ForgeDirection side, EntityPlayer player, boolean debug) {
+        MultiBlockGrid grid = getGrid();
+        if(grid != null) grid.addInfo(info, player, debug);
+
+        Attachment attachment = getAttachmentSelected(player);
+        if(attachment != null) attachment.addInfo(info, player, debug);
+    }
+
+    public Attachment getAttachmentSelected(EntityPlayer player){
+        MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+        if (rayTrace == null) {
+            return null;
+        }
+
+        int subHit = rayTrace.subHit;
+        if (subHit > 13 && subHit < 20) {
+            return attachments[subHit - 14];
+        }
+
+        if (subHit >= 20 && subHit < 26) {
+            return covers[subHit - 20];
+        }
+
+        return null;
+    }
 }
