@@ -13,11 +13,14 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class EntityTransport extends Entity {
 
@@ -44,7 +47,7 @@ public class EntityTransport extends Entity {
     public float originalHeight = 0;
     public float originalYOffset = 0;
     public float originalEyeHeight = 0;
-    public EntityLivingBase rider = null;
+    public Entity rider = null;
 
     Route myPath;
     BlockPosition pos;
@@ -110,14 +113,14 @@ public class EntityTransport extends Entity {
         return true;
     }
 
-    public void start(EntityLivingBase passenger) {
+    public void start(Entity passenger) {
 
         loadRider(passenger);
         worldObj.spawnEntityInWorld(this);
         passenger.mountEntity(this);
     }
 
-    public void loadRider(EntityLivingBase passenger) {
+    public void loadRider(Entity passenger) {
         this.rider = passenger;
         this.originalWidth = passenger.width;
         this.originalHeight = passenger.height;
@@ -228,7 +231,7 @@ public class EntityTransport extends Entity {
         }
     }
 
-    public void updateRider(EntityLivingBase rider) {
+    public void updateRider(Entity rider) {
         rider.width = DEFAULT_WIDTH;
         rider.height = DEFAULT_HEIGHT;
         rider.yOffset = DEFAULT_YOFFSET;
@@ -520,4 +523,54 @@ public class EntityTransport extends Entity {
         return p_70112_1_ < 4096;
     }
 
+    public void teleport(TileTransportDuctBaseRoute dest) {
+        if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
+            return;
+        }
+
+        int curDim = this.dimension;
+        int destDim = dest.world().provider.dimensionId;
+
+        if(destDim != curDim) {
+            MinecraftServer minecraftserver = MinecraftServer.getServer();
+
+            WorldServer currentWorld = minecraftserver.worldServerForDimension(curDim);
+            WorldServer destinationWorld = minecraftserver.worldServerForDimension(destDim);
+
+            rider.mountEntity(null);
+
+            transferNormalEntity(curDim, destDim, currentWorld, destinationWorld, this);
+
+            if(rider instanceof EntityPlayerMP){
+                transferPlayer(destDim, rider);
+            }else{
+                transferNormalEntity(curDim, destDim, currentWorld, destinationWorld, rider);
+            }
+
+            rider.mountEntity(this);
+
+            currentWorld.resetUpdateEntityTick();
+            destinationWorld.resetUpdateEntityTick();
+        }
+
+        pos = new BlockPosition(dest);
+
+        if (myPath.hasNextDirection()) {
+            oldDirection = direction;
+            direction = myPath.getNextDirection();
+        } else {
+            reRoute = true;
+        }
+    }
+
+    public void transferPlayer(int destDim, Entity entity){
+        entity.travelToDimension(destDim);
+    }
+
+    public void transferNormalEntity(int curDim, int destDim, WorldServer currentWorld, WorldServer destinationWorld, Entity entity) {
+        entity.worldObj.removeEntity(entity);
+        MinecraftServer.getServer().getConfigurationManager().transferEntityToWorld(entity, curDim, currentWorld, destinationWorld);
+        destinationWorld.spawnEntityInWorld(entity);
+        entity.dimension = destDim;
+    }
 }

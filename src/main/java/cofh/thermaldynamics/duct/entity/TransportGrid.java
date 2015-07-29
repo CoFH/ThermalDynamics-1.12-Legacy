@@ -2,11 +2,8 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class TransportGrid extends MultiBlockGridWithRoutes {
 
@@ -15,23 +12,21 @@ public class TransportGrid extends MultiBlockGridWithRoutes {
 		super(world);
 	}
 
-	ArrayList<EntityTransport> travellers = new ArrayList<EntityTransport>();
+    public TransportGrid() {
+
+        this(DimensionManager.getWorld(0));
+    }
 
 	@Override
 	public void tickGrid() {
 
 		super.tickGrid();
-		for (Iterator<EntityTransport> iterator = travellers.iterator(); iterator.hasNext();) {
-			EntityTransport traveller = iterator.next();
-			if (traveller.isDead || traveller.riddenByEntity == null) {
-				iterator.remove();
-			}
-		}
+
 	}
 
 	@Override
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
-		return aBlock instanceof TileTransportDuctBase;
+		return aBlock instanceof TileTransportDuctBaseRoute;
 	}
 }
