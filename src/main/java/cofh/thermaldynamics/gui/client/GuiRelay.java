@@ -39,8 +39,6 @@ public class GuiRelay extends GuiBaseAdv {
         if (!"".equals(myInfo))
             addTab(new TabInfo(this, myInfo));
 
-//        addElement(new ElementIcon(this, 135, 24, icon));
-
         buttonType = new ElementButton(this, 8, 16, "ButtonType", 0, 204, 0, 224, 20, 20, TEX_PATH);
         addElement(buttonType);
 
@@ -63,7 +61,7 @@ public class GuiRelay extends GuiBaseAdv {
 
             @Override
             public void addTooltip(List<String> list) {
-                list.add(StringHelper.localize("info.thermaldynamics.relay.threshold") + _value);
+                list.add(StringHelper.localize("info.thermaldynamics.relay.threshold") + " " + _value);
             }
         }.setValue(relay.threshold);
         addElement(slider);
@@ -107,8 +105,19 @@ public class GuiRelay extends GuiBaseAdv {
 
         super.drawGuiContainerForegroundLayer(x, y);
 
-        fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.relay.relayRS") + container.relayPower, 8, 45, 0x404040);
-        fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.relay.gridRS") + container.gridPower, 8, 49 + fontRendererObj.FONT_HEIGHT, 0x404040);
+        int rY;
+        int gY;
+        if (relay.isInput()) {
+            rY = 45;
+            gY = 58;
+        } else {
+            gY = 45;
+            rY = 58;
+        }
+
+        fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.relay.relayRS") + ": " + container.relayPower, 8, rY, 0x404040);
+        fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.relay.gridRS") + ": " + container.gridPower, 8, gY, 0x404040);
+
 
     }
 }
