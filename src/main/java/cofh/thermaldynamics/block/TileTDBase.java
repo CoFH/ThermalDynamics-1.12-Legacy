@@ -40,6 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.Facing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.IIcon;
@@ -1211,10 +1212,28 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
     @Override
     public void getTileInfo(List<IChatComponent> info, ForgeDirection side, EntityPlayer player, boolean debug) {
         MultiBlockGrid grid = getGrid();
-        if(grid != null) grid.addInfo(info, player, debug);
+        if(grid != null) {
+            info.add(new ChatComponentTranslation("info.thermaldynamics.info.duct"));
+            grid.addInfo(info, player, debug);
+
+            if(subTiles.length != 0) {
+                for (SubTileMultiBlock subTile : subTiles) {
+                    if (subTile.grid != null) {
+                        subTile.grid.addInfo(info, player, debug);
+                    }
+                }
+            }
+        }
 
         Attachment attachment = getAttachmentSelected(player);
-        if(attachment != null) attachment.addInfo(info, player, debug);
+        if(attachment != null) {
+
+            info.add(new ChatComponentTranslation("info.thermaldynamics.info.attachment"));
+            int v = info.size();
+            attachment.addInfo(info, player, debug);
+            if(info.size() == v)
+                info.remove(v - 1);
+        }
     }
 
     public Attachment getAttachmentSelected(EntityPlayer player){

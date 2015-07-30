@@ -1,13 +1,12 @@
 package cofh.thermaldynamics.multiblock;
 
+import cofh.core.chat.ChatHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.debughelper.NoComodSet;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-
 import java.util.ArrayList;
-
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentTranslation;
@@ -285,6 +284,7 @@ public abstract class MultiBlockGrid {
 	public abstract boolean canAddBlock(IMultiBlock aBlock);
 
     public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+
         addInfo(info, "size", size());
 
         if (relaysIn != null) {
@@ -295,7 +295,8 @@ public abstract class MultiBlockGrid {
         }
     }
 
-    protected void addInfo(List<IChatComponent> info, String type, Object value) {
-        info.add(new ChatComponentTranslation("info.thermaldynamics.info." + type).appendText(value.toString()));
+    protected final void addInfo(List<IChatComponent> info, String type, Object value) {
+
+        info.add(new ChatComponentTranslation("info.thermaldynamics.info." + type).appendText(": ").appendSibling(ChatHelper.getChatComponent(value)));
     }
 }

@@ -8,6 +8,9 @@ import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.List;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
@@ -97,4 +100,10 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 		super.onMajorGridChange();
 		shouldRepoll = true;
 	}
+
+    @Override
+    public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+        super.addInfo(info, player, debug);
+        addInfo(info, "items", travelingItemsCount);
+    }
 }
