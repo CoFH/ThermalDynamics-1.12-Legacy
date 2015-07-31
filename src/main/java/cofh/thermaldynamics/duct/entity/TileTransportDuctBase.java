@@ -4,11 +4,14 @@ import cofh.CoFHCore;
 import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
+
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class TileTransportDuctBase extends TileTDBase  {
+public abstract class TileTransportDuctBase extends TileTDBase {
+
 	@Override
 	public boolean cachesExist() {
 
@@ -40,18 +43,21 @@ public abstract class TileTransportDuctBase extends TileTDBase  {
 		super.addTraceableCuboids(cuboids);
 	}
 
-    public abstract boolean advanceEntity(EntityTransport transport);
+	public abstract boolean advanceEntity(EntityTransport transport);
 
-    public IMultiBlock getPhysicalConnectedSide(byte direction) {
-        return super.getConnectedSide(direction);
-    }
+	public IMultiBlock getPhysicalConnectedSide(byte direction) {
 
+		return super.getConnectedSide(direction);
+	}
 
-    public boolean advanceEntityClient(EntityTransport t) {
-        t.progress += t.step;
-        if (t.progress >= EntityTransport.PIPE_LENGTH) {
-            if (!t.trySimpleAdvance()) return true;
-        }
-        return false;
-    }
+	public boolean advanceEntityClient(EntityTransport t) {
+
+		t.progress += t.step;
+		if (t.progress >= EntityTransport.PIPE_LENGTH) {
+			if (!t.trySimpleAdvance()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

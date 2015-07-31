@@ -11,8 +11,8 @@ import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Rotation;
 import cofh.repack.codechicken.lib.vec.Transformation;
 import cofh.repack.codechicken.lib.vec.Vector3;
-
 import cofh.thermaldynamics.core.TDProps;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;

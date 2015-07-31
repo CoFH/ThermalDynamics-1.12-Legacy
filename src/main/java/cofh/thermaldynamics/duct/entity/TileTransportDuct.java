@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,106 +12,106 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 
 public class TileTransportDuct extends TileTransportDuctBaseRoute {
-    @Override
-    public boolean openGui(EntityPlayer player) {
 
-        if (super.openGui(player) || worldObj.isRemote) {
-            return true;
-        }
+	@Override
+	public boolean openGui(EntityPlayer player) {
 
-        if (internalGrid == null) {
-            return false;
-        }
+		if (super.openGui(player) || worldObj.isRemote) {
+			return true;
+		}
 
-        MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-        if (movingObjectPosition == null) {
-            return false;
-        }
+		if (internalGrid == null) {
+			return false;
+		}
 
-        int subHit = movingObjectPosition.subHit;
-        int hitSide = movingObjectPosition.sideHit;
+		MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+		if (movingObjectPosition == null) {
+			return false;
+		}
 
-        if (subHit >= 0 && subHit <= 13) {
-            int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
+		int subHit = movingObjectPosition.subHit;
+		int hitSide = movingObjectPosition.sideHit;
 
-            onNeighborBlockChange();
+		if (subHit >= 0 && subHit <= 13) {
+			int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
 
-            if (neighborMultiBlocks[i] != null) {
-                return false;
-            }
+			onNeighborBlockChange();
 
-            ItemStack heldItem = player.getHeldItem();
+			if (neighborMultiBlocks[i] != null) {
+				return false;
+			}
 
-            if (connectionTypes[i] == ConnectionTypes.FORCED) {
-                if (heldItem != null && heldItem.getItem() == Items.spawn_egg) {
+			ItemStack heldItem = player.getHeldItem();
 
-                    Entity entity = EntityList.createEntityByID(heldItem.getItemDamage(), world());
+			if (connectionTypes[i] == ConnectionTypes.FORCED) {
+				if (heldItem != null && heldItem.getItem() == Items.spawn_egg) {
 
-                    if (entity == null || !(entity instanceof EntityLivingBase)) {
-                        return false;
-                    }
+					Entity entity = EntityList.createEntityByID(heldItem.getItemDamage(), world());
 
-                    EntityTransport route = findRoute(entity, i ^ 1, (byte) 50);
+					if (entity == null || !(entity instanceof EntityLivingBase)) {
+						return false;
+					}
 
-                    if (route != null) {
-                        entity.setPosition(x(), y(), z());
-                        world().spawnEntityInWorld(entity);
+					EntityTransport route = findRoute(entity, i ^ 1, (byte) 50);
 
-                        route.start((EntityLivingBase) entity);
-                    }
+					if (route != null) {
+						entity.setPosition(x(), y(), z());
+						world().spawnEntityInWorld(entity);
 
-                    return true;
-                }
+						route.start(entity);
+					}
 
-                if (heldItem != null && heldItem.getItem() == Items.minecart) {
-                    EntityTransport route = findRoute(player, i ^ 1, (byte) 50);
+					return true;
+				}
 
-                    if (route != null) {
-                        route.start(player);
-                    }
+				if (heldItem != null && heldItem.getItem() == Items.minecart) {
+					EntityTransport route = findRoute(player, i ^ 1, (byte) 50);
 
-                    return true;
-                }
+					if (route != null) {
+						route.start(player);
+					}
 
-            }
+					return true;
+				}
 
-            if (heldItem != null) {
-                return false;
-            }
+			}
 
-            connectionTypes[i] = connectionTypes[i] == ConnectionTypes.FORCED ? ConnectionTypes.NORMAL : ConnectionTypes.FORCED;
+			if (heldItem != null) {
+				return false;
+			}
 
-            onNeighborBlockChange();
+			connectionTypes[i] = connectionTypes[i] == ConnectionTypes.FORCED ? ConnectionTypes.NORMAL : ConnectionTypes.FORCED;
 
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+			onNeighborBlockChange();
 
-            if (myGrid != null) {
-                myGrid.destroyAndRecreate();
-            }
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
 
-            for (SubTileMultiBlock subTile : subTiles) {
-                subTile.destroyAndRecreate();
-            }
+			if (myGrid != null) {
+				myGrid.destroyAndRecreate();
+			}
 
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-            return true;
-        }
+			for (SubTileMultiBlock subTile : subTiles) {
+				subTile.destroyAndRecreate();
+			}
 
-        return false;
-    }
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			return true;
+		}
 
-    @Override
-    public void handleTileSideUpdate(int i) {
+		return false;
+	}
 
-        super.handleTileSideUpdate(i);
+	@Override
+	public void handleTileSideUpdate(int i) {
 
-        if (connectionTypes[i] == ConnectionTypes.FORCED) {
-            neighborMultiBlocks[i] = null;
-            neighborTypes[i] = NeighborTypes.OUTPUT;
-            isNode = true;
-            isOutput = true;
-        }
-    }
+		super.handleTileSideUpdate(i);
 
+		if (connectionTypes[i] == ConnectionTypes.FORCED) {
+			neighborMultiBlocks[i] = null;
+			neighborTypes[i] = NeighborTypes.OUTPUT;
+			isNode = true;
+			isOutput = true;
+		}
+	}
 
 }

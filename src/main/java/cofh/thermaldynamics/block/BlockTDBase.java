@@ -187,8 +187,7 @@ public abstract class BlockTDBase extends BlockCoFHBase implements ITileEntityPr
 	@Override
 	public void debugBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player) {
 
-
-        ((TileTDBase) world.getTileEntity(x, y, z)).doDebug(player);
+		((TileTDBase) world.getTileEntity(x, y, z)).doDebug(player);
 	}
 
 	/* IBlockInfo */
@@ -210,8 +209,5 @@ public abstract class BlockTDBase extends BlockCoFHBase implements ITileEntityPr
 			}
 		}
 	}
-
-
-
 
 }

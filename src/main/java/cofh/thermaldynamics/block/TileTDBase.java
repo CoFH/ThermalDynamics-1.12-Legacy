@@ -49,7 +49,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
+public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData,
+		ITileInfo {
 
 	static {
 		GameRegistry.registerTileEntityWithAlternatives(TileTDBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
@@ -505,11 +506,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
 			return;
 		}
-
 		if (isInvalid()) {
 			return;
 		}
-
 		int i = BlockHelper.determineAdjacentSide(this, tileX, tileY, tileZ);
 
 		boolean wasNode = isNode;
@@ -552,7 +551,6 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			if (neighborTypes[i] == NeighborTypes.INPUT) {
 				isInput = true;
 			}
-
 		}
 	}
 
@@ -849,10 +847,10 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public void doDebug(EntityPlayer thePlayer) {
 
-//		thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
-//		thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
-//		thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
-//
+		// thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
+		// thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
+		// thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
+		//
 	}
 
 	public boolean addFacade(Cover cover) {
@@ -1208,49 +1206,51 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		}
 	}
 
+	@Override
+	public void getTileInfo(List<IChatComponent> info, ForgeDirection side, EntityPlayer player, boolean debug) {
 
-    @Override
-    public void getTileInfo(List<IChatComponent> info, ForgeDirection side, EntityPlayer player, boolean debug) {
-        MultiBlockGrid grid = getGrid();
-        if(grid != null) {
-            info.add(new ChatComponentTranslation("info.thermaldynamics.info.duct"));
-            grid.addInfo(info, player, debug);
+		MultiBlockGrid grid = getGrid();
+		if (grid != null) {
+			info.add(new ChatComponentTranslation("info.thermaldynamics.info.duct"));
+			grid.addInfo(info, player, debug);
 
-            if(subTiles.length != 0) {
-                for (SubTileMultiBlock subTile : subTiles) {
-                    if (subTile.grid != null) {
-                        subTile.grid.addInfo(info, player, debug);
-                    }
-                }
-            }
-        }
+			if (subTiles.length != 0) {
+				for (SubTileMultiBlock subTile : subTiles) {
+					if (subTile.grid != null) {
+						subTile.grid.addInfo(info, player, debug);
+					}
+				}
+			}
+		}
 
-        Attachment attachment = getAttachmentSelected(player);
-        if(attachment != null) {
+		Attachment attachment = getAttachmentSelected(player);
+		if (attachment != null) {
 
-            info.add(new ChatComponentTranslation("info.thermaldynamics.info.attachment"));
-            int v = info.size();
-            attachment.addInfo(info, player, debug);
-            if(info.size() == v)
-                info.remove(v - 1);
-        }
-    }
+			info.add(new ChatComponentTranslation("info.thermaldynamics.info.attachment"));
+			int v = info.size();
+			attachment.addInfo(info, player, debug);
+			if (info.size() == v) {
+				info.remove(v - 1);
+			}
+		}
+	}
 
-    public Attachment getAttachmentSelected(EntityPlayer player){
-        MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-        if (rayTrace == null) {
-            return null;
-        }
+	public Attachment getAttachmentSelected(EntityPlayer player) {
 
-        int subHit = rayTrace.subHit;
-        if (subHit > 13 && subHit < 20) {
-            return attachments[subHit - 14];
-        }
+		MovingObjectPosition rayTrace = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
+		if (rayTrace == null) {
+			return null;
+		}
 
-        if (subHit >= 20 && subHit < 26) {
-            return covers[subHit - 20];
-        }
+		int subHit = rayTrace.subHit;
+		if (subHit > 13 && subHit < 20) {
+			return attachments[subHit - 14];
+		}
 
-        return null;
-    }
+		if (subHit >= 20 && subHit < 26) {
+			return covers[subHit - 20];
+		}
+
+		return null;
+	}
 }

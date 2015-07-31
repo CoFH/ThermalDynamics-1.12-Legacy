@@ -39,9 +39,11 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -240,36 +242,38 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 		return true;
 	}
 
-    @Override
-    public boolean openConfigGui(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player) {
+	@Override
+	public boolean openConfigGui(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player) {
 
-        TileTDBase tile = (TileTDBase) world.getTileEntity(x, y, z);
-        if (tile instanceof IBlockConfigGui)
-            return ((IBlockConfigGui) tile).openConfigGui(world, x, y, z, side, player);
-        else {
-            int subHit = side.ordinal();
-            if (world instanceof World) {
-                MovingObjectPosition rayTrace = RayTracer.retraceBlock((World) world, player, x, y, z);
-                if (rayTrace == null) {
-                    return false;
-                }
+		TileTDBase tile = (TileTDBase) world.getTileEntity(x, y, z);
+		if (tile instanceof IBlockConfigGui) {
+			return ((IBlockConfigGui) tile).openConfigGui(world, x, y, z, side, player);
+		} else {
+			int subHit = side.ordinal();
+			if (world instanceof World) {
+				MovingObjectPosition rayTrace = RayTracer.retraceBlock((World) world, player, x, y, z);
+				if (rayTrace == null) {
+					return false;
+				}
 
-                if (subHit > 13 && subHit < 20)
-                    subHit = rayTrace.subHit - 14;
-            }
+				if (subHit > 13 && subHit < 20) {
+					subHit = rayTrace.subHit - 14;
+				}
+			}
 
-            if (subHit > 13 && subHit < 20) {
-                Attachment attachment = tile.attachments[subHit - 14];
-                if (attachment instanceof IBlockConfigGui)
-                    return ((IBlockConfigGui) attachment).openConfigGui(world, x, y, z, side, player);
-            }
+			if (subHit > 13 && subHit < 20) {
+				Attachment attachment = tile.attachments[subHit - 14];
+				if (attachment instanceof IBlockConfigGui) {
+					return ((IBlockConfigGui) attachment).openConfigGui(world, x, y, z, side, player);
+				}
+			}
 
-        }
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public static enum ConnectionTypes {
+	public static enum ConnectionTypes {
 		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
 
 		private final boolean renderDuct;
@@ -420,8 +424,8 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 
 		if (DebugHelper.debug) {
 			GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
-            GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
-            GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
+			GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
+			GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
 			EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
 			MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
 			FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);

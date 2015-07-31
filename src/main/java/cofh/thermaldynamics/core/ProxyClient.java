@@ -43,7 +43,7 @@ public class ProxyClient extends Proxy {
 
 		ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new RenderTransport());
+		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new RenderTransport());
 	}
 
 	@Override

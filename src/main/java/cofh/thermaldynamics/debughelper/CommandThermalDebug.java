@@ -90,7 +90,7 @@ public class CommandThermalDebug extends CommandBase {
 		return builder.toString();
 	}
 
-    public static volatile boolean serverOverclock = false;
+	public static volatile boolean serverOverclock = false;
 
 	@Override
 	public void processCommand(ICommandSender p_71515_1_, String[] args) {
@@ -99,56 +99,56 @@ public class CommandThermalDebug extends CommandBase {
 			return;
 		}
 
-        if("overclock".equals(args[0])) {
-            serverOverclock = !serverOverclock;
-            p_71515_1_.addChatMessage(new ChatComponentText("Server Overclock = " + serverOverclock));
-        }
+		if ("overclock".equals(args[0])) {
+			serverOverclock = !serverOverclock;
+			p_71515_1_.addChatMessage(new ChatComponentText("Server Overclock = " + serverOverclock));
+		}
 
-        if("lag".equals(args[0])){
-            if(args.length == 1){
-                DebugTickHandler.lag = 0;
-            }else {
-                DebugTickHandler.lag = (long) (parseDouble(p_71515_1_, args[1]) * 1000 * 1000);
-            }
-        }
+		if ("lag".equals(args[0])) {
+			if (args.length == 1) {
+				DebugTickHandler.lag = 0;
+			} else {
+				DebugTickHandler.lag = (long) (parseDouble(p_71515_1_, args[1]) * 1000 * 1000);
+			}
+		}
 
-        if ("longRange".equals(args[0])) {
+		if ("longRange".equals(args[0])) {
 
-            if (!(p_71515_1_ instanceof EntityPlayerMP)) {
-                return;
-            }
+			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+				return;
+			}
 
-            EntityPlayerMP playerMP = (EntityPlayerMP) p_71515_1_;
-            BlockPosition pos = new BlockPosition((int) Math.floor(playerMP.posX), (int) Math.floor(playerMP.posY) - 5, (int) Math.floor(playerMP.posZ));
+			EntityPlayerMP playerMP = (EntityPlayerMP) p_71515_1_;
+			BlockPosition pos = new BlockPosition((int) Math.floor(playerMP.posX), (int) Math.floor(playerMP.posY) - 5, (int) Math.floor(playerMP.posZ));
 
-            final World world = playerMP.getEntityWorld();
+			final World world = playerMP.getEntityWorld();
 
-            pos.setOrientation(ForgeDirection.NORTH);
+			pos.setOrientation(ForgeDirection.NORTH);
 
-            int n = Integer.valueOf(args[1]);
+			int n = Integer.valueOf(args[1]);
 
-            for (int i = 0; i < n; i++) {
-                world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
-                pos.getTileEntity(world, TileTDBase.class).blockPlaced();
-                pos.moveForwards(1);
-            }
+			for (int i = 0; i < n; i++) {
+				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
+				pos.moveForwards(1);
+			}
 
-            for (int i = 0; i < 4; i++) {
-                world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
-                pos.getTileEntity(world, TileTDBase.class).blockPlaced();
-                pos.moveRight(1);
-            }
+			for (int i = 0; i < 4; i++) {
+				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
+				pos.moveRight(1);
+			}
 
-            for (int i = 0; i < n; i++) {
-                if (!world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3)){
-                    world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
-                }
-                pos.getTileEntity(world, TileTDBase.class).blockPlaced();
-                pos.moveBackwards(1);
-            }
+			for (int i = 0; i < n; i++) {
+				if (!world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3)) {
+					world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+				}
+				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
+				pos.moveBackwards(1);
+			}
 
-            return;
-        }
+			return;
+		}
 
 		if ("addRandNBT".equals(args[0])) {
 			if (!(p_71515_1_ instanceof EntityPlayerMP)) {

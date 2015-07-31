@@ -7,6 +7,7 @@ import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
@@ -272,23 +273,25 @@ public class FluidGrid extends MultiBlockGrid {
 		public static final byte FULL = 6;
 	}
 
-    @Override
-    public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
-        super.addInfo(info, player, debug);
-        FluidStack fluid = getFluid();
-        IChatComponent f;
-        if(fluid != null){
-            f = new ChatComponentTranslation(fluid.getUnlocalizedName()).appendText(" " + fluid.amount + "/" + myTank.getCapacity());
-            addInfo(info, "fluid", f);
-            if(this instanceof FluidGridSuper)
-                addInfo(info, "fluidThroughput", myTank.fluidThroughput);
-            else
-                addInfo(info, "fluidThroughput", new ChatComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
+	@Override
+	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
 
-        }else{
-            f = new ChatComponentText("0/" + myTank.getCapacity());
-            addInfo(info, "fluid", f);
-        }
+		super.addInfo(info, player, debug);
+		FluidStack fluid = getFluid();
+		IChatComponent f;
+		if (fluid != null) {
+			f = new ChatComponentTranslation(fluid.getUnlocalizedName()).appendText(" " + fluid.amount + "/" + myTank.getCapacity());
+			addInfo(info, "fluid", f);
+			if (this instanceof FluidGridSuper) {
+				addInfo(info, "fluidThroughput", myTank.fluidThroughput);
+			} else {
+				addInfo(info, "fluidThroughput", new ChatComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
+			}
 
-    }
+		} else {
+			f = new ChatComponentText("0/" + myTank.getCapacity());
+			addInfo(info, "fluid", f);
+		}
+
+	}
 }

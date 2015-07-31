@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
+
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -12,10 +13,10 @@ public class TransportGrid extends MultiBlockGridWithRoutes {
 		super(world);
 	}
 
-    public TransportGrid() {
+	public TransportGrid() {
 
-        this(DimensionManager.getWorld(0));
-    }
+		this(DimensionManager.getWorld(0));
+	}
 
 	@Override
 	public void tickGrid() {

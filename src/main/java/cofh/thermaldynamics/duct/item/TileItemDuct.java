@@ -92,32 +92,34 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		if (item == null) {
 			return null;
 		}
-        int side = from.ordinal();
-        if (!((neighborTypes[side] == NeighborTypes.INPUT) || (neighborTypes[side] == NeighborTypes.OUTPUT && connectionTypes[side].allowTransfer))) {
+		int side = from.ordinal();
+		if (!((neighborTypes[side] == NeighborTypes.INPUT) || (neighborTypes[side] == NeighborTypes.OUTPUT && connectionTypes[side].allowTransfer))) {
 			return item;
 		}
 		if (internalGrid == null) {
 			return item;
 		}
 		Attachment attachment = attachments[side];
-        if (attachment != null && attachment.getId() == AttachmentRegistry.SERVO_ITEM) {
-            return ((ServoItem) attachment).insertItem(item);
-        } else {
-            ItemStack itemCopy = ItemHelper.cloneStack(item);
+		if (attachment != null && attachment.getId() == AttachmentRegistry.SERVO_ITEM) {
+			return ((ServoItem) attachment).insertItem(item);
+		} else {
+			ItemStack itemCopy = ItemHelper.cloneStack(item);
 
-            if (filterCache != null && !filterCache[side].matchesFilter(item)) return item;
+			if (filterCache != null && !filterCache[side].matchesFilter(item)) {
+				return item;
+			}
 
-            TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)),
-                    getCache(false).outputRoutes, this, side, ServoItem.range[0], (byte) 1);
-            if (routeForItem == null) {
-                return item;
-            }
+			TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)),
+					getCache(false).outputRoutes, this, side, ServoItem.range[0], (byte) 1);
+			if (routeForItem == null) {
+				return item;
+			}
 
-            itemCopy.stackSize -= routeForItem.stack.stackSize;
-            insertNewItem(routeForItem);
-            return itemCopy.stackSize > 0 ? itemCopy : null;
-        }
-    }
+			itemCopy.stackSize -= routeForItem.stack.stackSize;
+			insertNewItem(routeForItem);
+			return itemCopy.stackSize > 0 ? itemCopy : null;
+		}
+	}
 
 	public Route getRoute(IMultiBlockRoute itemDuct) {
 
@@ -156,7 +158,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	/*
 	 * Should return true if theTile is significant to this multiblock
-	 * 
+	 *
 	 * IE: Inventory's to ItemDuct's
 	 */
 	@Override

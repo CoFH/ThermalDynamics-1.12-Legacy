@@ -137,14 +137,14 @@ public abstract class Attachment {
 
 	}
 
-    public PacketTileInfo getNewPacket() {
+	public PacketTileInfo getNewPacket() {
 
-        PacketTileInfo packet = PacketTileInfo.newPacket(tile);
-        packet.addByte(1 + side);
-        return packet;
-    }
+		PacketTileInfo packet = PacketTileInfo.newPacket(tile);
+		packet.addByte(1 + side);
+		return packet;
+	}
 
-    public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+	public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
 
 	}
 
@@ -204,7 +204,7 @@ public abstract class Attachment {
 
 	}
 
-    public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
 
-    }
+	}
 }

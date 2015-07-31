@@ -7,7 +7,9 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.Route;
+
 import java.util.LinkedList;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,273 +20,291 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 
-    final BlockPosition[] rangePos = new BlockPosition[6];
-    final static BlockPosition clientValue = new BlockPosition(0, 0, 0, ForgeDirection.DOWN);
-    public static final int PAUSE_LEVEL = 120;
+	final BlockPosition[] rangePos = new BlockPosition[6];
+	final static BlockPosition clientValue = new BlockPosition(0, 0, 0, ForgeDirection.DOWN);
+	public static final int PAUSE_LEVEL = 120;
 
-    public void handleTileSideUpdate(int i) {
-        super.handleTileSideUpdate(i);
+	@Override
+	public void handleTileSideUpdate(int i) {
 
-        if (rangePos[i] == null || rangePos[i].orientation == ForgeDirection.UNKNOWN) {
-            rangePos[i] = null;
-            return;
-        }
+		super.handleTileSideUpdate(i);
 
-        if (neighborTypes[i] != NeighborTypes.OUTPUT) {
-            if (i < 2 || worldObj.blockExists(xCoord + Facing.offsetsXForSide[i], yCoord, zCoord + Facing.offsetsZForSide[i])) {
-                rangePos[i] = null;
-//                if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
-//                    TileEntity theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
-//
-//                    if (theTile instanceof TileTransportDuctCrossover){
-//                        theTile`
-//                    }
-//                }
-            }
-            return;
-        }
+		if (rangePos[i] == null || rangePos[i].orientation == ForgeDirection.UNKNOWN) {
+			rangePos[i] = null;
+			return;
+		}
 
-        if (rangePos[i] == clientValue) {
-            return;
-        }
+		if (neighborTypes[i] != NeighborTypes.OUTPUT) {
+			if (i < 2 || worldObj.blockExists(xCoord + Facing.offsetsXForSide[i], yCoord, zCoord + Facing.offsetsZForSide[i])) {
+				rangePos[i] = null;
+				// if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
+				// TileEntity theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
+				//
+				// if (theTile instanceof TileTransportDuctCrossover){
+				// theTile`
+				// }
+				// }
+			}
+			return;
+		}
 
-        int j = rangePos[i].orientation.ordinal();
-        TileEntity theTile;
+		if (rangePos[i] == clientValue) {
+			return;
+		}
 
-        if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
-            theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
+		int j = rangePos[i].orientation.ordinal();
+		TileEntity theTile;
 
-            if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileTDBase) theTile).isBlockedSide(j ^ 1)) {
-                neighborMultiBlocks[i] = (IMultiBlock) theTile;
-                neighborTypes[i] = NeighborTypes.MULTIBLOCK;
-            } else {
-                rangePos[i] = null;
-                super.handleTileSideUpdate(i);
-            }
-        } else {
-            neighborMultiBlocks[i] = null;
-            neighborTypes[i] = NeighborTypes.OUTPUT;
-        }
+		if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
+			theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
 
-    }
+			if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileTDBase) theTile).isBlockedSide(j ^ 1)) {
+				neighborMultiBlocks[i] = (IMultiBlock) theTile;
+				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+			} else {
+				rangePos[i] = null;
+				super.handleTileSideUpdate(i);
+			}
+		} else {
+			neighborMultiBlocks[i] = null;
+			neighborTypes[i] = NeighborTypes.OUTPUT;
+		}
 
-    @Override
-    public boolean isOutput() {
-        return false;
-    }
+	}
 
-    @Override
-    public Route getRoute(Entity entity, int side, byte speed) {
-        return null;
-    }
+	@Override
+	public boolean isOutput() {
 
-    @Override
-    public boolean openGui(EntityPlayer player) {
-        if (worldObj.isRemote)
-            return true;
+		return false;
+	}
 
-        LinkedList<TileTransportDuctCrossover> toUpdate = new LinkedList<TileTransportDuctCrossover>();
+	@Override
+	public Route getRoute(Entity entity, int side, byte speed) {
 
-        DebugHelper.startTimer();
-        int k;
+		return null;
+	}
 
-        for (byte i = 0; i < 6; i++) {
-            rangePos[i] = null;
+	@Override
+	public boolean openGui(EntityPlayer player) {
 
-            k = 1;
+		if (worldObj.isRemote) {
+			return true;
+		}
 
-            TileEntity adjTileEntitySafe = getAdjTileEntitySafe(i);
-            if (!(adjTileEntitySafe instanceof TileTransportDuctLongRange)) {
-                continue;
-            }
+		LinkedList<TileTransportDuctCrossover> toUpdate = new LinkedList<TileTransportDuctCrossover>();
 
-            player.addChatComponentMessage(new ChatComponentText("Searching on side - " + ForgeDirection.getOrientation(i)));
+		DebugHelper.startTimer();
+		int k;
 
-            TileTransportDuctLongRange travel = (TileTransportDuctLongRange) adjTileEntitySafe;
+		for (byte i = 0; i < 6; i++) {
+			rangePos[i] = null;
 
-            TileTransportDuctCrossover finalDest = null;
+			k = 1;
 
-            byte d = travel.nextDirection(i);
+			TileEntity adjTileEntitySafe = getAdjTileEntitySafe(i);
+			if (!(adjTileEntitySafe instanceof TileTransportDuctLongRange)) {
+				continue;
+			}
 
-            BlockPosition pos = new BlockPosition(travel);
+			player.addChatComponentMessage(new ChatComponentText("Searching on side - " + ForgeDirection.getOrientation(i)));
 
-            while (d != -1) {
-                k++;
-                pos.step(d);
+			TileTransportDuctLongRange travel = (TileTransportDuctLongRange) adjTileEntitySafe;
 
-                for (int j = 2; j < 6; j++) {
-                    worldObj.getChunkFromBlockCoords(pos.x + Facing.offsetsXForSide[j], pos.z + Facing.offsetsZForSide[j]);
-                }
-                TileEntity side = worldObj.getTileEntity(pos.x, pos.y, pos.z);
+			TileTransportDuctCrossover finalDest = null;
 
-                if (side instanceof TileTransportDuctCrossover) {
-                    finalDest = ((TileTransportDuctCrossover) side);
-                    break;
-                } else if (side instanceof TileTransportDuctLongRange) {
-                    travel = (TileTransportDuctLongRange) side;
-                } else
-                    break;
+			byte d = travel.nextDirection(i);
 
-                travel.onNeighborBlockChange();
+			BlockPosition pos = new BlockPosition(travel);
 
-                d = travel.nextDirection(d);
-            }
+			while (d != -1) {
+				k++;
+				pos.step(d);
 
-            if (finalDest != null) {
-                player.addChatComponentMessage(new ChatComponentText("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
-                finalDest.rangePos[d ^ 1] = new BlockPosition(this).setOrientation(ForgeDirection.getOrientation(i ^ 1));
-                rangePos[i] = new BlockPosition(finalDest).setOrientation(ForgeDirection.getOrientation(d));
+				for (int j = 2; j < 6; j++) {
+					worldObj.getChunkFromBlockCoords(pos.x + Facing.offsetsXForSide[j], pos.z + Facing.offsetsZForSide[j]);
+				}
+				TileEntity side = worldObj.getTileEntity(pos.x, pos.y, pos.z);
 
-                if (internalGrid != null)
-                    internalGrid.destroyAndRecreate();
+				if (side instanceof TileTransportDuctCrossover) {
+					finalDest = ((TileTransportDuctCrossover) side);
+					break;
+				} else if (side instanceof TileTransportDuctLongRange) {
+					travel = (TileTransportDuctLongRange) side;
+				} else {
+					break;
+				}
 
-                if (finalDest.internalGrid != null)
-                    finalDest.internalGrid.destroyAndRecreate();
-            } else
-                player.addChatComponentMessage(new ChatComponentText("Failed at - (" + pos.x + ", " + pos.y + ", " + pos.z + ")"));
-        }
+				travel.onNeighborBlockChange();
 
-        DebugHelper.stopTimer("Timer: ");
-        return true;
-    }
+				d = travel.nextDirection(d);
+			}
 
-    @Override
-    public IMultiBlock getPhysicalConnectedSide(byte direction) {
+			if (finalDest != null) {
+				player.addChatComponentMessage(new ChatComponentText("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
+				finalDest.rangePos[d ^ 1] = new BlockPosition(this).setOrientation(ForgeDirection.getOrientation(i ^ 1));
+				rangePos[i] = new BlockPosition(finalDest).setOrientation(ForgeDirection.getOrientation(d));
 
-        if (rangePos[direction] != null) {
-            TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, direction);
-            if (adjacentTileEntity instanceof TileTransportDuctLongRange) {
-                return ((TileTransportDuctLongRange) adjacentTileEntity);
-            }
-            return null;
-        }
-        return super.getPhysicalConnectedSide(direction);
-    }
+				if (internalGrid != null) {
+					internalGrid.destroyAndRecreate();
+				}
 
-    @Override
-    public void advanceToNextTile(EntityTransport t) {
-        if (rangePos[t.direction] == null)
-            super.advanceToNextTile(t);
-        else {
-            if (this.neighborTypes[t.direction] == TileTDBase.NeighborTypes.MULTIBLOCK
-                    && this.connectionTypes[t.direction].allowTransfer) {
-                TileTransportDuctBase newHome = (TileTransportDuctBase) this.getPhysicalConnectedSide(t.direction);
-                if (!(newHome instanceof TileTransportDuctLongRange)) {
-                    t.bouncePassenger(this);
-                    return;
-                }
+				if (finalDest.internalGrid != null) {
+					finalDest.internalGrid.destroyAndRecreate();
+				}
+			} else {
+				player.addChatComponentMessage(new ChatComponentText("Failed at - (" + pos.x + ", " + pos.y + ", " + pos.z + ")"));
+			}
+		}
 
-                if (newHome.neighborTypes[(t.direction ^ 1)] == NeighborTypes.MULTIBLOCK) {
-                    t.pos = new BlockPosition(newHome);
+		DebugHelper.stopTimer("Timer: ");
+		return true;
+	}
 
-                    t.oldDirection = t.direction;
-                    t.direction = ((TileTransportDuctLongRange) newHome).nextDirection(t.direction);
-                    if (t.direction == -1) {
-                        t.dropPassenger();
-                    }
-                } else
-                    t.reRoute = true;
-            } else if (this.neighborTypes[t.direction] == TileTDBase.NeighborTypes.OUTPUT && this.connectionTypes[t.direction].allowTransfer) {
-                t.dropPassenger();
-            } else {
-                t.bouncePassenger(this);
-            }
-        }
-    }
+	@Override
+	public IMultiBlock getPhysicalConnectedSide(byte direction) {
 
-    @Override
-    public boolean advanceEntity(EntityTransport t) {
-        if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
-            if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
-                t.progress = EntityTransport.PIPE_LENGTH2;
-                t.pause = PAUSE_LEVEL;
-                return true;
-            }
-        }
+		if (rangePos[direction] != null) {
+			TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, direction);
+			if (adjacentTileEntity instanceof TileTransportDuctLongRange) {
+				return ((TileTransportDuctLongRange) adjacentTileEntity);
+			}
+			return null;
+		}
+		return super.getPhysicalConnectedSide(direction);
+	}
 
-        return super.advanceEntity(t);
-    }
+	@Override
+	public void advanceToNextTile(EntityTransport t) {
 
-    @Override
-    public boolean advanceEntityClient(EntityTransport t) {
-        if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
-            if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
-                t.progress = EntityTransport.PIPE_LENGTH2;
-                t.pause = PAUSE_LEVEL;
-                return true;
-            }
-        }
+		if (rangePos[t.direction] == null) {
+			super.advanceToNextTile(t);
+		} else {
+			if (this.neighborTypes[t.direction] == TileTDBase.NeighborTypes.MULTIBLOCK && this.connectionTypes[t.direction].allowTransfer) {
+				TileTransportDuctBase newHome = (TileTransportDuctBase) this.getPhysicalConnectedSide(t.direction);
+				if (!(newHome instanceof TileTransportDuctLongRange)) {
+					t.bouncePassenger(this);
+					return;
+				}
 
-        return super.advanceEntityClient(t);
-    }
+				if (newHome.neighborTypes[(t.direction ^ 1)] == NeighborTypes.MULTIBLOCK) {
+					t.pos = new BlockPosition(newHome);
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        for (byte i = 0; i < 6; i++) {
-            if (nbt.hasKey("crossover" + i, 10)) {
-                NBTTagCompound tag = nbt.getCompoundTag("crossover" + i);
-                rangePos[i] = new BlockPosition(tag);
-            }
-        }
-    }
+					t.oldDirection = t.direction;
+					t.direction = ((TileTransportDuctLongRange) newHome).nextDirection(t.direction);
+					if (t.direction == -1) {
+						t.dropPassenger();
+					}
+				} else {
+					t.reRoute = true;
+				}
+			} else if (this.neighborTypes[t.direction] == TileTDBase.NeighborTypes.OUTPUT && this.connectionTypes[t.direction].allowTransfer) {
+				t.dropPassenger();
+			} else {
+				t.bouncePassenger(this);
+			}
+		}
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        for (int i = 0; i < 6; i++) {
-            if (rangePos[i] != null) {
-                NBTTagCompound tag = new NBTTagCompound();
-                rangePos[i].writeToNBT(tag);
-                nbt.setTag("crossover" + i, tag);
-            }
-        }
-    }
+	@Override
+	public boolean advanceEntity(EntityTransport t) {
 
-    @Override
-    public boolean isConnectable(TileEntity theTile, int side) {
-        return theTile instanceof TileTransportDuctBaseRoute
-                && !(theTile instanceof TileTransportDuctCrossover);
-    }
+		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
+			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
+				t.progress = EntityTransport.PIPE_LENGTH2;
+				t.pause = PAUSE_LEVEL;
+				return true;
+			}
+		}
 
-    @Override
-    public boolean isSignificantTile(TileEntity theTile, int side) {
-        return theTile instanceof TileTransportDuctLongRange;
-    }
+		return super.advanceEntity(t);
+	}
 
-    @Override
-    public PacketCoFHBase getPacket() {
-        PacketCoFHBase packet = super.getPacket();
+	@Override
+	public boolean advanceEntityClient(EntityTransport t) {
 
-        int rangeMask = 0;
+		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
+			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
+				t.progress = EntityTransport.PIPE_LENGTH2;
+				t.pause = PAUSE_LEVEL;
+				return true;
+			}
+		}
 
-        for (byte i = 0; i < 6; i++) {
-            if (rangePos[i] != null) {
-                rangeMask = rangeMask | (1 << i);
-            }
-        }
+		return super.advanceEntityClient(t);
+	}
 
-        packet.addInt(rangeMask);
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
 
+		super.readFromNBT(nbt);
+		for (byte i = 0; i < 6; i++) {
+			if (nbt.hasKey("crossover" + i, 10)) {
+				NBTTagCompound tag = nbt.getCompoundTag("crossover" + i);
+				rangePos[i] = new BlockPosition(tag);
+			}
+		}
+	}
 
-        return packet;
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
 
-    @Override
-    public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-        super.handleTilePacket(payload, isServer);
-        if (!isServer) {
-            int rangeMask = payload.getInt();
-            for (int i = 0; i < rangePos.length; i++) {
-                if ((rangeMask & (1 << i)) != 0) {
-                    rangePos[i] = clientValue;
-                }
-            }
-        }
-    }
+		super.writeToNBT(nbt);
+		for (int i = 0; i < 6; i++) {
+			if (rangePos[i] != null) {
+				NBTTagCompound tag = new NBTTagCompound();
+				rangePos[i].writeToNBT(tag);
+				nbt.setTag("crossover" + i, tag);
+			}
+		}
+	}
 
-    @Override
-    public int getWeight() {
-        return super.getWeight() * 100;
-    }
+	@Override
+	public boolean isConnectable(TileEntity theTile, int side) {
+
+		return theTile instanceof TileTransportDuctBaseRoute && !(theTile instanceof TileTransportDuctCrossover);
+	}
+
+	@Override
+	public boolean isSignificantTile(TileEntity theTile, int side) {
+
+		return theTile instanceof TileTransportDuctLongRange;
+	}
+
+	@Override
+	public PacketCoFHBase getPacket() {
+
+		PacketCoFHBase packet = super.getPacket();
+
+		int rangeMask = 0;
+
+		for (byte i = 0; i < 6; i++) {
+			if (rangePos[i] != null) {
+				rangeMask = rangeMask | (1 << i);
+			}
+		}
+
+		packet.addInt(rangeMask);
+
+		return packet;
+	}
+
+	@Override
+	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+
+		super.handleTilePacket(payload, isServer);
+		if (!isServer) {
+			int rangeMask = payload.getInt();
+			for (int i = 0; i < rangePos.length; i++) {
+				if ((rangeMask & (1 << i)) != 0) {
+					rangePos[i] = clientValue;
+				}
+			}
+		}
+	}
+
+	@Override
+	public int getWeight() {
+
+		return super.getWeight() * 100;
+	}
 }

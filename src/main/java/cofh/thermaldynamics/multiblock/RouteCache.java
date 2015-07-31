@@ -109,8 +109,7 @@ public class RouteCache {
 
 		byte foundDir = -1;
 		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-			if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK
-					&& route.endPoint.getConnectionType(i).allowTransfer) {
+			if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i).allowTransfer) {
 				IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
 
 				if (validTile != null) {
