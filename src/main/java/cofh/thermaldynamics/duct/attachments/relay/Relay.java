@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.duct.attachments.relay;
 
 import cofh.api.block.IBlockConfigGui;
+import cofh.api.tileentity.IPortableData;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
@@ -35,7 +36,7 @@ import net.minecraft.util.Facing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class Relay extends Attachment implements IBlockConfigGui {
+public class Relay extends Attachment implements IBlockConfigGui, IPortableData {
 
 	public byte type = 0;
 	public int powerLevel;
@@ -125,10 +126,6 @@ public class Relay extends Attachment implements IBlockConfigGui {
 
 			this.setPowerLevel(powerLevel);
 		}
-
-		if (tile.myGrid != null) {
-			tile.myGrid.signalsUpToDate = false;
-		}
 	}
 
 	public int adjustPowerLevel(int powerLevel) {
@@ -144,12 +141,10 @@ public class Relay extends Attachment implements IBlockConfigGui {
 	}
 
 	public boolean shouldThreshold() {
-
 		return (invert & 2) != 0;
 	}
 
 	public boolean shouldInvert() {
-
 		return (invert & 1) == 1;
 	}
 
@@ -163,10 +158,18 @@ public class Relay extends Attachment implements IBlockConfigGui {
 		Block block = tile.world().getBlock(dx, dy, dz);
 
 		if (type == 0) { // should calc vanilla redstone level
-			level = Math.max(level, tile.world().getIndirectPowerLevelTo(dx, dy, dz, side));
+			if (isBlockDuct(block)) {
+				TileTDBase t = (TileTDBase) tile.world().getTileEntity(dx, dy, dz);
+				Attachment attachment = t.attachments[side ^ 1];
+				if (attachment != null)
+					level = attachment.getRSOutput();
 
-			if (block == Blocks.redstone_wire) {
-				level = Math.max(level, tile.world().getBlockMetadata(dx, dy, dz));
+			} else {
+				level = Math.max(level, tile.world().getIndirectPowerLevelTo(dx, dy, dz, side));
+
+				if (block == Blocks.redstone_wire) {
+					level = Math.max(level, tile.world().getBlockMetadata(dx, dy, dz));
+				}
 			}
 		}
 
@@ -189,6 +192,14 @@ public class Relay extends Attachment implements IBlockConfigGui {
 		return level;
 	}
 
+	public static boolean isBlockDuct(Block block) {
+		for (BlockDuct blockDuct : ThermalDynamics.blockDuct) {
+			if (block == blockDuct)
+				return true;
+		}
+		return false;
+	}
+
 	public boolean isInput() {
 
 		return type == 0 || type == 2;
@@ -202,7 +213,7 @@ public class Relay extends Attachment implements IBlockConfigGui {
 	public int getPowerLevel() {
 
 		if (type == 1) {
-			return adjustPowerLevel(tile.myGrid != null ? tile.myGrid.redstoneLevel : 0);
+			return adjustPowerLevel(powerLevel);
 		}
 		return powerLevel;
 	}
@@ -218,8 +229,30 @@ public class Relay extends Attachment implements IBlockConfigGui {
 		if (this.powerLevel != powerLevel) {
 			this.powerLevel = powerLevel;
 
-			tile.world().notifyBlockOfNeighborChange(tile.xCoord + Facing.offsetsXForSide[side], tile.yCoord + Facing.offsetsYForSide[side],
-					tile.zCoord + Facing.offsetsZForSide[side], tile.getBlockType());
+			if (tile.myGrid != null) {
+				tile.myGrid.signalsUpToDate = false;
+			}
+
+			if (isOutput()) {
+				tile.world().notifyBlockOfNeighborChange(
+						tile.xCoord + Facing.offsetsXForSide[side],
+						tile.yCoord + Facing.offsetsYForSide[side],
+						tile.zCoord + Facing.offsetsZForSide[side],
+						tile.getBlockType());
+
+				for (int i = 0; i < 6; i++) {
+					if (side == (i ^ 1))
+						continue;
+
+					tile.world().notifyBlockOfNeighborChange(
+							tile.xCoord + Facing.offsetsXForSide[side] + Facing.offsetsXForSide[i],
+							tile.yCoord + Facing.offsetsYForSide[side] + Facing.offsetsYForSide[i],
+							tile.zCoord + Facing.offsetsZForSide[side] + Facing.offsetsZForSide[i],
+							tile.getBlockType());
+				}
+
+
+			}
 		}
 
 	}
@@ -247,6 +280,7 @@ public class Relay extends Attachment implements IBlockConfigGui {
 		tag.setByte("type", type);
 		tag.setByte("invert", invert);
 		tag.setByte("threshold", threshold);
+		tag.setByte("power", (byte) powerLevel);
 	}
 
 	@Override
@@ -260,6 +294,7 @@ public class Relay extends Attachment implements IBlockConfigGui {
 		if (tag.hasKey("threshold", 1)) {
 			setThreshold(tag.getByte("threshold"));
 		}
+		powerLevel = tag.getByte("power");
 	}
 
 	@Override
@@ -284,14 +319,6 @@ public class Relay extends Attachment implements IBlockConfigGui {
 		PacketHandler.sendTo(getPacket(), player);
 		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + this.side, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
 		return true;
-		// this.type = type ^ 1;
-		// if (tile.myGrid != null) {
-		// tile.myGrid.resetRelays();
-		// }
-		// tile.world().notifyBlocksOfNeighborChange(tile.xCoord, tile.yCoord, tile.zCoord, tile.getBlockType());
-		// onNeighborChange();
-		// tile.world().markBlockForUpdate(tile.x(), tile.y(), tile.z());
-		// return true;
 	}
 
 	@Override
@@ -375,13 +402,35 @@ public class Relay extends Attachment implements IBlockConfigGui {
 
 		super.sendGuiNetworkData(container, player, newGuy);
 
-		if (newGuy) {
+		if (newGuy)
 			for (Object p : player) {
-				if (p instanceof EntityPlayer) {
+				if (p instanceof EntityPlayer)
 					PacketHandler.sendTo(getPacket(), (EntityPlayer) p);
-				}
 			}
+
+	}
+
+	@Override
+	public String getDataType() {
+		return "RedstoneRelay";
+	}
+
+	@Override
+	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
+		readFromNBT(tag);
+
+		tile.world().notifyBlocksOfNeighborChange(tile.xCoord, tile.yCoord, tile.zCoord, tile.getBlockType());
+		onNeighborChange();
+		if (tile.myGrid != null) {
+			tile.myGrid.resetRelays();
 		}
 
+		onNeighborChange();
+		tile.world().markBlockForUpdate(tile.x(), tile.y(), tile.z());
+	}
+
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+		writeToNBT(tag);
 	}
 }
