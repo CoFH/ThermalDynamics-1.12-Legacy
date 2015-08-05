@@ -5,17 +5,15 @@ import cofh.lib.util.helpers.FluidHelper;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
+import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidGrid extends MultiBlockGrid {
+public class FluidGrid extends MultiBlockGridTracking {
 
 	public final FluidTankGrid myTank = new FluidTankGrid(1000, this);
 	public int toDistribute = 0;
@@ -30,6 +28,12 @@ public class FluidGrid extends MultiBlockGrid {
 
 		super(world);
 
+	}
+
+	@Override
+	public int getLevel() {
+
+		return myTank.getFluidAmount();
 	}
 
 	@Override
@@ -280,18 +284,18 @@ public class FluidGrid extends MultiBlockGrid {
 		FluidStack fluid = getFluid();
 		IChatComponent f;
 		if (fluid != null) {
-			f = new ChatComponentTranslation(fluid.getUnlocalizedName()).appendText(" " + fluid.amount + "/" + myTank.getCapacity());
-			addInfo(info, "fluid", f);
-			if (this instanceof FluidGridSuper) {
-				addInfo(info, "fluidThroughput", myTank.fluidThroughput);
-			} else {
+			if ((this instanceof FluidGridSuper)) {
 				addInfo(info, "fluidThroughput", new ChatComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
+			} else {
+				addInfo(info, "fluidThroughput", myTank.fluidThroughput);
 			}
-
-		} else {
-			f = new ChatComponentText("0/" + myTank.getCapacity());
-			addInfo(info, "fluid", f);
 		}
 
+	}
+
+	@Override
+	protected String getUnit() {
+
+		return "mB";
 	}
 }

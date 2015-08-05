@@ -54,13 +54,13 @@ public class FluidGridSuper extends FluidGrid {
 		}
 		isSendingFluid = true;
 		for (int i = nodeTracker; i < list.length && fluidToSend > 0; i++) {
-			fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
+			fluidToSend -= trackInOut(list[i].transfer(fluidToSend, simulate, fluid, false), simulate);
 			if (fluidToSend == 0) {
 				nodeTracker = i + 1;
 			}
 		}
 		for (int i = 0; i < list.length && i < nodeTracker && fluidToSend > 0; i++) {
-			fluidToSend -= list[i].transfer(fluidToSend, simulate, fluid, false);
+			fluidToSend -= trackInOut(list[i].transfer(fluidToSend, simulate, fluid, false), simulate);
 			if (fluidToSend == 0) {
 				nodeTracker = i + 1;
 			}

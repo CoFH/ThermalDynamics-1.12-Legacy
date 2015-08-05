@@ -5,14 +5,10 @@ import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IChatComponent;
+import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import net.minecraft.world.World;
 
-public class EnergyGrid extends MultiBlockGrid {
+public class EnergyGrid extends MultiBlockGridTracking {
 
 	public final EnergyStorage myStorage;
 	private int currentEnergy = 0;
@@ -41,7 +37,17 @@ public class EnergyGrid extends MultiBlockGrid {
 
 		super(world);
 		this.type = type;
-		myStorage = new EnergyStorage(NODE_STORAGE[type], NODE_TRANSFER[type]);
+		myStorage = new EnergyStorage(NODE_STORAGE[type], NODE_TRANSFER[type]){
+			@Override
+			public int receiveEnergy(int maxReceive, boolean simulate) {
+				return trackIn(super.receiveEnergy(maxReceive, simulate), simulate);
+			}
+
+			@Override
+			public int extractEnergy(int maxExtract, boolean simulate) {
+				return trackOut(super.extractEnergy(maxExtract, simulate), simulate);
+			}
+		};
 	}
 
 	@Override
@@ -54,6 +60,11 @@ public class EnergyGrid extends MultiBlockGrid {
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
 		return aBlock instanceof TileEnergyDuct && ((TileEnergyDuct) aBlock).getDuctType().type == this.type;
+	}
+
+	@Override
+	public int getLevel() {
+		return myStorage.getEnergyStored();
 	}
 
 	@Override
@@ -78,7 +89,7 @@ public class EnergyGrid extends MultiBlockGrid {
 
 	public void useEnergy(int energyUsed) {
 
-		myStorage.modifyEnergyStored(-energyUsed);
+		myStorage.extractEnergy(energyUsed, false);
 		if (energyUsed > currentEnergy) {
 			extraEnergy -= (energyUsed - currentEnergy);
 			extraEnergy = Math.max(0, extraEnergy);
@@ -118,9 +129,7 @@ public class EnergyGrid extends MultiBlockGrid {
 	}
 
 	@Override
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
-
-		super.addInfo(info, player, debug);
-		addInfo(info, "energy", myStorage.getEnergyStored() + "/" + myStorage.getMaxEnergyStored());
+	protected String getUnit() {
+		return "RF";
 	}
 }

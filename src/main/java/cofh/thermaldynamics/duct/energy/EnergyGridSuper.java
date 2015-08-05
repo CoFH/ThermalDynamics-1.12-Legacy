@@ -47,13 +47,13 @@ public class EnergyGridSuper extends EnergyGrid {
 		}
 		isSendingEnergy = true;
 		for (int i = nodeTracker; i < list.length && energy > 0; i++) {
-			energy -= list[i].transmitEnergy(energy, simulate);
+			energy -= trackInOut(list[i].transmitEnergy(energy, simulate), simulate);
 			if (energy == 0) {
 				nodeTracker = i + 1;
 			}
 		}
 		for (int i = 0; i < list.length && i < nodeTracker && energy > 0; i++) {
-			energy -= list[i].transmitEnergy(energy, simulate);
+			energy -= trackInOut(list[i].transmitEnergy(energy, simulate), simulate);
 			if (energy == 0) {
 				nodeTracker = i + 1;
 			}
