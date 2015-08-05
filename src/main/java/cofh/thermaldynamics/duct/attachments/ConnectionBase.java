@@ -138,8 +138,8 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	public boolean getPowerState() {
 
-		if (tile.myGrid != null) {
-			if (tile.myGrid.redstoneLevel > 0) {
+		if (tile.myGrid != null && tile.myGrid.rs != null) {
+			if (tile.myGrid.rs.redstoneLevel > 0) {
 				return true;
 			}
 		}

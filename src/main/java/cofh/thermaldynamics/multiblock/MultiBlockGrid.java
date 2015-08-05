@@ -22,10 +22,10 @@ public abstract class MultiBlockGrid {
 	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
 	public WorldGridList worldGrid;
 	public boolean signalsUpToDate;
-	public int redstoneLevel;
-	public byte nextRedstoneLevel = -128;
-	public ArrayList<Relay> relaysIn;
-	public ArrayList<Attachment> relaysOut;
+
+
+	public RedstoneControl rs;
+
 
 	public MultiBlockGrid(WorldGridList worldGrid) {
 
@@ -125,11 +125,11 @@ public abstract class MultiBlockGrid {
 	 */
 	public void tickGrid() {
 
-		if (nextRedstoneLevel != -128) {
-			redstoneLevel = nextRedstoneLevel;
-			nextRedstoneLevel = -128;
+		if (rs != null && rs.nextRedstoneLevel != -128) {
+			rs.redstoneLevel = rs.nextRedstoneLevel;
+			rs.nextRedstoneLevel = -128;
 
-			ArrayList<Attachment> signallersOut = this.relaysOut;
+			ArrayList<Attachment> signallersOut = rs.relaysOut;
 			if (signallersOut != null) {
 				for (Attachment output : signallersOut) {
 					output.checkSignal();
@@ -143,20 +143,26 @@ public abstract class MultiBlockGrid {
 
 		signalsUpToDate = true;
 
-		if (relaysIn == null) {
-			relaysOut = null;
+		if (rs == null || rs.relaysIn == null) {
+			if(rs != null) rs.relaysOut = null;
 			for (IMultiBlock multiBlock : nodeSet) {
 				multiBlock.addRelays();
 			}
 		}
 
-		if (relaysIn == null) {
-			nextRedstoneLevel = 0;
+		if(rs == null) return;
+
+		if (rs.relaysIn == null) {
+			if(rs.relaysOut == null ) {
+				rs = null;
+				return;
+			}else
+				rs.nextRedstoneLevel = 0;
 			return;
 		}
 
 		int powered = 0;
-		for (Relay signaller : relaysIn) {
+		for (Relay signaller : rs.relaysIn) {
 			powered = Math.max(powered, signaller.getPowerLevel());
 			if (powered == 15) {
 				break;
@@ -164,27 +170,31 @@ public abstract class MultiBlockGrid {
 
 		}
 
-		nextRedstoneLevel = (byte) powered;
+		rs.nextRedstoneLevel = (byte) powered;
 
 	}
 
 	public void addSignalInput(Relay signaller) {
 
 		if (signaller.isInput()) {
-			if (relaysIn == null) {
-				relaysIn = new ArrayList<Relay>();
+			if(rs == null) rs = new RedstoneControl();
+
+			if (rs.relaysIn == null) {
+				rs.relaysIn = new ArrayList<Relay>();
 			}
 
-			relaysIn.add(signaller);
+			rs.relaysIn.add(signaller);
 		}
 	}
 
 	public void addSignalOutput(Attachment attachment) {
 
-		if (relaysOut == null) {
-			relaysOut = new ArrayList<Attachment>();
+		if(rs == null) rs=new RedstoneControl();
+
+		if (rs.relaysOut == null) {
+			rs.relaysOut = new ArrayList<Attachment>();
 		}
-		relaysOut.add(attachment);
+		rs.relaysOut.add(attachment);
 	}
 
 	/*
@@ -254,8 +264,10 @@ public abstract class MultiBlockGrid {
 
 	public void resetRelays() {
 
-		relaysIn = null;
-		relaysOut = null;
+		if(rs != null) {
+			rs.relaysIn = null;
+			rs.relaysOut = null;
+		}
 		signalsUpToDate = false;
 	}
 
@@ -289,10 +301,10 @@ public abstract class MultiBlockGrid {
 
 		addInfo(info, "size", size());
 
-		if (relaysIn != null) {
-			int r = redstoneLevel;
-			if (nextRedstoneLevel != -128) {
-				r = nextRedstoneLevel;
+		if (rs != null) {
+			int r = rs.redstoneLevel;
+			if (rs.nextRedstoneLevel != -128) {
+				r = rs.nextRedstoneLevel;
 			}
 			addInfo(info, "redstone", r);
 		}
@@ -301,5 +313,12 @@ public abstract class MultiBlockGrid {
 	protected final void addInfo(List<IChatComponent> info, String type, Object value) {
 
 		info.add(new ChatComponentTranslation("info.thermaldynamics.info." + type).appendText(": ").appendSibling(ChatHelper.getChatComponent(value)));
+	}
+
+	public static class RedstoneControl {
+		public byte nextRedstoneLevel = -128;
+		public ArrayList<Relay> relaysIn;
+		public ArrayList<Attachment> relaysOut;
+		public int redstoneLevel;
 	}
 }

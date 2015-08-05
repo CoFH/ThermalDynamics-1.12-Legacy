@@ -28,11 +28,11 @@ public class ContainerRelay extends ContainerAttachmentBase {
 		relayPower = relay.getPowerLevel();
 
 		MultiBlockGrid grid = relay.tile.myGrid;
-		if (grid != null) {
-			if (grid.nextRedstoneLevel == -128) {
-				gridPower = grid.redstoneLevel;
+		if (grid != null && grid.rs != null) {
+			if (grid.rs.nextRedstoneLevel == -128) {
+				gridPower = grid.rs.redstoneLevel;
 			} else {
-				gridPower = grid.nextRedstoneLevel;
+				gridPower = grid.rs.nextRedstoneLevel;
 			}
 		} else {
 			gridPower = 0;

@@ -57,22 +57,26 @@ public class LightGrid extends MultiBlockGrid {
 
 		super.tickGrid();
 
+
+
 		if (upToDate && worldGrid.worldObj.getTotalWorldTime() % 160 != 0) {
-			if (nextRedstoneLevel != -128) {
+			if (rs != null && rs.nextRedstoneLevel != -128) {
 				upToDate = false;
 			}
 			return;
 		}
 
-		upToDate = nextRedstoneLevel == -128;
+		upToDate = rs == null || rs.nextRedstoneLevel == -128;
 
 		boolean shouldBeLit;
 
-		if (nextRedstoneLevel != -128) {
-			shouldBeLit = nextRedstoneLevel > 0;
+		if(rs != null)
+		if (rs.nextRedstoneLevel != -128) {
+			shouldBeLit = rs.nextRedstoneLevel > 0;
 		} else {
-			shouldBeLit = redstoneLevel > 0;
+			shouldBeLit = rs.redstoneLevel > 0;
 		}
+		else shouldBeLit = false;
 
 		// shouldBeLit = false;
 

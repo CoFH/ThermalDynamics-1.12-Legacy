@@ -261,10 +261,10 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	public void checkSignal() {
 
 		MultiBlockGrid grid = tile.myGrid;
-		if (grid == null) {
+		if (grid == null || grid.rs == null) {
 			return;
 		}
-		setPowerLevel(grid.redstoneLevel);
+		setPowerLevel(grid.rs.redstoneLevel);
 	}
 
 	@Override
