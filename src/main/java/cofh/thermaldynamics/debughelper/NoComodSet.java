@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.debughelper;
 
 import java.util.AbstractSet;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class NoComodSet<E> extends AbstractSet<E> {
@@ -13,7 +13,7 @@ public class NoComodSet<E> extends AbstractSet<E> {
 
 	public NoComodSet() {
 
-		this(new HashSet<E>());
+		this(new LinkedHashSet<E>());
 	}
 
 	public NoComodSet(Set<E> set) {
