@@ -19,7 +19,7 @@ public class MultiBlockFormer {
 		blocksToCheck.add(theMultiBlock);
 
 		while (!blocksToCheck.isEmpty()) {
-			checkMutliBlock(blocksToCheck.remove());
+			checkMultiBlock(blocksToCheck.remove());
 		}
 
 		// doStep(theMultiBlock.getGrid(), theMultiBlock);
@@ -27,7 +27,7 @@ public class MultiBlockFormer {
 		theMultiBlock.getGrid().resetMultiBlocks();
 	}
 
-	private void checkMutliBlock(IMultiBlock currentMultiBlock) {
+	private void checkMultiBlock(IMultiBlock currentMultiBlock) {
 
 		if (!currentMultiBlock.isValidForForming()) {
 			return;
