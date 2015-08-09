@@ -12,6 +12,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -194,7 +195,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 				block = Blocks.flowing_lava;
 			}
 
-			if (!"water".equals(fluid.getName()) || !worldObj.getBiomeGenForCoords(xCoord / 16, zCoord / 16).biomeName.toLowerCase().equals("hell")) {
+			if (!"water".equals(fluid.getName()) || !worldObj.getBiomeGenForCoords(xCoord / 16, zCoord / 16).biomeName.toLowerCase(Locale.US).equals("hell")) {
 				if (block == Blocks.flowing_water || block == Blocks.flowing_lava) {
 					worldObj.setBlock(xCoord, yCoord, zCoord, block, fullBucket ? 0 : (worldObj.rand.nextInt(6) + 1), 3);
 					worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, block, worldObj.rand.nextInt(30) + 10);
