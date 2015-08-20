@@ -3,6 +3,9 @@ package cofh.thermaldynamics.duct;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
+import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
+import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
@@ -112,6 +115,30 @@ public abstract class DuctFactory {
 		public TileTDBase createTileEntity(Duct duct, World worldObj) {
 
 			return new TileFluidDuctSuper();
+		}
+	};
+
+	public static DuctFactory transport = new DuctFactory() {
+		@Override
+		public TileTDBase createTileEntity(Duct duct, World worldObj) {
+
+			return new TileTransportDuct();
+		}
+	};
+
+	public static DuctFactory transport_longrange = new DuctFactory() {
+		@Override
+		public TileTDBase createTileEntity(Duct duct, World worldObj) {
+
+			return new TileTransportDuctLongRange();
+		}
+	};
+
+	public static DuctFactory transport_crossover = new DuctFactory() {
+		@Override
+		public TileTDBase createTileEntity(Duct duct, World worldObj) {
+
+			return new TileTransportDuctCrossover();
 		}
 	};
 

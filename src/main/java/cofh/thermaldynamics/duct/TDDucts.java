@@ -1,21 +1,13 @@
 package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.Duct.Type;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
 import cofh.thermaldynamics.duct.light.DuctLight;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.world.World;
 
 public class TDDucts {
 
@@ -27,7 +19,7 @@ public class TDDucts {
 	public static ArrayList<Duct> ductListSorted = null;
 
 	static Duct addDuct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+						String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
@@ -36,7 +28,7 @@ public class TDDucts {
 	}
 
 	static DuctItem addDuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+								String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		DuctItem newDuct = new DuctItem(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
@@ -107,6 +99,7 @@ public class TDDucts {
 		addFluidDucts();
 		addItemDucts();
 		addSupportDucts();
+		addTransportDucts();
 
 		if (DebugHelper.debug) {
 			addIndevDucts();
@@ -114,58 +107,18 @@ public class TDDucts {
 		return true;
 	}
 
-	private static void addIndevDucts() {
+	static void addTransportDucts() {
 
-		registerDuct(new Duct(4 * 16, false, 1, 4, "entityTransport", Type.ENTITY, new DuctFactory() {
+		transport = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "entityTransport", Type.ENTITY, DuctFactory.transport, null, null, null, 255, "electrum", "thermaldynamics:duct/base/greenGlass", 96));
 
-			@Override
-			public TileTDBase createTileEntity(Duct duct, World worldObj) {
+		transport_longrange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "entityTransportLongRange", Type.ENTITY, DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80));
 
-				return new TileTransportDuct();
-			}
-		}, null, null, null, 255, "electrum", "thermaldynamics:duct/base/greenGlass", 96) {
+		transport_crossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "entityTransportAcceleration", Type.ENTITY, DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128));
 
-			@Override
-			public void registerIcons(IIconRegister ir) {
+		transport_structure = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "entityTransportCrafting", Type.ENTITY, DuctFactory.structural, null, null, null, 255, "electrum", null, 128));
+	}
 
-				super.registerIcons(ir);
-				frameType = 4;
-			}
-		});
-
-		registerDuct(new Duct(4 * 16 + 1, false, 1, 4, "entityTransportLongRange", Type.ENTITY, new DuctFactory() {
-
-			@Override
-			public TileTDBase createTileEntity(Duct duct, World worldObj) {
-
-				return new TileTransportDuctLongRange();
-			}
-		}, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80) {
-
-			@Override
-			public void registerIcons(IIconRegister ir) {
-
-				super.registerIcons(ir);
-				frameType = 4;
-			}
-		});
-
-		registerDuct(new Duct(4 * 16 + 2, false, 1, 4, "entityTransportAcceleration", Type.ENTITY, new DuctFactory() {
-
-			@Override
-			public TileTDBase createTileEntity(Duct duct, World worldObj) {
-
-				return new TileTransportDuctCrossover();
-			}
-		}, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128) {
-
-			@Override
-			public void registerIcons(IIconRegister ir) {
-
-				super.registerIcons(ir);
-				frameType = 4;
-			}
-		});
+	static void addIndevDucts() {
 
 	}
 
@@ -270,6 +223,7 @@ public class TDDucts {
 	public static int OFFSET_FLUID = 1 * 16;
 	public static int OFFSET_ITEM = 2 * 16;
 	public static int OFFSET_STRUCTURE = 3 * 16;
+	public static int OFFSET_TRANSPORT = 4 * 16;
 
 	/* ENERGY */
 	public static Duct energyBasic;
@@ -315,6 +269,13 @@ public class TDDucts {
 	public static Duct structure;
 
 	public static DuctLight lightDuct;
+
+	/* TRANSPORT */
+
+	public static DuctTransport transport;
+	public static DuctTransport transport_longrange;
+	public static DuctTransport transport_crossover;
+	public static DuctTransport transport_structure;
 
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,
