@@ -208,7 +208,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		if (type == NETWORK_REQUEST && isServer) {
 			sendPlayerToDest(thePlayer, payload.getInt(), payload.getInt(), payload.getInt());
 		} else if (type == NETWORK_SETOUTPUTDATA && isServer) {
-			if(data == BLANK_NAME) data = new OutputData();
+			if (data == BLANK_NAME) data = new OutputData();
 			data.loadConfigData(payload);
 			if (internalGrid != null)
 				internalGrid.onMajorGridChange();
@@ -355,15 +355,19 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		public ItemStack item = null;
 
 		public void write(NBTTagCompound nbt, TileTransportDuct transportDuct) {
-			nbt.setString("DestinationName", name);
+			if (!"".equals(name))
+				nbt.setString("DestinationName", name);
 			if (item != null)
-				nbt.setTag("Icon", item.writeToNBT(new NBTTagCompound()));
+				nbt.setTag("DestinationIcon", item.writeToNBT(new NBTTagCompound()));
 		}
 
 		public static OutputData read(NBTTagCompound nbt) {
+			if (!nbt.hasKey("DestinationName") && !nbt.hasKey("DestinationIcon"))
+				return BLANK_NAME;
+
 			OutputData outputData = new OutputData();
 			outputData.name = nbt.getString("DestinationName");
-			outputData.item = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("Icon"));
+			outputData.item = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("DestinationIcon"));
 			return outputData;
 		}
 
