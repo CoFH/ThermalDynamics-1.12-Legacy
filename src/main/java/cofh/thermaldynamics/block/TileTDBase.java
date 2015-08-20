@@ -36,6 +36,7 @@ import java.util.List;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -1250,6 +1251,17 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		if (subHit >= 20 && subHit < 26) {
 			return covers[subHit - 20];
 		}
+
+		return null;
+	}
+
+
+	public Object getConfigGuiServer(InventoryPlayer inventory){
+
+		return null;
+	}
+
+	public Object getConfigGuiClient(InventoryPlayer inventory){
 
 		return null;
 	}
