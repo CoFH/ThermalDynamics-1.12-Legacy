@@ -5,12 +5,13 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.gui.element.ElementButtonManaged;
 import cofh.lib.gui.element.listbox.SliderVertical;
+import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import java.util.ArrayList;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiTransport extends GuiBaseAdv {
-	private final ContainerTransport container;
+	final ContainerTransport container;
 
 	static final String TEX_PATH = "thermaldynamics:textures/gui/Transport.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
@@ -18,6 +19,8 @@ public class GuiTransport extends GuiBaseAdv {
 	ElementDirectoryButton[] directoryButtons;
 	SliderVertical vertical;
 	public ElementButtonManaged buttonConfig;
+	public int x0;
+	public int y0;
 
 	public GuiTransport(ContainerTransport container) {
 		super(container, TEXTURE);
@@ -25,13 +28,13 @@ public class GuiTransport extends GuiBaseAdv {
 		this.ySize = 204;
 		this.drawInventory = false;
 		this.drawTitle = true;
-		this.name = "thermaldynamics.transport.name";
+		this.name = "info.thermaldynamics.transport.name";
 	}
 
 	final static int NUM_ENTRIES = 7;
 	final static int BUTTON_WIDTH = 155;
 	final static int BUTTON_HEIGHT = 22;
-	final static int BUTTON_OFFSET = 2;
+	final static int BUTTON_OFFSET = 1;
 
 	final static int GUI_BUTTON_X0_BASE = 0;
 	final static int GUI_BUTTON_Y0_BASE = 204;
@@ -49,8 +52,8 @@ public class GuiTransport extends GuiBaseAdv {
 	public void initGui() {
 		super.initGui();
 
-		int x0 = (xSize - BUTTON_WIDTH ) / 2 - SLIDER_WIDTH;
-		int y0 = getFontRenderer().FONT_HEIGHT + 6;
+		x0 = (xSize - BUTTON_WIDTH ) / 2 - SLIDER_WIDTH;
+		y0 = getFontRenderer().FONT_HEIGHT + 28;
 
 		vertical = new SliderVertical(this, xSize - 6 - SLIDER_WIDTH, y0, SLIDER_WIDTH, NUM_ENTRIES * BUTTON_HEIGHT + (NUM_ENTRIES - 1) * BUTTON_OFFSET, 10);
 		vertical.setVisible(false);
@@ -62,10 +65,14 @@ public class GuiTransport extends GuiBaseAdv {
 			addElement(directoryButtons[i]);
 		}
 
-		buttonConfig = new ElementButtonManaged(this, 8, ySize - 20, 50, 16, "Config") {
+
+		final String configText = StringHelper.localize("info.thermaldynamics.transport.config");
+		int stringWidth = getFontRenderer().getStringWidth(configText);
+		buttonConfig = new ElementButtonManaged(this, xSize - 12 - stringWidth, 16, stringWidth + 8, 16, configText) {
 
 			@Override
 			public void onClick() {
+
 				PacketTileInfo myPayload = PacketTileInfo.newPacket(container.transportDuct);
 				myPayload.addByte(0);
 				myPayload.addByte(TileTransportDuct.NETWORK_CONFIG);
@@ -73,6 +80,29 @@ public class GuiTransport extends GuiBaseAdv {
 			}
 		};
 		addElement(buttonConfig);
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int x, int y) {
+		super.drawGuiContainerForegroundLayer(x, y);
+
+		DirectoryEntry directoryEntry = container.directoryEntry;
+		if(directoryEntry != null){
+			int dy = 15;
+
+			int by = directoryEntry.icon != null  ? BUTTON_HEIGHT : 0;
+			String text = getFontRenderer().trimStringToWidth(directoryEntry.getName(), xSize - buttonConfig.getWidth() - 16 - by);
+			getFontRenderer().drawString(text, x0 + by + 4, dy + (BUTTON_HEIGHT - 8) / 2, 0x404040);
+
+			if(directoryEntry.icon != null)
+				drawItemStack(directoryEntry.icon, x0 + 3, dy + 3, false, null);
+		}
+
+		ArrayList<DirectoryEntry> directory = container.directory;
+		if (directory == null)
+			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.waiting"), getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.waiting")), ySize / 2, 0x404040);
+		else if (directory.isEmpty())
+			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.nodest"), getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.nodest")), ySize / 2, 0x404040);
 	}
 
 	public void goToDest(DirectoryEntry directoryEntry) {
@@ -93,7 +123,7 @@ public class GuiTransport extends GuiBaseAdv {
 		vertical.setVisible(needSlider);
 		vertical.setLimits(0, needSlider ? additionalEntries : 0);
 
-		int x0 = (xSize - BUTTON_WIDTH ) / 2 - (needSlider ? SLIDER_WIDTH : 0);
+		x0 = (xSize - BUTTON_WIDTH ) / 2 - (needSlider ? SLIDER_WIDTH : 0);
 
 		int offset = vertical.getValue();
 
@@ -103,7 +133,7 @@ public class GuiTransport extends GuiBaseAdv {
 			directoryButtons[i].setEntry(index >= directory.size() ? null : directory.get(index));
 		}
 
-		buttonConfig.setPosition(x0, buttonConfig.getPosY());
+//		buttonConfig.setPosition(x0, buttonConfig.getPosY());
 
 	}
 

@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.entity.gui;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
+import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import com.google.common.base.Strings;
 import net.minecraft.item.ItemStack;
@@ -49,14 +50,8 @@ public final class DirectoryEntry {
 
 	public String getName() {
 		if (Strings.isNullOrEmpty(name)) {
-			return getBlockPosName();
+			return StringHelper.localize("info.thermaldynamics.transport.unnamed");
 		} else
 			return name;
 	}
-
-	public String getBlockPosName() {
-		return String.format("x=%d, y=%d, z=%d", x, y, z);
-	}
-
-
 }

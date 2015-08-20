@@ -25,12 +25,20 @@ public class GuiTransportConfig extends GuiBaseAdv {
 
 		super.initGui();
 
+		final boolean drawBack = inventory != null;
+
 		addElement(
-		new ElementTextField(this, 31, 15, 137, 16  ){
+		new ElementTextField(this, 32, 18, 135, 10  ){
 			@Override
 			protected void onCharacterEntered(boolean success) {
 				super.onCharacterEntered(success);
 				transportDuct.setName(this.getText());
+			}
+
+			@Override
+			public void drawBackground(int mouseX, int mouseY, float gameTicks) {
+				if(drawBack)
+					super.drawBackground(mouseX, mouseY, gameTicks);
 			}
 		}.setText(transportDuct.data.name).setBackgroundColor(0,0,0));
 	}

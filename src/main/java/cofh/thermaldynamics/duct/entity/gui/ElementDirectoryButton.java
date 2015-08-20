@@ -59,9 +59,9 @@ public class ElementDirectoryButton extends ElementButton {
 		if (entry == null)
 			return;
 
-		String text = getFontRenderer().trimStringToWidth(entry.getName(), sizeX - sizeY - 8 - 4);
+		String text = getFontRenderer().trimStringToWidth(entry.getName(), sizeX - sizeY - 4);
 
-		getFontRenderer().drawStringWithShadow(text, posX + sizeY + 8, posY + (sizeY - 8) / 2, getTextColor(mouseX, mouseY));
+		getFontRenderer().drawStringWithShadow(text, posX + sizeY + 4, posY + (sizeY - 8) / 2, getTextColor(mouseX, mouseY));
 
 		if (entry.icon != null)
 			gui.drawItemStack(entry.icon, posX + 3, posY + 3, false, null);
@@ -86,8 +86,17 @@ public class ElementDirectoryButton extends ElementButton {
 	@Override
 	public void addTooltip(List<String> list) {
 
-		if (entry.name != null)
-			list.add(entry.name);
-		list.add(entry.getBlockPosName());
+		list.add(entry.getName());
+
+//		list.add(
+//				String.format("x=%d, y=%d, z=%d", entry.x, entry.y, entry.z)
+//		);
+		list.add(String.format("x: %d", entry.x));
+		list.add(String.format("y: %d", entry.y));
+		list.add(String.format("z: %d", entry.z));
+
+//		Math.abs(entry.x - gui.container.directoryEntry.x)
+				
+
 	}
 }

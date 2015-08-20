@@ -220,6 +220,8 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 			ContainerTransport transport = (ContainerTransport) openContainer;
 
+			transport.setEntry(new DirectoryEntry(payload));
+
 			ArrayList<DirectoryEntry> entries = new ArrayList<DirectoryEntry>();
 
 			int size = payload.getShort();
@@ -282,6 +284,8 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 				ducts.add((TileTransportDuct) outputRoute.endPoint);
 			}
 		}
+
+		DirectoryEntry.addDirectoryEntry(myPayload, this);
 
 		myPayload.addShort(ducts.size());
 		for (TileTransportDuct endPoint : ducts) {

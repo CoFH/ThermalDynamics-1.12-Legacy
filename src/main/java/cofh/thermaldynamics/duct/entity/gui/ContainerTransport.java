@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerTransport extends Container {
 	public final TileTransportDuct transportDuct;
+	public DirectoryEntry directoryEntry;
 
 	public ContainerTransport(TileTransportDuct transportDuct) {
 		this.transportDuct = transportDuct;
@@ -102,5 +103,10 @@ public class ContainerTransport extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int p_82846_2_) {
 		return null;
+	}
+
+	public void setEntry(DirectoryEntry directoryEntry) {
+
+		this.directoryEntry = directoryEntry;
 	}
 }
