@@ -79,7 +79,7 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 	@Override
 	public boolean isOutput() {
 
-		return isOutput;
+		return false;
 	}
 
 	@Override
