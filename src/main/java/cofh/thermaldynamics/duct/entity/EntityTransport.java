@@ -332,17 +332,56 @@ public class EntityTransport extends Entity {
 	public void dropPassenger() {
 
 		if (!worldObj.isRemote) {
-			moveToSafePosition();
-			riddenByEntity.mountEntity(null);
+			rider.mountEntity(null);
+
+			if (direction >= 0 && direction < 6) {
+
+				double x = pos.x + Facing.offsetsXForSide[direction] + 0.5;
+				double y = pos.y + Facing.offsetsYForSide[direction];
+				double z = pos.z + Facing.offsetsZForSide[direction] + 0.5;
+
+				if (direction == 0) {
+					y = Math.floor(pos.y - originalHeight);
+				}
+
+				rider.setPosition(x, y, z);
+
+				if (rider instanceof EntityPlayerMP) {
+					float yaw, pitch;
+					switch (direction) {
+						case 0:
+							yaw = rider.rotationYaw;
+							pitch = 0;
+							break;
+						case 1:
+							yaw = rider.rotationYaw;
+							pitch = 0;
+							break;
+						case 2:
+							yaw = 180;
+							pitch = 0;
+							break;
+						case 3:
+							yaw = 0;
+							pitch = 0;
+							break;
+						case 4:
+							yaw = 90;
+							pitch = 0;
+							break;
+						case 5:
+							yaw = 270;
+							pitch = 0;
+							break;
+						default:
+							return;
+					}
+
+
+					((EntityPlayerMP) rider).playerNetServerHandler.setPlayerLocation(x, y, z, yaw, pitch);
+				}
+			}
 			setDead();
-		}
-	}
-
-	public void moveToSafePosition() {
-
-		if (direction >= 0 && direction < 6) {
-			setPosition(pos.x + Facing.offsetsXForSide[direction] + 0.5, pos.y + Facing.offsetsYForSide[direction], pos.z + Facing.offsetsZForSide[direction]
-					+ 0.5);
 		}
 	}
 
