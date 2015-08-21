@@ -15,7 +15,6 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.core.TDProps;
-import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
@@ -422,14 +421,14 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
 
-		if (DebugHelper.debug) {
-			GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
-			GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
-			GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
-			EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
-			MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
-			FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
-		}
+
+		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
+		GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
+		GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
+		EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
+		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
+		FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
+
 		return true;
 	}
 
