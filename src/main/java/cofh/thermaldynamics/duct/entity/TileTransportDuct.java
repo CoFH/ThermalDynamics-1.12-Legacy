@@ -115,7 +115,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	@Override
 	public boolean openGui(EntityPlayer player) {
 
-		if (super.openGui(player) || worldObj.isRemote) {
+		if (super.openGui(player) || ServerHelper.isClientWorld(worldObj)) {
 			return true;
 		}
 
@@ -123,27 +123,12 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 			return false;
 		}
 
-		MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(worldObj, player, xCoord, yCoord, zCoord);
-		if (movingObjectPosition == null) {
-			return false;
-		}
+		onNeighborBlockChange();
 
-		int subHit = movingObjectPosition.subHit;
-		int hitSide = movingObjectPosition.sideHit;
-
-		if (subHit >= 0 && subHit <= 13) {
-			int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
-
-			onNeighborBlockChange();
-
-			if (neighborMultiBlocks[i] != null) {
-				return false;
-			}
-
+		for (int i = 0; i < 6; i++) {
 			if (connectionTypes[i] == ConnectionTypes.FORCED) {
-				if (ServerHelper.isClientWorld(worldObj)) {
-					return true;
-				}
+				if (neighborMultiBlocks[i] != null)
+					continue;
 
 				PacketHandler.sendTo(getPacket(), player);
 				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, worldObj, xCoord, yCoord, zCoord);
