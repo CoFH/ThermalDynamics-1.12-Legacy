@@ -14,7 +14,7 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
@@ -272,8 +272,8 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public CoverHoleQuad.ITransformer[] getHollowMask() {
-		return CoverHoleQuad.hollowDuctTile;
+	public CoverHoleRender.ITransformer[] getHollowMask() {
+		return CoverHoleRender.hollowDuctTile;
 	}
 
 	@Override

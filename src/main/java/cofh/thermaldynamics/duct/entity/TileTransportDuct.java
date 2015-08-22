@@ -12,7 +12,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.entity.gui.ContainerTransport;
 import cofh.thermaldynamics.duct.entity.gui.ContainerTransportConfig;
 import cofh.thermaldynamics.duct.entity.gui.DirectoryEntry;
@@ -388,9 +388,9 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public CoverHoleQuad.ITransformer[] getHollowMask(byte side) {
+	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleQuad.hollowDuctTransport;
+		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctTransport;
 	}
 }

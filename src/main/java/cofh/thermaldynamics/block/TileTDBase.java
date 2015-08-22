@@ -20,7 +20,7 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
@@ -1062,15 +1062,15 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	}
 
 	@SideOnly(Side.CLIENT)
-	public CoverHoleQuad.ITransformer[] getHollowMask(byte side) {
+	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
 		if(connectionType == BlockDuct.ConnectionTypes.TILECONNECTION)
-			return CoverHoleQuad.hollowDuctTile;
+			return CoverHoleRender.hollowDuctTile;
 		else if(connectionType == BlockDuct.ConnectionTypes.NONE){
 			return null;
 		} else {
-			return CoverHoleQuad.hollowDuct;
+			return CoverHoleRender.hollowDuct;
 		}
 	}
 

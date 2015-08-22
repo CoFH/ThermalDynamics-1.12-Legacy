@@ -12,7 +12,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
@@ -390,7 +390,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public CoverHoleQuad.ITransformer[] getHollowMask() {
-		return CoverHoleQuad.hollowDuctTile;
+	public CoverHoleRender.ITransformer[] getHollowMask() {
+		return CoverHoleRender.hollowDuctTile;
 	}
 }
