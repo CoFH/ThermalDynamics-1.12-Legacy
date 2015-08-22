@@ -176,9 +176,9 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 	}
 
 	@Override
-	public BlockDuct.ConnectionTypes getConnectionType(int side) {
+	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
 
-		BlockDuct.ConnectionTypes connectionType = super.getConnectionType(side);
+		BlockDuct.ConnectionTypes connectionType = super.getRenderConnectionType(side);
 		if (connectionType == BlockDuct.ConnectionTypes.NONE || connections == 0) {
 			return connectionType;
 		}

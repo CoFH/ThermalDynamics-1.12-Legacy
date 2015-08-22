@@ -32,7 +32,7 @@ public class CoverRenderer {
 	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
 	public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
-			boolean addTrans) {
+									  boolean addTrans, CoverHoleQuad.ITransformer[] hollowCover) {
 
 		facadeRenderBlocks.blockAccess = CoverBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
 
@@ -40,6 +40,10 @@ public class CoverRenderer {
 		int rawBufferIndex = tess.rawBufferIndex;
 
 		boolean rendered = facadeRenderBlocks.renderBlockByRenderType(block, x, y, z);
+
+		if (hollowCover != null)
+			CoverHoleQuad.holify(rawBufferIndex, x, y, z, side, hollowCover);
+
 
 		int rawBufferIndex2 = tess.rawBufferIndex;
 
@@ -101,19 +105,7 @@ public class CoverRenderer {
 				}
 
 				if (addNormals) {
-					// normal = (new Vector3(quad[1][0] - quad[0][0], quad[1][1] - quad[0][1], quad[1][2] - quad[0][2]));
-					//
-					// normal.crossProduct(new Vector3(quad[2][0] - quad[0][0], quad[2][1] - quad[0][1], quad[2][2] - quad[0][2]));
-					//
-					// normal.normalize();
-					//
-					// byte b0 = (byte) ((int) (normal.x * 127.0F));
-					// byte b1 = (byte) ((int) (normal.y * 127.0F));
-					// byte b2 = (byte) ((int) (normal.z * 127.0F));
-					// intNormal = (b0 & 255) | (b1 & 255) << 8 | (b2 & 255) << 16;
-
 					intNormal = -64 << 8;
-
 				}
 
 				for (int k2 = 0; k2 < 4; k2++) {

@@ -6,6 +6,7 @@ import cofh.core.util.CoreUtils;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -206,5 +207,10 @@ public abstract class Attachment {
 
 	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
 
+	}
+
+	@SideOnly(Side.CLIENT)
+	public CoverHoleQuad.ITransformer[] getHollowMask(){
+		return null;
 	}
 }

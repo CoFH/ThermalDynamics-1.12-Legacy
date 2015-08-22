@@ -1,5 +1,7 @@
 package cofh.thermaldynamics.duct.fluid;
 
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -31,4 +33,16 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 		return 0;
 	}
 
+	@Override
+	public CoverHoleQuad.ITransformer[] getHollowMask(byte side) {
+
+		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+		if(connectionType == BlockDuct.ConnectionTypes.TILECONNECTION)
+			return CoverHoleQuad.hollowDuctTile;
+		else if(connectionType == BlockDuct.ConnectionTypes.NONE){
+			return null;
+		} else {
+			return CoverHoleQuad.hollowDuctLarge;
+		}
+	}
 }

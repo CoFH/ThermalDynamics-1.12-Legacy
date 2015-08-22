@@ -14,12 +14,15 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleQuad;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -265,6 +268,12 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			return;
 		}
 		setPowerLevel(grid.rs.redstoneLevel);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public CoverHoleQuad.ITransformer[] getHollowMask() {
+		return CoverHoleQuad.hollowDuctTile;
 	}
 
 	@Override

@@ -375,7 +375,7 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public void getDuctConnections(TileTDBase tile) {
 
 		for (int i = 0; i < 6; i++) {
-			connections[i] = tile.getConnectionType(i).ordinal();
+			connections[i] = tile.getRenderConnectionType(i).ordinal();
 		}
 	}
 

@@ -98,7 +98,15 @@ public class Cover extends Attachment {
 			return false;
 		}
 
-		return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false);
+		Attachment attachment = tile.attachments[side];
+		CoverHoleQuad.ITransformer[] hollowMask = null;
+		if (attachment != null)
+			hollowMask = attachment.getHollowMask();
+		if (hollowMask == null) {
+			hollowMask = tile.getHollowMask(side);
+		}
+
+		return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask);
 	}
 
 	@Override
@@ -206,7 +214,7 @@ public class Cover extends Attachment {
 			renderBlocks.blockAccess = player.getEntityWorld();
 			for (int i = 0; i < 2; i++) {
 				if (block.canRenderInPass(i)) {
-					CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true);
+					CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true, null);
 				}
 			}
 			tess.draw();

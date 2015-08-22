@@ -61,9 +61,9 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	}
 
 	@Override
-	public BlockDuct.ConnectionTypes getConnectionType(int side) {
+	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
 
-		BlockDuct.ConnectionTypes connectionType = super.getConnectionType(side);
+		BlockDuct.ConnectionTypes connectionType = super.getRenderConnectionType(side);
 		if (connectionType == BlockDuct.ConnectionTypes.DUCT) {
 			if (!(neighborMultiBlocks[side] instanceof TileFluidDuctPowered)) {
 				return BlockDuct.ConnectionTypes.CLEANDUCT;

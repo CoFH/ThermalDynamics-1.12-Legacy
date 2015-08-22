@@ -25,7 +25,7 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 	}
 
 	@Override
-	public BlockDuct.ConnectionTypes getConnectionType(int side) {
+	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
 
 		if (attachments[side] != null) {
 			return attachments[side].getRenderConnectionType();
@@ -34,7 +34,7 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 		if (neighborTypes[side] == NeighborTypes.STRUCTURE) {
 			return connectionTypes[side] != ConnectionTypes.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
 		} else {
-			return super.getConnectionType(side);
+			return super.getRenderConnectionType(side);
 		}
 	}
 

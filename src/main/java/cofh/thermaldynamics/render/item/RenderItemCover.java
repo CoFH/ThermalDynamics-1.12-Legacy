@@ -79,7 +79,7 @@ public class RenderItemCover implements IItemRenderer {
 		GL11.glTranslated(-side.offsetX * 0.5, -side.offsetY * 0.5, -side.offsetZ * 0.5);
 		for (int pass = 0; pass < 2; pass++) {
 			if (block.canRenderInPass(pass)) {
-				CoverRenderer.renderCover(CoverRenderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false);
+				CoverRenderer.renderCover(CoverRenderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false, null);
 			}
 		}
 		CCRenderState.draw();
