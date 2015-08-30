@@ -9,6 +9,7 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import java.util.ArrayList;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
 public class GuiTransport extends GuiBaseAdv {
 	final ContainerTransport container;
@@ -52,7 +53,7 @@ public class GuiTransport extends GuiBaseAdv {
 	public void initGui() {
 		super.initGui();
 
-		x0 = (xSize - BUTTON_WIDTH ) / 2 - SLIDER_WIDTH;
+		x0 = (xSize - BUTTON_WIDTH) / 2 - SLIDER_WIDTH;
 		y0 = getFontRenderer().FONT_HEIGHT + 28;
 
 		vertical = new SliderVertical(this, xSize - 6 - SLIDER_WIDTH, y0, SLIDER_WIDTH, NUM_ENTRIES * BUTTON_HEIGHT + (NUM_ENTRIES - 1) * BUTTON_OFFSET, 10);
@@ -65,6 +66,10 @@ public class GuiTransport extends GuiBaseAdv {
 			addElement(directoryButtons[i]);
 		}
 
+		Mouse.setCursorPosition(
+				(directoryButtons[0].getPosX() + (directoryButtons[0].getWidth() >> 1) + guiLeft) * this.mc.displayWidth / this.width,
+				(this.height - (1 + directoryButtons[0].getPosY() + (directoryButtons[0].getHeight() >> 1) + guiTop + 1)) * this.mc.displayHeight / this.height
+		);
 
 		final String configText = StringHelper.localize("info.thermaldynamics.transport.config");
 		int stringWidth = getFontRenderer().getStringWidth(configText);
@@ -87,14 +92,14 @@ public class GuiTransport extends GuiBaseAdv {
 		super.drawGuiContainerForegroundLayer(x, y);
 
 		DirectoryEntry directoryEntry = container.directoryEntry;
-		if(directoryEntry != null){
+		if (directoryEntry != null) {
 			int dy = 15;
 
-			int by = directoryEntry.icon != null  ? BUTTON_HEIGHT : 0;
+			int by = directoryEntry.icon != null ? BUTTON_HEIGHT : 0;
 			String text = getFontRenderer().trimStringToWidth(directoryEntry.getName(), xSize - buttonConfig.getWidth() - 16 - by);
 			getFontRenderer().drawString(text, x0 + by + 4, dy + (BUTTON_HEIGHT - 8) / 2, 0x404040);
 
-			if(directoryEntry.icon != null)
+			if (directoryEntry.icon != null)
 				drawItemStack(directoryEntry.icon, x0 + 3, dy + 3, false, null);
 		}
 
@@ -123,7 +128,7 @@ public class GuiTransport extends GuiBaseAdv {
 		vertical.setVisible(needSlider);
 		vertical.setLimits(0, needSlider ? additionalEntries : 0);
 
-		x0 = (xSize - BUTTON_WIDTH ) / 2 - (needSlider ? SLIDER_WIDTH : 0);
+		x0 = (xSize - BUTTON_WIDTH) / 2 - (needSlider ? SLIDER_WIDTH : 0);
 
 		int offset = vertical.getValue();
 
