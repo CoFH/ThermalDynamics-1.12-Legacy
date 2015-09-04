@@ -357,7 +357,7 @@ public class CoverHoleRender {
 	}
 
 	public static class Vertex8 {
-		public final static int TEX_NUM = 7;
+		public final static int TEX_NUM = 8;
 		float x, y, z;
 		float u, v;
 		int color;
@@ -398,7 +398,7 @@ public class CoverHoleRender {
 					(color >> 16) & 0xFF,
 					(color >> 8) & 0xFF,
 					(color) & 0xFF,
-					brightness
+					brightness & 0xFFFF, (brightness >>> 16) & 0xFFFF
 			};
 		}
 
@@ -409,7 +409,8 @@ public class CoverHoleRender {
 					((int) MathHelper.clampF(tex[3], 0, 255) << 16) |
 					((int) MathHelper.clampF(tex[4], 0, 255) << 8) |
 					((int) MathHelper.clampF(tex[5], 0, 255));
-			brightness = (int) tex[6];
+
+			brightness = ((int) MathHelper.clampF(tex[6], 0, 65535)) | ((int) MathHelper.clampF(tex[7], 0, 65535) << 16);
 		}
 	}
 
