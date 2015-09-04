@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.attachments.cover;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.core.TDProps;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.client.renderer.Tessellator;
@@ -182,10 +183,16 @@ public class CoverHoleRender {
 
 			return beta;
 		}
+
+		@Override
+		public String toString() {
+			return String.format("Quad{%s}", Arrays.toString(verts));
+		}
 	}
 
 	public static void holify(int startIndex, int x, int y, int z, int side, ITransformer[] transformers) {
 		List<Quad> tessQuads = loadFromTessellator(startIndex, true);
+
 		for (Quad tessQuad : tessQuads) {
 			tessQuad.sliceStretchDraw(x, y, z, side, transformers);
 		}
@@ -298,9 +305,28 @@ public class CoverHoleRender {
 		public float transformY(float dx, float dy) {
 			return MathHelper.clampF(dy, y0, y1);
 		}
+
+		@Override
+		public String toString() {
+			return "TransformSquare{" +
+					"x0=" + x0 +
+					", x1=" + x1 +
+					", y0=" + y0 +
+					", y1=" + y1 +
+					'}';
+		}
 	}
 
 	public static class TriTransformer implements ITransformer {
+		@Override
+		public String toString() {
+			return "TriTransformer{" +
+					"m=" + m +
+					", k=" + k +
+					", flipX=" + flipX +
+					", flipY=" + flipY +
+					'}';
+		}
 
 		float m, k;
 		boolean flipX, flipY;
@@ -363,6 +389,11 @@ public class CoverHoleRender {
 		int color;
 		int normal;
 		int brightness;
+
+		@Override
+		public String toString() {
+			return String.format("V8{{%s,%s,%s},{%s,%s},c=%d,n=%d,b=%d}", x, y, z, u, v, color, normal, brightness);
+		}
 
 		public Vertex8(float x, float y, float z, float u, float v, int color, int normal, int brightness) {
 			this.x = x;
