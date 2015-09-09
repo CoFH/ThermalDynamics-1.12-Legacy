@@ -155,9 +155,9 @@ public class CoverRenderer {
 					}
 					if (addTrans) {
 						if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-							rb[i + 5] = rb[i + 5] & 0x00FFFFFF | 0x80000000;
+							rb[i + 5] = rb[i + 5] & 0x00FFFFFF | (((rb[i + 5] & 0xFF000000) >>> 1) & 0xFF000000);
 						} else {
-							rb[i + 5] = rb[i + 5] & 0xFFFFFF00 | 0x00000080;
+							rb[i + 5] = rb[i + 5] & 0xFFFFFF00 | (((rb[i + 5] & 0x000000FF) >>> 1) & 0x000000FF);
 						}
 					}
 				}
