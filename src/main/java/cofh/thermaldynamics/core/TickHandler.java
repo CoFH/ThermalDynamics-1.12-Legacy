@@ -79,10 +79,6 @@ public class TickHandler {
 	@SubscribeEvent
 	public void tick(TickEvent.WorldTickEvent evt) {
 
-		if (handlers.isEmpty()) {
-			return;
-		}
-
 		synchronized (handlers) {
 			WorldGridList worldGridList = handlers.get(evt.world);
 			if (worldGridList == null) {
@@ -100,8 +96,25 @@ public class TickHandler {
 	@SubscribeEvent
 	public void worldUnload(WorldEvent.Unload evt) {
 
+		World world = evt.world;
+
+		if(world.isRemote) return;
+
 		synchronized (handlers) {
-			handlers.remove(evt.world);
+			handlers.remove(world);
+			handlers.isEmpty();
+		}
+
+		synchronized (multiBlocksToCalculate) {
+			if (!multiBlocksToCalculate.isEmpty()) {
+				Iterator<WeakReference<IMultiBlock>> iterator = multiBlocksToCalculate.iterator();
+				while (iterator.hasNext()) {
+					IMultiBlock multiBlock = iterator.next().get();
+					if (multiBlock == null || multiBlock.world() == world) {
+						iterator.remove();
+					}
+				}
+			}
 		}
 	}
 
