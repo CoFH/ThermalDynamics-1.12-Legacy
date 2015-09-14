@@ -359,7 +359,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	@Override
 	public boolean openGui(EntityPlayer player) {
 
-		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+		if(ServerHelper.isServerWorld(tile.world())) {
+			player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+		}
 		return true;
 	}
 

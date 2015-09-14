@@ -82,40 +82,42 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	}
 
 	public void calcItems() {
-
-		if (isItem()) {
-			quickItems.clear();
-
-			if (!flags[flagIgnoreOreDictionary]) {
-				if (oreIds == null) {
-					oreIds = new TIntHashSet();
-				} else {
-					oreIds.clear();
-				}
-			} else {
-				oreIds = null;
-			}
-
-			if (!flags[flagIgnoreMod]) {
-				if (modNames == null) {
-					modNames = new HashSet<String>();
-				} else {
-					modNames.clear();
-				}
-			} else {
-				modNames = null;
-			}
-
-			customFilterItems = null;
-
-		} else if (isFluid()) {
-			fluidsSimple.clear();
-			fluidsNBT.clear();
-
-			customFilterFluids = null;
-		}
 		synchronized (items) {
-			boolean flag = true;
+			recalc = false;
+
+			if (isItem()) {
+				quickItems.clear();
+
+				if (!flags[flagIgnoreOreDictionary]) {
+					if (oreIds == null) {
+						oreIds = new TIntHashSet();
+					} else {
+						oreIds.clear();
+					}
+				} else {
+					oreIds = null;
+				}
+
+				if (!flags[flagIgnoreMod]) {
+					if (modNames == null) {
+						modNames = new HashSet<String>();
+					} else {
+						modNames.clear();
+					}
+				} else {
+					modNames = null;
+				}
+
+				customFilterItems = null;
+
+			} else if (isFluid()) {
+				fluidsSimple.clear();
+				fluidsNBT.clear();
+
+				customFilterFluids = null;
+			}
+
+			itemLoop:
 			for (ItemStack item : items) {
 				if (item != null) {
 					if (isItem()) {
@@ -150,13 +152,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 						for (ItemStack i : quickItems) {
 							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
-								flag = false;
-								break;
+								continue itemLoop;
 							}
 						}
-						if (flag) {
-							quickItems.add(d);
-						}
+
+						quickItems.add(d);
 
 					} else if (isFluid()) {
 						if (item.getItem() instanceof ISpecialFilterFluid) {
@@ -169,6 +169,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 						FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
 						if (fluidStack != null) {
+							fluidStack = fluidStack.copy();
 							fluidStack.amount = 1;
 
 							if (fluidStack.tag == null || flags[flagIgnoreNBT]) {
@@ -180,7 +181,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 					}
 				}
 			}
-			recalc = false;
+
 		}
 
 	}
@@ -202,17 +203,19 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			calcItems();
 		}
 
+		boolean returnValue = !flags[flagBlackList];
+
 		if (customFilterItems != null) {
 			for (CustomFilterItem customFilterItem : customFilterItems) {
 				if (customFilterItem.filter.matchesItem(customFilterItem.filterStack, item)) {
-					return !flags[flagBlackList];
+					return returnValue;
 				}
 			}
 		}
 
 		if (!flags[flagIgnoreMod]) {
 			if (modNames.contains(CoreUtils.getModName(item.getItem()))) {
-				return !flags[flagBlackList];
+				return returnValue;
 			}
 		}
 
@@ -221,7 +224,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			if (allOreIDs != null) {
 				for (Integer integer : allOreIDs) {
 					if (oreIds.contains(integer)) {
-						return !flags[flagBlackList];
+						return returnValue;
 					}
 				}
 			}
@@ -240,9 +243,9 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				continue;
 			}
 
-			return !flags[flagBlackList];
+			return returnValue;
 		}
-		return flags[flagBlackList];
+		return !returnValue;
 	}
 
 	@Override
