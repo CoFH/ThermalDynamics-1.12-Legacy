@@ -23,9 +23,7 @@ public abstract class MultiBlockGrid {
 	public WorldGridList worldGrid;
 	public boolean signalsUpToDate;
 
-
 	public RedstoneControl rs;
-
 
 	public MultiBlockGrid(WorldGridList worldGrid) {
 
@@ -144,20 +142,25 @@ public abstract class MultiBlockGrid {
 		signalsUpToDate = true;
 
 		if (rs == null || rs.relaysIn == null) {
-			if(rs != null) rs.relaysOut = null;
+			if (rs != null) {
+				rs.relaysOut = null;
+			}
 			for (IMultiBlock multiBlock : nodeSet) {
 				multiBlock.addRelays();
 			}
 		}
 
-		if(rs == null) return;
+		if (rs == null) {
+			return;
+		}
 
 		if (rs.relaysIn == null) {
-			if(rs.relaysOut == null ) {
+			if (rs.relaysOut == null) {
 				rs = null;
 				return;
-			}else
+			} else {
 				rs.nextRedstoneLevel = 0;
+			}
 			return;
 		}
 
@@ -177,7 +180,9 @@ public abstract class MultiBlockGrid {
 	public void addSignalInput(Relay signaller) {
 
 		if (signaller.isInput()) {
-			if(rs == null) rs = new RedstoneControl();
+			if (rs == null) {
+				rs = new RedstoneControl();
+			}
 
 			if (rs.relaysIn == null) {
 				rs.relaysIn = new ArrayList<Relay>();
@@ -189,7 +194,9 @@ public abstract class MultiBlockGrid {
 
 	public void addSignalOutput(Attachment attachment) {
 
-		if(rs == null) rs=new RedstoneControl();
+		if (rs == null) {
+			rs = new RedstoneControl();
+		}
 
 		if (rs.relaysOut == null) {
 			rs.relaysOut = new ArrayList<Attachment>();
@@ -264,7 +271,7 @@ public abstract class MultiBlockGrid {
 
 	public void resetRelays() {
 
-		if(rs != null) {
+		if (rs != null) {
 			rs.relaysIn = null;
 			rs.relaysOut = null;
 		}
@@ -316,9 +323,11 @@ public abstract class MultiBlockGrid {
 	}
 
 	public static class RedstoneControl {
+
 		public byte nextRedstoneLevel = -128;
 		public ArrayList<Relay> relaysIn;
 		public ArrayList<Attachment> relaysOut;
 		public int redstoneLevel;
 	}
+
 }

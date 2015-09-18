@@ -112,7 +112,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 				this.tickInternalSideCounter(i + 1);
 				break;
 			}
-
 		}
 		for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
 			sent += transfer(i, available - sent, simulate, base, drainGridTank);
@@ -136,7 +135,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (!filterCache[bSide].allowFluid(fluid)) {
 			return 0;
 		}
-
 		FluidStack tempFluid = fluid.copy();
 		tempFluid.amount = available;
 		int amountSent = cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, false);
@@ -147,6 +145,8 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			} else {
 				if (drainGridTank) {
 					tempFluid = fluidGrid.myTank.drain(amountSent, true);
+				} else {
+					tempFluid.amount = amountSent;
 				}
 				return cache[bSide].fill(ForgeDirection.VALID_DIRECTIONS[bSide ^ 1], tempFluid, true);
 			}
