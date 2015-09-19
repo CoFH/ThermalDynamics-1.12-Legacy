@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.item;
 
 import cofh.api.inventory.IInventoryConnection;
 import cofh.api.transport.IItemDuct;
+import cofh.core.crash.CrashHelper;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
@@ -33,6 +34,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -42,6 +44,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
@@ -467,7 +470,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			NBTTagList list = nbt.getTagList("TravellingItems", 10);
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound compound = list.getCompoundTagAt(i);
-				myItems.add(new TravelingItem(compound));
+				TravelingItem travelingItem = new TravelingItem(compound);
+				if(travelingItem.stack != null)
+					myItems.add(travelingItem);
 			}
 		}
 
@@ -756,8 +761,23 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	public int simTransferI(int side, ItemStack insertingItem) {
 
-		ItemStack itemStack = simTransfer(side, insertingItem);
-		return itemStack == null ? 0 : itemStack.stackSize;
+		try {
+			ItemStack itemStack = simTransfer(side, insertingItem);
+			return itemStack == null ? 0 : itemStack.stackSize;
+		}catch(Exception err){
+			IInventory inventory = cache == null ? null : cache[side];
+
+			CrashReport crashReport = CrashHelper.makeDetailedCrashReport(err,
+					"Inserting", this,
+					"Inserting Item", insertingItem,
+					"Side", side,
+					"Cache", inventory,
+					"Type", cacheType == null ? null : cacheType[side],
+					"Grid", internalGrid);
+			CrashHelper.addSurroundingDetails(crashReport, "ItemDuct", this);
+			CrashHelper.addInventoryContents(crashReport, "Destination Invetory", inventory);
+			throw new ReportedException(crashReport);
+		}
 	}
 
 	public ItemStack simTransfer(int side, ItemStack insertingItem) {
