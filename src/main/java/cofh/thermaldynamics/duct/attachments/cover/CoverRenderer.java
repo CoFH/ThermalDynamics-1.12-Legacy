@@ -32,7 +32,7 @@ public class CoverRenderer {
 	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
 	public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
-									  boolean addTrans, CoverHoleRender.ITransformer[] hollowCover) {
+			boolean addTrans, CoverHoleRender.ITransformer[] hollowCover) {
 
 		facadeRenderBlocks.blockAccess = CoverBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
 
@@ -41,9 +41,9 @@ public class CoverRenderer {
 
 		boolean rendered = facadeRenderBlocks.renderBlockByRenderType(block, x, y, z);
 
-		if (hollowCover != null)
+		if (hollowCover != null) {
 			CoverHoleRender.holify(rawBufferIndex, x, y, z, side, hollowCover);
-
+		}
 
 		int rawBufferIndex2 = tess.rawBufferIndex;
 

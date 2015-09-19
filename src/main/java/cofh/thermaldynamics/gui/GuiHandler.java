@@ -29,19 +29,21 @@ public class GuiHandler implements IGuiHandler {
 			}
 		}
 		switch (id) {
-			case TILE_ID:
-				tile = world.getTileEntity(x, y, z);
-				if (tile instanceof TileCoFHBase) {
-					return ((TileCoFHBase) tile).getGuiServer(player.inventory);
-				}
+		case TILE_ID:
+			tile = world.getTileEntity(x, y, z);
+			if (tile instanceof TileCoFHBase) {
+				return ((TileCoFHBase) tile).getGuiServer(player.inventory);
+			}
 
-			case TILE_CONFIG:
-				tile = world.getTileEntity(x, y, z);
-				if (tile instanceof TileTDBase) {
-					return ((TileTDBase) tile).getConfigGuiServer(player.inventory);
-				} else return null;
-			default:
+		case TILE_CONFIG:
+			tile = world.getTileEntity(x, y, z);
+			if (tile instanceof TileTDBase) {
+				return ((TileTDBase) tile).getConfigGuiServer(player.inventory);
+			} else {
 				return null;
+			}
+		default:
+			return null;
 		}
 	}
 
@@ -58,20 +60,24 @@ public class GuiHandler implements IGuiHandler {
 			}
 		}
 		switch (id) {
-			case TILE_ID:
-				tile = world.getTileEntity(x, y, z);
-				if (tile instanceof TileCoFHBase) {
-					return ((TileCoFHBase) tile).getGuiClient(player.inventory);
-				} else return null;
-
-			case TILE_CONFIG:
-				tile = world.getTileEntity(x, y, z);
-				if (tile instanceof TileTDBase) {
-					return ((TileTDBase) tile).getConfigGuiClient(player.inventory);
-				} else return null;
-
-			default:
+		case TILE_ID:
+			tile = world.getTileEntity(x, y, z);
+			if (tile instanceof TileCoFHBase) {
+				return ((TileCoFHBase) tile).getGuiClient(player.inventory);
+			} else {
 				return null;
+			}
+
+		case TILE_CONFIG:
+			tile = world.getTileEntity(x, y, z);
+			if (tile instanceof TileTDBase) {
+				return ((TileTDBase) tile).getConfigGuiClient(player.inventory);
+			} else {
+				return null;
+			}
+
+		default:
+			return null;
 		}
 	}
 

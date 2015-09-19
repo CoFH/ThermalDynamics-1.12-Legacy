@@ -39,19 +39,20 @@ public class FluidTankGrid extends FluidTankAdv {
 		if (fluid == null && resource != null) {
 			setFluidData(resource);
 		}
-        return myMaster.trackIn(super.fill(resource, doFill), !doFill);
-    }
+		return myMaster.trackIn(super.fill(resource, doFill), !doFill);
+	}
 
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        FluidStack drain = super.drain(maxDrain, doDrain);
-        if(doDrain && drain != null)
-            myMaster.trackOut(drain.amount, false);
-        return drain;
-    }
+	@Override
+	public FluidStack drain(int maxDrain, boolean doDrain) {
 
+		FluidStack drain = super.drain(maxDrain, doDrain);
+		if (doDrain && drain != null) {
+			myMaster.trackOut(drain.amount, false);
+		}
+		return drain;
+	}
 
-    public void setFluidData(FluidStack fluid) {
+	public void setFluidData(FluidStack fluid) {
 
 		int viscosity = 0;
 

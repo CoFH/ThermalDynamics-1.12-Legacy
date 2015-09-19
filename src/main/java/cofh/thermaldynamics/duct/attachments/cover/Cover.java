@@ -100,8 +100,9 @@ public class Cover extends Attachment {
 
 		Attachment attachment = tile.attachments[side];
 		CoverHoleRender.ITransformer[] hollowMask = null;
-		if (attachment != null)
+		if (attachment != null) {
 			hollowMask = attachment.getHollowMask();
+		}
 		if (hollowMask == null) {
 			hollowMask = tile.getHollowMask(side);
 		}

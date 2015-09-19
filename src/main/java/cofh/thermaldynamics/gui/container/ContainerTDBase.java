@@ -2,6 +2,7 @@ package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
 import cofh.lib.util.helpers.ItemHelper;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,6 +10,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public abstract class ContainerTDBase extends Container {
+
 	protected void addPlayerInventory(InventoryPlayer inventory) {
 
 		for (int i = 0; i < 3; i++) {
@@ -92,7 +94,6 @@ public abstract class ContainerTDBase extends Container {
 		}
 		return slotFound;
 	}
-
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {

@@ -1065,9 +1065,9 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		if(connectionType == BlockDuct.ConnectionTypes.TILECONNECTION)
+		if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
-		else if(connectionType == BlockDuct.ConnectionTypes.NONE){
+		} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
 			return null;
 		} else {
 			return CoverHoleRender.hollowDuct;
@@ -1269,13 +1269,12 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		return null;
 	}
 
-
-	public Object getConfigGuiServer(InventoryPlayer inventory){
+	public Object getConfigGuiServer(InventoryPlayer inventory) {
 
 		return null;
 	}
 
-	public Object getConfigGuiClient(InventoryPlayer inventory){
+	public Object getConfigGuiClient(InventoryPlayer inventory) {
 
 		return null;
 	}

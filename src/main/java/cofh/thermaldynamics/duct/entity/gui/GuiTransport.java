@@ -7,11 +7,15 @@ import cofh.lib.gui.element.ElementButtonManaged;
 import cofh.lib.gui.element.listbox.SliderVertical;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+
 import java.util.ArrayList;
+
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.input.Mouse;
 
 public class GuiTransport extends GuiBaseAdv {
+
 	final ContainerTransport container;
 
 	static final String TEX_PATH = "thermaldynamics:textures/gui/Transport.png";
@@ -24,6 +28,7 @@ public class GuiTransport extends GuiBaseAdv {
 	public int y0;
 
 	public GuiTransport(ContainerTransport container) {
+
 		super(container, TEXTURE);
 		this.container = container;
 		this.ySize = 204;
@@ -46,11 +51,13 @@ public class GuiTransport extends GuiBaseAdv {
 	final static int SLIDER_WIDTH = 6;
 
 	public GuiTransport(TileTransportDuct transportDuct) {
+
 		this(new ContainerTransport(transportDuct));
 	}
 
 	@Override
 	public void initGui() {
+
 		super.initGui();
 
 		x0 = (xSize - BUTTON_WIDTH) / 2 - SLIDER_WIDTH;
@@ -66,10 +73,8 @@ public class GuiTransport extends GuiBaseAdv {
 			addElement(directoryButtons[i]);
 		}
 
-		Mouse.setCursorPosition(
-				(directoryButtons[0].getPosX() + (directoryButtons[0].getWidth() >> 1) + guiLeft) * this.mc.displayWidth / this.width,
-				(this.height - (1 + directoryButtons[0].getPosY() + (directoryButtons[0].getHeight() >> 1) + guiTop + 1)) * this.mc.displayHeight / this.height
-		);
+		Mouse.setCursorPosition((directoryButtons[0].getPosX() + (directoryButtons[0].getWidth() >> 1) + guiLeft) * this.mc.displayWidth / this.width,
+				(this.height - (1 + directoryButtons[0].getPosY() + (directoryButtons[0].getHeight() >> 1) + guiTop + 1)) * this.mc.displayHeight / this.height);
 
 		final String configText = StringHelper.localize("info.thermaldynamics.transport.config");
 		int stringWidth = getFontRenderer().getStringWidth(configText);
@@ -89,6 +94,7 @@ public class GuiTransport extends GuiBaseAdv {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
+
 		super.drawGuiContainerForegroundLayer(x, y);
 
 		DirectoryEntry directoryEntry = container.directoryEntry;
@@ -99,27 +105,33 @@ public class GuiTransport extends GuiBaseAdv {
 			String text = getFontRenderer().trimStringToWidth(directoryEntry.getName(), xSize - buttonConfig.getWidth() - 16 - by);
 			getFontRenderer().drawString(text, x0 + by + 4, dy + (BUTTON_HEIGHT - 8) / 2, 0x404040);
 
-			if (directoryEntry.icon != null)
+			if (directoryEntry.icon != null) {
 				drawItemStack(directoryEntry.icon, x0 + 3, dy + 3, false, null);
+			}
 		}
 
 		ArrayList<DirectoryEntry> directory = container.directory;
-		if (directory == null)
-			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.waiting"), getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.waiting")), ySize / 2, 0x404040);
-		else if (directory.isEmpty())
-			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.nodest"), getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.nodest")), ySize / 2, 0x404040);
+		if (directory == null) {
+			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.waiting"),
+					getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.waiting")), ySize / 2, 0x404040);
+		} else if (directory.isEmpty()) {
+			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.nodest"),
+					getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.nodest")), ySize / 2, 0x404040);
+		}
 	}
 
 	public void goToDest(DirectoryEntry directoryEntry) {
+
 		container.transportDuct.sendRequest(directoryEntry.x, directoryEntry.y, directoryEntry.z);
 	}
 
-
 	@Override
 	protected void updateElementInformation() {
+
 		ArrayList<DirectoryEntry> directory = container.directory;
-		if (directory == null)
+		if (directory == null) {
 			return;
+		}
 
 		boolean needSlider = directory.size() > NUM_ENTRIES;
 
@@ -138,12 +150,13 @@ public class GuiTransport extends GuiBaseAdv {
 			directoryButtons[i].setEntry(index >= directory.size() ? null : directory.get(index));
 		}
 
-//		buttonConfig.setPosition(x0, buttonConfig.getPosY());
+		//		buttonConfig.setPosition(x0, buttonConfig.getPosY());
 
 	}
 
 	@Override
 	protected boolean onMouseWheel(int mouseX, int mouseY, int wheelMovement) {
+
 		return vertical.isVisible() && vertical.onMouseWheel(mouseX, mouseY, wheelMovement);
 	}
 }

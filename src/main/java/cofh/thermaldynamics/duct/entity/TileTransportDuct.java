@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.entity;
 
-
 import cofh.api.block.IBlockConfigGui;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
@@ -24,8 +23,10 @@ import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.util.Utils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -40,6 +41,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 	@Override
 	public boolean isOutput() {
+
 		return isOutput;
 	}
 
@@ -129,8 +131,9 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 		for (int i = 0; i < 6; i++) {
 			if (connectionTypes[i] == ConnectionTypes.FORCED) {
-				if (neighborMultiBlocks[i] != null)
+				if (neighborMultiBlocks[i] != null) {
 					continue;
+				}
 
 				PacketHandler.sendTo(getPacket(), player);
 				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, worldObj, xCoord, yCoord, zCoord);
@@ -141,18 +144,19 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		return false;
 	}
 
-
 	private static final OutputData BLANK_NAME = new OutputData();
 	public OutputData data = BLANK_NAME;
 
-
+	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
-		if (data != BLANK_NAME)
+		if (data != BLANK_NAME) {
 			data.write(nbt, this);
+		}
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 
 		super.readFromNBT(nbt);
@@ -161,12 +165,14 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 	@Override
 	public PacketCoFHBase getPacket() {
+
 		PacketCoFHBase packet = super.getPacket();
 		if (data != BLANK_NAME) {
 			packet.addBool(true);
 			data.addToPacket(packet);
-		} else
+		} else {
 			packet.addBool(false);
+		}
 		return packet;
 	}
 
@@ -175,11 +181,13 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 		super.handleTilePacket(payload, isServer);
 		if (payload.getBool()) {
-			if (data == BLANK_NAME)
+			if (data == BLANK_NAME) {
 				data = new OutputData();
+			}
 			data.readPacket(payload);
-		} else
+		} else {
 			data = BLANK_NAME;
+		}
 
 	}
 
@@ -195,10 +203,13 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		if (type == NETWORK_REQUEST && isServer) {
 			sendPlayerToDest(thePlayer, payload.getInt(), payload.getInt(), payload.getInt());
 		} else if (type == NETWORK_SETOUTPUTDATA && isServer) {
-			if (data == BLANK_NAME) data = new OutputData();
+			if (data == BLANK_NAME) {
+				data = new OutputData();
+			}
 			data.loadConfigData(payload);
-			if (internalGrid != null)
+			if (internalGrid != null) {
 				internalGrid.onMajorGridChange();
+			}
 		} else if (type == NETWORK_LIST && !isServer) {
 			Container openContainer = thePlayer.openContainer;
 			if (!(openContainer instanceof ContainerTransport)) {
@@ -224,20 +235,27 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	}
 
 	public void setName(String name) {
+
 		if (!name.equals(this.data.name)) {
-			if (data == BLANK_NAME) data = new OutputData();
+			if (data == BLANK_NAME) {
+				data = new OutputData();
+			}
 			this.data.name = name;
 			sendOutputDataConfigPacket();
 		}
 	}
 
 	public void setIcon(ItemStack stack) {
-		if (data == BLANK_NAME) this.data = new OutputData();
+
+		if (data == BLANK_NAME) {
+			this.data = new OutputData();
+		}
 		this.data.item = stack;
 		sendOutputDataConfigPacket();
 	}
 
 	public void sendOutputDataConfigPacket() {
+
 		if (this.worldObj.isRemote) {
 			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
 			myPayload.addByte(0);
@@ -248,6 +266,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	}
 
 	public void sendRequest(int x, int y, int z) {
+
 		PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
 		myPayload.addByte(0);
 		myPayload.addByte(NETWORK_REQUEST);
@@ -258,6 +277,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	}
 
 	public PacketCoFHBase getDirectoryPacket() {
+
 		PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
 		myPayload.addByte(0);
 		myPayload.addByte(NETWORK_LIST);
@@ -294,8 +314,9 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 				EntityTransport entityTransport = new EntityTransport(this, route, (byte) (getStuffedSide() ^ 1), (byte) 50);
 				entityTransport.start(player);
 
-				if (player.openContainer instanceof ContainerTransport)
+				if (player.openContainer instanceof ContainerTransport) {
 					player.closeScreen();
+				}
 
 				return true;
 			}
@@ -304,30 +325,34 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		return false;
 	}
 
-
 	@Override
 	public Object getGuiServer(InventoryPlayer inventory) {
+
 		return new ContainerTransport(this);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Object getGuiClient(InventoryPlayer inventory) {
+
 		return new GuiTransport(this);
 	}
 
 	@Override
 	public Object getConfigGuiServer(InventoryPlayer inventory) {
+
 		return new ContainerTransportConfig(inventory, this);
 	}
 
 	@Override
 	public Object getConfigGuiClient(InventoryPlayer inventory) {
+
 		return new GuiTransportConfig(inventory, this);
 	}
 
 	@Override
 	public boolean openConfigGui(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player) {
+
 		if (ServerHelper.isClientWorld(worldObj)) {
 			return true;
 		}
@@ -338,19 +363,25 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	}
 
 	public static class OutputData {
+
 		public String name = "";
 		public ItemStack item = null;
 
 		public void write(NBTTagCompound nbt, TileTransportDuct transportDuct) {
-			if (!"".equals(name))
+
+			if (!"".equals(name)) {
 				nbt.setString("DestinationName", name);
-			if (item != null)
+			}
+			if (item != null) {
 				nbt.setTag("DestinationIcon", item.writeToNBT(new NBTTagCompound()));
+			}
 		}
 
 		public static OutputData read(NBTTagCompound nbt) {
-			if (!nbt.hasKey("DestinationName") && !nbt.hasKey("DestinationIcon"))
+
+			if (!nbt.hasKey("DestinationName") && !nbt.hasKey("DestinationIcon")) {
 				return BLANK_NAME;
+			}
 
 			OutputData outputData = new OutputData();
 			outputData.name = nbt.getString("DestinationName");
@@ -359,16 +390,19 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		}
 
 		public void addToPacket(PacketCoFHBase packet) {
+
 			packet.addString(name);
 			packet.addItemStack(item);
 		}
 
 		public void readPacket(PacketCoFHBase payload) {
+
 			name = payload.getString();
 			item = payload.getItemStack();
 		}
 
 		public void loadConfigData(PacketCoFHBase payload) {
+
 			String prevName = name;
 			ItemStack prevItem = ItemStack.copyItemStack(item);
 			try {
@@ -381,6 +415,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		}
 
 		public void saveConfigData(PacketTileInfo payload) {
+
 			payload.addString(name);
 			payload.addItemStack(item);
 		}
@@ -393,4 +428,5 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
 		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctTransport;
 	}
+
 }

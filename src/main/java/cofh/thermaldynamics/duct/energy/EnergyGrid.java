@@ -6,6 +6,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
+
 import net.minecraft.world.World;
 
 public class EnergyGrid extends MultiBlockGridTracking {
@@ -37,14 +38,17 @@ public class EnergyGrid extends MultiBlockGridTracking {
 
 		super(world);
 		this.type = type;
-		myStorage = new EnergyStorage(NODE_STORAGE[type], NODE_TRANSFER[type]){
+		myStorage = new EnergyStorage(NODE_STORAGE[type], NODE_TRANSFER[type]) {
+
 			@Override
 			public int receiveEnergy(int maxReceive, boolean simulate) {
+
 				return trackIn(super.receiveEnergy(maxReceive, simulate), simulate);
 			}
 
 			@Override
 			public int extractEnergy(int maxExtract, boolean simulate) {
+
 				return trackOut(super.extractEnergy(maxExtract, simulate), simulate);
 			}
 		};
@@ -64,6 +68,7 @@ public class EnergyGrid extends MultiBlockGridTracking {
 
 	@Override
 	public int getLevel() {
+
 		return myStorage.getEnergyStored();
 	}
 
@@ -130,6 +135,7 @@ public class EnergyGrid extends MultiBlockGridTracking {
 
 	@Override
 	protected String getUnit() {
+
 		return "RF";
 	}
 }

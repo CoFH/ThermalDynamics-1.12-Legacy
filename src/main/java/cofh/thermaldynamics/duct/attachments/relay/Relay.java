@@ -20,9 +20,9 @@ import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -144,10 +144,12 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	public boolean shouldThreshold() {
+
 		return (invert & 2) != 0;
 	}
 
 	public boolean shouldInvert() {
+
 		return (invert & 1) == 1;
 	}
 
@@ -164,8 +166,9 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			if (isBlockDuct(block)) {
 				TileTDBase t = (TileTDBase) tile.world().getTileEntity(dx, dy, dz);
 				Attachment attachment = t.attachments[side ^ 1];
-				if (attachment != null)
+				if (attachment != null) {
 					level = attachment.getRSOutput();
+				}
 
 			} else {
 				level = Math.max(level, tile.world().getIndirectPowerLevelTo(dx, dy, dz, side));
@@ -196,9 +199,11 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	public static boolean isBlockDuct(Block block) {
+
 		for (BlockDuct blockDuct : ThermalDynamics.blockDuct) {
-			if (block == blockDuct)
+			if (block == blockDuct) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -237,23 +242,18 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			}
 
 			if (isOutput()) {
-				tile.world().notifyBlockOfNeighborChange(
-						tile.xCoord + Facing.offsetsXForSide[side],
-						tile.yCoord + Facing.offsetsYForSide[side],
-						tile.zCoord + Facing.offsetsZForSide[side],
-						tile.getBlockType());
+				tile.world().notifyBlockOfNeighborChange(tile.xCoord + Facing.offsetsXForSide[side], tile.yCoord + Facing.offsetsYForSide[side],
+						tile.zCoord + Facing.offsetsZForSide[side], tile.getBlockType());
 
 				for (int i = 0; i < 6; i++) {
-					if (side == (i ^ 1))
+					if (side == (i ^ 1)) {
 						continue;
+					}
 
-					tile.world().notifyBlockOfNeighborChange(
-							tile.xCoord + Facing.offsetsXForSide[side] + Facing.offsetsXForSide[i],
+					tile.world().notifyBlockOfNeighborChange(tile.xCoord + Facing.offsetsXForSide[side] + Facing.offsetsXForSide[i],
 							tile.yCoord + Facing.offsetsYForSide[side] + Facing.offsetsYForSide[i],
-							tile.zCoord + Facing.offsetsZForSide[side] + Facing.offsetsZForSide[i],
-							tile.getBlockType());
+							tile.zCoord + Facing.offsetsZForSide[side] + Facing.offsetsZForSide[i], tile.getBlockType());
 				}
-
 
 			}
 		}
@@ -273,6 +273,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask() {
+
 		return CoverHoleRender.hollowDuctTile;
 	}
 
@@ -411,21 +412,25 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		super.sendGuiNetworkData(container, player, newGuy);
 
-		if (newGuy)
+		if (newGuy) {
 			for (Object p : player) {
-				if (p instanceof EntityPlayer)
+				if (p instanceof EntityPlayer) {
 					PacketHandler.sendTo(getPacket(), (EntityPlayer) p);
+				}
 			}
+		}
 
 	}
 
 	@Override
 	public String getDataType() {
+
 		return "RedstoneRelay";
 	}
 
 	@Override
 	public void readPortableData(EntityPlayer player, NBTTagCompound tag) {
+
 		readFromNBT(tag);
 
 		tile.world().notifyBlocksOfNeighborChange(tile.xCoord, tile.yCoord, tile.zCoord, tile.getBlockType());
@@ -440,6 +445,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 	@Override
 	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+
 		writeToNBT(tag);
 	}
 }

@@ -4,6 +4,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.Duct.Type;
 import cofh.thermaldynamics.duct.light.DuctLight;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,7 +20,7 @@ public class TDDucts {
 	public static ArrayList<Duct> ductListSorted = null;
 
 	static Duct addDuct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-						String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
@@ -28,7 +29,7 @@ public class TDDucts {
 	}
 
 	static DuctItem addDuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-								String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		DuctItem newDuct = new DuctItem(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
 				frameTexture, frameFluidTexture, frameFluidTransparency);
@@ -109,13 +110,17 @@ public class TDDucts {
 
 	static void addTransportDucts() {
 
-		transport = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.ENTITY, DuctFactory.transport, null, null, null, 255, "electrum", "thermaldynamics:duct/base/greenGlass", 96));
+		transport = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.ENTITY, DuctFactory.transport, null, null, null, 255,
+				"electrum", "thermaldynamics:duct/base/greenGlass", 96));
 
-		transport_longrange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.ENTITY, DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80));
+		transport_longrange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.ENTITY,
+				DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80));
 
-		transport_crossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.ENTITY, DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128));
+		transport_crossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.ENTITY,
+				DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128));
 
-		transport_structure = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.ENTITY, DuctFactory.structural, null, null, null, 255, "electrum", null, 128));
+		transport_structure = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.ENTITY, DuctFactory.structural, null,
+				null, null, 255, "electrum", null, 128));
 	}
 
 	static void addIndevDucts() {

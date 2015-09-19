@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.thermaldynamics.block.Attachment;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -59,7 +60,9 @@ public class ContainerAttachmentBase extends ContainerTDBase {
 		baseTile.receiveGuiNetworkData(i, j);
 	}
 
+	@Override
 	public int numTileSlots() {
+
 		return baseTile == null ? 0 : baseTile.getInvSlotCount();
 	}
 

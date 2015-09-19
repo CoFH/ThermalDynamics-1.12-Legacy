@@ -421,7 +421,6 @@ public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppear
 
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
 
-
 		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
 		GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
 		GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");

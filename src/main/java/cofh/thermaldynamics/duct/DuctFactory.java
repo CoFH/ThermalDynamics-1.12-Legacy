@@ -119,6 +119,7 @@ public abstract class DuctFactory {
 	};
 
 	public static DuctFactory transport = new DuctFactory() {
+
 		@Override
 		public TileTDBase createTileEntity(Duct duct, World worldObj) {
 
@@ -127,6 +128,7 @@ public abstract class DuctFactory {
 	};
 
 	public static DuctFactory transport_longrange = new DuctFactory() {
+
 		@Override
 		public TileTDBase createTileEntity(Duct duct, World worldObj) {
 
@@ -135,6 +137,7 @@ public abstract class DuctFactory {
 	};
 
 	public static DuctFactory transport_crossover = new DuctFactory() {
+
 		@Override
 		public TileTDBase createTileEntity(Duct duct, World worldObj) {
 

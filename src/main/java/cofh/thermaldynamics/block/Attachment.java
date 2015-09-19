@@ -210,7 +210,8 @@ public abstract class Attachment {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask(){
+	public CoverHoleRender.ITransformer[] getHollowMask() {
+
 		return null;
 	}
 }

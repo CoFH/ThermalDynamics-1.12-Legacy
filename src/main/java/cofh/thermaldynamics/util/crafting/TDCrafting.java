@@ -133,10 +133,12 @@ public class TDCrafting {
 
 		/* TRANSPORT */
 
-		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transport_structure.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotElectrum", 'G', glassHardened));
+		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transport_structure.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotElectrum", 'G',
+				glassHardened));
 		addTransposerFill(800, TDDucts.transport_structure.itemStack, TDDucts.transport.itemStack, new FluidStack(TFFluids.fluidAerotheum, 50), false);
 		addTransposerFill(32000, TDDucts.transport.itemStack, TDDucts.transport_crossover.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
-		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transport_longrange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotCopper", 'G', glassHardened));
+		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transport_longrange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotCopper", 'G',
+				glassHardened));
 
 		/* COVERS */
 		if (enableCoverRecipes) {

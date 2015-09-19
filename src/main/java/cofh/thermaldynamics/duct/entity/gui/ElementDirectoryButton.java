@@ -1,14 +1,17 @@
 package cofh.thermaldynamics.duct.entity.gui;
 
 import cofh.lib.gui.element.ElementButton;
+
 import java.util.List;
 
 public class ElementDirectoryButton extends ElementButton {
+
 	final int index;
 	final GuiTransport gui;
 	DirectoryEntry entry;
 
-	public ElementDirectoryButton(int index, GuiTransport gui, int posX, int posY, int sizeX, int sizeY, int sheetX, int sheetY, int hoverX, int hoverY, String texture) {
+	public ElementDirectoryButton(int index, GuiTransport gui, int posX, int posY, int sizeX, int sizeY, int sheetX, int sheetY, int hoverX, int hoverY,
+			String texture) {
 
 		super(gui, posX, posY, sizeX, sizeY, sheetX, sheetY, hoverX, hoverY, texture);
 		this.index = index;
@@ -17,13 +20,9 @@ public class ElementDirectoryButton extends ElementButton {
 
 	public ElementDirectoryButton(int i, GuiTransport gui, int x0, int y0) {
 
-		this(i, gui,
-				x0, y0 + i * (GuiTransport.BUTTON_HEIGHT + GuiTransport.BUTTON_OFFSET),
-				GuiTransport.BUTTON_WIDTH, GuiTransport.BUTTON_HEIGHT,
-				GuiTransport.GUI_BUTTON_X0_BASE, GuiTransport.GUI_BUTTON_Y0_BASE,
-				GuiTransport.GUI_BUTTON_X0_HOVER, GuiTransport.GUI_BUTTON_Y0_HOVER,
-				GuiTransport.TEX_PATH
-		);
+		this(i, gui, x0, y0 + i * (GuiTransport.BUTTON_HEIGHT + GuiTransport.BUTTON_OFFSET), GuiTransport.BUTTON_WIDTH, GuiTransport.BUTTON_HEIGHT,
+				GuiTransport.GUI_BUTTON_X0_BASE, GuiTransport.GUI_BUTTON_Y0_BASE, GuiTransport.GUI_BUTTON_X0_HOVER, GuiTransport.GUI_BUTTON_Y0_HOVER,
+				GuiTransport.TEX_PATH);
 	}
 
 	public void setEntry(DirectoryEntry entry) {
@@ -40,8 +39,9 @@ public class ElementDirectoryButton extends ElementButton {
 	@Override
 	public void onClick() {
 
-		if (entry != null)
+		if (entry != null) {
 			gui.goToDest(entry);
+		}
 	}
 
 	@Override
@@ -50,21 +50,22 @@ public class ElementDirectoryButton extends ElementButton {
 		super.drawBackground(mouseX, mouseY, gameTicks);
 	}
 
-
 	@Override
 	public void drawForeground(int mouseX, int mouseY) {
 
 		super.drawForeground(mouseX, mouseY);
 
-		if (entry == null)
+		if (entry == null) {
 			return;
+		}
 
 		String text = getFontRenderer().trimStringToWidth(entry.getName(), sizeX - sizeY - 4);
 
 		getFontRenderer().drawStringWithShadow(text, posX + sizeY + 4, posY + (sizeY - 8) / 2, getTextColor(mouseX, mouseY));
 
-		if (entry.icon != null)
+		if (entry.icon != null) {
 			gui.drawItemStack(entry.icon, posX + 3, posY + 3, false, null);
+		}
 	}
 
 	protected int getTextColor(int mouseX, int mouseY) {
@@ -88,15 +89,14 @@ public class ElementDirectoryButton extends ElementButton {
 
 		list.add(entry.getName());
 
-//		list.add(
-//				String.format("x=%d, y=%d, z=%d", entry.x, entry.y, entry.z)
-//		);
+		//		list.add(
+		//				String.format("x=%d, y=%d, z=%d", entry.x, entry.y, entry.z)
+		//		);
 		list.add(String.format("x: %d", entry.x));
 		list.add(String.format("y: %d", entry.y));
 		list.add(String.format("z: %d", entry.z));
 
-//		Math.abs(entry.x - gui.container.directoryEntry.x)
-				
+		//		Math.abs(entry.x - gui.container.directoryEntry.x)
 
 	}
 }

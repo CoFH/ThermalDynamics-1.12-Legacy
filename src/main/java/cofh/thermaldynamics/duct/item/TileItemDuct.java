@@ -471,8 +471,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound compound = list.getCompoundTagAt(i);
 				TravelingItem travelingItem = new TravelingItem(compound);
-				if(travelingItem.stack != null)
+				if (travelingItem.stack != null) {
 					myItems.add(travelingItem);
+				}
 			}
 		}
 
@@ -764,16 +765,11 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		try {
 			ItemStack itemStack = simTransfer(side, insertingItem);
 			return itemStack == null ? 0 : itemStack.stackSize;
-		}catch(Exception err){
+		} catch (Exception err) {
 			IInventory inventory = cache == null ? null : cache[side];
 
-			CrashReport crashReport = CrashHelper.makeDetailedCrashReport(err,
-					"Inserting", this,
-					"Inserting Item", insertingItem,
-					"Side", side,
-					"Cache", inventory,
-					"Type", cacheType == null ? null : cacheType[side],
-					"Grid", internalGrid);
+			CrashReport crashReport = CrashHelper.makeDetailedCrashReport(err, "Inserting", this, "Inserting Item", insertingItem, "Side", side, "Cache",
+					inventory, "Type", cacheType == null ? null : cacheType[side], "Grid", internalGrid);
 			CrashHelper.addSurroundingDetails(crashReport, "ItemDuct", this);
 			CrashHelper.addInventoryContents(crashReport, "Destination Invetory", inventory);
 			throw new ReportedException(crashReport);

@@ -3,12 +3,14 @@ package cofh.thermaldynamics.duct.entity.gui;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import cofh.thermaldynamics.gui.container.ContainerTDBase;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ContainerTransportConfig extends ContainerTDBase {
+
 	private final InventoryPlayer inventory;
 	private final TileTransportDuct transportDuct;
 
@@ -22,6 +24,7 @@ public class ContainerTransportConfig extends ContainerTDBase {
 		addSlotToContainer(new SlotIcon(8, 15, transportDuct));
 	}
 
+	@Override
 	protected void addPlayerInventory(InventoryPlayer inventory) {
 
 		for (int i = 0; i < 3; i++) {
@@ -36,9 +39,9 @@ public class ContainerTransportConfig extends ContainerTDBase {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer p_75145_1_) {
+
 		return true;
 	}
-
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
@@ -82,6 +85,7 @@ public class ContainerTransportConfig extends ContainerTDBase {
 
 	@Override
 	protected int numTileSlots() {
+
 		return 1;
 	}
 }

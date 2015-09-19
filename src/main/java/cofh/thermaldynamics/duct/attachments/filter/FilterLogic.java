@@ -82,6 +82,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	}
 
 	public void calcItems() {
+
 		synchronized (items) {
 			recalc = false;
 
@@ -117,8 +118,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				customFilterFluids = null;
 			}
 
-			itemLoop:
-			for (ItemStack item : items) {
+			itemLoop: for (ItemStack item : items) {
 				if (item != null) {
 					if (isItem()) {
 						if (item.getItem() instanceof ISpecialFilterItem) {

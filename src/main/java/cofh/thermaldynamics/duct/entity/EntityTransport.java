@@ -349,34 +349,33 @@ public class EntityTransport extends Entity {
 				if (rider instanceof EntityPlayerMP) {
 					float yaw, pitch;
 					switch (direction) {
-						case 0:
-							yaw = rider.rotationYaw;
-							pitch = 0;
-							break;
-						case 1:
-							yaw = rider.rotationYaw;
-							pitch = 0;
-							break;
-						case 2:
-							yaw = 180;
-							pitch = 0;
-							break;
-						case 3:
-							yaw = 0;
-							pitch = 0;
-							break;
-						case 4:
-							yaw = 90;
-							pitch = 0;
-							break;
-						case 5:
-							yaw = 270;
-							pitch = 0;
-							break;
-						default:
-							return;
+					case 0:
+						yaw = rider.rotationYaw;
+						pitch = 0;
+						break;
+					case 1:
+						yaw = rider.rotationYaw;
+						pitch = 0;
+						break;
+					case 2:
+						yaw = 180;
+						pitch = 0;
+						break;
+					case 3:
+						yaw = 0;
+						pitch = 0;
+						break;
+					case 4:
+						yaw = 90;
+						pitch = 0;
+						break;
+					case 5:
+						yaw = 270;
+						pitch = 0;
+						break;
+					default:
+						return;
 					}
-
 
 					((EntityPlayerMP) rider).playerNetServerHandler.setPlayerLocation(x, y, z, yaw, pitch);
 				}
@@ -630,4 +629,5 @@ public class EntityTransport extends Entity {
 		destinationWorld.spawnEntityInWorld(entity);
 		entity.dimension = destDim;
 	}
+
 }

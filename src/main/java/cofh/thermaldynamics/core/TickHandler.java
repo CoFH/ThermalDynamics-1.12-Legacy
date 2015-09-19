@@ -98,7 +98,9 @@ public class TickHandler {
 
 		World world = evt.world;
 
-		if(world.isRemote) return;
+		if (world.isRemote) {
+			return;
+		}
 
 		synchronized (handlers) {
 			handlers.remove(world);

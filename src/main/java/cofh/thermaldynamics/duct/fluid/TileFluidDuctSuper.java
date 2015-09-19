@@ -37,9 +37,9 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		if(connectionType == BlockDuct.ConnectionTypes.TILECONNECTION)
+		if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
-		else if(connectionType == BlockDuct.ConnectionTypes.NONE){
+		} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
 			return null;
 		} else {
 			return CoverHoleRender.hollowDuctLarge;

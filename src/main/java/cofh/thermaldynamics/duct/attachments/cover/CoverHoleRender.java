@@ -2,10 +2,12 @@ package cofh.thermaldynamics.duct.attachments.cover;
 
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.core.TDProps;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import net.minecraft.client.renderer.Tessellator;
 
 public class CoverHoleRender {
@@ -17,15 +19,17 @@ public class CoverHoleRender {
 	public static final ITransformer[] hollowDuctCryo = CoverHoleRender.octaCover(0.5F - 0.375F, 0.1812F);
 	public static final ITransformer[] hollowDuctTransport = CoverHoleRender.octaCover(0.5F * (1 - TDProps.largeInnerModelScaling), 0.1812F);
 
-
 	public static class Quad {
+
 		Vertex8[] verts;
+
 		public Quad(Vertex8[] verts) {
+
 			this.verts = verts;
 		}
 
-
 		public void sliceStretchDraw(int x, int y, int z, int side, ITransformer[] transformers) {
+
 			float[][] uvTransform = getUVTransform(verts, side, x, y, z);
 
 			if (uvTransform == null) {
@@ -35,12 +39,14 @@ public class CoverHoleRender {
 
 			for (ITransformer transformer : transformers) {
 				Quad slice = slice(x, y, z, side, transformer, uvTransform);
-				if (slice.notEmpty())
+				if (slice.notEmpty()) {
 					slice.draw();
+				}
 			}
 		}
 
 		private boolean notEmpty() {
+
 			Vertex8 a = verts[0];
 			byte f = 0;
 			boolean flagX = true, flagY = true, flagZ = true;
@@ -58,13 +64,16 @@ public class CoverHoleRender {
 					flagZ = false;
 					f++;
 				}
-				if (f > 1) return true;
+				if (f > 1) {
+					return true;
+				}
 			}
 
 			return false;
 		}
 
 		public Quad slice(int x, int y, int z, int side, ITransformer transformer, float[][] uvTransform) {
+
 			Vertex8[] v = new Vertex8[this.verts.length];
 			int s = side >> 1;
 
@@ -115,12 +124,14 @@ public class CoverHoleRender {
 		}
 
 		public void draw() {
+
 			for (Vertex8 vertex : verts) {
 				vertex.draw();
 			}
 		}
 
 		public float[][] getUVTransform(Vertex8[] quads, int side, int x, int y, int z) {
+
 			int s = side >> 1;
 			float n = 0;
 			float sx = 0, sy = 0, sxy = 0, sxx = 0, syy = 0;
@@ -162,35 +173,37 @@ public class CoverHoleRender {
 
 			if (Math.abs(determinant) <= 1e-4F) {
 				return null;
-			} else
+			} else {
 				determinant = 1 / determinant;
+			}
 
 			float cy_xy = (sxy * sy - syy * sx) * determinant;
 			float cx_xy = (sxy * sx - sxx * sy) * determinant;
 			float cx_y = (sx * sy - sxy * n) * determinant;
-			float XXI[][] = {
-					{v * determinant, cy_xy, cx_xy},
-					{cy_xy, (syy * n - sy * sy) * determinant, cx_y},
-					{cx_xy, cx_y, (sxx * n - sx * sx) * determinant}
-			};
+			float XXI[][] = { { v * determinant, cy_xy, cx_xy }, { cy_xy, (syy * n - sy * sy) * determinant, cx_y },
+					{ cx_xy, cx_y, (sxx * n - sx * sx) * determinant } };
 
 			float[][] beta = new float[3][Vertex8.TEX_NUM];
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < Vertex8.TEX_NUM; j++) {
-					for (int k = 0; k < 3; k++)
+					for (int k = 0; k < 3; k++) {
 						beta[i][j] += XXI[i][k] * XY[k][j];
+					}
 				}
+			}
 
 			return beta;
 		}
 
 		@Override
 		public String toString() {
+
 			return String.format("Quad{%s}", Arrays.toString(verts));
 		}
 	}
 
 	public static void holify(int startIndex, int x, int y, int z, int side, ITransformer[] transformers) {
+
 		List<Quad> tessQuads = loadFromTessellator(startIndex, true);
 
 		for (Quad tessQuad : tessQuads) {
@@ -199,6 +212,7 @@ public class CoverHoleRender {
 	}
 
 	public static List<Quad> loadFromTessellator(int startIndex, boolean pop) {
+
 		Tessellator tess = Tessellator.instance;
 		int endIndex = tess.rawBufferIndex;
 
@@ -219,15 +233,8 @@ public class CoverHoleRender {
 			for (int k2 = 0; k2 < 4; k2++) {
 				int i = k + k2 * 8;
 
-				verts[k2] = new Vertex8(
-						Float.intBitsToFloat(rb[i]) - dx,
-						Float.intBitsToFloat(rb[i + 1]) - dy,
-						Float.intBitsToFloat(rb[i + 2]) - dz,
-						Float.intBitsToFloat(rb[i + 3]),
-						Float.intBitsToFloat(rb[i + 4]),
-						rb[i + 5],
-						rb[i + 6],
-						rb[i + 7]);
+				verts[k2] = new Vertex8(Float.intBitsToFloat(rb[i]) - dx, Float.intBitsToFloat(rb[i + 1]) - dy, Float.intBitsToFloat(rb[i + 2]) - dz,
+						Float.intBitsToFloat(rb[i + 3]), Float.intBitsToFloat(rb[i + 4]), rb[i + 5], rb[i + 6], rb[i + 7]);
 			}
 
 			list.add(new Quad(verts));
@@ -241,39 +248,27 @@ public class CoverHoleRender {
 		return list;
 	}
 
-
 	public static ITransformer[] hollowCover(float w) {
-		return new ITransformer[]{
-				new TransformSquare(0, w, 0, 1),
-				new TransformSquare(1 - w, 1, 0, 1),
-				new TransformSquare(w, 1 - w, 0, w),
-				new TransformSquare(w, 1 - w, 1 - w, 1)
-		};
+
+		return new ITransformer[] { new TransformSquare(0, w, 0, 1), new TransformSquare(1 - w, 1, 0, 1), new TransformSquare(w, 1 - w, 0, w),
+				new TransformSquare(w, 1 - w, 1 - w, 1) };
 	}
 
 	public static ITransformer[] octaCover(float w, float k) {
-		return new ITransformer[]{
-				new TransformSquare(0, w, 0, 1),
-				new TransformSquare(1 - w, 1, 0, 1),
-				new TransformSquare(w, 1 - w, 0, w),
-				new TransformSquare(w, 1 - w, 1 - w, 1),
-				new TriTransformer(w, w + 0.5F - k, false, false),
-				new TriTransformer(w, w + 0.5F - k, false, true),
-				new TriTransformer(w, w + 0.5F - k, true, false),
-				new TriTransformer(w, w + 0.5F - k, true, true),
-		};
+
+		return new ITransformer[] { new TransformSquare(0, w, 0, 1), new TransformSquare(1 - w, 1, 0, 1), new TransformSquare(w, 1 - w, 0, w),
+				new TransformSquare(w, 1 - w, 1 - w, 1), new TriTransformer(w, w + 0.5F - k, false, false), new TriTransformer(w, w + 0.5F - k, false, true),
+				new TriTransformer(w, w + 0.5F - k, true, false), new TriTransformer(w, w + 0.5F - k, true, true), };
 	}
 
 	public static ITransformer[] octaCover(float k) {
-		return new ITransformer[]{
-				new TriTransformer(0F, 0.5F - k, false, false),
-				new TriTransformer(0F, 0.5F - k, false, true),
-				new TriTransformer(0F, 0.5F - k, true, false),
-				new TriTransformer(0F, 0.5F - k, true, true),
-		};
+
+		return new ITransformer[] { new TriTransformer(0F, 0.5F - k, false, false), new TriTransformer(0F, 0.5F - k, false, true),
+				new TriTransformer(0F, 0.5F - k, true, false), new TriTransformer(0F, 0.5F - k, true, true), };
 	}
 
 	public static interface ITransformer {
+
 		boolean shouldTransform(float dx, float dy);
 
 		float transformX(float dx, float dy);
@@ -282,9 +277,11 @@ public class CoverHoleRender {
 	}
 
 	public static class TransformSquare implements ITransformer {
+
 		float x0, x1, y0, y1;
 
 		public TransformSquare(float x0, float x1, float y0, float y1) {
+
 			this.x0 = x0;
 			this.x1 = x1;
 			this.y0 = y0;
@@ -293,45 +290,42 @@ public class CoverHoleRender {
 
 		@Override
 		public boolean shouldTransform(float dx, float dy) {
+
 			return dx < x0 || dx > x1 || dy < y0 || dy > y1;
 		}
 
 		@Override
 		public float transformX(float dx, float dy) {
+
 			return MathHelper.clampF(dx, x0, x1);
 		}
 
 		@Override
 		public float transformY(float dx, float dy) {
+
 			return MathHelper.clampF(dy, y0, y1);
 		}
 
 		@Override
 		public String toString() {
-			return "TransformSquare{" +
-					"x0=" + x0 +
-					", x1=" + x1 +
-					", y0=" + y0 +
-					", y1=" + y1 +
-					'}';
+
+			return "TransformSquare{" + "x0=" + x0 + ", x1=" + x1 + ", y0=" + y0 + ", y1=" + y1 + '}';
 		}
 	}
 
 	public static class TriTransformer implements ITransformer {
+
 		@Override
 		public String toString() {
-			return "TriTransformer{" +
-					"m=" + m +
-					", k=" + k +
-					", flipX=" + flipX +
-					", flipY=" + flipY +
-					'}';
+
+			return "TriTransformer{" + "m=" + m + ", k=" + k + ", flipX=" + flipX + ", flipY=" + flipY + '}';
 		}
 
 		float m, k;
 		boolean flipX, flipY;
 
 		public TriTransformer(float m, float k, boolean flipX, boolean flipY) {
+
 			this.m = m;
 			this.k = k;
 			this.flipX = flipX;
@@ -340,20 +334,31 @@ public class CoverHoleRender {
 
 		@Override
 		public boolean shouldTransform(float dx, float dy) {
-			if (flipX) dx = 1 - dx;
-			if (flipY) dy = 1 - dy;
+
+			if (flipX) {
+				dx = 1 - dx;
+			}
+			if (flipY) {
+				dy = 1 - dy;
+			}
 
 			return dx < m || dy < m || (dx + dy) > k;
 		}
 
 		@Override
 		public float transformX(float dx, float dy) {
-			if (flipX) dx = 1 - dx;
 
-			if (dx < m)
+			if (flipX) {
+				dx = 1 - dx;
+			}
+
+			if (dx < m) {
 				return flipX ? 1 - m : m;
+			}
 
-			if (flipY) dy = 1 - dy;
+			if (flipY) {
+				dy = 1 - dy;
+			}
 			if (dy < m) {
 				float d = MathHelper.clampF(dx, m, k - m);
 				return flipX ? 1 - d : d;
@@ -365,13 +370,18 @@ public class CoverHoleRender {
 
 		@Override
 		public float transformY(float dx, float dy) {
-			if (flipY) dy = 1 - dy;
+
+			if (flipY) {
+				dy = 1 - dy;
+			}
 
 			if (dy < m) {
 				return flipY ? 1 - m : m;
 			}
 
-			if (flipX) dx = 1 - dx;
+			if (flipX) {
+				dx = 1 - dx;
+			}
 			if (dx < m) {
 				float d = MathHelper.clampF(dy, m, k - m);
 				return flipY ? 1 - d : d;
@@ -383,6 +393,7 @@ public class CoverHoleRender {
 	}
 
 	public static class Vertex8 {
+
 		public final static int TEX_NUM = 8;
 		float x, y, z;
 		float u, v;
@@ -392,10 +403,12 @@ public class CoverHoleRender {
 
 		@Override
 		public String toString() {
+
 			return String.format("V8{{%s,%s,%s},{%s,%s},c=%d,n=%d,b=%d}", x, y, z, u, v, color, normal, brightness);
 		}
 
 		public Vertex8(float x, float y, float z, float u, float v, int color, int normal, int brightness) {
+
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -407,10 +420,12 @@ public class CoverHoleRender {
 		}
 
 		public Vertex8 copy() {
+
 			return new Vertex8(x, y, z, u, v, color, normal, brightness);
 		}
 
 		public void draw() {
+
 			Tessellator tess = Tessellator.instance;
 			int index = tess.rawBufferIndex;
 			tess.addVertex(this.x, this.y, this.z); // to grow the rawBuffer if needed
@@ -423,23 +438,17 @@ public class CoverHoleRender {
 		}
 
 		public float[] buildTex() {
-			return new float[]{
-					u, v,
-					(color >> 24) & 0xFF,
-					(color >> 16) & 0xFF,
-					(color >> 8) & 0xFF,
-					(color) & 0xFF,
-					brightness & 0xFFFF, (brightness >>> 16) & 0xFFFF
-			};
+
+			return new float[] { u, v, (color >> 24) & 0xFF, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, brightness & 0xFFFF,
+					(brightness >>> 16) & 0xFFFF };
 		}
 
 		public void reloadTex(float[] tex) {
+
 			u = tex[0];
 			v = tex[1];
-			color = ((int) MathHelper.clampF(tex[2], 0, 255) << 24) |
-					((int) MathHelper.clampF(tex[3], 0, 255) << 16) |
-					((int) MathHelper.clampF(tex[4], 0, 255) << 8) |
-					((int) MathHelper.clampF(tex[5], 0, 255));
+			color = ((int) MathHelper.clampF(tex[2], 0, 255) << 24) | ((int) MathHelper.clampF(tex[3], 0, 255) << 16)
+					| ((int) MathHelper.clampF(tex[4], 0, 255) << 8) | ((int) MathHelper.clampF(tex[5], 0, 255));
 
 			brightness = ((int) MathHelper.clampF(tex[6], 0, 65535)) | ((int) MathHelper.clampF(tex[7], 0, 65535) << 16);
 		}

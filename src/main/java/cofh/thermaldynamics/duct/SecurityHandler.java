@@ -6,7 +6,9 @@ import cofh.lib.util.helpers.SecurityHelper;
 import cofh.lib.util.helpers.StringHelper;
 import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
+
 import java.util.UUID;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PreYggdrasilConverter;
@@ -76,6 +78,7 @@ public class SecurityHandler implements ISecurable {
 
 	@Override
 	public boolean canPlayerAccess(EntityPlayer player) {
+
 		return false;
 	}
 
