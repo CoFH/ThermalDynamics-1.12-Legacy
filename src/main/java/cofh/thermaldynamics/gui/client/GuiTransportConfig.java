@@ -1,8 +1,9 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiBaseAdv;
 import cofh.lib.gui.element.ElementTextField;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.gui.container.ContainerTransportConfig;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -48,4 +49,5 @@ public class GuiTransportConfig extends GuiBaseAdv {
 			}
 		}.setText(transportDuct.data.name).setBackgroundColor(0, 0, 0));
 	}
+
 }

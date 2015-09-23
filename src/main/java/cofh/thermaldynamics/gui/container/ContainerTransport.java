@@ -1,7 +1,8 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.container;
 
 import cofh.core.network.PacketHandler;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.multiblock.RouteCache;
 
 import java.util.ArrayList;
@@ -114,7 +115,6 @@ public class ContainerTransport extends Container {
 
 		directory = entries;
 		Collections.sort(directory, blockDist);
-
 		needsResort = true;
 	}
 
@@ -128,4 +128,5 @@ public class ContainerTransport extends Container {
 
 		this.directoryEntry = directoryEntry;
 	}
+
 }

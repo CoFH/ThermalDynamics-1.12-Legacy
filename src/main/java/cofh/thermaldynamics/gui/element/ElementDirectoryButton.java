@@ -1,6 +1,8 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.element;
 
 import cofh.lib.gui.element.ElementButton;
+import cofh.thermaldynamics.gui.client.DirectoryEntry;
+import cofh.thermaldynamics.gui.client.GuiTransport;
 
 import java.util.List;
 
@@ -97,6 +99,6 @@ public class ElementDirectoryButton extends ElementButton {
 		list.add(String.format("z: %d", entry.z));
 
 		//		Math.abs(entry.x - gui.container.directoryEntry.x)
-
 	}
+
 }

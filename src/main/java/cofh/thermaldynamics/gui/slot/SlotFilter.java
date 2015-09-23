@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.gui.container;
+package cofh.thermaldynamics.gui.slot;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterConfig;

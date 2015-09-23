@@ -1,5 +1,6 @@
 package cofh.thermaldynamics;
 
+import cofh.CoFHCore;
 import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
@@ -60,9 +61,12 @@ public class ThermalDynamics extends BaseMod {
 	public static final String modId = "ThermalDynamics";
 	public static final String modName = "Thermal Dynamics";
 	public static final String version = "1.7.10R1.2.0B1";
-	public static final String dependencies = "required-after:ThermalFoundation@[" + ThermalFoundation.version + ",)";
-	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/ThermalDynamics";
+	public static final String version_max = "1.7.10R1.3.0";
+	public static final String dependencies = CoFHCore.version_group + ThermalFoundation.version_group;
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
+
+	public static final String version_group = "required-after:" + modId + "@[" + version + "," + version_max + ");";
+	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/" + modId;
 
 	@Instance(modId)
 	public static ThermalDynamics instance;

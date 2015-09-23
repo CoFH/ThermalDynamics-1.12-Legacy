@@ -1,8 +1,8 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
-import cofh.thermaldynamics.gui.container.ContainerTDBase;
+import cofh.thermaldynamics.gui.slot.SlotIcon;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -88,4 +88,5 @@ public class ContainerTransportConfig extends ContainerTDBase {
 
 		return 1;
 	}
+
 }

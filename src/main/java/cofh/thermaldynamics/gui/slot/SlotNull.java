@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.gui.container;
+package cofh.thermaldynamics.gui.slot;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

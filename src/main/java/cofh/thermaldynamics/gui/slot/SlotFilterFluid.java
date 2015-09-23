@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.gui.container;
+package cofh.thermaldynamics.gui.slot;
 
 import cofh.api.item.ISpecialFilterFluid;
 import cofh.lib.util.helpers.FluidHelper;

@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.client;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
@@ -10,9 +10,9 @@ import net.minecraft.item.ItemStack;
 
 public final class DirectoryEntry {
 
-	String name;
-	int x, y, z;
-	ItemStack icon;
+	public final String name;
+	public final int x, y, z;
+	public final ItemStack icon;
 
 	public static void addDirectoryEntry(PacketTileInfo myPayload, TileTransportDuct endPoint) {
 
@@ -52,4 +52,5 @@ public final class DirectoryEntry {
 			return name;
 		}
 	}
+
 }

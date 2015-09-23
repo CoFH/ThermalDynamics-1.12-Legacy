@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiBaseAdv;
 import cofh.core.network.PacketHandler;
@@ -7,6 +7,8 @@ import cofh.lib.gui.element.ElementButtonManaged;
 import cofh.lib.gui.element.listbox.SliderVertical;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.gui.container.ContainerTransport;
+import cofh.thermaldynamics.gui.element.ElementDirectoryButton;
 
 import java.util.ArrayList;
 
@@ -18,7 +20,7 @@ public class GuiTransport extends GuiBaseAdv {
 
 	final ContainerTransport container;
 
-	static final String TEX_PATH = "thermaldynamics:textures/gui/Transport.png";
+	public static final String TEX_PATH = "thermaldynamics:textures/gui/Transport.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 
 	ElementDirectoryButton[] directoryButtons;
@@ -37,16 +39,16 @@ public class GuiTransport extends GuiBaseAdv {
 		this.name = "info.thermaldynamics.transport.name";
 	}
 
-	final static int NUM_ENTRIES = 7;
-	final static int BUTTON_WIDTH = 155;
-	final static int BUTTON_HEIGHT = 22;
-	final static int BUTTON_OFFSET = 1;
+	public final static int NUM_ENTRIES = 7;
+	public final static int BUTTON_WIDTH = 155;
+	public final static int BUTTON_HEIGHT = 22;
+	public final static int BUTTON_OFFSET = 1;
 
-	final static int GUI_BUTTON_X0_BASE = 0;
-	final static int GUI_BUTTON_Y0_BASE = 204;
+	public final static int GUI_BUTTON_X0_BASE = 0;
+	public final static int GUI_BUTTON_Y0_BASE = 204;
 
-	final static int GUI_BUTTON_X0_HOVER = GUI_BUTTON_X0_BASE;
-	final static int GUI_BUTTON_Y0_HOVER = GUI_BUTTON_Y0_BASE + BUTTON_HEIGHT;
+	public final static int GUI_BUTTON_X0_HOVER = GUI_BUTTON_X0_BASE;
+	public final static int GUI_BUTTON_Y0_HOVER = GUI_BUTTON_Y0_BASE + BUTTON_HEIGHT;
 
 	final static int SLIDER_WIDTH = 6;
 
@@ -132,7 +134,6 @@ public class GuiTransport extends GuiBaseAdv {
 		if (directory == null) {
 			return;
 		}
-
 		boolean needSlider = directory.size() > NUM_ENTRIES;
 
 		int additionalEntries = directory.size() - NUM_ENTRIES;
@@ -149,7 +150,6 @@ public class GuiTransport extends GuiBaseAdv {
 			directoryButtons[i].setPosX(x0);
 			directoryButtons[i].setEntry(index >= directory.size() ? null : directory.get(index));
 		}
-
 		//		buttonConfig.setPosition(x0, buttonConfig.getPosY());
 
 	}
@@ -159,4 +159,5 @@ public class GuiTransport extends GuiBaseAdv {
 
 		return vertical.isVisible() && vertical.onMouseWheel(mouseX, mouseY, wheelMovement);
 	}
+
 }

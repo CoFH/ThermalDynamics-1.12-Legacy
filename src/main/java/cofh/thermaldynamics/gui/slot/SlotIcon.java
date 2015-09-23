@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.entity.gui;
+package cofh.thermaldynamics.gui.slot;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
