@@ -97,6 +97,9 @@ public class CoverBlockAccess implements IBlockAccess {
 	@SideOnly(Side.CLIENT)
 	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int t) {
 
+		if (((side == 0 && y > blockY) || (side == 1 && y < blockY) || (side == 2 && z > blockZ) || (side == 3 && z < blockZ) || (side == 4 && x > blockX) || (side == 5 && x < blockX))) {
+			return world.getLightBrightnessForSkyBlocks(blockX, blockY, blockZ, t);
+		}
 		return world.getLightBrightnessForSkyBlocks(x, y, z, t);
 	}
 
