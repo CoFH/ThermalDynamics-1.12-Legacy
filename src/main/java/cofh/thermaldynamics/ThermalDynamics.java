@@ -129,8 +129,8 @@ public class ThermalDynamics extends BaseMod {
 			initializer.initialize();
 		}
 
-		FMLCommonHandler.instance().bus().register(TickHandler.INSTANCE);
-		MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
+		FMLCommonHandler.instance().bus().register(TickHandler.instance);
+		MinecraftForge.EVENT_BUS.register(TickHandler.instance);
 
 		PacketDebug.initialize();
 		DebugHelper.initialize();

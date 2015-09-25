@@ -457,7 +457,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 	public static final Perm[] levelPerms = { Perm.SERVO, Perm.SERVO, Perm.FILTER, Perm.ALL };
 	public static final int[][] minLevels = { { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, };
 
-	public static final int[][] maxLevels = { { maxSize[0], 0, 0, 0 }, { maxSize[1], 0, 0, 0 }, { maxSize[2], 3, 1, 0 }, { maxSize[3], 3, 1, 64 },
+	public static final int[][] maxLevels = { { maxSize[0], 0, 1, 0 }, { maxSize[1], 0, 1, 0 }, { maxSize[2], 3, 1, 0 }, { maxSize[3], 3, 1, 64 },
 			{ maxSize[4], 3, 1, 320 } };
 
 	public static final int[] defaultLevels = { 64, 0, 1, 0 };

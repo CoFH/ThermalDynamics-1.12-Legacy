@@ -15,9 +15,9 @@ import net.minecraftforge.event.world.WorldEvent;
 
 public class TickHandler {
 
-	public static TickHandler INSTANCE = new TickHandler();
-	public final static WeakHashMap<World, WorldGridList> handlers = new WeakHashMap<World, WorldGridList>();
-	public final static LinkedHashSet<WeakReference<IMultiBlock>> multiBlocksToCalculate = new LinkedHashSet<WeakReference<IMultiBlock>>();
+	public static final TickHandler instance = new TickHandler();
+	public static final WeakHashMap<World, WorldGridList> handlers = new WeakHashMap<World, WorldGridList>();
+	public static final LinkedHashSet<WeakReference<IMultiBlock>> multiBlocksToCalculate = new LinkedHashSet<WeakReference<IMultiBlock>>();
 
 	public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
 

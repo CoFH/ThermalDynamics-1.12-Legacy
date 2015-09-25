@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 
 public class TickHandlerClient {
 
-	public static TickHandlerClient INSTANCE = new TickHandlerClient();
+	public static final TickHandlerClient instance = new TickHandlerClient();
 	public static HashSet<TileItemDuct> tickBlocks = new HashSet<TileItemDuct>();
 	public static HashSet<TileItemDuct> tickBlocksToAdd = new HashSet<TileItemDuct>();
 	public static HashSet<TileItemDuct> tickBlocksToRemove = new HashSet<TileItemDuct>();

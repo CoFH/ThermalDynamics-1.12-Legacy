@@ -30,4 +30,5 @@ public interface IFilterItems {
 	};
 
 	public int getMaxStock();
+
 }

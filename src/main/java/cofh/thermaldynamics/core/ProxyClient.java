@@ -30,7 +30,7 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void registerRenderInformation() {
 
-		FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
+		FMLCommonHandler.instance().bus().register(TickHandlerClient.instance);
 
 		for (BlockDuct duct : ThermalDynamics.blockDuct) {
 			MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
