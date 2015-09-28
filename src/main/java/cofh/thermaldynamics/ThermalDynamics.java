@@ -23,6 +23,7 @@ import cofh.thermaldynamics.item.ItemFilter;
 import cofh.thermaldynamics.item.ItemRelay;
 import cofh.thermaldynamics.item.ItemRetriever;
 import cofh.thermaldynamics.item.ItemServo;
+import cofh.thermaldynamics.plugins.TDPlugins;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
@@ -117,6 +118,8 @@ public class ThermalDynamics extends BaseMod {
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
 		}
+
+		TDPlugins.preInit();
 	}
 
 	@EventHandler
@@ -134,6 +137,7 @@ public class ThermalDynamics extends BaseMod {
 
 		PacketDebug.initialize();
 		DebugHelper.initialize();
+		TDPlugins.initialize();
 	}
 
 	@EventHandler
@@ -145,10 +149,14 @@ public class ThermalDynamics extends BaseMod {
 		TDCrafting.loadRecipes();
 
 		proxy.registerRenderInformation();
+
+		TDPlugins.postInit();
 	}
 
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
+
+		TDPlugins.loadComplete();
 
 		config.cleanUp(false, true);
 		configClient.cleanUp(false, true);
