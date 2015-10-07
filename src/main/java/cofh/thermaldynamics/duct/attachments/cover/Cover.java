@@ -107,7 +107,7 @@ public class Cover extends Attachment {
 			hollowMask = tile.getHollowMask(side);
 		}
 
-		return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask);
+		return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask, tile.covers);
 	}
 
 	@Override

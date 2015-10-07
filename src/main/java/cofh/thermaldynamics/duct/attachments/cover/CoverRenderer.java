@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.attachments.cover;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.repack.codechicken.lib.vec.Cuboid6;
-import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.render.RenderDuct;
 
 import java.nio.ByteOrder;
@@ -34,6 +33,12 @@ public class CoverRenderer {
 	public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
 			boolean addTrans, CoverHoleRender.ITransformer[] hollowCover) {
 
+		return renderCover(renderBlocks, x, y, z, side, block, meta, bounds, addNormals, addTrans, hollowCover, null);
+	}
+
+	public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
+			boolean addTrans, CoverHoleRender.ITransformer[] hollowCover, Cover[] covers) {
+
 		facadeRenderBlocks.blockAccess = CoverBlockAccess.getInstance(renderBlocks.blockAccess, x, y, z, side, block, meta);
 
 		Tessellator tess = Tessellator.instance;
@@ -60,7 +65,6 @@ public class CoverRenderer {
 			float vec[] = new float[3];
 			boolean flat[] = new boolean[3];
 
-			Vector3 normal;
 			int intNormal = 0;
 
 			IIcon icon = RenderDuct.coverBase;
@@ -115,6 +119,7 @@ public class CoverRenderer {
 							quad[k2][j] = clampF(quad[k2][j], bounds, j);
 						} else {
 							if (flag && flag2 && flag3) {
+								// TODO: only clamp here when covers[] != null && has a cover on the side this vertex is on
 								quad[k2][j] = MathHelper.clampF(quad[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
 							}
 						}
