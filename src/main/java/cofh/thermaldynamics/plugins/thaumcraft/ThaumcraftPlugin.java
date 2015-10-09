@@ -1,10 +1,11 @@
 package cofh.thermaldynamics.plugins.thaumcraft;
 
 import static cofh.api.modhelpers.ThaumcraftHelper.parseAspects;
+
 import cofh.asm.relauncher.Strippable;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermalexpansion.ThermalExpansion;
+
 import net.minecraft.item.ItemStack;
 
 public class ThaumcraftPlugin {
@@ -74,7 +75,7 @@ public class ThaumcraftPlugin {
 			parseAspects(new ItemStack(ThermalDynamics.itemRetriever, 1, i), "1 metallum, 1 potentia, 1 machina, 2 permutatio, 2 alienis" + additionalAspects[i]);
 		}
 
-		ThermalExpansion.log.info("Thermal Dynamics: Thaumcraft Plugin Enabled.");
+		ThermalDynamics.log.info("Thaumcraft Plugin Enabled.");
 	}
 
 

@@ -2,7 +2,7 @@ package cofh.thermaldynamics.plugins;
 
 import cofh.core.CoFHProps;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermalexpansion.ThermalExpansion;
+
 import java.util.ArrayList;
 
 public class TDPlugins {
@@ -90,11 +90,11 @@ public class TDPlugins {
 
 	public static void preInit() {
 
-		ThermalExpansion.log.info("Thermal Dynamics: Loading Plugins...");
+		ThermalDynamics.log.info("Loading Plugins...");
 		for (int i = 0; i < pluginList.size(); i++) {
 			pluginList.get(i).preInit();
 		}
-		ThermalExpansion.log.info("Thermal Dynamics: Finished Loading Plugins.");
+		ThermalDynamics.log.info("Finished Loading Plugins.");
 	}
 
 	public static void initialize() {
