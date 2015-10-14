@@ -2,7 +2,6 @@ package cofh.thermaldynamics.duct;
 
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
-import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.render.IconRegistry;
@@ -64,7 +63,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockDuct extends BlockTDBase implements IInitializer, IBlockAppearance, IBlockConfigGui {
+public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui {
 
 	public int offset;
 

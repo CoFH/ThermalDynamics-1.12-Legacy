@@ -455,7 +455,6 @@ public class RenderDuct implements ISimpleBlockRenderingHandler, IItemRenderer {
 
 		Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + item.getItemDamage());
 		int metadata = duct.id;
-		boolean renderExtra = false;
 
 		GL11.glPushMatrix();
 		double offset = -0.5;

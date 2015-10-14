@@ -284,7 +284,6 @@ public class FluidGrid extends MultiBlockGridTracking {
 
 		super.addInfo(info, player, debug);
 		FluidStack fluid = getFluid();
-		IChatComponent f;
 		if (fluid != null) {
 			if ((this instanceof FluidGridSuper)) {
 				addInfo(info, "fluidThroughput", new ChatComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));

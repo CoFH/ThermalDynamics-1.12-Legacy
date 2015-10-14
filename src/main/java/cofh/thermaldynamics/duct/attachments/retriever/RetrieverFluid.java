@@ -49,7 +49,7 @@ public class RetrieverFluid extends ServoFluid {
 				return;
 			}
 		}
-		for (Iterator iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0;) {
+		for (Iterator<?> iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0;) {
 			TileFluidDuct fluidDuct = (TileFluidDuct) iterator.next();
 
 			if (!fluidDuct.cachesExist()) {

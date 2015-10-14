@@ -5,7 +5,6 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 
-import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -48,9 +47,6 @@ public class RecipeCover implements IRecipe {
 
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting craft) {
-
-		Block block;
-		int meta;
 
 		for (int i = 0; i < craft.getSizeInventory(); i++) {
 			ItemStack stack = craft.getStackInSlot(i);

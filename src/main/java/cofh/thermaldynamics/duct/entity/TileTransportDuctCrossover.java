@@ -8,8 +8,6 @@ import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.Route;
 
-import java.util.LinkedList;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -91,9 +89,8 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 			return true;
 		}
 
-		LinkedList<TileTransportDuctCrossover> toUpdate = new LinkedList<TileTransportDuctCrossover>();
-
 		DebugHelper.startTimer();
+		@SuppressWarnings("unused")
 		int k;
 
 		for (byte i = 0; i < 6; i++) {

@@ -60,10 +60,8 @@ public class DebugTickHandler {
 		}
 
 		long time = System.nanoTime();
-		int v = 0;
-		while (System.nanoTime() < (time + lag)) {
-			v++;
-		}
+		while (System.nanoTime() < (time + lag));
+		// thread.sleep() ?
 	}
 
 	@SubscribeEvent

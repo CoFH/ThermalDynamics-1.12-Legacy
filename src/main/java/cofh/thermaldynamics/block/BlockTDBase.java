@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.block;
 
-import cofh.api.block.IBlockInfo;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.BlockCoFHBase;
@@ -18,7 +17,6 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
-public abstract class BlockTDBase extends BlockCoFHBase implements ITileEntityProvider, IBlockInfo {
+public abstract class BlockTDBase extends BlockCoFHBase {
 
 	protected BlockTDBase(Material material) {
 

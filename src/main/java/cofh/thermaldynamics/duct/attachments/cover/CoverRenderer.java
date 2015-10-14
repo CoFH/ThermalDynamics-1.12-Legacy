@@ -264,6 +264,7 @@ public class CoverRenderer {
 	// rendered = facadeRenderBlocks.renderStandardBlock(Blocks.stone, x, y, z);
 	// }
 
+	@SuppressWarnings("unused")
 	private static float clampF(float vec, int side) {
 
 		return MathHelper.clampF(sideSoftBounds[side] + (vec - sideSoftBounds[side]) * size, sideBound1[side], sideBound2[side]);
@@ -277,7 +278,6 @@ public class CoverRenderer {
 	public static boolean notSolid(IBlockAccess world, int x, int y, int z, int side) {
 
 		ForgeDirection dir = ForgeDirection.values()[side];
-		Block block = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 		Block block2 = world.getBlock(x, y, z);
 
 		return block2.shouldSideBeRendered(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, side);

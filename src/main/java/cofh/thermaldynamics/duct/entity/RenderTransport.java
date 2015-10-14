@@ -55,7 +55,7 @@ public class RenderTransport extends RenderEntity {
 			dolls.put(player, doll);
 		}
 
-		List allWatched = player.getDataWatcher().getAllWatched();
+		List<?> allWatched = player.getDataWatcher().getAllWatched();
 		if (allWatched != null) {
 			doll.getDataWatcher().updateWatchedObjectsFromList(allWatched);
 		}

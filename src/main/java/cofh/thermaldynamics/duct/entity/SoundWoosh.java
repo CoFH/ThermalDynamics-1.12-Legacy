@@ -5,7 +5,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class SoundWoosh extends MovingSound {
 
-	private static final ResourceLocation soundFile = new ResourceLocation("thermaldynamics", "ductsTransportWoosh");
 	private final EntityTransport transport;
 
 	protected SoundWoosh(EntityTransport transport) {

@@ -104,7 +104,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 			if (neighborTypes[t.direction] == TileTDBase.NeighborTypes.MULTIBLOCK && connectionTypes[t.direction] == TileTDBase.ConnectionTypes.NORMAL) {
 				TileTransportDuctBase newHome = (TileTransportDuctBase) getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
-				if (newHome != null && newHome.neighborTypes[t.direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
+				if (newHome.neighborTypes[t.direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
 					t.pos = new BlockPosition(newHome);
 
 					t.oldDirection = t.direction;

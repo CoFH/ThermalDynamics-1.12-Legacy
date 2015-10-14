@@ -91,7 +91,7 @@ public abstract class Attachment {
 	@SideOnly(Side.CLIENT)
 	public abstract boolean render(int pass, RenderBlocks renderBlocks);
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addCollisionBoxesToList(AxisAlignedBB axis, List list, Entity entity) {
 
 		Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.xCoord, tile.yCoord, tile.zCoord));
@@ -145,6 +145,7 @@ public abstract class Attachment {
 		return packet;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
 
 	}

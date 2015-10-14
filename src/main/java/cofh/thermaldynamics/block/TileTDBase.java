@@ -363,7 +363,6 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
 	public void handleSideUpdate(int i) {
 
-		TileEntity theTile;
 		if (cachesExist()) {
 			clearCache(i);
 		}

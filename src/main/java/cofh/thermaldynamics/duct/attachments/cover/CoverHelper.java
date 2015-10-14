@@ -56,6 +56,7 @@ public class CoverHelper {
 		return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static boolean isValid(Block block, int meta) {
 
 		// noinspection deprecation

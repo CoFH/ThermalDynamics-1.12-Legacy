@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.core.TDProps;
@@ -144,7 +143,6 @@ public class ServoItem extends ServoBase {
 	@Override
 	public boolean onWrenched() {
 
-		Cuboid6 c = getCuboid();
 		if (isStuffed()) {
 			for (ItemStack stack : stuffedItems) {
 				while (stack.stackSize > 0) {
