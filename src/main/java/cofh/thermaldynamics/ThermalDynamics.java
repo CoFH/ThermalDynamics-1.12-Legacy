@@ -194,15 +194,15 @@ public class ThermalDynamics extends BaseMod {
 
 	LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();
 
-	public <T extends Block> T addBlock(T a) {
+	public <T extends Block & IInitializer> T addBlock(T a) {
 
-		initializerList.add((IInitializer) a);
+		initializerList.add(a);
 		return a;
 	}
 
-	public <T extends Item> T addItem(T a) {
+	public <T extends Item & IInitializer> T addItem(T a) {
 
-		initializerList.add((IInitializer) a);
+		initializerList.add(a);
 		return a;
 	}
 

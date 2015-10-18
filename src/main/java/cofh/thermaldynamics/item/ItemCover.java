@@ -10,6 +10,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -96,12 +98,25 @@ public class ItemCover extends ItemAttachment {
 
 		coverList = new ArrayList<ItemStack>();
 
-		Iterator iterator = Item.itemRegistry.iterator();
+		Iterator<Object> iterator = Item.itemRegistry.getKeys().iterator();
 		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 
+		ArrayList<Item> data = new ArrayList<Item>();
 		while (iterator.hasNext()) {
-			Item anItem = (Item) iterator.next();
+			// iterate over the keySet instead of all values (compatible with overridden items)
+			Item anItem = (Item) Item.itemRegistry.getObject(iterator.next());
+			data.add(anItem);
+		}
+		Collections.sort(data, new Comparator<Item>() {
 
+			@Override
+			public int compare(Item o1, Item o2) {
+
+				return Item.itemRegistry.getIDForObject(o1) - Item.itemRegistry.getIDForObject(o2);
+			}
+
+		});
+		for (Item anItem : data) {
 			if (anItem instanceof ItemBlock) {
 				anItem.getSubItems(anItem, null, stacks);
 			}
