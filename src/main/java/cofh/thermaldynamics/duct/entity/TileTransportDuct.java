@@ -59,6 +59,11 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	}
 
 	@Override
+	public boolean isBlockedSide(int side) {
+		return super.isBlockedSide(side) || connectionTypes[side] == ConnectionTypes.FORCED;
+	}
+
+	@Override
 	public boolean onWrench(EntityPlayer player, int hitSide) {
 
 		if (Utils.isHoldingUsableWrench(player, xCoord, yCoord, zCoord)) {
