@@ -340,10 +340,12 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 			handleSideUpdate(i);
 		}
 
-		if (wasNode != isNode && myGrid != null) {
-			myGrid.addBlock(this);
-		} else if (myGrid != null && (isOutput != wasOutput || isInput != wasInput)) {
-			myGrid.onMajorGridChange();
+		if (myGrid != null) {
+			if (wasNode != isNode) {
+				myGrid.addBlock(this);
+			} else if ((isOutput != wasOutput || isInput != wasInput)) {
+				myGrid.onMajorGridChange();
+			}
 		}
 
 		for (SubTileMultiBlock subTile : subTiles) {
@@ -469,8 +471,8 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 		for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
 			Object chunk = neighbourChunk.get();
 			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
-				onNeighborBlockChange();
 				neighbourChunks.clear();
+				onNeighborBlockChange();
 				return true;
 			}
 		}
