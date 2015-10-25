@@ -15,7 +15,7 @@ import net.minecraft.util.Facing;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderPlayerRiding extends RenderPlayer {
+public class RenderPlayerRiding extends RenderPlayerAlt {
 
 	static EntityTransport transport;
 
@@ -30,22 +30,12 @@ public class RenderPlayerRiding extends RenderPlayer {
 	}
 
 	@Override
-	protected int shouldRenderPass(AbstractClientPlayer p_77032_1_, int p_77032_2_, float p_77032_3_) {
-
-		int i = super.shouldRenderPass(p_77032_1_, p_77032_2_, p_77032_3_);
-		if (this.renderPassModel == null) {
-			i = -1;
-		}
-		return i;
-	}
-
-	@Override
 	protected void renderModel(EntityLivingBase p_77036_1_, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_,
-			float p_77036_7_) {
+							   float p_77036_7_) {
 
 		GL11.glPushMatrix();
 		this.bindEntityTexture(p_77036_1_);
-		renderBiped(p_77036_7_, this.modelBipedMain);
+		renderBiped(this.modelBipedMain);
 		GL11.glPopMatrix();
 	}
 
@@ -69,64 +59,64 @@ public class RenderPlayerRiding extends RenderPlayer {
 
 		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.PIPE_LENGTH);
 
-		float yaw = 0, pitch = 0;
+		float yaw = 0, pitch;
 
 		switch (d) {
-		case 0:
-			pitch = 180;
-			break;
-		case 1:
-			pitch = 0;
-			break;
-		case 2:
-			yaw = 180;
-			pitch = 90;
-			break;
-		case 3:
-			yaw = 0;
-			pitch = 90;
-			break;
-		case 4:
-			yaw = 90;
-			pitch = 90;
-			break;
-		case 5:
-			yaw = 270;
-			pitch = 90;
-			break;
-		default:
-			return;
+			case 0:
+				pitch = 180;
+				break;
+			case 1:
+				pitch = 0;
+				break;
+			case 2:
+				yaw = 180;
+				pitch = 90;
+				break;
+			case 3:
+				yaw = 0;
+				pitch = 90;
+				break;
+			case 4:
+				yaw = 90;
+				pitch = 90;
+				break;
+			case 5:
+				yaw = 270;
+				pitch = 90;
+				break;
+			default:
+				return;
 		}
 
 		modelBiped.bipedLeftLeg.rotateAngleX = modelBiped.bipedLeftLeg.rotateAngleZ = modelBiped.bipedRightLeg.rotateAngleX = modelBiped.bipedRightLeg.rotateAngleZ = 0;
 
 		if (d != od && d != (od ^ 1)) {
-			float prevPitch = 0, prevYaw = 0;
+			float prevPitch, prevYaw = 0;
 			switch (od) {
-			case 0:
-				prevPitch = 180;
-				break;
-			case 1:
-				prevPitch = 0;
-				break;
-			case 2:
-				prevYaw = 180;
-				prevPitch = 90;
-				break;
-			case 3:
-				prevYaw = 0;
-				prevPitch = 90;
-				break;
-			case 4:
-				prevYaw = 90;
-				prevPitch = 90;
-				break;
-			case 5:
-				prevYaw = 270;
-				prevPitch = 90;
-				break;
-			default:
-				return;
+				case 0:
+					prevPitch = 180;
+					break;
+				case 1:
+					prevPitch = 0;
+					break;
+				case 2:
+					prevYaw = 180;
+					prevPitch = 90;
+					break;
+				case 3:
+					prevYaw = 0;
+					prevPitch = 90;
+					break;
+				case 4:
+					prevYaw = 90;
+					prevPitch = 90;
+					break;
+				case 5:
+					prevYaw = 270;
+					prevPitch = 90;
+					break;
+				default:
+					return;
 			}
 
 			if (d < 2) {
@@ -224,7 +214,7 @@ public class RenderPlayerRiding extends RenderPlayer {
 
 	}
 
-	private void renderBiped(float p_77036_7_, ModelBiped modelBiped) {
+	private void renderBiped(ModelBiped modelBiped) {
 
 		handleAnimations(modelBiped);
 
