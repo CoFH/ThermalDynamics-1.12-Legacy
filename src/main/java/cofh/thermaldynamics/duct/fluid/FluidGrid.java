@@ -1,18 +1,26 @@
 package cofh.thermaldynamics.duct.fluid;
 
+import cofh.core.CoFHProps;
+import cofh.core.network.PacketHandler;
 import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.FluidHelper;
+import cofh.lib.util.helpers.MathHelper;
+import cofh.lib.util.position.ChunkCoord;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
+import com.google.common.collect.Iterables;
 
+import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidGrid extends MultiBlockGridTracking {
@@ -21,6 +29,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	public int toDistribute = 0;
 
 	/* Render Stuff */
+	public HashSet<ChunkCoord> chunks;
 	TimeTracker myTracker = new TimeTracker();
 	boolean recentRenderUpdate = false;
 	int renderFluidLevel = 0;
@@ -30,6 +39,19 @@ public class FluidGrid extends MultiBlockGridTracking {
 
 		super(world);
 
+	}
+
+	@Override
+	public void onMajorGridChange() {
+
+		super.onMajorGridChange();
+		chunks = null;
+	}
+
+	@Override
+	public void onMinorGridChange() {
+
+		super.onMinorGridChange();
 	}
 
 	@Override
@@ -52,6 +74,9 @@ public class FluidGrid extends MultiBlockGridTracking {
 			}
 			theCondF.fluidForGrid = null;
 			recentRenderUpdate = true;
+		}
+		if (renderFluidLevel != 0) {
+			theCondF.updateFluid();
 		}
 	}
 
@@ -202,6 +227,20 @@ public class FluidGrid extends MultiBlockGridTracking {
 	}
 
 	/* Renders */
+	public void buildMap() {
+
+		chunks = new HashSet<ChunkCoord>();
+		for (IMultiBlock iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
+			buildMapEntry(iMultiBlock);
+		}
+	}
+
+	private void buildMapEntry(IMultiBlock iMultiBlock) {
+
+		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
+	}
+
+	@SuppressWarnings("unchecked")
 	public void updateAllRenders() {
 
 		int fl = renderFluidLevel;
@@ -213,11 +252,37 @@ public class FluidGrid extends MultiBlockGridTracking {
 				} else {
 					myRenderFluid = null;
 				}
-				for (IMultiBlock curTile : nodeSet) {
-					((TileFluidDuct) curTile).updateFluid();
+
+				if (chunks == null) {
+					buildMap();
 				}
-				for (IMultiBlock curTile : idleSet) {
-					((TileFluidDuct) curTile).updateFluid();
+
+				l: if (worldGrid.worldObj instanceof WorldServer) {
+
+					int ducts = 0;
+					for (Object block : Iterables.concat(nodeSet, idleSet)) {
+						TileFluidDuct duct = ((TileFluidDuct) block);
+						if (!duct.getDuctType().opaque) {
+							++ducts;
+							duct.updateLighting();
+						}
+					}
+					if (ducts == 0) {
+						break l;
+					}
+					PacketFluid packet = new PacketFluid(this, ducts);
+					WorldServer dimension = (WorldServer) worldGrid.worldObj;
+					for (EntityPlayerMP player : (List<EntityPlayerMP>) dimension.playerEntities) {
+						for (ChunkCoord chunk : chunks) {
+							int dx = chunk.chunkX - (MathHelper.floor(player.posX) >> 4);
+							int dz = chunk.chunkZ - (MathHelper.floor(player.posZ) >> 4);
+
+							if (dx * dx + dz * dz <= CoFHProps.NETWORK_UPDATE_RANGE * CoFHProps.NETWORK_UPDATE_RANGE) {
+								PacketHandler.sendTo(packet, player);
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -265,6 +330,27 @@ public class FluidGrid extends MultiBlockGridTracking {
 	public FluidStack getRenderFluid() {
 
 		return myRenderFluid;
+	}
+
+	public FluidStack getConnectionFluid() {
+
+		int fl = renderFluidLevel;
+		if (updateRender()) {
+			if (fl != renderFluidLevel) {
+				if (myTank.getFluid() != null) {
+					myRenderFluid = myTank.getFluid().copy();
+					myRenderFluid.amount = renderFluidLevel;
+				} else {
+					myRenderFluid = null;
+				}
+			}
+		}
+		return myRenderFluid;
+	}
+
+	public int getRenderLevel() {
+
+		return renderFluidLevel;
 	}
 
 	/* FLUID RENDER TYPE */
