@@ -4,6 +4,7 @@ import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
 import cofh.core.CoFHProps;
 import cofh.core.block.TileCoFHBase;
+import cofh.core.network.PacketHandler;
 import cofh.core.render.IconRegistry;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
@@ -24,6 +25,7 @@ import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
+import cofh.thermaldynamics.duct.fluid.PacketFluid;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
@@ -409,6 +411,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		EnergyGrid.initialize();
 		SubTileEnergyRedstone.initialize();
 
+		PacketHandler.instance.registerPacket(PacketFluid.class);
 		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
 		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
 		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
