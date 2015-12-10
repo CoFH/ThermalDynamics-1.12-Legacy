@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.light;
 
-import cofh.core.CoFHProps;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.lib.util.position.ChunkCoord;
@@ -8,13 +7,15 @@ import cofh.thermaldynamics.core.WorldGridList;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import com.google.common.collect.Iterables;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.management.PlayerManager;
+import net.minecraft.server.management.PlayerManager.PlayerInstance;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class LightGrid extends MultiBlockGrid {
 
@@ -97,6 +98,7 @@ public class LightGrid extends MultiBlockGrid {
 
 	boolean lit = false;
 
+	@SuppressWarnings("unchecked")
 	public void setLight(boolean lit) {
 
 		this.lit = lit;
@@ -105,24 +107,24 @@ public class LightGrid extends MultiBlockGrid {
 			buildMap();
 		}
 
-		PacketCoFHBase packet = new PacketLight(lit, this);
-		int dimension = worldGrid.worldObj.provider.dimensionId;
-		for (EntityPlayerMP player : (List<EntityPlayerMP>) FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
-			if (dimension == player.dimension) {
+		if (worldGrid.worldObj instanceof WorldServer) {
+			PacketCoFHBase packet = new PacketLight(lit, this);
+			WorldServer dimension = (WorldServer) worldGrid.worldObj;
+			PlayerManager manger = dimension.getPlayerManager();
+			for (EntityPlayerMP player : (List<EntityPlayerMP>) dimension.playerEntities) {
 				for (ChunkCoord chunk : chunks) {
-					double d4 = chunk.chunkX - player.posX;
-					double d6 = chunk.chunkZ - player.posZ;
 
-					if (d4 * d4 + d6 * d6 < CoFHProps.NETWORK_UPDATE_RANGE * CoFHProps.NETWORK_UPDATE_RANGE) {
+					PlayerInstance inst = manger.getOrCreateChunkWatcher(chunk.chunkX, chunk.chunkZ, false);
+					if (inst != null && inst.playersWatchingChunk.contains(player)) {
 						PacketHandler.sendTo(packet, player);
 						break;
 					}
 				}
 			}
-		}
 
-		for (Object block : Iterables.concat(nodeSet, idleSet)) {
-			((TileLightDuct) block).checkLight();
+			for (Object block : Iterables.concat(nodeSet, idleSet)) {
+				((TileLightDuct) block).checkLight();
+			}
 		}
 	}
 
@@ -136,7 +138,7 @@ public class LightGrid extends MultiBlockGrid {
 
 	private void buildMapEntry(IMultiBlock iMultiBlock) {
 
-		chunks.add(new ChunkCoord(iMultiBlock.x() + 8, iMultiBlock.z() + 8));
+		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
 
 }

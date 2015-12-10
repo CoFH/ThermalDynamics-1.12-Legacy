@@ -9,6 +9,7 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
+import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
@@ -161,13 +162,25 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (getDuctType().opaque) {
 			return 0;
 		}
-		if (ServerHelper.isClientWorld(world())) {
-			return FluidHelper.getFluidLuminosity(myRenderFluid);
+		int fullEnough = FluidRenderType.FULL * 6 / 8;
+		int level = Math.min(getRenderFluidLevel(), fullEnough);
+		int light = FluidHelper.getFluidLuminosity(getConnectionFluid()) * level / fullEnough;
+		if (lightingUpdate != null && lightingUpdate != this) {
+			--light;
 		}
-		if (fluidGrid != null) {
-			return FluidHelper.getFluidLuminosity(fluidGrid.getFluid());
-		}
-		return super.getLightValue();
+		return light & (~light >> 31);
+	}
+
+	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
+	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
+	private static TileFluidDuct lightingUpdate = null;
+
+	@Override
+	public void updateLighting() {
+
+		lightingUpdate = this;
+		super.updateLighting();
+		lightingUpdate = null;
 	}
 
 	public void updateFluid() {
@@ -256,7 +269,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 		if (b == TileFluidPackets.UPDATE_RENDER) {
 			myRenderFluid = payload.getFluidStack();
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			worldObj.func_147451_t(xCoord, yCoord, zCoord);
 		}
 	}
 
@@ -270,7 +282,16 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 	public int getRenderFluidLevel() {
 
-		return myRenderFluid == null ? 0 : myRenderFluid.amount;
+		if (myRenderFluid != null) {
+			return myRenderFluid.amount;
+		} else if (fluidGrid == null) {
+			if (myConnectionFluid != null) {
+				return myConnectionFluid.amount;
+			}
+		} else {
+			return fluidGrid.getRenderLevel();
+		}
+		return 0;
 	}
 
 	@Override
@@ -290,10 +311,6 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 
 		super.handleTilePacket(payload, isServer);
 		myRenderFluid = payload.getFluidStack();
-
-		if (worldObj != null) {
-			worldObj.func_147451_t(xCoord, yCoord, zCoord);
-		}
 	}
 
 	public void sendRenderPacket() {
@@ -302,7 +319,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			return;
 		}
 		if (!getDuctType().opaque) {
-			worldObj.func_147451_t(xCoord, yCoord, zCoord);
+			updateLighting();
 
 			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
 			myPayload.addByte(0);
@@ -388,7 +405,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
 			mySavedFluid.writeToNBT(nbt);
 
 			nbt.setTag("ConnFluid", new NBTTagCompound());
-			myConnectionFluid = fluidGrid.getFluid().copy();
+			myConnectionFluid = fluidGrid.getConnectionFluid();
 			myConnectionFluid.writeToNBT(nbt.getCompoundTag("ConnFluid"));
 		} else {
 			mySavedFluid = null;

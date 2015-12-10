@@ -8,7 +8,6 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileLightDuct extends TileTDBase {
@@ -54,7 +53,22 @@ public class TileLightDuct extends TileTDBase {
 	@Override
 	public int getLightValue() {
 
-		return isLit() ? 15 : 0;
+		if (isLit()) {
+			return 15 - (lightingUpdate != null && lightingUpdate != this ? 1 : 0);
+		}
+		return 0;
+	}
+
+	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
+	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
+	private static TileLightDuct lightingUpdate = null;
+
+	@Override
+	protected void updateLighting() {
+
+		lightingUpdate = this;
+		super.updateLighting();
+		lightingUpdate = null;
 	}
 
 	public boolean isLit() {
@@ -68,16 +82,6 @@ public class TileLightDuct extends TileTDBase {
 		super.blockPlaced();
 		if (ServerHelper.isServerWorld(worldObj)) {
 			lit = worldObj.isBlockIndirectlyGettingPowered(x(), y(), z());
-		} else {
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity tile = worldObj.getTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
-				if (tile instanceof TileLightDuct) {
-					if (((TileLightDuct) tile).lit) {
-						lit = true;
-						break;
-					}
-				}
-			}
 		}
 	}
 
@@ -133,7 +137,7 @@ public class TileLightDuct extends TileTDBase {
 
 	public void checkLight() {
 
-		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+		updateLighting();
 	}
 
 	@Override
