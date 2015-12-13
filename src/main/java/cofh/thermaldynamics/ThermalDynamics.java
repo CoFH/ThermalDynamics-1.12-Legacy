@@ -177,10 +177,10 @@ public class ThermalDynamics extends BaseMod {
 
 		String comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";
 		TDProps.smallInnerModelScaling = MathHelper
-				.clampF((float) ThermalDynamics.configClient.get("Render", "InnerModelScaling", 0.99, comment), 0.50F, 0.99F);
+				.clamp((float) ThermalDynamics.configClient.get("Render", "InnerModelScaling", 0.99, comment), 0.50F, 0.99F);
 
 		comment = "This value affects the size of the inner duct model, such as fluids, on the large (octagonal) ducts. Lower it if you experience texture z-fighting.";
-		TDProps.largeInnerModelScaling = MathHelper.clampF((float) ThermalDynamics.configClient.get("Render", "LargeInnerModelScaling", 0.99, comment), 0.50F,
+		TDProps.largeInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.configClient.get("Render", "LargeInnerModelScaling", 0.99, comment), 0.50F,
 				0.99F);
 
 		/* Interface */

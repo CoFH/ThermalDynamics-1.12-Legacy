@@ -120,7 +120,7 @@ public class CoverRenderer {
 						} else {
 							if (flag && flag2 && flag3) {
 								// TODO: only clamp here when covers[] != null && has a cover on the side this vertex is on
-								quad[k2][j] = MathHelper.clampF(quad[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
+								quad[k2][j] = MathHelper.clamp(quad[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
 							}
 						}
 					}
@@ -144,8 +144,8 @@ public class CoverRenderer {
 							v = quad[k2][1];
 						}
 
-						u = MathHelper.clampF(u, 0, 1) * 16;
-						v = MathHelper.clampF(v, 0, 1) * 16;
+						u = MathHelper.clamp(u, 0, 1) * 16;
+						v = MathHelper.clamp(v, 0, 1) * 16;
 
 						u = icon.getInterpolatedU(u);
 						v = icon.getInterpolatedV(v);
@@ -267,7 +267,7 @@ public class CoverRenderer {
 	@SuppressWarnings("unused")
 	private static float clampF(float vec, int side) {
 
-		return MathHelper.clampF(sideSoftBounds[side] + (vec - sideSoftBounds[side]) * size, sideBound1[side], sideBound2[side]);
+		return MathHelper.clamp(sideSoftBounds[side] + (vec - sideSoftBounds[side]) * size, sideBound1[side], sideBound2[side]);
 	}
 
 	public static boolean noFacade(IBlockAccess world, int x, int y, int z, int side) {

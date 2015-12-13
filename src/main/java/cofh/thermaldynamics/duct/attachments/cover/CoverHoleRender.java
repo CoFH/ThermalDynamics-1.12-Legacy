@@ -297,13 +297,13 @@ public class CoverHoleRender {
 		@Override
 		public float transformX(float dx, float dy) {
 
-			return MathHelper.clampF(dx, x0, x1);
+			return MathHelper.clamp(dx, x0, x1);
 		}
 
 		@Override
 		public float transformY(float dx, float dy) {
 
-			return MathHelper.clampF(dy, y0, y1);
+			return MathHelper.clamp(dy, y0, y1);
 		}
 
 		@Override
@@ -360,7 +360,7 @@ public class CoverHoleRender {
 				dy = 1 - dy;
 			}
 			if (dy < m) {
-				float d = MathHelper.clampF(dx, m, k - m);
+				float d = MathHelper.clamp(dx, m, k - m);
 				return flipX ? 1 - d : d;
 			} else {
 				float d = k * dx / (dx + dy);
@@ -383,7 +383,7 @@ public class CoverHoleRender {
 				dx = 1 - dx;
 			}
 			if (dx < m) {
-				float d = MathHelper.clampF(dy, m, k - m);
+				float d = MathHelper.clamp(dy, m, k - m);
 				return flipY ? 1 - d : d;
 			} else {
 				float d = k * dy / (dy + dx);
@@ -447,10 +447,10 @@ public class CoverHoleRender {
 
 			u = tex[0];
 			v = tex[1];
-			color = ((int) MathHelper.clampF(tex[2], 0, 255) << 24) | ((int) MathHelper.clampF(tex[3], 0, 255) << 16)
-					| ((int) MathHelper.clampF(tex[4], 0, 255) << 8) | ((int) MathHelper.clampF(tex[5], 0, 255));
+			color = ((int) MathHelper.clamp(tex[2], 0, 255) << 24) | ((int) MathHelper.clamp(tex[3], 0, 255) << 16)
+					| ((int) MathHelper.clamp(tex[4], 0, 255) << 8) | ((int) MathHelper.clamp(tex[5], 0, 255));
 
-			brightness = ((int) MathHelper.clampF(tex[6], 0, 65535)) | ((int) MathHelper.clampF(tex[7], 0, 65535) << 16);
+			brightness = ((int) MathHelper.clamp(tex[6], 0, 65535)) | ((int) MathHelper.clamp(tex[7], 0, 65535) << 16);
 		}
 	}
 

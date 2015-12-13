@@ -216,7 +216,7 @@ public class TDCrafting {
 		if (useTransposerRecipes && Loader.isModLoaded("ThermalExpansion")) {
 			ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
 		} else {
-			int i = MathHelper.clampI(FluidContainerRegistry.BUCKET_VOLUME / fluid.amount, 1, 8);
+			int i = MathHelper.clamp(FluidContainerRegistry.BUCKET_VOLUME / fluid.amount, 1, 8);
 			ItemStack fluidBucket = getFluidBucket(fluid);
 			if (fluidBucket != null) {
 				ShapelessOreRecipe recipe = new ShapelessOreRecipe(ItemHelper.cloneStack(output, i), fluidBucket);

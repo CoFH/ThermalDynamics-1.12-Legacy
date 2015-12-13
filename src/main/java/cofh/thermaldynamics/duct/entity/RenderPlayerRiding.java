@@ -5,10 +5,8 @@ import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.block.TileTDBase;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Facing;
@@ -125,7 +123,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 				prevYaw = yaw;
 			}
 
-			float v = MathHelper.clampF((stepTime - 0.25F) / (1.0F - 0.25F), 0, 1);
+			float v = MathHelper.clamp((stepTime - 0.25F) / (1.0F - 0.25F), 0, 1);
 
 			if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw - 360)) {
 				yaw += 360;
@@ -138,7 +136,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			yaw = yaw * v + prevYaw * (1 - v);
 			pitch = pitch * v + prevPitch * (1 - v);
 
-			v = MathHelper.clampF(v, 0, 1);
+			v = MathHelper.clamp(v, 0, 1);
 			float angle = (v) * (1 - v) * 4 * 60 / 180.0F * (float) Math.PI;
 
 			if (d == 0 || od == 1) {
