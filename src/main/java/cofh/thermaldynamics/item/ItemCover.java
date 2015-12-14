@@ -23,6 +23,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 
 public class ItemCover extends ItemAttachment {
 
@@ -80,6 +81,10 @@ public class ItemCover extends ItemAttachment {
 		StringBuilder builder = new StringBuilder();
 		ItemStack b = CoverHelper.getCoverItemStack(item, true);
 		if (b != null) {
+			String unloc = getUnlocalizedNameInefficiently(item) + ".", unloc2 = b.getItem().getUnlocalizedNameInefficiently(b);
+			if (StatCollector.canTranslate(unloc + unloc2 + ".name")) {
+				return StatCollector.translateToLocal(unloc + unloc2 + ".name");
+			}
 			builder.append(b.getDisplayName());
 			builder.append(" ");
 		}

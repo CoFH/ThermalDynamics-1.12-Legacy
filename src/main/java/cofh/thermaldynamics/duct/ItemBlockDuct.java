@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 
 public class ItemBlockDuct extends ItemBlockBase {
 
@@ -26,7 +27,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 	@Override
 	public String getUnlocalizedName(ItemStack item) {
 
-		return TDDucts.isValid(id(item)) ? "tile.thermaldynamics.duct." + TDDucts.getType(id(item)).unlocalizedName + ".name" : super.getUnlocalizedName(item);
+		return TDDucts.isValid(id(item)) ? "tile.thermaldynamics.duct." + TDDucts.getType(id(item)).unlocalizedName : super.getUnlocalizedName(item);
 	}
 
 	@Override
@@ -36,17 +37,33 @@ public class ItemBlockDuct extends ItemBlockBase {
 			StringBuilder builder = new StringBuilder();
 			Duct type = TDDucts.getType(id(item));
 
+			boolean opaqueLocalized = false;
+			String unloc = getUnlocalizedNameInefficiently(item);
+
+			if (type.opaque && StatCollector.canTranslate(unloc + ".opaque.name")) {
+				unloc += ".opaque";
+				opaqueLocalized = true;
+			}
 			/* Dense / Vacuum */
 			if (type instanceof DuctItem && item.stackTagCompound != null) {
 				if (item.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_DENSE) {
-					builder.append(StringHelper.localize("tile.thermaldynamics.duct.dense.name")).append(" ");
+					if (StatCollector.canTranslate(unloc + ".dense.name")) {
+						unloc += ".dense";
+					} else {
+						builder.append(StringHelper.localize("tile.thermaldynamics.duct.dense.name")).append(" ");
+					}
 				} else if (item.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_VACUUM) {
-					builder.append(StringHelper.localize("tile.thermaldynamics.duct.vacuum.name")).append(" ");
+					if (StatCollector.canTranslate(unloc + ".vacuum.name")) {
+						unloc += ".vacuum";
+					} else {
+						builder.append(StringHelper.localize("tile.thermaldynamics.duct.vacuum.name")).append(" ");
+					}
 				}
 			}
-			builder.append(super.getItemStackDisplayName(item));
 
-			if (type.opaque) {
+			builder.append(StringHelper.localize(unloc + ".name"));
+
+			if (type.opaque && !opaqueLocalized) {
 				builder.append(" ").append(StringHelper.localize("tile.thermaldynamics.duct.opaque.name"));
 			}
 			return builder.toString();
