@@ -39,10 +39,12 @@ public class ItemBlockDuct extends ItemBlockBase {
 			String opaqueLocalized = null, modeLocalized = null;
 			String unloc = getUnlocalizedNameInefficiently(item);
 
-			if (type.opaque && StatCollector.canTranslate(unloc + ".opaque.name")) {
-				unloc += ".opaque";
-			} else {
-				opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
+			if (type.opaque) {
+				if (StatCollector.canTranslate(unloc + ".opaque.name")) {
+					unloc += ".opaque";
+				} else {
+					opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
+				}
 			}
 			/* Dense / Vacuum */
 			if (type instanceof DuctItem && item.stackTagCompound != null) {
