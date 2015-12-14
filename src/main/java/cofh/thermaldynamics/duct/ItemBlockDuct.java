@@ -41,6 +41,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 
 			if (type.opaque && StatCollector.canTranslate(unloc + ".opaque.name")) {
 				unloc += ".opaque";
+			} else {
 				opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
 			}
 			/* Dense / Vacuum */
