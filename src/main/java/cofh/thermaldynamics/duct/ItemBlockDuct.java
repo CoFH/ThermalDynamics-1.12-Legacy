@@ -34,15 +34,14 @@ public class ItemBlockDuct extends ItemBlockBase {
 	public String getItemStackDisplayName(ItemStack item) {
 
 		if (TDDucts.isValid(id(item))) {
-			StringBuilder builder = new StringBuilder();
 			Duct type = TDDucts.getType(id(item));
 
-			boolean opaqueLocalized = false;
+			String opaqueLocalized = null, modeLocalized = null;
 			String unloc = getUnlocalizedNameInefficiently(item);
 
 			if (type.opaque && StatCollector.canTranslate(unloc + ".opaque.name")) {
 				unloc += ".opaque";
-				opaqueLocalized = true;
+				opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
 			}
 			/* Dense / Vacuum */
 			if (type instanceof DuctItem && item.stackTagCompound != null) {
@@ -50,23 +49,26 @@ public class ItemBlockDuct extends ItemBlockBase {
 					if (StatCollector.canTranslate(unloc + ".dense.name")) {
 						unloc += ".dense";
 					} else {
-						builder.append(StringHelper.localize("tile.thermaldynamics.duct.dense.name")).append(" ");
+						modeLocalized = "tile.thermaldynamics.duct.dense.name";
 					}
 				} else if (item.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_VACUUM) {
 					if (StatCollector.canTranslate(unloc + ".vacuum.name")) {
 						unloc += ".vacuum";
 					} else {
-						builder.append(StringHelper.localize("tile.thermaldynamics.duct.vacuum.name")).append(" ");
+						modeLocalized = "tile.thermaldynamics.duct.vacuum.name";
 					}
 				}
 			}
 
-			builder.append(StringHelper.localize(unloc + ".name"));
+			String ret = StringHelper.localize(unloc + ".name");
 
-			if (type.opaque && !opaqueLocalized) {
-				builder.append(" ").append(StringHelper.localize("tile.thermaldynamics.duct.opaque.name"));
+			if (opaqueLocalized != null) {
+				ret = StatCollector.translateToLocalFormatted(opaqueLocalized, ret);
 			}
-			return builder.toString();
+			if (modeLocalized != null) {
+				ret = StatCollector.translateToLocalFormatted(modeLocalized, ret);
+			}
+			return ret;
 		} else {
 			return super.getItemStackDisplayName(item);
 		}

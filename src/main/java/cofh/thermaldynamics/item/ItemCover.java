@@ -78,18 +78,16 @@ public class ItemCover extends ItemAttachment {
 	@Override
 	public String getItemStackDisplayName(ItemStack item) {
 
-		StringBuilder builder = new StringBuilder();
 		ItemStack b = CoverHelper.getCoverItemStack(item, true);
+		String name = "";
 		if (b != null) {
 			String unloc = getUnlocalizedNameInefficiently(item) + ".", unloc2 = b.getItem().getUnlocalizedNameInefficiently(b);
 			if (StatCollector.canTranslate(unloc + unloc2 + ".name")) {
 				return StatCollector.translateToLocal(unloc + unloc2 + ".name");
 			}
-			builder.append(b.getDisplayName());
-			builder.append(" ");
+			name = b.getDisplayName();
 		}
-		builder.append(super.getItemStackDisplayName(item));
-		return builder.toString();
+		return StatCollector.translateToLocalFormatted(getUnlocalizedNameInefficiently(item) + ".name", name);
 	}
 
 	@Override
