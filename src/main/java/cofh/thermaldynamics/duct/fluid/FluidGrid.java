@@ -274,8 +274,8 @@ public class FluidGrid extends MultiBlockGridTracking {
 					WorldServer dimension = (WorldServer) worldGrid.worldObj;
 					for (EntityPlayerMP player : (List<EntityPlayerMP>) dimension.playerEntities) {
 						for (ChunkCoord chunk : chunks) {
-							int dx = chunk.chunkX - (MathHelper.floor(player.posX) >> 4);
-							int dz = chunk.chunkZ - (MathHelper.floor(player.posZ) >> 4);
+							int dx = (chunk.chunkX - (MathHelper.floor(player.posX) >> 4)) * 16;
+							int dz = (chunk.chunkZ - (MathHelper.floor(player.posZ) >> 4)) * 16;
 
 							if (dx * dx + dz * dz <= CoFHProps.NETWORK_UPDATE_RANGE * CoFHProps.NETWORK_UPDATE_RANGE) {
 								PacketHandler.sendTo(packet, player);
