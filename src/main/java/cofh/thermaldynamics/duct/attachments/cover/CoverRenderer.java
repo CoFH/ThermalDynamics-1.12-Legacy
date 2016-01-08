@@ -19,6 +19,8 @@ public class CoverRenderer {
 	private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
 	public static RenderBlocks renderBlocks = new RenderBlocks();
 
+	public static int VERTEX_SIZE = 8;
+
 	public static final float size = 1 / 512F;
 
 	final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
@@ -69,14 +71,17 @@ public class CoverRenderer {
 
 			IIcon icon = RenderDuct.coverBase;
 
-			for (int k = rawBufferIndex; k < rawBufferIndex2; k += 32) {
+			final int vertexSize = VERTEX_SIZE;
+			final int verticiesPerFace = 4, incrementAmt = vertexSize * verticiesPerFace;
+
+			for (int k = rawBufferIndex; k < rawBufferIndex2; k += incrementAmt) {
 				flag = flag2 = false;
 				for (int i = 0; i < 3; i++) {
 					flat[i] = true;
 				}
 
-				for (int k2 = 0; k2 < 4; k2++) {
-					int i = k + k2 * 8;
+				for (int k2 = 0; k2 < verticiesPerFace; k2++) {
+					int i = k + k2 * vertexSize;
 					quad[k2][0] = Float.intBitsToFloat(rb[i]) - dx - x;
 					quad[k2][1] = Float.intBitsToFloat(rb[i + 1]) - dy - y;
 					quad[k2][2] = Float.intBitsToFloat(rb[i + 2]) - dz - z;
@@ -112,7 +117,7 @@ public class CoverRenderer {
 					intNormal = -64 << 8;
 				}
 
-				for (int k2 = 0; k2 < 4; k2++) {
+				for (int k2 = 0; k2 < verticiesPerFace; k2++) {
 					boolean flag3 = quad[k2][sideOffsets[side]] != sideSoftBounds[side];
 					for (int j = 0; j < 3; j++) {
 						if (j == sideOffsets[side]) {
@@ -125,7 +130,7 @@ public class CoverRenderer {
 						}
 					}
 
-					int i = k + k2 * 8;
+					int i = k + k2 * vertexSize;
 					rb[i] = Float.floatToRawIntBits(quad[k2][0] + dx + x);
 					rb[i + 1] = Float.floatToRawIntBits(quad[k2][1] + dy + y);
 					rb[i + 2] = Float.floatToRawIntBits(quad[k2][2] + dz + z);
