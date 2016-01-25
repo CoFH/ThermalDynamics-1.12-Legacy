@@ -1055,13 +1055,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 	}
 
 	public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
-		if (living != null && living.isSneaking() && existsYet()) {
-			for (int i = 0; i < connectionTypes.length; i++) {
-				connectionTypes[i] = ConnectionTypes.BLOCKED;
-			}
-			onNeighborBlockChange();
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
-		}
+
 	}
 
 	public void dropAdditional(ArrayList<ItemStack> ret) {
