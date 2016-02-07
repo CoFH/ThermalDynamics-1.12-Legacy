@@ -306,7 +306,9 @@ public abstract class MultiBlockGrid {
 
 	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
 
-		addInfo(info, "size", size());
+		if (debug) {
+			addInfo(info, "size", size());
+		}
 
 		if (rs != null) {
 			int r = rs.redstoneLevel;
