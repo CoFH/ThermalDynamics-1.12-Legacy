@@ -62,7 +62,6 @@ public class ItemBlockDuct extends ItemBlockBase {
 					}
 				}
 			}
-
 			String ret = StringHelper.localize(unloc + ".name");
 
 			if (opaqueLocalized != null) {
@@ -147,6 +146,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 			break;
 		case ITEM:
 			list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
+
 			if (duct.type == 0) {
 				// list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemBasic.info"));
 			} else if (duct.type == 1) {
@@ -175,6 +175,15 @@ public class ItemBlockDuct extends ItemBlockBase {
 			} else if (duct == TDDucts.lightDuct) {
 				list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
 				list.add(StringHelper.localize("info.thermaldynamics.duct.light"));
+			}
+			break;
+		case TRANSPORT:
+			list.add(StringHelper.localize("info.thermaldynamics.duct.transport"));
+
+			if (duct == TDDucts.transportLongRange) {
+				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.transportLongRange"));
+			} else if (duct == TDDucts.transportCrossover) {
+				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.transportCrossover"));
 			}
 			break;
 		case CRAFTING:

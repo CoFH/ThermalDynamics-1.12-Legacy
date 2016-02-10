@@ -108,21 +108,6 @@ public class TDDucts {
 		return true;
 	}
 
-	static void addTransportDucts() {
-
-		transport = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.ENTITY, DuctFactory.transport, null, null, null, 255,
-				"electrum", "thermaldynamics:duct/base/greenGlass", 96));
-
-		transport_longrange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.ENTITY,
-				DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80));
-
-		transport_crossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.ENTITY,
-				DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128));
-
-		transport_structure = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.ENTITY, DuctFactory.structural, null,
-				null, null, 255, "electrum", null, 128));
-	}
-
 	static void addIndevDucts() {
 
 	}
@@ -217,6 +202,25 @@ public class TDDucts {
 		itemEnergyOpaque.setRarity(1);
 	}
 
+	static void addTransportDucts() {
+
+		transportBasic = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.TRANSPORT, DuctFactory.transport, null, null, null,
+				255, "electrum", "thermaldynamics:duct/base/greenGlass", 96));
+
+		transportLongRange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT,
+				DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80));
+
+		transportCrossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT,
+				DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128));
+
+		transportFrame = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.CRAFTING, DuctFactory.structural, null,
+				null, null, 255, "electrum", null, 128));
+
+		transportBasic.setRarity(1);
+		transportLongRange.setRarity(1);
+		transportCrossover.setRarity(2);
+	}
+
 	static void addSupportDucts() {
 
 		structure = addDuct(OFFSET_STRUCTURE + 0, true, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
@@ -270,17 +274,16 @@ public class TDDucts {
 	public static DuctItem itemEnergy;
 	public static DuctItem itemEnergyOpaque;
 
+	/* TRANSPORT */
+	public static DuctTransport transportBasic;
+	public static DuctTransport transportLongRange;
+	public static DuctTransport transportCrossover;
+	public static DuctTransport transportFrame;
+
 	/* STRUCTURE */
 	public static Duct structure;
 
 	public static DuctLight lightDuct;
-
-	/* TRANSPORT */
-
-	public static DuctTransport transport;
-	public static DuctTransport transport_longrange;
-	public static DuctTransport transport_crossover;
-	public static DuctTransport transport_structure;
 
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,

@@ -247,7 +247,8 @@ public class CommandThermalDebug extends CommandBase {
 				pos.moveForwards(1);
 			}
 
-			for (@SuppressWarnings("unused") BlockPosition p : positions) {
+			for (@SuppressWarnings("unused")
+			BlockPosition p : positions) {
 				// world.setBlock(p.x, p.y + 1, p.z, Blocks.chest, 0, 3);
 			}
 		}

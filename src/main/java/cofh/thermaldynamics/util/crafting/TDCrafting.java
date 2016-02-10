@@ -133,11 +133,11 @@ public class TDCrafting {
 
 		/* TRANSPORT */
 
-		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transport_structure.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotElectrum", 'G',
+		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportFrame.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotElectrum", 'G',
 				glassHardened));
-		addTransposerFill(800, TDDucts.transport_structure.itemStack, TDDucts.transport.itemStack, new FluidStack(TFFluids.fluidAerotheum, 50), false);
-		addTransposerFill(32000, TDDucts.transport.itemStack, TDDucts.transport_crossover.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
-		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transport_longrange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotCopper", 'G',
+		addTransposerFill(800, TDDucts.transportFrame.itemStack, TDDucts.transportBasic.itemStack, new FluidStack(TFFluids.fluidAerotheum, 50), false);
+		addTransposerFill(32000, TDDucts.transportBasic.itemStack, TDDucts.transportCrossover.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
+		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportLongRange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotCopper", 'G',
 				glassHardened));
 
 		/* COVERS */
@@ -163,7 +163,7 @@ public class TDCrafting {
 					i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
 
 			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ender_eye, 'G',
-					i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetEnderium"));
+					i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetGold"));
 
 			if (i > 0) {
 				for (Item item : new Item[] { ThermalDynamics.itemFilter, ThermalDynamics.itemServo, ThermalDynamics.itemRetriever }) {
@@ -267,4 +267,5 @@ public class TDCrafting {
 		}
 		return recipe;
 	}
+
 }

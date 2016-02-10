@@ -34,7 +34,6 @@ public class ThaumcraftPlugin {
 		parseAspects(TDDucts.itemEnder.itemStack, "1 metallum, 2 iter, 2 machina, 1 vitreus, 4 alienis");
 		parseAspects(TDDucts.itemEnderOpaque.itemStack, "2 metallum, 2 iter, 2 machina, 4 alienis");
 
-
 		parseAspects(TDDucts.energyBasic.itemStack, "1 metallum, 1 vitreus, 1 potentia");
 		parseAspects(TDDucts.energyHardened.itemStack, "1 metallum, 1 vitreus, 2 potentia");
 		parseAspects(TDDucts.energyReinforced.itemStack, "1 metallum, 1 vitreus, 4 potentia, 2 machina");
@@ -43,7 +42,6 @@ public class ThaumcraftPlugin {
 		parseAspects(TDDucts.energyResonantEmpty.itemStack, "1 metallum, 1 vitreus, 1 alienis");
 		parseAspects(TDDucts.energySuperCond.itemStack, "4 metallum, 2 vitreus, 16 potentia, 4 machina, 8 gelum");
 		parseAspects(TDDucts.energySuperCondEmpty.itemStack, "4 metallum, 2 vitreus");
-
 
 		parseAspects(TDDucts.structure.itemStack, "1 metallum, 1 ordo");
 		parseAspects(TDDucts.lightDuct.itemStack, "2 metallum, 4 lux");
@@ -60,23 +58,22 @@ public class ThaumcraftPlugin {
 		parseAspects(TDDucts.fluidSuper.itemStack, "1 metallum, 1 vitreus, 4 aqua, 4 iter, 2 tutamen");
 		parseAspects(TDDucts.fluidSuper.itemStack, "2 metallum, 4 aqua, 4 iter, 2 tutamen");
 
-
-		parseAspects(TDDucts.transport.itemStack, "4 metallum, 1 vitreus, 4 iter");
-		parseAspects(TDDucts.transport_longrange.itemStack, "4 metallum, 2 vitreus, 8 iter");
-		parseAspects(TDDucts.transport_crossover.itemStack, "4 metallum, 2 vitreus, 4 iter, 4 alienis");
-		parseAspects(TDDucts.transport_structure.itemStack, "4 metallum, 1 vitreus");
+		parseAspects(TDDucts.transportBasic.itemStack, "4 metallum, 1 vitreus, 4 iter");
+		parseAspects(TDDucts.transportLongRange.itemStack, "4 metallum, 2 vitreus, 8 iter");
+		parseAspects(TDDucts.transportCrossover.itemStack, "4 metallum, 2 vitreus, 4 iter, 4 alienis");
+		parseAspects(TDDucts.transportFrame.itemStack, "4 metallum, 1 vitreus");
 
 		parseAspects(ThermalDynamics.itemRelay, "1 metallum, 4 machina, 4 potentia");
 
-		final String[] additionalAspects = {"", ", 1 tutamen", "1 metallum", "1 metallum, 1 potentia, 1 machina", "1 metallum, 2 alienis"};
+		final String[] additionalAspects = { "", ", 1 tutamen", "1 metallum", "1 metallum, 1 potentia, 1 machina", "1 metallum, 2 alienis" };
 		for (int i = 0; i < 5; i++) {
 			parseAspects(new ItemStack(ThermalDynamics.itemServo, 1, i), "1 metallum, 1 potentia, 2 permutatio" + additionalAspects[i]);
 			parseAspects(new ItemStack(ThermalDynamics.itemFilter, 1, i), "1 metallum, 1 machina, 2 permutatio" + additionalAspects[i]);
-			parseAspects(new ItemStack(ThermalDynamics.itemRetriever, 1, i), "1 metallum, 1 potentia, 1 machina, 2 permutatio, 2 alienis" + additionalAspects[i]);
+			parseAspects(new ItemStack(ThermalDynamics.itemRetriever, 1, i), "1 metallum, 1 potentia, 1 machina, 2 permutatio, 2 alienis"
+					+ additionalAspects[i]);
 		}
 
 		ThermalDynamics.log.info("Thaumcraft Plugin Enabled.");
 	}
-
 
 }

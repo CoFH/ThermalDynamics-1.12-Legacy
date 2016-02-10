@@ -60,6 +60,20 @@ public class GuiDuctConnection extends GuiBaseAdv {
 		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
 		this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM)
 				&& conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
+
+		switch (conBase.getId()) {
+		case AttachmentRegistry.SERVO_ITEM:
+			generateInfo("tab.thermaldynamics.servoItem", 2);
+			break;
+		case AttachmentRegistry.FILTER_ITEM:
+			generateInfo("tab.thermaldynamics.filterItem", 1);
+			break;
+		case AttachmentRegistry.RETRIEVER_ITEM:
+			generateInfo("tab.thermaldynamics.retrieverItem", 2);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -76,13 +90,15 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 		super.initGui();
 
+		if (!myInfo.isEmpty()) {
+
+			myInfo += "\n\n" + StringHelper.localize("tab.thermaldynamics.conChange");
+
+			addTab(new TabInfo(this, myInfo));
+		}
 		if (conBase.canAlterRS()) {
 			addTab(new TabRedstone(this, conBase));
 		}
-		if (!myInfo.isEmpty()) {
-			addTab(new TabInfo(this, myInfo));
-		}
-
 		int[] flagNums = container.filter.validFlags();
 		flagButtons = new ElementButton[container.filter.numFlags()];
 
@@ -103,7 +119,6 @@ public class GuiDuctConnection extends GuiBaseAdv {
 						buttonSize, TEX_PATH);
 				addElement(flagButtons[j]);
 			}
-
 			for (int i = 0; i < levelNums.length; i++) {
 				int j = levelNums[i];
 				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, FilterLogic.levelNames[j], levelButtonPos[j][0],

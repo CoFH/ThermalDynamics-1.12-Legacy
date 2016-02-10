@@ -29,7 +29,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 	@Override
 	protected void renderModel(EntityLivingBase p_77036_1_, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_,
-							   float p_77036_7_) {
+			float p_77036_7_) {
 
 		GL11.glPushMatrix();
 		this.bindEntityTexture(p_77036_1_);
@@ -60,30 +60,30 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 		float yaw = 0, pitch;
 
 		switch (d) {
-			case 0:
-				pitch = 180;
-				break;
-			case 1:
-				pitch = 0;
-				break;
-			case 2:
-				yaw = 180;
-				pitch = 90;
-				break;
-			case 3:
-				yaw = 0;
-				pitch = 90;
-				break;
-			case 4:
-				yaw = 90;
-				pitch = 90;
-				break;
-			case 5:
-				yaw = 270;
-				pitch = 90;
-				break;
-			default:
-				return;
+		case 0:
+			pitch = 180;
+			break;
+		case 1:
+			pitch = 0;
+			break;
+		case 2:
+			yaw = 180;
+			pitch = 90;
+			break;
+		case 3:
+			yaw = 0;
+			pitch = 90;
+			break;
+		case 4:
+			yaw = 90;
+			pitch = 90;
+			break;
+		case 5:
+			yaw = 270;
+			pitch = 90;
+			break;
+		default:
+			return;
 		}
 
 		modelBiped.bipedLeftLeg.rotateAngleX = modelBiped.bipedLeftLeg.rotateAngleZ = modelBiped.bipedRightLeg.rotateAngleX = modelBiped.bipedRightLeg.rotateAngleZ = 0;
@@ -91,30 +91,30 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 		if (d != od && d != (od ^ 1)) {
 			float prevPitch, prevYaw = 0;
 			switch (od) {
-				case 0:
-					prevPitch = 180;
-					break;
-				case 1:
-					prevPitch = 0;
-					break;
-				case 2:
-					prevYaw = 180;
-					prevPitch = 90;
-					break;
-				case 3:
-					prevYaw = 0;
-					prevPitch = 90;
-					break;
-				case 4:
-					prevYaw = 90;
-					prevPitch = 90;
-					break;
-				case 5:
-					prevYaw = 270;
-					prevPitch = 90;
-					break;
-				default:
-					return;
+			case 0:
+				prevPitch = 180;
+				break;
+			case 1:
+				prevPitch = 0;
+				break;
+			case 2:
+				prevYaw = 180;
+				prevPitch = 90;
+				break;
+			case 3:
+				prevYaw = 0;
+				prevPitch = 90;
+				break;
+			case 4:
+				prevYaw = 90;
+				prevPitch = 90;
+				break;
+			case 5:
+				prevYaw = 270;
+				prevPitch = 90;
+				break;
+			default:
+				return;
 			}
 
 			if (d < 2) {

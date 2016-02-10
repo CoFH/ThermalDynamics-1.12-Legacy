@@ -44,4 +44,10 @@ public class TDItems {
 	public static ItemStack servoReinforced;
 	public static ItemStack servoSignalum;
 	public static ItemStack servoResonant;
+
+	public static ItemStack retrieverBasic;
+	public static ItemStack retrieverHardened;
+	public static ItemStack retrieverReinforced;
+	public static ItemStack retrieverSignalum;
+	public static ItemStack retrieverResonant;
 }

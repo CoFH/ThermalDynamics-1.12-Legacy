@@ -206,8 +206,8 @@ public class EntityTransport extends Entity {
 					if (pause == 0) {
 						CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
 					} else {
-						CoFHCore.proxy.addIndexedChatMessage(new ChatComponentText("Charging - " + (TileTransportDuctCrossover.PAUSE_LEVEL - pause) + " / "
-								+ TileTransportDuctCrossover.PAUSE_LEVEL), -515781222);
+						CoFHCore.proxy.addIndexedChatMessage(new ChatComponentText("Charging - " + (TileTransportDuctCrossover.CHARGE_TIME - pause) + " / "
+								+ TileTransportDuctCrossover.CHARGE_TIME), -515781222);
 					}
 				}
 

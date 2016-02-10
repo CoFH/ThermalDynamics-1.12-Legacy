@@ -20,7 +20,8 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 
 	final BlockPosition[] rangePos = new BlockPosition[6];
 	final static BlockPosition clientValue = new BlockPosition(0, 0, 0, ForgeDirection.DOWN);
-	public static final int PAUSE_LEVEL = 120;
+
+	public static byte CHARGE_TIME = 120;
 
 	@Override
 	public void handleTileSideUpdate(int i) {
@@ -208,7 +209,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
 			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
-				t.pause = PAUSE_LEVEL;
+				t.pause = CHARGE_TIME;
 				return true;
 			}
 		}
@@ -222,7 +223,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
 			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
-				t.pause = PAUSE_LEVEL;
+				t.pause = CHARGE_TIME;
 				return true;
 			}
 		}

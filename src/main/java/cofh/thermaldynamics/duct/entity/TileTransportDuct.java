@@ -60,6 +60,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 	@Override
 	public boolean isBlockedSide(int side) {
+
 		return super.isBlockedSide(side) || connectionTypes[side] == ConnectionTypes.FORCED;
 	}
 

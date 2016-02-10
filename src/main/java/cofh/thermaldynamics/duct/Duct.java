@@ -14,7 +14,7 @@ public class Duct {
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public static enum Type {
-		ENERGY, FLUID, ITEM, ENTITY, STRUCTURAL, CRAFTING
+		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, CRAFTING
 	}
 
 	public ItemStack itemStack = null;
