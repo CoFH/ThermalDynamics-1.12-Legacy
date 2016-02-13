@@ -62,7 +62,7 @@ public class ThermalDynamics extends BaseMod {
 
 	public static final String modId = "ThermalDynamics";
 	public static final String modName = "Thermal Dynamics";
-	public static final String version = "1.7.10R1.2.0B1";
+	public static final String version = "1.7.10R1.2.0B2";
 	public static final String version_max = "1.7.10R1.3.0";
 	public static final String dependencies = CoFHCore.version_group + ThermalFoundation.version_group;
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
