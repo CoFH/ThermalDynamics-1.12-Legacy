@@ -57,7 +57,7 @@ public class FluidTankGrid extends FluidTankAdv {
 		int viscosity = 0;
 
 		if (fluid != null) {
-			viscosity = fluid.getFluid().getViscosity();
+			viscosity = Math.max(fluid.getFluid().getViscosity(), 100);
 			fluidThroughput = MathHelper.clamp(120000 / viscosity, 80, 600);
 
 			if (fluidFlowrate.containsKey(fluid.getFluid().getName())) {
