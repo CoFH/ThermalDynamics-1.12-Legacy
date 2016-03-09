@@ -28,6 +28,14 @@ public class TickHandlerClient {
 		Minecraft mc = Minecraft.getMinecraft();
 
 		if (evt.phase == TickEvent.Phase.END) {
+			if (mc.currentScreen instanceof GuiMainMenu) {
+				if (needsMenu) {
+					onMainMenu();
+					needsMenu = false;
+				}
+			} else if (mc.inGameHasFocus) {
+				needsMenu = true;
+			}
 
 			if (!tickBlocksToAdd.isEmpty()) {
 				tickBlocks.addAll(tickBlocksToAdd);
@@ -45,14 +53,6 @@ public class TickHandlerClient {
 				tickBlocks.removeAll(tickBlocksToRemove);
 				tickBlocksToRemove.clear();
 			}
-			if (mc.currentScreen instanceof GuiMainMenu) {
-				if (needsMenu) {
-					onMainMenu();
-					needsMenu = false;
-				}
-			} else if (mc.inGameHasFocus) {
-				needsMenu = true;
-			}
 		}
 	}
 
@@ -61,6 +61,10 @@ public class TickHandlerClient {
 		synchronized (TickHandler.handlers) {
 			TickHandler.handlers.clear();
 		}
+
+		tickBlocks.clear();
+		tickBlocksToAdd.clear();
+		tickBlocksToRemove.clear();
 	}
 
 }
