@@ -205,9 +205,11 @@ public class TDCrafting {
 
 		/* DENSE / VACUUM - TE Integration */
 		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque, TDDucts.itemEnder, TDDucts.itemEnderOpaque, TDDucts.itemFast,
-				TDDucts.itemFastOpaque }) {
+				TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }) {
 			GameRegistry.addRecipe(ShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "dustLead"));
 			GameRegistry.addRecipe(ShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "dustSilver"));
+			GameRegistry.addRecipe(ShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
+			GameRegistry.addRecipe(ShapelessRecipe(duct.itemStack, duct.getVacuumItemStack()));// , "dustCharcoal"));
 		}
 	}
 
