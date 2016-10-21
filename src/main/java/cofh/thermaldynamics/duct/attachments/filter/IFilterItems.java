@@ -4,11 +4,11 @@ import net.minecraft.item.ItemStack;
 
 public interface IFilterItems {
 
-	public boolean matchesFilter(ItemStack item);
+	boolean matchesFilter(ItemStack item);
 
-	public boolean shouldIncRouteItems();
+	boolean shouldIncRouteItems();
 
-	final static IFilterItems nullFilter = new IFilterItems() {
+	IFilterItems nullFilter = new IFilterItems() {
 
 		@Override
 		public boolean matchesFilter(ItemStack item) {
@@ -29,6 +29,6 @@ public interface IFilterItems {
 		}
 	};
 
-	public int getMaxStock();
+	int getMaxStock();
 
 }

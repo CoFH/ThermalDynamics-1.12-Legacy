@@ -1,146 +1,133 @@
 package cofh.thermaldynamics.duct;
 
+import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
-import cofh.core.CoFHProps;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.network.PacketHandler;
-import cofh.core.render.IconRegistry;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.core.util.CoreUtils;
-import cofh.repack.codechicken.lib.raytracer.RayTracer;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.core.TDProps;
+import cofh.thermaldynamics.core.ClientProxy;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
-import cofh.thermaldynamics.duct.entity.EntityTransport;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
-import cofh.thermaldynamics.duct.entity.TransportHandler;
-import cofh.thermaldynamics.duct.fluid.PacketFluid;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuctFlux;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuctFragile;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuctSuper;
+import cofh.thermaldynamics.duct.fluid.*;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui {
 
-	public int offset;
+    public int offset;
 
-	public BlockDuct(int offset) {
+    public BlockDuct(int offset) {
 
-		super(Material.glass);
-		setHardness(1.0F);
-		setResistance(10.0F);
-		setStepSound(soundTypeMetal);
-		setBlockName("thermaldynamics.duct");
-		setCreativeTab(ThermalDynamics.tabCommon);
-		this.offset = offset * 16;
-	}
+        super(Material.GLASS);
+        setHardness(1.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
+        setUnlocalizedName("thermaldynamics.duct");
+        setCreativeTab(ThermalDynamics.tabCommon);
+        setDefaultState(getBlockState().getBaseState().withProperty(META, 0));
+        this.offset = offset * 16;
+    }
 
-	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+    @Override
+    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
 
-		for (int i = 0; i < 16; i++) {
-			if (TDDucts.isValid(i + offset)) {
-				list.add(TDDucts.getDuct(i + offset).itemStack.copy());
-			}
-		}
-	}
+        for (int i = 0; i < 16; i++) {
+            if (TDDucts.isValid(i + offset)) {
+                list.add(TDDucts.getDuct(i + offset).itemStack.copy());
+            }
+        }
+    }
 
-	@Override
-	public boolean hasTileEntity(int metadata) {
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
 
-		return TDDucts.isValid(metadata + offset);
-	}
+        return TDDucts.isValid(getMetaFromState(state) + offset);
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
+    @Override
+    public TileEntity createNewTileEntity(World world, int metadata) {
 
-		Duct duct = TDDucts.getType(metadata + offset);
-		return duct.factory.createTileEntity(duct, world);
-	}
+        Duct duct = TDDucts.getType(metadata + offset);
+        return duct.factory.createTileEntity(duct, world);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int metadata) {
+    //	@Override
+    //	@SideOnly(Side.CLIENT)
+    //	public IIcon getIcon(int side, int metadata) {
+    //
+    //		return TDDucts.getType(metadata + offset).iconBaseTexture;
+    //	}
 
-		return TDDucts.getType(metadata + offset).iconBaseTexture;
-	}
+    @Override
+    public int damageDropped(IBlockState state) {
 
-	@Override
-	public int damageDropped(int i) {
+        return getMetaFromState(state);
+    }
 
-		return i;
-	}
+    @Override
+    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+        return false;
+    }
 
-	@Override
-	public boolean canCreatureSpawn(EnumCreatureType type, IBlockAccess world, int x, int y, int z) {
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onBlockHighlight(DrawBlockHighlightEvent event) {
+        RayTraceResult target = event.getTarget();
+        EntityPlayer player = event.getPlayer();
+        if (target.typeOfHit == Type.BLOCK && player.worldObj.getBlockState(event.getTarget().getBlockPos()).getBlock().getUnlocalizedName().equals(getUnlocalizedName())) {
+            RayTracer.retraceBlock(player.worldObj, player, target.getBlockPos());
 
-		return false;
-	}
+            ICustomHitBox theTile = ((ICustomHitBox) player.worldObj.getTileEntity(target.getBlockPos()));
+            if (theTile.shouldRenderCustomHitBox(target.subHit, player)) {
+                event.setCanceled(true);
+                RenderHitbox.drawSelectionBox(player, target, event.getPartialTicks(), theTile.getCustomHitBox(target.subHit, player));
+            }
+        }
+    }
 
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onBlockHighlight(DrawBlockHighlightEvent event) {
-
-		if (event.target.typeOfHit == MovingObjectType.BLOCK
-				&& event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ).getUnlocalizedName()
-						.equals(getUnlocalizedName())) {
-			RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
-
-			ICustomHitBox theTile = ((ICustomHitBox) event.player.worldObj.getTileEntity(event.target.blockX, event.target.blockY, event.target.blockZ));
-			if (theTile.shouldRenderCustomHitBox(event.target.subHit, event.player)) {
-				event.setCanceled(true);
-				RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, theTile.getCustomHitBox(event.target.subHit, event.player));
-			}
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
+	/*@Override
+    @SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister ir) {
 
 		if (offset != 0) {
@@ -168,312 +155,307 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			}
 		}
 		TDDucts.structureInvis.registerIcons(ir);
-	}
-
-	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-
-		if (target.subHit >= 14 && target.subHit < 20) {
-			TileTDBase tileEntity = (TileTDBase) world.getTileEntity(x, y, z);
-			ItemStack pickBlock = tileEntity.attachments[target.subHit - 14].getPickBlock();
-			if (pickBlock != null) {
-				return pickBlock;
-			}
-		}
-		if (target.subHit >= 20 && target.subHit < 26) {
-			TileTDBase tileEntity = (TileTDBase) world.getTileEntity(x, y, z);
-			ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
-			if (pickBlock != null) {
-				return pickBlock;
-			}
-		}
-		return super.getPickBlock(target, world, x, y, z);
-	}
-
-	@Override
-	public int getRenderType() {
-
-		return TDProps.renderDuctId;
-	}
-
-	@Override
-	public boolean canRenderInPass(int pass) {
-
-		renderPass = pass;
-		return pass < 2;
-	}
-
-	@Override
-	public int getRenderBlockPass() {
-
-		return 1;
-	}
-
-	@Override
-	public Block getVisualBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
-		if (tileEntity instanceof TileTDBase) {
-			Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
-			if (cover != null) {
-				return cover.block;
-			}
-
-		}
-		return this;
-	}
-
-	@Override
-	public int getVisualMeta(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
-		if (tileEntity instanceof TileTDBase) {
-			Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
-			if (cover != null) {
-				return cover.meta;
-			}
-		}
-		return world.getBlockMetadata(x, y, z);
-	}
-
-	@Override
-	public boolean supportsVisualConnections() {
-
-		return true;
-	}
-
-	@Override
-	public boolean openConfigGui(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player) {
-
-		TileTDBase tile = (TileTDBase) world.getTileEntity(x, y, z);
-		if (tile instanceof IBlockConfigGui) {
-			return ((IBlockConfigGui) tile).openConfigGui(world, x, y, z, side, player);
-		} else {
-			int subHit = side.ordinal();
-			if (world instanceof World) {
-				MovingObjectPosition rayTrace = RayTracer.retraceBlock((World) world, player, x, y, z);
-				if (rayTrace == null) {
-					return false;
-				}
-
-				if (subHit > 13 && subHit < 20) {
-					subHit = rayTrace.subHit - 14;
-				}
-			}
-
-			if (subHit > 13 && subHit < 20) {
-				Attachment attachment = tile.attachments[subHit - 14];
-				if (attachment instanceof IBlockConfigGui) {
-					return ((IBlockConfigGui) attachment).openConfigGui(world, x, y, z, side, player);
-				}
-			}
-
-		}
-
-		return false;
-	}
-
-	public static enum ConnectionTypes {
-		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
-
-		private final boolean renderDuct;
-
-		private ConnectionTypes() {
-
-			renderDuct = true;
-		}
-
-		private ConnectionTypes(boolean renderDuct) {
-
-			this.renderDuct = renderDuct;
-		}
-
-		public boolean renderDuct() {
-
-			return renderDuct;
-		}
-	}
-
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase living, ItemStack stack) {
-
-		super.onBlockPlacedBy(world, x, y, z, living, stack);
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof TileTDBase) {
-			((TileTDBase) tile).onPlacedBy(living, stack);
-		}
-	}
-
-	@Override
-	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, World world, int x, int y, int z, boolean returnDrops, boolean simulate) {
-
-		TileEntity tile = world.getTileEntity(x, y, z);
-		int bMeta = world.getBlockMetadata(x, y, z);
-
-		ItemStack dropBlock;
-		if (tile instanceof TileTDBase) {
-			dropBlock = ((TileTDBase) tile).getDrop();
-		} else {
-			dropBlock = new ItemStack(this, 1, bMeta);
-		}
-
-		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-		ret.add(dropBlock);
-
-		if (tile instanceof TileTDBase) {
-			TileTDBase multiBlock = (TileTDBase) tile;
-			for (Attachment a : multiBlock.attachments) {
-				if (a != null) {
-					ret.addAll(a.getDrops());
-				}
-			}
-			for (Cover cover : multiBlock.covers) {
-				if (cover != null) {
-					ret.addAll(cover.getDrops());
-				}
-			}
-			multiBlock.dropAdditional(ret);
-		}
-
-		if (nbt != null) {
-			dropBlock.setTagCompound(nbt);
-		}
-		if (!simulate) {
-			if (tile instanceof TileCoFHBase) {
-				((TileCoFHBase) tile).blockDismantled();
-			}
-			world.setBlockToAir(x, y, z);
-
-			if (!returnDrops) {
-				float f = 0.3F;
-				for (ItemStack stack : ret) {
-					double x2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-					double y2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-					double z2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-					EntityItem item = new EntityItem(world, x + x2, y + y2, z + z2, stack);
-					item.delayBeforeCanPickup = 10;
-					world.spawnEntityInWorld(item);
-				}
-
-				if (player != null) {
-					CoreUtils.dismantleLog(player.getCommandSenderName(), this, bMeta, x, y, z);
-				}
-			}
-		}
-
-		return ret;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
-
-		super.randomDisplayTick(world, x, y, z, rand);
-
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
-		if (tileEntity instanceof TileTDBase) {
-			((TileTDBase) tileEntity).randomDisplayTick();
-		}
-	}
-
-	@Override
-	public float getSize(World world, int x, int y, int z) {
-
-		return TDDucts.getDuct(offset + world.getBlockMetadata(x, y, z)).isLargeTube() ? 0.05F : super.getSize(world, x, y, z);
-	}
-
-	/* IInitializer */
-	@Override
-	public boolean preInit() {
-
-		GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDynamics_" + offset);
-
-		for (int i = 0; i < 16; i++) {
-			if (TDDucts.isValid(offset + i)) {
-				TDDucts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean initialize() {
-
-		MinecraftForge.EVENT_BUS.register(this);
-
-		if (offset != 0) {
-			return true;
-		}
-		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.FluxDuct");
-		GameRegistry.registerTileEntity(TileEnergyDuctSuper.class, "thermaldynamics.FluxDuctSuperConductor");
-
-		EnergyGrid.initialize();
-		SubTileEnergyRedstone.initialize();
-
-		PacketHandler.instance.registerPacket(PacketFluid.class);
-		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
-		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
-		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
-		GameRegistry.registerTileEntity(TileFluidDuctSuper.class, "thermaldynamics.FluidDuctSuper");
-
-		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ItemDuct");
-		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");
-		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
-
-		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
-
-		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
-		GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
-		GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
-		EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
-		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
-		FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
-
-		return true;
-	}
-
-	@Override
-	public boolean postInit() {
-
-		return true;
-	}
-
-	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
-
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
-		if (theTile != null && theTile.attachments[side ^ 1] != null) {
-			return theTile.attachments[side ^ 1].getRSOutput();
-		}
-		return 0;
-	}
-
-	@Override
-	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
-
-		return 0;
-	}
-
-	@Override
-	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
-
-		if (side == -1) {
-			return false;
-		}
-
-		int s;
-		if (side == 0) {
-			s = 2;
-		} else if (side == 1) {
-			s = 5;
-		} else if (side == 2) {
-			s = 3;
-		} else {
-			s = 4;
-		}
-
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
-		return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
-	}
+	}*/
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        if (target.subHit >= 14 && target.subHit < 20) {
+            TileTDBase tileEntity = (TileTDBase) world.getTileEntity(pos);
+            ItemStack pickBlock = tileEntity.attachments[target.subHit - 14].getPickBlock();
+            if (pickBlock != null) {
+                return pickBlock;
+            }
+        }
+        if (target.subHit >= 20 && target.subHit < 26) {
+            TileTDBase tileEntity = (TileTDBase) world.getTileEntity(pos);
+            ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
+            if (pickBlock != null) {
+                return pickBlock;
+            }
+        }
+        return super.getPickBlock(state, target, world, pos, player);
+    }
+
+    //@Override
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return ClientProxy.renderType;
+    }
+
+    //@Override
+    public boolean canRenderInPass(int pass) {
+        renderPass = pass;
+        return pass < 2;
+    }
+
+    //@Override
+    public int getRenderBlockPass() {
+        return 1;
+    }
+
+    @Override
+    public Block getVisualBlock(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+
+        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+        if (tileEntity instanceof TileTDBase) {
+            Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
+            if (cover != null) {
+                return cover.block;
+            }
+
+        }
+        return this;
+    }
+
+    @Override
+    public int getVisualMeta(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+
+        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+        if (tileEntity instanceof TileTDBase) {
+            Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
+            if (cover != null) {
+                return cover.meta;
+            }
+        }
+        IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+        return state.getBlock().getMetaFromState(state);
+    }
+
+    @Override
+    public boolean supportsVisualConnections() {
+        return true;
+    }
+
+    @Override
+    public boolean openConfigGui(IBlockAccess world, int x, int y, int z, EnumFacing side, EntityPlayer player) {
+        BlockPos pos = new BlockPos(x, y, z);
+        TileTDBase tile = (TileTDBase) world.getTileEntity(pos);
+        if (tile instanceof IBlockConfigGui) {
+            return ((IBlockConfigGui) tile).openConfigGui(world, x, y, z, side, player);
+        } else {
+            int subHit = side.ordinal();
+            if (world instanceof World) {
+                RayTraceResult rayTrace = RayTracer.retraceBlock((World) world, player, pos);
+                if (rayTrace == null) {
+                    return false;
+                }
+
+                if (subHit > 13 && subHit < 20) {
+                    subHit = rayTrace.subHit - 14;
+                }
+            }
+
+            if (subHit > 13 && subHit < 20) {
+                Attachment attachment = tile.attachments[subHit - 14];
+                if (attachment instanceof IBlockConfigGui) {
+                    return ((IBlockConfigGui) attachment).openConfigGui(world, x, y, z, side, player);
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    public enum ConnectionTypes {
+        NONE(false),
+        DUCT,
+        TILECONNECTION,
+        STRUCTURE,
+        CLEANDUCT;
+
+        private final boolean renderDuct;
+
+        ConnectionTypes() {
+
+            renderDuct = true;
+        }
+
+        ConnectionTypes(boolean renderDuct) {
+
+            this.renderDuct = renderDuct;
+        }
+
+        public boolean renderDuct() {
+
+            return renderDuct;
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, living, stack);
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileTDBase) {
+            ((TileTDBase) tile).onPlacedBy(living, stack);
+        }
+    }
+
+    @Override
+    public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, IBlockAccess world, BlockPos pos, boolean returnDrops, boolean simulate) {
+
+        TileEntity tile = world.getTileEntity(pos);
+        IBlockState state = world.getBlockState(pos);
+        int bMeta = getMetaFromState(state);
+
+        ItemStack dropBlock;
+        if (tile instanceof TileTDBase) {
+            dropBlock = ((TileTDBase) tile).getDrop();
+        } else {
+            dropBlock = new ItemStack(this, 1, bMeta);
+        }
+
+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        ret.add(dropBlock);
+
+        if (tile instanceof TileTDBase) {
+            TileTDBase multiBlock = (TileTDBase) tile;
+            for (Attachment a : multiBlock.attachments) {
+                if (a != null) {
+                    ret.addAll(a.getDrops());
+                }
+            }
+            for (Cover cover : multiBlock.covers) {
+                if (cover != null) {
+                    ret.addAll(cover.getDrops());
+                }
+            }
+            multiBlock.dropAdditional(ret);
+        }
+
+        if (nbt != null) {
+            dropBlock.setTagCompound(nbt);
+        }
+        if (!simulate) {
+            World actualWorld = (World) world;
+            if (tile instanceof TileCoFHBase) {
+                ((TileCoFHBase) tile).blockDismantled();
+            }
+            actualWorld.setBlockToAir(pos);
+
+            if (!returnDrops) {
+                for (ItemStack stack : ret) {
+                    ItemUtils.dropItem(actualWorld, pos, stack, 0.3F);
+                }
+
+                if (player != null) {
+                    CoreUtils.dismantleLog(player.getName(), this, bMeta, pos);
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
+        super.randomDisplayTick(state, world, pos, rand);
+
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity instanceof TileTDBase) {
+            ((TileTDBase) tileEntity).randomDisplayTick();
+        }
+    }
+
+    @Override
+    public float getSize(IBlockAccess world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        return TDDucts.getDuct(offset + getMetaFromState(state)).isLargeTube() ? 0.05F : super.getSize(world, pos);
+    }
+
+    /* IInitializer */
+    @Override
+    public boolean preInit() {
+
+        GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDynamics_" + offset);
+
+        for (int i = 0; i < 16; i++) {
+            if (TDDucts.isValid(offset + i)) {
+                TDDucts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean initialize() {
+
+        MinecraftForge.EVENT_BUS.register(this);
+
+        if (offset != 0) {
+            return true;
+        }
+        GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.FluxDuct");
+        GameRegistry.registerTileEntity(TileEnergyDuctSuper.class, "thermaldynamics.FluxDuctSuperConductor");
+
+        EnergyGrid.initialize();
+        SubTileEnergyRedstone.initialize();
+
+        PacketHandler.instance.registerPacket(PacketFluid.class);
+        GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
+        GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
+        GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
+        GameRegistry.registerTileEntity(TileFluidDuctSuper.class, "thermaldynamics.FluidDuctSuper");
+
+        GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ItemDuct");
+        GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");
+        GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
+
+        GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
+
+        //GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
+        //GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
+        //GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
+        //EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
+        //MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
+        //FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
+
+        return true;
+    }
+
+    @Override
+    public boolean postInit() {
+
+        return true;
+    }
+
+    @Override
+    public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
+
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+        if (theTile != null && theTile.attachments[side.ordinal() ^ 1] != null) {
+            return theTile.attachments[side.ordinal() ^ 1].getRSOutput();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+
+        return 0;
+    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if (side == null) {
+            return false;
+        }
+
+        int s;
+        if (side == EnumFacing.DOWN) {
+            s = 2;
+        } else if (side == EnumFacing.UP) {
+            s = 5;
+        } else if (side == EnumFacing.NORTH) {
+            s = 3;
+        } else {
+            s = 4;
+        }
+
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+        return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
+    }
 }

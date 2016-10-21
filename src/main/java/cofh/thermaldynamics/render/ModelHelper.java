@@ -1,16 +1,12 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.vec.*;
+import codechicken.lib.vec.uv.UV;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.repack.codechicken.lib.lighting.LightModel;
-import cofh.repack.codechicken.lib.render.BlockRenderer;
-import cofh.repack.codechicken.lib.render.CCModel;
-import cofh.repack.codechicken.lib.render.Vertex5;
-import cofh.repack.codechicken.lib.render.uv.UV;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
-import cofh.repack.codechicken.lib.vec.Rotation;
-import cofh.repack.codechicken.lib.vec.Transformation;
-import cofh.repack.codechicken.lib.vec.Vector3;
+import codechicken.lib.lighting.LightModel;
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCModel;
 import cofh.thermaldynamics.core.TDProps;
 
 import java.util.Collections;

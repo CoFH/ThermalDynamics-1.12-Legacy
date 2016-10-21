@@ -7,7 +7,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
 public class EnergySubGrid extends MultiBlockGrid {
@@ -74,7 +74,7 @@ public class EnergySubGrid extends MultiBlockGrid {
 	}
 
 	@Override
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		super.addInfo(info, player, debug);
 	}

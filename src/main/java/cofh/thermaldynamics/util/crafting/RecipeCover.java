@@ -9,6 +9,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 public class RecipeCover implements IRecipe {
 
@@ -72,5 +73,10 @@ public class RecipeCover implements IRecipe {
 
 		return new ItemStack(ThermalDynamics.itemCover, 6);
 	}
+
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+    }
 
 }

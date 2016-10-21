@@ -80,10 +80,11 @@ public class PacketMultiTileInfo extends PacketCoFHBase {
 			n2 = getShort();
 			for (int j = 0; j < n2; j++) {
 				xz = getByte();
-				TileEntity tile = chunk.getTileEntityUnsafe(xz >> 4, getInt(), xz & 15);
-				if (tile instanceof ITileInfoPacketHandler) {
-					tiles.add(((ITileInfoPacketHandler) tile));
-				}
+                getInt();//TODO << Dummy getInt to prevent any issues with packets.
+				//TileEntity tile = chunk.getTileEntity(xz >> 4, getInt(), xz & 15);
+				//if (tile instanceof ITileInfoPacketHandler) {
+				//	tiles.add(((ITileInfoPacketHandler) tile));
+				//}
 			}
 		}
 

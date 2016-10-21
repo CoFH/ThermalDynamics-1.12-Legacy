@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public abstract class FilterLogicBase implements IFilterConfig {
 
-	public static enum Perm {
+	public enum Perm {
 		FILTER(true, false, Duct.Type.ITEM), SERVO(false, true, Duct.Type.ITEM), ALL(true, true, Duct.Type.ITEM);
 
 		public final boolean filter;

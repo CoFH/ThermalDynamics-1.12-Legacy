@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class CoverHelper {
 
@@ -23,13 +24,13 @@ public class CoverHelper {
 
 		fluidToBlockMap = new HashMap<Fluid, Block>();
 
-		fluidToBlockMap.put(FluidRegistry.WATER, Blocks.water);
-		fluidToBlockMap.put(FluidRegistry.LAVA, Blocks.lava);
-		for (Object obj : Block.blockRegistry) {
-			if (obj instanceof IFluidBlock) {
-				Fluid fluid = ((IFluidBlock) obj).getFluid();
+		fluidToBlockMap.put(FluidRegistry.WATER, Blocks.WATER);
+		fluidToBlockMap.put(FluidRegistry.LAVA, Blocks.LAVA);
+		for (Block block : ForgeRegistries.BLOCKS) {
+			if (block instanceof IFluidBlock) {
+				Fluid fluid = ((IFluidBlock) block).getFluid();
 				if (fluid != null) {
-					fluidToBlockMap.put(fluid, (Block) obj);
+					fluidToBlockMap.put(fluid, block);
 				}
 			}
 		}
@@ -49,28 +50,26 @@ public class CoverHelper {
 	public static boolean isValid(ItemStack stack) {
 
 		if (stack.getItem() instanceof ItemBlock) {
-			if (isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
+			if (isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
 				return true;
 			}
 		}
 		return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean isValid(Block block, int meta) {
 
-		// noinspection deprecation
 		if (block == null) {
 			return false;
 		}
-		return !(block.hasTileEntity(meta) || block.hasTileEntity());
+		return !(block.hasTileEntity(block.getStateFromMeta(meta)) || block.hasTileEntity());
 
 	}
 
 	public static ItemStack getCoverStack(ItemStack stack) {
 
 		if (stack.getItem() instanceof ItemBlock) {
-			return getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()));
+			return getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()));
 		}
 		Block fluidBlock = getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack));
 		if (fluidBlock != null) {
@@ -82,7 +81,7 @@ public class CoverHelper {
 	public static ItemStack getCoverStack(Block block, int meta) {
 
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("Block", Block.blockRegistry.getNameForObject(block));
+		tag.setString("Block", ForgeRegistries.BLOCKS.getKey(block).toString());
 		tag.setByte("Meta", ((byte) meta));
 
 		ItemStack itemStack = new ItemStack(ThermalDynamics.itemCover, 1);
@@ -100,7 +99,7 @@ public class CoverHelper {
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
-		if (block == Blocks.air || meta < 0 || meta >= 16 || !isValid(block, meta)) {
+		if (block == Blocks.AIR || meta < 0 || meta >= 16 || !isValid(block, meta)) {
 			if (removeInvalidData) {
 				nbt.removeTag("Meta");
 				nbt.removeTag("Block");

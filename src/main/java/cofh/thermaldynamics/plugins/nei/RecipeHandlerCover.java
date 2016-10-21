@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.plugins.nei;
 
-import codechicken.nei.ItemPanel;
-import codechicken.nei.PositionedStack;
+import codechicken.nei.api.stack.PositionedStack;
 import codechicken.nei.recipe.ShapelessRecipeHandler;
+import codechicken.nei.widget.ItemPanel;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
@@ -78,7 +78,7 @@ public class RecipeHandlerCover extends ShapelessRecipeHandler {
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
-		if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
+		if (block == Blocks.AIR || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
 			return;
 		}
 		arecipes.add(new CachedCoverRecipeSimple(new ItemStack(block, 1, meta)));

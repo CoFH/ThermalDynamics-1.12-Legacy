@@ -1,211 +1,234 @@
 package cofh.thermaldynamics.block;
 
+import codechicken.lib.block.property.PropertyInteger;
+import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.Vector3;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.BlockCoFHBase;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.repack.codechicken.lib.raytracer.IndexedCuboid6;
-import cofh.repack.codechicken.lib.raytracer.RayTracer;
-import cofh.repack.codechicken.lib.vec.BlockCoord;
-import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
-import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.util.Utils;
-import cpw.mods.fml.common.eventhandler.Event.Result;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
+
+import javax.annotation.Nullable;
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class BlockTDBase extends BlockCoFHBase {
 
-	protected BlockTDBase(Material material) {
+    public static PropertyInteger META = new PropertyInteger("meta", 15);
 
-		super(material);
-	}
+    protected BlockTDBase(Material material) {
+        super(material);
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(META);
+    }
 
-		return null;
-	}
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(META, meta);
+    }
 
-	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, META);
+    }
 
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
-		return (theTile != null && (theTile.covers[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null
-				&& theTile.attachments[side.ordinal()].makesSideSolid()))
-				|| super.isSideSolid(world, x, y, z, side);
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int metadata) {
+        return null;
+    }
 
-	public float getSize(World world, int x, int y, int z) {
+    @Override
+    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+        return (theTile != null && (theTile.covers[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid())) || super.isSideSolid(base_state, world, pos, side);
+    }
 
-		return 0.3F;
-	}
+    public float getSize(IBlockAccess world, BlockPos pos) {
 
-	@Override
-	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity) {
+        return 0.3F;
+    }
 
-		if (entity instanceof EntityTransport) {
-			return;
-		}
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity){
 
-		float min = getSize(world, x, y, z);
-		float max = 1 - min;
+        //if (entity instanceof EntityTransport) {
+        //    return;//TODO Entity Transport.
+        //}
 
-		this.setBlockBounds(min, min, min, max, max, max);
-		super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
+        float min = getSize(world, pos);
+        float max = 1 - min;
 
-		if (theTile != null) {
-			for (byte i = 0; i < 6; i++) {
-				if (theTile.attachments[i] != null) {
-					theTile.attachments[i].addCollisionBoxesToList(axis, list, entity);
-				}
-				if (theTile.covers[i] != null) {
-					theTile.covers[i].addCollisionBoxesToList(axis, list, entity);
-				}
-			}
-			if (theTile.neighborTypes[0] != NeighborTypes.NONE) {
-				this.setBlockBounds(min, 0.0F, min, max, max, max);
-				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-			}
-			if (theTile.neighborTypes[1] != NeighborTypes.NONE) {
-				this.setBlockBounds(min, min, min, max, 1.0F, max);
-				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-			}
-			if (theTile.neighborTypes[2] != NeighborTypes.NONE) {
-				this.setBlockBounds(min, min, 0.0F, max, max, max);
-				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-			}
-			if (theTile.neighborTypes[3] != NeighborTypes.NONE) {
-				this.setBlockBounds(min, min, min, max, max, 1.0F);
-				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-			}
-			if (theTile.neighborTypes[4] != NeighborTypes.NONE) {
-				this.setBlockBounds(0.0F, min, min, max, max, max);
-				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-			}
-			if (theTile.neighborTypes[5] != NeighborTypes.NONE) {
-				this.setBlockBounds(min, min, min, 1.0F, max, max);
-				super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
-			}
-		}
-		this.setBlockBounds(min, min, min, max, max, max);
-	}
+        AxisAlignedBB bb = new AxisAlignedBB(min, min, min, max, max, max);
+        addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
 
-	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
+        if (theTile != null) {
+            for (byte i = 0; i < 6; i++) {
+                if (theTile.attachments[i] != null) {
+                    theTile.attachments[i].addCollisionBoxesToList(entityBox, collidingBoxes, entity);
+                }
+                if (theTile.covers[i] != null) {
+                    theTile.covers[i].addCollisionBoxesToList(entityBox, collidingBoxes, entity);
+                }
+            }
 
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(x, y, z);
-		if (theTile == null) {
-			return null;
-		}
-		List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
-		theTile.addTraceableCuboids(cuboids);
-		return RayTracer.instance().rayTraceCuboids(new Vector3(start), new Vector3(end), cuboids, new BlockCoord(x, y, z), this);
-	}
+            if (theTile.neighborTypes[0] != NeighborTypes.NONE) {
+                bb = new AxisAlignedBB(min, 0.0F, min, max, max, max);
+                addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+            }
+            if (theTile.neighborTypes[1] != NeighborTypes.NONE) {
+                bb = new AxisAlignedBB(min, min, min, max, 1.0F, max);
+                addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+            }
+            if (theTile.neighborTypes[2] != NeighborTypes.NONE) {
+                bb = new AxisAlignedBB(min, min, 0.0F, max, max, max);
+                addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+            }
+            if (theTile.neighborTypes[3] != NeighborTypes.NONE) {
+                bb = new AxisAlignedBB(min, min, min, max, max, 1.0F);
+                addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+            }
+            if (theTile.neighborTypes[4] != NeighborTypes.NONE) {
+                bb = new AxisAlignedBB(0.0F, min, min, max, max, max);
+                addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+            }
+            if (theTile.neighborTypes[5] != NeighborTypes.NONE) {
+                bb = new AxisAlignedBB(min, min, min, 1.0F, max, max);
+                addCollisionBoxToList(pos,entityBox, collidingBoxes, bb);
+            }
+        }
+    }
 
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int hitSide, float hitX, float hitY, float hitZ) {
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        float min = getSize(source, pos);
+        float max = 1 - min;
+        return new AxisAlignedBB(min, min, min, max, max, max);
+    }
 
-		PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, x, y, z, hitSide, world);
-		if (MinecraftForge.EVENT_BUS.post(event) || event.getResult() == Result.DENY || event.useBlock == Result.DENY) {
-			return false;
-		}
-		if (player.isSneaking()) {
-			if (Utils.isHoldingUsableWrench(player, x, y, z)) {
-				if (ServerHelper.isServerWorld(world) && canDismantle(player, world, x, y, z)) {
-					dismantleBlock(player, world, x, y, z, false);
-				}
-				Utils.usedWrench(player, x, y, z);
-				return true;
-			}
-			return false;
-		}
-		TileTDBase tile = (TileTDBase) world.getTileEntity(x, y, z);
+    @Override
+    public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
+        TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+        if (theTile == null) {
+            return null;
+        }
+        List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
+        theTile.addTraceableCuboids(cuboids);
+        return RayTracer.rayTraceCuboidsClosest(start, end, cuboids, pos);
+    }
 
-		if (tile == null) {
-			return false;
-		}
-		if (Utils.isHoldingUsableWrench(player, x, y, z)) {
-			if (ServerHelper.isServerWorld(world)) {
-				tile.onWrench(player, hitSide);
-			}
-			Utils.usedWrench(player, x, y, z);
-			return true;
-		}
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        RayTraceResult traceResult = RayTracer.retraceBlock(world, player, pos);
+        if (traceResult == null || traceResult.getBlockPos() != pos){
+            return false;
+        }
+        PlayerInteractEvent event = new PlayerInteractEvent.RightClickBlock(player, hand, heldItem, pos, side, traceResult.hitVec);
+        if (MinecraftForge.EVENT_BUS.post(event) || event.getResult() == Result.DENY) {
+            return false;
+        }
+        if (player.isSneaking()) {
+            if (Utils.isHoldingUsableWrench(player, traceResult)) {
+                if (ServerHelper.isServerWorld(world) && canDismantle(player, world, pos)) {
+                    dismantleBlock(player, world, pos, false);
+                }
+                Utils.usedWrench(player, traceResult);
+                return true;
+            }
+            return false;
+        }
+        TileTDBase tile = (TileTDBase) world.getTileEntity(pos);
 
-		// Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		//
-		// if (equipped instanceof ItemBlock) {
-		// Block block = ((ItemBlock) equipped).field_150939_a;
-		// int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
-		// int side = -1;
-		// MovingObjectPosition position = RayTracer.retraceBlock(world, player, x, y, z);
-		// if (position != null) {
-		// int subHit = position.subHit;
-		// if (subHit < 6)
-		// side = subHit;
-		// else if (subHit < 12)
-		// side = subHit - 6;
-		// else if (subHit == 13)
-		// side = hitSide;
-		// if (side != -1) {
-		// if (!world.isRemote) {
-		// tile.addFacade(new Facade(tile, (byte) side, block, meta));
-		// }
-		// return true;
-		// }
-		// }
-		//
-		// }
+        if (tile == null) {
+            return false;
+        }
+        if (Utils.isHoldingUsableWrench(player, traceResult)) {
+            if (ServerHelper.isServerWorld(world)) {
+                tile.onWrench(player, side.ordinal());
+            }
+            Utils.usedWrench(player, traceResult);
+            return true;
+        }
 
-		return tile.openGui(player);
-	}
+        // Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
+        //
+        // if (equipped instanceof ItemBlock) {
+        // Block block = ((ItemBlock) equipped).field_150939_a;
+        // int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
+        // int side = -1;
+        // MovingObjectPosition position = RayTracer.retraceBlock(world, player, x, y, z);
+        // if (position != null) {
+        // int subHit = position.subHit;
+        // if (subHit < 6)
+        // side = subHit;
+        // else if (subHit < 12)
+        // side = subHit - 6;
+        // else if (subHit == 13)
+        // side = hitSide;
+        // if (side != -1) {
+        // if (!world.isRemote) {
+        // tile.addFacade(new Facade(tile, (byte) side, block, meta));
+        // }
+        // return true;
+        // }
+        // }
+        //
+        // }
 
-	/* IBlockDebug */
-	@Override
-	public void debugBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player) {
+        return tile.openGui(player);
+    }
 
-		((TileTDBase) world.getTileEntity(x, y, z)).doDebug(player);
-	}
+    /* IBlockDebug */
+    @Override
+    public void debugBlock(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
-	/* IBlockInfo */
-	@Override
-	public void getBlockInfo(IBlockAccess world, int x, int y, int z, ForgeDirection side, EntityPlayer player, List<IChatComponent> info, boolean debug) {
+        ((TileTDBase) world.getTileEntity(pos)).doDebug(player);
+    }
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+    /* IBlockInfo */
+    @Override
+    public void getBlockInfo(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player, List<ITextComponent> info, boolean debug) {
 
-		if (tile instanceof ITileInfo) {
-			((ITileInfo) tile).getTileInfo(info, side, player, debug);
-		} else {
-			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler eHandler = (IEnergyHandler) tile;
-				if (eHandler.getMaxEnergyStored(side) <= 0) {
-					return;
-				}
-				info.add(new ChatComponentText(StringHelper.localize("info.cofh.energy") + ": " + eHandler.getEnergyStored(side) + "/"
-						+ eHandler.getMaxEnergyStored(side) + " RF."));
-			}
-		}
-	}
+        TileEntity tile = world.getTileEntity(pos);
+
+        if (tile instanceof ITileInfo) {
+            ((ITileInfo) tile).getTileInfo(info, side, player, debug);
+        } else {
+            if (tile instanceof IEnergyHandler) {
+                IEnergyHandler eHandler = (IEnergyHandler) tile;
+                if (eHandler.getMaxEnergyStored(side) <= 0) {
+                    return;
+                }
+                info.add(new TextComponentString(StringHelper.localize("info.cofh.energy") + ": " + eHandler.getEnergyStored(side) + "/" + eHandler.getMaxEnergyStored(side) + " RF."));
+            }
+        }
+    }
 
 }

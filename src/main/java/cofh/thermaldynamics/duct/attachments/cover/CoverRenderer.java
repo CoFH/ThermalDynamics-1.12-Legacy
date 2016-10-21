@@ -1,8 +1,9 @@
+/*
 package cofh.thermaldynamics.duct.attachments.cover;
 
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.render.RenderDuct;
 
 import java.nio.ByteOrder;
@@ -288,3 +289,4 @@ public class CoverRenderer {
 		return block2.shouldSideBeRendered(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, side);
 	}
 }
+*/

@@ -7,7 +7,7 @@ import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -72,10 +72,10 @@ public class ServoFluid extends ServoBase {
 
 		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
 
-		maxInput = fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[side], theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false), false);
+		maxInput = fluidDuct.fill(EnumFacing.VALUES[side], theTile.drain(EnumFacing.VALUES[side ^ 1], maxInput, false), false);
 
-		FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, true);
-		fluidDuct.fill(ForgeDirection.getOrientation(side), returned, true);
+		FluidStack returned = theTile.drain(EnumFacing.VALUES[side ^ 1], maxInput, true);
+		fluidDuct.fill(EnumFacing.VALUES[side], returned, true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {

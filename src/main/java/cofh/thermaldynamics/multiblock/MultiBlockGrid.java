@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class MultiBlockGrid {
 
@@ -45,7 +45,7 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		} else {
 			boolean flag = false;
-			for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++) {
+			for (byte s = 0; s < EnumFacing.VALUES.length; s++) {
 				if (aMultiBlock.isSideConnected(s)) {
 					if (flag) {
 						onMajorGridChange();
@@ -304,7 +304,7 @@ public abstract class MultiBlockGrid {
 
 	public abstract boolean canAddBlock(IMultiBlock aBlock);
 
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		if (debug) {
 			addInfo(info, "size", size());
@@ -319,9 +319,9 @@ public abstract class MultiBlockGrid {
 		}
 	}
 
-	protected final void addInfo(List<IChatComponent> info, String type, Object value) {
+	protected final void addInfo(List<ITextComponent> info, String type, Object value) {
 
-		info.add(new ChatComponentTranslation("info.thermaldynamics.info." + type).appendText(": ").appendSibling(ChatHelper.getChatComponent(value)));
+		info.add(new TextComponentTranslation("info.thermaldynamics.info." + type).appendText(": ").appendSibling(ChatHelper.getChatComponent(value)));
 	}
 
 	public static class RedstoneControl {

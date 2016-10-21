@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.attachments;
 
+import codechicken.lib.util.BlockUtils;
 import cofh.api.tileentity.IPortableData;
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
@@ -7,12 +8,11 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.RedstoneControlHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
@@ -20,8 +20,9 @@ import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiDuctConnection;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.inventory.IContainerListener;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,6 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -117,7 +117,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered || isValidInput != wasValidInput) {
-			tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+            BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 		}
 	}
 
@@ -127,7 +127,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered) {
-			tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+            BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 		}
 	}
 
@@ -145,7 +145,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 			}
 		}
 
-		return tile.getWorldObj().isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
+		return tile.getWorld().isBlockPowered(tile.getPos());
 	}
 
 	@Override
@@ -280,21 +280,21 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public void sendGuiNetworkData(Container container, List players, boolean newGuy) {
+	public void sendGuiNetworkData(Container container, List<IContainerListener> players, boolean newGuy) {
 
 		super.sendGuiNetworkData(container, players, newGuy);
 		int flagByte = filter.getFlagByte();
 		if (flagByte != prevFlag || newGuy) {
-			for (Object player : players) {
-				((ICrafting) player).sendProgressBarUpdate(container, 0, flagByte);
+			for (IContainerListener player : players) {
+				player.sendProgressBarUpdate(container, 0, flagByte);
 			}
 		}
 		prevFlag = flagByte;
 
 		if (filter.levelsChanged || newGuy) {
 			for (int i = 0; i < FilterLogic.defaultLevels.length; i++) {
-				for (Object player : players) {
-					((ICrafting) player).sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
+				for (IContainerListener player : players) {
+					player.sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
 				}
 			}
 			filter.levelsChanged = false;
@@ -360,7 +360,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public boolean openGui(EntityPlayer player) {
 
 		if (ServerHelper.isServerWorld(tile.world())) {
-			player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+			player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorld(), tile.x(), tile.y(), tile.z());
 		}
 		return true;
 	}
@@ -390,10 +390,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		filter.writeToNBT(tag);
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask() {
-
-		return CoverHoleRender.hollowDuctTile;
-	}
+	//@Override
+	//@SideOnly(Side.CLIENT)
+	//public CoverHoleRender.ITransformer[] getHollowMask() {
+	//	return CoverHoleRender.hollowDuctTile;
+	//}
 }

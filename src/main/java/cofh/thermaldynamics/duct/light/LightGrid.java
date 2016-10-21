@@ -11,9 +11,9 @@ import com.google.common.collect.Iterables;
 import java.util.HashSet;
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.management.PlayerManager;
-import net.minecraft.server.management.PlayerManager.PlayerInstance;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -110,12 +110,12 @@ public class LightGrid extends MultiBlockGrid {
 		if (worldGrid.worldObj instanceof WorldServer) {
 			PacketCoFHBase packet = new PacketLight(lit, this);
 			WorldServer dimension = (WorldServer) worldGrid.worldObj;
-			PlayerManager manger = dimension.getPlayerManager();
-			for (EntityPlayerMP player : (List<EntityPlayerMP>) dimension.playerEntities) {
+			PlayerChunkMap manger = dimension.getPlayerChunkMap();
+			for (EntityPlayer player : (List<EntityPlayer>) dimension.playerEntities) {
 				for (ChunkCoord chunk : chunks) {
 
-					PlayerInstance inst = manger.getOrCreateChunkWatcher(chunk.chunkX, chunk.chunkZ, false);
-					if (inst != null && inst.playersWatchingChunk.contains(player)) {
+					PlayerChunkMapEntry inst = manger.getEntry(chunk.chunkX, chunk.chunkZ);
+					if (inst != null && inst.players.contains(player)) {
 						PacketHandler.sendTo(packet, player);
 						break;
 					}

@@ -3,7 +3,8 @@ package cofh.thermaldynamics.gui;
 import cofh.core.block.TileCoFHBase;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,8 +19,8 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-
-		TileEntity tile = world.getTileEntity(x, y, z);
+        BlockPos pos = new BlockPos(x,y,z);
+		TileEntity tile = world.getTileEntity(pos);
 		if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID_END) {
 			if (tile instanceof TileTDBase) {
 				Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
@@ -30,13 +31,13 @@ public class GuiHandler implements IGuiHandler {
 		}
 		switch (id) {
 		case TILE_ID:
-			tile = world.getTileEntity(x, y, z);
+			tile = world.getTileEntity(pos);
 			if (tile instanceof TileCoFHBase) {
 				return ((TileCoFHBase) tile).getGuiServer(player.inventory);
 			}
 
 		case TILE_CONFIG:
-			tile = world.getTileEntity(x, y, z);
+			tile = world.getTileEntity(pos);
 			if (tile instanceof TileTDBase) {
 				return ((TileTDBase) tile).getConfigGuiServer(player.inventory);
 			} else {
@@ -49,8 +50,8 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-
-		TileEntity tile = world.getTileEntity(x, y, z);
+        BlockPos pos = new BlockPos(x,y,z);
+		TileEntity tile = world.getTileEntity(pos);
 		if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID_END) {
 			if (tile instanceof TileTDBase) {
 				Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
@@ -61,7 +62,7 @@ public class GuiHandler implements IGuiHandler {
 		}
 		switch (id) {
 		case TILE_ID:
-			tile = world.getTileEntity(x, y, z);
+			tile = world.getTileEntity(pos);
 			if (tile instanceof TileCoFHBase) {
 				return ((TileCoFHBase) tile).getGuiClient(player.inventory);
 			} else {
@@ -69,7 +70,7 @@ public class GuiHandler implements IGuiHandler {
 			}
 
 		case TILE_CONFIG:
-			tile = world.getTileEntity(x, y, z);
+			tile = world.getTileEntity(pos);
 			if (tile instanceof TileTDBase) {
 				return ((TileTDBase) tile).getConfigGuiClient(player.inventory);
 			} else {

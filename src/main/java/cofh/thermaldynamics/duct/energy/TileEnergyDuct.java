@@ -8,7 +8,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 
@@ -34,31 +34,31 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 
 		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 
 		return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
 
 		return (this.internalGrid != null && canConnectEnergy(from)) ? this.internalGrid.myStorage.extractEnergy(maxExtract, simulate) : 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 
 		return this.internalGrid != null ? this.internalGrid.myStorage.getEnergyStored() : 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 
 		return this.internalGrid != null ? this.internalGrid.myStorage.getMaxEnergyStored() : 0;
 	}
@@ -72,7 +72,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 	@Override
 	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
@@ -108,8 +108,8 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedEnergy < energy; i++) {
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (cache[i] != null) {
-					if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedEnergy += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], energy - usedEnergy, simulate);
+					if (cache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
+						usedEnergy += cache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], energy - usedEnergy, simulate);
 					}
 					if (!simulate && usedEnergy >= energy) {
 						this.tickInternalSideCounter(i + 1);
@@ -122,8 +122,8 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 		for (byte i = 0; i < this.internalSideCounter && usedEnergy < energy; i++) {
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (cache[i] != null) {
-					if (cache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedEnergy += cache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], energy - usedEnergy, simulate);
+					if (cache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
+						usedEnergy += cache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], energy - usedEnergy, simulate);
 					}
 					if (!simulate && usedEnergy >= energy) {
 						this.tickInternalSideCounter(i + 1);
@@ -144,7 +144,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
 
@@ -158,6 +158,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
 		} else {
 			energyForGrid = 0;
 		}
+		return nbt;
 	}
 
 	@Override

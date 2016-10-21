@@ -1,33 +1,34 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.render.CCRenderState;
 import cofh.core.render.RenderUtils;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
-public class RenderDuctFluids extends TileEntitySpecialRenderer {
+public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
 
 	public static final RenderDuctFluids instance = new RenderDuctFluids();
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
+	public void renderTileEntityAt(TileFluidDuct duct, double x, double y, double z, float frame, int destroyStage) {
 
-		TileFluidDuct duct = (TileFluidDuct) tile;
-		RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        RenderUtils.preWorldRender(duct.getWorld(), duct.getPos());
 
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glDisable(GL11.GL_LIGHTING);
+		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
+		GlStateManager.disableLighting();
 		RenderDuct.instance.getDuctConnections(duct);
-		RenderDuct.instance.renderFluid(duct.myRenderFluid, RenderDuct.connections, duct.getRenderFluidLevel(), x, y, z);
-		GL11.glEnable(GL11.GL_LIGHTING);
+		RenderDuct.instance.renderFluid(CCRenderState.instance(), duct.myRenderFluid, RenderDuct.connections, duct.getRenderFluidLevel(), x, y, z);
+        GlStateManager.enableLighting();
 
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 
 	}
 

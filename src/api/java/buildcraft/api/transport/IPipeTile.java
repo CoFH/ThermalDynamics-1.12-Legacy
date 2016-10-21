@@ -9,14 +9,14 @@
 package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IPipeTile {
 
-	public enum PipeType {
+	enum PipeType {
 
-		ITEM, FLUID, POWER, STRUCTURE;
-	}
+		ITEM, FLUID, POWER, STRUCTURE
+    }
 
 	PipeType getPipeType();
 
@@ -31,7 +31,7 @@ public interface IPipeTile {
 	 *            Orientation the ItemStack is offered from.
 	 * @return Amount of items used from the passed stack.
 	 */
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
+	int injectItem(ItemStack stack, boolean doAdd, EnumFacing from);
 
 	/**
 	 * True if the pipe is connected to the block/pipe in the specific direction
@@ -39,7 +39,7 @@ public interface IPipeTile {
 	 * @param with
 	 * @return true if connect
 	 */
-	boolean isPipeConnected(ForgeDirection with);
+	boolean isPipeConnected(EnumFacing with);
 
 	/**
 	 * True if the pipe has a powered wire of the specified color.

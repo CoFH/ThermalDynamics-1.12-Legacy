@@ -1,12 +1,7 @@
 package cofh.thermaldynamics.duct.energy;
 
-import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class TileEnergyDuctSuper extends TileEnergyDuct {
 
@@ -26,7 +21,7 @@ public class TileEnergyDuctSuper extends TileEnergyDuct {
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 
 		if (this.internalGridSC != null && canConnectEnergy(from)) {
 			return internalGridSC.sendEnergy(maxReceive, simulate);
@@ -34,11 +29,10 @@ public class TileEnergyDuctSuper extends TileEnergyDuct {
 		return 0;
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-
-		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctCryo;
-	}
+	//@Override
+	//@SideOnly(Side.CLIENT)
+	//public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+	//	BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+	//	return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctCryo;
+	//}
 }

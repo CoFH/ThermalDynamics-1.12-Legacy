@@ -12,7 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 public class ItemBlockDuct extends ItemBlockBase {
 
@@ -40,22 +40,22 @@ public class ItemBlockDuct extends ItemBlockBase {
 			String unloc = getUnlocalizedNameInefficiently(item);
 
 			if (type.opaque) {
-				if (StatCollector.canTranslate(unloc + ".opaque.name")) {
+				if (I18n.canTranslate(unloc + ".opaque.name")) {
 					unloc += ".opaque";
 				} else {
 					opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
 				}
 			}
 			/* Dense / Vacuum */
-			if (type instanceof DuctItem && item.stackTagCompound != null) {
-				if (item.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_DENSE) {
-					if (StatCollector.canTranslate(unloc + ".dense.name")) {
+			if (type instanceof DuctItem && item.getTagCompound() != null) {
+				if (item.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_DENSE) {
+					if (I18n.canTranslate(unloc + ".dense.name")) {
 						unloc += ".dense";
 					} else {
 						modeLocalized = "tile.thermaldynamics.duct.dense.name";
 					}
-				} else if (item.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_VACUUM) {
-					if (StatCollector.canTranslate(unloc + ".vacuum.name")) {
+				} else if (item.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_VACUUM) {
+					if (I18n.canTranslate(unloc + ".vacuum.name")) {
 						unloc += ".vacuum";
 					} else {
 						modeLocalized = "tile.thermaldynamics.duct.vacuum.name";
@@ -65,10 +65,10 @@ public class ItemBlockDuct extends ItemBlockBase {
 			String ret = StringHelper.localize(unloc + ".name");
 
 			if (opaqueLocalized != null) {
-				ret = StatCollector.translateToLocalFormatted(opaqueLocalized, ret);
+				ret = I18n.translateToLocalFormatted(opaqueLocalized, ret);
 			}
 			if (modeLocalized != null) {
-				ret = StatCollector.translateToLocalFormatted(modeLocalized, ret);
+				ret = I18n.translateToLocalFormatted(modeLocalized, ret);
 			}
 			return ret;
 		} else {
@@ -89,7 +89,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 		if (TDDucts.isValid(ductId)) {
 			return TDDucts.getType(ductId).rarity;
 		}
-		return EnumRarity.uncommon;
+		return EnumRarity.UNCOMMON;
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class ItemBlockDuct extends ItemBlockBase {
 				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
 			}
 			if (stack.hasTagCompound()) {
-				byte pathWeight = stack.stackTagCompound.getByte(DuctItem.PATHWEIGHT_NBT);
+				byte pathWeight = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
 				if (pathWeight == DuctItem.PATHWEIGHT_DENSE) {
 					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.dense"));
 				} else if (pathWeight == DuctItem.PATHWEIGHT_VACUUM) {

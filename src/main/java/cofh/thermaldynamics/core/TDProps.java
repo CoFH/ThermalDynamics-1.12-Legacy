@@ -1,5 +1,9 @@
 package cofh.thermaldynamics.core;
 
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 public class TDProps {
 
 	private TDProps() {
@@ -19,8 +23,5 @@ public class TDProps {
 	/* Duct Render Constants */
 	public static float smallInnerModelScaling = 0.99F;
 	public static float largeInnerModelScaling = 0.99F;
-
-	/* Render Ids */
-	public static int renderDuctId = -1;
 
 }

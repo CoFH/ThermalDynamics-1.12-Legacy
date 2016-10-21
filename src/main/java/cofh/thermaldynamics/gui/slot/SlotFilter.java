@@ -62,7 +62,7 @@ public class SlotFilter extends SlotFalseCopy {
 	}
 
 	@Override
-	public boolean isSlotInInventory(IInventory inventory, int slot) {
+	public boolean isHere(IInventory inventory, int slot) {
 
 		return false;
 	}

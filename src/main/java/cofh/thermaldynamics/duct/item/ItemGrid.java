@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.repack.codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
@@ -23,7 +24,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	public int travelingItemsCount = 0;
 	public static ArrayList<Attachment> toTick = new ArrayList<Attachment>();
 	// public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
-	public HashMap<BlockCoord, StackMap> travelingItems = new HashMap<BlockCoord, StackMap>();
+	public HashMap<BlockPos, StackMap> travelingItems = new HashMap<BlockPos, StackMap>();
 	public boolean shouldRepoll = true;
 	public boolean repoll = false;
 
@@ -78,7 +79,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 		if (item.myPath == null) {
 			return;
 		}
-		BlockCoord dest = item.getDest();
+		BlockPos dest = item.getDest();
 		StackMap list = travelingItems.get(dest);
 		if (list == null) {
 			list = new StackMap();
@@ -102,7 +103,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	}
 
 	@Override
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		super.addInfo(info, player, debug);
 		addInfo(info, "items", travelingItemsCount);

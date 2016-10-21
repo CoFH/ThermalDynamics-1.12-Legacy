@@ -1,3 +1,4 @@
+/*
 package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiBaseAdv;
@@ -6,7 +7,6 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.gui.element.ElementButtonManaged;
 import cofh.lib.gui.element.listbox.SliderVertical;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import cofh.thermaldynamics.gui.container.ContainerTransport;
 import cofh.thermaldynamics.gui.element.ElementDirectoryButton;
 
@@ -161,3 +161,4 @@ public class GuiTransport extends GuiBaseAdv {
 	}
 
 }
+*/

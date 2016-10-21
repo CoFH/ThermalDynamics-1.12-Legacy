@@ -10,21 +10,21 @@ package buildcraft.api.transport;
 
 import buildcraft.api.transport.IPipeTile.PipeType;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IPipeConnection {
 
 	enum ConnectOverride {
 
 		CONNECT, DISCONNECT, DEFAULT
-	};
+	}
 
-	/**
+    /**
 	 * Allows you to override pipe connection logic.
 	 * 
 	 * @param type
 	 * @param with
 	 * @return CONNECT to force a connection, DISCONNECT to force no connection, and DEFAULT to let the pipe decide.
 	 */
-	ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with);
+	ConnectOverride overridePipeConnection(PipeType type, EnumFacing with);
 }

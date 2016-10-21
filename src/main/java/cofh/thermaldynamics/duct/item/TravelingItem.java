@@ -1,9 +1,10 @@
 package cofh.thermaldynamics.duct.item;
 
+import codechicken.lib.vec.Vector3;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.repack.codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.TileTDBase.ConnectionTypes;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
 import cofh.thermaldynamics.core.TickHandlerClient;
@@ -14,6 +15,8 @@ import cofh.thermaldynamics.multiblock.RouteCache;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class TravelingItem {
 
@@ -204,7 +207,7 @@ public class TravelingItem {
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
 			} else if (homeTile.ticksExisted == TileItemDuct.maxTicksExistedBeforeDump) {
-				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorldObj(), homeTile.x(), homeTile.y(), homeTile.z());
+				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorld(), new Vector3(homeTile.getPos()));
 				homeTile.removeItem(this, true);
 			}
 		}
@@ -331,7 +334,7 @@ public class TravelingItem {
 
 	// DOWN, UP, NORTH, SOUTH, WEST, EAST
 
-	public BlockCoord getDest() {
+	public BlockPos getDest() {
 
 		if (myPath == null) {
 			return null;
@@ -341,9 +344,9 @@ public class TravelingItem {
 				if (!hasDest) {
 					return null;
 				}
-				myPath.dest = (new BlockCoord(destX, destY, destZ).offset(getLastSide()));
+				myPath.dest = (new BlockPos(destX, destY, destZ).offset(EnumFacing.VALUES[getLastSide()]));
 			} else {
-				myPath.dest = (new BlockCoord(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(getLastSide());
+				myPath.dest = (new BlockPos(myPath.endPoint.x(), myPath.endPoint.y(), myPath.endPoint.z())).offset(EnumFacing.VALUES[getLastSide()]);
 			}
 
 		}

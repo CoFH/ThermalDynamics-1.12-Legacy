@@ -8,7 +8,7 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.repack.codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,9 +44,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
@@ -90,7 +90,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	public CacheType[] cacheType;
 
 	@Override
-	public ItemStack insertItem(ForgeDirection from, ItemStack item) {
+	public ItemStack insertItem(EnumFacing from, ItemStack item) {
 
 		if (item == null) {
 			return null;
@@ -135,7 +135,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		return null;
 	}
 
-	public static enum CacheType {
+	public enum CacheType {
 		NONE, IINV, ISIDEDINV
 	}
 
@@ -172,7 +172,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		}
 		if ((theTile instanceof IInventoryConnection)) {
 			IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile)
-					.canConnectInventory(ForgeDirection.VALID_DIRECTIONS[side ^ 1]);
+					.canConnectInventory(EnumFacing.VALUES[side ^ 1]);
 			if (connectionType == IInventoryConnection.ConnectionType.DENY) {
 				return false;
 			}
@@ -184,7 +184,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			return false;
 		}
 		if (theTile instanceof ISidedInventory) {
-			int[] slots = ((ISidedInventory) theTile).getAccessibleSlotsFromSide(side ^ 1);
+			int[] slots = ((ISidedInventory) theTile).getSlotsForFace(EnumFacing.VALUES[side ^ 1]);
 			if (slots == null) {
 				ErrorHelper.reportProblemOnce(theTile.getClass().getName() + " - returns null from getAccessibleSlotsFromSide() with side=" + (side ^ 1));
 				return false;
@@ -238,7 +238,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	}
 
 	@Override
-	public IIcon getBaseIcon() {
+	public TextureAtlasSprite getBaseIcon() {
 
 		if (pathWeightType == DuctItem.PATHWEIGHT_DENSE) {
 			return ((DuctItem) getDuctType()).iconBaseTextureDense;
@@ -295,19 +295,19 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	@Override
 	public int x() {
 
-		return xCoord;
+		return getPos().getX();
 	}
 
 	@Override
 	public int y() {
 
-		return yCoord;
+		return getPos().getY();
 	}
 
 	@Override
 	public int z() {
 
-		return zCoord;
+		return getPos().getZ();
 	}
 
 	@Override
@@ -481,7 +481,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
 
@@ -497,6 +497,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		if (pathWeightType != 0) {
 			nbt.setByte("Weight", pathWeightType);
 		}
+		return nbt;
 	}
 
 	public void sendTravelingItemsPacket() {
@@ -659,10 +660,10 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 		ItemStack drop = super.getDrop();
 		if (pathWeightType != 0) {
-			if (drop.stackTagCompound == null) {
-				drop.stackTagCompound = new NBTTagCompound();
+			if (!drop.hasTagCompound()) {
+                drop.setTagCompound(new NBTTagCompound());
 			}
-			drop.stackTagCompound.setByte(DuctItem.PATHWEIGHT_NBT, pathWeightType);
+			drop.getTagCompound().setByte(DuctItem.PATHWEIGHT_NBT, pathWeightType);
 		}
 		return drop;
 	}
@@ -728,7 +729,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		int stackSizeLeft;
 		ItemStack curItem;
 
-		for (byte i = internalSideCounter; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (byte i = internalSideCounter; i < EnumFacing.VALUES.length; i++) {
 			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
@@ -858,7 +859,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext();) {
 				iterator.advance();
 
-				if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), iterator.key().side ^ 1) != null
+				if (InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), EnumFacing.VALUES[iterator.key().side ^ 1]) != null
 						&& ItemHelper.itemsIdentical(insertingItem, iterator.key().toItemStack(iterator.value()))) {
 					return insertingItem;
 				}
@@ -954,7 +955,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 		if (inv instanceof ISidedInventory) {
 			ISidedInventory iSidedInventory = ((ISidedInventory) inv);
-			for (int slot : iSidedInventory.getAccessibleSlotsFromSide(side)) {
+			for (int slot : iSidedInventory.getSlotsForFace(EnumFacing.VALUES[side])) {
 				ItemStack stackInSlot = iSidedInventory.getStackInSlot(slot);
 				if (ItemHelper.itemsIdentical(stackInSlot, insertingItem)) {
 					storedNo += stackInSlot.stackSize;
@@ -982,7 +983,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	public static ItemStack insertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
 
 		if (cap < 0 || cap == Integer.MAX_VALUE) {
-			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, EnumFacing.VALUES[side]);
 		}
 		int toInsert = cap - getNumItems(inventory, side, stack, cap);
 
@@ -990,9 +991,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			return stack;
 		}
 		if (stack.stackSize < toInsert) {
-			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, side);
+			return InventoryHelper.insertItemStackIntoInventory(inventory, stack, EnumFacing.VALUES[side]);
 		} else {
-			ItemStack remaining = InventoryHelper.insertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
+			ItemStack remaining = InventoryHelper.insertItemStackIntoInventory(inventory, stack.splitStack(toInsert), EnumFacing.VALUES[side]);
 			if (remaining != null) {
 				stack.stackSize += remaining.stackSize;
 			}
@@ -1003,7 +1004,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	public static ItemStack simulateInsertItemStackIntoInventory(IInventory inventory, ItemStack stack, int side, int cap) {
 
 		if (cap < 0 || cap == Integer.MAX_VALUE) {
-			return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
+			return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, EnumFacing.VALUES[side]);
 		}
 
 		int toInsert = cap - getNumItems(inventory, side, stack, cap);
@@ -1012,9 +1013,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			return stack;
 		}
 		if (stack.stackSize <= toInsert) {
-			return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, side);
+			return InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack, EnumFacing.VALUES[side]);
 		} else {
-			ItemStack remaining = InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack.splitStack(toInsert), side);
+			ItemStack remaining = InventoryHelper.simulateInsertItemStackIntoInventory(inventory, stack.splitStack(toInsert), EnumFacing.VALUES[side]);
 			if (remaining != null) {
 				stack.stackSize += remaining.stackSize;
 			}

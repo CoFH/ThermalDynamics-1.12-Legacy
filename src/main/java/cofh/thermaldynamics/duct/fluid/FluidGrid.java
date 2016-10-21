@@ -17,8 +17,8 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidStack;
@@ -272,7 +272,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 					}
 					PacketFluid packet = new PacketFluid(this, ducts);
 					WorldServer dimension = (WorldServer) worldGrid.worldObj;
-					for (EntityPlayerMP player : (List<EntityPlayerMP>) dimension.playerEntities) {
+					for (EntityPlayer player : (List<EntityPlayer>) dimension.playerEntities) {
 						for (ChunkCoord chunk : chunks) {
 							int dx = (chunk.chunkX - (MathHelper.floor(player.posX) >> 4)) * 16;
 							int dz = (chunk.chunkZ - (MathHelper.floor(player.posZ) >> 4)) * 16;
@@ -366,13 +366,13 @@ public class FluidGrid extends MultiBlockGridTracking {
 	}
 
 	@Override
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		super.addInfo(info, player, debug);
 		FluidStack fluid = getFluid();
 		if (fluid != null) {
 			if ((this instanceof FluidGridSuper)) {
-				addInfo(info, "fluidThroughput", new ChatComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
+				addInfo(info, "fluidThroughput", new TextComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
 			} else {
 				addInfo(info, "fluidThroughput", myTank.fluidThroughput);
 			}

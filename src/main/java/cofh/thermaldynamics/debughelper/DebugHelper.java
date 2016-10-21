@@ -1,8 +1,9 @@
 package cofh.thermaldynamics.debughelper;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.map.hash.TObjectLongHashMap;
@@ -85,7 +86,7 @@ public class DebugHelper {
 		if (world == null) {
 			world = Minecraft.getMinecraft().theWorld;
 		}
-		world.spawnParticle("reddust", x, y, z, r, g, b);
+		world.spawnParticle(EnumParticleTypes.REDSTONE, x, y, z, r, g, b);
 	}
 
 	public static void quit() {

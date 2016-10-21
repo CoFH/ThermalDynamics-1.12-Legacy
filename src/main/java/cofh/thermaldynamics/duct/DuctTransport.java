@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.TextureMap;
 
 public class DuctTransport extends Duct {
 
@@ -12,9 +12,8 @@ public class DuctTransport extends Duct {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister ir) {
-
-		super.registerIcons(ir);
+	public void registerIcons(TextureMap textureMap) {
+		super.registerIcons(textureMap);
 		frameType = 4;
 	}
 }

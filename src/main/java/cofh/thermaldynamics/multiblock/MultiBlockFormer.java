@@ -3,7 +3,7 @@ package cofh.thermaldynamics.multiblock;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class MultiBlockFormer {
 
@@ -37,7 +37,7 @@ public class MultiBlockFormer {
 		currentMultiBlock.setInvalidForForming();
 
 		IMultiBlock aBlock;
-		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (currentMultiBlock.isSideConnected(i)) {
 				aBlock = currentMultiBlock.getConnectedSide(i);
 				if (aBlock != null && aBlock.isValidForForming()) {

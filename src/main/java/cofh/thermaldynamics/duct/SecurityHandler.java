@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct;
 
+import codechicken.lib.util.CommonUtils;
 import cofh.api.tileentity.ISecurable;
 import cofh.core.CoFHProps;
 import cofh.lib.util.helpers.SecurityHelper;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PreYggdrasilConverter;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class SecurityHandler implements ISecurable {
 
@@ -34,13 +36,13 @@ public class SecurityHandler implements ISecurable {
 	@Override
 	public boolean setOwnerName(String name) {
 
-		if (MinecraftServer.getServer() == null) {
+		if (FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
 			return false;
 		}
 		if (Strings.isNullOrEmpty(name) || CoFHProps.DEFAULT_OWNER.getName().equalsIgnoreCase(name)) {
 			return false;
 		}
-		String uuid = PreYggdrasilConverter.func_152719_a(name);
+		String uuid = PreYggdrasilConverter.convertMobOwnerIfNeeded(FMLCommonHandler.instance().getMinecraftServerInstance(), name);
 		if (Strings.isNullOrEmpty(uuid)) {
 			return false;
 		}
@@ -53,7 +55,7 @@ public class SecurityHandler implements ISecurable {
 		if (SecurityHelper.isDefaultUUID(owner.getId())) {
 			owner = profile;
 			if (!SecurityHelper.isDefaultUUID(owner.getId())) {
-				if (MinecraftServer.getServer() != null) {
+				if (FMLCommonHandler.instance().getMinecraftServerInstance() != null) {
 					new Thread("CoFH User Loader") {
 
 						@Override

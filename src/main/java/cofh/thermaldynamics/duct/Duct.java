@@ -1,30 +1,35 @@
 package cofh.thermaldynamics.duct;
 
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.texture.TextureUtils.IIconRegister;
 import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class Duct {
+public class Duct implements IIconRegister {
 
 	public static final String REDSTONE_BLOCK = "minecraft:redstone_block";
 	public static final String SIDE_DUCTS = "sideDucts";
 
-	public static enum Type {
+	public enum Type {
 		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, CRAFTING
 	}
 
 	public ItemStack itemStack = null;
 
-	public IIcon iconBaseTexture;
-	public IIcon iconConnectionTexture;
-	public IIcon iconFluidTexture;
-	public IIcon iconFrameTexture;
-	public IIcon iconFrameBandTexture;
-	public IIcon iconFrameFluidTexture;
+	public TextureAtlasSprite iconBaseTexture;
+	public TextureAtlasSprite iconConnectionTexture;
+	public TextureAtlasSprite iconFluidTexture;
+	public TextureAtlasSprite iconFrameTexture;
+	public TextureAtlasSprite iconFrameBandTexture;
+	public TextureAtlasSprite iconFrameFluidTexture;
 
 	public byte frameType = 0;
 
@@ -43,7 +48,7 @@ public class Duct {
 	public final boolean opaque;
 	public final int type;
 
-	public EnumRarity rarity = EnumRarity.common;
+	public EnumRarity rarity = EnumRarity.COMMON;
 
 	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
 			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
@@ -62,6 +67,9 @@ public class Duct {
 		this.frameTexture = frameTexture;
 		this.frameFluidTexture = frameFluidTexture;
 		this.frameFluidTransparency = (byte) frameFluidTransparency;
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT){
+            TextureUtils.addIconRegister(this);
+        }
 	}
 
 	public Duct setRarity(int rarity) {
@@ -75,7 +83,8 @@ public class Duct {
 		return frameType == 2 || frameType == 4;
 	}
 
-	public void registerIcons(IIconRegister ir) {
+	@Override
+	public void registerIcons(TextureMap ir) {
 
 		if (baseTexture != null) {
 			iconBaseTexture = TextureOverlay.generateBaseTexture(ir, baseTexture, opaque ? null : "trans", null);
@@ -90,7 +99,7 @@ public class Duct {
 		if (frameTexture != null) {
 			if (frameTexture.endsWith("_large")) {
 				frameType = 3;
-				iconFrameTexture = ir.registerIcon("thermaldynamics:duct/base/" + frameTexture);
+				iconFrameTexture = ir.registerSprite(new ResourceLocation("thermaldynamics:duct/base/" + frameTexture));
 			} else if (SIDE_DUCTS.equals(frameTexture)) {
 				frameType = 1;
 			} else {
@@ -113,7 +122,7 @@ public class Duct {
 		return this.id > other.id ? 1 : this.id < other.id ? -1 : 0;
 	}
 
-	public IIcon getBaseTexture(ItemStack itemStack) {
+	public TextureAtlasSprite getBaseTexture(ItemStack itemStack) {
 
 		return iconBaseTexture;
 	}

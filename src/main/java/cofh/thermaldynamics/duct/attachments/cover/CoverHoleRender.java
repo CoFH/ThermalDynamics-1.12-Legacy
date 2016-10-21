@@ -1,3 +1,4 @@
+/*
 package cofh.thermaldynamics.duct.attachments.cover;
 
 import cofh.lib.util.helpers.MathHelper;
@@ -392,6 +393,7 @@ public class CoverHoleRender {
 		}
 	}
 
+	@Deprecated
 	public static class Vertex8 {
 
 		public final static int TEX_NUM = 8;
@@ -426,15 +428,15 @@ public class CoverHoleRender {
 
 		public void draw() {
 
-			Tessellator tess = Tessellator.instance;
-			int index = tess.rawBufferIndex;
-			tess.addVertex(this.x, this.y, this.z); // to grow the rawBuffer if needed
-			int[] buffer = tess.rawBuffer;
-			buffer[index + 3] = Float.floatToRawIntBits(this.u);
-			buffer[index + 4] = Float.floatToRawIntBits(this.v);
-			buffer[index + 5] = this.color;
-			buffer[index + 6] = this.normal;
-			buffer[index + 7] = this.brightness;
+			//Tessellator tess = Tessellator.instance;
+			//int index = tess.rawBufferIndex;
+			//tess.addVertex(this.x, this.y, this.z); // to grow the rawBuffer if needed
+			//int[] buffer = tess.rawBuffer;
+			//buffer[index + 3] = Float.floatToRawIntBits(this.u);
+			//buffer[index + 4] = Float.floatToRawIntBits(this.v);
+			//buffer[index + 5] = this.color;
+			//buffer[index + 6] = this.normal;
+			//buffer[index + 7] = this.brightness;
 		}
 
 		public float[] buildTex() {
@@ -455,3 +457,4 @@ public class CoverHoleRender {
 	}
 
 }
+*/

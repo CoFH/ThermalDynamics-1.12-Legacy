@@ -6,8 +6,8 @@ import com.google.common.math.DoubleMath;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 public abstract class MultiBlockGridTracking extends MultiBlockGrid {
@@ -73,13 +73,13 @@ public abstract class MultiBlockGridTracking extends MultiBlockGrid {
 	}
 
 	@Override
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		super.addInfo(info, player, debug);
 		addInfo(info, "tracker.cur", format(getLevel()));
 
 		if (tracker == null) {
-			info.add(new ChatComponentTranslation("info.thermaldynamics.info.tracker.activate"));
+			info.add(new TextComponentTranslation("info.thermaldynamics.info.tracker.activate"));
 			getTracker();
 			return;
 		}

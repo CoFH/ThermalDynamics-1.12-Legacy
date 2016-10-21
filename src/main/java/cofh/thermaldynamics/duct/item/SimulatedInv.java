@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
 
 public class SimulatedInv implements IInventory {
 
@@ -75,30 +77,34 @@ public class SimulatedInv implements IInventory {
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
+	public ItemStack removeStackFromSlot(int i) {
 
 		return items[i];
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack stack) {
-
 		items[i] = stack;
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 
 		return "[Simulated]";
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 
 		return false;
 	}
 
-	@Override
+    @Override
+    public ITextComponent getDisplayName() {
+        return null;
+    }
+
+    @Override
 	public int getInventoryStackLimit() {
 
 		return target.getInventoryStackLimit();
@@ -116,12 +122,12 @@ public class SimulatedInv implements IInventory {
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 
 	}
 
@@ -131,7 +137,22 @@ public class SimulatedInv implements IInventory {
 		return slot < target.getSizeInventory() && target.isItemValidForSlot(slot, stack);
 	}
 
-	public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
 
 		ISidedInventory sided;
 
@@ -146,19 +167,19 @@ public class SimulatedInv implements IInventory {
 		}
 
 		@Override
-		public int[] getAccessibleSlotsFromSide(int side) {
+		public int[] getSlotsForFace(EnumFacing side) {
 
-			return sided.getAccessibleSlotsFromSide(side);
+			return sided.getSlotsForFace(side);
 		}
 
 		@Override
-		public boolean canInsertItem(int slot, ItemStack item, int side) {
+		public boolean canInsertItem(int slot, ItemStack item, EnumFacing side) {
 
 			return slot < target.getSizeInventory() && sided.canInsertItem(slot, item, side);
 		}
 
 		@Override
-		public boolean canExtractItem(int slot, ItemStack item, int side) {
+		public boolean canExtractItem(int slot, ItemStack item, EnumFacing side) {
 
 			return slot < target.getSizeInventory() && sided.canExtractItem(slot, item, side);
 		}

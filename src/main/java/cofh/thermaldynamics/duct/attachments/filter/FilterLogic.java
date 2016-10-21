@@ -239,7 +239,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				continue;
 			}
 
-			if (!flags[flagIgnoreNBT] && !ItemHelper.doNBTsMatch(item.stackTagCompound, filter.stackTagCompound)) {
+			if (!flags[flagIgnoreNBT] && !ItemHelper.doNBTsMatch(item.getTagCompound(), filter.getTagCompound())) {
 				continue;
 			}
 
@@ -429,7 +429,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		return validLevels.length;
 	}
 
-	public static enum Perm {
+	public enum Perm {
 		FILTER(true, false, Duct.Type.ITEM), SERVO(false, true, Duct.Type.ITEM), ALL(true, true, Duct.Type.ITEM);
 
 		public final boolean filter;

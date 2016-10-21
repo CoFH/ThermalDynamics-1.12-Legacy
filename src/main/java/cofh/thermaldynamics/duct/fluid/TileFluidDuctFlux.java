@@ -6,7 +6,8 @@ import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class TileFluidDuctFlux extends TileFluidDuctPowered {
 
@@ -54,9 +55,9 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	}
 
 	@Override
-	public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
+	public void onNeighborTileChange(BlockPos pos) {
 
-		super.onNeighborTileChange(tileX, tileY, tileZ);
+		super.onNeighborTileChange(pos);
 		checkSubNode();
 	}
 
@@ -103,8 +104,8 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
 			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (energyCache[i] != null) {
-					if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+					if (energyCache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
+						usedPower += energyCache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], power - usedPower, false);
 					}
 					if (usedPower >= power) {
 						this.tickInternalSideCounter(i + 1);
@@ -117,8 +118,8 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
 			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (energyCache[i] != null) {
-					if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
+					if (energyCache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
+						usedPower += energyCache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], power - usedPower, false);
 					}
 					if (usedPower >= power) {
 						this.tickInternalSideCounter(i + 1);

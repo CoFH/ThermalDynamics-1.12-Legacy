@@ -1,13 +1,10 @@
 package cofh.thermaldynamics.render;
 
-import cofh.repack.codechicken.lib.render.TextureDataHolder;
-import cofh.repack.codechicken.lib.render.TextureSpecial;
-import cofh.repack.codechicken.lib.render.TextureUtils;
-
-import net.minecraft.client.renderer.texture.IIconRegister;
+import codechicken.lib.texture.TextureDataHolder;
+import codechicken.lib.texture.TextureSpecial;
+import codechicken.lib.texture.TextureUtils;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 public class TextureOverlay {
@@ -42,7 +39,7 @@ public class TextureOverlay {
 		return newTex;
 	}
 
-	public static IIcon generateBaseTexture(IIconRegister register, String base, String... textures) {
+	public static TextureAtlasSprite generateBaseTexture(TextureMap map, String base, String... textures) {
 
 		TextureDataHolder image, newimage;
 		image = TextureUtils.loadTexture(toLoc(PATH_BASE, base));
@@ -57,7 +54,7 @@ public class TextureOverlay {
 		}
 		String name = builder.toString();
 
-		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		TextureAtlasSprite entry = map.getTextureExtry(name);
 		if (entry != null) {
 			return entry;
 		}
@@ -89,54 +86,54 @@ public class TextureOverlay {
 				}
 			}
 		}
-		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		TextureSpecial texture = TextureUtils.getTextureSpecial(map, name);
 		texture.addTexture(image);
 
 		return texture;
 	}
 
-	public static IIcon generateConnectionTexture(IIconRegister register, String connection) {
+	public static TextureAtlasSprite generateConnectionTexture(TextureMap map, String connection) {
 
 		TextureDataHolder image;
 		image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
 
 		String name = "thermaldynamics:Conn_" + connection;
 
-		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		TextureAtlasSprite entry = map.getTextureExtry(name);
 		if (entry != null) {
 			return entry;
 		}
-		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		TextureSpecial texture = TextureUtils.getTextureSpecial(map, name);
 		texture.addTexture(image);
 
 		return texture;
 	}
 
-	public static IIcon generateFrameTexture(IIconRegister register, String frame) {
+	public static TextureAtlasSprite generateFrameTexture(TextureMap map, String frame) {
 
 		TextureDataHolder image;
 		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
 
 		String name = "thermaldynamics:Frame_" + frame;
 
-		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		TextureAtlasSprite entry = map.getTextureExtry(name);
 		if (entry != null) {
 			return entry;
 		}
-		TextureSpecial texture = TextureUtils.getTextureSpecial(register, name);
+		TextureSpecial texture = TextureUtils.getTextureSpecial(map, name);
 		texture.addTexture(image);
 
 		return texture;
 	}
 
-	public static IIcon generateFrameBandTexture(IIconRegister register, String frame) {
+	public static TextureAtlasSprite generateFrameBandTexture(TextureMap register, String frame) {
 
 		TextureDataHolder image;
 		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
 
 		String name = "thermaldynamics:Band_" + frame;
 
-		TextureAtlasSprite entry = ((TextureMap) register).getTextureExtry(name);
+		TextureAtlasSprite entry = register.getTextureExtry(name);
 		if (entry != null) {
 			return entry;
 		}

@@ -1,18 +1,22 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.RenderUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.render.RenderHelper;
-import cofh.repack.codechicken.lib.render.CCModel;
-import cofh.repack.codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.CCModel;
+import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermalfoundation.fluid.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.ARBShaderObjects;
@@ -44,36 +48,37 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	};
 
 	@Override
-	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
+	public void renderTileEntityAt(TileItemDuct tile, double x, double y, double z, float frame, int destroyStage) {
 
 		TileItemDuctEnder duct = (TileItemDuctEnder) tile;
 
 		if (duct.powered) {
-			CCRenderState.reset();
-			RenderUtils.preWorldRender(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+            CCRenderState ccrs = CCRenderState.instance();
+            ccrs.reset();
+			RenderUtils.preWorldRender(tile.getWorld(),tile.getPos());
 
-			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-			GL11.glColor4f(1, 1, 1, 1);
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+			GlStateManager.color(1, 1, 1, 1);
 
 			RenderDuct.instance.getDuctConnections(duct);
 			int[] connections = RenderDuct.connections;
 
-			drawEnderStarfield(x, y, z, connections, frame, duct.centerLine, duct.centerLineSub);
+			drawEnderStarfield(ccrs, x, y, z, connections, frame, duct.centerLine, duct.centerLineSub);
 
-			CCRenderState.reset();
+            ccrs.reset();
 
 		} else {
-			renderItemDuct(duct, x, y, z, frame);
+            super.renderTileEntityAt(duct, x, y, z, frame, destroyStage);
 		}
 	}
 
-	public static void drawEnderStarfield(double x, double y, double z, int[] connections, float frame, int alpha, int[] alphaSub) {
+	public static void drawEnderStarfield(CCRenderState ccrs, double x, double y, double z, int[] connections, float frame, int alpha, int[] alphaSub) {
 
 		if (ShaderHelper.useShaders() || ShaderStarfield.starfieldShader == 0) {
-			CCRenderState.changeTexture(ShaderStarfield.starsTexture);
+			TextureUtils.changeTexture(ShaderStarfield.starsTexture);
 		} else {
-			CCRenderState.changeTexture(RenderHelper.MC_BLOCK_SHEET);
+            TextureUtils.changeTexture(RenderHelper.MC_BLOCK_SHEET);
 		}
 
 		CCModel[] models = RenderDuct.modelFluid[5];
@@ -81,14 +86,14 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		if (alpha == 0) {
 			ShaderStarfield.alpha = 0;
 			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
-			CCRenderState.startDrawing();
+			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
-					models[s].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
+					models[s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
 				}
 			}
-			models[6].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
-			CCRenderState.draw();
+			models[6].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
+			ccrs.draw();
 			ShaderHelper.releaseShader();
 		} else {
 
@@ -96,17 +101,17 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
 					ShaderStarfield.alpha = getAlphaLevel(alphaSub[s], frame) / 255F;
 					ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
-					CCRenderState.startDrawing();
-					models[s].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
-					CCRenderState.draw();
+					ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+					models[s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
+					ccrs.draw();
 					ShaderHelper.releaseShader();
 				}
 			}
 			ShaderStarfield.alpha = getAlphaLevel(alpha, frame) / 255F;
 			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
-			CCRenderState.startDrawing();
-			models[6].render(x, y, z, RenderUtils.getIconTransformation(TFFluids.fluidEnder.getIcon()));
-			CCRenderState.draw();
+			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+			models[6].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
+			ccrs.draw();
 			ShaderHelper.releaseShader();
 		}
 	}

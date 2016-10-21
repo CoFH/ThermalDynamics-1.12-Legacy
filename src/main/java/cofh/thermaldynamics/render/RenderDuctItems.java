@@ -1,190 +1,179 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
 import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
-import cofh.repack.codechicken.lib.render.CCRenderState;
-import cofh.repack.codechicken.lib.vec.Translation;
-import cofh.repack.codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import com.google.common.collect.Iterators;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.RenderEntityItem;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Facing;
-import net.minecraft.world.World;
+public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 
-import org.lwjgl.opengl.GL11;
+    public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
 
-public class RenderDuctItems extends TileEntitySpecialRenderer {
+    static RenderEntityItem travelingItemRender;
+    static EntityItem travelingEntityItem = new EntityItem(null);
+    static float travelingItemSpin = 0.25F;
 
-	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
+    public static final RenderDuctItems instance = new RenderDuctItems();
 
-	static RenderItem travelingItemRender;
-	static EntityItem travelingEntityItem = new EntityItem(null);
-	static float travelingItemSpin = 0.25F;
+    static final float ITEM_RENDER_SCALE = 0.6F;
 
-	public static final RenderDuctItems instance = new RenderDuctItems();
+    static {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        travelingItemRender = new RenderEntityItem(minecraft.getRenderManager(), minecraft.getRenderItem()) {
 
-	static final float ITEM_RENDER_SCALE = 0.6F;
+            @Override
+            public boolean shouldBob() {
 
-	static {
-		travelingItemRender = new RenderItem() {
+                return false;
+            }
 
-			@Override
-			public boolean shouldBob() {
+            @Override
+            public boolean shouldSpreadItems() {
 
-				return false;
-			}
+                return false;
+            }
+        };
+        travelingEntityItem.hoverStart = 0;
 
-			@Override
-			public boolean shouldSpreadItems() {
+        MinecraftForge.EVENT_BUS.register(instance);
+    }
 
-				return false;
-			}
-		};
+    public static float spinStep = 0.026175f;
 
-		travelingItemRender.setRenderManager(RenderManager.instance);
-		travelingEntityItem.hoverStart = 0;
+    @SubscribeEvent
+    public void clientTick(TickEvent.ClientTickEvent event) {
 
-		FMLCommonHandler.instance().bus().register(instance);
-	}
+        travelingItemSpin += spinStep;
+        travelingItemSpin %= 180;
+    }
 
-	public static float spinStep = 0.026175f;
+    public void renderTileEntityAt(TileItemDuct duct, double x, double y, double z, float frame, int destroyStage) {
+        CCRenderState ccrs = CCRenderState.instance();
+        if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
+            //RenderUtils.preWorldRender(duct.getWorld(), duct.getPos());
+            //CCRenderState.useNormals = true;
 
-	@SubscribeEvent
-	public void clientTick(TickEvent.ClientTickEvent event) {
+            renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, duct.getWorld(), x, y, z, frame);
+            //CCRenderState.useNormals = false;
+            //ccrs.reset();
+        }
 
-		travelingItemSpin += spinStep;
-		travelingItemSpin %= 180;
-	}
+        if (duct.centerLine > 0) {
+            GlStateManager.pushMatrix();
 
-	@Override
-	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float frame) {
+            Translation trans = (new Vector3(x, y, z)).translation();
 
-		TileItemDuct duct = (TileItemDuct) tile;
-		renderItemDuct(duct, x, y, z, frame);
+            ccrs.reset();
+            GlStateManager.enableAlpha();
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            //CCRenderState.useNormals = true;
+            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.disableLighting();
 
-	}
+            GlStateManager.enableBlend();
+            GlStateManager.enableCull();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+            RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
+            RenderUtils.preWorldRender(duct.getWorld(), duct.getPos());
+            ccrs.colour = -1;
+            ccrs.brightness = 15728880;
 
-	public void renderItemDuct(TileItemDuct duct, double x, double y, double z, float frame) {
+            RenderDuct.instance.getDuctConnections(duct);
+            ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            for (int s = 0; s < 6; s++) {
+                if (BlockDuct.ConnectionTypes.values()[RenderDuct.connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
+                    ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], frame);
+                    RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
+                } else {
+                    ccrs.alphaOverride = getAlphaLevel(duct.centerLine, frame);
+                    RenderDuct.modelLineCenter.render(ccrs, s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
+                }
+            }
+            ccrs.draw();
+            ccrs.alphaOverride = -1;
+            ccrs.reset();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.disableBlend();
+            GlStateManager.enableLighting();
 
-		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
-			RenderUtils.preWorldRender(duct.getWorldObj(), duct.xCoord, duct.yCoord, duct.zCoord);
-			CCRenderState.useNormals = true;
+            //CCRenderState.useNormals = false;
+            GlStateManager.popMatrix();
 
-			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, duct.getWorldObj(), x, y, z, frame);
-			CCRenderState.useNormals = false;
-			CCRenderState.reset();
-		}
+        }
+    }
 
-		if (duct.centerLine > 0) {
-			GL11.glPushMatrix();
+    public static int getAlphaLevel(int centerLine, float frame) {
 
-			Translation trans = (new Vector3(x, y, z)).translation();
+        return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
+    }
 
-			CCRenderState.reset();
-			GL11.glEnable(GL11.GL_ALPHA_TEST);
-			OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-			CCRenderState.useNormals = true;
-			GL11.glColor4f(1, 1, 1, 1);
-			GL11.glDisable(GL11.GL_LIGHTING);
+    public void renderTravelingItems(Iterator<TravelingItem> items, TileItemDuct duct, World world, double x, double y, double z, float frame) {
 
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-			RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
-			RenderUtils.preWorldRender(duct.getWorldObj(), duct.xCoord, duct.yCoord, duct.zCoord);
-			CCRenderState.setColour(-1);
-			CCRenderState.setBrightness(15728880);
+        if (!items.hasNext()) {
+            return;
+        }
 
-			RenderDuct.instance.getDuctConnections(duct);
-			CCRenderState.startDrawing();
-			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[RenderDuct.connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
-					CCRenderState.alphaOverride = getAlphaLevel(duct.centerLineSub[s], frame);
-					RenderDuct.modelLine[s].render(trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
-				} else {
-					CCRenderState.alphaOverride = getAlphaLevel(duct.centerLine, frame);
-					RenderDuct.modelLineCenter.render(s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
-				}
-			}
-			CCRenderState.draw();
-			CCRenderState.alphaOverride = -1;
-			CCRenderState.reset();
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			GL11.glDisable(GL11.GL_BLEND);
-			GL11.glEnable(GL11.GL_LIGHTING);
+        travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
 
-			CCRenderState.useNormals = false;
-			GL11.glPopMatrix();
+        TravelingItem renderItem;
 
-		}
-	}
+        GlStateManager.pushMatrix();
+        {
+            GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
+            for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
+                renderItem = items.next();
+                if (renderItem == null || renderItem.stack == null) {
+                    continue;
+                }
 
-	public static int getAlphaLevel(int centerLine, float frame) {
+                double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
 
-		return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
-	}
+                v -= 0.5;
 
-	public void renderTravelingItems(Iterator<TravelingItem> items, TileItemDuct duct, World world, double x, double y, double z, float frame) {
+                if (renderItem.shouldDie && v > 0) {
+                    continue;
+                }
 
-		if (!items.hasNext()) {
-			return;
-		}
+                GlStateManager.pushMatrix();
+                {
+                    if (v < 0) {
+                        translateItem(renderItem.oldDirection, v);
+                    } else {
+                        translateItem(renderItem.direction, v);
+                    }
 
-		travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
+                    GlStateManager.scale(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
-		TravelingItem renderItem;
+                    travelingEntityItem.setEntityItemStack(renderItem.stack);
+                    travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
+                }
+                GlStateManager.popMatrix();
+            }
+        }
+        GlStateManager.popMatrix();
+    }
 
-		GL11.glPushMatrix();
-		{
-			GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
-			for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
-				renderItem = items.next();
-				if (renderItem == null || renderItem.stack == null) {
-					continue;
-				}
-
-				double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
-
-				v -= 0.5;
-
-				if (renderItem.shouldDie && v > 0) {
-					continue;
-				}
-
-				GL11.glPushMatrix();
-				{
-					if (v < 0) {
-						translateItem(renderItem.oldDirection, v);
-					} else {
-						translateItem(renderItem.direction, v);
-					}
-
-					GL11.glScalef(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
-
-					travelingEntityItem.setEntityItemStack(renderItem.stack);
-					travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
-				}
-				GL11.glPopMatrix();
-			}
-		}
-		GL11.glPopMatrix();
-	}
-
-	private void translateItem(byte direction, double v) {
-
-		GL11.glTranslated(Facing.offsetsXForSide[direction] * v, Facing.offsetsYForSide[direction] * v, Facing.offsetsZForSide[direction] * v);
-	}
+    private void translateItem(byte direction, double v) {
+        EnumFacing face = EnumFacing.VALUES[direction];
+        GlStateManager.translate(face.getFrontOffsetX() * v, face.getFrontOffsetY() * v, face.getFrontOffsetZ() * v);
+    }
 }

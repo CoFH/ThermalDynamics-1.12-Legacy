@@ -7,19 +7,19 @@ import net.minecraft.item.ItemStack;
 
 public interface IMultiBlockRoute extends IMultiBlock {
 
-	public abstract int getWeight();
+	int getWeight();
 
-	public abstract boolean canStuffItem();
+	boolean canStuffItem();
 
-	public boolean isOutput();
+	boolean isOutput();
 
-	public int getMaxRange();
+	int getMaxRange();
 
-	public TileTDBase.NeighborTypes getCachedSideType(byte side);
+	TileTDBase.NeighborTypes getCachedSideType(byte side);
 
-	public TileTDBase.ConnectionTypes getConnectionType(byte side);
+	TileTDBase.ConnectionTypes getConnectionType(byte side);
 
-	public IMultiBlock getCachedTile(byte side);
+	IMultiBlock getCachedTile(byte side);
 
 	TileItemDuct.RouteInfo canRouteItem(ItemStack stack);
 

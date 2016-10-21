@@ -1,28 +1,30 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
+import codechicken.lib.render.CCRenderState;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.render.RenderHelper;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
-import cofh.repack.codechicken.lib.vec.Rotation;
-import cofh.repack.codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Rotation;
+import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MovingObjectPosition;
 
 import org.lwjgl.opengl.GL11;
 
@@ -92,23 +94,24 @@ public class Cover extends Attachment {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(int pass, RenderBlocks renderBlocks) {
+	public boolean render(int pass, CCRenderState renderBlocks) {
 
-		if (!block.canRenderInPass(pass)) {
-			return false;
-		}
+		//if (!block.canRenderInPass(pass)) {//TODO
+		//	return false;
+		//}
 
-		Attachment attachment = tile.attachments[side];
-		CoverHoleRender.ITransformer[] hollowMask = null;
-		if (attachment != null) {
-			hollowMask = attachment.getHollowMask();
-		}
-		if (hollowMask == null) {
-			hollowMask = tile.getHollowMask(side);
-		}
+		//Attachment attachment = tile.attachments[side];
+		//CoverHoleRender.ITransformer[] hollowMask = null;
+		//if (attachment != null) {
+		//	hollowMask = attachment.getHollowMask();
+		//}
+		//if (hollowMask == null) {
+		//	hollowMask = tile.getHollowMask(side);
+		//}
 
-		return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
-				tile.covers);
+		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
+		//		tile.covers);
+        return false;
 	}
 
 	@Override
@@ -155,7 +158,7 @@ public class Cover extends Attachment {
 	public void writeToNBT(NBTTagCompound tag) {
 
 		super.writeToNBT(tag);
-		tag.setString("block", Block.blockRegistry.getNameForObject(block));
+		tag.setString("block", ForgeRegistries.BLOCKS.getKey(block).toString());
 		tag.setByte("meta", (byte) meta);
 	}
 
@@ -171,41 +174,40 @@ public class Cover extends Attachment {
 		super.readFromNBT(tag);
 		block = Block.getBlockFromName(tag.getString("block"));
 		if (block == null) {
-			block = Blocks.air;
+			block = Blocks.AIR;
 		}
 		meta = tag.getByte("meta");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
+	public void drawSelectionExtra(EntityPlayer player, RayTraceResult target, float partialTicks) {
 
 		super.drawSelectionExtra(player, target, partialTicks);
 
-		RenderHelper.setBlockTextureSheet();
+		/*RenderHelper.setBlockTextureSheet();
 		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
-		;
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableAlpha();
+		GlStateManager.enableColorMaterial();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableTexture2D();
 
-		GL11.glDepthMask(false);
+		GlStateManager.depthMask(false);
 		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
 		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-		GL11.glColor4f(1, 1, 1, 0.5F);
-		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-		GL11.glEnable(GL11.GL_BLEND);
-		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-		GL11.glPushMatrix();
+		GlStateManager.color(1, 1, 1, 0.5F);
+		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		GlStateManager.pushMatrix();
 		{
 
-			GL11.glTranslated(-d0, -d1, -d2);
-			GL11.glTranslated(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5);
-			GL11.glScaled(1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET);
-			GL11.glTranslated(-tile.xCoord - 0.5, -tile.yCoord - 0.5, -tile.zCoord - 0.5);
+			GlStateManager.translate(-d0, -d1, -d2);
+			GlStateManager.translate(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5);
+			GlStateManager.scale(1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET);
+			GlStateManager.translate(-tile.xCoord - 0.5, -tile.yCoord - 0.5, -tile.zCoord - 0.5);
 
 			Tessellator tess = Tessellator.instance;
 			tess.startDrawingQuads();
@@ -221,13 +223,13 @@ public class Cover extends Attachment {
 			}
 			tess.draw();
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 		net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-		GL11.glDepthMask(true);
-		GL11.glDisable(GL11.GL_ALPHA_TEST);
-		GL11.glDisable(GL11.GL_COLOR_MATERIAL);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_BLEND);
+		GlStateManager.depthMask(true);
+		GlStateManager.disableAlpha();
+		GlStateManager.disableColorMaterial();
+		GlStateManager.disableLighting();
+		GlStateManager.disableBlend();*/
 	}
 
 }

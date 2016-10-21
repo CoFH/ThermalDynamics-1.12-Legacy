@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class RouteCache {
 
@@ -55,8 +55,7 @@ public class RouteCache {
 	public synchronized void generateCache() {
 
 		while (processStep()) {
-			;
-		}
+        }
 
 	}
 
@@ -108,7 +107,7 @@ public class RouteCache {
 		}
 
 		byte foundDir = -1;
-		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i).allowTransfer) {
 				IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
 

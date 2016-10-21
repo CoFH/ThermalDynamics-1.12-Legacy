@@ -1,9 +1,9 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.repack.codechicken.lib.vec.BlockCoord;
 
 import gnu.trove.iterator.TByteIterator;
 import gnu.trove.list.linked.TByteLinkedList;
+import net.minecraft.util.math.BlockPos;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,7 +18,7 @@ public class Route implements Comparable<Route> {
 	public IMultiBlockRoute endPoint;
 	public int pathWeight = 0;
 	public boolean routeFinished = false;
-	public BlockCoord dest;
+	public BlockPos dest;
 	public static final byte[] tmpBuffer = new byte[256];
 
 	public Route(IMultiBlockRoute myParent) {

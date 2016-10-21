@@ -1,12 +1,19 @@
 package cofh.thermaldynamics.debughelper;
 
+import codechicken.lib.util.ItemUtils;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.position.BlockPosition;
-import cofh.repack.codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.raytracer.RayTracer;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase;
 import com.google.common.base.Throwables;
-import cpw.mods.fml.relauncher.ReflectionHelper;
+import net.minecraft.command.CommandException;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.LinkedList;
@@ -19,13 +26,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class CommandThermalDebug extends CommandBase {
 
@@ -36,7 +39,7 @@ public class CommandThermalDebug extends CommandBase {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_) {
+	public boolean checkPermission(MinecraftServer server, ICommandSender p_71519_1_) {
 
 		return true;
 	}
@@ -93,7 +96,7 @@ public class CommandThermalDebug extends CommandBase {
 	public static volatile boolean serverOverclock = false;
 
 	@Override
-	public void processCommand(ICommandSender p_71515_1_, String[] args) {
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException{
 
 		if (args.length == 0) {
 			return;
@@ -101,47 +104,47 @@ public class CommandThermalDebug extends CommandBase {
 
 		if ("overclock".equals(args[0])) {
 			serverOverclock = !serverOverclock;
-			p_71515_1_.addChatMessage(new ChatComponentText("Server Overclock = " + serverOverclock));
+			sender.addChatMessage(new TextComponentString("Server Overclock = " + serverOverclock));
 		}
 
 		if ("lag".equals(args[0])) {
 			if (args.length == 1) {
 				DebugTickHandler.lag = 0;
 			} else {
-				DebugTickHandler.lag = (long) (parseDouble(p_71515_1_, args[1]) * 1000 * 1000);
+				DebugTickHandler.lag = (long) (parseDouble(args[1]) * 1000 * 1000);
 			}
 		}
 
 		if ("longRange".equals(args[0])) {
 
-			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+			if (!(sender instanceof EntityPlayerMP)) {
 				return;
 			}
 
-			EntityPlayerMP playerMP = (EntityPlayerMP) p_71515_1_;
+			EntityPlayerMP playerMP = (EntityPlayerMP) sender;
 			BlockPosition pos = new BlockPosition((int) Math.floor(playerMP.posX), (int) Math.floor(playerMP.posY) - 5, (int) Math.floor(playerMP.posZ));
 
 			final World world = playerMP.getEntityWorld();
 
-			pos.setOrientation(ForgeDirection.NORTH);
+			pos.setOrientation(EnumFacing.NORTH);
 
 			int n = Integer.valueOf(args[1]);
 
 			for (int i = 0; i < n; i++) {
-				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+				world.setBlockState(pos.pos(), ThermalDynamics.blockDuct[4].getStateFromMeta(1), 3);
 				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
 				pos.moveForwards(1);
 			}
 
 			for (int i = 0; i < 4; i++) {
-				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+				world.setBlockState(pos.pos(), ThermalDynamics.blockDuct[4].getStateFromMeta(1), 3);
 				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
 				pos.moveRight(1);
 			}
 
 			for (int i = 0; i < n; i++) {
-				if (!world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3)) {
-					world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[4], 1, 3);
+				if (!world.setBlockState(pos.pos(), ThermalDynamics.blockDuct[4].getStateFromMeta(1), 3)) {
+					world.setBlockState(pos.pos(), ThermalDynamics.blockDuct[4].getStateFromMeta(1), 3);
 				}
 				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
 				pos.moveBackwards(1);
@@ -151,14 +154,14 @@ public class CommandThermalDebug extends CommandBase {
 		}
 
 		if ("addRandNBT".equals(args[0])) {
-			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+			if (!(sender instanceof EntityPlayerMP)) {
 				return;
 			}
 
-			EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
+			EntityPlayerMP player = (EntityPlayerMP) sender;
 
-			ItemStack heldItem = player.getHeldItem();
-			if (heldItem == null) {
+			ItemStack heldItem = ItemUtils.getHeldStack(player);
+            if (heldItem == null) {
 				return;
 			}
 
@@ -171,10 +174,10 @@ public class CommandThermalDebug extends CommandBase {
 				for (int i = 0; i < 5; i++) {
 					tag.setInteger(randString(), MathHelper.RANDOM.nextInt());
 				}
-				heldItem.stackTagCompound.setTag(randString(), tag);
+				heldItem.getTagCompound().setTag(randString(), tag);
 			}
 
-			NBTTagCompound tag = heldItem.stackTagCompound;
+			NBTTagCompound tag = heldItem.getTagCompound();
 			for (int i = 0; i < 5; i++) {
 				tag.setString(randString(), randString());
 			}
@@ -191,7 +194,7 @@ public class CommandThermalDebug extends CommandBase {
 		} else if ("showLoading".equals(args[0])) {
 			DebugTickHandler.showLoading = !DebugTickHandler.showLoading;
 		} else if ("unload".equals(args[0])) {
-			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+			if (!(sender instanceof EntityPlayerMP)) {
 				return;
 			}
 
@@ -199,34 +202,34 @@ public class CommandThermalDebug extends CommandBase {
 				chunksToUnload = ReflectionHelper.findField(ChunkProviderServer.class, "chunksToUnload");
 			}
 
-			EntityPlayerMP player = (EntityPlayerMP) p_71515_1_;
-			MovingObjectPosition trace = RayTracer.reTrace(player.worldObj, player, 100);
-			Chunk chunk = player.worldObj.getChunkFromBlockCoords(trace.blockX, trace.blockZ);
+			EntityPlayerMP player = (EntityPlayerMP) sender;
+			RayTraceResult trace = RayTracer.retrace(player, 100);
+			Chunk chunk = player.worldObj.getChunkFromBlockCoords(trace.getBlockPos());
 			Set<Long> o;
 			try {
 				// noinspection unchecked
-				o = (Set<Long>) chunksToUnload.get(player.getServerForPlayer().theChunkProviderServer);
+				o = (Set<Long>) chunksToUnload.get(player.getServerWorld().getChunkProvider());
 			} catch (IllegalAccessException e) {
 				throw Throwables.propagate(e);
 			}
 
-			o.add(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition));
+			o.add(ChunkPos.chunkXZ2Int(chunk.xPosition, chunk.zPosition));
 		} else if ("grids".equals(args[0])) {
 			DebugTickHandler.showParticles = !DebugTickHandler.showParticles;
 		} else if ("generate".equals(args[0]) && args.length == 2) {
-			if (!(p_71515_1_ instanceof EntityPlayerMP)) {
+			if (!(sender instanceof EntityPlayerMP)) {
 				return;
 			}
 
-			EntityPlayerMP playerMP = (EntityPlayerMP) p_71515_1_;
+			EntityPlayerMP playerMP = (EntityPlayerMP) sender;
 			BlockPosition pos = new BlockPosition((int) Math.floor(playerMP.posX), (int) Math.floor(playerMP.posY) - 5, (int) Math.floor(playerMP.posZ));
 
 			final World world = playerMP.getEntityWorld();
-			if (pos.getBlock(world) != Blocks.air) {
+			if (pos.getBlock(world) != Blocks.AIR) {
 				return;
 			}
 
-			pos.setOrientation(ForgeDirection.NORTH);
+			pos.setOrientation(EnumFacing.NORTH);
 
 			LinkedList<BlockPosition> positions = new LinkedList<BlockPosition>();
 
@@ -237,12 +240,12 @@ public class CommandThermalDebug extends CommandBase {
 					positions.add(pos.copy());
 				}
 
-				world.setBlock(pos.x, pos.y, pos.z, ThermalDynamics.blockDuct[2], 0, 3);
+				world.setBlockState(pos.pos(), ThermalDynamics.blockDuct[2].getStateFromMeta(0), 3);
 
 				pos.getTileEntity(world, TileTDBase.class).blockPlaced();
 
 				if (rand.nextInt(4) == 0) {
-					pos.setOrientation(pos.orientation.getRotation(rand.nextBoolean() ? ForgeDirection.UP : ForgeDirection.DOWN));
+					pos.setOrientation(pos.orientation = rand.nextBoolean() ? EnumFacing.UP : EnumFacing.DOWN);
 				}
 				pos.moveForwards(1);
 			}

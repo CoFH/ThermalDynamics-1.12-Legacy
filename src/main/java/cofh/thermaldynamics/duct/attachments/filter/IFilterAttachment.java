@@ -2,8 +2,8 @@ package cofh.thermaldynamics.duct.attachments.filter;
 
 public interface IFilterAttachment {
 
-	public IFilterItems getItemFilter();
+	IFilterItems getItemFilter();
 
-	public IFilterFluid getFluidFilter();
+	IFilterFluid getFluidFilter();
 
 }

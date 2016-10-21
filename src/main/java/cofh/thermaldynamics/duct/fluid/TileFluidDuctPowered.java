@@ -8,7 +8,7 @@ import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEnergyHandler {
 
@@ -44,35 +44,35 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 	@Override
 	public boolean isStructureTile(TileEntity theTile, int side) {
 
-		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.getOrientation(side ^ 1));
+		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 
 		return energy.energyGrid != null && canConnectEnergy(from) ? energy.energyGrid.myStorage.receiveEnergy(maxReceive, simulate) : 0;
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
 
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 
 		return energy.energyGrid != null ? energy.energyGrid.myStorage.getEnergyStored() : 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 
 		return energy.energyGrid != null ? energy.energyGrid.myStorage.getMaxEnergyStored() : 0;
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 
 		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
 	}

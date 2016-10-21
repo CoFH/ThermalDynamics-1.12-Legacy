@@ -5,9 +5,9 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctFactory;
 import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 
 public class DuctLight extends Duct {
 
@@ -23,15 +23,15 @@ public class DuctLight extends Duct {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister ir) {
+	public void registerIcons(TextureMap textureMap) {
 
-		iconBaseTexture = TextureOverlay.generateBaseTexture(ir, baseTexture);
+		iconBaseTexture = TextureOverlay.generateBaseTexture(textureMap, baseTexture);
 
 		if (connectionTexture != null) {
-			iconConnectionTexture = TextureOverlay.generateConnectionTexture(ir, connectionTexture);
+			iconConnectionTexture = TextureOverlay.generateConnectionTexture(textureMap, connectionTexture);
 		}
 		if (fluidTexture != null) {
-			iconFluidTexture = TextureTransparent.registerTransparentIcon(ir, fluidTexture, fluidTransparency);
+			iconFluidTexture = TextureTransparent.registerTransparentIcon(textureMap, fluidTexture, fluidTransparency);
 		}
 	}
 

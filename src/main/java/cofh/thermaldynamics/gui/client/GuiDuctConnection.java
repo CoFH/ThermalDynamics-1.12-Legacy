@@ -11,10 +11,9 @@ import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiDuctConnection extends GuiBaseAdv {
 
@@ -311,7 +310,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 
 	private void drawSlots() {
 
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		bindTexture(TEXTURE);
 
 		int x0 = container.gridX0 - 1;

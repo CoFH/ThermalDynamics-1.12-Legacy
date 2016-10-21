@@ -36,14 +36,14 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 
 		public ItemEntry(ItemStack item, int side) {
 
-			this(item.getItem(), item.getItemDamage(), item.stackTagCompound, side);
+			this(item.getItem(), item.getItemDamage(), item.getTagCompound(), side);
 		}
 
 		public ItemEntry(Item item, int metadata, NBTTagCompound tag, int side) {
 
 			this.item = item;
 			this.metadata = metadata;
-			this.tag = (tag != null) ? (NBTTagCompound) tag.copy() : null;
+			this.tag = (tag != null) ? tag.copy() : null;
 			this.side = side;
 			this.item_id = getId();
 		}
@@ -55,7 +55,7 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 			}
 
 			ItemStack itemStack = new ItemStack(item, amount, metadata);
-			itemStack.stackTagCompound = (NBTTagCompound) tag.copy();
+			itemStack.setTagCompound(tag.copy());
 			return itemStack;
 		}
 

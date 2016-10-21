@@ -5,10 +5,10 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class TileLightDuct extends TileTDBase {
 
@@ -81,7 +81,7 @@ public class TileLightDuct extends TileTDBase {
 
 		super.blockPlaced();
 		if (ServerHelper.isServerWorld(worldObj)) {
-			lit = worldObj.isBlockIndirectlyGettingPowered(x(), y(), z());
+			lit = worldObj.isBlockPowered(getPos());
 		}
 	}
 
@@ -94,14 +94,14 @@ public class TileLightDuct extends TileTDBase {
 		}
 
 		lit = false;
-		ForgeDirection[] valid_directions = ForgeDirection.VALID_DIRECTIONS;
+		EnumFacing[] valid_directions = EnumFacing.VALUES;
 		for (int i = 0; !lit && i < valid_directions.length; i++) {
 			if (attachments[i] != null && attachments[i].shouldRSConnect()) {
 				continue;
 			}
 
-			ForgeDirection dir = valid_directions[i];
-			lit = worldObj.getIndirectPowerOutput(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ, i);
+            EnumFacing dir = valid_directions[i];
+			lit = worldObj.isSidePowered(pos.offset(dir), dir);
 		}
 
 		if (gridGlow != null && gridGlow.lit != lit) {
@@ -130,7 +130,7 @@ public class TileLightDuct extends TileTDBase {
 	}
 
 	@Override
-	public IIcon getBaseIcon() {
+	public TextureAtlasSprite getBaseIcon() {
 
 		return super.getBaseIcon();
 	}
@@ -147,10 +147,11 @@ public class TileLightDuct extends TileTDBase {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
 		nbt.setBoolean("isLit", lit);
+        return nbt;
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 package cofh.thermaldynamics.core;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 
-public class Proxy {
+public class CommonProxy {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -20,8 +20,16 @@ public class Proxy {
 
 	}
 
-	public void registerRenderInformation() {
+	public void preInit() {
 
 	}
+
+	public void init(){
+
+    }
+
+    public void postInit(){
+
+    }
 
 }

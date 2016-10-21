@@ -100,7 +100,7 @@ public class TDDucts {
 		addFluidDucts();
 		addItemDucts();
 		addSupportDucts();
-		addTransportDucts();
+		//addTransportDucts();
 
 		if (DebugHelper.debug) {
 			addIndevDucts();
@@ -202,7 +202,7 @@ public class TDDucts {
 		itemEnergyOpaque.setRarity(1);
 	}
 
-	static void addTransportDucts() {
+	/*static void addTransportDucts() {
 
 		transportBasic = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.TRANSPORT, DuctFactory.transport, null, null, null,
 				255, "electrum", "thermaldynamics:duct/base/greenGlass", 96));
@@ -219,7 +219,7 @@ public class TDDucts {
 		transportBasic.setRarity(1);
 		transportLongRange.setRarity(1);
 		transportCrossover.setRarity(2);
-	}
+	}*/
 
 	static void addSupportDucts() {
 

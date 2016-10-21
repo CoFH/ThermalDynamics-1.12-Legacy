@@ -1,10 +1,8 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 public class TileFluidDuctSuper extends TileFluidDuct {
@@ -25,7 +23,7 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 
 		if (resource != null && isOpen(from) && matchesFilter(from, resource)) {
 			return internalGridFS.sendFluid(resource, !doFill);
@@ -33,16 +31,15 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 		return 0;
 	}
 
-	@Override
-	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-
-		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
-			return CoverHoleRender.hollowDuctTile;
-		} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
-			return null;
-		} else {
-			return CoverHoleRender.hollowDuctLarge;
-		}
-	}
+	//@Override
+	//public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+	//	BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+	//	if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
+	//		return CoverHoleRender.hollowDuctTile;
+	//	} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
+	//		return null;
+	//	} else {
+	//		return CoverHoleRender.hollowDuctLarge;
+	//	}
+	//}
 }

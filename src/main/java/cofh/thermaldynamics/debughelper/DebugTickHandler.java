@@ -5,11 +5,12 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import gnu.trove.iterator.TObjectLongIterator;
 
@@ -47,7 +48,7 @@ public class DebugTickHandler {
 			return;
 		}
 		DebugHelper.info("[" + event.getChunk().xPosition + "," + event.getChunk().zPosition + "]_"
-				+ (event.getChunk().worldObj.isRemote ? "Client" : "Server"));
+				+ (event.getChunk().getWorld().isRemote ? "Client" : "Server"));
 	}
 
 	public static volatile long lag = 0;
@@ -61,8 +62,7 @@ public class DebugTickHandler {
 
 		long time = System.nanoTime();
 		while (System.nanoTime() < (time + lag)) {
-			;
-			// thread.sleep() ?
+            // thread.sleep() ?
 		}
 	}
 
@@ -99,7 +99,7 @@ public class DebugTickHandler {
 	public void showParticles(TickEvent.WorldTickEvent evt) {
 
 		if (evt.phase == TickEvent.Phase.START || Minecraft.getMinecraft().theWorld == null
-				|| Minecraft.getMinecraft().theWorld.provider.dimensionId != evt.world.provider.dimensionId) {
+				|| Minecraft.getMinecraft().theWorld.provider.getDimension() != evt.world.provider.getDimension()) {
 			return;
 		}
 
@@ -121,7 +121,7 @@ public class DebugTickHandler {
 			b *= m;
 
 			for (IMultiBlock node : grid.nodeSet) {
-				Minecraft.getMinecraft().theWorld.spawnParticle("reddust", node.x() + 0.5, node.y() + 0.75, node.z() + 0.5, r, g, b);
+				Minecraft.getMinecraft().theWorld.spawnParticle(EnumParticleTypes.REDSTONE, node.x() + 0.5, node.y() + 0.75, node.z() + 0.5, r, g, b);
 			}
 
 			r *= 0.8;
@@ -129,7 +129,7 @@ public class DebugTickHandler {
 			b *= 0.8;
 
 			for (IMultiBlock node : grid.idleSet) {
-				Minecraft.getMinecraft().theWorld.spawnParticle("reddust", node.x() + 0.5, node.y() + 0.75, node.z() + 0.5, r, g, b);
+				Minecraft.getMinecraft().theWorld.spawnParticle(EnumParticleTypes.REDSTONE, node.x() + 0.5, node.y() + 0.75, node.z() + 0.5, r, g, b);
 			}
 		}
 

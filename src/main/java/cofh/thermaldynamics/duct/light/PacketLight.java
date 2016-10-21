@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class PacketLight extends PacketCoFHBase {
@@ -48,11 +49,12 @@ public class PacketLight extends PacketCoFHBase {
 			int x = getVarInt();
 			int y = getVarInt();
 			int z = getVarInt();
-			if (!world.blockExists(x, y, z)) {
+            BlockPos pos = new BlockPos(x,y,z);
+			if (!world.isBlockLoaded(pos)) {
 				continue;
 			}
 
-			TileEntity tile = world.getTileEntity(x, y, z);
+			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof TileLightDuct) {
 				TileLightDuct lamp = (TileLightDuct) tile;
 				lamp.lit = lit;

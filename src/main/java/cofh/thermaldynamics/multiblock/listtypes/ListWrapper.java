@@ -102,7 +102,7 @@ public class ListWrapper<T> implements Iterable<T> {
 		}
 	}
 
-	public static enum SortType {
+	public enum SortType {
 		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
 	}
 

@@ -11,10 +11,10 @@ public interface IItemConfigurable {
 
 	// Create a config Tab which is added to the gui when the itemstack is selected as a filter, you can modify the supplied nbt tag which will be applied to
 	// the itemstack. You cannot modify the itemstack directly. If the nbt tag has no keys, then the itemstack's nbt will be set to null
-	public TabBase getConfigTab(ItemStack filter, GuiBase gui, NBTTagCompound nbtTag, Slot[] requestedSlots);
+    TabBase getConfigTab(ItemStack filter, GuiBase gui, NBTTagCompound nbtTag, Slot[] requestedSlots);
 
-	public int numSlotsNeeded();
+	int numSlotsNeeded();
 
-	public Slot[] createSlots(int[] slotNumbers);
+	Slot[] createSlots(int[] slotNumbers);
 
 }

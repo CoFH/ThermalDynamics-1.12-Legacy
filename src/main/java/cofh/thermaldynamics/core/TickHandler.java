@@ -2,8 +2,8 @@ package cofh.thermaldynamics.core;
 
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
@@ -96,7 +96,7 @@ public class TickHandler {
 	@SubscribeEvent
 	public void worldUnload(WorldEvent.Unload evt) {
 
-		World world = evt.world;
+		World world = evt.getWorld();
 
 		if (world.isRemote) {
 			return;

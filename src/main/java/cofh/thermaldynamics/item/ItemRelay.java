@@ -4,7 +4,8 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.List;
 
@@ -17,13 +18,13 @@ public class ItemRelay extends ItemAttachment {
 
 		super();
 		this.setUnlocalizedName("thermaldynamics.relay");
-		this.setTextureName("thermaldynamics:relay");
+		//this.setTextureName("thermaldynamics:relay");
 	}
 
 	@Override
-	public Attachment getAttachment(int side, ItemStack stack, TileTDBase tile) {
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
 
-		return new Relay(tile, (byte) (side ^ 1));
+		return new Relay(tile, (byte) (side.ordinal() ^ 1));
 	}
 
 	@Override

@@ -1,27 +1,27 @@
 package cofh.thermaldynamics.block;
 
+import codechicken.lib.render.CCRenderState;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
-import cofh.repack.codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.inventory.IContainerListener;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovingObjectPosition;
 
 public abstract class Attachment {
 
@@ -81,22 +81,22 @@ public abstract class Attachment {
 	public void dropItemStack(ItemStack item) {
 
 		Cuboid6 c = getCuboid();
-		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorldObj(), tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
-				tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat()
-						* (c.max.z - c.min.z)
+		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), new Vector3(tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
+                tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat()
+                * (c.max.z - c.min.z))
 
 		);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public abstract boolean render(int pass, RenderBlocks renderBlocks);
+	public abstract boolean render(int pass, CCRenderState ccRenderState);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addCollisionBoxesToList(AxisAlignedBB axis, List list, Entity entity) {
+	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
 
-		Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.xCoord, tile.yCoord, tile.zCoord));
-		if (cuboid6.intersects(new Cuboid6(axis))) {
-			list.add(cuboid6.toAABB());
+		Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.getPos()));
+		if (cuboid6.intersects(new Cuboid6(entityBox))) {
+			list.add(cuboid6.aabb());
 		}
 	}
 
@@ -146,7 +146,7 @@ public abstract class Attachment {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+	public void sendGuiNetworkData(Container container, List<IContainerListener> player, boolean newGuy) {
 
 	}
 
@@ -179,7 +179,7 @@ public abstract class Attachment {
 		return canAddToTile(tile) && tile.addAttachment(this);
 	}
 
-	public void drawSelectionExtra(EntityPlayer player, MovingObjectPosition target, float partialTicks) {
+	public void drawSelectionExtra(EntityPlayer player, RayTraceResult target, float partialTicks) {
 
 	}
 
@@ -206,13 +206,12 @@ public abstract class Attachment {
 
 	}
 
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 	}
 
-	@SideOnly(Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask() {
-
-		return null;
-	}
+	//@SideOnly(Side.CLIENT)
+	//public CoverHoleRender.ITransformer[] getHollowMask() {
+	//	return null;
+	//}
 }

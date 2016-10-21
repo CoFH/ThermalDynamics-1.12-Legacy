@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
+import codechicken.lib.util.BlockUtils;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 
 public class ServoItem extends ServoBase {
 
@@ -205,7 +207,7 @@ public class ServoItem extends ServoBase {
 	public void handleItemSending() {
 
 		if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
-			int[] accessibleSlotsFromSide = cachedSidedInv.getAccessibleSlotsFromSide(side ^ 1);
+			int[] accessibleSlotsFromSide = cachedSidedInv.getSlotsForFace(EnumFacing.VALUES[side ^ 1]);
 			for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
 				int slot = accessibleSlotsFromSide[i];
 				ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
@@ -215,7 +217,7 @@ public class ServoItem extends ServoBase {
 				}
 				itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
 
-				if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+				if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, EnumFacing.VALUES[side ^ 1])) {
 					continue;
 				}
 				if (!filter.matchesFilter(itemStack)) {
@@ -240,7 +242,7 @@ public class ServoItem extends ServoBase {
 							slot = accessibleSlotsFromSide[i];
 							itemStack = cachedSidedInv.getStackInSlot(slot);
 							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)
-									&& cachedSidedInv.canExtractItem(slot, itemStack, side ^ 1)) {
+									&& cachedSidedInv.canExtractItem(slot, itemStack, EnumFacing.VALUES[side ^ 1])) {
 								itemStack = cachedSidedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
 								if (itemStack != null) {
 									travelingItem.stack.stackSize += itemStack.stackSize;
@@ -374,7 +376,7 @@ public class ServoItem extends ServoBase {
 
 		if (stuffed != !stuffedItems.isEmpty()) {
 			stuffed = isStuffed();
-			tile.getWorldObj().markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+            BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 		}
 		super.onNeighborChange();
 	}

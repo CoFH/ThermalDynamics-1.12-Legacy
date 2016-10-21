@@ -3,7 +3,7 @@ package cofh.thermaldynamics.gui.container;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 
 public class ContainerRelay extends ContainerAttachmentBase {
 
@@ -42,13 +42,12 @@ public class ContainerRelay extends ContainerAttachmentBase {
 			return;
 		}
 
-		for (Object crafter : this.crafters) {
-			ICrafting c = (ICrafting) crafter;
-			if (gridPower != prevGrid) {
-				c.sendProgressBarUpdate(this, 0, gridPower);
+		for (IContainerListener listener : this.listeners) {
+            if (gridPower != prevGrid) {
+				listener.sendProgressBarUpdate(this, 0, gridPower);
 			}
 			if (relayPower != prevRelay) {
-				c.sendProgressBarUpdate(this, 1, relayPower);
+				listener.sendProgressBarUpdate(this, 1, relayPower);
 			}
 		}
 	}

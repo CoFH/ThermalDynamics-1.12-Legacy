@@ -76,7 +76,7 @@ public class SlotNull extends Slot {
 	}
 
 	@Override
-	public boolean isSlotInInventory(IInventory p_75217_1_, int p_75217_2_) {
+	public boolean isHere(IInventory p_75217_1_, int p_75217_2_) {
 
 		return false;
 	}

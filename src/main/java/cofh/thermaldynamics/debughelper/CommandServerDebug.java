@@ -4,6 +4,7 @@ import cofh.core.network.PacketHandler;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 
 public class CommandServerDebug extends CommandBase {
 
@@ -20,13 +21,13 @@ public class CommandServerDebug extends CommandBase {
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender p_71519_1_) {
+	public boolean checkPermission(MinecraftServer server, ICommandSender p_71519_1_) {
 
 		return true;
 	}
 
 	@Override
-	public void processCommand(ICommandSender p_71515_1_, String[] p_71515_2_) {
+	public void execute(MinecraftServer server, ICommandSender p_71515_1_, String[] p_71515_2_) {
 
 		PacketHandler.sendToServer(new PacketDebug());
 	}

@@ -29,19 +29,19 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 	@Override
 	public int x() {
 
-		return parent.xCoord;
+		return parent.getPos().getX();
 	}
 
 	@Override
 	public int y() {
 
-		return parent.yCoord + 1;
+		return parent.getPos().getY() + 1;
 	}
 
 	@Override
 	public int z() {
 
-		return parent.zCoord;
+		return parent.getPos().getZ();
 	}
 
 	@Override

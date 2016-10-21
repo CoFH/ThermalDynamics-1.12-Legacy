@@ -1,126 +1,128 @@
 package cofh.thermaldynamics.item;
 
+import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.util.ItemUtils;
+import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IInitializer;
 import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.repack.codechicken.lib.raytracer.RayTracer;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class ItemAttachment extends Item implements IInitializer {
 
-	public ItemAttachment() {
+    public ItemAttachment() {
 
-		super();
-		setHasSubtypes(true);
-		this.setCreativeTab(ThermalDynamics.tabCommon);
-	}
+        super();
+        setHasSubtypes(true);
+        this.setCreativeTab(ThermalDynamics.tabCommon);
+    }
 
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    @Override
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-		Attachment attachment = getAttachment(stack, player, world, x, y, z, side);
+        Attachment attachment = getAttachment(stack, player, world, pos, facing);
 
-		if (attachment != null && attachment.addToTile()) {
-			if (!player.capabilities.isCreativeMode) {
-				stack.stackSize--;
-			}
-			return true;
-		}
+        if (attachment != null && attachment.addToTile()) {
+            if (!player.capabilities.isCreativeMode) {
+                stack.stackSize--;
+            }
+            return EnumActionResult.SUCCESS;
+        }
 
-		return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
-	}
+        return super.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ);
+    }
 
-	public Attachment getAttachment(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side) {
+    public Attachment getAttachment(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
 
-		Attachment attachment = null;
+        Attachment attachment = null;
 
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof TileTDBase) {
-			int s = -1;
-			MovingObjectPosition movingObjectPosition = RayTracer.retraceBlock(world, player, x, y, z);
-			if (movingObjectPosition != null) {
-				int subHit = movingObjectPosition.subHit;
-				if (subHit < 6) {
-					s = subHit;
-				} else if (subHit < 12) {
-					s = (subHit - 6);
-				} else if (subHit == 13) {
-					s = side;
-				} else {
-					s = ((subHit - 14) % 6);
-				}
-				if (s != -1) {
-					attachment = getAttachment(s ^ 1, stack, (TileTDBase) tile);
-				}
-			}
-		} else {
-			tile = BlockHelper.getAdjacentTileEntity(world, x, y, z, side);
-			if (tile instanceof TileTDBase) {
-				attachment = getAttachment(side, stack, (TileTDBase) tile);
-			}
-		}
-		return attachment;
-	}
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileTDBase) {
+            int s = -1;
+            RayTraceResult movingObjectPosition = RayTracer.retraceBlock(world, player, pos);
+            if (movingObjectPosition != null) {
+                int subHit = movingObjectPosition.subHit;
+                if (subHit < 6) {
+                    s = subHit;
+                } else if (subHit < 12) {
+                    s = (subHit - 6);
+                } else if (subHit == 13) {
+                    s = side.ordinal();
+                } else {
+                    s = ((subHit - 14) % 6);
+                }
+                if (s != -1) {
+                    attachment = getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileTDBase) tile);
+                }
+            }
+        } else {
+            tile = BlockHelper.getAdjacentTileEntity(world, pos, side);
+            if (tile instanceof TileTDBase) {
+                attachment = getAttachment(side, stack, (TileTDBase) tile);
+            }
+        }
+        return attachment;
+    }
 
-	public abstract Attachment getAttachment(int side, ItemStack stack, TileTDBase tile);
+    public abstract Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile);
 
-	@Override
-	public boolean initialize() {
+    @Override
+    public boolean initialize() {
 
-		MinecraftForge.EVENT_BUS.register(this);
-		return true;
-	}
+        MinecraftForge.EVENT_BUS.register(this);
+        return true;
+    }
 
-	@Override
-	public boolean postInit() {
+    @Override
+    public boolean postInit() {
 
-		return true;
-	}
+        return true;
+    }
 
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onBlockHighlight(DrawBlockHighlightEvent event) {
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onBlockHighlight(DrawBlockHighlightEvent event) {
+        RayTraceResult target = event.getTarget();
+        if (target.typeOfHit != Type.BLOCK || !ItemUtils.isPlayerHoldingSomething(event.getPlayer()) || ItemUtils.getHeldStack(event.getPlayer()).getItem() != this) {
+            return;
+        }
 
-		if (event.target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || event.player.getHeldItem() == null
-				|| event.player.getHeldItem().getItem() != this) {
-			return;
-		}
+        RayTracer.retraceBlock(event.getPlayer().worldObj, event.getPlayer(), target.getBlockPos());
+        ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
+        Attachment attachment = getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
 
-		RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
+        if (attachment == null || !attachment.canAddToTile(attachment.tile)) {
+            return;
+        }
 
-		Attachment attachment = getAttachment(event.player.getHeldItem(), event.player, event.player.getEntityWorld(), event.target.blockX,
-				event.target.blockY, event.target.blockZ, event.target.sideHit);
+        Cuboid6 c = attachment.getCuboid();
+        c.max.subtract(c.min);
 
-		if (attachment == null || !attachment.canAddToTile(attachment.tile)) {
-			return;
-		}
+        RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.tile.x() + c.min.x, attachment.tile.y() + c.min.y, attachment.tile.z() + c.min.z));
 
-		Cuboid6 c = attachment.getCuboid();
-		c.max.sub(c.min);
+        attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
 
-		RenderHitbox.drawSelectionBox(event.player, event.target, event.partialTicks, new CustomHitBox(c.max.y, c.max.z, c.max.x,
-				attachment.tile.x() + c.min.x, attachment.tile.y() + c.min.y, attachment.tile.z() + c.min.z));
-
-		attachment.drawSelectionExtra(event.player, event.target, event.partialTicks);
-
-		event.setCanceled(true);
-	}
+        event.setCanceled(true);
+    }
 
 }

@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.gui;
 
 import cofh.thermaldynamics.ThermalDynamics;
-import cpw.mods.fml.client.config.GuiConfig;
-import cpw.mods.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.IConfigElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class GuiConfigTD extends GuiConfig {
 		List<IConfigElement> list = new ArrayList<IConfigElement>();
 
 		for (int i = 0; i < CATEGORIES.length; i++) {
-			list.add(new ConfigElement<ConfigCategory>(ThermalDynamics.config.getCategory(CATEGORIES[i])));
+			list.add(new ConfigElement(ThermalDynamics.config.getCategory(CATEGORIES[i])));
 		}
 		return list;
 	}

@@ -1,15 +1,16 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Vector3;
 import cofh.core.render.RenderUtils;
-import cofh.repack.codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Translation;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.render.RenderDuct;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,13 +48,13 @@ public abstract class FilterBase extends ConnectionBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(int pass, RenderBlocks renderBlocks) {
+	public boolean render(int pass, CCRenderState ccRenderState) {
 
 		if (pass == 1) {
 			return false;
 		}
-		Translation trans = RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
-		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(trans, RenderUtils.getIconTransformation(RenderDuct.filterTexture[type]));
+		Translation trans = Vector3.fromTileCenter(tile).translation(); //RenderUtils.getRenderVector(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5).translation();
+		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(ccRenderState, trans, RenderUtils.getIconTransformation(RenderDuct.filterTexture[type]));
 		return true;
 	}
 

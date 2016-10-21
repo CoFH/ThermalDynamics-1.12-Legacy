@@ -1,13 +1,10 @@
 package cofh.thermaldynamics;
 
-import cofh.CoFHCore;
 import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.mod.BaseMod;
-import cofh.mod.updater.UpdateManager;
-import cofh.thermaldynamics.core.Proxy;
+import cofh.thermaldynamics.core.CommonProxy;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
@@ -15,7 +12,6 @@ import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.debughelper.PacketDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.gui.TDCreativeTabCovers;
@@ -27,21 +23,20 @@ import cofh.thermaldynamics.item.ItemServo;
 import cofh.thermaldynamics.plugins.TDPlugins;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
-import cofh.thermalfoundation.ThermalFoundation;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.CustomProperty;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.CustomProperty;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -58,13 +53,13 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies,
 		guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
-public class ThermalDynamics extends BaseMod {
+public class ThermalDynamics {
 
 	public static final String modId = "ThermalDynamics";
 	public static final String modName = "Thermal Dynamics";
 	public static final String version = "1.7.10R1.2.0";
 	public static final String version_max = "1.7.10R1.3.0";
-	public static final String dependencies = CoFHCore.version_group + ThermalFoundation.version_group;
+	public static final String dependencies = "";//CoFHCore.version_group + ThermalFoundation.version_group;
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
 
 	public static final String version_group = "required-after:" + modId + "@[" + version + "," + version_max + ");";
@@ -73,8 +68,8 @@ public class ThermalDynamics extends BaseMod {
 	@Instance(modId)
 	public static ThermalDynamics instance;
 
-	@SidedProxy(clientSide = "cofh.thermaldynamics.core.ProxyClient", serverSide = "cofh.thermaldynamics.core.Proxy")
-	public static Proxy proxy;
+	@SidedProxy(clientSide = "cofh.thermaldynamics.core.ClientProxy", serverSide = "cofh.thermaldynamics.core.CommonProxy")
+	public static CommonProxy proxy;
 
 	public static final Logger log = LogManager.getLogger(modId);
 	public static final ConfigHandler config = new ConfigHandler(version);
@@ -84,16 +79,24 @@ public class ThermalDynamics extends BaseMod {
 	public static CreativeTabs tabCommon;
 	public static CreativeTabs tabCovers;
 
+
+    public static BlockDuct[] blockDuct;
+    public static ItemServo itemServo;
+    public static ItemFilter itemFilter;
+    public static ItemCover itemCover;
+    public static ItemRetriever itemRetriever;
+    public static ItemRelay itemRelay;
+
 	/* INIT SEQUENCE */
 	public ThermalDynamics() {
 
-		super(log);
+		super();
 	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 
-		UpdateManager.registerUpdater(new UpdateManager(this, releaseURL, CoFHProps.DOWNLOAD_URL));
+		//UpdateManager.registerUpdater(new UpdateManager(this, releaseURL, CoFHProps.DOWNLOAD_URL));
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
 		configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 
@@ -119,6 +122,7 @@ public class ThermalDynamics extends BaseMod {
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
 		}
+        proxy.preInit();
 
 		TDPlugins.preInit();
 	}
@@ -136,6 +140,8 @@ public class ThermalDynamics extends BaseMod {
 		FMLCommonHandler.instance().bus().register(TickHandler.instance);
 		MinecraftForge.EVENT_BUS.register(TickHandler.instance);
 
+        proxy.init();
+
 		PacketDebug.initialize();
 		DebugHelper.initialize();
 		TDPlugins.initialize();
@@ -149,8 +155,7 @@ public class ThermalDynamics extends BaseMod {
 		}
 		TDCrafting.loadRecipes();
 
-		proxy.registerRenderInformation();
-
+        proxy.postInit();
 		TDPlugins.postInit();
 	}
 
@@ -179,9 +184,9 @@ public class ThermalDynamics extends BaseMod {
 		/* Duct */
 		String category = "Duct.Transport";
 		String comment = "Must be between 0 and 120 ticks.";
-		TileTransportDuctCrossover.CHARGE_TIME = (byte) MathHelper.clamp(
-				ThermalDynamics.config.get(category, "CrossoverChargeTime", TileTransportDuctCrossover.CHARGE_TIME, comment), 0,
-				TileTransportDuctCrossover.CHARGE_TIME);
+		//TileTransportDuctCrossover.CHARGE_TIME = (byte) MathHelper.clamp(
+		//		ThermalDynamics.config.get(category, "CrossoverChargeTime", TileTransportDuctCrossover.CHARGE_TIME, comment), 0,
+		//		TileTransportDuctCrossover.CHARGE_TIME);
 
 		/* Models */
 		comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";
@@ -215,30 +220,20 @@ public class ThermalDynamics extends BaseMod {
 	}
 
 	/* BaseMod */
-	@Override
 	public String getModId() {
 
 		return modId;
 	}
 
-	@Override
 	public String getModName() {
 
 		return modName;
 	}
 
-	@Override
 	public String getModVersion() {
 
 		return version;
 	}
-
-	public static BlockDuct[] blockDuct;
-	public static ItemServo itemServo;
-	public static ItemFilter itemFilter;
-	public static ItemCover itemCover;
-	public static ItemRetriever itemRetriever;
-	public static ItemRelay itemRelay;
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {

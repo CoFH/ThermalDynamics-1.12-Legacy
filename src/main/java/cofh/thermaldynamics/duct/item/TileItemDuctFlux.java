@@ -3,158 +3,158 @@ package cofh.thermaldynamics.duct.item;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
-
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class TileItemDuctFlux extends TileItemDuctPowered {
 
-	public final SubTileEnergyRedstone redstoneEnergy;
-	boolean isSubNode = false;
+    public final SubTileEnergyRedstone redstoneEnergy;
+    boolean isSubNode = false;
 
-	IEnergyReceiver[] energyCache;
+    IEnergyReceiver[] energyCache;
 
-	@Override
-	public void onNeighborBlockChange() {
+    @Override
+    public void onNeighborBlockChange() {
 
-		super.onNeighborBlockChange();
-		checkSubNode();
-	}
+        super.onNeighborBlockChange();
+        checkSubNode();
+    }
 
-	public TileItemDuctFlux() {
+    public TileItemDuctFlux() {
 
-		super();
-		setSubEnergy(redstoneEnergy = new SubTileEnergyRedstone(this));
-	}
+        super();
+        setSubEnergy(redstoneEnergy = new SubTileEnergyRedstone(this));
+    }
 
-	public void checkSubNode() {
+    public void checkSubNode() {
 
-		boolean newSubNode = false;
-		if (cachesExist()) {
-			for (int i = 0; i < 6; i++) {
-				if (energyCache[i] != null) {
-					newSubNode = true;
-					break;
-				}
-			}
-		}
-		if (isSubNode != newSubNode) {
-			isSubNode = newSubNode;
-			if (energy.energyGrid != null) {
-				energy.energyGrid.addBlock(energy);
-			}
+        boolean newSubNode = false;
+        if (cachesExist()) {
+            for (int i = 0; i < 6; i++) {
+                if (energyCache[i] != null) {
+                    newSubNode = true;
+                    break;
+                }
+            }
+        }
+        if (isSubNode != newSubNode) {
+            isSubNode = newSubNode;
+            if (energy.energyGrid != null) {
+                energy.energyGrid.addBlock(energy);
+            }
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public boolean isSubNode() {
+    @Override
+    public boolean isSubNode() {
 
-		return isSubNode;
-	}
+        return isSubNode;
+    }
 
-	@Override
-	public void onNeighborTileChange(int tileX, int tileY, int tileZ) {
+    @Override
+    public void onNeighborTileChange(BlockPos pos) {
 
-		super.onNeighborTileChange(tileX, tileY, tileZ);
-		checkSubNode();
-	}
+        super.onNeighborTileChange(pos);
+        checkSubNode();
+    }
 
-	@Override
-	public boolean tickPass(int pass) {
+    @Override
+    public boolean tickPass(int pass) {
 
-		if (!super.tickPass(pass)) {
-			return false;
-		}
-		if (pass == 0 && isSubNode && redstoneEnergy.internalGrid != null) {
-			int maxSend = redstoneEnergy.internalGrid.toDistribute;
-			redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
-		}
-		return true;
-	}
+        if (!super.tickPass(pass)) {
+            return false;
+        }
+        if (pass == 0 && isSubNode && redstoneEnergy.internalGrid != null) {
+            int maxSend = redstoneEnergy.internalGrid.toDistribute;
+            redstoneEnergy.internalGrid.myStorage.modifyEnergyStored(-transmitEnergy(maxSend));
+        }
+        return true;
+    }
 
-	public int transmitEnergy(int power) {
+    public int transmitEnergy(int power) {
 
-		int usedPower = 0;
-		if (!cachesExist()) {
-			return 0;
-		}
+        int usedPower = 0;
+        if (!cachesExist()) {
+            return 0;
+        }
 
-		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
-			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-				if (energyCache[i] != null) {
-					if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-					}
-					if (usedPower >= power) {
-						this.tickInternalSideCounter(i + 1);
-						break;
-					}
-				}
-			}
-		}
+        for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
+            if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+                if (energyCache[i] != null) {
+                    if (energyCache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
+                        usedPower += energyCache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], power - usedPower, false);
+                    }
+                    if (usedPower >= power) {
+                        this.tickInternalSideCounter(i + 1);
+                        break;
+                    }
+                }
+            }
+        }
 
-		for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
-			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
-				if (energyCache[i] != null) {
-					if (energyCache[i].canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1])) {
-						usedPower += energyCache[i].receiveEnergy(ForgeDirection.VALID_DIRECTIONS[i ^ 1], power - usedPower, false);
-					}
-					if (usedPower >= power) {
-						this.tickInternalSideCounter(i + 1);
-						break;
-					}
-				}
-			}
-		}
-		return usedPower;
-	}
+        for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
+            if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+                if (energyCache[i] != null) {
+                    if (energyCache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
+                        usedPower += energyCache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], power - usedPower, false);
+                    }
+                    if (usedPower >= power) {
+                        this.tickInternalSideCounter(i + 1);
+                        break;
+                    }
+                }
+            }
+        }
+        return usedPower;
+    }
 
-	@Override
-	public void createCaches() {
+    @Override
+    public void createCaches() {
 
-		super.createCaches();
-		energyCache = new IEnergyReceiver[6];
-	}
+        super.createCaches();
+        energyCache = new IEnergyReceiver[6];
+    }
 
-	@Override
-	public void clearCache(int side) {
+    @Override
+    public void clearCache(int side) {
 
-		super.clearCache(side);
-		energyCache[side] = null;
-	}
+        super.clearCache(side);
+        energyCache[side] = null;
+    }
 
-	@Override
-	public void cacheImportant(TileEntity tile, int side) {
+    @Override
+    public void cacheImportant(TileEntity tile, int side) {
 
-		super.cacheImportant(tile, side);
-		if (tile instanceof IEnergyReceiver) {
-			energyCache[side] = (IEnergyReceiver) tile;
-		}
-	}
+        super.cacheImportant(tile, side);
+        if (tile instanceof IEnergyReceiver) {
+            energyCache[side] = (IEnergyReceiver) tile;
+        }
+    }
 
-	@Override
-	public void cacheInputTile(TileEntity tile, int side) {
+    @Override
+    public void cacheInputTile(TileEntity tile, int side) {
 
-		super.cacheInputTile(tile, side);
-		if (tile instanceof IEnergyReceiver) {
-			energyCache[side] = (IEnergyReceiver) tile;
-		}
-	}
+        super.cacheInputTile(tile, side);
+        if (tile instanceof IEnergyReceiver) {
+            energyCache[side] = (IEnergyReceiver) tile;
+        }
+    }
 
-	@Override
-	public void cacheStructural(TileEntity tile, int side) {
+    @Override
+    public void cacheStructural(TileEntity tile, int side) {
 
-		if (tile instanceof IEnergyReceiver) {
-			energyCache[side] = (IEnergyReceiver) tile;
-		}
-		isOutput = true;
-	}
+        if (tile instanceof IEnergyReceiver) {
+            energyCache[side] = (IEnergyReceiver) tile;
+        }
+        isOutput = true;
+    }
 
-	@Override
-	public boolean isStructureTile(TileEntity theTile, int side) {
+    @Override
+    public boolean isStructureTile(TileEntity theTile, int side) {
 
-		return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(ForgeDirection.getOrientation(side ^ 1));
-	}
+        return theTile instanceof IEnergyConnection && ((IEnergyConnection) theTile).canConnectEnergy(EnumFacing.VALUES[side ^ 1]);
+    }
 
 }
