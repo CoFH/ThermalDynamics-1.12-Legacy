@@ -35,6 +35,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -183,6 +184,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         return ClientProxy.renderType;
     }
 
+    @Override
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
+
     //@Override
     public boolean canRenderInPass(int pass) {
         renderPass = pass;
@@ -228,11 +234,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public boolean openConfigGui(IBlockAccess world, int x, int y, int z, EnumFacing side, EntityPlayer player) {
-        BlockPos pos = new BlockPos(x, y, z);
+    public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         TileTDBase tile = (TileTDBase) world.getTileEntity(pos);
         if (tile instanceof IBlockConfigGui) {
-            return ((IBlockConfigGui) tile).openConfigGui(world, x, y, z, side, player);
+            return ((IBlockConfigGui) tile).openConfigGui(world, pos, side, player);
         } else {
             int subHit = side.ordinal();
             if (world instanceof World) {
@@ -249,7 +254,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
             if (subHit > 13 && subHit < 20) {
                 Attachment attachment = tile.attachments[subHit - 14];
                 if (attachment instanceof IBlockConfigGui) {
-                    return ((IBlockConfigGui) attachment).openConfigGui(world, x, y, z, side, player);
+                    return ((IBlockConfigGui) attachment).openConfigGui(world, pos, side, player);
                 }
             }
 
@@ -360,9 +365,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public float getSize(IBlockAccess world, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
-        return TDDucts.getDuct(offset + getMetaFromState(state)).isLargeTube() ? 0.05F : super.getSize(world, pos);
+    public float getSize(IBlockState state) {
+        return TDDucts.getDuct(offset + getMetaFromState(state)).isLargeTube() ? 0.05F : super.getSize(state);
     }
 
     /* IInitializer */

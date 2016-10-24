@@ -70,7 +70,22 @@ public abstract class BlockTDBase extends BlockCoFHBase {
         return (theTile != null && (theTile.covers[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid())) || super.isSideSolid(base_state, world, pos, side);
     }
 
-    public float getSize(IBlockAccess world, BlockPos pos) {
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return false;
+    }
+
+    public float getSize(IBlockState state) {
 
         return 0.3F;
     }
@@ -82,7 +97,7 @@ public abstract class BlockTDBase extends BlockCoFHBase {
         //    return;//TODO Entity Transport.
         //}
 
-        float min = getSize(world, pos);
+        float min = getSize(state);
         float max = 1 - min;
 
         AxisAlignedBB bb = new AxisAlignedBB(min, min, min, max, max, max);
@@ -128,7 +143,7 @@ public abstract class BlockTDBase extends BlockCoFHBase {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        float min = getSize(source, pos);
+        float min = getSize(state);
         float max = 1 - min;
         return new AxisAlignedBB(min, min, min, max, max, max);
     }

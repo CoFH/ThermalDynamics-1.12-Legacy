@@ -23,18 +23,18 @@ public class TextureTransparent extends TextureCustomAnim {
 
 	public static TextureAtlasSprite registerTransparentIcon(TextureMap textureMap, String name, byte transparency) {
 
-		if (transparency == (byte) 255) {
+		//if (transparency == (byte) 255) {//TODO
 			return textureMap.registerSprite(new ResourceLocation(name));
-		}
+		//}
 
-		TextureMap map = textureMap;
+		/*TextureMap map = textureMap;
 
 		TextureAtlasSprite icon = map.getTextureExtry(transformedName(name, transparency));
 		if (icon == null) {
 			icon = new TextureTransparent(name, transparency);
 			map.setTextureEntry(icon.getIconName(), icon);
 		}
-		return icon;
+		return icon;*/
 	}
 
 	protected TextureTransparent(String icon, byte transparency) {

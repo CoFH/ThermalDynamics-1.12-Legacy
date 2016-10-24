@@ -14,6 +14,7 @@ import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -38,9 +39,7 @@ public class ClientProxy extends CommonProxy {
             StateMap.Builder stateMapBuilder = new StateMap.Builder();
             stateMapBuilder.ignore(BlockDuct.META);
             ModelLoader.setCustomStateMapper(duct, stateMapBuilder.build());
-
-            ModelRegistryHelper.register(new ModelResourceLocation(duct.getRegistryName(), "inventory"), RenderDuct.instance);
-			//MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
+            ModelRegistryHelper.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
 		}
         //MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
 

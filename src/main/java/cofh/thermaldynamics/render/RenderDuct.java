@@ -488,7 +488,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		int metadata = duct.id;
 
 		GlStateManager.pushMatrix();
-		double offset = -0.5;
+		double offset = 0;
 		//if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
 		//	offset = 0;
 		//}

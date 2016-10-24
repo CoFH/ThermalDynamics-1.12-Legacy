@@ -735,7 +735,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
     @Override
     public boolean openGui(EntityPlayer player) {
 
-        RayTraceResult movingObjectPosition = RayTracer.retraceBlock(worldObj, player, getPos());
+        RayTraceResult movingObjectPosition = RayTracer.retrace(player);
         if (movingObjectPosition == null) {
             return false;
         }
@@ -769,35 +769,33 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
 
     public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
 
-        Vector3 pos = new Vector3(getPos());
-
         for (int i = 0; i < 6; i++) {
             // Add ATTACHMENT sides
             if (attachments[i] != null) {
-                cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid().add(pos)));
+                cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid()));
 
                 if (neighborTypes[i] != NeighborTypes.NONE) {
-                    cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy().add(pos)));
+                    cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy()));
                 }
             }
             if (covers[i] != null) {
-                cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid().add(pos)));
+                cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid()));
             }
 
             {
                 // Add TILE sides
                 if (neighborTypes[i] == NeighborTypes.OUTPUT) {
-                    cuboids.add(new IndexedCuboid6(i, subSelection[i].copy().add(pos)));
+                    cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
                 } else if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
-                    cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy().add(pos)));
+                    cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
                 } else if (neighborTypes[i] == NeighborTypes.STRUCTURE) {
-                    cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy().add(pos)));
+                    cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
                 }
 
             }
         }
 
-        cuboids.add(new IndexedCuboid6(13, centerSelection.copy().add(pos)));
+        cuboids.add(new IndexedCuboid6(13, centerSelection.copy()));
     }
 
     @Override

@@ -116,7 +116,7 @@ public class TDCrafting {
 
 		/* COVERS */
         if (enableCoverRecipes) {
-            GameRegistry.addRecipe(RecipeCover.instance);
+            //GameRegistry.addRecipe(RecipeCover.instance);
         }
 
 		/* SIGNALLER */

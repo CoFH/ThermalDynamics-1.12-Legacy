@@ -351,7 +351,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean openConfigGui(IBlockAccess world, int x, int y, int z, EnumFacing side, EntityPlayer player) {
+	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
 		return true;
 	}

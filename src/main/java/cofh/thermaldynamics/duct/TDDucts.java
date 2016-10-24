@@ -121,20 +121,20 @@ public class TDDucts {
 				null, null, 0);
 
 		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 128, null, null, 0);
+				"thermalfoundation:fluid/redstone_still", 128, null, null, 0);
 
 		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
 				"electrum", null, 0, null, null, 0);
 
 		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 128, null, null, 0);
+				"thermalfoundation:fluid/redstone_still", 128, null, null, 0);
 		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, DuctFactory.structural, "enderium", "enderium",
 				null, 0, null, null, 0);
 
 		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 255, "electrum", "thermalfoundation:fluid/Fluid_Cryotheum_Still", 96);
+				"thermalfoundation:fluid/redstone_still", 255, "electrum", "thermalfoundation:fluid/cryotheum_still", 96);
 		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
-				"electrum", "thermalfoundation:fluid/Fluid_Redstone_Still", 192, "electrum", null, 0);
+				"electrum", "thermalfoundation:fluid/redstone_still", 192, "electrum", null, 0);
 
 		energyReinforced.setRarity(1);
 		energyReinforcedEmpty.setRarity(1);
@@ -180,7 +180,7 @@ public class TDDucts {
 		itemBasicOpaque = addDuctItem(OFFSET_ITEM + 1, true, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
 
 		itemFast = addDuctItem(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
-				"thermalfoundation:fluid/Fluid_Glowstone_Still", 128, null, null, 0);
+				"thermalfoundation:fluid/glowstone_still", 128, null, null, 0);
 		itemFastOpaque = addDuctItem(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
 
 		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
@@ -188,7 +188,7 @@ public class TDDucts {
 				null, 0);
 
 		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin",
-				"thermalfoundation:fluid/Fluid_Redstone_Still", 48, null, null, 0);
+				"thermalfoundation:fluid/redstone_still", 48, null, null, 0);
 
 		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
 
