@@ -1,15 +1,14 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public abstract class TileItemDuctPowered extends TileItemDuct implements IEnergyHandler {
+public abstract class TileItemDuctPowered extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
 
 	SubTileEnergy energy;
 

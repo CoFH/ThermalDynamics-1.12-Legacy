@@ -1,16 +1,15 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class TileEnergyDuct extends TileTDBase implements IEnergyHandler {
+public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEnergyProvider {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
