@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.*;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
@@ -10,7 +9,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEnergyHandler {
+public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEnergyHandler, IEnergyProvider, IEnergyReceiver {
 
 	SubTileEnergy energy;
 
