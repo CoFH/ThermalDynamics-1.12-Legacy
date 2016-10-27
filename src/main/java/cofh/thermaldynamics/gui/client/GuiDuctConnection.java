@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiDuctConnection extends GuiBaseAdv {
 
-	static final String TEX_PATH = "thermaldynamics:textures/gui/Connection.png";
+	static final String TEX_PATH = "thermaldynamics:textures/gui/connection.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 
 	public String myInfo = "";

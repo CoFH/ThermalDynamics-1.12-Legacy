@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiRelay extends GuiBaseAdv {
 
-	static final String TEX_PATH = "thermaldynamics:textures/gui/Relay.png";
+	static final String TEX_PATH = "thermaldynamics:textures/gui/relay.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 	private final Relay relay;
 	public ElementButton buttonType;
