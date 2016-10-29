@@ -121,20 +121,20 @@ public class TDDucts {
 				null, null, 0);
 
 		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
-				"thermalfoundation:fluid/redstone_still", 128, null, null, 0);
+				"thermalfoundation:blocks/fluid/redstone_still", 128, null, null, 0);
 
 		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
 				"electrum", null, 0, null, null, 0);
 
 		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
-				"thermalfoundation:fluid/redstone_still", 128, null, null, 0);
+				"thermalfoundation:blocks/fluid/redstone_still", 128, null, null, 0);
 		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, DuctFactory.structural, "enderium", "enderium",
 				null, 0, null, null, 0);
 
 		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
-				"thermalfoundation:fluid/redstone_still", 255, "electrum", "thermalfoundation:fluid/cryotheum_still", 96);
+				"thermalfoundation:blocks/fluid/redstone_still", 255, "electrum", "thermalfoundation:blocks/fluid/cryotheum_still", 96);
 		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
-				"electrum", "thermalfoundation:fluid/redstone_still", 192, "electrum", null, 0);
+				"electrum", "thermalfoundation:blocks/fluid/redstone_still", 192, "electrum", null, 0);
 
 		energyReinforced.setRarity(1);
 		energyReinforcedEmpty.setRarity(1);
@@ -153,9 +153,9 @@ public class TDDucts {
 		fluidHardened = addDuct(OFFSET_FLUID + 2, false, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
 		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
 
-		fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null,
+		fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "flux_electrum", "flux_electrum", null, 0, null,
 				null, 0);
-		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "fluxElectrum", "fluxElectrum", null, 0, null,
+		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "flux_electrum", "flux_electrum", null, 0, null,
 				null, 0);
 
 		fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large", null,
