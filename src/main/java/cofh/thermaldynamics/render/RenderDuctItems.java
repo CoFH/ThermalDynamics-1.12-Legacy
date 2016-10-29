@@ -164,7 +164,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
                     GlStateManager.scale(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
                     travelingEntityItem.setEntityItemStack(renderItem.stack);
-                    travelingItemRender.doRender(travelingEntityItem, 0, -0.1F, 0, 0, 0);
+                    travelingItemRender.doRender(travelingEntityItem, 0, -0.3F, 0, 0, 0);
                 }
                 GlStateManager.popMatrix();
             }
