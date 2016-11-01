@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.render;
 
-import codechicken.lib.texture.TextureCustomAnim;
+import codechicken.lib.texture.TextureCustomImage;
+import codechicken.lib.texture.CustomIResource;
 import cofh.thermaldynamics.ThermalDynamics;
 
 import java.awt.image.BufferedImage;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
@@ -16,25 +18,23 @@ import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
 
-public class TextureTransparent extends TextureCustomAnim {
+public class TextureTransparent extends TextureAtlasSprite {
 
 	byte transparency;
 	ResourceLocation location;
 
 	public static TextureAtlasSprite registerTransparentIcon(TextureMap textureMap, String name, byte transparency) {
 
-		//if (transparency == (byte) 255) {//TODO
+		if (transparency == (byte) 255) {
 			return textureMap.registerSprite(new ResourceLocation(name));
-		//}
+		}
 
-		/*TextureMap map = textureMap;
-
-		TextureAtlasSprite icon = map.getTextureExtry(transformedName(name, transparency));
+        TextureAtlasSprite icon = textureMap.getTextureExtry(transformedName(name, transparency));
 		if (icon == null) {
 			icon = new TextureTransparent(name, transparency);
-			map.setTextureEntry(icon.getIconName(), icon);
+			textureMap.setTextureEntry(icon);
 		}
-		return icon;*/
+		return icon;
 	}
 
 	protected TextureTransparent(String icon, byte transparency) {
@@ -53,7 +53,7 @@ public class TextureTransparent extends TextureCustomAnim {
 			}
 		}
 
-		this.location = new ResourceLocation(s1, "textures/blocks/" + s2 + ".png");
+		this.location = new ResourceLocation(s1, "textures/" + s2 + ".png");
 	}
 
 	private static String transformedName(String icon, byte transparency) {
@@ -87,11 +87,18 @@ public class TextureTransparent extends TextureCustomAnim {
 
 			image.setRGB(0, 0, image.getWidth(), image.getHeight(), data, 0, image.getWidth());
 
-			BufferedImage[] img = new BufferedImage[1 + settings.mipmapLevels];
-			img[0] = image;
+			//BufferedImage[] img = new BufferedImage[1 + settings.mipmapLevels];
+			//img[0] = image;
 
-			AnimationMetadataSection animationmetadatasection = iresource.getMetadata("animation");
-			loadSprite(img, animationmetadatasection);
+			AnimationMetadataSection metadataSection = iresource.getMetadata("animation");
+
+            PngSizeInfo sizeInfo = PngSizeInfo.makeFromResource(new CustomIResource(this.location, image, iresource));
+            CustomIResource resource = new CustomIResource(this.location, image, iresource);
+
+            loadSprite(sizeInfo, metadataSection!= null);
+            loadSpriteFrames(resource, settings.mipmapLevels + 1);
+
+			//loadSprite(img, animationmetadatasection);
 		} catch (IOException ioexception1) {
 			ThermalDynamics.log.error("Using missing texture, unable to load " + this.location, ioexception1);
 			return true;

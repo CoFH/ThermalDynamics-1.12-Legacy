@@ -180,7 +180,7 @@ public class TDDucts {
 		itemBasicOpaque = addDuctItem(OFFSET_ITEM + 1, true, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
 
 		itemFast = addDuctItem(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
-				"thermalfoundation:fluid/glowstone_still", 128, null, null, 0);
+				"thermalfoundation:blocks/fluid/glowstone_still", 128, null, null, 0);
 		itemFastOpaque = addDuctItem(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
 
 		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
@@ -188,7 +188,7 @@ public class TDDucts {
 				null, 0);
 
 		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin",
-				"thermalfoundation:fluid/redstone_still", 48, null, null, 0);
+				"thermalfoundation:blocks/fluid/redstone_still", 48, null, null, 0);
 
 		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
 

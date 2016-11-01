@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class Duct implements IIconRegister {
 
-	public static final String REDSTONE_BLOCK = "minecraft:redstone_block";
+	public static final String REDSTONE_BLOCK = "minecraft:blocks/redstone_block";
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public enum Type {
@@ -99,7 +99,7 @@ public class Duct implements IIconRegister {
 		if (frameTexture != null) {
 			if (frameTexture.endsWith("_large")) {
 				frameType = 3;
-				iconFrameTexture = ir.registerSprite(new ResourceLocation("thermaldynamics:duct/base/" + frameTexture));
+				iconFrameTexture = ir.registerSprite(new ResourceLocation("thermaldynamics:blocks/duct/base/" + frameTexture));
 			} else if (SIDE_DUCTS.equals(frameTexture)) {
 				frameType = 1;
 			} else {

@@ -2,9 +2,11 @@ package cofh.thermaldynamics.core;
 
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
+import cofh.core.render.IconRegistry;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.debughelper.CommandServerDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
@@ -41,12 +43,21 @@ public class ClientProxy extends CommonProxy {
             ModelLoader.setCustomStateMapper(duct, stateMapBuilder.build());
             ModelRegistryHelper.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
 		}
+
+		String[] names = {"basic", "hardened", "reinforced", "signalum", "resonant"};
+        Item[] items = {ThermalDynamics.itemFilter, ThermalDynamics.itemRetriever, ThermalDynamics.itemServo};
+        for (Item item : items) {
+            for (int i = 0; i < names.length; i++) {
+                ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=" + item.getRegistryName().getResourcePath() + "_" + names[i]);
+                ModelLoader.setCustomModelResourceLocation(item, i, location);
+            }
+        }
+        ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
+        ModelLoader.setCustomModelResourceLocation(ThermalDynamics.itemRelay, 0, location);
+
+        ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
+
         //MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
-
-
-
-		ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
-
 		//RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new RenderTransport());
 	}
 
@@ -68,7 +79,29 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
 
-	}
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 2; j++) {
+                IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:blocks/duct/attachment/servo/servo_base_" + i + "" + j, event.getMap());
+                IconRegistry.addIcon("RetrieverBase" + (i * 2 + j), "thermaldynamics:blocks/duct/attachment/retriever/retriever_base_" + i + "" + j, event.getMap());
+            }
+        }
+
+        IconRegistry.addIcon("Signaller", "thermaldynamics:blocks/duct/attachment/signallers/signaller", event.getMap());
+
+        IconRegistry.addIcon("CoverBase", "thermaldynamics:blocks/duct/attachment/cover/support", event.getMap());
+
+        for (int i = 0; i < 5; i++) {
+            IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:blocks/duct/attachment/filter/filter_" + i + "0", event.getMap());
+        }
+        IconRegistry.addIcon("SideDucts", "thermaldynamics:blocks/duct/side_ducts", event.getMap());
+
+        for (int i = 0; i < TDDucts.ductList.size(); i++) {
+            if (TDDucts.isValid(i)) {
+                TDDucts.ductList.get(i).registerIcons(event.getMap());
+            }
+        }
+        TDDucts.structureInvis.registerIcons(event.getMap());
+    }
 
 	@Override
 	@SideOnly(Side.CLIENT)

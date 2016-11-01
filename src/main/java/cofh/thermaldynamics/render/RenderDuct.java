@@ -36,8 +36,10 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 
 import net.minecraft.block.Block;
@@ -89,8 +91,8 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
         //TDProps.renderType = RenderingRegistry.getNextAvailableRenderId();
 		//RenderingRegistry.registerBlockHandler(instance);
 
-		//generateModels();
-		//generateFluidModels();
+		generateModels();
+		generateFluidModels();
 	}
 
 	public static CCModel[] modelOpaqueTubes;
@@ -100,8 +102,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 	public static void initialize() {
 
-		generateFluidModels();
-		generateModels();
 		for (int i = 0; i < 10; i++) {
 			servoTexture[i] = IconRegistry.getIcon("ServoBase" + i);
 			retrieverTexture[i] = IconRegistry.getIcon("RetrieverBase" + i);
@@ -161,7 +161,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 		CCModel.generateBackface(modelCenter, 0, modelCenter, 24, 24);
 		CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
-		modelConnection[0][1].apply(RenderUtils.getRenderVector(-0.5, -0.5, -0.5).translation());
+		modelConnection[0][1].apply(new Translation(-0.5, -0.5, -0.5));
 
 		for (int i = 0; i < modelConnection.length; i++) {
 			CCModel.generateSidedModels(modelConnection[i], 1, Vector3.zero);
@@ -423,23 +423,23 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		getDuctConnections(theTile);
 
 		boolean flag = false;
-
+        BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 		for (Attachment attachment : theTile.attachments) {
 			if (attachment != null) {
-				flag = attachment.render(BlockCoFHBase.renderPass, ccrs) || flag;
+				flag = attachment.render(layer, ccrs) || flag;
 			}
 		}
 		for (Cover cover : theTile.covers) {
 			if (cover != null) {
-				flag = cover.render(BlockCoFHBase.renderPass, ccrs) || flag;
+				flag = cover.render(layer, ccrs) || flag;
 			}
 		}
 		int renderType = TDDucts.getDuct(((BlockDuct) state.getBlock()).offset + state.getBlock().getMetaFromState(state)).id;
 
-		if (BlockCoFHBase.renderPass == 0) {
+		if (layer == BlockRenderLayer.CUTOUT) {
 			renderBase(ccrs, false, renderType, connections, x, y, z, theTile.getBaseIcon());
 			flag = true;
-		} else {
+		} else if (layer == BlockRenderLayer.TRANSLUCENT){
 			flag = renderWorldExtra(ccrs, false, theTile, renderType, connections, x, y, z) || flag;
 		}
 

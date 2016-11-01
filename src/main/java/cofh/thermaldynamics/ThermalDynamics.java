@@ -1,5 +1,6 @@
 package cofh.thermaldynamics;
 
+import cofh.CoFHCore;
 import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
@@ -23,6 +24,7 @@ import cofh.thermaldynamics.item.ItemServo;
 import cofh.thermaldynamics.plugins.TDPlugins;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
+import cofh.thermalfoundation.ThermalFoundation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.CustomProperty;
@@ -59,10 +61,10 @@ public class ThermalDynamics {
 	public static final String modName = "Thermal Dynamics";
 	public static final String version = "1.7.10R1.2.0";
 	public static final String version_max = "1.7.10R1.3.0";
-	public static final String dependencies = "";//CoFHCore.version_group + ThermalFoundation.version_group;
+	public static final String dependencies = CoFHCore.version_group + ThermalFoundation.version_group;
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
 
-	public static final String version_group = "required-after:" + modId + "@[" + version + "," + version_max + ");";
+	public static final String version_group = "required-after:" + modId + "@[" + version + "," + /*version_max +*/ ");";
 	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/" + modId;
 
 	@Instance(modId)

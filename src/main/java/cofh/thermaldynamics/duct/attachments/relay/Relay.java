@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.attachments.relay;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.api.block.IBlockConfigGui;
 import cofh.api.tileentity.IPortableData;
 import cofh.core.network.PacketCoFHBase;
@@ -24,6 +25,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
@@ -96,13 +98,13 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean render(int pass, CCRenderState ccRenderState) {
+	public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+        if (layer != BlockRenderLayer.SOLID){
+            return false;
+        }
 
-		if (pass == 1) {
-			return false;
-		}
-		Translation trans = Vector3.fromTileCenter(tile).translation(); //RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
-		RenderDuct.modelConnection[1 + (type & 1)][side].render(ccRenderState, trans, RenderUtils.getIconTransformation(RenderDuct.signalTexture));
+		Translation trans = Vector3.fromTileCenter(tile).translation();
+		RenderDuct.modelConnection[1 + (type & 1)][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.signalTexture));
 		return true;
 	}
 

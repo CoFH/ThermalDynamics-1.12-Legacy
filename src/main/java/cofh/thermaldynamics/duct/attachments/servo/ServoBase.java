@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.attachments.servo;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.render.RenderUtils;
@@ -11,6 +12,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.render.RenderDuct;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -114,14 +116,14 @@ public abstract class ServoBase extends ConnectionBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(int pass, CCRenderState ccRenderState) {
+	public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+        if (layer != BlockRenderLayer.SOLID){
+            return false;
+        }
 
-		if (pass == 1) {
-			return false;
-		}
 		Translation trans = Vector3.fromTileCenter(tile).translation();
-		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans,
-				RenderUtils.getIconTransformation(RenderDuct.servoTexture[type * 2 + (stuffed ? 1 : 0)]));
+        IconTransformation iconTrans = new IconTransformation(RenderDuct.servoTexture[type * 2 + (stuffed ? 1 : 0)]);
+		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, iconTrans);
 		return true;
 	}
 

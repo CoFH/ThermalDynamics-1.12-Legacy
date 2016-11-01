@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.render.RenderUtils;
 import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
@@ -23,7 +24,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -63,13 +66,13 @@ public class RetrieverItem extends ServoItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean render(int pass, CCRenderState ccRenderState) {
-
-        if (pass == 1) {
+    public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+        if (layer != BlockRenderLayer.SOLID) {
             return false;
         }
+
         Translation trans = Vector3.fromTileCenter(tile).translation();
-        RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, RenderUtils.getIconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
+        RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
         return true;
     }
 

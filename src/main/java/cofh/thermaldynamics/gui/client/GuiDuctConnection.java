@@ -217,9 +217,9 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			if (button != null && button.getName().equals(buttonName)) {
 				if (container.filter.setFlag(i, !container.filter.getFlag(i))) {
 					if (container.filter.getFlag(i)) {
-						playSound("random.click", 1.0F, 0.8F);
+                        playClickSound(1.0F, 0.8F);
 					} else {
-						playSound("random.click", 1.0F, 0.6F);
+                        playClickSound(1.0F, 0.6F);
 					}
 				}
 				setButtons();
@@ -231,10 +231,10 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			if (button != null && button.getName().equals(buttonName)) {
 				if (mouseButton == 0) {
 					container.filter.incLevel(i);
-					playSound("random.click", 1.0F, 0.8F);
+                    playClickSound(1.0F, 0.8F);
 				} else if (mouseButton == 1) {
 					container.filter.decLevel(i);
-					playSound("random.click", 1.0F, 0.6F);
+                    playClickSound(1.0F, 0.6F);
 				}
 				setButtons();
 				return;
@@ -266,7 +266,7 @@ public class GuiDuctConnection extends GuiBaseAdv {
 			pitch += 0.1F;
 		}
 
-		playSound("random.click", 1.0F, pitch);
+        playClickSound(1.0F, pitch);
 	}
 
 	@Override

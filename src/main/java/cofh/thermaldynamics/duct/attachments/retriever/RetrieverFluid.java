@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.attachments.retriever;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.render.RenderUtils;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.AttachmentRegistry;
@@ -13,6 +14,7 @@ import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -99,13 +101,13 @@ public class RetrieverFluid extends ServoFluid {
     }
 
     @Override
-    public boolean render(int pass, CCRenderState ccRenderState) {
-
-        if (pass == 1) {
+    public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+        if (layer != BlockRenderLayer.SOLID) {
             return false;
         }
-        Translation trans = Vector3.fromTileCenter(tile).translation();// RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
-        RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, RenderUtils.getIconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
+
+        Translation trans = Vector3.fromTileCenter(tile).translation();
+        RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
         return true;
     }
 

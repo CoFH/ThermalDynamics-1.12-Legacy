@@ -10,6 +10,7 @@ import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -94,7 +95,7 @@ public class Cover extends Attachment {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(int pass, CCRenderState renderBlocks) {
+	public boolean render(BlockRenderLayer layer, CCRenderState renderBlocks) {
 
 		//if (!block.canRenderInPass(pass)) {//TODO
 		//	return false;

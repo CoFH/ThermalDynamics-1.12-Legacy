@@ -127,37 +127,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         }
     }
 
-	/*@Override
-    @SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister ir) {
-
-		if (offset != 0) {
-			return;
-		}
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 2; j++) {
-				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:duct/attachment/servo/ServoBase" + i + "" + j, ir);
-				IconRegistry.addIcon("RetrieverBase" + (i * 2 + j), "thermaldynamics:duct/attachment/retriever/RetrieverBase" + i + "" + j, ir);
-			}
-		}
-
-		IconRegistry.addIcon("Signaller", "thermaldynamics:duct/attachment/signallers/Signaller", ir);
-
-		IconRegistry.addIcon("CoverBase", "thermaldynamics:duct/attachment/cover/support", ir);
-
-		for (int i = 0; i < 5; i++) {
-			IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:duct/attachment/filter/Filter" + i + "0", ir);
-		}
-		IconRegistry.addIcon("SideDucts", "thermaldynamics:duct/sideDucts", ir);
-
-		for (int i = 0; i < TDDucts.ductList.size(); i++) {
-			if (TDDucts.isValid(i)) {
-				TDDucts.ductList.get(i).registerIcons(ir);
-			}
-		}
-		TDDucts.structureInvis.registerIcons(ir);
-	}*/
-
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         if (target.subHit >= 14 && target.subHit < 20) {
@@ -189,15 +158,9 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         return BlockRenderLayer.CUTOUT;
     }
 
-    //@Override
-    public boolean canRenderInPass(int pass) {
-        renderPass = pass;
-        return pass < 2;
-    }
-
-    //@Override
-    public int getRenderBlockPass() {
-        return 1;
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return true;
     }
 
     @Override

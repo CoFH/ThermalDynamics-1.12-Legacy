@@ -8,6 +8,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.BlockDuct;
 import net.minecraft.inventory.IContainerListener;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -89,7 +90,7 @@ public abstract class Attachment {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public abstract boolean render(int pass, CCRenderState ccRenderState);
+	public abstract boolean render(BlockRenderLayer layer, CCRenderState ccRenderState);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
