@@ -82,7 +82,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 		EnumFacing side =  EnumFacing.WEST; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
         CCRenderState ccrs = CCRenderState.instance();
         ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        CoverRenderer.renderCover(ccrs, BlockPos.ORIGIN, block.getStateFromMeta(meta), side.ordinal());
+        CoverRenderer.renderCover(ccrs, BlockPos.ORIGIN, block.getStateFromMeta(meta), side.ordinal(), null);
         ccrs.draw();
 
 

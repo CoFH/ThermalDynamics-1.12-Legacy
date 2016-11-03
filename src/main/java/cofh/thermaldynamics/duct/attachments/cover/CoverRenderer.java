@@ -1,23 +1,15 @@
-
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import codechicken.lib.lighting.LightMatrix;
+import codechicken.lib.colour.EnumColour;
 import codechicken.lib.lighting.LightModel;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.vec.Rotation;
-import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import codechicken.lib.vec.uv.IconVertexRangeUVTransform;
 import cofh.lib.render.RenderHelper;
-import cofh.lib.util.helpers.MathHelper;
-import codechicken.lib.vec.Cuboid6;
-import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 //import java.nio.ByteOrder;
@@ -31,24 +23,23 @@ import net.minecraft.util.math.BlockPos;
 
 public class CoverRenderer {
 
-	//private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
-	//public static RenderBlocks renderBlocks = new RenderBlocks();
+    //private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
+    //public static RenderBlocks renderBlocks = new RenderBlocks();
 
-	public static int VERTEX_SIZE = 8;
+    public static int VERTEX_SIZE = 8;
 
-	public static final float size = 1 / 512F;
+    public static final float size = 1 / 512F;
 
-	final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
-	final static float[] sideBound1 = { 0, 1 - size, 0, 1 - size, 0, 1 - size };
-	final static float[] sideBound2 = { size, 1, size, 1, size, 1 };
+    final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
+    final static float[] sideBound1 = { 0, 1 - size, 0, 1 - size, 0, 1 - size };
+    final static float[] sideBound2 = { size, 1, size, 1, size, 1 };
 
-	final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
+    final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
 
-	private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
-	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
+    private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
+    private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
     private static CCModel[] models;
-
 
     static {
 
@@ -60,24 +51,28 @@ public class CoverRenderer {
 
     }
 
+    public static boolean renderCover(CCRenderState ccrs, BlockPos pos, IBlockState coveredBlock, int side, Cover[] covers) {
 
-    public static boolean renderCover(CCRenderState ccrs, BlockPos pos, IBlockState coveredBlock, int side) {
+        TextureAtlasSprite[] textures = TextureUtils.getSideIconsForBlock(coveredBlock);
 
-        TextureAtlasSprite[] textures = TextureUtils.getIconsForBlock(coveredBlock, EnumFacing.VALUES[side]);
-        if (textures.length == 0){
-            return false;
+        models[side].render(ccrs, side * 4, side * 4 + 4, new Vector3(pos).translation(), new IconTransformation(textures[side]));
+        models[side].render(ccrs, (side ^ 1) * 4, (side ^ 1) * 4 + 4, new Vector3(pos).translation(), new IconTransformation(textures[side ^ 1]));
+        for (int i = 0; i < 6; i++) {
+            if (i != (side ^ 1)) {
+                if (covers == null || covers[i] == null) {
+                    ccrs.baseColour = EnumColour.GRAY.rgba();
+                    models[side].render(ccrs, i * 4, i * 4 + 4, new Vector3(pos).translation(), new IconTransformation(textures[i]));
+                    ccrs.baseColour = -1;
+                }
+            }
         }
-
-        TextureAtlasSprite faceSprite = textures[0];
-        TextureAtlasSprite missingTex = TextureUtils.getMissingSprite();
-        models[side].render(ccrs, new Vector3(pos).translation(), new IconTransformation(faceSprite));
 
         return true;
     }
 
 
 	/*public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
-			boolean addTrans, CoverHoleRender.ITransformer[] hollowCover) {
+            boolean addTrans, CoverHoleRender.ITransformer[] hollowCover) {
 
 		return renderCover(renderBlocks, x, y, z, side, block, meta, bounds, addNormals, addTrans, hollowCover, null);
 	}

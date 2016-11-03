@@ -11,7 +11,9 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -113,7 +115,7 @@ public class Cover extends Attachment {
 
 		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
 		//		tile.covers);
-        return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side);
+        return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);
 	}
 
 	@Override
@@ -187,7 +189,7 @@ public class Cover extends Attachment {
 
 		super.drawSelectionExtra(player, target, partialTicks);
 
-		/*RenderHelper.setBlockTextureSheet();
+		RenderHelper.setBlockTextureSheet();
 		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
         GlStateManager.enableAlpha();
 		GlStateManager.enableColorMaterial();
@@ -207,23 +209,29 @@ public class Cover extends Attachment {
 		{
 
 			GlStateManager.translate(-d0, -d1, -d2);
-			GlStateManager.translate(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5);
+			GlStateManager.translate(tile.x() + 0.5, tile.y() + 0.5, tile.z() + 0.5);
 			GlStateManager.scale(1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET);
-			GlStateManager.translate(-tile.xCoord - 0.5, -tile.yCoord - 0.5, -tile.zCoord - 0.5);
+			GlStateManager.translate(-tile.x() - 0.5, -tile.y() - 0.5, -tile.z() - 0.5);
 
-			Tessellator tess = Tessellator.instance;
-			tess.startDrawingQuads();
-			Tessellator.instance.setNormal(0, 1, 0);
-			tess.setColorRGBA_F(1, 1, 1, 0.5F);
-			tess.setBrightness(tile.getBlockType().getMixedBrightnessForBlock(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord));
-			RenderBlocks renderBlocks = CoverRenderer.renderBlocks;
-			renderBlocks.blockAccess = player.getEntityWorld();
-			for (int i = 0; i < 2; i++) {
-				if (block.canRenderInPass(i)) {
-					CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true, null);
-				}
-			}
-			tess.draw();
+            CCRenderState ccrs = CCRenderState.instance();
+            ccrs.reset();
+            ccrs.startDrawing(7, DefaultVertexFormats.ITEM);
+            ccrs.alphaOverride = 80;
+            CoverRenderer.renderCover(ccrs, tile.getPos(), block.getStateFromMeta(meta), side, null);
+            ccrs.draw();
+			//Tessellator tess = Tessellator.instance;
+			//tess.startDrawingQuads();
+			//Tessellator.instance.setNormal(0, 1, 0);
+			//tess.setColorRGBA_F(1, 1, 1, 0.5F);
+			//tess.setBrightness(tile.getBlockType().getMixedBrightnessForBlock(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord));
+			//RenderBlocks renderBlocks = CoverRenderer.renderBlocks;
+			//renderBlocks.blockAccess = player.getEntityWorld();
+			//for (int i = 0; i < 2; i++) {
+			//	if (block.canRenderInPass(i)) {
+			//		CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true, null);
+			//	}
+			//}
+			//tess.draw();
 		}
 		GlStateManager.popMatrix();
 		net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
@@ -231,7 +239,7 @@ public class Cover extends Attachment {
 		GlStateManager.disableAlpha();
 		GlStateManager.disableColorMaterial();
 		GlStateManager.disableLighting();
-		GlStateManager.disableBlend();*/
+		GlStateManager.disableBlend();
 	}
 
 }
