@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.render;
 
-import codechicken.lib.texture.TextureCustomImage;
 import codechicken.lib.texture.CustomIResource;
 import cofh.thermaldynamics.ThermalDynamics;
 

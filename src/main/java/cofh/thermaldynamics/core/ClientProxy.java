@@ -14,6 +14,7 @@ import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
 import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.RenderDuctItemsEnder;
+import cofh.thermaldynamics.render.item.RenderItemCover;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.item.Item;
@@ -55,7 +56,11 @@ public class ClientProxy extends CommonProxy {
         ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
         ModelLoader.setCustomModelResourceLocation(ThermalDynamics.itemRelay, 0, location);
 
+        ModelRegistryHelper.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
+
         ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
+
+
 
         //MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
 		//RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new RenderTransport());

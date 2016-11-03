@@ -1,39 +1,49 @@
 package cofh.thermaldynamics.render.item;
 
+import codechicken.lib.render.item.IItemRenderer;
+import codechicken.lib.util.TransformUtils;
 import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
 import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
+import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
-public class RenderItemCover //implements IItemRenderer
-{
+import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
+import java.util.ArrayList;
+import java.util.List;
 
-	/*public static IItemRenderer instance = new RenderItemCover();
+public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
-	@Override
-	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+	public static IItemRenderer instance = new RenderItemCover();
 
-		return true;
-	}
-
-	@Override
-	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-
-		return true;
-	}
 
 	@Override
-	public void renderItem(ItemRenderType type, ItemStack stack, Object... data) {
+	public void renderItem(ItemStack stack) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
@@ -42,7 +52,7 @@ public class RenderItemCover //implements IItemRenderer
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
-		if (block == Blocks.air || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
+		if (block == Blocks.AIR || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
 			nbt.removeTag("Meta");
 			nbt.removeTag("Block");
 			if (nbt.hasNoTags()) {
@@ -52,43 +62,88 @@ public class RenderItemCover //implements IItemRenderer
 
 		GlStateManager.pushMatrix();
 		double offset = -0.5;
-		if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-			offset = 0;
-		} else if (type == ItemRenderType.ENTITY) {
-			GlStateManager.scale(0.5, 0.5, 0.5);
-		}
-		RenderHelper.setBlockTextureSheet();
-		RenderUtils.preItemRender();
+		//if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+		//	offset = 0;
+		//} else if (type == ItemRenderType.ENTITY) {
+		//	GlStateManager.scale(0.5, 0.5, 0.5);
+		//}
+		//RenderUtils.preItemRender();
 
-		RenderHelper.enableGUIStandardItemLighting();
+		//RenderHelper.enableGUIStandardItemLighting();
 
-		CCRenderState.startDrawing();
-		GlStateManager.translate(offset, offset - 128, offset);
+		//CCRenderState.startDrawing();
+		//GlStateManager.translate(offset, offset - 128, offset);
 
-		SingleBlockAccess.instance.block = block;
-		SingleBlockAccess.instance.meta = meta;
-		CoverRenderer.renderBlocks.blockAccess = SingleBlockAccess.instance;
-		Tessellator.instance.setNormal(0.0F, 1.0F, 0.0F);
+		//SingleBlockAccess.instance.block = block;
+		//SingleBlockAccess.instance.meta = meta;
+		//CoverRenderer.renderBlocks.blockAccess = SingleBlockAccess.instance;
+		//Tessellator.instance.setNormal(0.0F, 1.0F, 0.0F);
 
-		ForgeDirection side = type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
-		GlStateManager.translate(-side.offsetX * 0.5, -side.offsetY * 0.5, -side.offsetZ * 0.5);
-		for (int pass = 0; pass < 2; pass++) {
-			if (block.canRenderInPass(pass)) {
-				CoverRenderer.renderCover(CoverRenderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false, null);
-			}
-		}
-		CCRenderState.draw();
-		CCRenderState.useNormals = false;
+		EnumFacing side =  EnumFacing.WEST; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
+        CCRenderState ccrs = CCRenderState.instance();
+        ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+        CoverRenderer.renderCover(ccrs, BlockPos.ORIGIN, block.getStateFromMeta(meta), side.ordinal());
+        ccrs.draw();
 
-		RenderHelper.setItemTextureSheet();
-		RenderUtils.postItemRender();
 
-		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+		//GlStateManager.translate(-side.offsetX * 0.5, -side.offsetY * 0.5, -side.offsetZ * 0.5);
+		//for (int pass = 0; pass < 2; pass++) {
+		//	if (block.canRenderInPass(pass)) {
+		//		CoverRenderer.renderCover(CoverRenderer.renderBlocks, 0, 128, 0, side.ordinal(), block, meta, Cover.bounds[side.ordinal()], true, false, null);
+		//	}
+		//}
+		//CCRenderState.draw();
+		//CCRenderState.useNormals = false;
+
+		//RenderHelper.setItemTextureSheet();
+		//RenderUtils.postItemRender();
+
+		//net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 
 		GlStateManager.popMatrix();
 	}
 
-	public static class SingleBlockAccess implements IBlockAccess {
+    @Override
+    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+        return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        return new ArrayList<BakedQuad>();
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return false;
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return true;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return null;
+    }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return ItemCameraTransforms.DEFAULT;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return ItemOverrideList.NONE;
+    }
+
+	/*public static class SingleBlockAccess implements IBlockAccess {
 
 		public static SingleBlockAccess instance = new SingleBlockAccess();
 

@@ -9,6 +9,7 @@ import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.RayTraceResult;
@@ -95,11 +96,11 @@ public class Cover extends Attachment {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(BlockRenderLayer layer, CCRenderState renderBlocks) {
-
-		//if (!block.canRenderInPass(pass)) {//TODO
-		//	return false;
-		//}
+	public boolean render(BlockRenderLayer layer, CCRenderState ccrs) {
+        IBlockState state = block.getStateFromMeta(meta);
+		if (!block.canRenderInLayer(state, layer)) {//TODO
+			return false;
+		}
 
 		//Attachment attachment = tile.attachments[side];
 		//CoverHoleRender.ITransformer[] hollowMask = null;
@@ -112,7 +113,7 @@ public class Cover extends Attachment {
 
 		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
 		//		tile.covers);
-        return false;
+        return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side);
 	}
 
 	@Override

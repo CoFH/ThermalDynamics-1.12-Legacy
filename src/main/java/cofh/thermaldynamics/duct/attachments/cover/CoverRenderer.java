@@ -1,24 +1,38 @@
-/*
+
 package cofh.thermaldynamics.duct.attachments.cover;
 
+import codechicken.lib.lighting.LightMatrix;
+import codechicken.lib.lighting.LightModel;
+import codechicken.lib.render.CCModel;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.vec.Rotation;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
+import codechicken.lib.vec.uv.IconVertexRangeUVTransform;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.render.RenderDuct;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
-import java.nio.ByteOrder;
+//import java.nio.ByteOrder;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
+//import net.minecraft.block.Block;
+//import net.minecraft.client.renderer.RenderBlocks;
+//import net.minecraft.client.renderer.Tessellator;
+//import net.minecraft.util.IIcon;
+//import net.minecraft.world.IBlockAccess;
+//import net.minecraftforge.common.util.ForgeDirection;
 
 public class CoverRenderer {
 
-	private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
-	public static RenderBlocks renderBlocks = new RenderBlocks();
+	//private static RenderBlocks facadeRenderBlocks = new RenderBlocks();
+	//public static RenderBlocks renderBlocks = new RenderBlocks();
 
 	public static int VERTEX_SIZE = 8;
 
@@ -33,7 +47,36 @@ public class CoverRenderer {
 	private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
 	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-	public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
+    private static CCModel[] models;
+
+
+    static {
+
+        models = new CCModel[6];
+
+        for (int i = 0; i < 6; i++) {
+            models[i] = CCModel.quadModel(24).generateBlock(0, Cover.bounds[i]).computeNormals().computeLighting(LightModel.standardLightModel);
+        }
+
+    }
+
+
+    public static boolean renderCover(CCRenderState ccrs, BlockPos pos, IBlockState coveredBlock, int side) {
+
+        TextureAtlasSprite[] textures = TextureUtils.getIconsForBlock(coveredBlock, EnumFacing.VALUES[side]);
+        if (textures.length == 0){
+            return false;
+        }
+
+        TextureAtlasSprite faceSprite = textures[0];
+        TextureAtlasSprite missingTex = TextureUtils.getMissingSprite();
+        models[side].render(ccrs, new Vector3(pos).translation(), new IconTransformation(faceSprite));
+
+        return true;
+    }
+
+
+	/*public static boolean renderCover(RenderBlocks renderBlocks, int x, int y, int z, int side, Block block, int meta, Cuboid6 bounds, boolean addNormals,
 			boolean addTrans, CoverHoleRender.ITransformer[] hollowCover) {
 
 		return renderCover(renderBlocks, x, y, z, side, block, meta, bounds, addNormals, addTrans, hollowCover, null);
@@ -287,6 +330,6 @@ public class CoverRenderer {
 		Block block2 = world.getBlock(x, y, z);
 
 		return block2.shouldSideBeRendered(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, side);
-	}
+	}*/
 }
-*/
+
