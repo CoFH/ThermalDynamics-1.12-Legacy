@@ -1,8 +1,10 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
+import codechicken.lib.render.CCRenderState;
 import cofh.api.block.IBlockAppearance;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -19,30 +21,26 @@ public class CoverBlockAccess implements IBlockAccess {
 
     IBlockAccess world;
 
-    public static CoverBlockAccess instance = new CoverBlockAccess();
+    public static ThreadLocal<CoverBlockAccess> instances = new ThreadLocal<CoverBlockAccess>() {
+        @Override
+        protected CoverBlockAccess initialValue() {
+            return new CoverBlockAccess();
+        }
+    };
 
-    public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, Block block, int meta) {
-
+    public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
+        CoverBlockAccess instance = instances.get();
         instance.world = world;
-        instance.blockX = pos.getX();
-        instance.blockY = pos.getY();
-        instance.blockZ = pos.getZ();
         instance.pos = pos;
         instance.side = side;
-        instance.block = block;
-        instance.meta = meta;
-        instance.state = block.getStateFromMeta(meta);
+        instance.state = state;
         return instance;
     }
 
-    @Deprecated
-    public int blockX, blockY, blockZ;
     public BlockPos pos;
     public EnumFacing side;
 
     IBlockState state;
-    public Block block;
-    public int meta;
 
     public enum Result {
         ORIGINAL,
@@ -75,13 +73,13 @@ public class CoverBlockAccess implements IBlockAccess {
                 return COVER;
             }
 
-            if (blockAppearance.getVisualBlock(world, pos.getX(), pos.getY(), pos.getZ(), side) == block && blockAppearance.getVisualMeta(world, pos.getX(), pos.getY(), pos.getZ(), side) == meta) {
+            if (blockAppearance.getVisualState(world, pos, side).equals(state)) {
                 return state.isNormalCube() ? BEDROCK : AIR;
             } else {
                 return COVER;
             }
         } else {
-            if (worldBlock == block && worldBlock.getMetaFromState(worldState) == meta) {
+            if (worldState.equals(state)) {
                 return state.isNormalCube() ? BEDROCK : AIR;
             } else {
                 return ORIGINAL;
@@ -91,7 +89,8 @@ public class CoverBlockAccess implements IBlockAccess {
 
     @Override
     public IBlockState getBlockState(BlockPos pos) {
-        return null;
+        Result action = getAction(pos);
+        return action == ORIGINAL ? world.getBlockState(pos) : action == AIR ? Blocks.AIR.getDefaultState() : action == BEDROCK ? Blocks.BEDROCK.getDefaultState() : action == COVER ? ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side) : state;
     }
 
     /*@Override
@@ -117,13 +116,6 @@ public class CoverBlockAccess implements IBlockAccess {
         return world.getCombinedLight(pos, t);
     }
 
-    /*@Override
-    public int getBlockMetadata(int x, int y, int z) {
-
-        Result action = getAction(x, y, z);
-        return action == ORIGINAL ? world.getBlockMetadata(x, y, z) : action == AIR || action == BEDROCK ? 0 : action == COVER ? ((IBlockAppearance) world.getBlock(x, y, z)).getVisualMeta(world, x, y, z, ForgeDirection.getOrientation(side)) : meta;
-    }*/
-
     @Override
     public int getStrongPower(BlockPos pos, EnumFacing side) {
 
@@ -147,18 +139,6 @@ public class CoverBlockAccess implements IBlockAccess {
 
         return world.getBiomeGenForCoords(pos);
     }
-
-    //@Override
-    //@SideOnly(Side.CLIENT)
-    //public int getHeight() {
-    //    return world.getHeight();
-    //}
-
-    //@Override
-    //@SideOnly(Side.CLIENT)
-    //public boolean extendedLevelsInChunkCache() {
-    //    return world.extendedLevelsInChunkCache();
-    //}
 
     @Override
     public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {

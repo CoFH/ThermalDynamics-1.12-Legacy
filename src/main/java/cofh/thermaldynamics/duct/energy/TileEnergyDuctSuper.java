@@ -1,7 +1,11 @@
 package cofh.thermaldynamics.duct.energy;
 
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEnergyDuctSuper extends TileEnergyDuct {
 
@@ -29,10 +33,10 @@ public class TileEnergyDuctSuper extends TileEnergyDuct {
 		return 0;
 	}
 
-	//@Override
-	//@SideOnly(Side.CLIENT)
-	//public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-	//	BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-	//	return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctCryo;
-	//}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctCryo;
+	}
 }

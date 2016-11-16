@@ -1,15 +1,24 @@
-/*
+
 package cofh.thermaldynamics.duct.attachments.cover;
 
+import codechicken.lib.colour.ColourRGBA;
+import codechicken.lib.model.bakery.CCQuad;
+import codechicken.lib.model.bakery.UnpackingVertexConsumer;
+import codechicken.lib.render.buffer.BakingVertexBuffer;
+import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.Vertex5;
+import codechicken.lib.vec.uv.UV;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.core.TDProps;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import net.minecraft.client.renderer.Tessellator;
 
 public class CoverHoleRender {
 
@@ -23,27 +32,30 @@ public class CoverHoleRender {
 	public static class Quad {
 
 		Vertex8[] verts;
+        CCQuad originalQuad;
 
-		public Quad(Vertex8[] verts) {
-
+		public Quad(Vertex8[] verts, CCQuad quad) {
+            originalQuad = quad;
 			this.verts = verts;
 		}
 
-		public void sliceStretchDraw(int x, int y, int z, int side, ITransformer[] transformers) {
+		public List<CCQuad> sliceStretchDraw(int side, ITransformer[] transformers) {
 
-			float[][] uvTransform = getUVTransform(verts, side, x, y, z);
+			float[][] uvTransform = getUVTransform(verts, side);
 
+            List<CCQuad> quads = new ArrayList<CCQuad>();
 			if (uvTransform == null) {
-				draw();
-				return;
+                quads.add(draw());
+                return quads;
 			}
 
 			for (ITransformer transformer : transformers) {
-				Quad slice = slice(x, y, z, side, transformer, uvTransform);
+				Quad slice = slice(side, transformer, uvTransform);
 				if (slice.notEmpty()) {
-					slice.draw();
+					quads.add(slice.draw());
 				}
 			}
+			return quads;
 		}
 
 		private boolean notEmpty() {
@@ -73,7 +85,7 @@ public class CoverHoleRender {
 			return false;
 		}
 
-		public Quad slice(int x, int y, int z, int side, ITransformer transformer, float[][] uvTransform) {
+		public Quad slice(int side, ITransformer transformer, float[][] uvTransform) {
 
 			Vertex8[] v = new Vertex8[this.verts.length];
 			int s = side >> 1;
@@ -84,28 +96,28 @@ public class CoverHoleRender {
 				float dx;
 				float dy;
 				if (s == 0) {
-					dx = copy.x - x;
-					dy = copy.z - z;
+					dx = copy.x;
+					dy = copy.z;
 				} else if (s == 1) {
-					dx = copy.x - x;
-					dy = copy.y - y;
+					dx = copy.x;
+					dy = copy.y;
 				} else {
-					dx = copy.z - z;
-					dy = copy.y - y;
+					dx = copy.z;
+					dy = copy.y;
 				}
 
 				if (transformer.shouldTransform(dx, dy)) {
 					float dx2 = transformer.transformX(dx, dy);
 					float dy2 = transformer.transformY(dx, dy);
 					if (s == 0) {
-						copy.x = x + dx2;
-						copy.z = z + dy2;
+						copy.x = dx2;
+						copy.z = dy2;
 					} else if (s == 1) {
-						copy.x = x + dx2;
-						copy.y = y + dy2;
+						copy.x = dx2;
+						copy.y = dy2;
 					} else {
-						copy.z = z + dx2;
-						copy.y = y + dy2;
+						copy.z = dx2;
+						copy.y = dy2;
 					}
 
 					if (uvTransform != null) {
@@ -121,17 +133,19 @@ public class CoverHoleRender {
 				v[i] = copy;
 			}
 
-			return new Quad(v);
+			return new Quad(v, originalQuad.copy());
 		}
 
-		public void draw() {
-
-			for (Vertex8 vertex : verts) {
-				vertex.draw();
-			}
+		public CCQuad draw() {
+            CCQuad quad = originalQuad.copy();
+            for (int i = 0; i < verts.length; i++) {
+                Vertex8 vertex = verts[i];
+                vertex.draw(quad, i);
+            }
+			return quad;
 		}
 
-		public float[][] getUVTransform(Vertex8[] quads, int side, int x, int y, int z) {
+		public float[][] getUVTransform(Vertex8[] quads, int side) {
 
 			int s = side >> 1;
 			float n = 0;
@@ -144,14 +158,14 @@ public class CoverHoleRender {
 				float dx;
 				float dy;
 				if (s == 0) {
-					dx = vertex.x - x;
-					dy = vertex.z - z;
+					dx = vertex.x;
+					dy = vertex.z;
 				} else if (s == 1) {
-					dx = vertex.x - x;
-					dy = vertex.y - y;
+					dx = vertex.x;
+					dy = vertex.y;
 				} else {
-					dx = vertex.z - z;
-					dy = vertex.y - y;
+					dx = vertex.z;
+					dy = vertex.y;
 				}
 
 				sx += dx;
@@ -203,16 +217,40 @@ public class CoverHoleRender {
 		}
 	}
 
-	public static void holify(int startIndex, int x, int y, int z, int side, ITransformer[] transformers) {
-
-		List<Quad> tessQuads = loadFromTessellator(startIndex, true);
+	public static List<CCQuad> holify(List<CCQuad> quads, int side, ITransformer[] transformers) {
+        List<Quad> tessQuads = loadFromQuads(quads);
+        List<CCQuad> transformedQuads = new ArrayList<CCQuad>();
 
 		for (Quad tessQuad : tessQuads) {
-			tessQuad.sliceStretchDraw(x, y, z, side, transformers);
+			transformedQuads.addAll(tessQuad.sliceStretchDraw(side, transformers));
 		}
+
+		return transformedQuads;
 	}
 
-	public static List<Quad> loadFromTessellator(int startIndex, boolean pop) {
+    public static List<Quad> loadFromQuads(List<CCQuad> ccQuads) {
+        List<Quad> quads = new ArrayList<Quad>();
+
+        for (CCQuad quad : ccQuads) {
+
+            Vertex8[] verts = new Vertex8[4];
+
+            for (int v = 0; v < 4; v++) {
+                Vertex5 vert = quad.vertices[v];
+                //verts[v].x = (float) vert.vec.x;
+                //verts[v].y = (float) vert.vec.y;
+                //verts[v].z = (float) vert.vec.z;
+                //verts[v].u = (float) vert.uv.u;
+                //verts[v].v = (float) vert.uv.v;
+                verts[v] = new Vertex8((float) vert.vec.x, (float) vert.vec.y, (float) vert.vec.z, (float) vert.uv.u, (float) vert.uv.v, quad.colours[v].rgba(), quad.normals[v].copy(), quad.lightMaps[v]);
+            }
+            quads.add(new Quad(verts, quad.copy()));
+
+        }
+        return quads;
+    }
+
+	/*public static List<Quad> loadFromTessellator(int startIndex, boolean pop) {
 
 		Tessellator tess = Tessellator.instance;
 		int endIndex = tess.rawBufferIndex;
@@ -247,7 +285,7 @@ public class CoverHoleRender {
 		}
 
 		return list;
-	}
+	}*/
 
 	public static ITransformer[] hollowCover(float w) {
 
@@ -400,16 +438,16 @@ public class CoverHoleRender {
 		float x, y, z;
 		float u, v;
 		int color;
-		int normal;
+        Vector3 normal;
 		int brightness;
 
 		@Override
 		public String toString() {
 
-			return String.format("V8{{%s,%s,%s},{%s,%s},c=%d,n=%d,b=%d}", x, y, z, u, v, color, normal, brightness);
+			return String.format("V8{{%s,%s,%s},{%s,%s},c=%d,n=%s,b=%d}", x, y, z, u, v, color, normal.toString(), brightness);
 		}
 
-		public Vertex8(float x, float y, float z, float u, float v, int color, int normal, int brightness) {
+		public Vertex8(float x, float y, float z, float u, float v, int color, Vector3 normal, int brightness) {
 
 			this.x = x;
 			this.y = y;
@@ -426,17 +464,13 @@ public class CoverHoleRender {
 			return new Vertex8(x, y, z, u, v, color, normal, brightness);
 		}
 
-		public void draw() {
+		public void draw(CCQuad quad, int i) {
 
-			//Tessellator tess = Tessellator.instance;
-			//int index = tess.rawBufferIndex;
-			//tess.addVertex(this.x, this.y, this.z); // to grow the rawBuffer if needed
-			//int[] buffer = tess.rawBuffer;
-			//buffer[index + 3] = Float.floatToRawIntBits(this.u);
-			//buffer[index + 4] = Float.floatToRawIntBits(this.v);
-			//buffer[index + 5] = this.color;
-			//buffer[index + 6] = this.normal;
-			//buffer[index + 7] = this.brightness;
+            quad.vertices[i].vec.set(x, y, z);
+            quad.vertices[i].uv.set(u, v);
+            quad.colours[i].set(color);
+            quad.normals[i].set(normal);
+            quad.lightMaps[i] = brightness;
 		}
 
 		public float[] buildTex() {
@@ -457,4 +491,4 @@ public class CoverHoleRender {
 	}
 
 }
-*/
+

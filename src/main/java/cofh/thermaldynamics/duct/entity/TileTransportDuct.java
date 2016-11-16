@@ -426,11 +426,11 @@
 //		}
 //	}
 //
-//	//@Override
-//	//@SideOnly(Side.CLIENT)
-//	//public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-//	//	BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-//	//	return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctTransport;
-//	//}
+//	@Override
+//	@SideOnly(Side.CLIENT)
+//	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+//		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+//		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctTransport;
+//	}
 //
 //}
