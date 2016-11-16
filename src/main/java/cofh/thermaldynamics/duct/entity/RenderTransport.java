@@ -1,115 +1,122 @@
-//package cofh.thermaldynamics.duct.entity;
-//
-//import cofh.core.render.ShaderHelper;
-//
-//import java.util.List;
-//import java.util.WeakHashMap;
-//
-//import net.minecraft.client.Minecraft;
-//import net.minecraft.client.entity.EntityOtherPlayerMP;
-//import net.minecraft.client.renderer.entity.RenderEntity;
-//import net.minecraft.entity.Entity;
-//import net.minecraft.entity.player.EntityPlayer;
-//import net.minecraft.util.ResourceLocation;
-//
-//import org.lwjgl.opengl.GL11;
-//
-//public class RenderTransport extends RenderEntity {
-//
-//	RenderPlayerRiding renderPlayer = new RenderPlayerRiding();
-//
-//	WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<EntityPlayer, EntityOtherPlayerMP>();
-//
-//	@Override
-//	public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
-//
-//		if (entity.riddenByEntity == null) {
-//			return;
-//		}
-//
-//		EntityPlayer player = null;
-//
-//		if (entity.riddenByEntity instanceof EntityPlayer) {
-//			player = (EntityPlayer) entity.riddenByEntity;
-//		}
-//
-//		if (player == Minecraft.getMinecraft().thePlayer) {
-//			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
-//				return;
-//			}
-//		}
-//
-//		if (player == null) {
-//			return;
-//		}
-//
-//		EntityTransport transport = (EntityTransport) entity;
-//
-//		transport.setPosition(ShaderHelper.midGameTick);
-//
-//		transport.updateRiderPosition();
-//
-//		EntityOtherPlayerMP doll = dolls.get(player);
-//		if (doll == null) {
-//			doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
-//			dolls.put(player, doll);
-//		}
-//
-//		List<?> allWatched = player.getDataWatcher().getAllWatched();
-//		if (allWatched != null) {
-//			doll.getDataWatcher().updateWatchedObjectsFromList(allWatched);
-//		}
-//
-//		for (int i = 1; i < 5; i++) {
-//			doll.setCurrentItemOrArmor(i, player.getEquipmentInSlot(i));
-//		}
-//
-//		renderPlayer.setRenderManager(renderManager);
-//
-//		transport.setPosition(0);
-//
-//		GlStateManager.pushMatrix();
-//		RenderPlayerRiding.transport = transport;
-//
-//		double dy = player.yOffset - 1.62F;
-//		renderPlayer.doRender(doll, p_76986_2_, p_76986_4_ + dy, p_76986_6_, p_76986_8_, p_76986_9_);
-//		RenderPlayerRiding.transport = null;
-//		GlStateManager.popMatrix();
-//	}
-//
-//	@Override
-//	protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
-//
-//		return null;
-//	}
-//
-//	public void copyFromEntityTransport(Entity doll, EntityTransport other, EntityPlayer player) {
-//
-//		if (other.pos != null) {
-//			other.setPosition(0);
-//		}
-//
-//		doll.worldObj = Minecraft.getMinecraft().theWorld;
-//
-//		double dx = 0, dy = -(player.posY - (player.boundingBox.maxY + player.boundingBox.minY)), dz = 0;
-//
-//		doll.posX = other.posX + dx;
-//		doll.posY = other.posY + dy;
-//		doll.posZ = other.posZ + dz;
-//
-//		doll.lastTickPosX = other.lastTickPosX + dx;
-//		doll.lastTickPosY = other.lastTickPosY + dy;
-//		doll.lastTickPosZ = other.lastTickPosZ + dz;
-//
-//		doll.prevPosX = other.prevPosX + dx;
-//		doll.prevPosY = other.prevPosY + dy;
-//		doll.prevPosZ = other.prevPosZ + dz;
-//
-//		doll.rotationYaw = player.rotationYaw;
-//		doll.rotationPitch = player.rotationPitch;
-//
-//		doll.prevRotationYaw = player.prevRotationYaw;
-//		doll.prevRotationPitch = player.prevRotationPitch;
-//	}
-//
-//}
+package cofh.thermaldynamics.duct.entity;
+
+import cofh.core.render.ShaderHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
+
+import java.util.List;
+import java.util.WeakHashMap;
+
+public class RenderTransport extends RenderEntity {
+
+    RenderPlayerRiding renderPlayer;
+
+    WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<EntityPlayer, EntityOtherPlayerMP>();
+
+    public RenderTransport(RenderManager renderManager) {
+        super(renderManager);
+        renderPlayer = new RenderPlayerRiding(renderManager);
+    }
+
+    @Override
+    public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
+
+        if (!entity.isBeingRidden()) {
+            return;
+        }
+
+        EntityPlayer player = null;
+
+        if (entity.getPassengers().get(0) instanceof EntityPlayer) {
+            player = (EntityPlayer) entity.getPassengers().get(0);
+        }
+
+        if (player == Minecraft.getMinecraft().thePlayer) {
+            if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
+                return;
+            }
+        }
+
+        if (player == null) {
+            return;
+        }
+
+        EntityTransport transport = (EntityTransport) entity;
+
+        transport.setPosition(ShaderHelper.midGameTick);
+
+        transport.updatePassenger(player);
+
+        EntityOtherPlayerMP doll = dolls.get(player);
+        if (doll == null) {
+            doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
+            dolls.put(player, doll);
+        }
+
+        List<EntityDataManager.DataEntry<?>> allWatched = player.getDataManager().getAll();
+        if (allWatched != null) {
+            doll.getDataManager().setEntryValues(allWatched);
+        }
+
+        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+            doll.setItemStackToSlot(slot, player.getItemStackFromSlot(slot));
+        }
+
+        transport.setPosition(0);
+
+        GL11.glPushMatrix();
+        RenderPlayerRiding.transport = transport;
+
+        //TODO verify that this yOffset is ok
+        double dx = 0;
+        double dy = player.getYOffset() + 0.35D;
+        double dz = 0;
+        renderPlayer.doRender(doll, p_76986_2_ + dx, p_76986_4_ + dy, p_76986_6_ + dz, p_76986_8_, p_76986_9_);
+        RenderPlayerRiding.transport = null;
+        GL11.glPopMatrix();
+    }
+
+    @Override
+    protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+
+        return null;
+    }
+
+    public void copyFromEntityTransport(Entity doll, EntityTransport other, EntityPlayer player) {
+
+        if (other.pos != null) {
+            other.setPosition(0);
+        }
+
+        doll.worldObj = Minecraft.getMinecraft().theWorld;
+
+        double dx = 0, dy = -(player.posY - (player.getEntityBoundingBox().maxY + player.getEntityBoundingBox().minY)), dz = 0;
+
+        doll.posX = other.posX + dx;
+        doll.posY = other.posY + dy;
+        doll.posZ = other.posZ + dz;
+
+        doll.lastTickPosX = other.lastTickPosX + dx;
+        doll.lastTickPosY = other.lastTickPosY + dy;
+        doll.lastTickPosZ = other.lastTickPosZ + dz;
+
+        doll.prevPosX = other.prevPosX + dx;
+        doll.prevPosY = other.prevPosY + dy;
+        doll.prevPosZ = other.prevPosZ + dz;
+
+        doll.rotationYaw = player.rotationYaw;
+        doll.rotationPitch = player.rotationPitch;
+
+        doll.prevRotationYaw = player.prevRotationYaw;
+        doll.prevRotationPitch = player.prevRotationPitch;
+    }
+
+}

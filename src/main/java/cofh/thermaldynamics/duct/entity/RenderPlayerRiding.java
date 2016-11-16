@@ -1,220 +1,169 @@
-//package cofh.thermaldynamics.duct.entity;
-//
-//import cofh.core.render.ShaderHelper;
-//import cofh.lib.util.helpers.MathHelper;
-//import cofh.thermaldynamics.block.TileTDBase;
-//
-//import net.minecraft.client.Minecraft;
-//import net.minecraft.client.model.ModelBase;
-//import net.minecraft.client.model.ModelBiped;
-//import net.minecraft.entity.EntityLivingBase;
-//import net.minecraft.tileentity.TileEntity;
-//import net.minecraft.util.Facing;
-//
-//import org.lwjgl.opengl.GL11;
-//
-//public class RenderPlayerRiding extends RenderPlayerAlt {
-//
-//	static EntityTransport transport;
-//
-//	@Override
-//	public void setRenderPassModel(ModelBase p_77042_1_) {
-//
-//		if (p_77042_1_ instanceof ModelBiped) {
-//			this.renderPassModel = new ModelWrapper((ModelBiped) p_77042_1_);
-//		} else {
-//			this.renderPassModel = null;
-//		}
-//	}
-//
-//	@Override
-//	protected void renderModel(EntityLivingBase p_77036_1_, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_,
-//			float p_77036_7_) {
-//
-//		GlStateManager.pushMatrix();
-//		this.bindEntityTexture(p_77036_1_);
-//		renderBiped(this.modelBipedMain);
-//		GlStateManager.popMatrix();
-//	}
-//
-//	@Override
-//	protected boolean func_110813_b(EntityLivingBase p_110813_1_) {
-//
-//		return transport != null && transport.riddenByEntity != Minecraft.getMinecraft().thePlayer;
-//	}
-//
-//	public static void handleAnimations(ModelBiped modelBiped) {
-//
-//		if (transport == null) {
-//			return;
-//		}
-//
-//		double scale = 0.85;
-//		GlStateManager.scale(scale, scale, scale);
-//
-//		int d = transport.direction;
-//		int od = transport.oldDirection;
-//
-//		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.PIPE_LENGTH);
-//
-//		float yaw = 0, pitch;
-//
-//		switch (d) {
-//		case 0:
-//			pitch = 180;
-//			break;
-//		case 1:
-//			pitch = 0;
-//			break;
-//		case 2:
-//			yaw = 180;
-//			pitch = 90;
-//			break;
-//		case 3:
-//			yaw = 0;
-//			pitch = 90;
-//			break;
-//		case 4:
-//			yaw = 90;
-//			pitch = 90;
-//			break;
-//		case 5:
-//			yaw = 270;
-//			pitch = 90;
-//			break;
-//		default:
-//			return;
-//		}
-//
-//		modelBiped.bipedLeftLeg.rotateAngleX = modelBiped.bipedLeftLeg.rotateAngleZ = modelBiped.bipedRightLeg.rotateAngleX = modelBiped.bipedRightLeg.rotateAngleZ = 0;
-//
-//		if (d != od && d != (od ^ 1)) {
-//			float prevPitch, prevYaw = 0;
-//			switch (od) {
-//			case 0:
-//				prevPitch = 180;
-//				break;
-//			case 1:
-//				prevPitch = 0;
-//				break;
-//			case 2:
-//				prevYaw = 180;
-//				prevPitch = 90;
-//				break;
-//			case 3:
-//				prevYaw = 0;
-//				prevPitch = 90;
-//				break;
-//			case 4:
-//				prevYaw = 90;
-//				prevPitch = 90;
-//				break;
-//			case 5:
-//				prevYaw = 270;
-//				prevPitch = 90;
-//				break;
-//			default:
-//				return;
-//			}
-//
-//			if (d < 2) {
-//				yaw = prevYaw;
-//			} else if (od < 2) {
-//				prevYaw = yaw;
-//			}
-//
-//			float v = MathHelper.clamp((stepTime - 0.25F) / (1.0F - 0.25F), 0, 1);
-//
-//			if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw - 360)) {
-//				yaw += 360;
-//			}
-//
-//			if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw + 360)) {
-//				yaw -= 360;
-//			}
-//
-//			yaw = yaw * v + prevYaw * (1 - v);
-//			pitch = pitch * v + prevPitch * (1 - v);
-//
-//			v = MathHelper.clamp(v, 0, 1);
-//			float angle = (v) * (1 - v) * 4 * 60 / 180.0F * (float) Math.PI;
-//
-//			if (d == 0 || od == 1) {
-//				modelBiped.bipedLeftLeg.rotateAngleX = modelBiped.bipedRightLeg.rotateAngleX = -angle;
-//			} else if (d == 1 || od == 0) {
-//				modelBiped.bipedLeftLeg.rotateAngleX = modelBiped.bipedRightLeg.rotateAngleX = angle;
-//			} else {
-//				int q;
-//				if (d == 2 || d == 3) {
-//					q = (od == 4) == (d == 2) ? 1 : -1;
-//				} else {
-//					q = (od == 2) == (d == 4) ? -1 : 1;
-//				}
-//
-//				angle *= q;
-//
-//				modelBiped.bipedLeftLeg.rotateAngleZ = modelBiped.bipedRightLeg.rotateAngleZ = angle;
-//				if (angle < 0) {
-//					modelBiped.bipedRightLeg.rotationPointZ *= 0.7F;
-//				} else {
-//					modelBiped.bipedLeftLeg.rotationPointZ *= 0.7F;
-//				}
-//			}
-//		}
-//
-//		GL11.glRotatef(yaw, 0, 1, 0);
-//		GL11.glRotatef(pitch, 1, 0, 0);
-//
-//		modelBiped.bipedHead.rotateAngleY = 0 / (180F / (float) Math.PI);
-//		modelBiped.bipedHead.rotateAngleX = -90 / (180F / (float) Math.PI);
-//		modelBiped.bipedHeadwear.rotateAngleY = modelBiped.bipedHead.rotateAngleY;
-//		modelBiped.bipedHeadwear.rotateAngleX = modelBiped.bipedHead.rotateAngleX;
-//
-//		modelBiped.bipedRightArm.rotateAngleZ = 0.0F;
-//		modelBiped.bipedLeftArm.rotateAngleZ = 0.0F;
-//		modelBiped.bipedRightLeg.rotateAngleY = 0.0F;
-//		modelBiped.bipedLeftLeg.rotateAngleY = 0.0F;
-//		modelBiped.bipedRightArm.rotateAngleX = 0.0F;
-//		modelBiped.bipedLeftArm.rotateAngleX = 0.0F;
-//
-//		modelBiped.bipedBody.rotateAngleX = 0.0F;
-//
-//		modelBiped.bipedRightLeg.rotationPointZ = 0.1F;
-//		modelBiped.bipedLeftLeg.rotationPointZ = 0.1F;
-//		modelBiped.bipedRightLeg.rotationPointY = 12.0F;
-//		modelBiped.bipedLeftLeg.rotationPointY = 12.0F;
-//
-//		float renderScale = 1 / 16.0f;
-//
-//		modelBiped.bipedHead.render(renderScale);
-//		modelBiped.bipedBody.render(renderScale);
-//		modelBiped.bipedRightArm.render(renderScale);
-//		modelBiped.bipedLeftArm.render(renderScale);
-//		modelBiped.bipedHeadwear.render(renderScale);
-//
-//		if (od != d) {
-//			GL11.glTranslatef(0, -0.3F, 0);
-//		} else if (stepTime < 0.5F) {
-//			if (transport.pos != null) {
-//				TileEntity tile = transport.worldObj.getTileEntity(transport.pos.x + Facing.offsetsXForSide[d ^ 1], transport.pos.y
-//						+ Facing.offsetsYForSide[d ^ 1], transport.pos.z + Facing.offsetsZForSide[d ^ 1]);
-//				if (tile instanceof TileTransportDuctBase) {
-//					if (((TileTransportDuctBase) tile).neighborTypes[d ^ 1] == TileTDBase.NeighborTypes.NONE) {
-//						GL11.glTranslatef(0, -0.3F * (1 - stepTime * 2), 0);
-//					}
-//				} else {
-//					GL11.glTranslatef(0, -0.3F * (1 - stepTime * 2), 0);
-//				}
-//			}
-//		}
-//		modelBiped.bipedRightLeg.render(renderScale);
-//		modelBiped.bipedLeftLeg.render(renderScale);
-//
-//	}
-//
-//	private void renderBiped(ModelBiped modelBiped) {
-//
-//		handleAnimations(modelBiped);
-//
-//	}
-//}
+package cofh.thermaldynamics.duct.entity;
+
+import cofh.core.render.ShaderHelper;
+import cofh.lib.util.helpers.MathHelper;
+import cofh.thermaldynamics.block.TileTDBase;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelPlayer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
+import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
+import net.minecraft.client.renderer.entity.layers.LayerDeadmau5Head;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class RenderPlayerRiding extends RenderPlayerAlt {
+
+    static EntityTransport transport;
+
+    public RenderPlayerRiding(RenderManager renderManager) {
+
+        super(renderManager);
+
+        List<LayerRenderer> layersToRemove = new ArrayList<LayerRenderer>();
+        for (LayerRenderer layer : layerRenderers) {
+            if (layer instanceof LayerBipedArmor || layer instanceof LayerDeadmau5Head || layer instanceof LayerCustomHead) {
+                continue;
+            }
+            layersToRemove.add(layer);
+        }
+
+        for (LayerRenderer layer : layersToRemove) {
+            removeLayer(layer);
+        }
+    }
+
+    @Override
+    protected void rotateCorpse(AbstractClientPlayer entityLiving, float p_77043_2_, float p_77043_3_, float partialTicks) {
+
+        if (transport == null) {
+            return;
+        }
+
+        entityLiving.prevRotationYawHead = 0F;
+        entityLiving.rotationYawHead = 0F;
+        entityLiving.prevRotationPitch = -90F;
+        entityLiving.rotationPitch = -90F;
+
+        int d = transport.direction;
+        int od = transport.oldDirection;
+        float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.PIPE_LENGTH);
+        float yaw = 0, pitch;
+
+        switch (d) {
+            case 0:
+                pitch = 180;
+                break;
+            case 1:
+                pitch = 0;
+                break;
+            case 2:
+                yaw = 0;
+                pitch = 270;
+                break;
+            case 3:
+                yaw = 180;
+                pitch = 270;
+                break;
+            case 4:
+                yaw = 90;
+                pitch = 270;
+                break;
+            case 5:
+                yaw = 270;
+                pitch = 270;
+                break;
+            default:
+                return;
+        }
+
+        double scale = 0.85;
+        GlStateManager.scale(scale, scale, scale);
+
+        if (d != od && d != (od ^ 1)) {
+            float prevPitch, prevYaw = 0;
+            switch (od) {
+                case 0:
+                    prevPitch = 180;
+                    break;
+                case 1:
+                    prevPitch = 0;
+                    break;
+                case 2:
+                    prevYaw = 0;
+                    prevPitch = 270;
+                    break;
+                case 3:
+                    prevYaw = 180;
+                    prevPitch = 270;
+                    break;
+                case 4:
+                    prevYaw = 90;
+                    prevPitch = 270;
+                    break;
+                case 5:
+                    prevYaw = 270;
+                    prevPitch = 270;
+                    break;
+                default:
+                    return;
+            }
+
+            if (d < 2) {
+                yaw = prevYaw;
+            } else if (od < 2) {
+                prevYaw = yaw;
+            }
+
+            float v = MathHelper.clamp((stepTime - 0.25F) / (1.0F - 0.25F), 0, 1);
+
+            if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw - 360)) {
+                yaw += 360;
+            }
+
+            if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw + 360)) {
+                yaw -= 360;
+            }
+
+            yaw = yaw * v + prevYaw * (1 - v);
+            pitch = pitch * v + prevPitch * (1 - v);
+        }
+
+        GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
+
+        GlStateManager.translate(0, -1F, 0);
+
+        if (od != d) {
+            GlStateManager.translate(0, -0.3F, 0);
+        } else if (stepTime < 0.5F) {
+            if (transport.pos != null) {
+                TileEntity tile = transport.worldObj.getTileEntity(transport.pos.offset(EnumFacing.VALUES[d].getOpposite()));
+                if (tile instanceof TileTransportDuctBase) {
+                    if (((TileTransportDuctBase) tile).neighborTypes[d ^ 1] == TileTDBase.NeighborTypes.NONE) {
+                        GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
+                    }
+                } else {
+                    GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    protected boolean canRenderName(AbstractClientPlayer entity) {
+        return transport != null && (transport.getPassengers().isEmpty() || transport.getPassengers().get(0) != Minecraft.getMinecraft().thePlayer);
+    }
+}

@@ -100,7 +100,7 @@ public class TDDucts {
 		addFluidDucts();
 		addItemDucts();
 		addSupportDucts();
-		//addTransportDucts();
+		addTransportDucts();
 
 		if (DebugHelper.debug) {
 			addIndevDucts();
@@ -202,16 +202,16 @@ public class TDDucts {
 		itemEnergyOpaque.setRarity(1);
 	}
 
-	/*static void addTransportDucts() {
+	static void addTransportDucts() {
 
 		transportBasic = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.TRANSPORT, DuctFactory.transport, null, null, null,
-				255, "electrum", "thermaldynamics:duct/base/greenGlass", 96));
+				255, "electrum", "thermaldynamics:blocks/duct/base/green_glass", 96));
 
 		transportLongRange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT,
-				DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:duct/base/greenGlass", 80));
+				DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:blocks/duct/base/green_glass", 80));
 
 		transportCrossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT,
-				DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:duct/base/greenGlass", 128));
+				DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:blocks/duct/base/green_glass", 128));
 
 		transportFrame = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.CRAFTING, DuctFactory.structural, null,
 				null, null, 255, "electrum", null, 128));
@@ -219,7 +219,7 @@ public class TDDucts {
 		transportBasic.setRarity(1);
 		transportLongRange.setRarity(1);
 		transportCrossover.setRarity(2);
-	}*/
+	}
 
 	static void addSupportDucts() {
 

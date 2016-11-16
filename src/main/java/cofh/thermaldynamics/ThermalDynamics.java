@@ -13,6 +13,8 @@ import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.debughelper.PacketDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.entity.SoundWoosh;
+import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.gui.TDCreativeTabCovers;
@@ -124,6 +126,9 @@ public class ThermalDynamics {
 		for (IInitializer initializer : initializerList) {
 			initializer.preInit();
 		}
+
+        GameRegistry.register(SoundWoosh.WOOSH);
+
         proxy.preInit();
 
 		TDPlugins.preInit();
@@ -139,7 +144,6 @@ public class ThermalDynamics {
 			initializer.initialize();
 		}
 
-		FMLCommonHandler.instance().bus().register(TickHandler.instance);
 		MinecraftForge.EVENT_BUS.register(TickHandler.instance);
 
         proxy.init();
@@ -186,9 +190,9 @@ public class ThermalDynamics {
 		/* Duct */
 		String category = "Duct.Transport";
 		String comment = "Must be between 0 and 120 ticks.";
-		//TileTransportDuctCrossover.CHARGE_TIME = (byte) MathHelper.clamp(
-		//		ThermalDynamics.config.get(category, "CrossoverChargeTime", TileTransportDuctCrossover.CHARGE_TIME, comment), 0,
-		//		TileTransportDuctCrossover.CHARGE_TIME);
+		TileTransportDuctCrossover.CHARGE_TIME = (byte) MathHelper.clamp(
+				ThermalDynamics.config.get(category, "CrossoverChargeTime", TileTransportDuctCrossover.CHARGE_TIME, comment), 0,
+				TileTransportDuctCrossover.CHARGE_TIME);
 
 		/* Models */
 		comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";

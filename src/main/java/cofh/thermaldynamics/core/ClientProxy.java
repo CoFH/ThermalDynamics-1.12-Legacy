@@ -7,6 +7,8 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.debughelper.CommandServerDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.entity.EntityTransport;
+import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
@@ -17,10 +19,14 @@ import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -63,7 +69,12 @@ public class ClientProxy extends CommonProxy {
 
 
         //MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
-		//RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new RenderTransport());
+		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new IRenderFactory<EntityTransport>() {
+            @Override
+            public Render<? super EntityTransport> createRenderFor(RenderManager manager) {
+                return new RenderTransport(manager);
+            }
+        });
 	}
 
     @Override

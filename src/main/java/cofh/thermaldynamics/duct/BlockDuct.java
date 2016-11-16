@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
+import cofh.core.CoFHProps;
 import cofh.core.block.TileCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.render.hitbox.ICustomHitBox;
@@ -19,6 +20,7 @@ import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
+import cofh.thermaldynamics.duct.entity.*;
 import cofh.thermaldynamics.duct.fluid.*;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
@@ -45,8 +47,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -351,12 +355,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
         GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
 
-        //GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
-        //GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
-        //GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
-        //EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
-        //MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
-        //FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
+        GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
+        GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
+        GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
+        EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
+        MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
+        FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
 
         return true;
     }
