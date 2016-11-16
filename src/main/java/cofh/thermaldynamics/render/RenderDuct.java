@@ -493,9 +493,9 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		//	offset = 0;
 		//}
 		RenderHelper.setBlockTextureSheet();
-		RenderUtils.preItemRender();
+		//RenderUtils.preItemRender();
 
-		RenderHelper.enableGUIStandardItemLighting();
+		//RenderHelper.enableGUIStandardItemLighting();
 
 		// GlStateManager.depthMask(true);
         CCRenderState ccrs = CCRenderState.instance();
@@ -513,9 +513,9 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		//CCRenderState.useNormals = false;
 		//RenderHelper.setItemTextureSheet();
 
-		RenderUtils.postItemRender();
+		//RenderUtils.postItemRender();
 
-		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+		//net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 		GlStateManager.popMatrix();
 	}
 

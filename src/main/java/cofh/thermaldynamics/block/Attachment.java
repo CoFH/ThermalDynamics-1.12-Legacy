@@ -7,6 +7,7 @@ import cofh.core.util.CoreUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -211,8 +212,8 @@ public abstract class Attachment {
 
 	}
 
-	//@SideOnly(Side.CLIENT)
-	//public CoverHoleRender.ITransformer[] getHollowMask() {
-	//	return null;
-	//}
+	@SideOnly(Side.CLIENT)
+	public CoverHoleRender.ITransformer[] getHollowMask() {
+		return null;
+	}
 }

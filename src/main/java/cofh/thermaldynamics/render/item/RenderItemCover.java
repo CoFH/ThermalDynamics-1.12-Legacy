@@ -10,6 +10,7 @@ import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -60,8 +61,8 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 			}
 		}
 
-		GlStateManager.pushMatrix();
-		double offset = -0.5;
+		//GlStateManager.pushMatrix();
+		//double offset = -0.5;
 		//if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
 		//	offset = 0;
 		//} else if (type == ItemRenderType.ENTITY) {
@@ -81,8 +82,9 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 		EnumFacing side =  EnumFacing.WEST; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
         CCRenderState ccrs = CCRenderState.instance();
+        ccrs.reset();
         ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        CoverRenderer.renderCover(ccrs, BlockPos.ORIGIN, block.getStateFromMeta(meta), side.ordinal(), null);
+        CoverRenderer.renderItemCover(ccrs, new BlockPos(0, 0, 0), side.ordinal(), block.getStateFromMeta(meta), Cover.bounds[side.ordinal()]);
         ccrs.draw();
 
 
@@ -100,7 +102,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 		//net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 
-		GlStateManager.popMatrix();
+		//GlStateManager.popMatrix();
 	}
 
     @Override

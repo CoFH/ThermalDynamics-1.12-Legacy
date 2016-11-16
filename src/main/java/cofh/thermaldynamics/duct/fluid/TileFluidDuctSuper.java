@@ -1,9 +1,13 @@
 package cofh.thermaldynamics.duct.fluid;
 
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileFluidDuctSuper extends TileFluidDuct {
 
@@ -31,15 +35,16 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 		return 0;
 	}
 
-	//@Override
-	//public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-	//	BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-	//	if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
-	//		return CoverHoleRender.hollowDuctTile;
-	//	} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
-	//		return null;
-	//	} else {
-	//		return CoverHoleRender.hollowDuctLarge;
-	//	}
-	//}
+	@Override
+    @SideOnly(Side.CLIENT)
+	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+		if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
+			return CoverHoleRender.hollowDuctTile;
+		} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
+			return null;
+		} else {
+			return CoverHoleRender.hollowDuctLarge;
+		}
+	}
 }

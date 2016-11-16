@@ -45,6 +45,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -93,13 +94,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         return duct.factory.createTileEntity(duct, world);
     }
 
-    //	@Override
-    //	@SideOnly(Side.CLIENT)
-    //	public IIcon getIcon(int side, int metadata) {
-    //
-    //		return TDDucts.getType(metadata + offset).iconBaseTexture;
-    //	}
-
     @Override
     public int damageDropped(IBlockState state) {
 
@@ -112,7 +106,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onBlockHighlight(DrawBlockHighlightEvent event) {
         RayTraceResult target = event.getTarget();
         EntityPlayer player = event.getPlayer();
@@ -164,31 +158,15 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public Block getVisualBlock(IBlockAccess world, int x, int y, int z, EnumFacing side) {
-
-        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+    public IBlockState getVisualState(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof TileTDBase) {
             Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
-            if (cover != null) {
-                return cover.block;
-            }
-
-        }
-        return this;
-    }
-
-    @Override
-    public int getVisualMeta(IBlockAccess world, int x, int y, int z, EnumFacing side) {
-
-        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-        if (tileEntity instanceof TileTDBase) {
-            Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
-            if (cover != null) {
-                return cover.meta;
+            if (cover != null){
+                return cover.state;
             }
         }
-        IBlockState state = world.getBlockState(new BlockPos(x, y, z));
-        return state.getBlock().getMetaFromState(state);
+        return world.getBlockState(pos);
     }
 
     @Override

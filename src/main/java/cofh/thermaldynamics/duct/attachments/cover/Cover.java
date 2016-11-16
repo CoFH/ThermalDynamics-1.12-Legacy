@@ -40,14 +40,18 @@ public class Cover extends Attachment {
 			bound.copy().apply(Rotation.sideRotations[2].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[3].at(Vector3.center)),
 			bound.copy().apply(Rotation.sideRotations[4].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[5].at(Vector3.center)) };
 
+    @Deprecated
 	public Block block;
+    @Deprecated
 	public int meta;
+    public IBlockState state;
 
-	public Cover(TileTDBase tile, byte side, Block block, int meta) {
+	public Cover(TileTDBase tile, byte side, IBlockState state) {
 
 		super(tile, side);
-		this.block = block;
-		this.meta = meta;
+        this.state = state;
+		this.block = state.getBlock();
+		this.meta = state.getBlock().getMetaFromState(state);
 	}
 
 	public Cover(TileTDBase tile, byte side) {
@@ -99,23 +103,26 @@ public class Cover extends Attachment {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean render(BlockRenderLayer layer, CCRenderState ccrs) {
-        IBlockState state = block.getStateFromMeta(meta);
-		if (!block.canRenderInLayer(state, layer)) {//TODO
+        //IBlockState state = block.getStateFromMeta(meta);
+		if (!block.canRenderInLayer(state, layer)) {
 			return false;
 		}
 
-		//Attachment attachment = tile.attachments[side];
-		//CoverHoleRender.ITransformer[] hollowMask = null;
-		//if (attachment != null) {
-		//	hollowMask = attachment.getHollowMask();
-		//}
-		//if (hollowMask == null) {
-		//	hollowMask = tile.getHollowMask(side);
-		//}
+		Attachment attachment = tile.attachments[side];
+		CoverHoleRender.ITransformer[] hollowMask = null;
+		if (attachment != null) {
+			hollowMask = attachment.getHollowMask();
+		}
+		if (hollowMask == null) {
+			hollowMask = tile.getHollowMask(side);
+		}
 
+
+		//TODO World passed in through chunk batcher.
+		return CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), hollowMask);
 		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
 		//		tile.covers);
-        return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);
+        //return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);
 	}
 
 	@Override
@@ -156,6 +163,7 @@ public class Cover extends Attachment {
 
 		block = Block.getBlockById(packet.getShort());
 		meta = packet.getByte();
+        state = block.getStateFromMeta(meta);
 	}
 
 	@Override
@@ -179,15 +187,19 @@ public class Cover extends Attachment {
 		block = Block.getBlockFromName(tag.getString("block"));
 		if (block == null) {
 			block = Blocks.AIR;
-		}
-		meta = tag.getByte("meta");
+            meta = 0;
+            state = Blocks.AIR.getDefaultState();
+		} else {
+            meta = tag.getByte("meta");
+            state = block.getStateFromMeta(meta);
+        }
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void drawSelectionExtra(EntityPlayer player, RayTraceResult target, float partialTicks) {
 
-		super.drawSelectionExtra(player, target, partialTicks);
+		/*super.drawSelectionExtra(player, target, partialTicks);
 
 		RenderHelper.setBlockTextureSheet();
 		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
@@ -239,7 +251,7 @@ public class Cover extends Attachment {
 		GlStateManager.disableAlpha();
 		GlStateManager.disableColorMaterial();
 		GlStateManager.disableLighting();
-		GlStateManager.disableBlend();
+		GlStateManager.disableBlend();*/
 	}
 
 }
