@@ -9,7 +9,8 @@ import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ServoFluid extends ServoBase {
 
@@ -46,13 +47,13 @@ public class ServoFluid extends ServoBase {
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		theTile = (IFluidHandler) tile;
+		theTile = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
 	public boolean isValidTile(TileEntity tile) {
 
-		return tile instanceof IFluidHandler;
+		return tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
@@ -71,11 +72,12 @@ public class ServoFluid extends ServoBase {
 		}
 
 		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
+		IFluidHandler ductHandler = fluidDuct.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
 
-		maxInput = fluidDuct.fill(EnumFacing.VALUES[side], theTile.drain(EnumFacing.VALUES[side ^ 1], maxInput, false), false);
+		maxInput = ductHandler.fill(theTile.drain(maxInput, false), false);
 
-		FluidStack returned = theTile.drain(EnumFacing.VALUES[side ^ 1], maxInput, true);
-		fluidDuct.fill(EnumFacing.VALUES[side], returned, true);
+		FluidStack returned = theTile.drain(maxInput, true);
+        ductHandler.fill(returned, true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {

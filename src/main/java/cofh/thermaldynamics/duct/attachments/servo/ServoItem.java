@@ -25,6 +25,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class ServoItem extends ServoBase {
 
@@ -206,57 +208,8 @@ public class ServoItem extends ServoBase {
 
 	public void handleItemSending() {
 
-		if (cacheType == TileItemDuct.CacheType.ISIDEDINV) {
-			int[] accessibleSlotsFromSide = cachedSidedInv.getSlotsForFace(EnumFacing.VALUES[side ^ 1]);
-			for (int i = 0; i < accessibleSlotsFromSide.length; i++) {
-				int slot = accessibleSlotsFromSide[i];
-				ItemStack itemStack = cachedSidedInv.getStackInSlot(slot);
-
-				if (itemStack == null) {
-					continue;
-				}
-				itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
-
-				if (itemStack == null || itemStack.stackSize == 0 || !cachedSidedInv.canExtractItem(slot, itemStack, EnumFacing.VALUES[side ^ 1])) {
-					continue;
-				}
-				if (!filter.matchesFilter(itemStack)) {
-					continue;
-				}
-				TravelingItem travelingItem = getRouteForItem(itemStack);
-
-				if (travelingItem == null) {
-					continue;
-				}
-				int totalSize = travelingItem.stack.stackSize;
-
-				travelingItem.stack = cachedSidedInv.decrStackSize(slot, travelingItem.stack.stackSize);
-
-				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
-					cachedSidedInv.markDirty();
-					continue;
-				}
-				if (multiStack[type]) {
-					if (travelingItem.stack.stackSize < totalSize) {
-						for (i++; i < accessibleSlotsFromSide.length && travelingItem.stack.stackSize < totalSize; i++) {
-							slot = accessibleSlotsFromSide[i];
-							itemStack = cachedSidedInv.getStackInSlot(slot);
-							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)
-									&& cachedSidedInv.canExtractItem(slot, itemStack, EnumFacing.VALUES[side ^ 1])) {
-								itemStack = cachedSidedInv.decrStackSize(slot, totalSize - travelingItem.stack.stackSize);
-								if (itemStack != null) {
-									travelingItem.stack.stackSize += itemStack.stackSize;
-								}
-							}
-						}
-					}
-				}
-				cachedSidedInv.markDirty();
-				itemDuct.insertNewItem(travelingItem);
-				return;
-			}
-		} else if (cacheType == TileItemDuct.CacheType.IINV) {
-			for (int slot = 0; slot < cachedInv.getSizeInventory(); slot++) {
+        if (cachedInv != null) {
+			for (int slot = 0; slot < cachedInv.getSlots(); slot++) {
 				ItemStack itemStack = cachedInv.getStackInSlot(slot);
 				if (itemStack == null) {
 					continue;
@@ -278,18 +231,17 @@ public class ServoItem extends ServoBase {
 
 				int totalSendSize = travelingItem.stack.stackSize;
 
-				travelingItem.stack = cachedInv.decrStackSize(slot, travelingItem.stack.stackSize);
+				travelingItem.stack = cachedInv.extractItem(slot, travelingItem.stack.stackSize, false);
 
 				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
-					cachedInv.markDirty();
 					continue;
 				}
 				if (multiStack[type]) {
 					if (travelingItem.stack.stackSize < totalSendSize) {
-						for (slot++; slot < cachedInv.getSizeInventory() && travelingItem.stack.stackSize < totalSendSize; slot++) {
+						for (slot++; slot < cachedInv.getSlots() && travelingItem.stack.stackSize < totalSendSize; slot++) {
 							itemStack = cachedInv.getStackInSlot(slot);
 							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-								itemStack = cachedInv.decrStackSize(slot, totalSendSize - travelingItem.stack.stackSize);
+								itemStack = cachedInv.extractItem(slot, totalSendSize - travelingItem.stack.stackSize, false);
 								if (itemStack != null) {
 									travelingItem.stack.stackSize += itemStack.stackSize;
 								}
@@ -297,7 +249,6 @@ public class ServoItem extends ServoBase {
 						}
 					}
 				}
-				cachedInv.markDirty();
 				itemDuct.insertNewItem(travelingItem);
 				return;
 			}
@@ -365,7 +316,7 @@ public class ServoItem extends ServoBase {
 		return range[type];
 	}
 
-	public ItemStack limitOutput(ItemStack itemStack, IInventory cachedInv, int slot, byte side) {
+	public ItemStack limitOutput(ItemStack itemStack, IItemHandler cachedInv, int slot, byte side) {
 
 		itemStack.stackSize = Math.min(itemStack.stackSize, filter.getLevel(FilterLogic.levelStackSize));
 		return itemStack;
@@ -389,33 +340,20 @@ public class ServoItem extends ServoBase {
 
 	@Override
 	public boolean isValidTile(TileEntity tile) {
-
-		return tile instanceof IInventory;
+		return tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
 	public void clearCache() {
-
-		cacheType = TileItemDuct.CacheType.NONE;
 		cachedInv = null;
-		cachedSidedInv = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
-
-		cachedInv = (IInventory) tile;
-		if (tile instanceof ISidedInventory) {
-			cacheType = TileItemDuct.CacheType.ISIDEDINV;
-			cachedSidedInv = (ISidedInventory) tile;
-		} else {
-			cacheType = TileItemDuct.CacheType.IINV;
-		}
+		cachedInv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
-	public IInventory cachedInv;
-	public ISidedInventory cachedSidedInv;
-	public TileItemDuct.CacheType cacheType;
+	public IItemHandler cachedInv;
 
 	public ItemStack insertItem(ItemStack item) {
 

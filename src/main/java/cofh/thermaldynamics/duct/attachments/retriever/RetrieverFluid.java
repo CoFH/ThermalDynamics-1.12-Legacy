@@ -17,6 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Iterator;
 
@@ -67,18 +69,19 @@ public class RetrieverFluid extends ServoFluid {
                         continue;
                     }
                 }
-                int input = fluidDuct.fill(EnumFacing.VALUES[i], fluidDuct.cache[i].drain(EnumFacing.VALUES[i ^ 1], maxInput, false), false);
+                IFluidHandler ductHandler = fluidDuct.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[i]);
+                int input = ductHandler.fill(fluidDuct.cache[i].drain(maxInput, false), false);
 
                 if (input == 0) {
                     continue;
                 }
-                FluidStack fluid = fluidDuct.cache[i].drain(EnumFacing.VALUES[i ^ 1], input, false);
+                FluidStack fluid = fluidDuct.cache[i].drain(input, false);
 
-                if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid) && fluidDuct.cache[i].canDrain(EnumFacing.VALUES[i ^ 1], fluid.getFluid())) {
+                if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid) && fluidDuct.cache[i].getTankProperties()[0].canDrainFluidType(fluid)) {
 
-                    fluid = fluidDuct.cache[i].drain(EnumFacing.VALUES[i ^ 1], input, true);
+                    fluid = fluidDuct.cache[i].drain(input, true);
 
-                    maxInput -= fluidDuct.fill(EnumFacing.VALUES[i], fluid, true);
+                    maxInput -= ductHandler.fill(fluid, true);
 
                     if (this.fluidDuct.fluidGrid.toDistribute > 0 && this.fluidDuct.fluidGrid.myTank.getFluid() != null) {
                         this.fluidDuct.transfer(side, Math.min(this.fluidDuct.fluidGrid.myTank.getFluid().amount, this.fluidDuct.fluidGrid.toDistribute), false, this.fluidDuct.fluidGrid.myTank.getFluid(), true);

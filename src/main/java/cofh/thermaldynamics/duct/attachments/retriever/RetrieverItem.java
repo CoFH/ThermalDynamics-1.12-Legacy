@@ -1,18 +1,15 @@
 package cofh.thermaldynamics.duct.attachments.retriever;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.core.render.RenderUtils;
 import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.item.SimulatedInv;
 import cofh.thermaldynamics.duct.item.StackMap;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -20,15 +17,13 @@ import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
 import gnu.trove.iterator.TObjectIntIterator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.Iterator;
 
@@ -93,14 +88,14 @@ public class RetrieverItem extends ServoItem {
     @Override
     public void handleItemSending() {
 
-        SimulatedInv simulatedInv = cacheType == TileItemDuct.CacheType.ISIDEDINV ? SimulatedInv.wrapInvSided(cachedSidedInv) : SimulatedInv.wrapInv(cachedInv);
+        IItemHandler simulatedInv = cachedInv;
 
-        StackMap travelingItems = itemDuct.internalGrid.travelingItems.get(new BlockCoord(itemDuct).offset(side));
+        StackMap travelingItems = itemDuct.internalGrid.travelingItems.get(itemDuct.getPos().offset(EnumFacing.VALUES[side]));
         if (travelingItems != null) {
 
             for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
                 iterator.advance();
-                InventoryHelper.insertItemStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), EnumFacing.VALUES[iterator.key().side ^ 1]);
+                InventoryHelper.insertStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), false);
             }
         }
 
@@ -114,77 +109,13 @@ public class RetrieverItem extends ServoItem {
                     continue;
                 }
 
-                if (!endPoint.cachesExist() || endPoint.cache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
+                if (!endPoint.cachesExist() || endPoint.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
                     continue;
                 }
 
-                if (endPoint.cache2[i] != null) {
-                    ISidedInventory inv = endPoint.cache2[i];
-                    int[] accessibleSlotsFromSide = inv.getSlotsForFace(EnumFacing.VALUES[i ^ 1]);
-                    for (int j = 0; j < accessibleSlotsFromSide.length; j++) {
-                        int slot = accessibleSlotsFromSide[j];
-
-                        ItemStack item = inv.getStackInSlot(slot);
-                        if (item == null) {
-                            continue;
-                        }
-
-                        item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
-                        if (item == null || item.stackSize == 0) {
-                            continue;
-                        }
-
-                        if (!inv.canExtractItem(slot, item, EnumFacing.VALUES[i ^ 1])) {
-                            continue;
-                        }
-
-                        if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item)) {
-                            continue;
-                        }
-
-                        ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
-
-                        if (remainder != null) {
-                            item.stackSize -= remainder.stackSize;
-                        }
-                        if (item.stackSize == 0) {
-                            continue;
-                        }
-
-                        Route route1 = endPoint.getRoute(itemDuct);
-                        if (route1 == null) {
-                            continue;
-                        }
-
-                        int maxStackSize = item.stackSize;
-                        item = inv.decrStackSize(slot, maxStackSize);
-                        if (item == null || item.stackSize == 0) {
-                            continue;
-                        }
-
-                        // No turning back now
-                        route1 = route1.copy();
-                        route1.pathDirections.add(side);
-
-                        if (multiStack[type] && item.stackSize < maxStackSize) {
-                            for (; item.stackSize < maxStackSize && j < accessibleSlotsFromSide.length; j++) {
-                                slot = accessibleSlotsFromSide[j];
-                                ItemStack inSlot = inv.getStackInSlot(slot);
-                                if (ItemHelper.itemsEqualWithMetadata(inSlot, item, true) && inv.canExtractItem(slot, inSlot, EnumFacing.VALUES[i ^ 1])) {
-                                    ItemStack extract = inv.decrStackSize(slot, maxStackSize - item.stackSize);
-                                    if (extract != null) {
-                                        item.stackSize += extract.stackSize;
-                                    }
-                                }
-                            }
-                        }
-
-                        endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
-                        return;
-                    }
-                } else {
-                    IInventory inv = endPoint.cache[i];
-                    for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
+                {
+                    IItemHandler inv = endPoint.handlerCache[i];
+                    for (int slot = 0; slot < inv.getSlots(); slot++) {
                         ItemStack item = inv.getStackInSlot(slot);
                         if (item == null) {
                             continue;
@@ -214,7 +145,7 @@ public class RetrieverItem extends ServoItem {
                         }
 
                         int maxStackSize = item.stackSize;
-                        item = inv.decrStackSize(slot, maxStackSize);
+                        item = inv.extractItem(slot, maxStackSize, false);
                         if (item == null || item.stackSize == 0) {
                             continue;
                         }
@@ -224,9 +155,9 @@ public class RetrieverItem extends ServoItem {
                         route1.pathDirections.add(side);
 
                         if (multiStack[type] && item.stackSize < maxStackSize) {
-                            for (; item.stackSize < maxStackSize && slot < inv.getSizeInventory(); slot++) {
+                            for (; item.stackSize < maxStackSize && slot < inv.getSlots(); slot++) {
                                 if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
-                                    ItemStack extract = inv.decrStackSize(slot, maxStackSize - item.stackSize);
+                                    ItemStack extract = inv.extractItem(slot, maxStackSize - item.stackSize, false);
                                     if (extract != null) {
                                         item.stackSize += extract.stackSize;
                                     }

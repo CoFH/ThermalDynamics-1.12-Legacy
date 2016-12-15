@@ -127,8 +127,6 @@ public class ThermalDynamics {
 			initializer.preInit();
 		}
 
-        GameRegistry.register(SoundWoosh.WOOSH);
-
         proxy.preInit();
 
 		TDPlugins.preInit();

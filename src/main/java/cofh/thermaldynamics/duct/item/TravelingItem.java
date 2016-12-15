@@ -110,7 +110,7 @@ public class TravelingItem {
 				}
 			}
 		} else if (homeTile.neighborTypes[direction] == NeighborTypes.OUTPUT && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
-			stack.stackSize = homeTile.insertIntoInventory(stack, direction);
+			stack.stackSize = homeTile.insertIntoInventory(stack.copy(), direction);
 
 			if (stack.stackSize > 0) {
 				bounceItem(homeTile);

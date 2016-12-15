@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import codechicken.lib.util.BlockUtils;
-import cofh.core.CoFHProps;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
@@ -17,12 +16,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class TileFluidDuct extends TileTDBase implements IFluidHandler {
+import javax.annotation.Nullable;
+
+public class TileFluidDuct extends TileTDBase {
 
     public IFluidHandler[] cache;
     public IFilterFluid[] filterCache;
@@ -51,7 +54,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
         if (theTile instanceof IMultiBlock) {
             return false;
         }
-        return FluidHelper.isFluidHandler(theTile);
+        return theTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
         }
         FluidStack tempFluid = fluid.copy();
         tempFluid.amount = available;
-        int amountSent = cache[bSide].fill(EnumFacing.VALUES[bSide ^ 1], tempFluid, false);
+        int amountSent = cache[bSide].fill(tempFluid, false);
 
         if (amountSent > 0) {
             if (simulate) {
@@ -138,7 +141,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
                 } else {
                     tempFluid.amount = amountSent;
                 }
-                return cache[bSide].fill(EnumFacing.VALUES[bSide ^ 1], tempFluid, true);
+                return cache[bSide].fill(tempFluid, true);
             }
         } else {
             return 0;
@@ -234,7 +237,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
         if (attachments[side] instanceof IFilterAttachment) {
             filterCache[side] = ((IFilterAttachment) attachments[side]).getFluidFilter();
         }
-        cache[side] = (IFluidHandler) tile;
+        cache[side] = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
     }
 
     @Override
@@ -327,12 +330,50 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
     }
 
     @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return super.hasCapability(capability, facing) || capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+    }
 
-        if (isOpen(from) && matchesFilter(from, resource)) {
-            return fluidGrid.myTank.fill(resource, doFill);
+    @Override
+    public <T> T getCapability(Capability<T> capability, final EnumFacing from) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new IFluidHandler() {
+
+                @Override
+                public IFluidTankProperties[] getTankProperties() {
+                    FluidStack info = fluidGrid != null ? fluidGrid.myTank.getInfo().fluid : null;
+                    int capacity = fluidGrid != null ? fluidGrid.myTank.getInfo().capacity : 0;
+                    return new IFluidTankProperties[]{new FluidTankProperties(info, capacity, isOpen(from), isOpen(from))};
+                }
+
+                @Override
+                public int fill(FluidStack resource, boolean doFill) {
+                    if (isOpen(from) && matchesFilter(from, resource)) {
+                        return fluidGrid.myTank.fill(resource, doFill);
+                    }
+                    return 0;
+                }
+
+                @Nullable
+                @Override
+                public FluidStack drain(FluidStack resource, boolean doDrain) {
+                    if (isOpen(from)) {
+                        return fluidGrid.myTank.drain(resource, doDrain);
+                    }
+                    return null;
+                }
+
+                @Nullable
+                @Override
+                public FluidStack drain(int maxDrain, boolean doDrain) {
+                    if (isOpen(from)) {
+                        return fluidGrid.myTank.drain(maxDrain, doDrain);
+                    }
+                    return null;
+                }
+            });
         }
-        return 0;
+        return super.getCapability(capability, from);
     }
 
     public boolean matchesFilter(EnumFacing from, FluidStack resource) {
@@ -340,45 +381,9 @@ public class TileFluidDuct extends TileTDBase implements IFluidHandler {
         return filterCache == null || from == null || filterCache[from.ordinal()].allowFluid(resource);
     }
 
-    @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-
-        if (isOpen(from)) {
-            return fluidGrid.myTank.drain(resource, doDrain);
-        }
-        return null;
-    }
-
-    @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-
-        if (isOpen(from)) {
-            return fluidGrid.myTank.drain(maxDrain, doDrain);
-        }
-        return null;
-    }
-
-    @Override
-    public boolean canFill(EnumFacing from, Fluid fluid) {
-
-        return isOpen(from);
-    }
-
-    @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid) {
-
-        return isOpen(from);
-    }
-
     public boolean isOpen(EnumFacing from) {
 
         return fluidGrid != null && (from == null || ((neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.INPUT) && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED));
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from) {
-
-        return fluidGrid != null ? new FluidTankInfo[] { fluidGrid.myTank.getInfo() } : CoFHProps.EMPTY_TANK_INFO;
     }
 
     @Override
