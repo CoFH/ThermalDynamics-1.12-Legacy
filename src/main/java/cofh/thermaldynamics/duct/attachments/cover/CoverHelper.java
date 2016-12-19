@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
+import cofh.core.crash.CrashHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 
 import java.util.HashMap;
@@ -48,13 +49,17 @@ public class CoverHelper {
 	}
 
 	public static boolean isValid(ItemStack stack) {
-
-		if (stack.getItem() instanceof ItemBlock) {
-			if (isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-				return true;
-			}
-		}
-		return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
+        try {
+            if (stack.getItem() instanceof ItemBlock) {
+                if (isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+                    return true;
+                }
+            }
+            return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
 	}
 
 	public static boolean isValid(Block block, int meta) {
