@@ -144,14 +144,15 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         return super.getPickBlock(state, target, world, pos, player);
     }
 
-    //@Override
 
     @Override
+    @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return ClientProxy.renderType;
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT;
     }
