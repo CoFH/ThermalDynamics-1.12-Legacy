@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 public class ItemCover extends ItemAttachment {
 
@@ -95,14 +96,12 @@ public class ItemCover extends ItemAttachment {
 
         coverList = new ArrayList<ItemStack>();
 
-        Iterator<ResourceLocation> iterator = ForgeRegistries.ITEMS.getKeys().iterator();
         ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 
         ArrayList<Item> data = new ArrayList<Item>();
-        while (iterator.hasNext()) {
+        for (Item item : ForgeRegistries.ITEMS) {
             // iterate over the keySet instead of all values (compatible with overridden items)
-            Item anItem = ForgeRegistries.ITEMS.getValue(iterator.next());
-            data.add(anItem);
+            data.add(item);
         }
         Collections.sort(data, new Comparator<Item>() {
 
