@@ -213,7 +213,7 @@ public class CommandThermalDebug extends CommandBase {
 				throw Throwables.propagate(e);
 			}
 
-			o.add(ChunkPos.chunkXZ2Int(chunk.xPosition, chunk.zPosition));
+			o.add(ChunkPos.asLong(chunk.xPosition, chunk.zPosition));
 		} else if ("grids".equals(args[0])) {
 			DebugTickHandler.showParticles = !DebugTickHandler.showParticles;
 		} else if ("generate".equals(args[0]) && args.length == 2) {

@@ -193,7 +193,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
                 block = Blocks.FLOWING_LAVA;
             }
 
-            if (!"water".equals(fluid.getName()) || !worldObj.getBiomeGenForCoords(getPos()).getBiomeName().toLowerCase(Locale.US).equals("hell")) {
+            if (!"water".equals(fluid.getName()) || !worldObj.getBiome(getPos()).getBiomeName().toLowerCase(Locale.US).equals("hell")) {
                 if (block == Blocks.FLOWING_WATER || block == Blocks.FLOWING_LAVA) {
                     IBlockState levelState = block.getDefaultState().withProperty(BlockLiquid.LEVEL, fullBucket ? 0 : (worldObj.rand.nextInt(6) + 1));
                     worldObj.setBlockState(getPos(), levelState, 3);
