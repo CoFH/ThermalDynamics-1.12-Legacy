@@ -237,7 +237,7 @@ public class TileFluidDuct extends TileTDBase {
         if (attachments[side] instanceof IFilterAttachment) {
             filterCache[side] = ((IFilterAttachment) attachments[side]).getFluidFilter();
         }
-        cache[side] = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
+        cache[side] = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
     }
 
     @Override
