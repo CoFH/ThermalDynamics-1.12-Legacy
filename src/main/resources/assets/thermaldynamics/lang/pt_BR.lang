@@ -1,0 +1,118 @@
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+
+tile.thermaldynamics.duct=Duto
+tile.thermaldynamics.duct.energyBasic.name=Fluxoduto de Leadstone
+tile.thermaldynamics.duct.energyHardened.name=Fluxoduto Endurecido
+tile.thermaldynamics.duct.energyReinforced.name=Fluxoduto de Energia de Redstone
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Fluxoduto de Energia de Redstone (Vazio)
+tile.thermaldynamics.duct.energyResonant.name=Fluxoduto Ressoante
+tile.thermaldynamics.duct.energyResonantEmpty.name=Fluxoduto Ressoante (Vazio)
+tile.thermaldynamics.duct.energySuperconductor.name=Fluxoduto Crio-Estabilizado
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=Fluxoduto Crio-Estabilizado (Vazio)
+
+tile.thermaldynamics.duct.fluidBasic.name=Fluiduto Temperado
+tile.thermaldynamics.duct.fluidHardened.name=Fluiduto Endurecido
+tile.thermaldynamics.duct.fluidFlux.name=Fluiduto Revestido com Flux
+
+tile.thermaldynamics.duct.itemBasic.name=Itemduto
+tile.thermaldynamics.duct.itemFast.name=Itemduto de Impulso
+tile.thermaldynamics.duct.itemFlux.name=Itemduto Flutuante
+tile.thermaldynamics.duct.itemEnder.name=Itemduto de Hiperespaço
+
+tile.thermaldynamics.duct.structure.name=Estruturoduto
+
+tile.thermaldynamics.duct.energySupercond.info=Não tem capacitância residual.
+
+tile.thermaldynamics.duct.fluidBasic.info=Irá quebrar se o volume for muito quente ou frio.
+tile.thermaldynamics.duct.fluidHardened.info=Volumes podem ter qualquer temperatura.
+tile.thermaldynamics.duct.fluidFlux.info=Transfere Fluidos e Redstone Flux (RF).
+
+tile.thermaldynamics.duct.itemBasic.info=Transfere itens.
+tile.thermaldynamics.duct.itemFast.info=Enchido com Pedra Luminosa. Itens viajam mais rapidamente.
+tile.thermaldynamics.duct.itemEnder.info=Usa Redstone Flux (RF) para mover Itens instantaneamente.
+tile.thermaldynamics.duct.itemFlux.info=Transfere Itens e Redstone Flux (RF).
+tile.thermaldynamics.duct.structure.info=Providencia Estrutura
+
+tile.thermaldynamics.duct.opaque.name=%s (Opaco)
+tile.thermaldynamics.duct.dense.name=Denso %s
+tile.thermaldynamics.duct.vacuum.name=Aspirador %s
+
+item.thermaldynamics.cover.name=%s Cobertura
+
+item.thermaldynamics.filter.info=Restringe o que deve passar por ele.
+item.thermaldynamics.retriever.info=Puxa itens/fluidos distantes para si.
+item.thermaldynamics.servo.info=Extrai itens/fluidos de alguma coisa.
+
+item.thermaldynamics.filter.0.name=Filtro
+item.thermaldynamics.filter.1.name=Filtro Endurecido
+item.thermaldynamics.filter.2.name=Filtro Reforçado
+item.thermaldynamics.filter.3.name=Filtro de Signalo
+item.thermaldynamics.filter.4.name=Filtro Ressoante
+
+item.thermaldynamics.servo.0.name=Servo
+item.thermaldynamics.servo.1.name=Servo Endurecido
+item.thermaldynamics.servo.2.name=Servo Reforçado
+item.thermaldynamics.servo.3.name=Servo de Signalo
+item.thermaldynamics.servo.4.name=Servo Ressoante
+
+item.thermaldynamics.retriever.0.name=Recuperador
+item.thermaldynamics.retriever.1.name=Recuperador Endurecido
+item.thermaldynamics.retriever.2.name=Recuperador Reforçado
+item.thermaldynamics.retriever.3.name=Recuperador de Signalo
+item.thermaldynamics.retriever.4.name=Recuperador Ressoante
+
+info.thermaldynamics.capacitance=Capacitância
+info.thermaldynamics.transfer=Transferência
+info.thermaldynamics.transferConnection=Quantia de transferência é por conexão.
+info.thermaldynamics.transferFluid=Taxa de transferência varia por fluido.
+
+info.thermaldynamics.duct.energy=Transfere Redstone Flux (RF).
+info.thermaldynamics.duct.fluid=Transfere Fluidos.
+info.thermaldynamics.duct.item=Transfere Itens.
+info.thermaldynamics.duct.structure=Providencia Estrutura.
+info.thermaldynamics.duct.crafting=Item de Crafting.
+info.thermaldynamics.duct.cover=Combine com um Bloco para criar Coberturas.
+info.thermaldynamics.duct.dense=Aumenta a distância do caminho dramaticamente.
+info.thermaldynamics.duct.vacuum=Diminui a distância do caminho dramaticamente.
+
+info.thermaldynamics.filter.whiteList=Lista Negra
+info.thermaldynamics.filter.metadata=Metadata
+info.thermaldynamics.filter.nbt=NBT
+info.thermaldynamics.filter.oreDict=Ore Dictionary
+info.thermaldynamics.filter.modSorting=Mod Dono
+
+info.thermaldynamics.filter.whiteList.off=Lista Branca
+info.thermaldynamics.filter.whiteList.on=Lista Negra
+info.thermaldynamics.filter.metadata.off=Usar Metadata
+info.thermaldynamics.filter.metadata.on=Ignorar Metadata
+info.thermaldynamics.filter.nbt.off=Usar NBT
+info.thermaldynamics.filter.nbt.on=Ignorar NBT
+info.thermaldynamics.filter.oreDict.off=Usar Ore Dictionary
+info.thermaldynamics.filter.oreDict.on=Ignorar Ore Dictionary
+info.thermaldynamics.filter.modSorting.off=Usar Mod Dono
+info.thermaldynamics.filter.modSorting.on=Ignorar Mod Dono
+
+info.thermaldynamics.filter.routeType.0=Perto-Primeiro
+info.thermaldynamics.filter.routeType.1=Longe-Primeiro
+info.thermaldynamics.filter.routeType.2=Aleatório
+info.thermaldynamics.filter.routeType.3=Rodízio
+
+info.thermaldynamics.filter.antiSpam.0=Permitir Sobre-envio
+info.thermaldynamics.filter.antiSpam.1=Prevenir Sobre-envio
+
+info.thermaldynamics.filter.incRetainSize=Aumentar Total Máx. de Itens no Inventário
+info.thermaldynamics.filter.decRetainSize=Diminuir Total Máx. de Itens do Inventário
+info.thermaldynamics.filter.zeroRetainSize=Infinito	 
+
+info.thermaldynamics.servo.incStackSize=Aumentar Tamanho da Stack Extraída
+info.thermaldynamics.servo.decStackSize=Diminuir Tamanho da Stack Extraída
+
+info.thermaldynamics.servo.extractRate=Taxa de Extração:
+info.thermaldynamics.servo.speedBoost=Boost de Velocidade
+info.thermaldynamics.servo.maxStackSize=Tamanho Máx. de Stack
+info.thermaldynamics.servo.redstoneExt=Requer Sinal de Redstone
+info.thermaldynamics.servo.redstoneInt=Controle de Redstone Interno
+info.thermaldynamics.servo.slotMulti=Extrai de múltiplos slots.
+info.thermaldynamics.servo.slotSingle=Extrai de um único slot.
+
+recipe.thermaldynamics.covers=Receita de Cobertura

@@ -1,0 +1,118 @@
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+
+tile.thermaldynamics.duct=Ducte
+tile.thermaldynamics.duct.energyBasic.name=Fluxiducte en Plomberoche
+tile.thermaldynamics.duct.energyHardened.name=Fluxiducte Trempé
+tile.thermaldynamics.duct.energyReinforced.name=Fluxiducte à Énergie Redstone
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Fluxiducte à Énergie Redstone (vide)
+tile.thermaldynamics.duct.energyResonant.name=Fluxiducte Résonant
+tile.thermaldynamics.duct.energyResonantEmpty.name=Fluxiducte Résonant (vide)
+tile.thermaldynamics.duct.energySuperconductor.name=Fluxiducte Cryo-Stabilisé
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=Fluxiducte Cryo-Stabilisé (vide)
+
+tile.thermaldynamics.duct.fluidBasic.name=Fluiducte Tempéré
+tile.thermaldynamics.duct.fluidHardened.name=Fluiducte Trempé
+tile.thermaldynamics.duct.fluidFlux.name=Fluiducte Flux-Blindé
+
+tile.thermaldynamics.duct.itemBasic.name=Itemducte
+tile.thermaldynamics.duct.itemFast.name=Itemducte à Impulsion
+tile.thermaldynamics.duct.itemFlux.name=Itemducte Fluctuant
+tile.thermaldynamics.duct.itemEnder.name=Itemducte Déformateur
+
+tile.thermaldynamics.duct.structure.name=Structureducte
+
+tile.thermaldynamics.duct.energySupercond.info=N'a pas de capacitance structurelle.
+
+tile.thermaldynamics.duct.fluidBasic.info=Brisera si les contenus sont trop chauds ou froids.
+tile.thermaldynamics.duct.fluidHardened.info=La température des contenus n'importe pas.
+tile.thermaldynamics.duct.fluidFlux.info=Transfère des fluides et du Flux de Redstone (RF).
+
+tile.thermaldynamics.duct.itemBasic.info=Transfère des objets
+tile.thermaldynamics.duct.itemFast.info=Empli de Pierre Lumineuse. Les objets transitent plus vite.
+tile.thermaldynamics.duct.itemEnder.info=Utilise du Flux de Redstone (RF) pour déplacer des objets instantanément.
+tile.thermaldynamics.duct.itemFlux.info=Transfère des objets et du Flux de Redstone (RF).
+tile.thermaldynamics.duct.structure.info=Permet de créer des structures
+
+tile.thermaldynamics.duct.opaque.name=%s (Opaque)
+tile.thermaldynamics.duct.dense.name=Dense %s
+tile.thermaldynamics.duct.vacuum.name=A Vide %s
+
+item.thermaldynamics.cover.name=%s Couverture
+
+item.thermaldynamics.filter.info=Restreint ce qui passe en lui.
+item.thermaldynamics.retriever.info=Amène des objets/fluides à lui.
+item.thermaldynamics.servo.info=Extraits des objets/fluides.
+
+item.thermaldynamics.filter.0.name=Filtre
+item.thermaldynamics.filter.1.name=Filtre Trempé
+item.thermaldynamics.filter.2.name=Filtre Renforcé
+item.thermaldynamics.filter.3.name=Filter de Signalum
+item.thermaldynamics.filter.4.name=Filtre Résonant
+
+item.thermaldynamics.servo.0.name=Servo-mécanisme
+item.thermaldynamics.servo.1.name=Servo-mécanisme Trempé
+item.thermaldynamics.servo.2.name=Servo-mécanisme Renforcé
+item.thermaldynamics.servo.3.name=Servo-mécanisme de Signalum
+item.thermaldynamics.servo.4.name=Servo-mécanisme Résonant
+
+item.thermaldynamics.retriever.0.name=Récupérateur
+item.thermaldynamics.retriever.1.name=Récupérateur Trempé
+item.thermaldynamics.retriever.2.name=Récupérateur Renforcé
+item.thermaldynamics.retriever.3.name=Récupérateur de Signalum
+item.thermaldynamics.retriever.4.name=Récupérateur Résonant
+
+info.thermaldynamics.capacitance=Capacitance
+info.thermaldynamics.transfer=Transfert
+info.thermaldynamics.transferConnection=La quantité transferée est exprimée par connexion.
+info.thermaldynamics.transferFluid=Le Taux de transfert diffère selon le fluide.
+
+info.thermaldynamics.duct.energy=Transfère du Flux de Redstone (RF).
+info.thermaldynamics.duct.fluid=Transfère des fluides.
+info.thermaldynamics.duct.item=Transfère des objets.
+info.thermaldynamics.duct.structure=Permet de créer des structures.
+info.thermaldynamics.duct.crafting=Crafting Item.
+info.thermaldynamics.duct.cover=Combiner avec des blocs pour créer des couvertures.
+info.thermaldynamics.duct.dense=Augmente fortement la longueur du chemin.
+info.thermaldynamics.duct.vacuum=Diminue fortement la longueur du chemin.
+
+info.thermaldynamics.filter.whiteList=Liste-noire
+info.thermaldynamics.filter.metadata=Meta-données
+info.thermaldynamics.filter.nbt=NBT
+info.thermaldynamics.filter.oreDict=Minéropédie
+info.thermaldynamics.filter.modSorting=Mod propriétaire
+
+info.thermaldynamics.filter.whiteList.off=Liste Blanche
+info.thermaldynamics.filter.whiteList.on=Liste Noire
+info.thermaldynamics.filter.metadata.off=Prendre en compte les Meta-données
+info.thermaldynamics.filter.metadata.on=Ignorer les Meta-données
+info.thermaldynamics.filter.nbt.off=Prendre en compte les étiquettes NBT
+info.thermaldynamics.filter.nbt.on=Ignorer les étiquettes NBT
+info.thermaldynamics.filter.oreDict.off=Prendre en compte la Minéropédie
+info.thermaldynamics.filter.oreDict.on=Ignorer la Minéropédie
+info.thermaldynamics.filter.modSorting.off=Prendre en compte le Mod Propriétaire
+info.thermaldynamics.filter.modSorting.on=Ignorer le Mod Propriétaire
+
+info.thermaldynamics.filter.routeType.0=Au plus proche
+info.thermaldynamics.filter.routeType.1=Au plus loin
+info.thermaldynamics.filter.routeType.2=Aléatoire
+info.thermaldynamics.filter.routeType.3=Tour à tour
+
+info.thermaldynamics.filter.antiSpam.0=Autoriser la Surcharge
+info.thermaldynamics.filter.antiSpam.1=Éviter la Surcharge
+
+info.thermaldynamics.filter.incRetainSize=Augmenter le nb d'objets max
+info.thermaldynamics.filter.decRetainSize=Diminuer le nb d'objets max
+info.thermaldynamics.filter.zeroRetainSize=Infini
+
+info.thermaldynamics.servo.incStackSize=Augmenter le nb d'objets extraits
+info.thermaldynamics.servo.decStackSize=Augmenter le nb d'objets extraits
+
+info.thermaldynamics.servo.extractRate=Taux d'extraction
+info.thermaldynamics.servo.speedBoost=Boost de Vitesse
+info.thermaldynamics.servo.maxStackSize=Taille de pile maximale
+info.thermaldynamics.servo.redstoneExt=Nécéssite un Signal de Redstone
+info.thermaldynamics.servo.redstoneInt=Contrôle Redstone intégré
+info.thermaldynamics.servo.slotMulti=Extrait de plusieurs emplacements.
+info.thermaldynamics.servo.slotSingle=Extrait d'un seul emplacement.
+
+recipe.thermaldynamics.covers=Fabrcation des Couvertures
