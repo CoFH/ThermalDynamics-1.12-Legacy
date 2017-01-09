@@ -1,0 +1,171 @@
+#ja_JP
+
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+itemGroup.thermaldynamics.creativeTabCovers=Thermal Dynamics: Covers
+
+tile.thermaldynamics.duct=Duct
+tile.thermaldynamics.duct.energyBasic.name=鉛石電導管
+tile.thermaldynamics.duct.energyHardened.name=硬化電導管
+tile.thermaldynamics.duct.energyReinforced.name=レッドストーン電導管
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=レッドストーン電導管 (空)
+tile.thermaldynamics.duct.energyResonant.name=共振電導管
+tile.thermaldynamics.duct.energyResonantEmpty.name=共振電導管 (空)
+tile.thermaldynamics.duct.energySuperconductor.name=冷温安定化電導管
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=冷温安定化電導管 (空)
+
+tile.thermaldynamics.duct.fluidBasic.name=液体管
+tile.thermaldynamics.duct.fluidHardened.name=硬化液体管
+tile.thermaldynamics.duct.fluidFlux.name=電導液体管
+tile.thermaldynamics.duct.fluidSuper.name=高層液体管
+
+tile.thermaldynamics.duct.itemBasic.name=アイテム管
+tile.thermaldynamics.duct.itemFast.name=加速アイテム管
+tile.thermaldynamics.duct.itemFlux.name=電導アイテム管
+tile.thermaldynamics.duct.itemEnder.name=アイテムワープ管
+
+tile.thermaldynamics.duct.structure.name=構造管
+tile.thermaldynamics.duct.structureGlow.name=蛍光管
+
+tile.thermaldynamics.duct.energySupercond.info=この導管はRFを溜め込みません。
+
+tile.thermaldynamics.duct.fluidBasic.info=極端に熱いもしくは冷たい液体を通すと破損する恐れがあります。
+tile.thermaldynamics.duct.fluidHardened.info=どんな温度の液体も流すことができます。
+tile.thermaldynamics.duct.fluidFlux.info=液体とRFを通します。
+
+tile.thermaldynamics.duct.fluidSuper.info=加圧されている液体を制限なく流すことができます。
+
+tile.thermaldynamics.duct.itemBasic.info=アイテムを移送します。
+tile.thermaldynamics.duct.itemFast.info=グロウストーンで満たされており、アイテムを高速に移送します。
+tile.thermaldynamics.duct.itemEnder.info=RFが供給されているときは、アイテムを瞬時に目的地まで移送します。
+tile.thermaldynamics.duct.itemFlux.info=アイテムとRFを通します。
+tile.thermaldynamics.duct.structure.info=装飾用です。
+
+tile.thermaldynamics.duct.opaque.name=(不透明)
+tile.thermaldynamics.duct.dense.name=加圧
+tile.thermaldynamics.duct.vacuum.name=減圧
+
+item.thermaldynamics.cover.name=カバー
+
+item.thermaldynamics.filter.info=流れる量を制限します。
+item.thermaldynamics.retriever.info=他の場所のアイテムや液体を自分のところへ引き込みます。
+item.thermaldynamics.servo.info=他方へアイテムや液体を搬出します。
+item.thermaldynamics.relay.info=レッドストーン信号を通します。
+
+item.thermaldynamics.filter.0.name=フィルター
+item.thermaldynamics.filter.1.name=硬化フィルター
+item.thermaldynamics.filter.2.name=増強フィルター
+item.thermaldynamics.filter.3.name=シグナルムフィルター
+item.thermaldynamics.filter.4.name=共振フィルター
+
+item.thermaldynamics.servo.0.name=サーボ
+item.thermaldynamics.servo.1.name=硬化サーボ
+item.thermaldynamics.servo.2.name=増強サーボ
+item.thermaldynamics.servo.3.name=シグナルムサーボ
+item.thermaldynamics.servo.4.name=共振サーボ
+
+item.thermaldynamics.retriever.0.name=レトリーバー
+item.thermaldynamics.retriever.1.name=硬化レトリーバー
+item.thermaldynamics.retriever.2.name=増強レトリーバー
+item.thermaldynamics.retriever.3.name=シグナルムレトリーバー
+item.thermaldynamics.retriever.4.name=共振レトリーバー
+
+item.thermaldynamics.relay.name=レッドストーンリレー
+
+info.thermaldynamics.capacitance=容量
+info.thermaldynamics.transfer=移送
+info.thermaldynamics.transferConnection=電送量は接続数に依存します。
+info.thermaldynamics.transferFluid=流量は液体によって異なります。
+info.thermaldynamics.toggle=右クリックでモードを切り替えます。
+
+info.thermaldynamics.duct.energy=RFを通します。
+info.thermaldynamics.duct.fluid=液体を通します。
+info.thermaldynamics.duct.item=アイテムを通します。
+info.thermaldynamics.duct.structure=装飾用です。
+info.thermaldynamics.duct.light=レッドストーン信号を受けている時に光ります。
+info.thermaldynamics.duct.crafting=中間素材です。
+info.thermaldynamics.duct.cover=ブロックと合わせるとカバーができます。
+info.thermaldynamics.duct.dense=劇的に移送限界が増加します。
+info.thermaldynamics.duct.vacuum=劇的に移送限界が減少します。
+
+info.thermaldynamics.filter.options=フィルター設定
+info.thermaldynamics.filter.whiteList=ブラックリスト
+info.thermaldynamics.filter.metadata=メタデータ
+info.thermaldynamics.filter.nbt=NBT
+info.thermaldynamics.filter.oreDict=鉱石辞書
+info.thermaldynamics.filter.modSorting=MOD名
+
+info.thermaldynamics.filter.whiteList.off=ホワイトリスト
+info.thermaldynamics.filter.whiteList.on=ブラックリスト
+info.thermaldynamics.filter.metadata.off=メタデータで識別
+info.thermaldynamics.filter.metadata.on=メタデータを無視
+info.thermaldynamics.filter.nbt.off=NBTで識別
+info.thermaldynamics.filter.nbt.on=NBTを無視
+info.thermaldynamics.filter.oreDict.off=鉱石辞書名で識別
+info.thermaldynamics.filter.oreDict.on=鉱石辞書名を無視
+info.thermaldynamics.filter.modSorting.off=MOD名で識別
+info.thermaldynamics.filter.modSorting.on=MOD名を無視
+
+info.thermaldynamics.filter.routeType.0=近いところから順に
+info.thermaldynamics.filter.routeType.1=遠いところから順に
+info.thermaldynamics.filter.routeType.2=ランダム
+info.thermaldynamics.filter.routeType.3=ラウンドロビン
+
+info.thermaldynamics.filter.antiSpam.0=容量超えての搬入を許可
+info.thermaldynamics.filter.antiSpam.1=容量超えての搬入を不可
+
+info.thermaldynamics.filter.incRetainSize=インベントリ内の合計アイテム量を増やします。
+info.thermaldynamics.filter.decRetainSize=インベントリ内の合計アイテム量を減らします。
+info.thermaldynamics.filter.zeroRetainSize=制限なし
+
+info.thermaldynamics.servo.incStackSize=搬出量を増やします。
+info.thermaldynamics.servo.decStackSize=搬出量を減らします。
+
+info.thermaldynamics.servo.extractRate=搬出速度
+info.thermaldynamics.servo.speedBoost=速度増加
+info.thermaldynamics.servo.maxStackSize=最大搬出量
+info.thermaldynamics.servo.redstoneExt=レッドストーン信号
+info.thermaldynamics.servo.redstoneInt=レッドストーン制御
+info.thermaldynamics.servo.slotMulti=複数のスロットから搬出します。
+info.thermaldynamics.servo.slotSingle=一つのスロットから搬出します。
+
+recipe.thermaldynamics.covers=Cover Crafting
+
+#redstone relay localization
+info.thermaldynamics.relay.invert.0=Scaled
+info.thermaldynamics.relay.invert.1=Inverted Scaled
+info.thermaldynamics.relay.invert.2=Threshold
+info.thermaldynamics.relay.invert.3=Inverted Threshold
+
+info.thermaldynamics.relay.type.0=Redstone Input
+info.thermaldynamics.relay.type.1=Redstone Output
+info.thermaldynamics.relay.type.2=Comparator Input
+
+info.thermaldynamics.relay.threshold=Threshold >=
+
+info.thermaldynamics.relay.relayRS=Relay Power
+info.thermaldynamics.relay.gridRS=Duct Power
+
+#duct info
+info.thermaldynamics.info.duct=-Duct Info-
+info.thermaldynamics.info.attachment=-Attachment Info-
+info.thermaldynamics.info.size=Size
+info.thermaldynamics.info.redstone=Redstone
+info.thermaldynamics.info.items=Items
+info.thermaldynamics.info.fluid=Fluid
+info.thermaldynamics.info.fluidThroughput=Max Fluid Throughput
+info.thermaldynamics.info.energy=RF
+info.thermaldynamics.info.tracker.cur=Current Level
+info.thermaldynamics.info.tracker.avg=5 Sec. Avg. Level
+info.thermaldynamics.info.tracker.avgInOut=5 Sec. Avg. In/Out
+info.thermaldynamics.info.tracker.activate=Starting tracking
+
+info.thermaldynamics.transport.name=Transport Duct
+info.thermaldynamics.transport.config=Config
+info.thermaldynamics.transport.waiting=Waiting for Info
+info.thermaldynamics.transport.nodest=No destinations
+info.thermaldynamics.transport.unnamed=Unnamed
+
+tile.thermaldynamics.duct.transport.name=Viaduct
+tile.thermaldynamics.duct.transportLongRange.name=Long Range Viaduct
+tile.thermaldynamics.duct.transportAcceleration.name=Long Range Linking Viaduct
+tile.thermaldynamics.duct.transportCrafting.name=Viaduct (Untreated)

@@ -1,0 +1,167 @@
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+itemGroup.thermaldynamics.creativeTabCovers=Thermal Dynamics: Fassaden
+
+tile.thermaldynamics.duct=Dukt
+tile.thermaldynamics.duct.energyBasic.name=Leadstone-Energiedukt
+tile.thermaldynamics.duct.energyHardened.name=Gehärteter Energiedukt
+tile.thermaldynamics.duct.energyReinforced.name=Redstone-Energiedukt
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Redstone-Energiedukt (Leer)
+tile.thermaldynamics.duct.energyResonant.name=Resonanter Energiedukt
+tile.thermaldynamics.duct.energyResonantEmpty.name=Resonanter Energiedukt (Leer)
+tile.thermaldynamics.duct.energySuperconductor.name=Kryotheum-Stabilisierter Energiedukt
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=Kryotheum-Stabilisierter Energiedukt (Leer)
+
+tile.thermaldynamics.duct.fluidBasic.name=Temperierter Fluidukt
+tile.thermaldynamics.duct.fluidHardened.name=Gehärteter Fluidukt
+tile.thermaldynamics.duct.fluidFlux.name=Energie-Plattierter Fluidukt
+tile.thermaldynamics.duct.fluidSuper.name=Super-laminarer Fluidukt
+
+tile.thermaldynamics.duct.itemBasic.name=Itemdukt
+tile.thermaldynamics.duct.itemFast.name=Impuls-Itemdukt
+tile.thermaldynamics.duct.itemFlux.name=Energiegeladener Itemdukt
+tile.thermaldynamics.duct.itemEnder.name=Warp-Itemdukt
+
+tile.thermaldynamics.duct.structure.name=Strukturdukt
+tile.thermaldynamics.duct.structureGlow.name=Luxdukt
+
+tile.thermaldynamics.duct.energySupercond.info=Hat keine interne Restkapazität.
+
+tile.thermaldynamics.duct.fluidBasic.info=Nicht für extrem kalte oder heiße Flüssigkeiten geeignet.
+tile.thermaldynamics.duct.fluidHardened.info=Für Flüssigkeiten jeder Temperatur geeignet.
+tile.thermaldynamics.duct.fluidFlux.info=Überträgt Flüssigkeiten und Energie (RF).
+
+tile.thermaldynamics.duct.fluidSuper.info=Grenzenlose Übertragungsrate, wenn unter Druck stehend.
+
+tile.thermaldynamics.duct.itemBasic.info=Überträgt Items.
+tile.thermaldynamics.duct.itemFast.info=Überträgt Items schneller, da Glowstone-gefüllt.
+tile.thermaldynamics.duct.itemEnder.info=Benötigt Energie (RF), um Items sofort zu übertragen.
+tile.thermaldynamics.duct.itemFlux.info=Überträgt Items and Energie (RF).
+tile.thermaldynamics.duct.structure.info=Bietet Struktur.
+
+tile.thermaldynamics.duct.opaque.name=%s (Undurchsichtig)
+tile.thermaldynamics.duct.dense.name=Dichtes %s
+tile.thermaldynamics.duct.vacuum.name=Vakuum %s
+
+item.thermaldynamics.cover.name=%s Fassade
+
+item.thermaldynamics.filter.info=Filtert, was hindurch kann.
+item.thermaldynamics.retriever.info=Zieht entfernte Items oder Flüssigkeiten an.
+item.thermaldynamics.servo.info=Extrahiert Items oder Flüssigkeiten.
+item.thermaldynamics.relay.info=Überträgt Redstonesignale.
+
+item.thermaldynamics.filter.0.name=Filter
+item.thermaldynamics.filter.1.name=Gehärteter Filter
+item.thermaldynamics.filter.2.name=Verstärkter Filter
+item.thermaldynamics.filter.3.name=Signalum-Filter
+item.thermaldynamics.filter.4.name=Resonanter Filter
+
+item.thermaldynamics.servo.0.name=Servo
+item.thermaldynamics.servo.1.name=Gehärteter Servo
+item.thermaldynamics.servo.2.name=Verstärkter Servo
+item.thermaldynamics.servo.3.name=Signalum-Servo
+item.thermaldynamics.servo.4.name=Resonanter Servo
+
+item.thermaldynamics.retriever.0.name=Anzieher
+item.thermaldynamics.retriever.1.name=Gehärteter Anzieher
+item.thermaldynamics.retriever.2.name=Verstärkter Anzieher
+item.thermaldynamics.retriever.3.name=Signalum-Anzieher
+item.thermaldynamics.retriever.4.name=Resonanter Anzieher
+
+item.thermaldynamics.relay.name=Redstone Relais
+
+info.thermaldynamics.capacitance=Kapazität
+info.thermaldynamics.transfer=Transfer
+info.thermaldynamics.transferConnection=Transfer-Menge ist pro Verbindung.
+info.thermaldynamics.transferFluid=Transferrate variiert je nach Flüssigkeit.
+info.thermaldynamics.toggle=Rechtsklick, um den Modus umzuschalten.
+
+info.thermaldynamics.duct.energy=Überträgt Energie (RF).
+info.thermaldynamics.duct.fluid=Überträgt Flüssigkeiten.
+info.thermaldynamics.duct.item=Überträgt Items.
+info.thermaldynamics.duct.structure=Bietet Struktur.
+info.thermaldynamics.duct.light=Leuchtet, wenn ein Redstonesignal anliegt.
+info.thermaldynamics.duct.crafting=Crafting Item.
+info.thermaldynamics.duct.cover=Mit Block kombinieren, um Fassaden zu craften.
+info.thermaldynamics.duct.dense=Verlängert Pfadlänge enorm.
+info.thermaldynamics.duct.vacuum=Verkürzt Pfadlänge enorm.
+
+info.thermaldynamics.filter.options=Filteroptionen
+info.thermaldynamics.filter.whiteList=Ausschlußliste
+info.thermaldynamics.filter.metadata=Metadaten
+info.thermaldynamics.filter.nbt=NBT
+info.thermaldynamics.filter.oreDict=Erz-Verzeichnis
+info.thermaldynamics.filter.modSorting=Mod-Ersteller
+
+info.thermaldynamics.filter.whiteList.off=Einschlußliste
+info.thermaldynamics.filter.whiteList.on=Ausschlußliste
+info.thermaldynamics.filter.metadata.off=Nutze Metadaten
+info.thermaldynamics.filter.metadata.on=Ignoriere Metadaten
+info.thermaldynamics.filter.nbt.off=Nutze NBT
+info.thermaldynamics.filter.nbt.on=Ignoriere NBT
+info.thermaldynamics.filter.oreDict.off=Nutze Erz-Verzeichnis
+info.thermaldynamics.filter.oreDict.on=Ignoriere Erz-Verzeichnis
+info.thermaldynamics.filter.modSorting.off=Nutze Mod-Ersteller
+info.thermaldynamics.filter.modSorting.on=Ignoriere Mod-Ersteller
+
+info.thermaldynamics.filter.routeType.0=Nächste zuerst
+info.thermaldynamics.filter.routeType.1=Entfernteste zuerst
+info.thermaldynamics.filter.routeType.2=Zufällig
+info.thermaldynamics.filter.routeType.3=Round Robin
+
+info.thermaldynamics.filter.antiSpam.0=Item-Übersendung zulassen
+info.thermaldynamics.filter.antiSpam.1=Item-Übersendung verhindern
+
+info.thermaldynamics.filter.incRetainSize=Erhöhe Anzahl maximaler Items im Inventar
+info.thermaldynamics.filter.decRetainSize=Verringere Anzahl maximaler Items im Inventar
+info.thermaldynamics.filter.zeroRetainSize=Unendlich
+
+info.thermaldynamics.servo.incStackSize=Erhöhe Extraktions-Stapelgröße
+info.thermaldynamics.servo.decStackSize=Verringere Extraktions-Stapelgröße
+
+info.thermaldynamics.servo.extractRate=Extraktionsrate
+info.thermaldynamics.servo.speedBoost=Geschwindigkeitsschub
+info.thermaldynamics.servo.maxStackSize=Maximale Sende-Stapelgrösse
+info.thermaldynamics.servo.redstoneExt=Benötigt Redstone-Signal
+info.thermaldynamics.servo.redstoneInt=Interne Redstone-Steuerung
+info.thermaldynamics.servo.slotMulti=Extrahiert je aus mehreren Slots.
+info.thermaldynamics.servo.slotSingle=Extrahiert je aus einem Slot.
+
+recipe.thermaldynamics.covers=Fassadencrafting
+
+info.thermaldynamics.relay.invert.0=Skaliert
+info.thermaldynamics.relay.invert.1=Invertiert skaliert
+info.thermaldynamics.relay.invert.2=Schwellenwert
+info.thermaldynamics.relay.invert.3=Invertierter Schwellenwert
+
+info.thermaldynamics.relay.type.0=Redstone Input
+info.thermaldynamics.relay.type.1=Redstone Output
+info.thermaldynamics.relay.type.2=Komparator Input
+
+info.thermaldynamics.relay.threshold=Schwellenwert >=
+
+info.thermaldynamics.relay.relayRS=Relay Power
+info.thermaldynamics.relay.gridRS=Duct Power
+
+info.thermaldynamics.info.duct=-Leitung Info-
+info.thermaldynamics.info.attachment=-Anhang Info-
+info.thermaldynamics.info.size=Größe
+info.thermaldynamics.info.redstone=Redstone
+info.thermaldynamics.info.items=Items
+info.thermaldynamics.info.fluid=Flüssigkeit
+info.thermaldynamics.info.fluidThroughput=Maximaler Flüssigkeitsdurchsatz
+info.thermaldynamics.info.energy=RF
+info.thermaldynamics.info.tracker.cur=Aktueller Wert
+info.thermaldynamics.info.tracker.avg=5s durchschnittlich Wert
+info.thermaldynamics.info.tracker.avgInOut=5s durchschnittlich Ein/Aus
+info.thermaldynamics.info.tracker.activate=Starte tracking
+
+info.thermaldynamics.transport.name=Transportleitung
+info.thermaldynamics.transport.config=Konfiguration
+info.thermaldynamics.transport.waiting=Warte auf Info
+info.thermaldynamics.transport.nodest=Keine Ziele
+info.thermaldynamics.transport.unnamed=Unbenannt
+
+tile.thermaldynamics.duct.transport.name=Viadukt
+tile.thermaldynamics.duct.transportLongRange.name=Langstreckenviadukt
+tile.thermaldynamics.duct.transportAcceleration.name=Verbindender Langstreckenviadukt
+tile.thermaldynamics.duct.transportCrafting.name=Viadukt (Unbehandelt)

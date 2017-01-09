@@ -1,0 +1,119 @@
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+
+tile.thermaldynamics.duct=Condotto
+tile.thermaldynamics.duct.energyBasic.name=Fluxdotto di pietrapiombo
+tile.thermaldynamics.duct.energyHardened.name=Fluxdotto indurito
+tile.thermaldynamics.duct.energyReinforced.name=Fluxdotto di pietrarossa
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Fluxdotto di pietrarossa (vuoto)
+tile.thermaldynamics.duct.energyResonant.name=Fluxdotto risonante
+tile.thermaldynamics.duct.energyResonantEmpty.name=Fluxdotto risonante (vuoto)
+tile.thermaldynamics.duct.energySuperconductor.name=Fluxdotto crio-stabilizzato
+tile.thermaldynamics.duct.energySuperconductorEmpty.name=Fluxdotto crio-stabilizzato (vuoto)
+
+tile.thermaldynamics.duct.fluidBasic.name=Fluidotto temperato
+tile.thermaldynamics.duct.fluidHardened.name=Fluidotto indurito
+tile.thermaldynamics.duct.fluidFlux.name=Fluidotto piastrato di flux
+
+tile.thermaldynamics.duct.itemBasic.name=Condotto per oggetti
+tile.thermaldynamics.duct.itemFast.name=Condotto per oggetti a impulso
+tile.thermaldynamics.duct.itemFlux.name=Condotto per oggetti fluttuante
+tile.thermaldynamics.duct.itemEnder.name=Condotto per oggetti distorcente
+
+tile.thermaldynamics.duct.structure.name=Condotto strutturale
+
+tile.thermaldynamics.duct.energySupercond.info=Non ha alcuna capacità massima.
+
+tile.thermaldynamics.duct.fluidBasic.info=Si romperà se il contenuto è estremamente caldo o freddo.
+tile.thermaldynamics.duct.fluidHardened.info=Il contenuto può essere di qualsiasi temperatura.
+tile.thermaldynamics.duct.fluidFlux.info=Trasferisce fluidi e Redstone Flux (RF).
+
+tile.thermaldynamics.duct.itemBasic.info=Trasferisce oggetti
+tile.thermaldynamics.duct.itemFast.info=Riempito di luminite. Gli oggetti viaggiano più rapidamente.
+tile.thermaldynamics.duct.itemEnder.info=Usa Redstone Flux (RF) per muovere gli oggetti istantaneamente.
+tile.thermaldynamics.duct.itemFlux.info=Trasferisce oggetti e Redstone Flux (RF).
+tile.thermaldynamics.duct.structure.info=Fornisce struttura
+
+tile.thermaldynamics.duct.opaque.name=%s (opaco)
+tile.thermaldynamics.duct.dense.name=denso %s
+tile.thermaldynamics.duct.vacuum.name=vacuo %s
+
+item.thermaldynamics.cover.name=%s Copertura
+
+item.thermaldynamics.filter.info=Limita ciò che può passare attraverso.
+item.thermaldynamics.retriever.info=Spinge oggetti/fluidi distanti verso se stesso.
+item.thermaldynamics.servo.info=Estrae oggetti/fluidi da qualcosa.
+
+item.thermaldynamics.filter.0.name=Filtro
+item.thermaldynamics.filter.1.name=Filtro indurito
+item.thermaldynamics.filter.2.name=Filtro rinforzato
+item.thermaldynamics.filter.3.name=Filtro di signalo
+item.thermaldynamics.filter.4.name=Filtro risonante
+
+item.thermaldynamics.servo.0.name=Servomotore
+item.thermaldynamics.servo.1.name=Servomotore indurito
+item.thermaldynamics.servo.2.name=Servomotore rinforzato
+item.thermaldynamics.servo.3.name=Servomotore di signalo
+item.thermaldynamics.servo.4.name=Servomotore risonante
+
+item.thermaldynamics.retriever.0.name=Recuperatore
+item.thermaldynamics.retriever.1.name=Recuperatore indurito
+item.thermaldynamics.retriever.2.name=Recuperatore rinforzato
+item.thermaldynamics.retriever.3.name=Recuperatore di signalo
+item.thermaldynamics.retriever.4.name=Recuperatore risonante
+
+info.thermaldynamics.capacitance=Capacitanza
+info.thermaldynamics.transfer=Trasferisce
+info.thermaldynamics.transferConnection=La quantità trasportata varia per connessione.
+info.thermaldynamics.transferFluid=Il ritmo di trasporto varia secondo il fluido.
+
+info.thermaldynamics.duct.energy=Trasferisce Redstone Flux (RF).
+info.thermaldynamics.duct.fluid=Trasferisce fluidi.
+info.thermaldynamics.duct.item=Trasferisce oggetti.
+info.thermaldynamics.duct.structure=Fornisce struttura.
+info.thermaldynamics.duct.crafting=Componente.
+info.thermaldynamics.duct.cover=Combina con un blocco per creare delle Coperture.
+info.thermaldynamics.duct.dense=Aumenta la lunghezza del percorso sensibilmente.
+info.thermaldynamics.duct.vacuum=Diminuisce la lunghezza del percorso sensibilmente.
+
+info.thermaldynamics.filter.options=Opzioni filtro
+info.thermaldynamics.filter.whiteList=Lista nera
+info.thermaldynamics.filter.metadata=Metadata
+info.thermaldynamics.filter.nbt=NBT
+info.thermaldynamics.filter.oreDict=Ore Dictionary
+info.thermaldynamics.filter.modSorting=Proprietario mod
+
+info.thermaldynamics.filter.whiteList.off=Lista bianca
+info.thermaldynamics.filter.whiteList.on=Lista nera
+info.thermaldynamics.filter.metadata.off=Usa Metadata
+info.thermaldynamics.filter.metadata.on=Ignora Metadata
+info.thermaldynamics.filter.nbt.off=Usa NBT
+info.thermaldynamics.filter.nbt.on=Ignora NBT
+info.thermaldynamics.filter.oreDict.off=Usa Ore Dictionary
+info.thermaldynamics.filter.oreDict.on=Ignora Ore Dictionary
+info.thermaldynamics.filter.modSorting.off=Usa proprietario mod
+info.thermaldynamics.filter.modSorting.on=Ignora proprietario mod
+
+info.thermaldynamics.filter.routeType.0=Prima più vicino
+info.thermaldynamics.filter.routeType.1=Prima più lontano
+info.thermaldynamics.filter.routeType.2=Casuale
+info.thermaldynamics.filter.routeType.3=Circolare
+
+info.thermaldynamics.filter.antiSpam.0=Permetti di oltre-mandare
+info.thermaldynamics.filter.antiSpam.1=Evita di oltre-mandare
+
+info.thermaldynamics.filter.incRetainSize=Aum. massimo totale di oggetti nell'inv.
+info.thermaldynamics.filter.decRetainSize=Dim. massimo totale di oggetti nell'inv.
+info.thermaldynamics.filter.zeroRetainSize=Infinito
+
+info.thermaldynamics.servo.incStackSize=Aum. quantità estratta per volta
+info.thermaldynamics.servo.decStackSize=Dim. quantità estratta per volta
+
+info.thermaldynamics.servo.extractRate=Ritmo di estrazione
+info.thermaldynamics.servo.speedBoost=Aumento velocità
+info.thermaldynamics.servo.maxStackSize=Max grandezza pila
+info.thermaldynamics.servo.redstoneExt=Richiede segnale di pietrarossa
+info.thermaldynamics.servo.redstoneInt=Controllo di pietrarossa inerno
+info.thermaldynamics.servo.slotMulti=Estrae da slot multipli.
+info.thermaldynamics.servo.slotSingle=Estrae da un singolo slot.
+
+recipe.thermaldynamics.covers=Fabbr. copertura
