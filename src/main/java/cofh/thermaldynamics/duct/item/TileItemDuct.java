@@ -31,8 +31,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 import java.util.ArrayList;
@@ -811,18 +813,19 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 				}
 			}
 
-            IItemHandler simulatedInv = handlerCache[side];
+            SimulatedInv simulatedInv = SimulatedInv.wrapHandler(handlerCache[side]);
 
 
 			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext();) {
 				iterator.advance();
 
-				if (InventoryHelper.insertStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), true) != null
+				if (InventoryHelper.insertStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), false) != null
 						&& ItemHelper.itemsIdentical(insertingItem, iterator.key().toItemStack(iterator.value()))) {
 					return insertingItem;
 				}
 			}
 			insertingItem = simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1, maxStock);
+			simulatedInv.clear();
 			return insertingItem;
 		}
 	}

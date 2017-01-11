@@ -1,28 +1,22 @@
 package cofh.thermaldynamics.duct.item;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class SimulatedInv implements IInventory {
+public class SimulatedInv implements IItemHandler {
 
 	public static SimulatedInv INSTANCE = new SimulatedInv();
-	public static SimulatedInvSided INSTANCE_SIDED = new SimulatedInvSided();
 	public static final int REBUILD_THRESHOLD = 128;
 
+	public static SimulatedInv wrapHandler(IItemHandler handler) {
+        return INSTANCE.setTarget(handler);
+    }
+
 	public static SimulatedInv wrapInv(IInventory inventory) {
-
-		INSTANCE.setTarget(inventory);
-		return INSTANCE;
-	}
-
-	public static SimulatedInvSided wrapInvSided(ISidedInventory inventory) {
-
-		INSTANCE_SIDED.setTargetSided(inventory);
-		return INSTANCE_SIDED;
+		return INSTANCE.setTarget(new InvWrapper(inventory));
 	}
 
 	public SimulatedInv() {
@@ -30,129 +24,57 @@ public class SimulatedInv implements IInventory {
 	}
 
 	public SimulatedInv(IInventory target) {
-
-		setTarget(target);
+		setTarget(new InvWrapper(target));
 	}
 
 	public void clear() {
-
 		this.target = null;
 	}
 
-	public void setTarget(IInventory target) {
+	public SimulatedInv setTarget(IItemHandler target) {
 
-		this.target = target;
-		size = target.getSizeInventory();
+		//this.target = target;
+		size = target.getSlots();
 
 		if (items == null || items.length < size || (size < REBUILD_THRESHOLD && items.length >= REBUILD_THRESHOLD)) {
-			items = new ItemStack[target.getSizeInventory()];
+			items = new ItemStack[target.getSlots()];
 		}
 		ItemStack stackInSlot;
 		for (int i = 0; i < size; i++) {
 			stackInSlot = target.getStackInSlot(i);
 			items[i] = stackInSlot != null ? stackInSlot.copy() : null;
 		}
+		this.target = new ItemStackHandler(items);
+		return this;
 	}
-
-	IInventory target;
+    IItemHandler target;
+	//IInventory target;
 	ItemStack[] items;
 	int size;
 
-	@Override
-	public int getSizeInventory() {
+    @Override
+    public int getSlots() {
+        return items.length;
+    }
 
-		return items.length;
-	}
-
-	@Override
+    @Override
 	public ItemStack getStackInSlot(int i) {
 
 		return items[i];
 	}
 
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-
-		return null;
-	}
-
-	@Override
-	public ItemStack removeStackFromSlot(int i) {
-
-		return items[i];
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack stack) {
-		items[i] = stack;
-	}
-
-	@Override
-	public String getName() {
-
-		return "[Simulated]";
-	}
-
-	@Override
-	public boolean hasCustomName() {
-
-		return false;
-	}
-
     @Override
-    public ITextComponent getDisplayName() {
-        return null;
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        return target.insertItem(slot, stack, simulate);
     }
 
     @Override
-	public int getInventoryStackLimit() {
-
-		return target.getInventoryStackLimit();
-	}
-
-	@Override
-	public void markDirty() {
-
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-
-		return false;
-	}
-
-	@Override
-	public void openInventory(EntityPlayer player) {
-
-	}
-
-	@Override
-	public void closeInventory(EntityPlayer player) {
-
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-
-		return slot < target.getSizeInventory() && target.isItemValidForSlot(slot, stack);
-	}
-
-    @Override
-    public int getField(int id) {
-        return 0;
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        return target.extractItem(slot, amount, simulate);
     }
 
-    @Override
-    public void setField(int id, int value) {
-
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 0;
-    }
-
-    public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
+    //Left here for reasons.
+    /*public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
 
 		ISidedInventory sided;
 
@@ -196,6 +118,6 @@ public class SimulatedInv implements IInventory {
 			super.clear();
 			sided = null;
 		}
-	}
+	}*/
 
 }
