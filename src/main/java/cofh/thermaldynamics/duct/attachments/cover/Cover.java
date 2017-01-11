@@ -199,7 +199,7 @@ public class Cover extends Attachment {
 	@SideOnly(Side.CLIENT)
 	public void drawSelectionExtra(EntityPlayer player, RayTraceResult target, float partialTicks) {
 
-		/*super.drawSelectionExtra(player, target, partialTicks);
+		super.drawSelectionExtra(player, target, partialTicks);
 
 		RenderHelper.setBlockTextureSheet();
 		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
@@ -229,7 +229,7 @@ public class Cover extends Attachment {
             ccrs.reset();
             ccrs.startDrawing(7, DefaultVertexFormats.ITEM);
             ccrs.alphaOverride = 80;
-            CoverRenderer.renderCover(ccrs, tile.getPos(), block.getStateFromMeta(meta), side, null);
+            CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), null);
             ccrs.draw();
 			//Tessellator tess = Tessellator.instance;
 			//tess.startDrawingQuads();
@@ -251,7 +251,7 @@ public class Cover extends Attachment {
 		GlStateManager.disableAlpha();
 		GlStateManager.disableColorMaterial();
 		GlStateManager.disableLighting();
-		GlStateManager.disableBlend();*/
+		GlStateManager.disableBlend();
 	}
 
 }

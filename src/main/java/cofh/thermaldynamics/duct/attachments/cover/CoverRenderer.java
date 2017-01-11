@@ -268,9 +268,9 @@ public class CoverRenderer {
                 //This should be ok.. Hopefully..
                 //finalQuad.normals[k2].set((norm & 255) / 127.0F, ((norm << 8) & 255) / 127.0F, ((norm << 16) & 255) / 127.0F);
 
-                int oldColour = quad.colours[k2].rgba();
-                int colour = oldColour & 0xFFFFFF00 | (((oldColour & 0x000000FF) >>> 1) & 0x000000FF);
-                finalQuad.colours[k2].set(colour);
+                //int oldColour = quad.colours[k2].rgba();
+                //int colour = oldColour & 0xFFFFFF00 | (((oldColour & 0x000000FF) >>> 1) & 0x000000FF);
+                //finalQuad.colours[k2].set(colour);
             }
             finalQuads.add(finalQuad);
         }

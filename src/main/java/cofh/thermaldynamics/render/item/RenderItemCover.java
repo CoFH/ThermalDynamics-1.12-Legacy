@@ -80,7 +80,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 		//CoverRenderer.renderBlocks.blockAccess = SingleBlockAccess.instance;
 		//Tessellator.instance.setNormal(0.0F, 1.0F, 0.0F);
 
-		EnumFacing side =  EnumFacing.WEST; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
+		EnumFacing side =  EnumFacing.NORTH; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
         CCRenderState ccrs = CCRenderState.instance();
         ccrs.reset();
         ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
