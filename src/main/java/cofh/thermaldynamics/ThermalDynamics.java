@@ -60,16 +60,16 @@ public class ThermalDynamics {
 	public static final String modName = "Thermal Dynamics";
 	public static final String version = "1.7.10R1.2.0";
 	public static final String version_max = "1.7.10R1.3.0";
-	public static final String dependencies = CoFHCore.version_group + ThermalFoundation.version_group;
+	public static final String dependencies = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP;
 	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
 
-	public static final String version_group = "required-after:" + modId + "@[" + version + "," + /*version_max +*/ ");";
+	public static final String version_group = "required-after:" + modId + "@[" + version + "," + /*VERSION_MAX +*/ ");";
 	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/" + modId;
 
 	@Instance(modId)
 	public static ThermalDynamics instance;
 
-	@SidedProxy(clientSide = "cofh.thermaldynamics.core.ClientProxy", serverSide = "cofh.thermaldynamics.core.CommonProxy")
+	@SidedProxy(clientSide = "cofh.thermaldynamics.core.ProxyClient", serverSide = "cofh.thermaldynamics.core.Proxy")
 	public static CommonProxy proxy;
 
 	public static final Logger log = LogManager.getLogger(modId);
@@ -97,7 +97,7 @@ public class ThermalDynamics {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 
-		//UpdateManager.registerUpdater(new UpdateManager(this, releaseURL, CoFHProps.DOWNLOAD_URL));
+		//UpdateManager.registerUpdater(new UpdateManager(this, RELEASE_URL, CoFHProps.DOWNLOAD_URL));
 		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
 		configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 
