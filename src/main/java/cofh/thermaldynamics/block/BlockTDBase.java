@@ -3,13 +3,12 @@ package cofh.thermaldynamics.block;
 import codechicken.lib.block.property.PropertyInteger;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
-import codechicken.lib.vec.BlockCoord;
-import codechicken.lib.vec.Vector3;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.tileentity.ITileInfo;
-import cofh.core.block.BlockCoFHBase;
+import cofh.core.block.BlockCoFHBaseOld;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.StringHelper;
+import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
 import cofh.thermaldynamics.util.Utils;
 import net.minecraft.block.material.Material;
@@ -36,7 +35,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class BlockTDBase extends BlockCoFHBase {
+public abstract class BlockTDBase extends BlockCoFHBaseOld {
 
     public static PropertyInteger META = new PropertyInteger("meta", 15);
 
@@ -170,11 +169,11 @@ public abstract class BlockTDBase extends BlockCoFHBase {
             return false;
         }
         if (player.isSneaking()) {
-            if (Utils.isHoldingUsableWrench(player, traceResult)) {
-                if (ServerHelper.isServerWorld(world) && canDismantle(player, world, pos)) {
-                    dismantleBlock(player, world, pos, false);
+            if (WrenchHelper.isHoldingUsableWrench(player, traceResult)) {
+                if (ServerHelper.isServerWorld(world)) {
+                    dismantleBlock(world, pos, state, player, false);
+                    WrenchHelper.usedWrench(player, traceResult);
                 }
-                Utils.usedWrench(player, traceResult);
                 return true;
             }
             return false;
@@ -221,20 +220,20 @@ public abstract class BlockTDBase extends BlockCoFHBase {
     }
 
     /* IBlockDebug */
-    @Override
-    public void debugBlock(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-
-        ((TileTDBase) world.getTileEntity(pos)).doDebug(player);
-    }
+//    @Override
+//    public void debugBlock(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+//
+//        ((TileTDBase) world.getTileEntity(pos)).doDebug(player);
+//    }
 
     /* IBlockInfo */
     @Override
-    public void getBlockInfo(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player, List<ITextComponent> info, boolean debug) {
+    public void getBlockInfo(List<ITextComponent> info, IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player, boolean debug) {
 
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof ITileInfo) {
-            ((ITileInfo) tile).getTileInfo(info, side, player, debug);
+            ((ITileInfo) tile).getTileInfo(info, world, pos, side, player, debug);
         } else {
             if (tile instanceof IEnergyHandler) {
                 IEnergyHandler eHandler = (IEnergyHandler) tile;

@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.api.inventory.IInventoryConnection;
-import cofh.api.transport.IItemDuct;
+import cofh.api.tileentity.IInventoryConnection;
+import cofh.api.tileentity.IItemDuct;
 import cofh.core.crash.CrashHelper;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
@@ -31,10 +31,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 import java.util.ArrayList;

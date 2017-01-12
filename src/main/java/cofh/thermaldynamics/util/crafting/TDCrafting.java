@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.util.crafting;
 
-import cofh.api.modhelpers.ThermalExpansionHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
@@ -8,7 +7,6 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermalfoundation.fluid.TFFluids;
-import cofh.thermalfoundation.item.TFItems;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -55,8 +53,8 @@ public class TDCrafting {
         GameRegistry.addRecipe(ShapedRecipe(TDDucts.energySuperCondEmpty.itemStack, "IGI", "GEG", "IGI", 'I', "ingotElectrum", 'G', glassHardened, 'E', TDDucts.energyReinforced.itemStack));
 
 		/* ENERGY - TE Integration */
-        ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(TFItems.nuggetLead, 3));
-        ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(TFItems.nuggetInvar, 3));
+        //ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(TFItems.nuggetLead, 3));
+        //ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(TFItems.nuggetInvar, 3));
         addTransposerFill(800, TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforced.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
         addTransposerFill(800, TDDucts.energyResonantEmpty.itemStack, TDDucts.energyResonant.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
         addTransposerFill(4000, TDDucts.energySuperCondEmpty.itemStack, TDDucts.energySuperCond.itemStack, new FluidStack(TFFluids.fluidCryotheum, 500), false);
@@ -84,8 +82,8 @@ public class TDCrafting {
         // "ingotLead", 'P', "ingotPlatinum", 'l', "nuggetLead"));
 
 		/* FLUID - TE Integration */
-        ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(TFItems.nuggetCopper, 3));
-        ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(TFItems.nuggetCopper, 3), ItemHelper.cloneStack(TFItems.nuggetLead));
+        //ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(TFItems.nuggetCopper, 3));
+        //ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(TFItems.nuggetCopper, 3), ItemHelper.cloneStack(TFItems.nuggetLead));
 
 		/* ITEMS */
         GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened));
@@ -181,7 +179,7 @@ public class TDCrafting {
     public static void addTransposerFill(int energy, ItemStack input, ItemStack output, FluidStack fluid, boolean reversible) {
 
         if (useTransposerRecipes && Loader.isModLoaded("ThermalExpansion")) {
-            ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
+            //ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
         } else {
             int i = MathHelper.clamp(FluidContainerRegistry.BUCKET_VOLUME / fluid.amount, 1, 8);
             ItemStack fluidBucket = getFluidBucket(fluid);

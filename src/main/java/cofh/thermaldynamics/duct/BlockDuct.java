@@ -4,8 +4,9 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
+import cofh.api.tileentity.ISecurable;
 import cofh.core.CoFHProps;
-import cofh.core.block.TileCoFHBase;
+import cofh.core.block.TileCoFHBaseOld;
 import cofh.core.network.PacketHandler;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
@@ -25,13 +26,13 @@ import cofh.thermaldynamics.duct.fluid.*;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
-import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -243,8 +244,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         }
     }
 
+    /* Drop Helper */
+    public ArrayList<ItemStack> dropDelegate(NBTTagCompound nbt, IBlockAccess world, BlockPos pos, int fortune) {
+        return dismantleDelegate(nbt, (World) world, pos, null, false, true);
+    }
+
+    /* Dismantle Helper */
     @Override
-    public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, NBTTagCompound nbt, IBlockAccess world, BlockPos pos, boolean returnDrops, boolean simulate) {
+    public ArrayList<ItemStack> dismantleDelegate(NBTTagCompound nbt, World world, BlockPos pos, EntityPlayer player, boolean returnDrops, boolean simulate) {
 
         TileEntity tile = world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
@@ -280,8 +287,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         }
         if (!simulate) {
             World actualWorld = (World) world;
-            if (tile instanceof TileCoFHBase) {
-                ((TileCoFHBase) tile).blockDismantled();
+            if (tile instanceof TileCoFHBaseOld) {
+                ((TileCoFHBaseOld) tile).blockDismantled();
             }
             actualWorld.setBlockToAir(pos);
 
@@ -295,7 +302,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
                 }
             }
         }
-
         return ret;
     }
 

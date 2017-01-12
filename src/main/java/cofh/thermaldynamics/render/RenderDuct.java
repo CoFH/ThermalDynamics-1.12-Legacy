@@ -1,11 +1,10 @@
 package cofh.thermaldynamics.render;
 
-import codechicken.lib.render.block.BlockRenderingRegistry;
 import codechicken.lib.render.block.ICCBlockRenderer;
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
-import cofh.core.block.BlockCoFHBase;
+import cofh.core.block.BlockCoFHBaseOld;
 import cofh.core.render.IconRegistry;
 import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
@@ -18,7 +17,6 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.core.ClientProxy;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
@@ -443,7 +441,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			flag = renderWorldExtra(ccrs, false, theTile, renderType, connections, x, y, z) || flag;
 		}
 
-		flag = theTile.renderAdditional(renderType, connections, BlockCoFHBase.renderPass) || flag;
+		flag = theTile.renderAdditional(renderType, connections, BlockCoFHBaseOld.renderPass) || flag;
 
 		return flag;
 	}

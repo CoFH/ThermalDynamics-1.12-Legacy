@@ -4,10 +4,9 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Vector3;
 import cofh.api.tileentity.IPortableData;
 import cofh.api.tileentity.ITileInfo;
-import cofh.core.block.TileCoFHBase;
+import cofh.core.block.TileCoFHBaseOld;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
 import cofh.core.network.PacketCoFHBase;
@@ -40,6 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
+public abstract class TileTDBase extends TileCoFHBaseOld implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
 
     static {
         GameRegistry.registerTileEntityWithAlternatives(TileTDBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
@@ -1228,7 +1228,7 @@ public abstract class TileTDBase extends TileCoFHBase implements IMultiBlock, IT
     }
 
     @Override
-    public void getTileInfo(List<ITextComponent> info, EnumFacing side, EntityPlayer player, boolean debug) {
+    public void getTileInfo(List<ITextComponent> info, IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player, boolean debug) {
 
         MultiBlockGrid grid = getGrid();
         if (grid != null) {
