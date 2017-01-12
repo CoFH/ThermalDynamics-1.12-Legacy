@@ -13,7 +13,6 @@ import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.debughelper.PacketDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.duct.entity.SoundWoosh;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
@@ -23,11 +22,9 @@ import cofh.thermaldynamics.item.ItemFilter;
 import cofh.thermaldynamics.item.ItemRelay;
 import cofh.thermaldynamics.item.ItemRetriever;
 import cofh.thermaldynamics.item.ItemServo;
-import cofh.thermaldynamics.plugins.TDPlugins;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.CustomProperty;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -128,8 +125,6 @@ public class ThermalDynamics {
 		}
 
         proxy.preInit();
-
-		TDPlugins.preInit();
 	}
 
 	@EventHandler
@@ -148,7 +143,6 @@ public class ThermalDynamics {
 
 		PacketDebug.initialize();
 		DebugHelper.initialize();
-		TDPlugins.initialize();
 	}
 
 	@EventHandler
@@ -160,13 +154,10 @@ public class ThermalDynamics {
 		TDCrafting.loadRecipes();
 
         proxy.postInit();
-		TDPlugins.postInit();
 	}
 
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
-
-		TDPlugins.loadComplete();
 
 		config.cleanUp(false, true);
 		configClient.cleanUp(false, true);
