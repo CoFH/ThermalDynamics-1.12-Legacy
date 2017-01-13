@@ -5,7 +5,7 @@ import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.core.CommonProxy;
+import cofh.thermaldynamics.core.Proxy;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
@@ -70,7 +70,7 @@ public class ThermalDynamics {
 	public static ThermalDynamics instance;
 
 	@SidedProxy(clientSide = "cofh.thermaldynamics.core.ProxyClient", serverSide = "cofh.thermaldynamics.core.Proxy")
-	public static CommonProxy proxy;
+	public static Proxy proxy;
 
 	public static final Logger log = LogManager.getLogger(modId);
 	public static final ConfigHandler config = new ConfigHandler(version);

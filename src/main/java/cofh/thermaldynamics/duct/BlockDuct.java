@@ -4,7 +4,6 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
-import cofh.api.tileentity.ISecurable;
 import cofh.core.CoFHProps;
 import cofh.core.block.TileCoFHBaseOld;
 import cofh.core.network.PacketHandler;
@@ -15,7 +14,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.core.ClientProxy;
+import cofh.thermaldynamics.core.ProxyClient;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
@@ -32,7 +31,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -149,7 +147,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return ClientProxy.renderType;
+        return ProxyClient.renderType;
     }
 
     @Override

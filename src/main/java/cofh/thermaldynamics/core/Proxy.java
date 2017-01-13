@@ -6,7 +6,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 
-public class CommonProxy {
+public class Proxy {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent

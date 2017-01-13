@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.TextureStitchEvent;
 
-public class ClientProxy extends CommonProxy {
+public class ProxyClient extends Proxy {
 
     public static EnumBlockRenderType renderType;
 
@@ -89,8 +89,8 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit() {
-        ClientProxy.renderType = BlockRenderingRegistry.createRenderType("TD");
-        BlockRenderingRegistry.registerRenderer(ClientProxy.renderType, RenderDuct.instance);
+        ProxyClient.renderType = BlockRenderingRegistry.createRenderType("TD");
+        BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.instance);
     }
 
     @Override
