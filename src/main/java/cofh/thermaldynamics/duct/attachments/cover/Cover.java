@@ -227,7 +227,7 @@ public class Cover extends Attachment {
 
             CCRenderState ccrs = CCRenderState.instance();
             ccrs.reset();
-            ccrs.startDrawing(7, DefaultVertexFormats.ITEM);
+            ccrs.startDrawing(7, DefaultVertexFormats.BLOCK);
             ccrs.alphaOverride = 80;
             CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), null);
             ccrs.draw();

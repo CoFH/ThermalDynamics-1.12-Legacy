@@ -2,7 +2,9 @@ package cofh.thermaldynamics.duct.attachments.cover;
 
 import codechicken.lib.colour.Colour;
 import codechicken.lib.colour.ColourARGB;
+import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.model.bakery.CCQuad;
+import codechicken.lib.render.CCRSConsumer;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
@@ -63,7 +65,7 @@ public class CoverRenderer {
         boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 && model.isAmbientOcclusion();
         VertexLighterFlat lighter = renderAO ? lighterSmooth.get() : lighterFlat.get();
 
-        VertexBufferConsumer consumer = new VertexBufferConsumer(ccrs.getBuffer());
+        CCRSConsumer consumer = new CCRSConsumer(ccrs);
         lighter.setParent(consumer);
         consumer.setOffset(pos);
         return lighter;
@@ -98,7 +100,7 @@ public class CoverRenderer {
             }
             CCQuad copyQuad = quad.copy();
 
-            Colour c = new ColourARGB(colour);
+            Colour c = new ColourRGBA(colour);
 
             for (Colour qC : copyQuad.colours) {
                 qC.multiply(c);
@@ -155,7 +157,8 @@ public class CoverRenderer {
 
     public static boolean renderItemCover(CCRenderState ccrs, BlockPos pos, int side, IBlockState state, Cuboid6 bounds) {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        IBakedModel model = renderItem.getItemModelWithOverrides(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)), null, null);
+        ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().damageDropped(state));
+        IBakedModel model = renderItem.getItemModelWithOverrides(stack, null, null);
         List<BakedQuad> quads = new ArrayList<BakedQuad>();
         quads.addAll(model.getQuads(null, null, 0));
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -166,7 +169,7 @@ public class CoverRenderer {
 
         VertexBufferConsumer consumer = new VertexBufferConsumer(ccrs.getBuffer());
 
-        return renderItemQuads(consumer, slicedQuads, new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
+        return renderItemQuads(consumer, slicedQuads, stack);
     }
 
     public static List<CCQuad> sliceQuads(List<CCQuad> quads, int side, Cuboid6 bounds) {
@@ -179,9 +182,7 @@ public class CoverRenderer {
 
         TextureAtlasSprite icon = RenderDuct.coverBase;
 
-        final int vertexSize = VERTEX_SIZE;
-        final int verticiesPerFace = 4;
-        final int incrementAmt = vertexSize * verticiesPerFace;
+        final int verticesPerFace = 4;
 
         List<CCQuad> finalQuads = new LinkedList<CCQuad>();
 
@@ -227,7 +228,7 @@ public class CoverRenderer {
 
 
             CCQuad finalQuad = quad.copy();
-            for (int k2 = 0; k2 < verticiesPerFace; k2++) {
+            for (int k2 = 0; k2 < verticesPerFace; k2++) {
                 boolean flag3 = quadPos[k2][sideOffsets[side]] != sideSoftBounds[side];
                 for (int j = 0; j < 3; j++) {
                     if (j == sideOffsets[side]) {
@@ -261,6 +262,7 @@ public class CoverRenderer {
                     u = icon.getInterpolatedU(u);
                     v = icon.getInterpolatedV(v);
                     finalQuad.vertices[k2].uv.set(u, v);
+                    finalQuad.tintIndex = -1;
                 }
                 finalQuad.vertices[k2].vec.set(quadPos[k2]);
 

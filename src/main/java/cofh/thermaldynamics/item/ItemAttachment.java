@@ -100,7 +100,7 @@ public abstract class ItemAttachment extends Item implements IInitializer {
     }
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onBlockHighlight(DrawBlockHighlightEvent event) {
         RayTraceResult target = event.getTarget();
         if (target.typeOfHit != Type.BLOCK || !ItemUtils.isPlayerHoldingSomething(event.getPlayer()) || ItemUtils.getHeldStack(event.getPlayer()).getItem() != this) {
