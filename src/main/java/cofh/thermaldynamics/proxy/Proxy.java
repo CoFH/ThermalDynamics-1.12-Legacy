@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.core;
+package cofh.thermaldynamics.proxy;
 
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;

@@ -1,9 +1,10 @@
-package cofh.thermaldynamics.core;
+package cofh.thermaldynamics.proxy;
 
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
 import cofh.core.render.IconRegistry;
 import cofh.thermaldynamics.ThermalDynamics;
+import cofh.thermaldynamics.core.TickHandlerClient;
 import cofh.thermaldynamics.debughelper.CommandServerDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;

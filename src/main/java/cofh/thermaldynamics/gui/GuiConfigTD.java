@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 
 public class GuiConfigTD extends GuiConfig {
 
 	public GuiConfigTD(GuiScreen parentScreen) {
 
-		super(parentScreen, getConfigElements(parentScreen), ThermalDynamics.modId, false, false, ThermalDynamics.modName);
+		super(parentScreen, getConfigElements(parentScreen), ThermalDynamics.MOD_ID, false, false, ThermalDynamics.MOD_NAME);
 	}
 
 	public static final String[] CATEGORIES = {};
