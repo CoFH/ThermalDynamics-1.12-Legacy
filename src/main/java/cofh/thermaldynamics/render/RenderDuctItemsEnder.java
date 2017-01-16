@@ -9,15 +9,13 @@ import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
-import cofh.thermalfoundation.fluid.TFFluids;
+import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;

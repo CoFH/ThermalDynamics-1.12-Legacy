@@ -6,7 +6,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermalfoundation.fluid.TFFluids;
+import cofh.thermalfoundation.init.TFFluids;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
