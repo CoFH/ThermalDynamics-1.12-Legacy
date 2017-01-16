@@ -11,6 +11,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.gui.client.GuiTransport;
@@ -430,7 +431,6 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
         }
     }
 
-/* TODO add hollow cover rendering
     @Override
     @SideOnly(Side.CLIENT)
     public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
@@ -438,6 +438,5 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
         BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
         return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctTransport;
     }
-*/
 
 }

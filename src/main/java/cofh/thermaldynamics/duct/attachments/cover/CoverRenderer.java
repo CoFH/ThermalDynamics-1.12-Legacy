@@ -100,8 +100,7 @@ public class CoverRenderer {
             }
             CCQuad copyQuad = quad.copy();
 
-            Colour c = new ColourRGBA(colour);
-
+            Colour c = new ColourARGB(colour);
             for (Colour qC : copyQuad.colours) {
                 qC.multiply(c);
             }
@@ -157,7 +156,7 @@ public class CoverRenderer {
 
     public static boolean renderItemCover(CCRenderState ccrs, BlockPos pos, int side, IBlockState state, Cuboid6 bounds) {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().damageDropped(state));
+        ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
         IBakedModel model = renderItem.getItemModelWithOverrides(stack, null, null);
         List<BakedQuad> quads = new ArrayList<BakedQuad>();
         quads.addAll(model.getQuads(null, null, 0));
@@ -167,7 +166,7 @@ public class CoverRenderer {
 
         List<CCQuad> slicedQuads = sliceQuads(CCQuad.fromArray(quads), side, bounds);
 
-        VertexBufferConsumer consumer = new VertexBufferConsumer(ccrs.getBuffer());
+        CCRSConsumer consumer = new CCRSConsumer(ccrs);
 
         return renderItemQuads(consumer, slicedQuads, stack);
     }
