@@ -5,7 +5,7 @@ import cofh.api.core.IInitializer;
 import cofh.core.CoFHProps;
 import cofh.core.util.ConfigHandler;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.core.Proxy;
+import cofh.thermaldynamics.proxy.Proxy;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
@@ -17,64 +17,52 @@ import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.gui.TDCreativeTabCovers;
-import cofh.thermaldynamics.item.ItemCover;
-import cofh.thermaldynamics.item.ItemFilter;
-import cofh.thermaldynamics.item.ItemRelay;
-import cofh.thermaldynamics.item.ItemRetriever;
-import cofh.thermaldynamics.item.ItemServo;
+import cofh.thermaldynamics.item.*;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.CustomProperty;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import java.io.File;
-import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.CustomProperty;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = ThermalDynamics.modId, name = ThermalDynamics.modName, version = ThermalDynamics.version, dependencies = ThermalDynamics.dependencies,
-		guiFactory = ThermalDynamics.modGuiFactory, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
+import java.io.File;
+import java.util.LinkedList;
+
+@Mod(modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, guiFactory = ThermalDynamics.MOD_GUI_FACTORY, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
 public class ThermalDynamics {
 
-	public static final String modId = "ThermalDynamics";
-	public static final String modName = "Thermal Dynamics";
-	public static final String version = "1.7.10R1.2.0";
-	public static final String version_max = "1.7.10R1.3.0";
-	public static final String dependencies = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP;
-	public static final String modGuiFactory = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
+	public static final String MOD_ID = "ThermalDynamics";
+	public static final String MOD_NAME = "Thermal Dynamics";
 
-	public static final String version_group = "required-after:" + modId + "@[" + version + "," + /*VERSION_MAX +*/ ");";
-	public static final String releaseURL = "https://raw.github.com/CoFH/VERSION/master/" + modId;
+	public static final String VERSION = "1.2.0";
+	public static final String VERSION_MAX = "1.3.0";
+	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + /*VERSION_MAX +*/ ");";
 
-	@Instance(modId)
+	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP;
+	public static final String MOD_GUI_FACTORY = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
+
+	@Instance(MOD_ID)
 	public static ThermalDynamics instance;
 
-	@SidedProxy(clientSide = "cofh.thermaldynamics.core.ProxyClient", serverSide = "cofh.thermaldynamics.core.Proxy")
+	@SidedProxy(clientSide = "cofh.thermaldynamics.proxy.ProxyClient", serverSide = "cofh.thermaldynamics.proxy.Proxy")
 	public static Proxy proxy;
 
-	public static final Logger log = LogManager.getLogger(modId);
-	public static final ConfigHandler config = new ConfigHandler(version);
-	public static final ConfigHandler configClient = new ConfigHandler(version);
+	public static final Logger log = LogManager.getLogger(MOD_ID);
+	public static final ConfigHandler config = new ConfigHandler(VERSION);
+	public static final ConfigHandler configClient = new ConfigHandler(VERSION);
 	public static final GuiHandler guiHandler = new GuiHandler();
 
 	public static CreativeTabs tabCommon;
@@ -217,24 +205,24 @@ public class ThermalDynamics {
 	/* BaseMod */
 	public String getModId() {
 
-		return modId;
+		return MOD_ID;
 	}
 
 	public String getModName() {
 
-		return modName;
+		return MOD_NAME;
 	}
 
 	public String getModVersion() {
 
-		return version;
+		return VERSION;
 	}
 
 	@EventHandler
 	public void checkMappings(FMLMissingMappingsEvent event) {
 
 		for (FMLMissingMappingsEvent.MissingMapping map : event.get()) {
-			if ((modId + ":TestDuct").equals(map.name)) {
+			if ((MOD_ID + ":TestDuct").equals(map.name)) {
 				if (map.type == GameRegistry.Type.BLOCK) {
 					map.remap(blockDuct[0]);
 				} else {
