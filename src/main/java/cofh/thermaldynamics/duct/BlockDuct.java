@@ -54,6 +54,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -75,7 +76,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(@Nonnull Item item, CreativeTabs tab, List<ItemStack> list) {
 
         for (int i = 0; i < 16; i++) {
             if (TDDucts.isValid(i + offset)) {
@@ -144,12 +145,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return ProxyClient.renderType;
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
@@ -157,7 +160,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(IBlockState state, @Nonnull BlockRenderLayer layer) {
         return true;
     }
 
@@ -284,15 +287,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
             dropBlock.setTagCompound(nbt);
         }
         if (!simulate) {
-            World actualWorld = (World) world;
             if (tile instanceof TileCoFHBaseOld) {
                 ((TileCoFHBaseOld) tile).blockDismantled();
             }
-            actualWorld.setBlockToAir(pos);
+            world.setBlockToAir(pos);
 
             if (!returnDrops) {
                 for (ItemStack stack : ret) {
-                    ItemUtils.dropItem(actualWorld, pos, stack, 0.3F);
+                    ItemUtils.dropItem(world, pos, stack, 0.3F);
                 }
 
                 if (player != null) {

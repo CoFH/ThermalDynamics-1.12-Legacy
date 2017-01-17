@@ -92,7 +92,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean extraInfo) {
 
 		super.addInformation(stack, player, list, extraInfo);
 

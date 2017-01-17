@@ -22,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuctItemsEnder extends RenderDuctItems {
 
-	public static final TileEntitySpecialRenderer instance = new RenderDuctItemsEnder();
+	public static final TileEntitySpecialRenderer<TileItemDuct> instance = new RenderDuctItemsEnder();
 
 	// TEMA: this is the shader callback where the uniforms are set for this particular shader.
 	// it's called each frame when the shader is bound. Probably the most expensive part of the whole thing.
