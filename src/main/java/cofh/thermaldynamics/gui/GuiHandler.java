@@ -1,14 +1,13 @@
 package cofh.thermaldynamics.gui;
 
-import cofh.core.block.TileCoFHBaseOld;
+import cofh.core.block.TileCore;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.IGuiHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -32,8 +31,8 @@ public class GuiHandler implements IGuiHandler {
 		switch (id) {
 		case TILE_ID:
 			tile = world.getTileEntity(pos);
-			if (tile instanceof TileCoFHBaseOld) {
-				return ((TileCoFHBaseOld) tile).getGuiServer(player.inventory);
+			if (tile instanceof TileCore) {
+				return ((TileCore) tile).getGuiServer(player.inventory);
 			}
 
 		case TILE_CONFIG:
@@ -63,8 +62,8 @@ public class GuiHandler implements IGuiHandler {
 		switch (id) {
 		case TILE_ID:
 			tile = world.getTileEntity(pos);
-			if (tile instanceof TileCoFHBaseOld) {
-				return ((TileCoFHBaseOld) tile).getGuiClient(player.inventory);
+			if (tile instanceof TileCore) {
+				return ((TileCore) tile).getGuiClient(player.inventory);
 			} else {
 				return null;
 			}

@@ -5,7 +5,7 @@ import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
 import cofh.core.CoFHProps;
-import cofh.core.block.TileCoFHBaseOld;
+import cofh.core.block.TileCore;
 import cofh.core.network.PacketHandler;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
@@ -14,7 +14,6 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
@@ -25,6 +24,7 @@ import cofh.thermaldynamics.duct.fluid.*;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
+import cofh.thermaldynamics.proxy.ProxyClient;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -54,7 +54,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +75,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public void getSubBlocks(@Nonnull Item item, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
 
         for (int i = 0; i < 16; i++) {
             if (TDDucts.isValid(i + offset)) {
@@ -145,14 +144,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
 
-    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return ProxyClient.renderType;
     }
 
-    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
@@ -160,7 +157,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, @Nonnull BlockRenderLayer layer) {
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return true;
     }
 
@@ -287,14 +284,15 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
             dropBlock.setTagCompound(nbt);
         }
         if (!simulate) {
-            if (tile instanceof TileCoFHBaseOld) {
-                ((TileCoFHBaseOld) tile).blockDismantled();
+            World actualWorld = (World) world;
+            if (tile instanceof TileCore) {
+                ((TileCore) tile).blockDismantled();
             }
-            world.setBlockToAir(pos);
+            actualWorld.setBlockToAir(pos);
 
             if (!returnDrops) {
                 for (ItemStack stack : ret) {
-                    ItemUtils.dropItem(world, pos, stack, 0.3F);
+                    ItemUtils.dropItem(actualWorld, pos, stack, 0.3F);
                 }
 
                 if (player != null) {

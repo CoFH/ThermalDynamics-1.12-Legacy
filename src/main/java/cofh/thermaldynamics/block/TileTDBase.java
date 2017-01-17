@@ -6,7 +6,7 @@ import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.tileentity.IPortableData;
 import cofh.api.tileentity.ITileInfo;
-import cofh.core.block.TileCoFHBaseOld;
+import cofh.core.block.TileCore;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
 import cofh.core.network.PacketCoFHBase;
@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TileTDBase extends TileCoFHBaseOld implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
+public abstract class TileTDBase extends TileCore implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
 
     static {
         GameRegistry.registerTileEntityWithAlternatives(TileTDBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
@@ -799,7 +799,7 @@ public abstract class TileTDBase extends TileCoFHBaseOld implements IMultiBlock,
     }
 
     @Override
-    public boolean onWrench(EntityPlayer player, int hitSide) {
+    public boolean onWrench(EntityPlayer player, EnumFacing side) {
 
         RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, getPos());
         if (Utils.isHoldingUsableWrench(player, rayTrace)) {
@@ -809,7 +809,7 @@ public abstract class TileTDBase extends TileCoFHBaseOld implements IMultiBlock,
 
             int subHit = rayTrace.subHit;
             if (subHit >= 0 && subHit <= 13) {
-                int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
+                int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
 
                 onNeighborBlockChange();
 

@@ -5,7 +5,7 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.tileentity.ITileInfo;
-import cofh.core.block.BlockCoFHBaseOld;
+import cofh.core.block.BlockCoreTile;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.lib.util.helpers.WrenchHelper;
@@ -18,7 +18,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -35,7 +36,7 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class BlockTDBase extends BlockCoFHBaseOld {
+public abstract class BlockTDBase extends BlockCoreTile {
 
     public static PropertyInteger META = new PropertyInteger("meta", 15);
 
@@ -185,7 +186,7 @@ public abstract class BlockTDBase extends BlockCoFHBaseOld {
         }
         if (Utils.isHoldingUsableWrench(player, traceResult)) {
             if (ServerHelper.isServerWorld(world)) {
-                tile.onWrench(player, side.ordinal());
+                tile.onWrench(player, side);
             }
             Utils.usedWrench(player, traceResult);
             return true;

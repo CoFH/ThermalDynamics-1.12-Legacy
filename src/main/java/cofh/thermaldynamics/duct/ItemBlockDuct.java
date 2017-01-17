@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct;
 
-import cofh.core.item.ItemBlockCore;
+import cofh.core.block.ItemBlockCore;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;

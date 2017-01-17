@@ -66,7 +66,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
     }
 
     @Override
-    public boolean onWrench(EntityPlayer player, int hitSide) {
+    public boolean onWrench(EntityPlayer player, EnumFacing side) {
 
         RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, pos);
         if (Utils.isHoldingUsableWrench(player, rayTrace)) {
@@ -76,7 +76,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
             int subHit = rayTrace.subHit;
             if (subHit >= 0 && subHit <= 13) {
-                int i = subHit == 13 ? hitSide : subHit < 6 ? subHit : subHit - 6;
+                int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
 
                 onNeighborBlockChange();
 
