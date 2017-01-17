@@ -1,20 +1,19 @@
 package cofh.thermaldynamics.duct;
 
-import cofh.core.item.ItemBlockBase;
+import cofh.core.item.ItemBlockCore;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
-
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.translation.I18n;
 
-public class ItemBlockDuct extends ItemBlockBase {
+import java.util.List;
+
+public class ItemBlockDuct extends ItemBlockCore {
 
 	int offset;
 

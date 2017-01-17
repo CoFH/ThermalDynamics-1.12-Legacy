@@ -5,7 +5,7 @@ import cofh.core.network.PacketHandler;
 import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.lib.util.position.ChunkCoord;
+import cofh.lib.util.ChunkCoord;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;

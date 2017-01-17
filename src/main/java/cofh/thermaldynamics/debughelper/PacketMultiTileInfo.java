@@ -3,8 +3,8 @@ package cofh.thermaldynamics.debughelper;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
-import cofh.lib.util.position.BlockPosition;
-import cofh.lib.util.position.ChunkCoord;
+import cofh.lib.util.BlockPosition;
+import cofh.lib.util.ChunkCoord;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 
 import io.netty.buffer.ByteBuf;

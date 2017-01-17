@@ -14,7 +14,6 @@ import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.lib.util.position.BlockPosition;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
@@ -228,7 +227,7 @@ public abstract class TileTDBase extends TileCoFHBaseOld implements IMultiBlock,
     @Override
     public void setNotConnected(byte side) {
 
-        TileEntity tileEntity = BlockPosition.getAdjacentTileEntity(this, EnumFacing.VALUES[side]);
+        TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, EnumFacing.VALUES[side]);
 
         if (isSignificantTile(tileEntity, side)) {
             neighborMultiBlocks[side] = null;

@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.lib.util.position.BlockPosition;
+import cofh.lib.util.BlockPosition;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
