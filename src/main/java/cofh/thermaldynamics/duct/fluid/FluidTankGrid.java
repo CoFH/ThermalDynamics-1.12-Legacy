@@ -1,13 +1,13 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.core.util.fluid.FluidTankAdv;
+import cofh.core.util.fluid.FluidTankCore;
 import cofh.lib.util.helpers.MathHelper;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidTankGrid extends FluidTankAdv {
+public class FluidTankGrid extends FluidTankCore {
 
 	public int fluidThroughput = 120;
 	public int fluidPerDuct = 3000;
