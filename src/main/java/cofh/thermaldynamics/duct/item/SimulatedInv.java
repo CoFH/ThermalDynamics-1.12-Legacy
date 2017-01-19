@@ -54,7 +54,7 @@ public class SimulatedInv implements IItemHandler {
 
     @Override
     public int getSlots() {
-        return items.length;
+        return size;
     }
 
     @Override
