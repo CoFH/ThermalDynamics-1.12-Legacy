@@ -4,23 +4,19 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.item.StackMap;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
-import gnu.trove.iterator.TObjectIntIterator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -108,12 +104,12 @@ public class RetrieverItem extends ServoItem {
                     continue;
                 }
 
-                if (!endPoint.cachesExist() || endPoint.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
+                if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
                     continue;
                 }
 
                 {
-                    IItemHandler inv = endPoint.handlerCache[i];
+                    IItemHandler inv = endPoint.cache.handlerCache[i];
                     for (int slot = 0; slot < inv.getSlots(); slot++) {
                         ItemStack item = inv.getStackInSlot(slot);
                         if (item == null) {
@@ -125,7 +121,7 @@ public class RetrieverItem extends ServoItem {
                             continue;
                         }
 
-                        if (!filter.matchesFilter(item) || !endPoint.filterCache[i].matchesFilter(item)) {
+                        if (!filter.matchesFilter(item) || !endPoint.cache.filterCache[i].matchesFilter(item)) {
                             continue;
                         }
 
