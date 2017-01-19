@@ -126,10 +126,11 @@ public class RetrieverItem extends ServoItem {
 						int slot = accessibleSlotsFromSide[j];
 
 						ItemStack item = inv.getStackInSlot(slot);
-						if (item == null) {
+						if (item == null || item.stackSize <= 0) {
 							continue;
 						}
 
+						int realSize = item.stackSize;
 						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
 						if (item == null || item.stackSize == 0) {
 							continue;
@@ -158,7 +159,7 @@ public class RetrieverItem extends ServoItem {
 						}
 
 						int maxStackSize = item.stackSize;
-						item = inv.decrStackSize(slot, maxStackSize);
+						item = inv.decrStackSize(slot, Math.min(maxStackSize, realSize));
 						if (item == null || item.stackSize == 0) {
 							continue;
 						}
@@ -171,8 +172,8 @@ public class RetrieverItem extends ServoItem {
 							for (; item.stackSize < maxStackSize && j < accessibleSlotsFromSide.length; j++) {
 								slot = accessibleSlotsFromSide[j];
 								ItemStack inSlot = inv.getStackInSlot(slot);
-								if (ItemHelper.itemsEqualWithMetadata(inSlot, item, true) && inv.canExtractItem(slot, inSlot, i ^ 1)) {
-									ItemStack extract = inv.decrStackSize(slot, maxStackSize - item.stackSize);
+								if (inSlot != null && inSlot.stackSize> 0 && inv.canExtractItem(slot, inSlot, i ^ 1) && ItemHelper.itemsEqualWithMetadata(inSlot, item, true)) {
+									ItemStack extract = inv.decrStackSize(slot, Math.min(maxStackSize - item.stackSize, inSlot.stackSize));
 									if (extract != null) {
 										item.stackSize += extract.stackSize;
 									}
@@ -187,10 +188,11 @@ public class RetrieverItem extends ServoItem {
 					IInventory inv = endPoint.cache[i];
 					for (int slot = 0; slot < inv.getSizeInventory(); slot++) {
 						ItemStack item = inv.getStackInSlot(slot);
-						if (item == null) {
+						if (item == null || item.stackSize <= 0) {
 							continue;
 						}
 
+						int realSize = item.stackSize;
 						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
 						if (item == null || item.stackSize == 0) {
 							continue;
@@ -215,7 +217,7 @@ public class RetrieverItem extends ServoItem {
 						}
 
 						int maxStackSize = item.stackSize;
-						item = inv.decrStackSize(slot, maxStackSize);
+						item = inv.decrStackSize(slot, Math.min(maxStackSize, realSize));
 						if (item == null || item.stackSize == 0) {
 							continue;
 						}
@@ -226,8 +228,9 @@ public class RetrieverItem extends ServoItem {
 
 						if (multiStack[type] && item.stackSize < maxStackSize) {
 							for (; item.stackSize < maxStackSize && slot < inv.getSizeInventory(); slot++) {
-								if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
-									ItemStack extract = inv.decrStackSize(slot, maxStackSize - item.stackSize);
+								ItemStack inSlot = inv.getStackInSlot(slot);
+								if (inSlot != null && inSlot.stackSize > 0 && ItemHelper.itemsEqualWithMetadata(inSlot, item, true)) {
+									ItemStack extract = inv.decrStackSize(slot, Math.min(maxStackSize - item.stackSize, inSlot.stackSize));
 									if (extract != null) {
 										item.stackSize += extract.stackSize;
 									}
