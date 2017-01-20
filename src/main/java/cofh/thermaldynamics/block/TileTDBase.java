@@ -591,7 +591,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
     }
 
     @Override
-    public String getName() {
+    public String getTileName() {
 
         return "tile.thermaldynamics.multiblock.name";
     }
