@@ -185,7 +185,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
             Fluid fluid = fluidStack.getFluid();
             Block block = fluid.getBlock();
 
-            boolean fullBucket = fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME && worldObj.rand.nextInt(6) == 0;
+            boolean fullBucket = fluidStack.amount >= Fluid.BUCKET_VOLUME && worldObj.rand.nextInt(6) == 0;
 
             if ("water".equals(fluid.getName())) {
                 block = Blocks.FLOWING_WATER;

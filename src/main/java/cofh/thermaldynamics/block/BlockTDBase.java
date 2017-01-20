@@ -234,7 +234,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof ITileInfo) {
-            ((ITileInfo) tile).getTileInfo(info, world, pos, side, player, debug);
+            ((ITileInfo) tile).getTileInfo(info, side, player, debug);
         } else {
             if (tile instanceof IEnergyHandler) {
                 IEnergyHandler eHandler = (IEnergyHandler) tile;

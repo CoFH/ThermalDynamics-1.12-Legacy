@@ -10,6 +10,7 @@ import cofh.thermalfoundation.init.TFFluids;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -181,7 +182,7 @@ public class TDCrafting {
         if (useTransposerRecipes && Loader.isModLoaded("ThermalExpansion")) {
             //ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
         } else {
-            int i = MathHelper.clamp(FluidContainerRegistry.BUCKET_VOLUME / fluid.amount, 1, 8);
+            int i = MathHelper.clamp(Fluid.BUCKET_VOLUME / fluid.amount, 1, 8);
             ItemStack fluidBucket = getFluidBucket(fluid);
             if (fluidBucket != null) {
                 ShapelessOreRecipe recipe = new ShapelessOreRecipe(ItemHelper.cloneStack(output, i), fluidBucket);
@@ -197,7 +198,7 @@ public class TDCrafting {
     public static ItemStack getFluidBucket(FluidStack fluidStack) {
 
         fluidStack = fluidStack.copy();
-        fluidStack.amount = FluidContainerRegistry.BUCKET_VOLUME;
+        fluidStack.amount = Fluid.BUCKET_VOLUME;
         return FluidContainerRegistry.fillFluidContainer(fluidStack, FluidContainerRegistry.EMPTY_BUCKET);
     }
 

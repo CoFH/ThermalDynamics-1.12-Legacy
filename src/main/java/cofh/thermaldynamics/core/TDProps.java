@@ -1,26 +1,22 @@
 package cofh.thermaldynamics.core;
 
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 public class TDProps {
 
 	private TDProps() {
 
 	}
 
-	/* General */
+	/* GENERAL */
 	public static final int MAX_ITEMS_TRANSMITTED = 6;
 	public static final int FLUID_EMPTY_UPDATE_DELAY = 96;
 	public static final byte FLUID_UPDATE_DELAY = 4;
 	public static final int ENDER_TRANSMIT_COST = 50;
 	public static final int MAX_STUFFED_ITEMSTACKS_DROP = 30;
 
-	/* Graphics */
+	/* GRAPHICS */
 	public static final String PATH_GFX = "thermaldynamics:textures/";
 
-	/* Duct Render Constants */
+	/* DUCT RENDER CONSTANTS */
 	public static float smallInnerModelScaling = 0.99F;
 	public static float largeInnerModelScaling = 0.99F;
 
