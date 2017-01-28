@@ -574,7 +574,11 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	@Override
 	public void clearCache(int side) {
-        cache = null;
+		if(cache != null){
+			cache.filterCache[side] = IFilterItems.nullFilter;
+			cache.cache3[side] = null;
+			cache.handlerCache[side] = null;
+		}
     }
 
     static final int[][] equivalencySideMasks;
