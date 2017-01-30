@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.gui.client;
 
-import cofh.core.gui.GuiBaseAdv;
+import cofh.core.gui.GuiCore;
 import cofh.core.gui.element.TabInfo;
 import cofh.lib.gui.element.ElementButton;
 import cofh.lib.gui.element.ElementSlider;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import net.minecraft.util.ResourceLocation;
 
-public class GuiRelay extends GuiBaseAdv {
+public class GuiRelay extends GuiCore {
 
 	static final String TEX_PATH = "thermaldynamics:textures/gui/relay.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
