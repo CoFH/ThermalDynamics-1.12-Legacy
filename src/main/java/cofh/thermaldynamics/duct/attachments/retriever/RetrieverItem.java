@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -57,7 +58,7 @@ public class RetrieverItem extends ServoItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+    public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
         if (layer != BlockRenderLayer.SOLID) {
             return false;
         }

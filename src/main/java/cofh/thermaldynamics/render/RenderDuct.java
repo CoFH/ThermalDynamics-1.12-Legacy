@@ -421,12 +421,12 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 		for (Attachment attachment : theTile.attachments) {
 			if (attachment != null) {
-				flag = attachment.render(layer, ccrs) || flag;
+				flag = attachment.render(world, layer, ccrs) || flag;
 			}
 		}
 		for (Cover cover : theTile.covers) {
 			if (cover != null) {
-				flag = cover.render(layer, ccrs) || flag;
+				flag = cover.render(world, layer, ccrs) || flag;
 			}
 		}
 		int renderType = TDDucts.getDuct(((BlockDuct) state.getBlock()).offset + state.getBlock().getMetaFromState(state)).id;

@@ -9,7 +9,6 @@ import cofh.api.tileentity.IPortableData;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.core.render.RenderUtils;
 import cofh.lib.util.helpers.ServerHelper;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
@@ -99,7 +98,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
         if (layer != BlockRenderLayer.SOLID){
             return false;
         }

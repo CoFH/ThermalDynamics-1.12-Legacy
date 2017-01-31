@@ -19,6 +19,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -90,7 +91,7 @@ public abstract class Attachment {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public abstract boolean render(BlockRenderLayer layer, CCRenderState ccRenderState);
+	public abstract boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {

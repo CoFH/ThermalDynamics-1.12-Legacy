@@ -5,7 +5,6 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
-import cofh.core.render.RenderUtils;
 import cofh.lib.util.helpers.StringHelper;
 import codechicken.lib.vec.Translation;
 import cofh.thermaldynamics.ThermalDynamics;
@@ -13,6 +12,7 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -116,7 +116,7 @@ public abstract class ServoBase extends ConnectionBase {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
         if (layer != BlockRenderLayer.SOLID){
             return false;
         }

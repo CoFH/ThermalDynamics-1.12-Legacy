@@ -13,8 +13,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,8 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -102,7 +100,7 @@ public class Cover extends Attachment {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean render(BlockRenderLayer layer, CCRenderState ccrs) {
+	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccrs) {
         //IBlockState state = block.getStateFromMeta(meta);
 		if (!block.canRenderInLayer(state, layer)) {
 			return false;
@@ -118,8 +116,7 @@ public class Cover extends Attachment {
 		}
 
 
-		//TODO World passed in through chunk batcher.
-		return CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), hollowMask);
+		return CoverRenderer.renderBlockCover(ccrs, world, tile.getPos(), side, state, getCuboid(), hollowMask);
 		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
 		//		tile.covers);
         //return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);

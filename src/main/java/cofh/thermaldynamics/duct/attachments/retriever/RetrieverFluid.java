@@ -4,7 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.core.render.RenderUtils;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
@@ -16,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -104,7 +104,7 @@ public class RetrieverFluid extends ServoFluid {
     }
 
     @Override
-    public boolean render(BlockRenderLayer layer, CCRenderState ccRenderState) {
+    public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
         if (layer != BlockRenderLayer.SOLID) {
             return false;
         }
