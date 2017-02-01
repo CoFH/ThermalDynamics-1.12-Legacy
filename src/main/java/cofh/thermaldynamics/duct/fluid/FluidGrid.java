@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.core.CoFHProps;
+import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
 import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.FluidHelper;
@@ -276,7 +276,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 							int dx = (chunk.chunkX - (MathHelper.floor(player.posX) >> 4)) * 16;
 							int dz = (chunk.chunkZ - (MathHelper.floor(player.posZ) >> 4)) * 16;
 
-							if (dx * dx + dz * dz <= CoFHProps.NETWORK_UPDATE_RANGE * CoFHProps.NETWORK_UPDATE_RANGE) {
+							if (dx * dx + dz * dz <= CoreProps.NETWORK_UPDATE_RANGE * CoreProps.NETWORK_UPDATE_RANGE) {
 								PacketHandler.sendTo(packet, player);
 								break;
 							}

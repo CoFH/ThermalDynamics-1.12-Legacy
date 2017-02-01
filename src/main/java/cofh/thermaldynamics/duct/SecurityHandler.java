@@ -1,8 +1,7 @@
 package cofh.thermaldynamics.duct;
 
-import codechicken.lib.util.CommonUtils;
 import cofh.api.tileentity.ISecurable;
-import cofh.core.CoFHProps;
+import cofh.core.init.CoreProps;
 import cofh.lib.util.helpers.SecurityHelper;
 import cofh.lib.util.helpers.StringHelper;
 import com.google.common.base.Strings;
@@ -11,13 +10,12 @@ import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class SecurityHandler implements ISecurable {
 
-	protected GameProfile owner = CoFHProps.DEFAULT_OWNER;
+	protected GameProfile owner = CoreProps.DEFAULT_OWNER;
 	protected AccessMode access = AccessMode.PUBLIC;
 
 	@Override
@@ -39,7 +37,7 @@ public class SecurityHandler implements ISecurable {
 		if (FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
 			return false;
 		}
-		if (Strings.isNullOrEmpty(name) || CoFHProps.DEFAULT_OWNER.getName().equalsIgnoreCase(name)) {
+		if (Strings.isNullOrEmpty(name) || CoreProps.DEFAULT_OWNER.getName().equalsIgnoreCase(name)) {
 			return false;
 		}
 		String uuid = PreYggdrasilConverter.convertMobOwnerIfNeeded(FMLCommonHandler.instance().getMinecraftServerInstance(), name);

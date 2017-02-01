@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.item;
 
 import cofh.api.tileentity.IInventoryConnection;
 import cofh.api.tileentity.IItemDuct;
-import cofh.core.crash.CrashHelper;
+import cofh.core.util.CrashHelper;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;

@@ -4,7 +4,7 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
-import cofh.core.CoFHProps;
+import cofh.core.init.CoreProps;
 import cofh.core.block.TileCore;
 import cofh.core.network.PacketHandler;
 import cofh.core.render.hitbox.ICustomHitBox;
@@ -363,7 +363,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
         GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
         GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");
         GameRegistry.registerTileEntity(TileTransportDuctCrossover.class, "thermaldynamics.TransportDuctCrossover");
-        EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoFHProps.ENTITY_TRACKING_DISTANCE, 1, true);
+        EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
         MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
         FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
 

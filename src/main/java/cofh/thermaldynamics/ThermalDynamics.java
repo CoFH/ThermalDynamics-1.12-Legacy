@@ -2,7 +2,7 @@ package cofh.thermaldynamics;
 
 import cofh.CoFHCore;
 import cofh.api.core.IInitializer;
-import cofh.core.CoFHProps;
+import cofh.core.init.CoreProps;
 import cofh.core.util.ConfigHandler;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.proxy.Proxy;
@@ -86,8 +86,8 @@ public class ThermalDynamics {
 	public void preInit(FMLPreInitializationEvent event) {
 
 		//UpdateManager.registerUpdater(new UpdateManager(this, RELEASE_URL, CoFHProps.DOWNLOAD_URL));
-		config.setConfiguration(new Configuration(new File(CoFHProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
-		configClient.setConfiguration(new Configuration(new File(CoFHProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
+		config.setConfiguration(new Configuration(new File(CoreProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
+		configClient.setConfiguration(new Configuration(new File(CoreProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 
 		tabCommon = new TDCreativeTab();
 

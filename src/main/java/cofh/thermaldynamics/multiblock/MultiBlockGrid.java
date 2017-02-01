@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.core.chat.ChatHelper;
+import cofh.core.util.ChatHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.core.WorldGridList;

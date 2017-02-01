@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import cofh.core.crash.CrashHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 
 import java.util.HashMap;

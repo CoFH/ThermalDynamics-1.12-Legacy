@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.core.util.fluid.FluidTankCore;
+import cofh.core.fluid.FluidTankCore;
 import cofh.lib.util.helpers.MathHelper;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
