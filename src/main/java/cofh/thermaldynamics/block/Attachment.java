@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,7 +84,7 @@ public abstract class Attachment {
 	public void dropItemStack(ItemStack item) {
 
 		Cuboid6 c = getCuboid();
-		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), new Vector3(tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
+		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), new Vec3d(tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
                 tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat()
                 * (c.max.z - c.min.z))
 

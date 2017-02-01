@@ -1,9 +1,9 @@
 package cofh.thermaldynamics.render;
 
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.RenderUtils;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
-import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
@@ -93,7 +93,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
             GlStateManager.enableCull();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
             RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
-            RenderUtils.preWorldRender(duct.getWorld(), duct.getPos());
+            ccrs.preRenderWorld(duct.getWorld(), duct.getPos());
             ccrs.colour = -1;
             ccrs.brightness = 15728880;
 

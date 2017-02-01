@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.render.RenderUtils;
 import codechicken.lib.texture.TextureUtils;
-import cofh.core.render.RenderUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.render.RenderHelper;
 import codechicken.lib.render.CCModel;
@@ -53,7 +53,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		if (duct.powered) {
             CCRenderState ccrs = CCRenderState.instance();
             ccrs.reset();
-			RenderUtils.preWorldRender(tile.getWorld(),tile.getPos());
+			ccrs.preRenderWorld(tile.getWorld(),tile.getPos());
 
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);

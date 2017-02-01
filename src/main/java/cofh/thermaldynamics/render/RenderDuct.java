@@ -3,6 +3,7 @@ package cofh.thermaldynamics.render;
 import codechicken.lib.lighting.LightModel;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.block.ICCBlockRenderer;
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.texture.TextureUtils;
@@ -11,8 +12,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Scale;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.render.IconRegistry;
-import cofh.core.render.RenderUtils;
 import cofh.lib.render.RenderHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
@@ -188,13 +189,13 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		y += 0.5;
 		z += 0.5;
 
-		Translation trans = RenderUtils.getRenderVector(x, y, z).translation();
+		Translation trans = new Translation(x, y, z);
 
 		int c = 0;
 		Duct ductType = TDDucts.ductList.get(renderType);
 		for (int s = 0; s < 6; s++) {
 			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
-				RenderUtils.ScaledIconTransformation icon;
+				IconTransformation icon;
 
 				if (BlockDuct.ConnectionTypes.values()[connection[s]] == BlockDuct.ConnectionTypes.STRUCTURE) {
 					icon = RenderUtils.getIconTransformation(TDDucts.structure.iconBaseTexture);
@@ -217,7 +218,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		}
 
 		if (iconBaseTexture != null) {
-			RenderUtils.ScaledIconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
+			IconTransformation icon = RenderUtils.getIconTransformation(iconBaseTexture);
 			(ductType.opaque ? modelOpaqueTubes[c] : modelTransTubes[c]).render(ccrs,trans, icon);
 		}
 
@@ -354,10 +355,10 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		}
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		Fluid fluid = stack.getFluid();
 
-		RenderUtils.setFluidRenderColor(stack);
+		ccrs.setFluidColour(stack);
 		RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
 		TextureAtlasSprite fluidTex = RenderHelper.getFluidTexture(stack);
 
@@ -414,7 +415,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		}
 		TileTDBase theTile = (TileTDBase) tile;
 
-		RenderUtils.preWorldRender(world, pos);
+        ccrs.preRenderWorld(world, pos);
 		getDuctConnections(theTile);
 
 		boolean flag = false;

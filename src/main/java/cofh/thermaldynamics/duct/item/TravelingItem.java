@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class TravelingItem {
 
@@ -207,7 +208,7 @@ public class TravelingItem {
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
 			} else if (homeTile.ticksExisted == TileItemDuct.maxTicksExistedBeforeDump) {
-				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorld(), new Vector3(homeTile.getPos()));
+				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorld(), new Vec3d(homeTile.getPos()));
 				homeTile.removeItem(this, true);
 			}
 		}
