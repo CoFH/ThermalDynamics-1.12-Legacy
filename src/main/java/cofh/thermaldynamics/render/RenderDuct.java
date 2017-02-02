@@ -84,9 +84,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	static CCModel[] modelTransport = new CCModel[64];
 
     static {
-        //TDProps.renderType = RenderingRegistry.getNextAvailableRenderId();
-		//RenderingRegistry.registerBlockHandler(instance);
-
 		generateModels();
 		generateFluidModels();
 	}
@@ -454,27 +451,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
     public void registerTextures(TextureMap map) {
 
     }
-
-    //@Override
-	//public boolean shouldRender3DInInventory(int modelId) {
-	//	return true;
-	//}
-
-	//@Override
-	//public int getRenderId() {
-	//	return TDProps.renderType;
-	//}
-
-	/* IItemRenderer */
-	//@Override
-	//public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-	//	return true;
-	//}
-
-	//@Override
-	//public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-	//	return true;
-	//}
 
 	@Override
 	public void renderItem(ItemStack item) {

@@ -1127,11 +1127,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
         return "tile.thermaldynamics.duct";
     }
 
-    public void cofh_invalidate() {
-
-        markChunkDirty();
-    }
-
     @Override
     public void addRelays() {
 
