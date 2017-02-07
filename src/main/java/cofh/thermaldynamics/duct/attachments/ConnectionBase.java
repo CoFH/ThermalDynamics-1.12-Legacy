@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.duct.attachments;
 
 import codechicken.lib.util.BlockUtils;
+import codechicken.lib.vec.Cuboid6;
 import cofh.api.tileentity.IPortableData;
 import cofh.api.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
@@ -8,7 +9,6 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.RedstoneControlHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import codechicken.lib.vec.Cuboid6;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
@@ -21,19 +21,18 @@ import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiDuctConnection;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 
 public abstract class ConnectionBase extends Attachment implements IStuffable, IRedstoneControl, IFilterAttachment, IPortableData {
 
@@ -190,10 +189,10 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public void setControl(ControlMode control) {
+	public boolean setControl(ControlMode control) {
 
 		if (!canAlterRS()) {
-			return;
+			return false;
 		}
 		rsMode = control;
 		if (ServerHelper.isClientWorld(tile.world())) {
@@ -203,6 +202,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		} else {
 			onNeighborChange();
 		}
+		return true;
 	}
 
 	@Override
