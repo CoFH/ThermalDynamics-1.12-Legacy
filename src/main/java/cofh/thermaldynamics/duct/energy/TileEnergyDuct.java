@@ -108,7 +108,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (cache[i] != null) {
 					if (cache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
-						usedEnergy += cache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], energy - usedEnergy, simulate);
+						usedEnergy += sendEnergy(cache[i], energy - usedEnergy, i, simulate);
 					}
 					if (!simulate && usedEnergy >= energy) {
 						this.tickInternalSideCounter(i + 1);
@@ -122,7 +122,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 			if (this.neighborTypes[i] == NeighborTypes.OUTPUT && this.connectionTypes[i] == ConnectionTypes.NORMAL) {
 				if (cache[i] != null) {
 					if (cache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
-						usedEnergy += cache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], energy - usedEnergy, simulate);
+						usedEnergy += sendEnergy(cache[i], energy - usedEnergy, i, simulate);
 					}
 					if (!simulate && usedEnergy >= energy) {
 						this.tickInternalSideCounter(i + 1);
@@ -132,6 +132,10 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 			}
 		}
 		return usedEnergy;
+	}
+
+	protected int sendEnergy(IEnergyReceiver receiver, int maxReceive, byte side, boolean simulate) {
+		return receiver.receiveEnergy(EnumFacing.VALUES[side ^ 1], maxReceive, simulate);
 	}
 
 	@Override
