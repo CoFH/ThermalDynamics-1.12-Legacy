@@ -5,7 +5,6 @@ import cofh.api.core.IInitializer;
 import cofh.core.init.CoreProps;
 import cofh.core.util.ConfigHandler;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.proxy.Proxy;
 import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.core.TickHandler;
 import cofh.thermaldynamics.debughelper.CommandThermalDebug;
@@ -18,6 +17,7 @@ import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.TDCreativeTab;
 import cofh.thermaldynamics.gui.TDCreativeTabCovers;
 import cofh.thermaldynamics.item.*;
+import cofh.thermaldynamics.proxy.Proxy;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
 import cofh.thermaldynamics.util.crafting.TDCrafting;
 import cofh.thermalfoundation.ThermalFoundation;
@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,12 +75,12 @@ public class ThermalDynamics {
     public static ItemRetriever itemRetriever;
     public static ItemRelay itemRelay;
 
-	/* INIT SEQUENCE */
 	public ThermalDynamics() {
 
 		super();
 	}
 
+	/* INIT */
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 
@@ -154,6 +153,11 @@ public class ThermalDynamics {
 	}
 
 	@EventHandler
+	public void serverStart(FMLServerAboutToStartEvent event) {
+
+	}
+
+	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 
 		if (DebugHelper.debug) {
@@ -200,36 +204,6 @@ public class ThermalDynamics {
 
 		initializerList.add(a);
 		return a;
-	}
-
-	/* BaseMod */
-	public String getModId() {
-
-		return MOD_ID;
-	}
-
-	public String getModName() {
-
-		return MOD_NAME;
-	}
-
-	public String getModVersion() {
-
-		return VERSION;
-	}
-
-	@EventHandler
-	public void checkMappings(FMLMissingMappingsEvent event) {
-
-		for (FMLMissingMappingsEvent.MissingMapping map : event.get()) {
-			if ((MOD_ID + ":TestDuct").equals(map.name)) {
-				if (map.type == GameRegistry.Type.BLOCK) {
-					map.remap(blockDuct[0]);
-				} else {
-					map.remap(Item.getItemFromBlock(blockDuct[0]));
-				}
-			}
-		}
 	}
 
 }
