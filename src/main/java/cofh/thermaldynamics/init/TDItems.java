@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.init;
 
 import cofh.api.core.IInitializer;
+import cofh.thermaldynamics.item.*;
 
 import java.util.ArrayList;
 
@@ -35,5 +36,10 @@ public class TDItems {
 	private static ArrayList<IInitializer> initList = new ArrayList<IInitializer>();
 
 	/* REFERENCES */
+	public static ItemServo itemServo;
+	public static ItemFilter itemFilter;
+	public static ItemRetriever itemRetriever;
+	public static ItemRelay itemRelay;
+	public static ItemCover itemCover;
 
 }

@@ -1,14 +1,29 @@
 package cofh.thermaldynamics.proxy;
 
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.client.event.TextureStitchEvent;
-
 public class Proxy {
 
-	@SideOnly(Side.CLIENT)
+	/* INIT */
+	public void preInit(FMLPreInitializationEvent event) {
+
+	}
+
+	public void initialize(FMLInitializationEvent event) {
+
+	}
+
+	public void postInit(FMLPostInitializationEvent event) {
+
+	}
+
+	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
 
@@ -19,17 +34,5 @@ public class Proxy {
 	public void initializeIcons(TextureStitchEvent.Post event) {
 
 	}
-
-	public void preInit() {
-
-	}
-
-	public void init(){
-
-    }
-
-    public void postInit(){
-
-    }
 
 }

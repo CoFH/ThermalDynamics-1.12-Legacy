@@ -13,7 +13,7 @@ public class SubTileEnergyRedstone extends SubTileEnergy {
 	public static void initialize() {
 
 		String category = "Duct.Energy.Hybrid";
-		NODE_TRANSFER = MathHelper.clamp(ThermalDynamics.config.get(category, "Transfer", NODE_TRANSFER), NODE_TRANSFER / 10, NODE_TRANSFER * 10);
+		NODE_TRANSFER = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER), NODE_TRANSFER / 10, NODE_TRANSFER * 10);
 		NODE_STORAGE = NODE_TRANSFER * 6;
 	}
 

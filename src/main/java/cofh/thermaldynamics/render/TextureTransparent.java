@@ -99,7 +99,7 @@ public class TextureTransparent extends TextureAtlasSprite {
 
 			//loadSprite(img, animationmetadatasection);
 		} catch (IOException ioexception1) {
-			ThermalDynamics.log.error("Using missing texture, unable to load " + this.location, ioexception1);
+			ThermalDynamics.LOG.error("Using missing texture, unable to load " + this.location, ioexception1);
 			return true;
 		}
 

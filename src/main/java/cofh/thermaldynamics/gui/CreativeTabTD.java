@@ -18,12 +18,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TDCreativeTab extends CreativeTabs {
+public class CreativeTabTD extends CreativeTabs {
 
     int iconIndex = 0;
     TimeTracker iconTracker = new TimeTracker();
 
-    public TDCreativeTab() {
+    public CreativeTabTD() {
 
         super("ThermalDynamics");
     }

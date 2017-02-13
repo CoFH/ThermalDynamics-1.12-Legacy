@@ -13,12 +13,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class TDCreativeTabCovers extends CreativeTabs {
+public class CreativeTabTDCovers extends CreativeTabs {
 
 	int iconIndex = 0;
 	TimeTracker iconTracker = new TimeTracker();
 
-	public TDCreativeTabCovers() {
+	public CreativeTabTDCovers() {
 
 		super("ThermalDynamicsCovers");
 	}

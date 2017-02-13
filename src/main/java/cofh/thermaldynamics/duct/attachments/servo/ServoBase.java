@@ -30,7 +30,7 @@ public abstract class ServoBase extends ConnectionBase {
 		String category = "Attachment.Servo.";
 
 		for (int i = 0; i < NAMES.length; i++) {
-			redstoneControl[i] = ThermalDynamics.config.get(category + StringHelper.titleCase(NAMES[i]), "RedstoneControl", redstoneControl[i]);
+			redstoneControl[i] = ThermalDynamics.CONFIG.get(category + StringHelper.titleCase(NAMES[i]), "RedstoneControl", redstoneControl[i]);
 		}
 	}
 

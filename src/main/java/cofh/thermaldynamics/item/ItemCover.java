@@ -13,13 +13,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 public class ItemCover extends ItemAttachment {
 
@@ -126,7 +124,7 @@ public class ItemCover extends ItemAttachment {
                     continue;
                 }
             } catch (Exception e){
-                ThermalDynamics.log.error("Crashing on checking viability of cover, This cover will be ignored. " + stack.toString(), e);
+                ThermalDynamics.LOG.error("Crashing on checking viability of cover, This cover will be ignored. " + stack.toString(), e);
                 continue;
             }
             coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));

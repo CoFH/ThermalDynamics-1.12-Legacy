@@ -11,7 +11,7 @@ public class ErrorHelper {
 	public static void reportProblemOnce(String message) {
 
 		if (stringSet.add(message)) {
-			ThermalDynamics.log.error(message);
+			ThermalDynamics.LOG.error(message);
 		}
 	}
 

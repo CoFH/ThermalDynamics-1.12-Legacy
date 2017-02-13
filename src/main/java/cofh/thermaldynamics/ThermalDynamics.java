@@ -13,9 +13,9 @@ import cofh.thermaldynamics.debughelper.PacketDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
+import cofh.thermaldynamics.gui.CreativeTabTD;
+import cofh.thermaldynamics.gui.CreativeTabTDCovers;
 import cofh.thermaldynamics.gui.GuiHandler;
-import cofh.thermaldynamics.gui.TDCreativeTab;
-import cofh.thermaldynamics.gui.TDCreativeTabCovers;
 import cofh.thermaldynamics.item.*;
 import cofh.thermaldynamics.proxy.Proxy;
 import cofh.thermaldynamics.util.crafting.RecipeCover;
@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.util.LinkedList;
 
-@Mod(modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, guiFactory = ThermalDynamics.MOD_GUI_FACTORY, customProperties = @CustomProperty(k = "cofhversion", v = "true"))
+@Mod (modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, guiFactory = ThermalDynamics.MOD_GUI_FACTORY, customProperties = @CustomProperty (k = "cofhversion", v = "true"))
 public class ThermalDynamics {
 
 	public static final String MOD_ID = "ThermalDynamics";
@@ -48,32 +48,31 @@ public class ThermalDynamics {
 
 	public static final String VERSION = "1.2.0";
 	public static final String VERSION_MAX = "1.3.0";
-	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + /*VERSION_MAX +*/ ");";
+	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + VERSION_MAX + ");";
 
 	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP;
 	public static final String MOD_GUI_FACTORY = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
 
-	@Instance(MOD_ID)
+	@Instance (MOD_ID)
 	public static ThermalDynamics instance;
 
-	@SidedProxy(clientSide = "cofh.thermaldynamics.proxy.ProxyClient", serverSide = "cofh.thermaldynamics.proxy.Proxy")
+	@SidedProxy (clientSide = "cofh.thermaldynamics.proxy.ProxyClient", serverSide = "cofh.thermaldynamics.proxy.Proxy")
 	public static Proxy proxy;
 
-	public static final Logger log = LogManager.getLogger(MOD_ID);
-	public static final ConfigHandler config = new ConfigHandler(VERSION);
-	public static final ConfigHandler configClient = new ConfigHandler(VERSION);
-	public static final GuiHandler guiHandler = new GuiHandler();
+	public static final Logger LOG = LogManager.getLogger(MOD_ID);
+	public static final ConfigHandler CONFIG = new ConfigHandler(VERSION);
+	public static final ConfigHandler CONFIG_CLIENT = new ConfigHandler(VERSION);
+	public static final GuiHandler GUI_HANDLER = new GuiHandler();
 
 	public static CreativeTabs tabCommon;
 	public static CreativeTabs tabCovers;
 
-
-    public static BlockDuct[] blockDuct;
-    public static ItemServo itemServo;
-    public static ItemFilter itemFilter;
-    public static ItemCover itemCover;
-    public static ItemRetriever itemRetriever;
-    public static ItemRelay itemRelay;
+	public static BlockDuct[] blockDuct;
+	public static ItemServo itemServo;
+	public static ItemFilter itemFilter;
+	public static ItemCover itemCover;
+	public static ItemRetriever itemRetriever;
+	public static ItemRelay itemRelay;
 
 	public ThermalDynamics() {
 
@@ -84,11 +83,10 @@ public class ThermalDynamics {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 
-		//UpdateManager.registerUpdater(new UpdateManager(this, RELEASE_URL, CoFHProps.DOWNLOAD_URL));
-		config.setConfiguration(new Configuration(new File(CoreProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
-		configClient.setConfiguration(new Configuration(new File(CoreProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
+		CONFIG.setConfiguration(new Configuration(new File(CoreProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
+		CONFIG_CLIENT.setConfiguration(new Configuration(new File(CoreProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 
-		tabCommon = new TDCreativeTab();
+		tabCommon = new CreativeTabTD();
 
 		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
 
@@ -111,13 +109,13 @@ public class ThermalDynamics {
 			initializer.preInit();
 		}
 
-        proxy.preInit();
+		proxy.preInit(event);
 	}
 
 	@EventHandler
 	public void initialize(FMLInitializationEvent event) {
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, guiHandler);
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, GUI_HANDLER);
 		MinecraftForge.EVENT_BUS.register(proxy);
 
 		for (IInitializer initializer : initializerList) {
@@ -126,7 +124,7 @@ public class ThermalDynamics {
 
 		MinecraftForge.EVENT_BUS.register(TickHandler.instance);
 
-        proxy.init();
+		proxy.initialize(event);
 
 		PacketDebug.initialize();
 		DebugHelper.initialize();
@@ -140,16 +138,16 @@ public class ThermalDynamics {
 		}
 		TDCrafting.loadRecipes();
 
-        proxy.postInit();
+		proxy.postInit(event);
 	}
 
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
 
-		config.cleanUp(false, true);
-		configClient.cleanUp(false, true);
+		CONFIG.cleanUp(false, true);
+		CONFIG_CLIENT.cleanUp(false, true);
 
-		log.info("Thermal Dynamics: Load Complete.");
+		LOG.info("Thermal Dynamics: Load Complete.");
 	}
 
 	@EventHandler
@@ -171,25 +169,22 @@ public class ThermalDynamics {
 		/* Duct */
 		String category = "Duct.Transport";
 		String comment = "Must be between 0 and 120 ticks.";
-		TileTransportDuctCrossover.CHARGE_TIME = (byte) MathHelper.clamp(
-				ThermalDynamics.config.get(category, "CrossoverChargeTime", TileTransportDuctCrossover.CHARGE_TIME, comment), 0,
-				TileTransportDuctCrossover.CHARGE_TIME);
+		TileTransportDuctCrossover.CHARGE_TIME = (byte) MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "CrossoverChargeTime", TileTransportDuctCrossover.CHARGE_TIME, comment), 0, TileTransportDuctCrossover.CHARGE_TIME);
 
 		/* Models */
 		comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";
-		TDProps.smallInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.configClient.get("Render", "InnerModelScaling", 0.99, comment), 0.50F, 0.99F);
+		TDProps.smallInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.CONFIG_CLIENT.get("Render", "InnerModelScaling", 0.99, comment), 0.50F, 0.99F);
 
 		comment = "This value affects the size of the inner duct model, such as fluids, on the large (octagonal) ducts. Lower it if you experience texture z-fighting.";
-		TDProps.largeInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.configClient.get("Render", "LargeInnerModelScaling", 0.99, comment), 0.50F,
-				0.99F);
+		TDProps.largeInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.CONFIG_CLIENT.get("Render", "LargeInnerModelScaling", 0.99, comment), 0.50F, 0.99F);
 
 		/* Interface */
-		ItemCover.enableCreativeTab = ThermalDynamics.configClient.get("Interface.CreativeTab", "Covers.Enable", ItemCover.enableCreativeTab);
+		ItemCover.enableCreativeTab = ThermalDynamics.CONFIG_CLIENT.get("Interface.CreativeTab", "Covers.Enable", ItemCover.enableCreativeTab);
 
 		if (ItemCover.enableCreativeTab) {
-			tabCovers = new TDCreativeTabCovers();
+			tabCovers = new CreativeTabTDCovers();
 		}
-		ItemCover.showInNEI = ThermalDynamics.configClient.get("Plugins.NEI", "Covers.Show", ItemCover.showInNEI, "Set to TRUE to show Covers in NEI.");
+		ItemCover.showInNEI = ThermalDynamics.CONFIG_CLIENT.get("Plugins.NEI", "Covers.Show", ItemCover.showInNEI, "Set to TRUE to show Covers in NEI.");
 	}
 
 	LinkedList<IInitializer> initializerList = new LinkedList<IInitializer>();

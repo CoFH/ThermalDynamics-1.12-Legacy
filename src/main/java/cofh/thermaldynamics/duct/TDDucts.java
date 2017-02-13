@@ -45,7 +45,7 @@ public class TDDucts {
 		}
 		Duct oldDuct = ductList.set(id, newDuct);
 		if (oldDuct != null) {
-			ThermalDynamics.log.info("Replacing " + oldDuct.unlocalizedName + " with " + newDuct.unlocalizedName);
+			ThermalDynamics.LOG.info("Replacing " + oldDuct.unlocalizedName + " with " + newDuct.unlocalizedName);
 		}
 		return newDuct;
 	}
