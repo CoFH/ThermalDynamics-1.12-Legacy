@@ -2,15 +2,15 @@ package cofh.thermaldynamics.duct.attachments.cover;
 
 import codechicken.lib.colour.Colour;
 import codechicken.lib.colour.ColourARGB;
-import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.model.bakery.CCQuad;
 import codechicken.lib.render.CCRSConsumer;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Vector3;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.render.RenderDuct;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -24,14 +24,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CoverRenderer {
 
@@ -61,6 +60,9 @@ public class CoverRenderer {
         }
     };
 
+    //Stop inventory churn of models being sliced.
+    public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+
     private static VertexLighterFlat setupLighter(CCRenderState ccrs, IBlockState state, IBlockAccess access, BlockPos pos,  IBakedModel model) {
         boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 && model.isAmbientOcclusion();
         VertexLighterFlat lighter = renderAO ? lighterSmooth.get() : lighterFlat.get();
@@ -85,7 +87,8 @@ public class CoverRenderer {
         return false;
     }
 
-    public static boolean renderItemQuads(IVertexConsumer consumer, List<CCQuad> quads, ItemStack stack) {
+    public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
+        List<CCQuad> retQuads = new LinkedList<CCQuad>();
         for (CCQuad quad : quads) {
             int colour = -1;
 
@@ -104,12 +107,10 @@ public class CoverRenderer {
             for (Colour qC : copyQuad.colours) {
                 qC.multiply(c);
             }
-
-            copyQuad.pipe(consumer);
-
+            retQuads.add(copyQuad);
         }
 
-        return false;
+        return retQuads;
     }
 
     public static boolean renderBlockCover(CCRenderState ccrs, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, CoverHoleRender.ITransformer[] hollowCover) {
@@ -154,21 +155,33 @@ public class CoverRenderer {
         return false;
     }
 
-    public static boolean renderItemCover(CCRenderState ccrs, BlockPos pos, int side, IBlockState state, Cuboid6 bounds) {
+    public static void renderItemCover(CCRenderState ccrs, int side, IBlockState state, Cuboid6 bounds) {
+
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
         IBakedModel model = renderItem.getItemModelWithOverrides(stack, null, null);
-        List<BakedQuad> quads = new ArrayList<BakedQuad>();
-        quads.addAll(model.getQuads(null, null, 0));
-        for (EnumFacing face : EnumFacing.VALUES) {
-            quads.addAll(model.getQuads(null, face, 0));
-        }
 
-        List<CCQuad> slicedQuads = sliceQuads(CCQuad.fromArray(quads), side, bounds);
+        String cacheKey = state.getBlock().getRegistryName() + "|" + state.getBlock().getMetaFromState(state);
+
+        List<CCQuad> renderQuads = itemQuadCache.getIfPresent(cacheKey);
+        if (renderQuads == null) {
+            List<BakedQuad> quads = new ArrayList<BakedQuad>();
+
+            quads.addAll(model.getQuads(null, null, 0));
+            for (EnumFacing face : EnumFacing.VALUES) {
+                quads.addAll(model.getQuads(null, face, 0));
+            }
+
+            renderQuads = applyItemTint(sliceQuads(CCQuad.fromArray(quads), side, bounds), stack);
+            itemQuadCache.put(cacheKey, renderQuads);
+        }
 
         CCRSConsumer consumer = new CCRSConsumer(ccrs);
 
-        return renderItemQuads(consumer, slicedQuads, stack);
+        for (CCQuad quad : renderQuads) {
+            quad.pipe(consumer);
+        }
+
     }
 
     public static List<CCQuad> sliceQuads(List<CCQuad> quads, int side, Cuboid6 bounds) {
@@ -193,10 +206,9 @@ public class CoverRenderer {
             }
 
             for (int v = 0; v < 4; v++) {
-                Vector3 posVect = quad.vertices[v].vec.copy();
-                quadPos[v][0] = (float) posVect.x;
-                quadPos[v][1] = (float) posVect.y;
-                quadPos[v][2] = (float) posVect.z;
+                quadPos[v][0] = (float) quad.vertices[v].vec.x;
+                quadPos[v][1] = (float) quad.vertices[v].vec.y;
+                quadPos[v][2] = (float) quad.vertices[v].vec.z;
 
                 flag = flag || quadPos[v][sideOffsets[side]] != sideSoftBounds[side];
                 flag2 = flag2 || quadPos[v][sideOffsets[side]] != (1 - sideSoftBounds[side]);
@@ -225,8 +237,6 @@ public class CoverRenderer {
                 }
             }
 
-
-            CCQuad finalQuad = quad.copy();
             for (int k2 = 0; k2 < verticesPerFace; k2++) {
                 boolean flag3 = quadPos[k2][sideOffsets[side]] != sideSoftBounds[side];
                 for (int j = 0; j < 3; j++) {
@@ -260,10 +270,10 @@ public class CoverRenderer {
 
                     u = icon.getInterpolatedU(u);
                     v = icon.getInterpolatedV(v);
-                    finalQuad.vertices[k2].uv.set(u, v);
-                    finalQuad.tintIndex = -1;
+                    quad.vertices[k2].uv.set(u, v);
+                    quad.tintIndex = -1;
                 }
-                finalQuad.vertices[k2].vec.set(quadPos[k2]);
+                quad.vertices[k2].vec.set(quadPos[k2]);
 
                 //int norm = -64 << 8;
                 //This should be ok.. Hopefully..
@@ -273,8 +283,9 @@ public class CoverRenderer {
                 //int colour = oldColour & 0xFFFFFF00 | (((oldColour & 0x000000FF) >>> 1) & 0x000000FF);
                 //finalQuad.colours[k2].set(colour);
             }
-            finalQuads.add(finalQuad);
+            finalQuads.add(quad);
         }
+
         return finalQuads;
     }
 

@@ -2,17 +2,12 @@ package cofh.thermaldynamics.render.item;
 
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.util.TransformUtils;
-import cofh.core.render.RenderUtils;
-import cofh.lib.render.RenderHelper;
 import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -23,11 +18,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import org.apache.commons.lang3.tuple.Pair;
@@ -84,7 +75,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
         CCRenderState ccrs = CCRenderState.instance();
         ccrs.reset();
         ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        CoverRenderer.renderItemCover(ccrs, new BlockPos(0, 0, 0), side.ordinal(), block.getStateFromMeta(meta), Cover.bounds[side.ordinal()]);
+        CoverRenderer.renderItemCover(ccrs, side.ordinal(), block.getStateFromMeta(meta), Cover.bounds[side.ordinal()]);
         ccrs.draw();
 
 
