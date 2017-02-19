@@ -2,7 +2,7 @@ package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiCore;
 import cofh.core.gui.element.TabInfo;
-import cofh.core.gui.element.TabRedstone;
+import cofh.core.gui.element.TabRedstoneControl;
 import cofh.lib.gui.element.ElementButton;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.block.AttachmentRegistry;
@@ -96,7 +96,7 @@ public class GuiDuctConnection extends GuiCore {
 			addTab(new TabInfo(this, myInfo));
 		}
 		if (conBase.canAlterRS()) {
-			addTab(new TabRedstone(this, conBase));
+			addTab(new TabRedstoneControl(this, conBase));
 		}
 		int[] flagNums = container.filter.validFlags();
 		flagButtons = new ElementButton[container.filter.numFlags()];
