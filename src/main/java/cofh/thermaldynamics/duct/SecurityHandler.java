@@ -6,12 +6,11 @@ import cofh.lib.util.helpers.SecurityHelper;
 import cofh.lib.util.helpers.StringHelper;
 import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
-
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import java.util.UUID;
 
 public class SecurityHandler implements ISecurable {
 
@@ -63,7 +62,6 @@ public class SecurityHandler implements ISecurable {
 						}
 					}.start();
 				}
-
 				return true;
 			}
 		}
