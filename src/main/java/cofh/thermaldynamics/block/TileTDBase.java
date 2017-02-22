@@ -886,9 +886,9 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 
     /* NETWORK METHODS */
     @Override
-    public PacketCoFHBase getPacket() {
+    public PacketCoFHBase getTilePacket() {
 
-        PacketCoFHBase payload = super.getPacket();
+        PacketCoFHBase payload = super.getTilePacket();
 
         int attachmentMask = 0;
         recalcFacadeMask();

@@ -143,7 +143,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
                     continue;
                 }
 
-                PacketHandler.sendTo(getPacket(), player);
+                PacketHandler.sendTo(getTilePacket(), player);
                 player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, worldObj, pos.getX(), pos.getY(), pos.getZ());
                 return true;
             }
@@ -174,9 +174,9 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
     }
 
     @Override
-    public PacketCoFHBase getPacket() {
+    public PacketCoFHBase getTilePacket() {
 
-        PacketCoFHBase packet = super.getPacket();
+        PacketCoFHBase packet = super.getTilePacket();
         if (data != BLANK_NAME) {
             packet.addBool(true);
             data.addToPacket(packet);
@@ -239,7 +239,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
             transport.setDirectory(entries);
         } else if (type == NETWORK_CONFIG && isServer) {
-            PacketHandler.sendTo(getPacket(), thePlayer);
+            PacketHandler.sendTo(getTilePacket(), thePlayer);
             thePlayer.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, worldObj, pos.getX(), pos.getY(), pos.getZ());
         }
     }
@@ -367,7 +367,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
             return true;
         }
 
-        PacketHandler.sendTo(getPacket(), player);
+        PacketHandler.sendTo(getTilePacket(), player);
         player.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, worldObj, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }

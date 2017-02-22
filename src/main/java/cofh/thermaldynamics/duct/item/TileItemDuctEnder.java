@@ -191,9 +191,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 	}
 
 	@Override
-	public PacketCoFHBase getPacket() {
+	public PacketCoFHBase getTilePacket() {
 
-		PacketCoFHBase packet = super.getPacket();
+		PacketCoFHBase packet = super.getTilePacket();
 
 		packet.addBool(isPowered());
 

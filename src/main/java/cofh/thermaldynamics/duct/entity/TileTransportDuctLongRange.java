@@ -202,9 +202,9 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
     }
 
     @Override
-    public PacketCoFHBase getPacket() {
+    public PacketCoFHBase getTilePacket() {
 
-        PacketCoFHBase packet = super.getPacket();
+        PacketCoFHBase packet = super.getTilePacket();
         packet.addShort(connections << 6 | d1 << 3 | d2);
         return packet;
     }

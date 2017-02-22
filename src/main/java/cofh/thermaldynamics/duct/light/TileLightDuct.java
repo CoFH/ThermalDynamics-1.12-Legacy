@@ -110,9 +110,9 @@ public class TileLightDuct extends TileTDBase {
 	}
 
 	@Override
-	public PacketCoFHBase getPacket() {
+	public PacketCoFHBase getTilePacket() {
 
-		PacketCoFHBase packet = super.getPacket();
+		PacketCoFHBase packet = super.getTilePacket();
 		packet.addBool(lit || (gridGlow != null && gridGlow.lit));
 		return packet;
 	}

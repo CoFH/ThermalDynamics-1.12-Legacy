@@ -286,9 +286,9 @@ public class TileFluidDuct extends TileTDBase {
     }
 
     @Override
-    public PacketCoFHBase getPacket() {
+    public PacketCoFHBase getTilePacket() {
 
-        PacketCoFHBase packet = super.getPacket();
+        PacketCoFHBase packet = super.getTilePacket();
         if (fluidGrid != null) {
             packet.addFluidStack(fluidGrid.getRenderFluid());
         } else {

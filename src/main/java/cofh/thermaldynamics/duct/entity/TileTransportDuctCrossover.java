@@ -271,9 +271,9 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
     }
 
     @Override
-    public PacketCoFHBase getPacket() {
+    public PacketCoFHBase getTilePacket() {
 
-        PacketCoFHBase packet = super.getPacket();
+        PacketCoFHBase packet = super.getTilePacket();
 
         int rangeMask = 0;
 

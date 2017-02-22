@@ -628,9 +628,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	}
 
 	@Override
-	public PacketCoFHBase getPacket() {
+	public PacketCoFHBase getTilePacket() {
 
-		PacketCoFHBase packet = super.getPacket();
+		PacketCoFHBase packet = super.getTilePacket();
 		packet.addByte(pathWeightType);
 		return packet;
 	}
