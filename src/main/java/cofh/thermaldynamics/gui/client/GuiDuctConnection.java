@@ -62,25 +62,16 @@ public class GuiDuctConnection extends GuiCore {
 
 		switch (conBase.getId()) {
 		case AttachmentRegistry.SERVO_ITEM:
-			generateInfo("tab.thermaldynamics.servoItem", 2);
+			generateInfo("tab.thermaldynamics.servoItem");
 			break;
 		case AttachmentRegistry.FILTER_ITEM:
-			generateInfo("tab.thermaldynamics.filterItem", 1);
+			generateInfo("tab.thermaldynamics.filterItem");
 			break;
 		case AttachmentRegistry.RETRIEVER_ITEM:
-			generateInfo("tab.thermaldynamics.retrieverItem", 2);
+			generateInfo("tab.thermaldynamics.retrieverItem");
 			break;
 		default:
 			break;
-		}
-	}
-
-	@Override
-	protected void generateInfo(String tileString, int lines) {
-
-		myInfo = StringHelper.localize(tileString + "." + 0);
-		for (int i = 1; i < lines; i++) {
-			myInfo += "\n\n" + StringHelper.localize(tileString + "." + i);
 		}
 	}
 
