@@ -13,30 +13,33 @@ import java.util.Map;
 
 public class EnergyGridGlowing extends EnergyGrid {
 
-
 	@Nullable
 	HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions;
 	HashMap<IMultiBlock, int[]> inputs = new HashMap<IMultiBlock, int[]>();
 	HashMap<IMultiBlock, int[]> outputs = new HashMap<IMultiBlock, int[]>();
 
 	public EnergyGridGlowing(World world, int type) {
+
 		super(world, type);
 	}
 
 	@Override
 	public void onMinorGridChange() {
+
 		super.onMinorGridChange();
 		directions = null;
 	}
 
 	@Override
 	public void onMajorGridChange() {
+
 		super.onMajorGridChange();
 		directions = null;
 	}
 
 	@Override
 	public void tickGrid() {
+
 		super.tickGrid();
 		if ((worldGrid.worldObj.getTotalWorldTime() % 2) == 0) {
 			processDirections();
@@ -44,6 +47,7 @@ public class EnergyGridGlowing extends EnergyGrid {
 	}
 
 	public void processDirections() {
+
 		Iterable<TileEnergyDuctGlowing> blocks = (Iterable<TileEnergyDuctGlowing>) Iterables.concat((Iterable) nodeSet, (Iterable) idleSet);
 
 		for (TileEnergyDuctGlowing block : blocks) {
@@ -64,6 +68,7 @@ public class EnergyGridGlowing extends EnergyGrid {
 	}
 
 	protected void processEntries(Iterable<TileEnergyDuctGlowing> blocks, HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions, boolean output, HashMap<IMultiBlock, int[]> entrySet) {
+
 		for (Iterator<Map.Entry<IMultiBlock, int[]>> iterator = entrySet.entrySet().iterator(); iterator.hasNext(); ) {
 			Map.Entry<IMultiBlock, int[]> entry = iterator.next();
 			IMultiBlock key = entry.getKey();
@@ -92,8 +97,8 @@ public class EnergyGridGlowing extends EnergyGrid {
 									n++;
 								}
 							}
-							float amount = ((float)val)/n;
-							if(n > 0){
+							float amount = ((float) val) / n;
+							if (n > 0) {
 								for (byte i = 0; i < 6; i++) {
 									if ((s & (1 << i)) != 0) {
 										sendFlux(block, amount, i, output);
@@ -113,23 +118,29 @@ public class EnergyGridGlowing extends EnergyGrid {
 	}
 
 	private void sendFlux(TileEnergyDuctGlowing block, float val, byte side, boolean output) {
+
 		block.addFlux(val, side, output);
 		IMultiBlock neighborMultiBlock = block.neighborMultiBlocks[side];
-		if(neighborMultiBlock instanceof TileEnergyDuctGlowing){
-			((TileEnergyDuctGlowing)neighborMultiBlock).addFlux(val, (byte)(side ^1), !output);
+		if (neighborMultiBlock instanceof TileEnergyDuctGlowing) {
+			((TileEnergyDuctGlowing) neighborMultiBlock).addFlux(val, (byte) (side ^ 1), !output);
 		}
 	}
 
 	public void noteReceivingEnergy(IMultiBlock block, byte side, int amount) {
+
 		noteEnergy(block, side, amount, this.inputs);
 	}
 
 	public void noteExtractingEnergy(IMultiBlock block, byte side, int amount) {
+
 		noteEnergy(block, side, amount, this.outputs);
 	}
 
 	protected void noteEnergy(IMultiBlock block, byte side, int amount, HashMap<IMultiBlock, int[]> map) {
-		if (amount == 0) return;
+
+		if (amount == 0) {
+			return;
+		}
 		int[] sideData = map.get(block);
 		if (sideData == null) {
 			sideData = new int[6];
@@ -138,8 +149,8 @@ public class EnergyGridGlowing extends EnergyGrid {
 		sideData[side] += amount;
 	}
 
-
 	public TObjectIntHashMap<IMultiBlock> buildDirectionTable(IMultiBlock block) {
+
 		TObjectIntHashMap<IMultiBlock> facingMap = new TObjectIntHashMap<IMultiBlock>();
 		TObjectIntHashMap<IMultiBlock> directionMap = new TObjectIntHashMap<IMultiBlock>(10, 0.5F, -1);
 		LinkedList<IMultiBlock> toProcess = new LinkedList<IMultiBlock>();
@@ -154,7 +165,9 @@ public class EnergyGridGlowing extends EnergyGrid {
 			for (byte i = 0; i < 6; i++) {
 				if (processing.isSideConnected(i)) {
 					IMultiBlock connectedSide = processing.getConnectedSide(i);
-					if (connectedSide == null || connectedSide.getGrid() != this) continue;
+					if (connectedSide == null || connectedSide.getGrid() != this) {
+						continue;
+					}
 					int dir = directionMap.get(connectedSide);
 					if (dir == -1) {
 						toProcess.add(connectedSide);

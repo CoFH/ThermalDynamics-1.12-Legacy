@@ -8,10 +8,9 @@ import cofh.lib.gui.element.listbox.SliderHorizontal;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
-
-import net.minecraft.util.ResourceLocation;
 
 public class GuiRelay extends GuiCore {
 

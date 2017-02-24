@@ -1,9 +1,8 @@
 package cofh.thermaldynamics.duct;
 
-import cofh.thermaldynamics.core.WorldGridList;
+import cofh.thermaldynamics.util.WorldGridList;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.world.World;
 
 public class GridStructural extends MultiBlockGrid {

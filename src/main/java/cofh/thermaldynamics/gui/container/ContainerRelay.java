@@ -2,7 +2,6 @@ package cofh.thermaldynamics.gui.container;
 
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.inventory.IContainerListener;
 
 public class ContainerRelay extends ContainerAttachmentBase {
@@ -43,7 +42,7 @@ public class ContainerRelay extends ContainerAttachmentBase {
 		}
 
 		for (IContainerListener listener : this.listeners) {
-            if (gridPower != prevGrid) {
+			if (gridPower != prevGrid) {
 				listener.sendProgressBarUpdate(this, 0, gridPower);
 			}
 			if (relayPower != prevRelay) {

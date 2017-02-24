@@ -9,8 +9,9 @@ import cofh.core.block.BlockCoreTile;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.lib.util.helpers.WrenchHelper;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
-import cofh.thermaldynamics.util.Utils;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -43,6 +44,8 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	protected BlockTDBase(Material material) {
 
 		super(material);
+		setSoundType(SoundType.METAL);
+		setCreativeTab(ThermalDynamics.tabCommon);
 	}
 
 	@Override
@@ -69,6 +72,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		return null;
 	}
 
+	/* BLOCK METHODS */
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 
@@ -196,11 +200,11 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		if (tile == null) {
 			return false;
 		}
-		if (Utils.isHoldingUsableWrench(player, traceResult)) {
+		if (WrenchHelper.isHoldingUsableWrench(player, traceResult)) {
 			if (ServerHelper.isServerWorld(world)) {
 				tile.onWrench(player, side);
 			}
-			Utils.usedWrench(player, traceResult);
+			WrenchHelper.usedWrench(player, traceResult);
 			return true;
 		}
 
@@ -231,13 +235,6 @@ public abstract class BlockTDBase extends BlockCoreTile {
 
 		return tile.openGui(player);
 	}
-
-    /* IBlockDebug */
-	//    @Override
-	//    public void debugBlock(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
-	//
-	//        ((TileTDBase) world.getTileEntity(pos)).doDebug(player);
-	//    }
 
 	/* IBlockInfo */
 	@Override

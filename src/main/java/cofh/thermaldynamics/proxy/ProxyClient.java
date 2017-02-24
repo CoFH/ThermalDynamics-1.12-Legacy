@@ -3,9 +3,6 @@ package cofh.thermaldynamics.proxy;
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
 import cofh.core.render.IconRegistry;
-import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.core.TickHandlerClient;
-import cofh.thermaldynamics.debughelper.CommandServerDebug;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
@@ -14,18 +11,20 @@ import cofh.thermaldynamics.duct.entity.SoundWoosh;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
+import cofh.thermaldynamics.init.TDBlocks;
+import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
 import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import cofh.thermaldynamics.render.item.RenderItemCover;
+import cofh.thermaldynamics.util.TickHandlerClient;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -48,9 +47,9 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 
-		FMLCommonHandler.instance().bus().register(TickHandlerClient.instance);
+		FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
 
-		for (BlockDuct duct : ThermalDynamics.blockDuct) {
+		for (BlockDuct duct : TDBlocks.blockDuct) {
 			StateMap.Builder stateMapBuilder = new StateMap.Builder();
 			stateMapBuilder.ignore(BlockDuct.META);
 			ModelLoader.setCustomStateMapper(duct, stateMapBuilder.build());
@@ -58,7 +57,7 @@ public class ProxyClient extends Proxy {
 		}
 
 		String[] names = { "basic", "hardened", "reinforced", "signalum", "resonant" };
-		Item[] items = { ThermalDynamics.itemFilter, ThermalDynamics.itemRetriever, ThermalDynamics.itemServo };
+		Item[] items = { TDItems.itemFilter, TDItems.itemRetriever, TDItems.itemServo };
 		for (Item item : items) {
 			for (int i = 0; i < names.length; i++) {
 				ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=" + item.getRegistryName().getResourcePath() + "_" + names[i]);
@@ -66,11 +65,9 @@ public class ProxyClient extends Proxy {
 			}
 		}
 		ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
-		ModelLoader.setCustomModelResourceLocation(ThermalDynamics.itemRelay, 0, location);
+		ModelLoader.setCustomModelResourceLocation(TDItems.itemRelay, 0, location);
 
-		ModelRegistryHelper.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
-
-		ClientCommandHandler.instance.registerCommand(new CommandServerDebug());
+		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.instance);
 
 		//MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
 		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new IRenderFactory<EntityTransport>() {

@@ -5,13 +5,12 @@ import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.slot.SlotFilter;
 import cofh.thermaldynamics.gui.slot.SlotFilterFluid;
-
-import java.util.LinkedList;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import java.util.LinkedList;
 
 public class ContainerDuctConnection extends ContainerAttachmentBase {
 
@@ -39,15 +38,15 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 		gridX0 = 89 - gridWidth * 9;
 
 		switch (gridHeight) {
-		case 1:
-			gridY0 = 38;
-			break;
-		case 2:
-			gridY0 = 29;
-			break;
-		default:
-			gridY0 = 20;
-			break;
+			case 1:
+				gridY0 = 38;
+				break;
+			case 2:
+				gridY0 = 29;
+				break;
+			default:
+				gridY0 = 20;
+				break;
 		}
 		for (int i = 0; i < gridHeight; i++) {
 			for (int j = 0; j < gridWidth; j++) {

@@ -2,6 +2,8 @@ package cofh.thermaldynamics.duct.attachments.relay;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.util.BlockUtils;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.api.block.IBlockConfigGui;
@@ -10,8 +12,6 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Translation;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
@@ -21,27 +21,28 @@ import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
+import cofh.thermaldynamics.init.TDBlocks;
+import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class Relay extends Attachment implements IBlockConfigGui, IPortableData {
 
@@ -99,9 +100,10 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
-        if (layer != BlockRenderLayer.SOLID){
-            return false;
-        }
+
+		if (layer != BlockRenderLayer.SOLID) {
+			return false;
+		}
 
 		Translation trans = Vector3.fromTileCenter(tile).translation();
 		RenderDuct.modelConnection[1 + (type & 1)][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.signalTexture));
@@ -111,7 +113,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	public ItemStack getPickBlock() {
 
-		return new ItemStack(ThermalDynamics.itemRelay);
+		return new ItemStack(TDItems.itemRelay);
 	}
 
 	@Override
@@ -158,11 +160,12 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	public int getRawRedstoneLevel() {
-        EnumFacing side = EnumFacing.VALUES[this.side];
-        BlockPos offsetPos = tile.getPos().offset(side);
+
+		EnumFacing side = EnumFacing.VALUES[this.side];
+		BlockPos offsetPos = tile.getPos().offset(side);
 		int level = 0;
 
-        IBlockState state = tile.world().getBlockState(offsetPos);
+		IBlockState state = tile.world().getBlockState(offsetPos);
 		Block block = state.getBlock();
 
 		if (type == 0) { // should calc vanilla redstone level
@@ -186,9 +189,9 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			if (state.hasComparatorInputOverride()) {
 				level = state.getComparatorInputOverride(tile.world(), offsetPos);
 			} else if (block.isNormalCube(state, tile.world(), offsetPos)) {
-                BlockPos offset2 = offsetPos.offset(side);
+				BlockPos offset2 = offsetPos.offset(side);
 
-                IBlockState otherState = tile.getWorld().getBlockState(offset2);
+				IBlockState otherState = tile.getWorld().getBlockState(offset2);
 
 				if (otherState.hasComparatorInputOverride()) {
 					level = otherState.getComparatorInputOverride(tile.world(), offsetPos);
@@ -201,7 +204,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 	public static boolean isBlockDuct(Block block) {
 
-		for (BlockDuct blockDuct : ThermalDynamics.blockDuct) {
+		for (BlockDuct blockDuct : TDBlocks.blockDuct) {
 			if (block == blockDuct) {
 				return true;
 			}
@@ -243,14 +246,14 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			}
 
 			if (isOutput()) {
-                BlockPos offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
+				BlockPos offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
 				tile.world().notifyNeighborsOfStateChange(offsetPos, tile.getBlockType());
 
 				for (int i = 0; i < 6; i++) {
 					if (side == (i ^ 1)) {
 						continue;
 					}
-                    offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
+					offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
 					tile.world().notifyNeighborsOfStateChange(offsetPos, tile.getBlockType());
 				}
 
@@ -270,7 +273,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask() {
 
 		return CoverHoleRender.hollowDuctTile;
@@ -402,7 +405,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		}
 
-        BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+		BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 
 	}
 

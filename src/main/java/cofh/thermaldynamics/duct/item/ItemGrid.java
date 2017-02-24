@@ -1,18 +1,16 @@
 package cofh.thermaldynamics.duct.item;
 
-import codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ItemGrid extends MultiBlockGridWithRoutes {
 

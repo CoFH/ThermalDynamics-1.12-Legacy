@@ -22,127 +22,110 @@ import java.util.List;
 
 public class ItemFilter extends ItemAttachment {
 
-    public static EnumRarity[] rarity = { EnumRarity.COMMON, EnumRarity.COMMON, EnumRarity.UNCOMMON, EnumRarity.UNCOMMON, EnumRarity.RARE };
-    public static ItemStack basicFilter, hardenedFilter, reinforcedFilter, signalumFilter, resonantFilter;
+	public static EnumRarity[] rarity = { EnumRarity.COMMON, EnumRarity.COMMON, EnumRarity.UNCOMMON, EnumRarity.UNCOMMON, EnumRarity.RARE };
+	public static ItemStack basicFilter, hardenedFilter, reinforcedFilter, signalumFilter, resonantFilter;
 
-    public ItemFilter() {
+	public ItemFilter() {
 
-        super();
-        this.setUnlocalizedName("thermaldynamics.filter");
-    }
-
-    @Override
-    public String getUnlocalizedName(ItemStack item) {
-
-        return super.getUnlocalizedName(item) + "." + item.getItemDamage();
-    }
-
-    @Override
-    public void getSubItems(Item item, CreativeTabs tab, List list) {
-
-        for (int i = 0; i < 5; i++) {
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
-
-    @Override
-    public EnumRarity getRarity(ItemStack stack) {
-
-        return rarity[stack.getItemDamage() % 5];
-    }
-
-	/*@Override
-    @SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister ir) {
-
-		icons = new IIcon[5];
-		for (int i = 0; i < 5; i++) {
-			icons[i] = ir.registerIcon("thermaldynamics:filter" + i);
-		}
-		this.itemIcon = icons[0];
+		super();
+		this.setUnlocalizedName("thermaldynamics.filter");
 	}
 
 	@Override
-	public IIcon getIconFromDamage(int i) {
+	public String getUnlocalizedName(ItemStack item) {
 
-		return icons[i % icons.length];
-	}*/
+		return super.getUnlocalizedName(item) + "." + item.getItemDamage();
+	}
 
-    @Override
-    public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
+	@Override
+	public void getSubItems(Item item, CreativeTabs tab, List list) {
 
-        int type = stack.getItemDamage() % 5;
-        if (tile instanceof TileFluidDuct) {
-            return new FilterFluid(tile, (byte) (side.ordinal() ^ 1), type);
-        }
-        if (tile instanceof TileItemDuct) {
-            return new FilterItem(tile, (byte) (side.ordinal() ^ 1), type);
-        }
-        return null;
-    }
+		for (int i = 0; i < 5; i++) {
+			list.add(new ItemStack(item, 1, i));
+		}
+	}
 
-    @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
 
-        super.addInformation(stack, player, list, extraInfo);
+		return rarity[stack.getItemDamage() % 5];
+	}
 
-        int type = stack.getItemDamage() % 5;
+	@Override
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
 
-        if (!StringHelper.isShiftKeyDown()) {
-            list.add(StringHelper.getInfoText("item.thermaldynamics.filter.info"));
+		int type = stack.getItemDamage() % 5;
+		if (tile instanceof TileFluidDuct) {
+			return new FilterFluid(tile, (byte) (side.ordinal() ^ 1), type);
+		}
+		if (tile instanceof TileItemDuct) {
+			return new FilterItem(tile, (byte) (side.ordinal() ^ 1), type);
+		}
+		return null;
+	}
 
-            if (StringHelper.displayShiftForDetail) {
-                list.add(StringHelper.shiftForDetails());
-            }
-            return;
-        }
-        list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
-        addFiltering(list, type, Duct.Type.ITEM);
-        list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
-        addFiltering(list, type, Duct.Type.FLUID);
-    }
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
 
-    public static void addFiltering(List list, int type, Duct.Type duct) {
+		super.addInformation(stack, player, list, extraInfo);
 
-        StringBuilder b = new StringBuilder();
+		int type = stack.getItemDamage() % 5;
 
-        b.append(StringHelper.localize("info.thermaldynamics.filter.options") + ": " + StringHelper.WHITE);
-        boolean flag = false;
-        for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
-            if (FilterLogic.canAlterFlag(duct, type, i)) {
-                if (flag) {
-                    b.append(", ");
-                } else {
-                    flag = true;
-                }
-                b.append(StringHelper.localize("info.thermaldynamics.filter." + FilterLogic.flagTypes[i]));
-            }
-        }
-        flag = false;
-        for (String s : Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(b.toString(), 140)) {
-            if (flag) {
-                s = "  " + StringHelper.WHITE + s;
-            }
-            flag = true;
-            list.add("  " + s + StringHelper.END);
-        }
-    }
+		if (!StringHelper.isShiftKeyDown()) {
+			list.add(StringHelper.getInfoText("item.thermaldynamics.filter.info"));
 
-    /* IInitializer */
-    @Override
-    public boolean preInit() {
+			if (StringHelper.displayShiftForDetail) {
+				list.add(StringHelper.shiftForDetails());
+			}
+			return;
+		}
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
+		addFiltering(list, type, Duct.Type.ITEM);
+		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
+		addFiltering(list, type, Duct.Type.FLUID);
+	}
 
-        GameRegistry.registerItem(this, "filter");
+	public static void addFiltering(List list, int type, Duct.Type duct) {
 
-        basicFilter = new ItemStack(this, 1, 0);
-        hardenedFilter = new ItemStack(this, 1, 1);
-        reinforcedFilter = new ItemStack(this, 1, 2);
-        signalumFilter = new ItemStack(this, 1, 3);
-        resonantFilter = new ItemStack(this, 1, 4);
+		StringBuilder b = new StringBuilder();
 
-        return true;
-    }
+		b.append(StringHelper.localize("info.thermaldynamics.filter.options") + ": " + StringHelper.WHITE);
+		boolean flag = false;
+		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
+			if (FilterLogic.canAlterFlag(duct, type, i)) {
+				if (flag) {
+					b.append(", ");
+				} else {
+					flag = true;
+				}
+				b.append(StringHelper.localize("info.thermaldynamics.filter." + FilterLogic.flagTypes[i]));
+			}
+		}
+		flag = false;
+		for (String s : Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(b.toString(), 140)) {
+			if (flag) {
+				s = "  " + StringHelper.WHITE + s;
+			}
+			flag = true;
+			list.add("  " + s + StringHelper.END);
+		}
+	}
 
-    //IIcon[] icons;
+	/* IInitializer */
+	@Override
+	public boolean preInit() {
+
+		GameRegistry.registerItem(this, "filter");
+
+		basicFilter = new ItemStack(this, 1, 0);
+		hardenedFilter = new ItemStack(this, 1, 1);
+		reinforcedFilter = new ItemStack(this, 1, 2);
+		signalumFilter = new ItemStack(this, 1, 3);
+		resonantFilter = new ItemStack(this, 1, 4);
+
+		return true;
+	}
+
+	//IIcon[] icons;
 
 }

@@ -1,7 +1,9 @@
-package cofh.thermaldynamics.core;
+package cofh.thermaldynamics.util;
 
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -10,14 +12,11 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.WeakHashMap;
 
-import net.minecraft.world.World;
-import net.minecraftforge.event.world.WorldEvent;
-
 public class TickHandler {
 
-	public static final TickHandler instance = new TickHandler();
-	public static final WeakHashMap<World, WorldGridList> handlers = new WeakHashMap<World, WorldGridList>();
-	public static final LinkedHashSet<WeakReference<IMultiBlock>> multiBlocksToCalculate = new LinkedHashSet<WeakReference<IMultiBlock>>();
+	public static final TickHandler INSTANCE = new TickHandler();
+	public static final WeakHashMap<World, WorldGridList> HANDLERS = new WeakHashMap<World, WorldGridList>();
+	public static final LinkedHashSet<WeakReference<IMultiBlock>> MULTI_BLOCKS_TO_CALCULATE = new LinkedHashSet<WeakReference<IMultiBlock>>();
 
 	public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
 
@@ -26,8 +25,8 @@ public class TickHandler {
 				getTickHandler(multiBlock.world()).tickingBlocks.add(multiBlock);
 			}
 		} else {
-			synchronized (multiBlocksToCalculate) {
-				multiBlocksToCalculate.add(new WeakReference<IMultiBlock>(multiBlock));
+			synchronized (MULTI_BLOCKS_TO_CALCULATE) {
+				MULTI_BLOCKS_TO_CALCULATE.add(new WeakReference<IMultiBlock>(multiBlock));
 			}
 		}
 	}
@@ -35,17 +34,16 @@ public class TickHandler {
 	public static WorldGridList getTickHandler(World world) {
 
 		if (ServerHelper.isClientWorld(world)) {
-			throw new IllegalStateException("World Grid called client-side");
+			throw new IllegalStateException("World Grid called Client-side");
 		}
+		synchronized (HANDLERS) {
+			WorldGridList worldGridList = HANDLERS.get(world);
 
-		synchronized (handlers) {
-			WorldGridList worldGridList = handlers.get(world);
 			if (worldGridList != null) {
 				return worldGridList;
 			}
-
 			worldGridList = new WorldGridList(world);
-			handlers.put(world, worldGridList);
+			HANDLERS.put(world, worldGridList);
 			return worldGridList;
 		}
 	}
@@ -56,10 +54,9 @@ public class TickHandler {
 		if (event.phase != TickEvent.Phase.END) {
 			return;
 		}
-
-		synchronized (multiBlocksToCalculate) {
-			if (!multiBlocksToCalculate.isEmpty()) {
-				Iterator<WeakReference<IMultiBlock>> iterator = multiBlocksToCalculate.iterator();
+		synchronized (MULTI_BLOCKS_TO_CALCULATE) {
+			if (!MULTI_BLOCKS_TO_CALCULATE.isEmpty()) {
+				Iterator<WeakReference<IMultiBlock>> iterator = MULTI_BLOCKS_TO_CALCULATE.iterator();
 				while (iterator.hasNext()) {
 					IMultiBlock multiBlock = iterator.next().get();
 					if (multiBlock == null) {
@@ -77,15 +74,15 @@ public class TickHandler {
 	}
 
 	@SubscribeEvent
-	public void tick(TickEvent.WorldTickEvent evt) {
+	public void tick(TickEvent.WorldTickEvent event) {
 
-		synchronized (handlers) {
-			WorldGridList worldGridList = handlers.get(evt.world);
+		synchronized (HANDLERS) {
+			WorldGridList worldGridList = HANDLERS.get(event.world);
+
 			if (worldGridList == null) {
 				return;
 			}
-
-			if (evt.phase == TickEvent.Phase.START) {
+			if (event.phase == TickEvent.Phase.START) {
 				worldGridList.tickStart();
 			} else {
 				worldGridList.tickEnd();
@@ -94,22 +91,20 @@ public class TickHandler {
 	}
 
 	@SubscribeEvent
-	public void worldUnload(WorldEvent.Unload evt) {
+	public void worldUnload(WorldEvent.Unload event) {
 
-		World world = evt.getWorld();
+		World world = event.getWorld();
 
 		if (world.isRemote) {
 			return;
 		}
-
-		synchronized (handlers) {
-			handlers.remove(world);
-			handlers.isEmpty();
+		synchronized (HANDLERS) {
+			HANDLERS.remove(world);
+			HANDLERS.isEmpty();
 		}
-
-		synchronized (multiBlocksToCalculate) {
-			if (!multiBlocksToCalculate.isEmpty()) {
-				Iterator<WeakReference<IMultiBlock>> iterator = multiBlocksToCalculate.iterator();
+		synchronized (MULTI_BLOCKS_TO_CALCULATE) {
+			if (!MULTI_BLOCKS_TO_CALCULATE.isEmpty()) {
+				Iterator<WeakReference<IMultiBlock>> iterator = MULTI_BLOCKS_TO_CALCULATE.iterator();
 				while (iterator.hasNext()) {
 					IMultiBlock multiBlock = iterator.next().get();
 					if (multiBlock == null || multiBlock.world() == world) {

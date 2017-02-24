@@ -13,6 +13,18 @@ public class TDItems {
 
 	public static void preInit() {
 
+		itemServo = new ItemServo();
+		itemFilter = new ItemFilter();
+		itemRetriever = new ItemRetriever();
+		itemRelay = new ItemRelay();
+		itemCover = new ItemCover();
+
+		initList.add(itemServo);
+		initList.add(itemFilter);
+		initList.add(itemRetriever);
+		initList.add(itemRelay);
+		initList.add(itemCover);
+
 		for (IInitializer init : initList) {
 			init.preInit();
 		}

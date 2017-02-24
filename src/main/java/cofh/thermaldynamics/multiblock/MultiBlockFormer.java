@@ -1,9 +1,9 @@
 package cofh.thermaldynamics.multiblock;
 
+import net.minecraft.util.EnumFacing;
+
 import java.util.LinkedList;
 import java.util.Queue;
-
-import net.minecraft.util.EnumFacing;
 
 public class MultiBlockFormer {
 

@@ -4,7 +4,6 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;

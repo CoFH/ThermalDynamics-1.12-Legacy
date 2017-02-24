@@ -1,20 +1,18 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
-
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
-
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.hash.TIntHashSet;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
+import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
 
 public abstract class FilterLogicBase implements IFilterConfig {
 
@@ -34,12 +32,7 @@ public abstract class FilterLogicBase implements IFilterConfig {
 
 		public boolean appliesTo(FilterLogicBase base) {
 
-			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter)
-					&& (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter)
-					&& (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo)
-					&& (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo)
-					&& (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo)
-					&& (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
+			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter) && (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter) && (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
 		}
 	}
 

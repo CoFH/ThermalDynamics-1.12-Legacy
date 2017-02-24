@@ -117,7 +117,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered || isValidInput != wasValidInput) {
-            BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 		}
 	}
 
@@ -127,7 +127,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered) {
-            BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 		}
 	}
 
@@ -320,7 +320,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public Object getGuiClient(InventoryPlayer inventory) {
 
 		return new GuiDuctConnection(inventory, this);
@@ -392,8 +392,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask() {
+
 		return CoverHoleRender.hollowDuctTile;
 	}
 }

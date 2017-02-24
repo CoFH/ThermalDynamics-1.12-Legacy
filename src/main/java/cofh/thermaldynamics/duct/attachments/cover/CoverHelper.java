@@ -1,20 +1,15 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import cofh.thermaldynamics.ThermalDynamics;
-
-import java.util.HashMap;
-
+import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.HashMap;
 
 public class CoverHelper {
 
@@ -48,17 +43,18 @@ public class CoverHelper {
 	}
 
 	public static boolean isValid(ItemStack stack) {
-        try {
-            if (stack.getItem() instanceof ItemBlock) {
-                if (isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-                    return true;
-                }
-            }
-            return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+
+		try {
+			if (stack.getItem() instanceof ItemBlock) {
+				if (isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+					return true;
+				}
+			}
+			return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public static boolean isValid(Block block, int meta) {
@@ -88,7 +84,7 @@ public class CoverHelper {
 		tag.setString("Block", ForgeRegistries.BLOCKS.getKey(block).toString());
 		tag.setByte("Meta", ((byte) meta));
 
-		ItemStack itemStack = new ItemStack(ThermalDynamics.itemCover, 1);
+		ItemStack itemStack = new ItemStack(TDItems.itemCover, 1);
 		itemStack.setTagCompound(tag);
 		return itemStack;
 	}

@@ -1,12 +1,11 @@
 package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.block.TileTDBase;
+import net.minecraft.util.EnumFacing;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
-
-import net.minecraft.util.EnumFacing;
 
 public class RouteCache {
 
@@ -55,7 +54,7 @@ public class RouteCache {
 	public synchronized void generateCache() {
 
 		while (processStep()) {
-        }
+		}
 
 	}
 

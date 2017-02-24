@@ -121,7 +121,7 @@ public class ListWrapper<T> implements Iterable<T> {
 			return i < array.length;
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings ("unchecked")
 		@Override
 		public T next() {
 

@@ -1,22 +1,20 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.render.CCModel;
+import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.render.RenderHelper;
-import codechicken.lib.render.CCModel;
-import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
@@ -51,9 +49,9 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		TileItemDuctEnder duct = (TileItemDuctEnder) tile;
 
 		if (duct.powered) {
-            CCRenderState ccrs = CCRenderState.instance();
-            ccrs.reset();
-			ccrs.preRenderWorld(tile.getWorld(),tile.getPos());
+			CCRenderState ccrs = CCRenderState.instance();
+			ccrs.reset();
+			ccrs.preRenderWorld(tile.getWorld(), tile.getPos());
 
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
@@ -64,10 +62,10 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 
 			drawEnderStarfield(ccrs, x, y, z, connections, frame, duct.centerLine, duct.centerLineSub);
 
-            ccrs.reset();
+			ccrs.reset();
 
 		} else {
-            super.renderTileEntityAt(duct, x, y, z, frame, destroyStage);
+			super.renderTileEntityAt(duct, x, y, z, frame, destroyStage);
 		}
 	}
 
@@ -76,7 +74,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		if (ShaderHelper.useShaders() || ShaderStarfield.starfieldShader == 0) {
 			TextureUtils.changeTexture(ShaderStarfield.starsTexture);
 		} else {
-            TextureUtils.changeTexture(RenderHelper.MC_BLOCK_SHEET);
+			TextureUtils.changeTexture(RenderHelper.MC_BLOCK_SHEET);
 		}
 
 		CCModel[] models = RenderDuct.modelFluid[5];

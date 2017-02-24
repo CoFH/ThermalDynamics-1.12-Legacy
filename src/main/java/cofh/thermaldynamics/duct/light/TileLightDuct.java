@@ -4,7 +4,6 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -100,7 +99,7 @@ public class TileLightDuct extends TileTDBase {
 				continue;
 			}
 
-            EnumFacing dir = valid_directions[i];
+			EnumFacing dir = valid_directions[i];
 			lit = worldObj.isSidePowered(pos.offset(dir), dir);
 		}
 
@@ -151,7 +150,7 @@ public class TileLightDuct extends TileTDBase {
 
 		super.writeToNBT(nbt);
 		nbt.setBoolean("isLit", lit);
-        return nbt;
+		return nbt;
 	}
 
 	@Override

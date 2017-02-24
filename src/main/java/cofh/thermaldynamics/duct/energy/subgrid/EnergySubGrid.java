@@ -3,12 +3,11 @@ package cofh.thermaldynamics.duct.energy.subgrid;
 import cofh.api.energy.EnergyStorage;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public class EnergySubGrid extends MultiBlockGrid {
 
@@ -42,8 +41,7 @@ public class EnergySubGrid extends MultiBlockGrid {
 
 	public int getNodeShare(IMultiBlock ductEnergy) {
 
-		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
-				+ myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
+		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size() + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
 
 	@Override
@@ -78,4 +76,5 @@ public class EnergySubGrid extends MultiBlockGrid {
 
 		super.addInfo(info, player, debug);
 	}
+
 }

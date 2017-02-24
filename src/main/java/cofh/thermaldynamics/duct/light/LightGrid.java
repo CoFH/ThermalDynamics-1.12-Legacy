@@ -3,19 +3,18 @@ package cofh.thermaldynamics.duct.light;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.lib.util.ChunkCoord;
-import cofh.thermaldynamics.core.WorldGridList;
+import cofh.thermaldynamics.util.WorldGridList;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import com.google.common.collect.Iterables;
-
-import java.util.HashSet;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
+import java.util.HashSet;
+import java.util.List;
 
 public class LightGrid extends MultiBlockGrid {
 
@@ -98,7 +97,7 @@ public class LightGrid extends MultiBlockGrid {
 
 	boolean lit = false;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public void setLight(boolean lit) {
 
 		this.lit = lit;

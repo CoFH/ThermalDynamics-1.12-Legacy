@@ -1,6 +1,8 @@
-package cofh.thermaldynamics.core;
+package cofh.thermaldynamics.util;
 
 import cofh.thermaldynamics.duct.item.TileItemDuct;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -9,12 +11,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
-
 public class TickHandlerClient {
 
-	public static final TickHandlerClient instance = new TickHandlerClient();
+	public static final TickHandlerClient INSTANCE = new TickHandlerClient();
 	public static HashSet<TileItemDuct> tickBlocks = new HashSet<TileItemDuct>();
 	public static HashSet<TileItemDuct> tickBlocksToAdd = new HashSet<TileItemDuct>();
 	public static HashSet<TileItemDuct> tickBlocksToRemove = new HashSet<TileItemDuct>();
@@ -22,12 +21,12 @@ public class TickHandlerClient {
 	boolean needsMenu = false;
 
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void tick(TickEvent.ClientTickEvent evt) {
+	@SideOnly (Side.CLIENT)
+	public void tick(TickEvent.ClientTickEvent event) {
 
 		Minecraft mc = Minecraft.getMinecraft();
 
-		if (evt.phase == TickEvent.Phase.END) {
+		if (event.phase == TickEvent.Phase.END) {
 			if (mc.currentScreen instanceof GuiMainMenu) {
 				if (needsMenu) {
 					onMainMenu();
@@ -36,13 +35,12 @@ public class TickHandlerClient {
 			} else if (mc.inGameHasFocus) {
 				needsMenu = true;
 			}
-
 			if (!tickBlocksToAdd.isEmpty()) {
 				tickBlocks.addAll(tickBlocksToAdd);
 				tickBlocksToAdd.clear();
 			}
 			if (!mc.isGamePaused() && !tickBlocks.isEmpty()) {
-				for (Iterator<TileItemDuct> iterator = tickBlocks.iterator(); iterator.hasNext();) {
+				for (Iterator<TileItemDuct> iterator = tickBlocks.iterator(); iterator.hasNext(); ) {
 					TileItemDuct aCond = iterator.next();
 					if (aCond.isInvalid()) {
 						iterator.remove();
@@ -58,10 +56,9 @@ public class TickHandlerClient {
 
 	public void onMainMenu() {
 
-		synchronized (TickHandler.handlers) {
-			TickHandler.handlers.clear();
+		synchronized (TickHandler.HANDLERS) {
+			TickHandler.HANDLERS.clear();
 		}
-
 		tickBlocks.clear();
 		tickBlocksToAdd.clear();
 		tickBlocksToRemove.clear();

@@ -4,22 +4,15 @@ import codechicken.lib.util.BlockUtils;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.ItemGrid;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import cofh.thermaldynamics.multiblock.listtypes.ListWrapper;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,6 +20,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ServoItem extends ServoBase {
 
@@ -208,7 +205,7 @@ public class ServoItem extends ServoBase {
 
 	public void handleItemSending() {
 
-        if (cachedInv != null) {
+		if (cachedInv != null) {
 			for (int slot = 0; slot < cachedInv.getSlots(); slot++) {
 				ItemStack itemStack = cachedInv.getStackInSlot(slot);
 				if (itemStack == null) {
@@ -257,7 +254,7 @@ public class ServoItem extends ServoBase {
 
 	public void handleStuffedItems() {
 
-		for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext();) {
+		for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext(); ) {
 			ItemStack stuffedItem = iterator.next();
 			ItemStack send = stuffedItem.copy();
 			send.stackSize = Math.min(send.stackSize, send.getMaxStackSize());
@@ -327,7 +324,7 @@ public class ServoItem extends ServoBase {
 
 		if (stuffed != !stuffedItems.isEmpty()) {
 			stuffed = isStuffed();
-            BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
 		}
 		super.onNeighborChange();
 	}
@@ -340,16 +337,19 @@ public class ServoItem extends ServoBase {
 
 	@Override
 	public boolean isValidTile(TileEntity tile) {
+
 		return tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
 	public void clearCache() {
+
 		cachedInv = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
+
 		cachedInv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 

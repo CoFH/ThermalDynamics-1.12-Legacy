@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.thermaldynamics.block.Attachment;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IContainerListener;

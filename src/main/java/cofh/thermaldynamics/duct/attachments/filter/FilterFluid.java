@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.attachments.filter;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.Duct;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;

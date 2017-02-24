@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 
 public class TileEnergyDuctGlowing extends TileEnergyDuct {
+
 	public float[] fluxIn = new float[6];
 	public float[] fluxOut = new float[6];
 	int totalFlux = 0;
@@ -16,10 +17,12 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 
 	@Override
 	public MultiBlockGrid getNewGrid() {
+
 		return new EnergyGridGlowing(worldObj, getDuctType().type);
 	}
 
 	public void resetFlux() {
+
 		for (int i = 0; i < 6; i++) {
 			fluxIn[i] = 0;
 			fluxOut[i] = 0;
@@ -27,8 +30,8 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 		totalFlux = 0;
 	}
 
-
 	public void updateFlux() {
+
 		int hash = 0;
 		int sideMask = 0;
 		for (int i = 0; i < 6; i++) {
@@ -42,7 +45,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 		for (int i = 0; i < 6; i++) {
 			float aFlux = fluxOut[i];
 			if (aFlux != 0) {
-				sideMask |= 1 << (6+i);
+				sideMask |= 1 << (6 + i);
 				hash = hash * 31 + Float.floatToIntBits(aFlux);
 			}
 		}
@@ -72,6 +75,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 
 	@Override
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+
 		byte b = payload.getByte();
 		if (b == 0) {
 			int sideMask = payload.getInt();
@@ -85,7 +89,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 			}
 
 			for (int i = 0; i < 6; i++) {
-				if ((sideMask & (1 << (1+i))) != 0) {
+				if ((sideMask & (1 << (1 + i))) != 0) {
 					fluxOut[i] = payload.getFloat();
 				} else {
 					fluxOut[i] = 0;
@@ -94,8 +98,11 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 		}
 	}
 
-	public void addFlux(float amount, byte side, boolean output){
-		if (amount == 0 || side == -1) return;
+	public void addFlux(float amount, byte side, boolean output) {
+
+		if (amount == 0 || side == -1) {
+			return;
+		}
 		totalFlux += Math.abs(amount);
 
 		float[] fluxArray = output ? this.fluxOut : this.fluxIn;
@@ -104,7 +111,10 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 	}
 
 	public void addFlux(int amount, int sideMask, boolean output) {
-		if (amount == 0 || sideMask == 0) return;
+
+		if (amount == 0 || sideMask == 0) {
+			return;
+		}
 		totalFlux += Math.abs(amount);
 
 		float[] fluxArray = output ? this.fluxOut : this.fluxIn;
@@ -134,7 +144,9 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 				numSides++;
 			}
 		}
-		if(numSides == 0) return;
+		if (numSides == 0) {
+			return;
+		}
 		float perSide = ((float) amount) / numSides;
 		for (int i = 0; i < 6; i++) {
 			if ((sideMask & (1 << i)) != 0 && neighborTypes[i] != NeighborTypes.NONE && connectionTypes[i].allowTransfer) {
@@ -145,6 +157,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 
 	@Override
 	protected int sendEnergy(IEnergyReceiver receiver, int maxReceive, byte side, boolean simulate) {
+
 		int energy = super.sendEnergy(receiver, maxReceive, side, simulate);
 		if (!simulate && internalGrid != null) {
 			((EnergyGridGlowing) internalGrid).noteExtractingEnergy(this, side, energy);
@@ -154,6 +167,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 
 	@Override
 	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+
 		int energy = super.extractEnergy(from, maxExtract, simulate);
 		if (!simulate && internalGrid != null) {
 			((EnergyGridGlowing) internalGrid).noteExtractingEnergy(this, (byte) from.ordinal(), energy);
@@ -163,6 +177,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 
 	@Override
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+
 		int energy = super.receiveEnergy(from, maxReceive, simulate);
 		if (!simulate && internalGrid != null) {
 			((EnergyGridGlowing) internalGrid).noteReceivingEnergy(this, (byte) from.ordinal(), energy);
@@ -172,20 +187,21 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 
 	@Override
 	public void randomDisplayTick() {
+
 		super.randomDisplayTick();
-//		for (int i = 0; i < flux.length; i++) {
-//			float v = flux[i];
-//			if (v != 0) {
-//				int n = (int) (Math.ceil(Math.log1p(Math.abs(v))));
-//				for (int i1 = 0; i1 < n; i1++) {
-//					float d = worldObj.rand.nextFloat();
-//					EnumFacing side = EnumFacing.values()[i];
-//					float x = x() + 0.5F + side.getFrontOffsetX() * d;
-//					float y = y() + 0.5F + side.getFrontOffsetY() * d;
-//					float z = z() + 0.5F + side.getFrontOffsetZ() * d;
-//					worldObj.spawnParticle(EnumParticleTypes.REDSTONE, x, y, z, 0, 0, 0);
-//				}
-//			}
-//		}
+		//		for (int i = 0; i < flux.length; i++) {
+		//			float v = flux[i];
+		//			if (v != 0) {
+		//				int n = (int) (Math.ceil(Math.log1p(Math.abs(v))));
+		//				for (int i1 = 0; i1 < n; i1++) {
+		//					float d = worldObj.rand.nextFloat();
+		//					EnumFacing side = EnumFacing.values()[i];
+		//					float x = x() + 0.5F + side.getFrontOffsetX() * d;
+		//					float y = y() + 0.5F + side.getFrontOffsetY() * d;
+		//					float z = z() + 0.5F + side.getFrontOffsetZ() * d;
+		//					worldObj.spawnParticle(EnumParticleTypes.REDSTONE, x, y, z, 0, 0, 0);
+		//				}
+		//			}
+		//		}
 	}
 }

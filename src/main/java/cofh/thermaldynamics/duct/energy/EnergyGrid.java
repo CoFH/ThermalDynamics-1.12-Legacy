@@ -6,7 +6,6 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
-
 import net.minecraft.world.World;
 
 public class EnergyGrid extends MultiBlockGridTracking {
@@ -28,8 +27,7 @@ public class EnergyGrid extends MultiBlockGridTracking {
 
 		for (int i = 0; i < 4; i++) {
 			category = category2 + names[i];
-			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10,
-					NODE_TRANSFER[i] * 10);
+			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
 			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
 		}
 	}
@@ -129,8 +127,7 @@ public class EnergyGrid extends MultiBlockGridTracking {
 
 	public int getNodeShare(IMultiBlock ductEnergy) {
 
-		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size()
-				+ myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
+		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size() + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
 
 	@Override

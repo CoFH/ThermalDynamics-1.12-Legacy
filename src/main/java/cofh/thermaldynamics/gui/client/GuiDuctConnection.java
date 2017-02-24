@@ -9,7 +9,6 @@ import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -57,21 +56,20 @@ public class GuiDuctConnection extends GuiCore {
 		name = conBase.getName();
 		this.ySize = 204;
 		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
-		this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM)
-				&& conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
+		this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM) && conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
 
 		switch (conBase.getId()) {
-		case AttachmentRegistry.SERVO_ITEM:
-			generateInfo("tab.thermaldynamics.servoItem");
-			break;
-		case AttachmentRegistry.FILTER_ITEM:
-			generateInfo("tab.thermaldynamics.filterItem");
-			break;
-		case AttachmentRegistry.RETRIEVER_ITEM:
-			generateInfo("tab.thermaldynamics.retrieverItem");
-			break;
-		default:
-			break;
+			case AttachmentRegistry.SERVO_ITEM:
+				generateInfo("tab.thermaldynamics.servoItem");
+				break;
+			case AttachmentRegistry.FILTER_ITEM:
+				generateInfo("tab.thermaldynamics.filterItem");
+				break;
+			case AttachmentRegistry.RETRIEVER_ITEM:
+				generateInfo("tab.thermaldynamics.retrieverItem");
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -104,27 +102,20 @@ public class GuiDuctConnection extends GuiCore {
 
 			for (int i = 0; i < flagNums.length; i++) {
 				int j = flagNums[i];
-				flagButtons[j] = new ElementButton(this, x0 + button_offset * i, y0, container.filter.flagType(j), flagButtonsPos[j][0], flagButtonsPos[j][1],
-						flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize, flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize * 2, buttonSize,
-						buttonSize, TEX_PATH);
+				flagButtons[j] = new ElementButton(this, x0 + button_offset * i, y0, container.filter.flagType(j), flagButtonsPos[j][0], flagButtonsPos[j][1], flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize, flagButtonsPos[j][0], flagButtonsPos[j][1] + buttonSize * 2, buttonSize, buttonSize, TEX_PATH);
 				addElement(flagButtons[j]);
 			}
 			for (int i = 0; i < levelNums.length; i++) {
 				int j = levelNums[i];
-				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, FilterLogic.levelNames[j], levelButtonPos[j][0],
-						levelButtonPos[j][1], levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize, buttonSize, buttonSize, TEX_PATH);
+				levelButtons[j] = new ElementButton(this, x0 + button_offset * (i + flagNums.length), y0, FilterLogic.levelNames[j], levelButtonPos[j][0], levelButtonPos[j][1], levelButtonPos[j][0], levelButtonPos[j][1] + buttonSize, buttonSize, buttonSize, TEX_PATH);
 				addElement(levelButtons[j]);
 			}
 		}
-		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH)
-				.setToolTip("info.thermaldynamics.servo.decStackSize");
-		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH)
-				.setToolTip("info.thermaldynamics.servo.incStackSize");
+		decStackSize = new ElementButton(this, 137, 57, "DecStackSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.servo.decStackSize");
+		incStackSize = new ElementButton(this, 153, 57, "IncStackSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.servo.incStackSize");
 
-		decRetainSize = new ElementButton(this, 137, 28, "DecRetainSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH)
-				.setToolTip("info.thermaldynamics.filter.decRetainSize");
-		incRetainSize = new ElementButton(this, 153, 28, "IncRetainSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH)
-				.setToolTip("info.thermaldynamics.filter.incRetainSize");
+		decRetainSize = new ElementButton(this, 137, 28, "DecRetainSize", 216, 120, 216, 134, 216, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.filter.decRetainSize");
+		incRetainSize = new ElementButton(this, 153, 28, "IncRetainSize", 230, 120, 230, 134, 230, 148, 14, 14, TEX_PATH).setToolTip("info.thermaldynamics.filter.incRetainSize");
 
 		if (isAdvItemFilter) {
 			addElement(decRetainSize);
@@ -208,9 +199,9 @@ public class GuiDuctConnection extends GuiCore {
 			if (button != null && button.getName().equals(buttonName)) {
 				if (container.filter.setFlag(i, !container.filter.getFlag(i))) {
 					if (container.filter.getFlag(i)) {
-                        playClickSound(1.0F, 0.8F);
+						playClickSound(1.0F, 0.8F);
 					} else {
-                        playClickSound(1.0F, 0.6F);
+						playClickSound(1.0F, 0.6F);
 					}
 				}
 				setButtons();
@@ -222,10 +213,10 @@ public class GuiDuctConnection extends GuiCore {
 			if (button != null && button.getName().equals(buttonName)) {
 				if (mouseButton == 0) {
 					container.filter.incLevel(i);
-                    playClickSound(1.0F, 0.8F);
+					playClickSound(1.0F, 0.8F);
 				} else if (mouseButton == 1) {
 					container.filter.decLevel(i);
-                    playClickSound(1.0F, 0.6F);
+					playClickSound(1.0F, 0.6F);
 				}
 				setButtons();
 				return;
@@ -257,7 +248,7 @@ public class GuiDuctConnection extends GuiCore {
 			pitch += 0.1F;
 		}
 
-        playClickSound(1.0F, pitch);
+		playClickSound(1.0F, pitch);
 	}
 
 	@Override

@@ -1,10 +1,9 @@
-package cofh.thermaldynamics.util.crafting;
+package cofh.thermaldynamics.util;
 
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
-
+import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -71,12 +70,13 @@ public class RecipeCover implements IRecipe {
 	@Override
 	public ItemStack getRecipeOutput() {
 
-		return new ItemStack(ThermalDynamics.itemCover, 6);
+		return new ItemStack(TDItems.itemCover, 6);
 	}
 
-    @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
-    }
+	@Override
+	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+
+		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+	}
 
 }

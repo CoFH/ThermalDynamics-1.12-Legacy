@@ -11,52 +11,52 @@ import java.util.List;
 
 public abstract class TileTransportDuctBase extends TileTDBase {
 
-    @Override
-    public boolean cachesExist() {
+	@Override
+	public boolean cachesExist() {
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public void createCaches() {
+	@Override
+	public void createCaches() {
 
-    }
+	}
 
-    @Override
-    public void cacheImportant(TileEntity tile, int side) {
+	@Override
+	public void cacheImportant(TileEntity tile, int side) {
 
-    }
+	}
 
-    @Override
-    public void clearCache(int side) {
+	@Override
+	public void clearCache(int side) {
 
-    }
+	}
 
-    @Override
-    public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
+	@Override
+	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
 
-        EntityPlayer player = CoFHCore.proxy.getClientPlayer();
-        if (player != null && player.getRidingEntity() != null && player.getRidingEntity().getClass() == EntityTransport.class) {
-            return;
-        }
-        super.addTraceableCuboids(cuboids);
-    }
+		EntityPlayer player = CoFHCore.proxy.getClientPlayer();
+		if (player != null && player.getRidingEntity() != null && player.getRidingEntity().getClass() == EntityTransport.class) {
+			return;
+		}
+		super.addTraceableCuboids(cuboids);
+	}
 
-    public abstract boolean advanceEntity(EntityTransport transport);
+	public abstract boolean advanceEntity(EntityTransport transport);
 
-    public IMultiBlock getPhysicalConnectedSide(byte direction) {
+	public IMultiBlock getPhysicalConnectedSide(byte direction) {
 
-        return super.getConnectedSide(direction);
-    }
+		return super.getConnectedSide(direction);
+	}
 
-    public boolean advanceEntityClient(EntityTransport t) {
+	public boolean advanceEntityClient(EntityTransport t) {
 
-        t.progress += t.step;
-        if (t.progress >= EntityTransport.PIPE_LENGTH) {
-            if (!t.trySimpleAdvance()) {
-                return true;
-            }
-        }
-        return false;
-    }
+		t.progress += t.step;
+		if (t.progress >= EntityTransport.PIPE_LENGTH) {
+			if (!t.trySimpleAdvance()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

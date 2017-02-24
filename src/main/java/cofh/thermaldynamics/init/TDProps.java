@@ -1,5 +1,11 @@
 package cofh.thermaldynamics.init;
 
+import cofh.lib.util.helpers.MathHelper;
+import cofh.thermaldynamics.ThermalDynamics;
+import cofh.thermaldynamics.gui.CreativeTabTD;
+import cofh.thermaldynamics.gui.CreativeTabTDCovers;
+import cofh.thermaldynamics.item.ItemCover;
+
 public class TDProps {
 
 	private TDProps() {
@@ -23,5 +29,46 @@ public class TDProps {
 
 	private static void configClient() {
 
+		String category;
+		String comment;
+
+		/* GRAPHICS */
+		category = "Render";
+
+		comment = "This value affects the size of the inner duct model, such as fluids. Lower it if you experience texture z-fighting.";
+		smallInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.CONFIG_CLIENT.get(category, "InnerModelScaling", 0.99, comment), 0.50F, 0.99F);
+
+		comment = "This value affects the size of the inner duct model, such as fluids, on the large (octagonal) ducts. Lower it if you experience texture z-fighting.";
+		largeInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.CONFIG_CLIENT.get(category, "LargeInnerModelScaling", 0.99, comment), 0.50F, 0.99F);
+
+		category = "Interface";
+		boolean itemTabCovers = true;
+		boolean florbTabCommon = false;
+
+		comment = "If TRUE, Thermal Dynamics Covers will have a Creative Tab.";
+		itemTabCovers = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("ItemsInCommonTab", category, itemTabCovers, comment);
+
+		/* CREATIVE TABS */
+		ThermalDynamics.tabCommon = new CreativeTabTD();
+
+		if (itemTabCovers) {
+			ItemCover.enableCreativeTab = true;
+			ThermalDynamics.tabCovers = new CreativeTabTDCovers();
+		}
 	}
+
+	/* GENERAL */
+	public static final int MAX_ITEMS_TRANSMITTED = 6;
+	public static final int FLUID_EMPTY_UPDATE_DELAY = 96;
+	public static final byte FLUID_UPDATE_DELAY = 4;
+	public static final int ENDER_TRANSMIT_COST = 50;
+	public static final int MAX_STUFFED_ITEMSTACKS_DROP = 30;
+
+	/* TEXTURES */
+	public static final String PATH_GFX = "thermaldynamics:textures/";
+
+	/* RENDER */
+	public static float smallInnerModelScaling = 0.99F;
+	public static float largeInnerModelScaling = 0.99F;
+
 }

@@ -17,106 +17,107 @@ import java.util.WeakHashMap;
 
 public class RenderTransport extends RenderEntity {
 
-    RenderPlayerRiding renderPlayer;
+	RenderPlayerRiding renderPlayer;
 
-    WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<EntityPlayer, EntityOtherPlayerMP>();
+	WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<EntityPlayer, EntityOtherPlayerMP>();
 
-    public RenderTransport(RenderManager renderManager) {
-        super(renderManager);
-        renderPlayer = new RenderPlayerRiding(renderManager);
-    }
+	public RenderTransport(RenderManager renderManager) {
 
-    @Override
-    public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
+		super(renderManager);
+		renderPlayer = new RenderPlayerRiding(renderManager);
+	}
 
-        if (!entity.isBeingRidden()) {
-            return;
-        }
+	@Override
+	public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
 
-        EntityPlayer player = null;
+		if (!entity.isBeingRidden()) {
+			return;
+		}
 
-        if (entity.getPassengers().get(0) instanceof EntityPlayer) {
-            player = (EntityPlayer) entity.getPassengers().get(0);
-        }
+		EntityPlayer player = null;
 
-        if (player == Minecraft.getMinecraft().thePlayer) {
-            if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
-                return;
-            }
-        }
+		if (entity.getPassengers().get(0) instanceof EntityPlayer) {
+			player = (EntityPlayer) entity.getPassengers().get(0);
+		}
 
-        if (player == null) {
-            return;
-        }
+		if (player == Minecraft.getMinecraft().thePlayer) {
+			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
+				return;
+			}
+		}
 
-        EntityTransport transport = (EntityTransport) entity;
+		if (player == null) {
+			return;
+		}
 
-        transport.setPosition(ShaderHelper.midGameTick);
+		EntityTransport transport = (EntityTransport) entity;
 
-        transport.updatePassenger(player);
+		transport.setPosition(ShaderHelper.midGameTick);
 
-        EntityOtherPlayerMP doll = dolls.get(player);
-        if (doll == null) {
-            doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
-            dolls.put(player, doll);
-        }
+		transport.updatePassenger(player);
 
-        List<EntityDataManager.DataEntry<?>> allWatched = player.getDataManager().getAll();
-        if (allWatched != null) {
-            doll.getDataManager().setEntryValues(allWatched);
-        }
+		EntityOtherPlayerMP doll = dolls.get(player);
+		if (doll == null) {
+			doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
+			dolls.put(player, doll);
+		}
 
-        for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
-            doll.setItemStackToSlot(slot, player.getItemStackFromSlot(slot));
-        }
+		List<EntityDataManager.DataEntry<?>> allWatched = player.getDataManager().getAll();
+		if (allWatched != null) {
+			doll.getDataManager().setEntryValues(allWatched);
+		}
 
-        transport.setPosition(0);
+		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+			doll.setItemStackToSlot(slot, player.getItemStackFromSlot(slot));
+		}
 
-        GL11.glPushMatrix();
-        RenderPlayerRiding.transport = transport;
+		transport.setPosition(0);
 
-        //TODO verify that this yOffset is ok
-        double dx = 0;
-        double dy = player.getYOffset() + 0.35D;
-        double dz = 0;
-        renderPlayer.doRender(doll, p_76986_2_ + dx, p_76986_4_ + dy, p_76986_6_ + dz, p_76986_8_, p_76986_9_);
-        RenderPlayerRiding.transport = null;
-        GL11.glPopMatrix();
-    }
+		GL11.glPushMatrix();
+		RenderPlayerRiding.transport = transport;
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+		//TODO verify that this yOffset is ok
+		double dx = 0;
+		double dy = player.getYOffset() + 0.35D;
+		double dz = 0;
+		renderPlayer.doRender(doll, p_76986_2_ + dx, p_76986_4_ + dy, p_76986_6_ + dz, p_76986_8_, p_76986_9_);
+		RenderPlayerRiding.transport = null;
+		GL11.glPopMatrix();
+	}
 
-        return null;
-    }
+	@Override
+	protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
 
-    public void copyFromEntityTransport(Entity doll, EntityTransport other, EntityPlayer player) {
+		return null;
+	}
 
-        if (other.pos != null) {
-            other.setPosition(0);
-        }
+	public void copyFromEntityTransport(Entity doll, EntityTransport other, EntityPlayer player) {
 
-        doll.worldObj = Minecraft.getMinecraft().theWorld;
+		if (other.pos != null) {
+			other.setPosition(0);
+		}
 
-        double dx = 0, dy = -(player.posY - (player.getEntityBoundingBox().maxY + player.getEntityBoundingBox().minY)), dz = 0;
+		doll.worldObj = Minecraft.getMinecraft().theWorld;
 
-        doll.posX = other.posX + dx;
-        doll.posY = other.posY + dy;
-        doll.posZ = other.posZ + dz;
+		double dx = 0, dy = -(player.posY - (player.getEntityBoundingBox().maxY + player.getEntityBoundingBox().minY)), dz = 0;
 
-        doll.lastTickPosX = other.lastTickPosX + dx;
-        doll.lastTickPosY = other.lastTickPosY + dy;
-        doll.lastTickPosZ = other.lastTickPosZ + dz;
+		doll.posX = other.posX + dx;
+		doll.posY = other.posY + dy;
+		doll.posZ = other.posZ + dz;
 
-        doll.prevPosX = other.prevPosX + dx;
-        doll.prevPosY = other.prevPosY + dy;
-        doll.prevPosZ = other.prevPosZ + dz;
+		doll.lastTickPosX = other.lastTickPosX + dx;
+		doll.lastTickPosY = other.lastTickPosY + dy;
+		doll.lastTickPosZ = other.lastTickPosZ + dz;
 
-        doll.rotationYaw = player.rotationYaw;
-        doll.rotationPitch = player.rotationPitch;
+		doll.prevPosX = other.prevPosX + dx;
+		doll.prevPosY = other.prevPosY + dy;
+		doll.prevPosZ = other.prevPosZ + dz;
 
-        doll.prevRotationYaw = player.prevRotationYaw;
-        doll.prevRotationPitch = player.prevRotationPitch;
-    }
+		doll.rotationYaw = player.rotationYaw;
+		doll.rotationPitch = player.rotationPitch;
+
+		doll.prevRotationYaw = player.prevRotationYaw;
+		doll.prevRotationPitch = player.prevRotationPitch;
+	}
 
 }

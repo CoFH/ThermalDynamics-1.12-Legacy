@@ -3,9 +3,6 @@ package cofh.thermaldynamics.duct;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
-//import cofh.thermaldynamics.duct.entity.TileTransportDuct;
-//import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
-//import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
@@ -17,7 +14,6 @@ import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
 import cofh.thermaldynamics.duct.light.TileLightDuct;
-
 import net.minecraft.world.World;
 
 public abstract class DuctFactory {
@@ -149,4 +145,5 @@ public abstract class DuctFactory {
 	};
 
 	public abstract TileTDBase createTileEntity(Duct duct, World worldObj);
+
 }

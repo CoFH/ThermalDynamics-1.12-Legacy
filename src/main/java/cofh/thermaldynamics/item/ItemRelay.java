@@ -4,13 +4,12 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 public class ItemRelay extends ItemAttachment {
 

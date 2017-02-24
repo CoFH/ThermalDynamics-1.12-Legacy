@@ -1,7 +1,5 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
-
 import cofh.api.item.ISpecialFilterFluid;
 import cofh.api.item.ISpecialFilterItem;
 import cofh.core.util.CoreUtils;
@@ -11,19 +9,19 @@ import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
-
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.hash.TIntHashSet;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+
+import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
 
 public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
@@ -118,7 +116,8 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				customFilterFluids = null;
 			}
 
-			itemLoop: for (ItemStack item : items) {
+			itemLoop:
+			for (ItemStack item : items) {
 				if (item != null) {
 					if (isItem()) {
 						if (item.getItem() instanceof ISpecialFilterItem) {
@@ -325,8 +324,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 	public static boolean canAlterFlag(Duct.Type transferType, int type, int flagType) {
 
-		return (transferType == Duct.Type.ITEM && options[type] >= flagType)
-				|| (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
+		return (transferType == Duct.Type.ITEM && options[type] >= flagType) || (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
@@ -445,20 +443,14 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 		public boolean appliesTo(FilterLogic base) {
 
-			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter)
-					&& (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter)
-					&& (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo)
-					&& (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo)
-					&& (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo)
-					&& (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
+			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter) && (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter) && (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
 		}
 	}
 
 	public static final Perm[] levelPerms = { Perm.SERVO, Perm.SERVO, Perm.FILTER, Perm.ALL };
 	public static final int[][] minLevels = { { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, };
 
-	public static final int[][] maxLevels = { { maxSize[0], 0, 1, 0 }, { maxSize[1], 0, 1, 0 }, { maxSize[2], 3, 1, 64 }, { maxSize[3], 3, 1, 128 },
-			{ maxSize[4], 3, 1, 320 } };
+	public static final int[][] maxLevels = { { maxSize[0], 0, 1, 0 }, { maxSize[1], 0, 1, 0 }, { maxSize[2], 3, 1, 64 }, { maxSize[3], 3, 1, 128 }, { maxSize[4], 3, 1, 320 } };
 
 	public static final int[] defaultLevels = { 64, 0, 1, 0 };
 	public int[] validLevels;

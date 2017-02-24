@@ -3,8 +3,8 @@ package cofh.thermaldynamics.duct.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.thermaldynamics.core.TDProps;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyEnder;
+import cofh.thermaldynamics.init.TDProps;
 
 public class TileItemDuctEnder extends TileItemDuctPowered {
 
@@ -71,8 +71,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 				}
 				if (travelingItem.reRoute || travelingItem.myPath == null) {
 					travelingItem.bounceItem(this);
-				} else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST
-						&& energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+				} else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
 					energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
 					multiAdvance(travelingItem, false);
 				} else {
@@ -96,8 +95,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 	@Override
 	public void insertNewItem(TravelingItem travelingItem) {
 
-		if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST
-				&& energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+		if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
 			energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
 			multiAdvance(travelingItem, true);
 		} else {

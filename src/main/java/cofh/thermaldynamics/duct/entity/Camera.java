@@ -12,87 +12,92 @@ import java.util.Collections;
 
 public class Camera extends EntityLivingBase {
 
-    public Camera() {
+	public Camera() {
 
-        super(null);
-        this.width = 0;
-        this.height = 0;
-        invulnerable = true;
-    }
+		super(null);
+		this.width = 0;
+		this.height = 0;
+		invulnerable = true;
+	}
 
-    @Override
-    public boolean canTriggerWalking() {
+	@Override
+	public boolean canTriggerWalking() {
 
-        return false;
-    }
+		return false;
+	}
 
-    @Nullable
-    @Override
-    public ItemStack getHeldItemMainhand() {
-        return null;
-    }
+	@Nullable
+	@Override
+	public ItemStack getHeldItemMainhand() {
 
-    @Nullable
-    @Override
-    public ItemStack getHeldItemOffhand() {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public EnumHandSide getPrimaryHand() {
-        return EnumHandSide.RIGHT;
-    }
+	@Nullable
+	@Override
+	public ItemStack getHeldItemOffhand() {
 
-    @Nullable
-    @Override
-    public ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn) {
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public void setItemStackToSlot(EntityEquipmentSlot slotIn, @Nullable ItemStack stack) {
+	@Override
+	public EnumHandSide getPrimaryHand() {
 
-    }
+		return EnumHandSide.RIGHT;
+	}
 
-    @Override
-    public Iterable<ItemStack> getArmorInventoryList() {
-        return Collections.EMPTY_LIST;
-    }
+	@Nullable
+	@Override
+	public ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn) {
 
-    public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {
+		return null;
+	}
 
-        if (other.pos != null) {
-            other.setPosition(0);
-        }
+	@Override
+	public void setItemStackToSlot(EntityEquipmentSlot slotIn, @Nullable ItemStack stack) {
 
-        if (worldObj == null) {
-            worldObj = Minecraft.getMinecraft().theWorld;
-        }
+	}
 
-        double dx = 0, dy = player.getYOffset() + 0.35D, dz = 0;
+	@Override
+	public Iterable<ItemStack> getArmorInventoryList() {
 
-        posX = other.posX + dx;
-        posY = other.posY + dy;
-        posZ = other.posZ + dz;
+		return Collections.EMPTY_LIST;
+	}
 
-        lastTickPosX = other.lastTickPosX + dx;
-        lastTickPosY = other.lastTickPosY + dy;
-        lastTickPosZ = other.lastTickPosZ + dz;
+	public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {
 
-        prevPosX = other.prevPosX + dx;
-        prevPosY = other.prevPosY + dy;
-        prevPosZ = other.prevPosZ + dz;
+		if (other.pos != null) {
+			other.setPosition(0);
+		}
 
-        rotationYaw = player.rotationYaw;
-        rotationPitch = player.rotationPitch;
+		if (worldObj == null) {
+			worldObj = Minecraft.getMinecraft().theWorld;
+		}
 
-        prevRotationYaw = player.prevRotationYaw;
-        prevRotationPitch = player.prevRotationPitch;
-    }
+		double dx = 0, dy = player.getYOffset() + 0.35D, dz = 0;
 
-    @Override
-    public float getEyeHeight() {
+		posX = other.posX + dx;
+		posY = other.posY + dy;
+		posZ = other.posZ + dz;
 
-        return 0;
-    }
+		lastTickPosX = other.lastTickPosX + dx;
+		lastTickPosY = other.lastTickPosY + dy;
+		lastTickPosZ = other.lastTickPosZ + dz;
+
+		prevPosX = other.prevPosX + dx;
+		prevPosY = other.prevPosY + dy;
+		prevPosZ = other.prevPosZ + dz;
+
+		rotationYaw = player.rotationYaw;
+		rotationPitch = player.rotationPitch;
+
+		prevRotationYaw = player.prevRotationYaw;
+		prevRotationPitch = player.prevRotationPitch;
+	}
+
+	@Override
+	public float getEyeHeight() {
+
+		return 0;
+	}
 }

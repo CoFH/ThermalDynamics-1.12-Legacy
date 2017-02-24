@@ -5,12 +5,12 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,178 +26,179 @@ import java.util.Iterator;
 
 public class RetrieverItem extends ServoItem {
 
-    boolean baseTileHasOtherOutputs = false;
+	boolean baseTileHasOtherOutputs = false;
 
-    public RetrieverItem(TileTDBase tile, byte side) {
+	public RetrieverItem(TileTDBase tile, byte side) {
 
-        super(tile, side);
-    }
+		super(tile, side);
+	}
 
-    public RetrieverItem(TileTDBase tile, byte side, int type) {
+	public RetrieverItem(TileTDBase tile, byte side, int type) {
 
-        super(tile, side, type);
-    }
+		super(tile, side, type);
+	}
 
-    @Override
-    public int getId() {
+	@Override
+	public int getId() {
 
-        return AttachmentRegistry.RETRIEVER_ITEM;
-    }
+		return AttachmentRegistry.RETRIEVER_ITEM;
+	}
 
-    @Override
-    public ItemStack getPickBlock() {
+	@Override
+	public ItemStack getPickBlock() {
 
-        return new ItemStack(ThermalDynamics.itemRetriever, 1, type);
-    }
+		return new ItemStack(TDItems.itemRetriever, 1, type);
+	}
 
-    @Override
-    public String getName() {
+	@Override
+	public String getName() {
 
-        return "item.thermaldynamics.retriever." + type + ".name";
-    }
+		return "item.thermaldynamics.retriever." + type + ".name";
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
-        if (layer != BlockRenderLayer.SOLID) {
-            return false;
-        }
+	@Override
+	@SideOnly (Side.CLIENT)
+	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-        Translation trans = Vector3.fromTileCenter(tile).translation();
-        RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
-        return true;
-    }
+		if (layer != BlockRenderLayer.SOLID) {
+			return false;
+		}
 
-    @Override
-    public void postNeighbourChange() {
+		Translation trans = Vector3.fromTileCenter(tile).translation();
+		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
+		return true;
+	}
 
-        baseTileHasOtherOutputs = false;
-        for (int i = 0; i < 6; i++) {
-            if ((tile.neighborTypes[i] == TileTDBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileTDBase.NeighborTypes.INPUT) && (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
-                baseTileHasOtherOutputs = true;
-                break;
-            }
-        }
-        super.postNeighbourChange();
+	@Override
+	public void postNeighbourChange() {
 
-    }
+		baseTileHasOtherOutputs = false;
+		for (int i = 0; i < 6; i++) {
+			if ((tile.neighborTypes[i] == TileTDBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileTDBase.NeighborTypes.INPUT) && (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+				baseTileHasOtherOutputs = true;
+				break;
+			}
+		}
+		super.postNeighbourChange();
 
-    @Override
-    public void handleItemSending() {
+	}
 
-        IItemHandler simulatedInv = cachedInv;
+	@Override
+	public void handleItemSending() {
 
-        //StackMap travelingItems = itemDuct.internalGrid.travelingItems.get(itemDuct.getPos().offset(EnumFacing.VALUES[side]));
-        //if (travelingItems != null) {
-        //    for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
-        //        iterator.advance();
-        //        InventoryHelper.insertStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), false);
-        //    }
-        //}
+		IItemHandler simulatedInv = cachedInv;
 
-        for (Route route : routeList) {
-            TileItemDuct endPoint = (TileItemDuct) route.endPoint;
+		//StackMap travelingItems = itemDuct.internalGrid.travelingItems.get(itemDuct.getPos().offset(EnumFacing.VALUES[side]));
+		//if (travelingItems != null) {
+		//    for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
+		//        iterator.advance();
+		//        InventoryHelper.insertStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), false);
+		//    }
+		//}
 
-            for (int k = 0; k < 6; k++) {
-                int i = (endPoint.internalSideCounter + k) % 6;
+		for (Route route : routeList) {
+			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
 
-                if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM) {
-                    continue;
-                }
+			for (int k = 0; k < 6; k++) {
+				int i = (endPoint.internalSideCounter + k) % 6;
 
-                if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
-                    continue;
-                }
+				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+					continue;
+				}
 
-                {
-                    IItemHandler inv = endPoint.cache.handlerCache[i];
-                    for (int slot = 0; slot < inv.getSlots(); slot++) {
-                        ItemStack item = inv.getStackInSlot(slot);
-                        if (item == null) {
-                            continue;
-                        }
+				if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
+					continue;
+				}
 
-                        item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
-                        if (item == null || item.stackSize == 0) {
-                            continue;
-                        }
+				{
+					IItemHandler inv = endPoint.cache.handlerCache[i];
+					for (int slot = 0; slot < inv.getSlots(); slot++) {
+						ItemStack item = inv.getStackInSlot(slot);
+						if (item == null) {
+							continue;
+						}
 
-                        if (!filter.matchesFilter(item) || !endPoint.cache.filterCache[i].matchesFilter(item)) {
-                            continue;
-                        }
+						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
+						if (item == null || item.stackSize == 0) {
+							continue;
+						}
 
-                        ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
+						if (!filter.matchesFilter(item) || !endPoint.cache.filterCache[i].matchesFilter(item)) {
+							continue;
+						}
 
-                        if (remainder != null) {
-                            item.stackSize -= remainder.stackSize;
-                        }
-                        if (item.stackSize <= 0) {
-                            continue;
-                        }
+						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
-                        Route route1 = endPoint.getRoute(itemDuct);
-                        if (route1 == null) {
-                            continue;
-                        }
+						if (remainder != null) {
+							item.stackSize -= remainder.stackSize;
+						}
+						if (item.stackSize <= 0) {
+							continue;
+						}
 
-                        int maxStackSize = item.stackSize;
-                        item = inv.extractItem(slot, maxStackSize, false);
-                        if (item == null || item.stackSize == 0) {
-                            continue;
-                        }
+						Route route1 = endPoint.getRoute(itemDuct);
+						if (route1 == null) {
+							continue;
+						}
 
-                        // No turning back now
-                        route1 = route1.copy();
-                        route1.pathDirections.add(side);
+						int maxStackSize = item.stackSize;
+						item = inv.extractItem(slot, maxStackSize, false);
+						if (item == null || item.stackSize == 0) {
+							continue;
+						}
 
-                        if (multiStack[type] && item.stackSize < maxStackSize) {
-                            for (; item.stackSize < maxStackSize && slot < inv.getSlots(); slot++) {
-                                if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
-                                    ItemStack extract = inv.extractItem(slot, maxStackSize - item.stackSize, false);
-                                    if (extract != null) {
-                                        item.stackSize += extract.stackSize;
-                                    }
-                                }
-                            }
-                        }
+						// No turning back now
+						route1 = route1.copy();
+						route1.pathDirections.add(side);
 
-                        endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
-                        return;
-                    }
-                }
-            }
-        }
-    }
+						if (multiStack[type] && item.stackSize < maxStackSize) {
+							for (; item.stackSize < maxStackSize && slot < inv.getSlots(); slot++) {
+								if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
+									ItemStack extract = inv.extractItem(slot, maxStackSize - item.stackSize, false);
+									if (extract != null) {
+										item.stackSize += extract.stackSize;
+									}
+								}
+							}
+						}
 
-    @Override
-    public void handleStuffedItems() {
+						endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
+						return;
+					}
+				}
+			}
+		}
+	}
 
-        for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext(); ) {
-            ItemStack stuffedItem = iterator.next();
-            if (!filter.matchesFilter(stuffedItem)) {
-                continue;
-            }
+	@Override
+	public void handleStuffedItems() {
 
-            stuffedItem.stackSize = itemDuct.insertIntoInventory(stuffedItem, side);
-            if (stuffedItem.stackSize <= 0) {
-                iterator.remove();
-            }
-        }
-        super.handleStuffedItems();
-    }
+		for (Iterator<ItemStack> iterator = stuffedItems.iterator(); iterator.hasNext(); ) {
+			ItemStack stuffedItem = iterator.next();
+			if (!filter.matchesFilter(stuffedItem)) {
+				continue;
+			}
 
-    @Override
-    public TileTDBase.NeighborTypes getNeighborType() {
+			stuffedItem.stackSize = itemDuct.insertIntoInventory(stuffedItem, side);
+			if (stuffedItem.stackSize <= 0) {
+				iterator.remove();
+			}
+		}
+		super.handleStuffedItems();
+	}
 
-        return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
-    }
+	@Override
+	public TileTDBase.NeighborTypes getNeighborType() {
 
-    /* IPortableData */
-    @Override
-    public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
+	}
 
-        super.writePortableData(player, tag);
-        tag.setString("DisplayType", "item.thermaldynamics.retriever.0.name");
-    }
+	/* IPortableData */
+	@Override
+	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {
+
+		super.writePortableData(player, tag);
+		tag.setString("DisplayType", "item.thermaldynamics.retriever.0.name");
+	}
 
 }

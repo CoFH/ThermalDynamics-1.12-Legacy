@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.debughelper;
+package cofh.thermaldynamics.multiblock;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
@@ -94,4 +94,5 @@ public class NoComodSet<E> extends AbstractSet<E> {
 			iterator.remove();
 		}
 	}
+
 }

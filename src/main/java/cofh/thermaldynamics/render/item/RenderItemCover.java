@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.render.item;
 
+import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.util.TransformUtils;
-import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
@@ -19,7 +19,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
@@ -32,7 +31,6 @@ import java.util.List;
 public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 	public static IItemRenderer instance = new RenderItemCover();
-
 
 	@Override
 	public void renderItem(ItemStack stack) {
@@ -71,13 +69,12 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 		//CoverRenderer.renderBlocks.blockAccess = SingleBlockAccess.instance;
 		//Tessellator.instance.setNormal(0.0F, 1.0F, 0.0F);
 
-		EnumFacing side =  EnumFacing.NORTH; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
-        CCRenderState ccrs = CCRenderState.instance();
-        ccrs.reset();
-        ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        CoverRenderer.renderItemCover(ccrs, side.ordinal(), block.getStateFromMeta(meta), Cover.bounds[side.ordinal()]);
-        ccrs.draw();
-
+		EnumFacing side = EnumFacing.NORTH; //type == ItemRenderType.EQUIPPED_FIRST_PERSON ? ForgeDirection.WEST : ForgeDirection.SOUTH;
+		CCRenderState ccrs = CCRenderState.instance();
+		ccrs.reset();
+		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+		CoverRenderer.renderItemCover(ccrs, side.ordinal(), block.getStateFromMeta(meta), Cover.bounds[side.ordinal()]);
+		ccrs.draw();
 
 		//GlStateManager.translate(-side.offsetX * 0.5, -side.offsetY * 0.5, -side.offsetZ * 0.5);
 		//for (int pass = 0; pass < 2; pass++) {
@@ -96,45 +93,53 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 		//GlStateManager.popMatrix();
 	}
 
-    @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-        return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
-    }
+	@Override
+	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 
-    @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return new ArrayList<BakedQuad>();
-    }
+		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
+	}
 
-    @Override
-    public boolean isAmbientOcclusion() {
-        return false;
-    }
+	@Override
+	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
 
-    @Override
-    public boolean isGui3d() {
-        return false;
-    }
+		return new ArrayList<BakedQuad>();
+	}
 
-    @Override
-    public boolean isBuiltInRenderer() {
-        return true;
-    }
+	@Override
+	public boolean isAmbientOcclusion() {
 
-    @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return null;
-    }
+		return false;
+	}
 
-    @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
-        return ItemCameraTransforms.DEFAULT;
-    }
+	@Override
+	public boolean isGui3d() {
 
-    @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
-    }
+		return false;
+	}
+
+	@Override
+	public boolean isBuiltInRenderer() {
+
+		return true;
+	}
+
+	@Override
+	public TextureAtlasSprite getParticleTexture() {
+
+		return null;
+	}
+
+	@Override
+	public ItemCameraTransforms getItemCameraTransforms() {
+
+		return ItemCameraTransforms.DEFAULT;
+	}
+
+	@Override
+	public ItemOverrideList getOverrides() {
+
+		return ItemOverrideList.NONE;
+	}
 
 	/*public static class SingleBlockAccess implements IBlockAccess {
 

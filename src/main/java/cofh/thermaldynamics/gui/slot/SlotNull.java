@@ -6,13 +6,15 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 public class SlotNull extends Slot {
 
-	private static final IInventory inv = new InventoryBasic("[Null]", true, 1);
+	private static final IInventory INV = new InventoryBasic("[Null]", true, 1);
 
 	public SlotNull(int x, int y) {
 
-		super(inv, 0, x, y);
+		super(INV, 0, x, y);
 	}
 
 	@Override
@@ -21,22 +23,22 @@ public class SlotNull extends Slot {
 	}
 
 	@Override
-	protected void onCrafting(ItemStack p_75210_1_, int p_75210_2_) {
+	protected void onCrafting(ItemStack stack, int amount) {
 
 	}
 
 	@Override
-	protected void onCrafting(ItemStack p_75208_1_) {
+	protected void onCrafting(ItemStack stack) {
 
 	}
 
 	@Override
-	public void onPickupFromSlot(EntityPlayer p_82870_1_, ItemStack p_82870_2_) {
+	public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
 
 	}
 
 	@Override
-	public boolean isItemValid(ItemStack p_75214_1_) {
+	public boolean isItemValid(@Nullable ItemStack stack) {
 
 		return false;
 	}
@@ -54,7 +56,7 @@ public class SlotNull extends Slot {
 	}
 
 	@Override
-	public void putStack(ItemStack p_75215_1_) {
+	public void putStack(@Nullable ItemStack stack) {
 
 	}
 
@@ -70,20 +72,21 @@ public class SlotNull extends Slot {
 	}
 
 	@Override
-	public ItemStack decrStackSize(int p_75209_1_) {
+	public ItemStack decrStackSize(int amount) {
 
 		return null;
 	}
 
 	@Override
-	public boolean isHere(IInventory p_75217_1_, int p_75217_2_) {
+	public boolean isHere(IInventory inv, int slotIn) {
 
 		return false;
 	}
 
 	@Override
-	public boolean canTakeStack(EntityPlayer p_82869_1_) {
+	public boolean canTakeStack(EntityPlayer playerIn) {
 
 		return false;
 	}
+
 }

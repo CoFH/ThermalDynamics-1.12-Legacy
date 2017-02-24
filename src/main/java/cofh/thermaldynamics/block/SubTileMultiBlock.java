@@ -1,11 +1,10 @@
 package cofh.thermaldynamics.block;
 
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.core.TickHandler;
+import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -205,4 +204,5 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 	public void addRelays() {
 
 	}
+
 }

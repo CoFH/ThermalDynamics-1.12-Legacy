@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.attachments.filter;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.Duct;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.TileEntity;

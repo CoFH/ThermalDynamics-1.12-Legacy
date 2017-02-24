@@ -29,7 +29,7 @@ public class Proxy {
 
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
 

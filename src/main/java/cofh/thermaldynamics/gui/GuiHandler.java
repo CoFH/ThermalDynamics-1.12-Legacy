@@ -12,72 +12,70 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler {
 
 	public static final int TILE_ID = 0;
-	public static final int TILE_ATTACHMENT_ID = 1;
-	public static final int TILE_ATTACHMENT_ID_END = 6;
-	public static final int TILE_CONFIG = 7;
+	public static final int TILE_CONFIG = 1;
+	public static final int TILE_ATTACHMENT_ID = 10;
 
 	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x,y,z);
-		TileEntity tile = world.getTileEntity(pos);
-		if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID_END) {
-			if (tile instanceof TileTDBase) {
-				Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
-				if (attachment != null) {
-					return attachment.getGuiServer(player.inventory);
-				}
-			}
-		}
-		switch (id) {
-		case TILE_ID:
-			tile = world.getTileEntity(pos);
-			if (tile instanceof TileCore) {
-				return ((TileCore) tile).getGuiServer(player.inventory);
-			}
+	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-		case TILE_CONFIG:
-			tile = world.getTileEntity(pos);
-			if (tile instanceof TileTDBase) {
-				return ((TileTDBase) tile).getConfigGuiServer(player.inventory);
-			} else {
+		BlockPos pos = new BlockPos(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
+
+		switch (id) {
+			case TILE_ID:
+				tile = world.getTileEntity(pos);
+				if (tile instanceof TileCore) {
+					return ((TileCore) tile).getGuiClient(player.inventory);
+				}
 				return null;
-			}
-		default:
-			return null;
+			case TILE_CONFIG:
+				tile = world.getTileEntity(pos);
+				if (tile instanceof TileTDBase) {
+					return ((TileTDBase) tile).getConfigGuiClient(player.inventory);
+				}
+				return null;
+			default:
+				if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID + 5) {
+					if (tile instanceof TileTDBase) {
+						Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
+						if (attachment != null) {
+							return attachment.getGuiClient(player.inventory);
+						}
+					}
+				}
+				return null;
 		}
 	}
 
 	@Override
-	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x,y,z);
+	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+
+		BlockPos pos = new BlockPos(x, y, z);
 		TileEntity tile = world.getTileEntity(pos);
-		if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID_END) {
-			if (tile instanceof TileTDBase) {
-				Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
-				if (attachment != null) {
-					return attachment.getGuiClient(player.inventory);
-				}
-			}
-		}
+
 		switch (id) {
-		case TILE_ID:
-			tile = world.getTileEntity(pos);
-			if (tile instanceof TileCore) {
-				return ((TileCore) tile).getGuiClient(player.inventory);
-			} else {
+			case TILE_ID:
+				tile = world.getTileEntity(pos);
+				if (tile instanceof TileCore) {
+					return ((TileCore) tile).getGuiServer(player.inventory);
+				}
 				return null;
-			}
-
-		case TILE_CONFIG:
-			tile = world.getTileEntity(pos);
-			if (tile instanceof TileTDBase) {
-				return ((TileTDBase) tile).getConfigGuiClient(player.inventory);
-			} else {
+			case TILE_CONFIG:
+				tile = world.getTileEntity(pos);
+				if (tile instanceof TileTDBase) {
+					return ((TileTDBase) tile).getConfigGuiServer(player.inventory);
+				}
 				return null;
-			}
-
-		default:
-			return null;
+			default:
+				if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID + 5) {
+					if (tile instanceof TileTDBase) {
+						Attachment attachment = ((TileTDBase) tile).attachments[id - TILE_ATTACHMENT_ID];
+						if (attachment != null) {
+							return attachment.getGuiServer(player.inventory);
+						}
+					}
+				}
+				return null;
 		}
 	}
 

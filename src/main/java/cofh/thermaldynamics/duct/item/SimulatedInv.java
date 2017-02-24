@@ -12,10 +12,12 @@ public class SimulatedInv implements IItemHandler {
 	public static final int REBUILD_THRESHOLD = 128;
 
 	public static SimulatedInv wrapHandler(IItemHandler handler) {
-        return INSTANCE.setTarget(handler);
-    }
+
+		return INSTANCE.setTarget(handler);
+	}
 
 	public static SimulatedInv wrapInv(IInventory inventory) {
+
 		return INSTANCE.setTarget(new InvWrapper(inventory));
 	}
 
@@ -24,10 +26,12 @@ public class SimulatedInv implements IItemHandler {
 	}
 
 	public SimulatedInv(IInventory target) {
+
 		setTarget(new InvWrapper(target));
 	}
 
 	public void clear() {
+
 		this.target = null;
 	}
 
@@ -47,34 +51,38 @@ public class SimulatedInv implements IItemHandler {
 		this.target = new ItemStackHandler(items);
 		return this;
 	}
-    IItemHandler target;
+
+	IItemHandler target;
 	//IInventory target;
 	ItemStack[] items;
 	int size;
 
-    @Override
-    public int getSlots() {
-        return size;
-    }
+	@Override
+	public int getSlots() {
 
-    @Override
+		return size;
+	}
+
+	@Override
 	public ItemStack getStackInSlot(int i) {
 
 		return items[i];
 	}
 
-    @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        return target.insertItem(slot, stack, simulate);
-    }
+	@Override
+	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 
-    @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return target.extractItem(slot, amount, simulate);
-    }
+		return target.insertItem(slot, stack, simulate);
+	}
 
-    //Left here for reasons.
-    /*public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
+	@Override
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+
+		return target.extractItem(slot, amount, simulate);
+	}
+
+	//Left here for reasons.
+	/*public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
 
 		ISidedInventory sided;
 

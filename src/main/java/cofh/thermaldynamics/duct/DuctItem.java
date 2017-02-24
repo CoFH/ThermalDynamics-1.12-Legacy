@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.render.TextureOverlay;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -16,11 +15,9 @@ public class DuctItem extends Duct {
 	public TextureAtlasSprite iconBaseTextureVacuum;
 	public TextureAtlasSprite iconBaseTextureDense;
 
-	public DuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+	public DuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
-		super(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency, frameTexture,
-				frameFluidTexture, frameFluidTransparency);
+		super(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency, frameTexture, frameFluidTexture, frameFluidTransparency);
 	}
 
 	@Override
@@ -48,7 +45,7 @@ public class DuctItem extends Duct {
 	public ItemStack getDenseItemStack() {
 
 		ItemStack item = itemStack.copy();
-        item.setTagCompound(new NBTTagCompound());
+		item.setTagCompound(new NBTTagCompound());
 		item.getTagCompound().setByte(PATHWEIGHT_NBT, PATHWEIGHT_DENSE);
 		return item;
 	}
@@ -56,7 +53,7 @@ public class DuctItem extends Duct {
 	public ItemStack getVacuumItemStack() {
 
 		ItemStack item = itemStack.copy();
-        item.setTagCompound(new NBTTagCompound());
+		item.setTagCompound(new NBTTagCompound());
 		item.getTagCompound().setByte(PATHWEIGHT_NBT, PATHWEIGHT_VACUUM);
 		return item;
 	}

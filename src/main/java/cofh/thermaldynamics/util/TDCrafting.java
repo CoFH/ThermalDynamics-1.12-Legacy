@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.util.crafting;
+package cofh.thermaldynamics.util;
 
 import cofh.api.util.ThermalExpansionHelper;
 import cofh.lib.util.helpers.ItemHelper;
@@ -7,6 +7,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.init.TDItems;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.item.ItemMaterial;
 import net.minecraft.init.Items;
@@ -119,7 +120,7 @@ public class TDCrafting {
 
 		/* SIGNALLER */
 
-		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum"));
+		GameRegistry.addRecipe(ShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum"));
 
 		/* ATTACHMENTS */
 		String[] materials = { "Iron", "Invar", "Electrum", "Signalum", "Enderium" };
@@ -127,14 +128,14 @@ public class TDCrafting {
 		int hardGlassLevel = useHardenedGlass ? 2 : 5; // level to start using hardened glass
 
 		for (int i = 0; i < materials.length; i++) {
-			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
+			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(TDItems.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
 
-			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
+			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(TDItems.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
 
-			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(ThermalDynamics.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ENDER_EYE, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetGold"));
+			GameRegistry.addRecipe(ShapedRecipe(new ItemStack(TDItems.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ENDER_EYE, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetGold"));
 
 			if (i > 0) {
-				for (Item item : new Item[] { ThermalDynamics.itemFilter, ThermalDynamics.itemServo, ThermalDynamics.itemRetriever }) {
+				for (Item item : new Item[] { TDItems.itemFilter, TDItems.itemServo, TDItems.itemRetriever }) {
 					if (i < hardGlassLevel) {
 						GameRegistry.addRecipe(addInputMetaRange(new ShapelessOreRecipe(new ItemStack(item, 1, i), "ingot" + materials[i]), new ItemStack(item, 1), 0, i - 1));
 					} else {

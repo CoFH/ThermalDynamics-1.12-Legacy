@@ -1,10 +1,9 @@
 package cofh.thermaldynamics.duct.energy.subgrid;
 
-import cofh.thermaldynamics.core.TDProps;
+import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import com.google.common.collect.Iterables;
-
 import net.minecraft.world.World;
 
 public class EnergySubGridEnder extends EnergySubGrid {

@@ -1,14 +1,13 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.core.WorldGridList;
+import cofh.thermaldynamics.util.WorldGridList;
 import com.google.common.math.DoubleMath;
-
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 public abstract class MultiBlockGridTracking extends MultiBlockGrid {
 

@@ -4,7 +4,6 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.texture.TextureUtils.IIconRegister;
 import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.EnumRarity;
@@ -50,8 +49,7 @@ public class Duct implements IIconRegister {
 
 	public EnumRarity rarity = EnumRarity.COMMON;
 
-	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		this.id = id;
 		this.pathWeight = pathWeight;
@@ -67,9 +65,9 @@ public class Duct implements IIconRegister {
 		this.frameTexture = frameTexture;
 		this.frameFluidTexture = frameFluidTexture;
 		this.frameFluidTransparency = (byte) frameFluidTransparency;
-        if (FMLCommonHandler.instance().getSide() == Side.CLIENT){
-            TextureUtils.addIconRegister(this);
-        }
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			TextureUtils.addIconRegister(this);
+		}
 	}
 
 	public Duct setRarity(int rarity) {
@@ -89,7 +87,6 @@ public class Duct implements IIconRegister {
 		if (baseTexture != null) {
 			iconBaseTexture = TextureOverlay.generateBaseTexture(ir, baseTexture, opaque ? null : "trans", null);
 		}
-
 		if (connectionTexture != null) {
 			iconConnectionTexture = TextureOverlay.generateConnectionTexture(ir, connectionTexture);
 		}

@@ -1,53 +1,49 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
 import codechicken.lib.render.CCRenderState;
-import cofh.core.network.PacketCoFHBase;
-import cofh.lib.render.RenderHelper;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
+import cofh.core.network.PacketCoFHBase;
+import cofh.lib.render.RenderHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.AttachmentRegistry;
 import cofh.thermaldynamics.block.TileTDBase;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import org.lwjgl.opengl.GL11;
 
 public class Cover extends Attachment {
 
 	private static Cuboid6 bound = new Cuboid6(0, 0, 0, 1, 0.0625, 1);
 
-	public static Cuboid6[] bounds = { bound, bound.copy().apply(Rotation.sideRotations[1].at(Vector3.center)),
-			bound.copy().apply(Rotation.sideRotations[2].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[3].at(Vector3.center)),
-			bound.copy().apply(Rotation.sideRotations[4].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[5].at(Vector3.center)) };
+	public static Cuboid6[] bounds = { bound, bound.copy().apply(Rotation.sideRotations[1].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[2].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[3].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[4].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[5].at(Vector3.center)) };
 
-    @Deprecated
+	@Deprecated
 	public Block block;
-    @Deprecated
+	@Deprecated
 	public int meta;
-    public IBlockState state;
+	public IBlockState state;
 
 	public Cover(TileTDBase tile, byte side, IBlockState state) {
 
 		super(tile, side);
-        this.state = state;
+		this.state = state;
 		this.block = state.getBlock();
 		this.meta = state.getBlock().getMetaFromState(state);
 	}
@@ -99,9 +95,9 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccrs) {
-        //IBlockState state = block.getStateFromMeta(meta);
+		//IBlockState state = block.getStateFromMeta(meta);
 		if (!block.canRenderInLayer(state, layer)) {
 			return false;
 		}
@@ -115,11 +111,10 @@ public class Cover extends Attachment {
 			hollowMask = tile.getHollowMask(side);
 		}
 
-
 		return CoverRenderer.renderBlockCover(ccrs, world, tile.getPos(), side, state, getCuboid(), hollowMask);
 		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
 		//		tile.covers);
-        //return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);
+		//return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);
 	}
 
 	@Override
@@ -160,7 +155,7 @@ public class Cover extends Attachment {
 
 		block = Block.getBlockById(packet.getShort());
 		meta = packet.getByte();
-        state = block.getStateFromMeta(meta);
+		state = block.getStateFromMeta(meta);
 	}
 
 	@Override
@@ -184,23 +179,23 @@ public class Cover extends Attachment {
 		block = Block.getBlockFromName(tag.getString("block"));
 		if (block == null) {
 			block = Blocks.AIR;
-            meta = 0;
-            state = Blocks.AIR.getDefaultState();
+			meta = 0;
+			state = Blocks.AIR.getDefaultState();
 		} else {
-            meta = tag.getByte("meta");
-            state = block.getStateFromMeta(meta);
-        }
+			meta = tag.getByte("meta");
+			state = block.getStateFromMeta(meta);
+		}
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public void drawSelectionExtra(EntityPlayer player, RayTraceResult target, float partialTicks) {
 
 		super.drawSelectionExtra(player, target, partialTicks);
 
 		RenderHelper.setBlockTextureSheet();
 		net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
-        GlStateManager.enableAlpha();
+		GlStateManager.enableAlpha();
 		GlStateManager.enableColorMaterial();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -222,12 +217,12 @@ public class Cover extends Attachment {
 			GlStateManager.scale(1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET);
 			GlStateManager.translate(-tile.x() - 0.5, -tile.y() - 0.5, -tile.z() - 0.5);
 
-            CCRenderState ccrs = CCRenderState.instance();
-            ccrs.reset();
-            ccrs.startDrawing(7, DefaultVertexFormats.BLOCK);
-            ccrs.alphaOverride = 80;
-            CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), null);
-            ccrs.draw();
+			CCRenderState ccrs = CCRenderState.instance();
+			ccrs.reset();
+			ccrs.startDrawing(7, DefaultVertexFormats.BLOCK);
+			ccrs.alphaOverride = 80;
+			CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), null);
+			ccrs.draw();
 			//Tessellator tess = Tessellator.instance;
 			//tess.startDrawingQuads();
 			//Tessellator.instance.setNormal(0, 1, 0);

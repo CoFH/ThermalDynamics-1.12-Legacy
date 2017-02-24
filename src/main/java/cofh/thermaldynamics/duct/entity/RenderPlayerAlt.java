@@ -14,86 +14,89 @@ import net.minecraft.util.EnumHandSide;
 
 public class RenderPlayerAlt extends RenderPlayer {
 
-    public RenderPlayerAlt(RenderManager renderManager) {
-        super(renderManager, false);
-    }
+	public RenderPlayerAlt(RenderManager renderManager) {
 
-    /**
-     * Renders the desired {@code T} type Entity.
-     */
-    public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        if (!entity.isUser() || this.renderManager.renderViewEntity == entity) {
-            double d0 = y;
+		super(renderManager, false);
+	}
 
-            if (entity.isSneaking() && !(entity instanceof EntityPlayerSP)) {
-                d0 = y - 0.125D;
-            }
+	/**
+	 * Renders the desired {@code T} type Entity.
+	 */
+	public void doRender(AbstractClientPlayer entity, double x, double y, double z, float entityYaw, float partialTicks) {
 
-            this.setModelVisibilities(entity);
-            GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
-            super.doRender(entity, x, d0, z, entityYaw, partialTicks);
-            GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
-        }
-    }
+		if (!entity.isUser() || this.renderManager.renderViewEntity == entity) {
+			double d0 = y;
 
-    private void setModelVisibilities(AbstractClientPlayer clientPlayer) {
-        ModelPlayer modelplayer = this.getMainModel();
+			if (entity.isSneaking() && !(entity instanceof EntityPlayerSP)) {
+				d0 = y - 0.125D;
+			}
 
-        if (clientPlayer.isSpectator()) {
-            modelplayer.setInvisible(false);
-            modelplayer.bipedHead.showModel = true;
-            modelplayer.bipedHeadwear.showModel = true;
-        } else {
-            ItemStack itemstack = clientPlayer.getHeldItemMainhand();
-            ItemStack itemstack1 = clientPlayer.getHeldItemOffhand();
-            modelplayer.setInvisible(true);
-            modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
-            modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
-            modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);
-            modelplayer.bipedRightLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_PANTS_LEG);
-            modelplayer.bipedLeftArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_SLEEVE);
-            modelplayer.bipedRightArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_SLEEVE);
-            modelplayer.isSneak = clientPlayer.isSneaking();
-            ModelBiped.ArmPose modelbiped$armpose = ModelBiped.ArmPose.EMPTY;
-            ModelBiped.ArmPose modelbiped$armpose1 = ModelBiped.ArmPose.EMPTY;
+			this.setModelVisibilities(entity);
+			GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
+			super.doRender(entity, x, d0, z, entityYaw, partialTicks);
+			GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
+		}
+	}
 
-            if (itemstack != null) {
-                modelbiped$armpose = ModelBiped.ArmPose.ITEM;
+	private void setModelVisibilities(AbstractClientPlayer clientPlayer) {
 
-                if (clientPlayer.getItemInUseCount() > 0) {
-                    EnumAction enumaction = itemstack.getItemUseAction();
+		ModelPlayer modelplayer = this.getMainModel();
 
-                    if (enumaction == EnumAction.BLOCK) {
-                        modelbiped$armpose = ModelBiped.ArmPose.BLOCK;
-                    } else if (enumaction == EnumAction.BOW) {
-                        modelbiped$armpose = ModelBiped.ArmPose.BOW_AND_ARROW;
-                    }
-                }
-            }
+		if (clientPlayer.isSpectator()) {
+			modelplayer.setInvisible(false);
+			modelplayer.bipedHead.showModel = true;
+			modelplayer.bipedHeadwear.showModel = true;
+		} else {
+			ItemStack itemstack = clientPlayer.getHeldItemMainhand();
+			ItemStack itemstack1 = clientPlayer.getHeldItemOffhand();
+			modelplayer.setInvisible(true);
+			modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
+			modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
+			modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);
+			modelplayer.bipedRightLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_PANTS_LEG);
+			modelplayer.bipedLeftArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_SLEEVE);
+			modelplayer.bipedRightArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_SLEEVE);
+			modelplayer.isSneak = clientPlayer.isSneaking();
+			ModelBiped.ArmPose modelbiped$armpose = ModelBiped.ArmPose.EMPTY;
+			ModelBiped.ArmPose modelbiped$armpose1 = ModelBiped.ArmPose.EMPTY;
 
-            if (itemstack1 != null) {
-                modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
+			if (itemstack != null) {
+				modelbiped$armpose = ModelBiped.ArmPose.ITEM;
 
-                if (clientPlayer.getItemInUseCount() > 0) {
-                    EnumAction enumaction1 = itemstack1.getItemUseAction();
+				if (clientPlayer.getItemInUseCount() > 0) {
+					EnumAction enumaction = itemstack.getItemUseAction();
 
-                    if (enumaction1 == EnumAction.BLOCK) {
-                        modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
-                    }
-                    // FORGE: fix MC-88356 allow offhand to use bow and arrow animation
-                    else if (enumaction1 == EnumAction.BOW) {
-                        modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
-                    }
-                }
-            }
+					if (enumaction == EnumAction.BLOCK) {
+						modelbiped$armpose = ModelBiped.ArmPose.BLOCK;
+					} else if (enumaction == EnumAction.BOW) {
+						modelbiped$armpose = ModelBiped.ArmPose.BOW_AND_ARROW;
+					}
+				}
+			}
 
-            if (clientPlayer.getPrimaryHand() == EnumHandSide.RIGHT) {
-                modelplayer.rightArmPose = modelbiped$armpose;
-                modelplayer.leftArmPose = modelbiped$armpose1;
-            } else {
-                modelplayer.rightArmPose = modelbiped$armpose1;
-                modelplayer.leftArmPose = modelbiped$armpose;
-            }
-        }
-    }
+			if (itemstack1 != null) {
+				modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
+
+				if (clientPlayer.getItemInUseCount() > 0) {
+					EnumAction enumaction1 = itemstack1.getItemUseAction();
+
+					if (enumaction1 == EnumAction.BLOCK) {
+						modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
+					}
+					// FORGE: fix MC-88356 allow offhand to use bow and arrow animation
+					else if (enumaction1 == EnumAction.BOW) {
+						modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
+					}
+				}
+			}
+
+			if (clientPlayer.getPrimaryHand() == EnumHandSide.RIGHT) {
+				modelplayer.rightArmPose = modelbiped$armpose;
+				modelplayer.leftArmPose = modelbiped$armpose1;
+			} else {
+				modelplayer.rightArmPose = modelbiped$armpose1;
+				modelplayer.leftArmPose = modelbiped$armpose;
+			}
+		}
+	}
 }

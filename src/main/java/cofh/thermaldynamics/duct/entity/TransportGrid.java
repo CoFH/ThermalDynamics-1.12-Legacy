@@ -7,26 +7,26 @@ import net.minecraftforge.common.DimensionManager;
 
 public class TransportGrid extends MultiBlockGridWithRoutes {
 
-    public TransportGrid(World world) {
+	public TransportGrid(World world) {
 
-        super(world);
-    }
+		super(world);
+	}
 
-    public TransportGrid() {
+	public TransportGrid() {
 
-        this(DimensionManager.getWorld(0));
-    }
+		this(DimensionManager.getWorld(0));
+	}
 
-    @Override
-    public void tickGrid() {
+	@Override
+	public void tickGrid() {
 
-        super.tickGrid();
+		super.tickGrid();
 
-    }
+	}
 
-    @Override
-    public boolean canAddBlock(IMultiBlock aBlock) {
+	@Override
+	public boolean canAddBlock(IMultiBlock aBlock) {
 
-        return aBlock instanceof TileTransportDuctBaseRoute;
-    }
+		return aBlock instanceof TileTransportDuctBaseRoute;
+	}
 }

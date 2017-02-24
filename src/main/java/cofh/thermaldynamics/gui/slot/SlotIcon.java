@@ -8,51 +8,52 @@ import net.minecraft.item.ItemStack;
 
 public class SlotIcon extends SlotFalseCopy {
 
-    static final IInventory inv = new InventoryBasic("[FALSE]", false, 0);
-    private final TileTransportDuct duct;
+	private static final IInventory INV = new InventoryBasic("[FALSE]", false, 0);
 
-    public SlotIcon(int x, int y, TileTransportDuct duct) {
+	private final TileTransportDuct duct;
 
-        super(inv, 0, x, y);
-        this.duct = duct;
-    }
+	public SlotIcon(int x, int y, TileTransportDuct duct) {
 
-    @Override
-    public ItemStack getStack() {
+		super(INV, 0, x, y);
+		this.duct = duct;
+	}
 
-        return ItemStack.copyItemStack(duct.data.item);
-    }
+	@Override
+	public ItemStack getStack() {
 
-    @Override
-    public void putStack(ItemStack stack) {
+		return ItemStack.copyItemStack(duct.data.item);
+	}
 
-        if (stack != null) {
-            stack.stackSize = 1;
-        }
-        duct.setIcon(stack);
-    }
+	@Override
+	public void putStack(ItemStack stack) {
 
-    @Override
-    public void onSlotChanged() {
+		if (stack != null) {
+			stack.stackSize = 1;
+		}
+		duct.setIcon(stack);
+	}
 
-    }
+	@Override
+	public void onSlotChanged() {
 
-    @Override
-    public int getSlotStackLimit() {
+	}
 
-        return 1;
-    }
+	@Override
+	public int getSlotStackLimit() {
 
-    @Override
-    public ItemStack decrStackSize(int p_75209_1_) {
+		return 1;
+	}
 
-        return null;
-    }
+	@Override
+	public ItemStack decrStackSize(int amount) {
 
-    @Override
-    public boolean isHere(IInventory p_75217_1_, int p_75217_2_) {
+		return null;
+	}
 
-        return false;
-    }
+	@Override
+	public boolean isHere(IInventory inv, int slotIn) {
+
+		return false;
+	}
 
 }

@@ -2,25 +2,24 @@ package cofh.thermaldynamics.duct.fluid;
 
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
+import cofh.lib.util.ChunkCoord;
 import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.lib.util.ChunkCoord;
-import cofh.thermaldynamics.core.TDProps;
+import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import com.google.common.collect.Iterables;
-
-import java.util.HashSet;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.HashSet;
+import java.util.List;
 
 public class FluidGrid extends MultiBlockGridTracking {
 
@@ -211,8 +210,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 
 	public int getNodeAmount(TileFluidDuct theCond) {
 
-		return size() == 1 ? myTank.getFluidAmount() : isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size() + myTank.getFluidAmount() % size()
-				: myTank.getFluidAmount() / size();
+		return size() == 1 ? myTank.getFluidAmount() : isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size() + myTank.getFluidAmount() % size() : myTank.getFluidAmount() / size();
 	}
 
 	public FluidStack getFluid() {
@@ -239,7 +237,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public void updateAllRenders() {
 
 		int fl = renderFluidLevel;
@@ -256,7 +254,8 @@ public class FluidGrid extends MultiBlockGridTracking {
 					buildMap();
 				}
 
-				l: if (worldGrid.worldObj instanceof WorldServer) {
+				l:
+				if (worldGrid.worldObj instanceof WorldServer) {
 
 					int ducts = 0;
 					for (Object block : Iterables.concat(nodeSet, idleSet)) {

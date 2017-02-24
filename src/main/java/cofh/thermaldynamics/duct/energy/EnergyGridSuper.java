@@ -2,7 +2,6 @@ package cofh.thermaldynamics.duct.energy;
 
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.world.World;
 
 public class EnergyGridSuper extends EnergyGrid {

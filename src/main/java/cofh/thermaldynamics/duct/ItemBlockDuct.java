@@ -112,83 +112,80 @@ public class ItemBlockDuct extends ItemBlockCore {
 		}
 		Duct duct = TDDucts.getType(ductId);
 		switch (duct.ductType) {
-		case ENERGY:
-			list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-
-			if (duct != TDDucts.energySuperCond) {
-				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type]
-						+ StringHelper.LIGHT_GRAY + " RF/t.");
-			} else {
-				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.infinite")
-						+ StringHelper.LIGHT_GRAY + " RF/t.");
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySupercond.info"));
-			}
-			list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
-			break;
-		case FLUID:
-			list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
-
-			if (duct.type != 3) {
-				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferFluid"));
-			}
-			if (duct.type == 0) {
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
-			} else if (duct.type == 1) {
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
-			} else if (duct.type == 2) {
+			case ENERGY:
 				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
-						+ StringHelper.LIGHT_GRAY + " RF/t.");
-			} else if (duct.type == 3) {
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info"));
-			}
-			break;
-		case ITEM:
-			list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
 
-			if (duct.type == 0) {
-				// list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemBasic.info"));
-			} else if (duct.type == 1) {
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
-			} else if (duct.type == 2) {
-				list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
-			} else if (duct.type == 3) {
-				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-				list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER
-						+ StringHelper.LIGHT_GRAY + " RF/t.");
-				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
-			}
-			if (stack.hasTagCompound()) {
-				byte pathWeight = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
-				if (pathWeight == DuctItem.PATHWEIGHT_DENSE) {
-					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.dense"));
-				} else if (pathWeight == DuctItem.PATHWEIGHT_VACUUM) {
-					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.vacuum"));
+				if (duct != TDDucts.energySuperCond) {
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type] + StringHelper.LIGHT_GRAY + " RF/t.");
+				} else {
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + " RF/t.");
+					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySupercond.info"));
 				}
-			}
-			break;
-		case STRUCTURAL:
-			if (duct == TDDucts.structure) {
-				list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
-				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
-			} else if (duct == TDDucts.lightDuct) {
-				list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
-				list.add(StringHelper.localize("info.thermaldynamics.duct.light"));
-			}
-			break;
-		case TRANSPORT:
-			list.add(StringHelper.localize("info.thermaldynamics.duct.transport"));
+				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
+				break;
+			case FLUID:
+				list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
 
-			if (duct == TDDucts.transportLongRange) {
-				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.transportLongRange"));
-			} else if (duct == TDDucts.transportCrossover) {
-				list.add(StringHelper.getInfoText("info.thermaldynamics.duct.transportCrossover"));
-			}
-			break;
-		case CRAFTING:
-			list.add(StringHelper.localize("info.thermaldynamics.duct.crafting"));
-			break;
-		default:
+				if (duct.type != 3) {
+					list.add(StringHelper.getNoticeText("info.thermaldynamics.transferFluid"));
+				}
+				if (duct.type == 0) {
+					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
+				} else if (duct.type == 1) {
+					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
+				} else if (duct.type == 2) {
+					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+				} else if (duct.type == 3) {
+					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info"));
+				}
+				break;
+			case ITEM:
+				list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
+
+				if (duct.type == 0) {
+					// list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemBasic.info"));
+				} else if (duct.type == 1) {
+					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
+				} else if (duct.type == 2) {
+					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
+				} else if (duct.type == 3) {
+					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
+				}
+				if (stack.hasTagCompound()) {
+					byte pathWeight = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
+					if (pathWeight == DuctItem.PATHWEIGHT_DENSE) {
+						list.add(StringHelper.getInfoText("info.thermaldynamics.duct.dense"));
+					} else if (pathWeight == DuctItem.PATHWEIGHT_VACUUM) {
+						list.add(StringHelper.getInfoText("info.thermaldynamics.duct.vacuum"));
+					}
+				}
+				break;
+			case STRUCTURAL:
+				if (duct == TDDucts.structure) {
+					list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.cover"));
+				} else if (duct == TDDucts.lightDuct) {
+					list.add(StringHelper.localize("info.thermaldynamics.duct.structure"));
+					list.add(StringHelper.localize("info.thermaldynamics.duct.light"));
+				}
+				break;
+			case TRANSPORT:
+				list.add(StringHelper.localize("info.thermaldynamics.duct.transport"));
+
+				if (duct == TDDucts.transportLongRange) {
+					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.transportLongRange"));
+				} else if (duct == TDDucts.transportCrossover) {
+					list.add(StringHelper.getInfoText("info.thermaldynamics.duct.transportCrossover"));
+				}
+				break;
+			case CRAFTING:
+				list.add(StringHelper.localize("info.thermaldynamics.duct.crafting"));
+				break;
+			default:
 		}
 	}
+
 }

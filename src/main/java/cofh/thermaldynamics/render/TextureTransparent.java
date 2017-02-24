@@ -2,11 +2,6 @@ package cofh.thermaldynamics.render;
 
 import codechicken.lib.texture.CustomIResource;
 import cofh.thermaldynamics.ThermalDynamics;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -16,6 +11,10 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ResourceLocation;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class TextureTransparent extends TextureAtlasSprite {
 
@@ -28,7 +27,7 @@ public class TextureTransparent extends TextureAtlasSprite {
 			return textureMap.registerSprite(new ResourceLocation(name));
 		}
 
-        TextureAtlasSprite icon = textureMap.getTextureExtry(transformedName(name, transparency));
+		TextureAtlasSprite icon = textureMap.getTextureExtry(transformedName(name, transparency));
 		if (icon == null) {
 			icon = new TextureTransparent(name, transparency);
 			textureMap.setTextureEntry(icon);
@@ -91,11 +90,11 @@ public class TextureTransparent extends TextureAtlasSprite {
 
 			AnimationMetadataSection metadataSection = iresource.getMetadata("animation");
 
-            PngSizeInfo sizeInfo = PngSizeInfo.makeFromResource(new CustomIResource(this.location, image, iresource));
-            CustomIResource resource = new CustomIResource(this.location, image, iresource);
+			PngSizeInfo sizeInfo = PngSizeInfo.makeFromResource(new CustomIResource(this.location, image, iresource));
+			CustomIResource resource = new CustomIResource(this.location, image, iresource);
 
-            loadSprite(sizeInfo, metadataSection!= null);
-            loadSpriteFrames(resource, settings.mipmapLevels + 1);
+			loadSprite(sizeInfo, metadataSection != null);
+			loadSpriteFrames(resource, settings.mipmapLevels + 1);
 
 			//loadSprite(img, animationmetadatasection);
 		} catch (IOException ioexception1) {

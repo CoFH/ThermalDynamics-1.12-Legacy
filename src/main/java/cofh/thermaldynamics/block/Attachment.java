@@ -84,17 +84,15 @@ public abstract class Attachment {
 	public void dropItemStack(ItemStack item) {
 
 		Cuboid6 c = getCuboid();
-		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), new Vec3d(tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x),
-                tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat()
-                * (c.max.z - c.min.z))
+		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), new Vec3d(tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x), tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat() * (c.max.z - c.min.z))
 
 		);
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public abstract boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState);
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
 
 		Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.getPos()));
@@ -121,7 +119,7 @@ public abstract class Attachment {
 
 	public abstract List<ItemStack> getDrops();
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public Object getGuiClient(InventoryPlayer inventory) {
 
 		return null;
@@ -148,7 +146,7 @@ public abstract class Attachment {
 		return packet;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public void sendGuiNetworkData(Container container, List<IContainerListener> player, boolean newGuy) {
 
 	}
@@ -213,8 +211,9 @@ public abstract class Attachment {
 
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask() {
+
 		return null;
 	}
 }

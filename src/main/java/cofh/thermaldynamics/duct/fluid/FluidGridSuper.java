@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.fluid;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 

@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.energy.subgrid;
 import cofh.thermaldynamics.block.SubTileMultiBlock;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-
 import net.minecraft.nbt.NBTTagCompound;
 
 public class SubTileEnergy extends SubTileMultiBlock {

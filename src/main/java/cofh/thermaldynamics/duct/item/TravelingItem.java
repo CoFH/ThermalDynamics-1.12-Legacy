@@ -1,17 +1,14 @@
 package cofh.thermaldynamics.duct.item;
 
-import codechicken.lib.vec.Vector3;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
-import codechicken.lib.vec.BlockCoord;
 import cofh.thermaldynamics.block.TileTDBase.ConnectionTypes;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
-import cofh.thermaldynamics.core.TickHandlerClient;
+import cofh.thermaldynamics.util.TickHandlerClient;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

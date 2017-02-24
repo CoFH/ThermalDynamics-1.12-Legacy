@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import codechicken.lib.render.CCRenderState;
 import cofh.api.block.IBlockAppearance;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -19,79 +18,78 @@ import static net.minecraft.util.EnumFacing.*;
 
 public class CoverBlockAccess implements IBlockAccess {
 
-    IBlockAccess world;
+	IBlockAccess world;
 
-    public static ThreadLocal<CoverBlockAccess> instances = new ThreadLocal<CoverBlockAccess>() {
-        @Override
-        protected CoverBlockAccess initialValue() {
-            return new CoverBlockAccess();
-        }
-    };
+	public static ThreadLocal<CoverBlockAccess> instances = new ThreadLocal<CoverBlockAccess>() {
+		@Override
+		protected CoverBlockAccess initialValue() {
 
-    public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
-        CoverBlockAccess instance = instances.get();
-        instance.world = world;
-        instance.pos = pos;
-        instance.side = side;
-        instance.state = state;
-        return instance;
-    }
+			return new CoverBlockAccess();
+		}
+	};
 
-    public BlockPos pos;
-    public EnumFacing side;
+	public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
 
-    IBlockState state;
+		CoverBlockAccess instance = instances.get();
+		instance.world = world;
+		instance.pos = pos;
+		instance.side = side;
+		instance.state = state;
+		return instance;
+	}
 
-    public enum Result {
-        ORIGINAL,
-        AIR,
-        BASE,
-        BEDROCK,
-        COVER
-    }
+	public BlockPos pos;
+	public EnumFacing side;
 
-    public Result getAction(BlockPos pos) {
+	IBlockState state;
 
-        if (this.pos == pos) {
-            return BASE;
-        }
+	public enum Result {
+		ORIGINAL, AIR, BASE, BEDROCK, COVER
+	}
 
-        if (pos == this.pos.offset(side)) {
-            return ORIGINAL;
-        }
+	public Result getAction(BlockPos pos) {
 
-        if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
-            return AIR;
-        }
+		if (this.pos == pos) {
+			return BASE;
+		}
 
-        IBlockState worldState = world.getBlockState(pos);
-        Block worldBlock = worldState.getBlock();
+		if (pos == this.pos.offset(side)) {
+			return ORIGINAL;
+		}
 
-        if (worldBlock instanceof IBlockAppearance) {
-            IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
-            if (blockAppearance.supportsVisualConnections()) {
-                return COVER;
-            }
+		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
+			return AIR;
+		}
 
-            if (blockAppearance.getVisualState(world, pos, side).equals(state)) {
-                return state.isNormalCube() ? BEDROCK : AIR;
-            } else {
-                return COVER;
-            }
-        } else {
-            if (worldState.equals(state)) {
-                return state.isNormalCube() ? BEDROCK : AIR;
-            } else {
-                return ORIGINAL;
-            }
-        }
-    }
+		IBlockState worldState = world.getBlockState(pos);
+		Block worldBlock = worldState.getBlock();
 
-    @Override
-    public IBlockState getBlockState(BlockPos pos) {
-        Result action = getAction(pos);
-        return action == ORIGINAL ? world.getBlockState(pos) : action == AIR ? Blocks.AIR.getDefaultState() : action == BEDROCK ? Blocks.BEDROCK.getDefaultState() : action == COVER ? ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side) : state;
-    }
+		if (worldBlock instanceof IBlockAppearance) {
+			IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
+			if (blockAppearance.supportsVisualConnections()) {
+				return COVER;
+			}
+
+			if (blockAppearance.getVisualState(world, pos, side).equals(state)) {
+				return state.isNormalCube() ? BEDROCK : AIR;
+			} else {
+				return COVER;
+			}
+		} else {
+			if (worldState.equals(state)) {
+				return state.isNormalCube() ? BEDROCK : AIR;
+			} else {
+				return ORIGINAL;
+			}
+		}
+	}
+
+	@Override
+	public IBlockState getBlockState(BlockPos pos) {
+
+		Result action = getAction(pos);
+		return action == ORIGINAL ? world.getBlockState(pos) : action == AIR ? Blocks.AIR.getDefaultState() : action == BEDROCK ? Blocks.BEDROCK.getDefaultState() : action == COVER ? ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side) : state;
+	}
 
     /*@Override
     public Block getBlock(int x, int y, int z) {
@@ -100,53 +98,55 @@ public class CoverBlockAccess implements IBlockAccess {
         return action == ORIGINAL ? world.getBlock(x, y, z) : action == AIR ? Blocks.air : action == BEDROCK ? Blocks.bedrock : action == COVER ? ((IBlockAppearance) world.getBlock(x, y, z)).getVisualBlock(world, x, y, z, ForgeDirection.getOrientation(side)) : block;
     }*/
 
-    @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+	@Override
+	public TileEntity getTileEntity(BlockPos pos) {
 
-        return getAction(pos) == ORIGINAL ? world.getTileEntity(pos) : null;
-    }
+		return getAction(pos) == ORIGINAL ? world.getTileEntity(pos) : null;
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getCombinedLight(BlockPos pos, int t) {
+	@Override
+	@SideOnly (Side.CLIENT)
+	public int getCombinedLight(BlockPos pos, int t) {
 
-        if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
-            return world.getCombinedLight(this.pos, t);
-        }
-        return world.getCombinedLight(pos, t);
-    }
+		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
+			return world.getCombinedLight(this.pos, t);
+		}
+		return world.getCombinedLight(pos, t);
+	}
 
-    @Override
-    public int getStrongPower(BlockPos pos, EnumFacing side) {
+	@Override
+	public int getStrongPower(BlockPos pos, EnumFacing side) {
 
-        return world.getStrongPower(pos, side);
-    }
+		return world.getStrongPower(pos, side);
+	}
 
-    @Override
-    public WorldType getWorldType() {
-        return world.getWorldType();
-    }
+	@Override
+	public WorldType getWorldType() {
 
-    @Override
-    public boolean isAirBlock(BlockPos pos) {
-        Result action = getAction(pos);
-        return action == AIR || (action == ORIGINAL && world.isAirBlock(pos)) || (action == COVER && getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos));
-    }
+		return world.getWorldType();
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Biome getBiome(BlockPos pos) {
+	@Override
+	public boolean isAirBlock(BlockPos pos) {
 
-        return world.getBiome(pos);
-    }
+		Result action = getAction(pos);
+		return action == AIR || (action == ORIGINAL && world.isAirBlock(pos)) || (action == COVER && getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos));
+	}
 
-    @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+	@Override
+	@SideOnly (Side.CLIENT)
+	public Biome getBiome(BlockPos pos) {
 
-        if (pos.getX() < -30000000 || pos.getZ() < -30000000 || pos.getX() >= 30000000 || pos.getZ() >= 30000000) {
-            return _default;
-        } else {
-            return getBlockState(pos).isSideSolid(this, pos, side);
-        }
-    }
+		return world.getBiome(pos);
+	}
+
+	@Override
+	public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+
+		if (pos.getX() < -30000000 || pos.getZ() < -30000000 || pos.getX() >= 30000000 || pos.getZ() >= 30000000) {
+			return _default;
+		} else {
+			return getBlockState(pos).isSideSolid(this, pos, side);
+		}
+	}
 }

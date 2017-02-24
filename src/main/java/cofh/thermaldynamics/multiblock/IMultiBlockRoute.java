@@ -2,7 +2,6 @@ package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
-
 import net.minecraft.item.ItemStack;
 
 public interface IMultiBlockRoute extends IMultiBlock {

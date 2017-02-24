@@ -34,261 +34,265 @@ import java.util.concurrent.TimeUnit;
 
 public class CoverRenderer {
 
-    final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
+	final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
 
-    final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
+	final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
 
-    private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
-    private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
+	private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
+	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-    private static final ThreadLocal<VertexLighterFlat> lighterFlat = new ThreadLocal<VertexLighterFlat>(){
-        @Override
-        protected VertexLighterFlat initialValue() {
-            return new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors());
-        }
-    };
-    private static final ThreadLocal<VertexLighterFlat> lighterSmooth = new ThreadLocal<VertexLighterFlat>(){
-        @Override
-        protected VertexLighterFlat initialValue() {
-            return new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors());
-        }
-    };
+	private static final ThreadLocal<VertexLighterFlat> lighterFlat = new ThreadLocal<VertexLighterFlat>() {
+		@Override
+		protected VertexLighterFlat initialValue() {
 
-    //Stop inventory churn of models being sliced.
-    public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+			return new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors());
+		}
+	};
+	private static final ThreadLocal<VertexLighterFlat> lighterSmooth = new ThreadLocal<VertexLighterFlat>() {
+		@Override
+		protected VertexLighterFlat initialValue() {
 
-    private static VertexLighterFlat setupLighter(CCRenderState ccrs, IBlockState state, IBlockAccess access, BlockPos pos,  IBakedModel model) {
-        boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 && model.isAmbientOcclusion();
-        VertexLighterFlat lighter = renderAO ? lighterSmooth.get() : lighterFlat.get();
+			return new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors());
+		}
+	};
 
-        CCRSConsumer consumer = new CCRSConsumer(ccrs);
-        lighter.setParent(consumer);
-        consumer.setOffset(pos);
-        return lighter;
-    }
+	//Stop inventory churn of models being sliced.
+	public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
 
-    public static boolean renderBlockQuads(VertexLighterFlat lighter, IBlockAccess access, IBlockState state, List<CCQuad> quads, BlockPos pos) {
-        if (!quads.isEmpty()) {
-            lighter.setWorld(access);
-            lighter.setState(state);
-            lighter.setBlockPos(pos);
-            for (CCQuad quad : quads) {
-                lighter.updateBlockInfo();
-                quad.pipe(lighter);
-            }
-            return true;
-        }
-        return false;
-    }
+	private static VertexLighterFlat setupLighter(CCRenderState ccrs, IBlockState state, IBlockAccess access, BlockPos pos, IBakedModel model) {
 
-    public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
-        List<CCQuad> retQuads = new LinkedList<CCQuad>();
-        for (CCQuad quad : quads) {
-            int colour = -1;
+		boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 && model.isAmbientOcclusion();
+		VertexLighterFlat lighter = renderAO ? lighterSmooth.get() : lighterFlat.get();
 
+		CCRSConsumer consumer = new CCRSConsumer(ccrs);
+		lighter.setParent(consumer);
+		consumer.setOffset(pos);
+		return lighter;
+	}
 
-            if (quad.hasTint()) {
-                colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.tintIndex);
+	public static boolean renderBlockQuads(VertexLighterFlat lighter, IBlockAccess access, IBlockState state, List<CCQuad> quads, BlockPos pos) {
 
-                if (EntityRenderer.anaglyphEnable) {
-                    colour = TextureUtil.anaglyphColor(colour);
-                }
-                colour = colour | 0xFF000000;
-            }
-            CCQuad copyQuad = quad.copy();
+		if (!quads.isEmpty()) {
+			lighter.setWorld(access);
+			lighter.setState(state);
+			lighter.setBlockPos(pos);
+			for (CCQuad quad : quads) {
+				lighter.updateBlockInfo();
+				quad.pipe(lighter);
+			}
+			return true;
+		}
+		return false;
+	}
 
-            Colour c = new ColourARGB(colour);
-            for (Colour qC : copyQuad.colours) {
-                qC.multiply(c);
-            }
-            retQuads.add(copyQuad);
-        }
+	public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
 
-        return retQuads;
-    }
+		List<CCQuad> retQuads = new LinkedList<CCQuad>();
+		for (CCQuad quad : quads) {
+			int colour = -1;
 
-    public static boolean renderBlockCover(CCRenderState ccrs, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, CoverHoleRender.ITransformer[] hollowCover) {
-        EnumFacing face = EnumFacing.VALUES[side];
+			if (quad.hasTint()) {
+				colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.tintIndex);
 
-        IBlockAccess coverAccess = CoverBlockAccess.getInstance(world, pos, face, state);
-        BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+				if (EntityRenderer.anaglyphEnable) {
+					colour = TextureUtil.anaglyphColor(colour);
+				}
+				colour = colour | 0xFF000000;
+			}
+			CCQuad copyQuad = quad.copy();
 
-        try {
-            state = state.getActualState(coverAccess, pos);
-        } catch (Exception ignored) {
-        }
+			Colour c = new ColourARGB(colour);
+			for (Colour qC : copyQuad.colours) {
+				qC.multiply(c);
+			}
+			retQuads.add(copyQuad);
+		}
 
-        IBakedModel model = dispatcher.getModelForState(state);
+		return retQuads;
+	}
 
-        try {
-            state = state.getBlock().getExtendedState(state, coverAccess, pos);
-        } catch (Exception ignored) {
-        }
+	public static boolean renderBlockCover(CCRenderState ccrs, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, CoverHoleRender.ITransformer[] hollowCover) {
 
-        List<BakedQuad> bakedQuads = new LinkedList<BakedQuad>();
-        long posRand = net.minecraft.util.math.MathHelper.getPositionRandom(pos);
-        bakedQuads.addAll(model.getQuads(state, null, posRand));
+		EnumFacing face = EnumFacing.VALUES[side];
 
-        for (EnumFacing face2 : EnumFacing.VALUES) {
-            bakedQuads.addAll(model.getQuads(state, face2, posRand));
-        }
+		IBlockAccess coverAccess = CoverBlockAccess.getInstance(world, pos, face, state);
+		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
-        List<CCQuad> quads = CCQuad.fromArray(bakedQuads);
+		try {
+			state = state.getActualState(coverAccess, pos);
+		} catch (Exception ignored) {
+		}
 
-        if (hollowCover != null) {
-            quads = CoverHoleRender.holify(quads, side, hollowCover);
-        }
+		IBakedModel model = dispatcher.getModelForState(state);
 
-        quads = sliceQuads(quads, side, bounds);
+		try {
+			state = state.getBlock().getExtendedState(state, coverAccess, pos);
+		} catch (Exception ignored) {
+		}
 
-        if (!quads.isEmpty()){
-            VertexLighterFlat lighter = setupLighter(ccrs, state, coverAccess, pos, model);
-            return renderBlockQuads(lighter, coverAccess, state, quads, pos);
-        }
+		List<BakedQuad> bakedQuads = new LinkedList<BakedQuad>();
+		long posRand = net.minecraft.util.math.MathHelper.getPositionRandom(pos);
+		bakedQuads.addAll(model.getQuads(state, null, posRand));
 
-        return false;
-    }
+		for (EnumFacing face2 : EnumFacing.VALUES) {
+			bakedQuads.addAll(model.getQuads(state, face2, posRand));
+		}
 
-    public static void renderItemCover(CCRenderState ccrs, int side, IBlockState state, Cuboid6 bounds) {
+		List<CCQuad> quads = CCQuad.fromArray(bakedQuads);
 
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
-        IBakedModel model = renderItem.getItemModelWithOverrides(stack, null, null);
+		if (hollowCover != null) {
+			quads = CoverHoleRender.holify(quads, side, hollowCover);
+		}
 
-        String cacheKey = state.getBlock().getRegistryName() + "|" + state.getBlock().getMetaFromState(state);
+		quads = sliceQuads(quads, side, bounds);
 
-        List<CCQuad> renderQuads = itemQuadCache.getIfPresent(cacheKey);
-        if (renderQuads == null) {
-            List<BakedQuad> quads = new ArrayList<BakedQuad>();
+		if (!quads.isEmpty()) {
+			VertexLighterFlat lighter = setupLighter(ccrs, state, coverAccess, pos, model);
+			return renderBlockQuads(lighter, coverAccess, state, quads, pos);
+		}
 
-            quads.addAll(model.getQuads(null, null, 0));
-            for (EnumFacing face : EnumFacing.VALUES) {
-                quads.addAll(model.getQuads(null, face, 0));
-            }
+		return false;
+	}
 
-            renderQuads = applyItemTint(sliceQuads(CCQuad.fromArray(quads), side, bounds), stack);
-            itemQuadCache.put(cacheKey, renderQuads);
-        }
+	public static void renderItemCover(CCRenderState ccrs, int side, IBlockState state, Cuboid6 bounds) {
 
-        CCRSConsumer consumer = new CCRSConsumer(ccrs);
+		RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+		IBakedModel model = renderItem.getItemModelWithOverrides(stack, null, null);
 
-        for (CCQuad quad : renderQuads) {
-            quad.pipe(consumer);
-        }
+		String cacheKey = state.getBlock().getRegistryName() + "|" + state.getBlock().getMetaFromState(state);
 
-    }
+		List<CCQuad> renderQuads = itemQuadCache.getIfPresent(cacheKey);
+		if (renderQuads == null) {
+			List<BakedQuad> quads = new ArrayList<BakedQuad>();
 
-    public static List<CCQuad> sliceQuads(List<CCQuad> quads, int side, Cuboid6 bounds) {
+			quads.addAll(model.getQuads(null, null, 0));
+			for (EnumFacing face : EnumFacing.VALUES) {
+				quads.addAll(model.getQuads(null, face, 0));
+			}
 
-        boolean flag, flag2;
+			renderQuads = applyItemTint(sliceQuads(CCQuad.fromArray(quads), side, bounds), stack);
+			itemQuadCache.put(cacheKey, renderQuads);
+		}
 
-        float quadPos[][] = new float[4][3];
-        float vecPos[] = new float[3];
-        boolean flat[] = new boolean[3];
+		CCRSConsumer consumer = new CCRSConsumer(ccrs);
 
-        TextureAtlasSprite icon = RenderDuct.coverBase;
+		for (CCQuad quad : renderQuads) {
+			quad.pipe(consumer);
+		}
 
-        final int verticesPerFace = 4;
+	}
 
-        List<CCQuad> finalQuads = new LinkedList<CCQuad>();
+	public static List<CCQuad> sliceQuads(List<CCQuad> quads, int side, Cuboid6 bounds) {
 
-        for (CCQuad quad : quads) {
+		boolean flag, flag2;
 
-            flag = flag2 = false;
-            for (int i = 0; i < 3; i++) {
-                flat[i] = true;
-            }
+		float quadPos[][] = new float[4][3];
+		float vecPos[] = new float[3];
+		boolean flat[] = new boolean[3];
 
-            for (int v = 0; v < 4; v++) {
-                quadPos[v][0] = (float) quad.vertices[v].vec.x;
-                quadPos[v][1] = (float) quad.vertices[v].vec.y;
-                quadPos[v][2] = (float) quad.vertices[v].vec.z;
+		TextureAtlasSprite icon = RenderDuct.coverBase;
 
-                flag = flag || quadPos[v][sideOffsets[side]] != sideSoftBounds[side];
-                flag2 = flag2 || quadPos[v][sideOffsets[side]] != (1 - sideSoftBounds[side]);
+		final int verticesPerFace = 4;
 
-                if (v == 0) {
-                    System.arraycopy(quadPos[v], 0, vecPos, 0, 3);
-                } else {
-                    for (int vi = 0; vi < 3; vi++) {
-                        flat[vi] = flat[vi] && quadPos[v][vi] == vecPos[vi];
-                    }
-                }
-            }
+		List<CCQuad> finalQuads = new LinkedList<CCQuad>();
 
-            int s = -1;
+		for (CCQuad quad : quads) {
 
-            if (flag && flag2) {
-                for (int vi = 0; vi < 3; vi++) {
-                    if (flat[vi]) {
-                        if (vi != sideOffsets[side]) {
-                            s = vi;
-                            break;
-                        } else {
-                            flag = false;
-                        }
-                    }
-                }
-            }
+			flag = flag2 = false;
+			for (int i = 0; i < 3; i++) {
+				flat[i] = true;
+			}
 
-            for (int k2 = 0; k2 < verticesPerFace; k2++) {
-                boolean flag3 = quadPos[k2][sideOffsets[side]] != sideSoftBounds[side];
-                for (int j = 0; j < 3; j++) {
-                    if (j == sideOffsets[side]) {
-                        quadPos[k2][j] = clampF(quadPos[k2][j], bounds, j);
-                    } else {
-                        if (flag && flag2 && flag3) {
-                            // TODO: only clamp here when covers[] != null && has a cover on the side this vertex is on
-                            quadPos[k2][j] = MathHelper.clamp(quadPos[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
-                        }
-                    }
-                }
+			for (int v = 0; v < 4; v++) {
+				quadPos[v][0] = (float) quad.vertices[v].vec.x;
+				quadPos[v][1] = (float) quad.vertices[v].vec.y;
+				quadPos[v][2] = (float) quad.vertices[v].vec.z;
 
+				flag = flag || quadPos[v][sideOffsets[side]] != sideSoftBounds[side];
+				flag2 = flag2 || quadPos[v][sideOffsets[side]] != (1 - sideSoftBounds[side]);
 
-                if (s != -1) {
-                    float u, v;
+				if (v == 0) {
+					System.arraycopy(quadPos[v], 0, vecPos, 0, 3);
+				} else {
+					for (int vi = 0; vi < 3; vi++) {
+						flat[vi] = flat[vi] && quadPos[v][vi] == vecPos[vi];
+					}
+				}
+			}
 
-                    if (s == 0) {
-                        u = quadPos[k2][1];
-                        v = quadPos[k2][2];
-                    } else if (s == 1) {
-                        u = quadPos[k2][0];
-                        v = quadPos[k2][2];
-                    } else {
-                        u = quadPos[k2][0];
-                        v = quadPos[k2][1];
-                    }
+			int s = -1;
 
-                    u = MathHelper.clamp(u, 0, 1) * 16;
-                    v = MathHelper.clamp(v, 0, 1) * 16;
+			if (flag && flag2) {
+				for (int vi = 0; vi < 3; vi++) {
+					if (flat[vi]) {
+						if (vi != sideOffsets[side]) {
+							s = vi;
+							break;
+						} else {
+							flag = false;
+						}
+					}
+				}
+			}
 
-                    u = icon.getInterpolatedU(u);
-                    v = icon.getInterpolatedV(v);
-                    quad.vertices[k2].uv.set(u, v);
-                    quad.tintIndex = -1;
-                }
-                quad.vertices[k2].vec.set(quadPos[k2]);
-            }
-            finalQuads.add(quad);
-        }
+			for (int k2 = 0; k2 < verticesPerFace; k2++) {
+				boolean flag3 = quadPos[k2][sideOffsets[side]] != sideSoftBounds[side];
+				for (int j = 0; j < 3; j++) {
+					if (j == sideOffsets[side]) {
+						quadPos[k2][j] = clampF(quadPos[k2][j], bounds, j);
+					} else {
+						if (flag && flag2 && flag3) {
+							// TODO: only clamp here when covers[] != null && has a cover on the side this vertex is on
+							quadPos[k2][j] = MathHelper.clamp(quadPos[k2][j], FACADE_RENDER_OFFSET, FACADE_RENDER_OFFSET2);
+						}
+					}
+				}
 
-        return finalQuads;
-    }
+				if (s != -1) {
+					float u, v;
 
-    private final static int[][] sides = { { 4, 5 }, { 0, 1 }, { 2, 3 } };
+					if (s == 0) {
+						u = quadPos[k2][1];
+						v = quadPos[k2][2];
+					} else if (s == 1) {
+						u = quadPos[k2][0];
+						v = quadPos[k2][2];
+					} else {
+						u = quadPos[k2][0];
+						v = quadPos[k2][1];
+					}
 
-    private static float clampF(float x, Cuboid6 b, int j) {
+					u = MathHelper.clamp(u, 0, 1) * 16;
+					v = MathHelper.clamp(v, 0, 1) * 16;
 
-        float l = (float) b.getSide(sides[j][0]);
-        float u = (float) b.getSide(sides[j][1]);
+					u = icon.getInterpolatedU(u);
+					v = icon.getInterpolatedV(v);
+					quad.vertices[k2].uv.set(u, v);
+					quad.tintIndex = -1;
+				}
+				quad.vertices[k2].vec.set(quadPos[k2]);
+			}
+			finalQuads.add(quad);
+		}
 
-        if (x < l) {
-            return l - (l - x) * 0.001953125f;
-        } else if (x > u) {
-            return u + (x - u) * 0.001953125f;
-        } else {
-            return x;
-        }
-    }
+		return finalQuads;
+	}
+
+	private final static int[][] sides = { { 4, 5 }, { 0, 1 }, { 2, 3 } };
+
+	private static float clampF(float x, Cuboid6 b, int j) {
+
+		float l = (float) b.getSide(sides[j][0]);
+		float u = (float) b.getSide(sides[j][1]);
+
+		if (x < l) {
+			return l - (l - x) * 0.001953125f;
+		} else if (x > u) {
+			return u + (x - u) * 0.001953125f;
+		} else {
+			return x;
+		}
+	}
 }
 

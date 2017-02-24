@@ -5,7 +5,6 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -77,7 +76,7 @@ public class ServoFluid extends ServoBase {
 		maxInput = ductHandler.fill(theTile.drain(maxInput, false), false);
 
 		FluidStack returned = theTile.drain(maxInput, true);
-        ductHandler.fill(returned, true);
+		ductHandler.fill(returned, true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {

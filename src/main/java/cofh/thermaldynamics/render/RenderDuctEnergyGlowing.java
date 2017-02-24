@@ -13,16 +13,17 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 public class RenderDuctEnergyGlowing extends TileEntitySpecialRenderer<TileEnergyDuctGlowing> {
-	public static final RenderDuctEnergyGlowing instance = new RenderDuctEnergyGlowing();
 
+	public static final RenderDuctEnergyGlowing instance = new RenderDuctEnergyGlowing();
 
 	@Override
 	public void renderTileEntityAt(TileEnergyDuctGlowing duct, double x, double y, double z, float frame, int destroyStage) {
+
 		boolean hasFlux = false;
 		float[] flux = new float[6];
 		float maxFlux = 0;
 		for (int i = 0; i < 6; i++) {
-			float v = flux[i] = Math.max( duct.fluxIn[i] , duct.fluxOut[i]);
+			float v = flux[i] = Math.max(duct.fluxIn[i], duct.fluxOut[i]);
 			if (v != 0) {
 				hasFlux = true;
 				maxFlux = Math.max(maxFlux, Math.abs(v));

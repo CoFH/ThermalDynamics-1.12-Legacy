@@ -20,67 +20,67 @@ import java.util.List;
 
 public class CreativeTabTD extends CreativeTabs {
 
-    int iconIndex = 0;
-    TimeTracker iconTracker = new TimeTracker();
+	int iconIndex = 0;
+	TimeTracker iconTracker = new TimeTracker();
 
-    public CreativeTabTD() {
+	public CreativeTabTD() {
 
-        super("ThermalDynamics");
-    }
+		super("ThermalDynamics");
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public ItemStack getIconItemStack() {
+	@Override
+	@SideOnly (Side.CLIENT)
+	public ItemStack getIconItemStack() {
 
-        updateIcon();
-        return TDDucts.getDuct(iconIndex).itemStack;
-    }
+		updateIcon();
+		return TDDucts.getDuct(iconIndex).itemStack;
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Item getTabIconItem() {
+	@Override
+	@SideOnly (Side.CLIENT)
+	public Item getTabIconItem() {
 
-        return getIconItemStack().getItem();
-    }
+		return getIconItemStack().getItem();
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String getTabLabel() {
+	@Override
+	@SideOnly (Side.CLIENT)
+	public String getTabLabel() {
 
-        return "thermaldynamics.creativeTab";
-    }
+		return "thermaldynamics.creativeTab";
+	}
 
-    private void updateIcon() {
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void displayAllRelevantItems(List<ItemStack> list) {
 
-        World world = CoFHCore.proxy.getClientWorld();
+		LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
+		super.displayAllRelevantItems(itemStacks);
 
-        if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
-            int next = MathHelper.RANDOM.nextInt(TDDucts.ductList.size() - 1);
-            iconIndex = next >= iconIndex ? next + 1 : next;
-            iconTracker.markTime(world);
-        }
-    }
+		for (Duct d : TDDucts.getSortedDucts()) {
+			list.add(d.itemStack.copy());
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void displayAllRelevantItems(List<ItemStack> list) {
+			if (d instanceof DuctItem) {
+				list.add(((DuctItem) d).getDenseItemStack());
+				list.add(((DuctItem) d).getVacuumItemStack());
+			}
+		}
+		for (ItemStack item : itemStacks) {
+			if (!(item.getItem() instanceof ItemBlockDuct)) {
+				list.add(item);
+			}
+		}
+	}
 
-        LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
-        super.displayAllRelevantItems(itemStacks);
+	private void updateIcon() {
 
-        for (Duct d : TDDucts.getSortedDucts()) {
-            list.add(d.itemStack.copy());
+		World world = CoFHCore.proxy.getClientWorld();
 
-            if (d instanceof DuctItem) {
-                list.add(((DuctItem) d).getDenseItemStack());
-                list.add(((DuctItem) d).getVacuumItemStack());
-            }
-        }
-        for (ItemStack item : itemStacks) {
-            if (!(item.getItem() instanceof ItemBlockDuct)) {
-                list.add(item);
-            }
-        }
-    }
+		if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
+			int next = MathHelper.RANDOM.nextInt(TDDucts.ductList.size() - 1);
+			iconIndex = next >= iconIndex ? next + 1 : next;
+			iconTracker.markTime(world);
+		}
+	}
 
 }

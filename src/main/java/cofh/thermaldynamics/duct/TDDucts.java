@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.debughelper.DebugHelper;
 import cofh.thermaldynamics.duct.Duct.Type;
 import cofh.thermaldynamics.duct.light.DuctLight;
 
@@ -19,20 +18,16 @@ public class TDDucts {
 	public static ArrayList<Duct> ductList = new ArrayList<Duct>();
 	public static ArrayList<Duct> ductListSorted = null;
 
-	static Duct addDuct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+	static Duct addDuct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
-		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
-				frameTexture, frameFluidTexture, frameFluidTransparency);
+		Duct newDuct = new Duct(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency, frameTexture, frameFluidTexture, frameFluidTransparency);
 
 		return registerDuct(newDuct);
 	}
 
-	static DuctItem addDuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture,
-			String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+	static DuctItem addDuctItem(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
-		DuctItem newDuct = new DuctItem(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency,
-				frameTexture, frameFluidTexture, frameFluidTransparency);
+		DuctItem newDuct = new DuctItem(id, opaque, pathWeight, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency, frameTexture, frameFluidTexture, frameFluidTransparency);
 
 		return registerDuct(newDuct);
 	}
@@ -102,9 +97,6 @@ public class TDDucts {
 		addSupportDucts();
 		addTransportDucts();
 
-		if (DebugHelper.debug) {
-			addIndevDucts();
-		}
 		return true;
 	}
 
@@ -114,27 +106,19 @@ public class TDDucts {
 
 	static void addEnergyDucts() {
 
-		energyBasic = addDuct(OFFSET_ENERGY + 0, false, 1, 0, "energyBasic", Type.ENERGY, DuctFactory.energy, "lead", "lead", Duct.REDSTONE_BLOCK, 255, null,
-				null, 0);
+		energyBasic = addDuct(OFFSET_ENERGY + 0, false, 1, 0, "energyBasic", Type.ENERGY, DuctFactory.energy, "lead", "lead", Duct.REDSTONE_BLOCK, 255, null, null, 0);
 
-		energyHardened = addDuct(OFFSET_ENERGY + 1, false, 1, 1, "energyHardened", Type.ENERGY, DuctFactory.energy, "invar", "invar", Duct.REDSTONE_BLOCK, 255,
-				null, null, 0);
+		energyHardened = addDuct(OFFSET_ENERGY + 1, false, 1, 1, "energyHardened", Type.ENERGY, DuctFactory.energy, "invar", "invar", Duct.REDSTONE_BLOCK, 255, null, null, 0);
 
-		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum",
-				"thermalfoundation:blocks/fluid/redstone_still", 128, null, null, 0);
+		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, DuctFactory.energy, "electrum", "electrum", "thermalfoundation:blocks/fluid/redstone_still", 128, null, null, 0);
 
-		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
-				"electrum", null, 0, null, null, 0);
+		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, DuctFactory.structural, "electrum", "electrum", null, 0, null, null, 0);
 
-		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium",
-				"thermalfoundation:blocks/fluid/redstone_still", 128, null, null, 0);
-		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, DuctFactory.structural, "enderium", "enderium",
-				null, 0, null, null, 0);
+		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, DuctFactory.energy, "enderium", "enderium", "thermalfoundation:blocks/fluid/redstone_still", 128, null, null, 0);
+		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, DuctFactory.structural, "enderium", "enderium", null, 0, null, null, 0);
 
-		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum",
-				"thermalfoundation:blocks/fluid/redstone_still", 255, "electrum", "thermalfoundation:blocks/fluid/cryotheum_still", 96);
-		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, DuctFactory.structural, "electrum",
-				"electrum", "thermalfoundation:blocks/fluid/redstone_still", 192, "electrum", null, 0);
+		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, DuctFactory.energy_super, "electrum", "electrum", "thermalfoundation:blocks/fluid/redstone_still", 255, "electrum", "thermalfoundation:blocks/fluid/cryotheum_still", 96);
+		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, DuctFactory.structural, "electrum", "electrum", "thermalfoundation:blocks/fluid/redstone_still", 192, "electrum", null, 0);
 
 		energyReinforced.setRarity(1);
 		energyReinforcedEmpty.setRarity(1);
@@ -147,22 +131,17 @@ public class TDDucts {
 	static void addFluidDucts() {
 
 		fluidBasic = addDuct(OFFSET_FLUID + 0, false, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null, 0);
-		fluidBasicOpaque = addDuct(OFFSET_FLUID + 1, true, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null,
-				0);
+		fluidBasicOpaque = addDuct(OFFSET_FLUID + 1, true, 1, 0, "fluidBasic", Type.FLUID, DuctFactory.fluid_fragile, "copper", "copper", null, 0, null, null, 0);
 
 		fluidHardened = addDuct(OFFSET_FLUID + 2, false, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
 		fluidHardenedOpaque = addDuct(OFFSET_FLUID + 3, true, 1, 1, "fluidHardened", Type.FLUID, DuctFactory.fluid, "invar", "invar", null, 0, null, null, 0);
 
-		fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "flux_electrum", "flux_electrum", null, 0, null,
-				null, 0);
-		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "flux_electrum", "flux_electrum", null, 0, null,
-				null, 0);
+		fluidFlux = addDuct(OFFSET_FLUID + 4, false, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "flux_electrum", "flux_electrum", null, 0, null, null, 0);
+		fluidFluxOpaque = addDuct(OFFSET_FLUID + 5, true, 1, 2, "fluidFlux", Type.FLUID, DuctFactory.fluid_flux, "flux_electrum", "flux_electrum", null, 0, null, null, 0);
 
-		fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large", null,
-				0);
+		fluidSuper = addDuct(OFFSET_FLUID + 6, false, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large", null, 0);
 
-		fluidSuperOpaque = addDuct(OFFSET_FLUID + 7, true, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large",
-				null, 0);
+		fluidSuperOpaque = addDuct(OFFSET_FLUID + 7, true, 1, 3, "fluidSuper", Type.FLUID, DuctFactory.fluid_super, "invar", "invar", null, 0, "bronze_large", null, 0);
 
 		fluidHardened.setRarity(1);
 		fluidHardenedOpaque.setRarity(1);
@@ -179,16 +158,13 @@ public class TDDucts {
 		itemBasic = addDuctItem(OFFSET_ITEM + 0, false, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
 		itemBasicOpaque = addDuctItem(OFFSET_ITEM + 1, true, 1, 0, "itemBasic", Type.ITEM, DuctFactory.item, "tin", "tin", null, 0, null, null, 0);
 
-		itemFast = addDuctItem(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin",
-				"thermalfoundation:blocks/fluid/glowstone_still", 128, null, null, 0);
+		itemFast = addDuctItem(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin", "tin", "thermalfoundation:blocks/fluid/glowstone_still", 128, null, null, 0);
 		itemFastOpaque = addDuctItem(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, DuctFactory.item, "tin_1", "tin", null, 0, null, null, 0);
 
 		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
-		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null,
-				null, 0);
+		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, DuctFactory.item_ender, "enderium", "enderium", null, 48, null, null, 0);
 
-		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin",
-				"thermalfoundation:blocks/fluid/redstone_still", 48, null, null, 0);
+		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin", "tin", "thermalfoundation:blocks/fluid/redstone_still", 48, null, null, 0);
 
 		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, DuctFactory.item_flux, "tin_2", "tin", null, 0, null, null, 0);
 
@@ -204,17 +180,13 @@ public class TDDucts {
 
 	static void addTransportDucts() {
 
-		transportBasic = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.TRANSPORT, DuctFactory.transport, null, null, null,
-				255, "electrum", "thermaldynamics:blocks/duct/base/green_glass", 96));
+		transportBasic = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 0, false, 1, 4, "transport", Type.TRANSPORT, DuctFactory.transport, null, null, null, 255, "electrum", "thermaldynamics:blocks/duct/base/green_glass", 96));
 
-		transportLongRange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT,
-				DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:blocks/duct/base/green_glass", 80));
+		transportLongRange = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT, DuctFactory.transport_longrange, null, null, null, 255, "copper", "thermaldynamics:blocks/duct/base/green_glass", 80));
 
-		transportCrossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT,
-				DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:blocks/duct/base/green_glass", 128));
+		transportCrossover = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT, DuctFactory.transport_crossover, null, null, null, 255, "enderium", "thermaldynamics:blocks/duct/base/green_glass", 128));
 
-		transportFrame = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.CRAFTING, DuctFactory.structural, null,
-				null, null, 255, "electrum", null, 128));
+		transportFrame = registerDuct(new DuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.CRAFTING, DuctFactory.structural, null, null, null, 255, "electrum", null, 128));
 
 		transportBasic.setRarity(1);
 		transportLongRange.setRarity(1);
@@ -286,8 +258,7 @@ public class TDDucts {
 	public static DuctLight lightDuct;
 
 	/* HELPERS - NOT REAL */
-	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null,
-			0);
+	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
 
 	public static Duct placeholder = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, DuctFactory.structural, "support", null, null, 0, null, null, 0);
 

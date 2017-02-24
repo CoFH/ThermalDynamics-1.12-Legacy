@@ -1,13 +1,13 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.lighting.LightModel;
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCModel;
 import codechicken.lib.vec.*;
 import codechicken.lib.vec.uv.UV;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import codechicken.lib.lighting.LightModel;
-import codechicken.lib.render.BlockRenderer;
-import codechicken.lib.render.CCModel;
-import cofh.thermaldynamics.core.TDProps;
+import cofh.thermaldynamics.init.TDProps;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -70,8 +70,7 @@ public class ModelHelper {
 			double d3 = 0.32 + 0.06 * i;
 			double c1 = 0.32;
 			double c2 = 0.68;
-			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 },
-					{ 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 } };
+			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 }, { 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 } };
 
 			center = new Cuboid6(c1, c1, c1, c2, d3, c2);
 
@@ -196,8 +195,7 @@ public class ModelHelper {
 		return newModel.computeNormals();
 	}
 
-	static Vector3[] axes = { new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), new Vector3(-1, 0, 0),
-			new Vector3(1, 0, 0), };
+	static Vector3[] axes = { new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), new Vector3(-1, 0, 0), new Vector3(1, 0, 0), };
 
 	static int[] sideMasks = { 3, 3, 12, 12, 48, 48 };
 
@@ -238,7 +236,7 @@ public class ModelHelper {
 		while (iter.hasNext()) {
 			Face f = Face.loadFromIterator(iter);
 
-			for (Iterator<Face> iterator = faces.iterator(); iterator.hasNext();) {
+			for (Iterator<Face> iterator = faces.iterator(); iterator.hasNext(); ) {
 				Face g = iterator.next();
 				if (f.attemptToCombine(g)) {
 					iterator.remove();
@@ -640,8 +638,7 @@ public class ModelHelper {
 		}
 	}
 
-	static int[][] orthogonals = { { 6, 6, 4, 5, 2, 3 }, { 6, 6, 4, 5, 2, 3 }, { 4, 5, 6, 6, 0, 1 }, { 5, 4, 6, 6, 1, 0 }, { 2, 3, 0, 1, 6, 6 },
-			{ 3, 2, 1, 0, 6, 6 }, };
+	static int[][] orthogonals = { { 6, 6, 4, 5, 2, 3 }, { 6, 6, 4, 5, 2, 3 }, { 4, 5, 6, 6, 0, 1 }, { 5, 4, 6, 6, 1, 0 }, { 2, 3, 0, 1, 6, 6 }, { 3, 2, 1, 0, 6, 6 }, };
 
 	static int[][] edgePairs = { { 0, 2 }, { 0, 3 }, { 0, 4 }, { 0, 5 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, { 1, 5 }, { 2, 4 }, { 2, 5 }, { 3, 4 }, { 3, 5 }, };
 
@@ -716,8 +713,7 @@ public class ModelHelper {
 
 			for (int x = -1; x <= 1; x += 2) {
 				for (int y = -1; y <= 1; y += 2) {
-					cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)),
-							a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
+					cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)), a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
 					addSideFaces(vecs, cube, (1 << i) ^ (63));
 				}
 			}
@@ -728,8 +724,7 @@ public class ModelHelper {
 					int orthog = orthogonals[i][j];
 					c = axes[orthog];
 
-					cube = newCube(a.copy().multiply(h / 2 - (s2 - s)).add(b.copy().multiply(s)).add(c.copy().multiply(s)),
-							a.copy().multiply(h / 2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
+					cube = newCube(a.copy().multiply(h / 2 - (s2 - s)).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(h / 2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
 
 					addSideFaces(vecs, cube, (1 << orthog) | (1 << (orthog ^ 1)));
 				}
@@ -753,8 +748,7 @@ public class ModelHelper {
 
 					for (int x = -1; x <= 1; x += 2) {
 						for (int y = -1; y <= 1; y += 2) {
-							cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)),
-									a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
+							cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)), a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
 							addSideFaces(vecs, cube, (1 << i) | (1 << (i ^ 1)));
 						}
 					}
@@ -767,8 +761,7 @@ public class ModelHelper {
 					b = axes[pair[1]];
 					int orthog = orthogonals[pair[0]][pair[1]];
 					c = axes[orthog];
-					cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(s2).add(b.copy().multiply(s2))
-							.add(c.copy().multiply(-s)));
+					cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
 
 					addSideFaces(vecs, cube, (1 << orthog) | (1 << (orthog ^ 1)));
 				}
@@ -778,8 +771,7 @@ public class ModelHelper {
 				a = axes[cr[0]];
 				b = axes[cr[1]];
 				c = axes[cr[2]];
-				cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)),
-						a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(s2)));
+				cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(s2)));
 
 				int m = ((1 << cr[0]) & connections) | ((1 << cr[1]) & connections) | ((1 << cr[2]) & connections);
 

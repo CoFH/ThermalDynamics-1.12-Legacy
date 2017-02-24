@@ -2,19 +2,17 @@ package cofh.thermaldynamics.multiblock;
 
 import cofh.core.util.ChatHelper;
 import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.core.TickHandler;
-import cofh.thermaldynamics.core.WorldGridList;
-import cofh.thermaldynamics.debughelper.NoComodSet;
+import cofh.thermaldynamics.util.TickHandler;
+import cofh.thermaldynamics.util.WorldGridList;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class MultiBlockGrid {
 
@@ -56,7 +54,6 @@ public abstract class MultiBlockGrid {
 				}
 			}
 		}
-
 		balanceGrid();
 	}
 

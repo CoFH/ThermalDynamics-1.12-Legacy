@@ -1,9 +1,9 @@
 package cofh.thermaldynamics.multiblock;
 
+import net.minecraft.world.World;
+
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import net.minecraft.world.World;
 
 public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 

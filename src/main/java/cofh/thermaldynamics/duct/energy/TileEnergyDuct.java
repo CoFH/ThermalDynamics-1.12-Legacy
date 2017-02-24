@@ -135,6 +135,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 	}
 
 	protected int sendEnergy(IEnergyReceiver receiver, int maxReceive, byte side, boolean simulate) {
+
 		return receiver.receiveEnergy(EnumFacing.VALUES[side ^ 1], maxReceive, simulate);
 	}
 

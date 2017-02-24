@@ -16,116 +16,116 @@ import java.util.Comparator;
 
 public class ContainerTransport extends Container {
 
-    public final TileTransportDuct transportDuct;
-    public DirectoryEntry directoryEntry;
+	public final TileTransportDuct transportDuct;
+	public DirectoryEntry directoryEntry;
 
-    public ContainerTransport(TileTransportDuct transportDuct) {
+	public ContainerTransport(TileTransportDuct transportDuct) {
 
-        this.transportDuct = transportDuct;
-    }
+		this.transportDuct = transportDuct;
+	}
 
-    @Override
-    public boolean canInteractWith(EntityPlayer p_75145_1_) {
+	@Override
+	public boolean canInteractWith(EntityPlayer p_75145_1_) {
 
-        return !transportDuct.isInvalid() && (transportDuct.isOutput() || transportDuct.world().isRemote);
-    }
+		return !transportDuct.isInvalid() && (transportDuct.isOutput() || transportDuct.world().isRemote);
+	}
 
-    @Override
-    public void addListener(IContainerListener listener) {
+	@Override
+	public void addListener(IContainerListener listener) {
 
-        super.addListener(listener);
-        if (listener instanceof EntityPlayerMP) {
-            PacketHandler.sendTo(transportDuct.getDirectoryPacket(), (EntityPlayerMP) listener);
-            cache = transportDuct.getCache();
-        }
+		super.addListener(listener);
+		if (listener instanceof EntityPlayerMP) {
+			PacketHandler.sendTo(transportDuct.getDirectoryPacket(), (EntityPlayerMP) listener);
+			cache = transportDuct.getCache();
+		}
 
-    }
+	}
 
-    @Override
-    public void detectAndSendChanges() {
+	@Override
+	public void detectAndSendChanges() {
 
-        super.detectAndSendChanges();
+		super.detectAndSendChanges();
 
-        if (!this.listeners.isEmpty()) {
-            if (cache == null || cache.invalid) {
-                if (transportDuct.internalGrid == null) {
-                    cache = null;
-                } else {
-                    cache = transportDuct.getCache();
-                    for (IContainerListener listener : listeners) {
-                        if (listener instanceof EntityPlayerMP) {
-                            PacketHandler.sendTo(transportDuct.getDirectoryPacket(), (EntityPlayerMP) listener);
-                        }
-                    }
-                }
-            }
-        }
-    }
+		if (!this.listeners.isEmpty()) {
+			if (cache == null || cache.invalid) {
+				if (transportDuct.internalGrid == null) {
+					cache = null;
+				} else {
+					cache = transportDuct.getCache();
+					for (IContainerListener listener : listeners) {
+						if (listener instanceof EntityPlayerMP) {
+							PacketHandler.sendTo(transportDuct.getDirectoryPacket(), (EntityPlayerMP) listener);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    RouteCache cache;
+	RouteCache cache;
 
-    public ArrayList<DirectoryEntry> directory;
+	public ArrayList<DirectoryEntry> directory;
 
-    public Comparator<DirectoryEntry> blockDist = new Comparator<DirectoryEntry>() {
+	public Comparator<DirectoryEntry> blockDist = new Comparator<DirectoryEntry>() {
 
-        @Override
-        public int compare(DirectoryEntry o1, DirectoryEntry o2) {
+		@Override
+		public int compare(DirectoryEntry o1, DirectoryEntry o2) {
 
-            //			int c;
-            //			c = compareDists(o1.x - transportDuct.x(), o1.y - transportDuct.y(), o1.z - transportDuct.z(),
-            //					o2.x - transportDuct.x(), o2.y - transportDuct.y(), o2.z - transportDuct.z());
-            //			if (c != 0) return c;
+			//			int c;
+			//			c = compareDists(o1.x - transportDuct.x(), o1.y - transportDuct.y(), o1.z - transportDuct.z(),
+			//					o2.x - transportDuct.x(), o2.y - transportDuct.y(), o2.z - transportDuct.z());
+			//			if (c != 0) return c;
 
-            return compareStrings(o1.name, o2.name);
-        }
-    };
+			return compareStrings(o1.name, o2.name);
+		}
+	};
 
-    public int compareDists(int x1, int y1, int z1, int x2, int y2, int z2) {
+	public int compareDists(int x1, int y1, int z1, int x2, int y2, int z2) {
 
-        int c;
-        c = compareInts(x1 * x1 + y1 * y1 + z1 * z1, x2 * x2 + y2 * y2 + z2 * z2);
-        if (c != 0) {
-            return c;
-        }
-        c = compareInts(y1, y2);
-        if (c != 0) {
-            return c;
-        }
-        c = compareInts(x1, x2);
-        if (c != 0) {
-            return c;
-        }
-        return compareInts(z1, z2);
-    }
+		int c;
+		c = compareInts(x1 * x1 + y1 * y1 + z1 * z1, x2 * x2 + y2 * y2 + z2 * z2);
+		if (c != 0) {
+			return c;
+		}
+		c = compareInts(y1, y2);
+		if (c != 0) {
+			return c;
+		}
+		c = compareInts(x1, x2);
+		if (c != 0) {
+			return c;
+		}
+		return compareInts(z1, z2);
+	}
 
-    public int compareStrings(String name1, String name2) {
+	public int compareStrings(String name1, String name2) {
 
-        return name1 == null ? name2 == null ? 0 : -1 : name2 == null ? 1 : name1.compareTo(name2);
-    }
+		return name1 == null ? name2 == null ? 0 : -1 : name2 == null ? 1 : name1.compareTo(name2);
+	}
 
-    public static int compareInts(int x, int y) {
+	public static int compareInts(int x, int y) {
 
-        return (x < y) ? -1 : ((x == y) ? 0 : 1);
-    }
+		return (x < y) ? -1 : ((x == y) ? 0 : 1);
+	}
 
-    boolean needsResort = false;
+	boolean needsResort = false;
 
-    public void setDirectory(ArrayList<DirectoryEntry> entries) {
+	public void setDirectory(ArrayList<DirectoryEntry> entries) {
 
-        directory = entries;
-        Collections.sort(directory, blockDist);
-        needsResort = true;
-    }
+		directory = entries;
+		Collections.sort(directory, blockDist);
+		needsResort = true;
+	}
 
-    @Override
-    public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int p_82846_2_) {
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int p_82846_2_) {
 
-        return null;
-    }
+		return null;
+	}
 
-    public void setEntry(DirectoryEntry directoryEntry) {
+	public void setEntry(DirectoryEntry directoryEntry) {
 
-        this.directoryEntry = directoryEntry;
-    }
+		this.directoryEntry = directoryEntry;
+	}
 
 }
