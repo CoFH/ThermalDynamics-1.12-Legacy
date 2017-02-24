@@ -85,9 +85,6 @@ public class TextureTransparent extends TextureAtlasSprite {
 
 			image.setRGB(0, 0, image.getWidth(), image.getHeight(), data, 0, image.getWidth());
 
-			//BufferedImage[] img = new BufferedImage[1 + settings.mipmapLevels];
-			//img[0] = image;
-
 			AnimationMetadataSection metadataSection = iresource.getMetadata("animation");
 
 			PngSizeInfo sizeInfo = PngSizeInfo.makeFromResource(new CustomIResource(this.location, image, iresource));
@@ -96,7 +93,6 @@ public class TextureTransparent extends TextureAtlasSprite {
 			loadSprite(sizeInfo, metadataSection != null);
 			loadSpriteFrames(resource, settings.mipmapLevels + 1);
 
-			//loadSprite(img, animationmetadatasection);
 		} catch (IOException ioexception1) {
 			ThermalDynamics.LOG.error("Using missing texture, unable to load " + this.location, ioexception1);
 			return true;

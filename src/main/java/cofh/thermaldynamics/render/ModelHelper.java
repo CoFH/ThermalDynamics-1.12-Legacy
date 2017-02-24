@@ -93,7 +93,7 @@ public class ModelHelper {
 
 		public LinkedList<Vertex5> createModel(int cMask) {
 
-			LinkedList<Vertex5> verts = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> verts = new LinkedList<>();
 
 			for (int side = 0; side < 6; side++) {
 				if (!opaque && MathHelper.isBitSet(cMask, side)) {
@@ -221,7 +221,7 @@ public class ModelHelper {
 
 	public static LinkedList<Vertex5> apply(LinkedList<Vertex5> vecs, Transformation transformation) {
 
-		LinkedList<Vertex5> t = new LinkedList<Vertex5>();
+		LinkedList<Vertex5> t = new LinkedList<>();
 		for (Vertex5 v : vecs) {
 			t.add(v.copy().apply(transformation));
 		}
@@ -231,21 +231,16 @@ public class ModelHelper {
 	// very slow method that combines squares
 	public static LinkedList<Vertex5> simplifyModel(LinkedList<Vertex5> in) {
 
-		LinkedList<Face> faces = new LinkedList<Face>();
+		LinkedList<Face> faces = new LinkedList<>();
 		Iterator<Vertex5> iter = in.iterator();
 		while (iter.hasNext()) {
 			Face f = Face.loadFromIterator(iter);
 
-			for (Iterator<Face> iterator = faces.iterator(); iterator.hasNext(); ) {
-				Face g = iterator.next();
-				if (f.attemptToCombine(g)) {
-					iterator.remove();
-				}
-			}
+            faces.removeIf(f::attemptToCombine);
 			faces.add(f);
 		}
 
-		LinkedList<Vertex5> out = new LinkedList<Vertex5>();
+		LinkedList<Vertex5> out = new LinkedList<>();
 		for (Face f : faces) {
 			Collections.addAll(out, f.verts);
 		}
@@ -497,10 +492,10 @@ public class ModelHelper {
 
 		public LinkedList<Vertex5> generateIntersections(int connections) {
 
-			LinkedList<Vertex5> v = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> v = new LinkedList<>();
 
-			LinkedList<Vertex5> center = addSideFace(new LinkedList<Vertex5>(), new Cuboid6(-innerSize, -size, -innerSize, innerSize, size, innerSize), 0);
-			LinkedList<Vertex5> arm = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> center = addSideFace(new LinkedList<>(), new Cuboid6(-innerSize, -size, -innerSize, innerSize, size, innerSize), 0);
+			LinkedList<Vertex5> arm = new LinkedList<>();
 
 			for (int k = 0; k < 8; k++) {
 				if (frameOnly && (k % 2 == 0)) {
@@ -705,7 +700,7 @@ public class ModelHelper {
 
 		private LinkedList<Vertex5> generateConnections(int i) {
 
-			LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> vecs = new LinkedList<>();
 			Cuboid6 cube;
 			Vector3 a = axes[i];
 			Vector3 b = axes[orthogAxes[i][0]];
@@ -734,7 +729,7 @@ public class ModelHelper {
 
 		private LinkedList<Vertex5> generateIntersections(int connections) {
 
-			LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> vecs = new LinkedList<>();
 			Vector3 a, b, c;
 			Cuboid6 cube;
 

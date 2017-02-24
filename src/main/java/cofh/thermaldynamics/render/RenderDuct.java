@@ -153,19 +153,18 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
 		modelConnection[0][1].apply(new Translation(-0.5, -0.5, -0.5));
 
-		for (int i = 0; i < modelConnection.length; i++) {
-			CCModel.generateSidedModels(modelConnection[i], 1, Vector3.zero);
-		}
+        for (CCModel[] aModelConnection1 : modelConnection) {
+            CCModel.generateSidedModels(aModelConnection1, 1, Vector3.zero);
+        }
 		Scale[] mirrors = new Scale[] { new Scale(1, -1, 1), new Scale(1, 1, -1), new Scale(-1, 1, 1) };
-		for (int i = 0; i < modelConnection.length; i++) {
-			CCModel[] sideModels = modelConnection[i];
-			for (int s = 2; s < 6; s += 2) {
-				sideModels[s] = sideModels[0].sidedCopy(0, s, Vector3.zero);
-			}
-			for (int s = 1; s < 6; s += 2) {
-				sideModels[s] = sideModels[s - 1].backfacedCopy().apply(mirrors[s / 2]);
-			}
-		}
+        for (CCModel[] sideModels : modelConnection) {
+            for (int s = 2; s < 6; s += 2) {
+                sideModels[s] = sideModels[0].sidedCopy(0, s, Vector3.zero);
+            }
+            for (int s = 1; s < 6; s += 2) {
+                sideModels[s] = sideModels[s - 1].backfacedCopy().apply(mirrors[s / 2]);
+            }
+        }
 
 		modelCenter.computeNormals().computeLighting(LightModel.standardLightModel).shrinkUVs(RenderHelper.RENDER_OFFSET);
 
@@ -278,9 +277,8 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		return true;
 	}
 
-	public boolean renderWorldExtra(CCRenderState ccrs, boolean invRender, TileTDBase tile, int renderType, int[] connection, double x, double y, double z) {
+	public boolean renderWorldExtra(CCRenderState ccrs, boolean invRender, int renderType, int[] connection, double x, double y, double z) {
 
-		//Tessellator.instance.setColorOpaque_F(1, 1, 1);TODO
 		Duct ductType = TDDucts.ductList.get(renderType);
 		TextureAtlasSprite texture = ductType.iconFluidTexture;
 
@@ -431,11 +429,8 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			renderBase(ccrs, false, renderType, connections, x, y, z, theTile.getBaseIcon());
 			flag = true;
 		} else if (layer == BlockRenderLayer.TRANSLUCENT) {
-			flag = renderWorldExtra(ccrs, false, theTile, renderType, connections, x, y, z) || flag;
+			flag = renderWorldExtra(ccrs, false, renderType, connections, x, y, z) || flag;
 		}
-
-		// TODO: Block no longer "saves" render pass - is this necessary?
-		//flag = theTile.renderAdditional(renderType, connections, BlockCoreTile.renderPass) || flag;
 
 		return flag;
 	}
@@ -476,7 +471,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 		// GlStateManager.depthMask(false);
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		renderWorldExtra(ccrs, true, null, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+		renderWorldExtra(ccrs, true, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
 		ccrs.draw();
 
 		// GlStateManager.depthMask(true);
@@ -493,7 +488,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
 
-		return new ArrayList<BakedQuad>();
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -41,20 +41,8 @@ public class CoverRenderer {
 	private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
 	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-	private static final ThreadLocal<VertexLighterFlat> lighterFlat = new ThreadLocal<VertexLighterFlat>() {
-		@Override
-		protected VertexLighterFlat initialValue() {
-
-			return new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors());
-		}
-	};
-	private static final ThreadLocal<VertexLighterFlat> lighterSmooth = new ThreadLocal<VertexLighterFlat>() {
-		@Override
-		protected VertexLighterFlat initialValue() {
-
-			return new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors());
-		}
-	};
+	private static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors()));
+	private static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()));
 
 	//Stop inventory churn of models being sliced.
 	public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
@@ -87,7 +75,7 @@ public class CoverRenderer {
 
 	public static List<CCQuad> applyItemTint(List<CCQuad> quads, ItemStack stack) {
 
-		List<CCQuad> retQuads = new LinkedList<CCQuad>();
+		List<CCQuad> retQuads = new LinkedList<>();
 		for (CCQuad quad : quads) {
 			int colour = -1;
 
@@ -130,7 +118,7 @@ public class CoverRenderer {
 		} catch (Exception ignored) {
 		}
 
-		List<BakedQuad> bakedQuads = new LinkedList<BakedQuad>();
+		List<BakedQuad> bakedQuads = new LinkedList<>();
 		long posRand = net.minecraft.util.math.MathHelper.getPositionRandom(pos);
 		bakedQuads.addAll(model.getQuads(state, null, posRand));
 
@@ -164,7 +152,7 @@ public class CoverRenderer {
 
 		List<CCQuad> renderQuads = itemQuadCache.getIfPresent(cacheKey);
 		if (renderQuads == null) {
-			List<BakedQuad> quads = new ArrayList<BakedQuad>();
+			List<BakedQuad> quads = new ArrayList<>();
 
 			quads.addAll(model.getQuads(null, null, 0));
 			for (EnumFacing face : EnumFacing.VALUES) {
@@ -195,7 +183,7 @@ public class CoverRenderer {
 
 		final int verticesPerFace = 4;
 
-		List<CCQuad> finalQuads = new LinkedList<CCQuad>();
+		List<CCQuad> finalQuads = new LinkedList<>();
 
 		for (CCQuad quad : quads) {
 

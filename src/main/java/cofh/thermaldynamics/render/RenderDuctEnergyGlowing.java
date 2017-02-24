@@ -42,7 +42,6 @@ public class RenderDuctEnergyGlowing extends TileEntitySpecialRenderer<TileEnerg
 		ccrs.reset();
 		GlStateManager.enableAlpha();
 		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
-		//CCRenderState.useNormals = true;
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.disableLighting();
 
@@ -73,14 +72,11 @@ public class RenderDuctEnergyGlowing extends TileEntitySpecialRenderer<TileEnerg
 			}
 		}
 		ccrs.draw();
-		ccrs.baseColour = -1;
-		ccrs.alphaOverride = -1;
 		ccrs.reset();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableBlend();
 		GlStateManager.enableLighting();
 
-		//CCRenderState.useNormals = false;
 		GlStateManager.popMatrix();
 	}
 
