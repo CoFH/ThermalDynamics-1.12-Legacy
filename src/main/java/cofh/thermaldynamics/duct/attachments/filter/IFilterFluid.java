@@ -6,13 +6,6 @@ public interface IFilterFluid {
 
 	boolean allowFluid(FluidStack fluid);
 
-	IFilterFluid nullFilter = new IFilterFluid() {
-
-		@Override
-		public boolean allowFluid(FluidStack fluid) {
-
-			return true;
-		}
-	};
+	IFilterFluid nullFilter = fluid -> true;
 
 }

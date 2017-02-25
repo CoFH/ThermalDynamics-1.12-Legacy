@@ -63,17 +63,13 @@ public class TDDucts {
 					ductListSorted.add(duct);
 				}
 			}
-			Collections.sort(ductListSorted, new Comparator<Duct>() {
+			Collections.sort(ductListSorted, (o1, o2) -> {
 
-				@Override
-				public int compare(Duct o1, Duct o2) {
-
-					int i = o1.ductType.compareTo(o2.ductType);
-					if (i == 0) {
-						i = o1.compareTo(o2);
-					}
-					return i;
+				int i = o1.ductType.compareTo(o2.ductType);
+				if (i == 0) {
+					i = o1.compareTo(o2);
 				}
+				return i;
 			});
 		}
 		return ductListSorted;

@@ -104,15 +104,7 @@ public class ItemCover extends ItemAttachment {
 			// iterate over the keySet instead of all values (compatible with overridden items)
 			data.add(item);
 		}
-		Collections.sort(data, new Comparator<Item>() {
-
-			@Override
-			public int compare(Item o1, Item o2) {
-
-				return Item.REGISTRY.getIDForObject(o1) - Item.REGISTRY.getIDForObject(o2);
-			}
-
-		});
+		Collections.sort(data, (o1, o2) -> Item.REGISTRY.getIDForObject(o1) - Item.REGISTRY.getIDForObject(o2));
 		for (Item anItem : data) {
 			if (anItem instanceof ItemBlock) {
 				anItem.getSubItems(anItem, null, stacks);

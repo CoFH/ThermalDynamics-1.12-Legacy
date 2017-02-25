@@ -70,13 +70,7 @@ public class ProxyClient extends Proxy {
 		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.instance);
 
 		//MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
-		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, new IRenderFactory<EntityTransport>() {
-			@Override
-			public Render<? super EntityTransport> createRenderFor(RenderManager manager) {
-
-				return new RenderTransport(manager);
-			}
-		});
+		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, manager -> new RenderTransport(manager));
 		GameRegistry.register(SoundWoosh.WOOSH);
 	}
 

@@ -66,18 +66,14 @@ public class ContainerTransport extends Container {
 
 	public ArrayList<DirectoryEntry> directory;
 
-	public Comparator<DirectoryEntry> blockDist = new Comparator<DirectoryEntry>() {
+	public Comparator<DirectoryEntry> blockDist = (o1, o2) -> {
 
-		@Override
-		public int compare(DirectoryEntry o1, DirectoryEntry o2) {
+		//			int c;
+		//			c = compareDists(o1.x - transportDuct.x(), o1.y - transportDuct.y(), o1.z - transportDuct.z(),
+		//					o2.x - transportDuct.x(), o2.y - transportDuct.y(), o2.z - transportDuct.z());
+		//			if (c != 0) return c;
 
-			//			int c;
-			//			c = compareDists(o1.x - transportDuct.x(), o1.y - transportDuct.y(), o1.z - transportDuct.z(),
-			//					o2.x - transportDuct.x(), o2.y - transportDuct.y(), o2.z - transportDuct.z());
-			//			if (c != 0) return c;
-
-			return compareStrings(o1.name, o2.name);
-		}
+		return compareStrings(o1.name, o2.name);
 	};
 
 	public int compareDists(int x1, int y1, int z1, int x2, int y2, int z2) {
