@@ -1,9 +1,12 @@
 package cofh.thermaldynamics.duct;
 
+import codechicken.lib.model.DummyBakedModel;
+import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
+import cofh.api.core.IModelRegister;
 import cofh.core.block.TileCore;
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
@@ -25,8 +28,11 @@ import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
 import cofh.thermaldynamics.proxy.ProxyClient;
+import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,6 +50,7 @@ import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -57,7 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui {
+public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister {
 
 	public int offset;
 
@@ -265,7 +272,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			dropBlock = new ItemStack(this, 1, bMeta);
 		}
 
-		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> ret = new ArrayList<>();
 		ret.add(dropBlock);
 
 		if (tile instanceof TileTDBase) {
@@ -328,7 +335,9 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public boolean preInit() {
 
-		GameRegistry.registerBlock(this, ItemBlockDuct.class, "ThermalDynamics_" + offset);
+		GameRegistry.register(this.setRegistryName("ThermalDynamics_" + offset));
+		GameRegistry.register(new ItemBlockDuct(this).setRegistryName("ThermalDynamics_" + offset));
+		ThermalDynamics.proxy.addIModelRegister(this);
 
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(offset + i)) {
@@ -379,6 +388,17 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	public boolean postInit() {
 
 		return true;
+	}
+
+	/* IModelRegister */
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(META).build());
+		ModelResourceLocation normalLocation = new ModelResourceLocation(getRegistryName(), "normal");
+		ModelRegistryHelper.register(normalLocation, new DummyBakedModel());
+		ModelRegistryHelper.registerItemRenderer(Item.getItemFromBlock(this), RenderDuct.instance);
 	}
 
 	@Override

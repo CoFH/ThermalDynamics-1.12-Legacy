@@ -2,8 +2,8 @@ package cofh.thermaldynamics.proxy;
 
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
+import cofh.api.core.IModelRegister;
 import cofh.core.render.IconRegistry;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
@@ -11,7 +11,6 @@ import cofh.thermaldynamics.duct.entity.SoundWoosh;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
-import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
@@ -20,17 +19,13 @@ import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cofh.thermaldynamics.util.TickHandlerClient;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -39,22 +34,19 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProxyClient extends Proxy {
 
 	public static EnumBlockRenderType renderType;
+	public static List<IModelRegister> modelRegisters = new ArrayList<>();
 
 	/* INIT */
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 
-		FMLCommonHandler.instance().bus().register(TickHandlerClient.INSTANCE);
-
-		for (BlockDuct duct : TDBlocks.blockDuct) {
-			StateMap.Builder stateMapBuilder = new StateMap.Builder();
-			stateMapBuilder.ignore(BlockDuct.META);
-			ModelLoader.setCustomStateMapper(duct, stateMapBuilder.build());
-			ModelRegistryHelper.registerItemRenderer(Item.getItemFromBlock(duct), RenderDuct.instance);
-		}
+		MinecraftForge.EVENT_BUS.register(TickHandlerClient.INSTANCE);
 
 		String[] names = { "basic", "hardened", "reinforced", "signalum", "resonant" };
 		Item[] items = { TDItems.itemFilter, TDItems.itemRetriever, TDItems.itemServo };
@@ -69,9 +61,11 @@ public class ProxyClient extends Proxy {
 
 		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.instance);
 
-		//MinecraftForgeClient.registerItemRenderer(ThermalDynamics.itemCover, RenderItemCover.instance);
-		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, manager -> new RenderTransport(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, RenderTransport::new);
 		GameRegistry.register(SoundWoosh.WOOSH);
+		for (IModelRegister register : modelRegisters) {
+			register.registerModels();
+		}
 	}
 
 	@Override
@@ -87,6 +81,11 @@ public class ProxyClient extends Proxy {
 
 		ProxyClient.renderType = BlockRenderingRegistry.createRenderType("TD");
 		BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.instance);
+	}
+
+	@Override
+	public void addIModelRegister(IModelRegister register) {
+		modelRegisters.add(register);
 	}
 
 	@Override

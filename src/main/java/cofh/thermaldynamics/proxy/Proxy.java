@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.proxy;
 
+import cofh.api.core.IModelRegister;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -20,6 +21,10 @@ public class Proxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
+
+	}
+
+	public void addIModelRegister(IModelRegister register) {
 
 	}
 
