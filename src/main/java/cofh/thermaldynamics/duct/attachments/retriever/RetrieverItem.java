@@ -11,6 +11,7 @@ import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,7 +66,7 @@ public class RetrieverItem extends ServoItem {
 		}
 
 		Translation trans = Vector3.fromTileCenter(tile).translation();
-		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
+		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(TDTextures.RETRIEVER_BASE[stuffed ? 1 : 0][type]));
 		return true;
 	}
 

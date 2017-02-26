@@ -13,7 +13,6 @@ import codechicken.lib.vec.Scale;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.core.render.IconRegistry;
 import cofh.lib.render.RenderHelper;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
@@ -22,6 +21,7 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.init.TDProps;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermalfoundation.init.TFFluids;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -62,14 +62,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 	static TextureAtlasSprite textureCenterLine;
 
-	public static TextureAtlasSprite coverBase;
-	public static TextureAtlasSprite signalTexture;
-	public static TextureAtlasSprite[] servoTexture = new TextureAtlasSprite[10];
-	public static TextureAtlasSprite[] retrieverTexture = new TextureAtlasSprite[10];
-	public static TextureAtlasSprite[] filterTexture = new TextureAtlasSprite[5];
-
-	public static TextureAtlasSprite sideDucts;
-
 	static CCModel[][] modelFluid = new CCModel[6][7];
 	public static CCModel[][] modelConnection = new CCModel[3][6];
 	static CCModel modelCenter;
@@ -94,18 +86,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	private static CCModel[] modelLargeTubes;
 
 	public static void initialize() {
-
-		for (int i = 0; i < 10; i++) {
-			servoTexture[i] = IconRegistry.getIcon("ServoBase" + i);
-			retrieverTexture[i] = IconRegistry.getIcon("RetrieverBase" + i);
-		}
-		for (int i = 0; i < 5; i++) {
-			filterTexture[i] = IconRegistry.getIcon("FilterBase" + i);
-		}
-		coverBase = IconRegistry.getIcon("CoverBase");
-		sideDucts = IconRegistry.getIcon("SideDucts");
-		signalTexture = IconRegistry.getIcon("Signaller");
-
 		textureCenterLine = TextureUtils.getTexture(TFFluids.fluidSteam.getStill());
 	}
 
@@ -153,18 +133,18 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
 		modelConnection[0][1].apply(new Translation(-0.5, -0.5, -0.5));
 
-        for (CCModel[] aModelConnection1 : modelConnection) {
-            CCModel.generateSidedModels(aModelConnection1, 1, Vector3.zero);
-        }
+		for (CCModel[] aModelConnection1 : modelConnection) {
+			CCModel.generateSidedModels(aModelConnection1, 1, Vector3.zero);
+		}
 		Scale[] mirrors = new Scale[] { new Scale(1, -1, 1), new Scale(1, 1, -1), new Scale(-1, 1, 1) };
-        for (CCModel[] sideModels : modelConnection) {
-            for (int s = 2; s < 6; s += 2) {
-                sideModels[s] = sideModels[0].sidedCopy(0, s, Vector3.zero);
-            }
-            for (int s = 1; s < 6; s += 2) {
-                sideModels[s] = sideModels[s - 1].backfacedCopy().apply(mirrors[s / 2]);
-            }
-        }
+		for (CCModel[] sideModels : modelConnection) {
+			for (int s = 2; s < 6; s += 2) {
+				sideModels[s] = sideModels[0].sidedCopy(0, s, Vector3.zero);
+			}
+			for (int s = 1; s < 6; s += 2) {
+				sideModels[s] = sideModels[s - 1].backfacedCopy().apply(mirrors[s / 2]);
+			}
+		}
 
 		modelCenter.computeNormals().computeLighting(LightModel.standardLightModel).shrinkUVs(RenderHelper.RENDER_OFFSET);
 
@@ -220,7 +200,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		}
 
 		if (ductType.frameType == 1) {
-			renderSideTubes(ccrs, 0, connection, x - 0.5, y - 0.5, z - 0.5, sideDucts);
+			renderSideTubes(ccrs, 0, connection, x - 0.5, y - 0.5, z - 0.5, TDTextures.SIDE_DUCTS);
 		} else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {

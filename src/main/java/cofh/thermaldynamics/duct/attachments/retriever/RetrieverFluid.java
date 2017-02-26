@@ -9,6 +9,7 @@ import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -111,7 +112,7 @@ public class RetrieverFluid extends ServoFluid {
 		}
 
 		Translation trans = Vector3.fromTileCenter(tile).translation();
-		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.retrieverTexture[type * 2 + (stuffed ? 1 : 0)]));
+		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(TDTextures.RETRIEVER_BASE[stuffed ? 1 : 0][type]));
 		return true;
 	}
 

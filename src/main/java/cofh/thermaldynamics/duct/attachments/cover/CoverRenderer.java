@@ -9,7 +9,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.render.RenderDuct;
+import cofh.thermaldynamics.init.TDTextures;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.minecraft.block.state.IBlockState;
@@ -181,7 +181,7 @@ public class CoverRenderer {
 		float vecPos[] = new float[3];
 		boolean flat[] = new boolean[3];
 
-		TextureAtlasSprite icon = RenderDuct.coverBase;
+		TextureAtlasSprite icon = TDTextures.COVER_SIDE;
 
 		final int verticesPerFace = 4;
 

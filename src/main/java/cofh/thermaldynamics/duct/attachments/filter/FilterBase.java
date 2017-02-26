@@ -7,6 +7,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -56,7 +57,7 @@ public abstract class FilterBase extends ConnectionBase {
 		}
 
 		Translation trans = Vector3.fromTileCenter(tile).translation();
-		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.filterTexture[type]));
+		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(ccRenderState, trans, new IconTransformation(TDTextures.FILTER_BASE[type]));
 		return true;
 	}
 

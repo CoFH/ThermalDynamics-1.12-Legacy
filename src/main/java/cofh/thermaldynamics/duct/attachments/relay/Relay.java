@@ -23,6 +23,7 @@ import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
 import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.Block;
@@ -106,7 +107,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		}
 
 		Translation trans = Vector3.fromTileCenter(tile).translation();
-		RenderDuct.modelConnection[1 + (type & 1)][side].render(ccRenderState, trans, new IconTransformation(RenderDuct.signalTexture));
+		RenderDuct.modelConnection[1 + (type & 1)][side].render(ccRenderState, trans, new IconTransformation(TDTextures.SIGNALLER));
 		return true;
 	}
 

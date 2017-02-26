@@ -11,6 +11,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -123,7 +124,7 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 
 		Translation trans = Vector3.fromTileCenter(tile).translation();
-		IconTransformation iconTrans = new IconTransformation(RenderDuct.servoTexture[type * 2 + (stuffed ? 1 : 0)]);
+		IconTransformation iconTrans = new IconTransformation(TDTextures.SERVO_BASE[stuffed ? 1 : 0][type]);
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, iconTrans);
 		return true;
 	}

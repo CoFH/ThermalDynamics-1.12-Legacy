@@ -3,7 +3,6 @@ package cofh.thermaldynamics.proxy;
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
 import cofh.api.core.IModelRegister;
-import cofh.core.render.IconRegistry;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
@@ -12,6 +11,7 @@ import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
 import cofh.thermaldynamics.render.RenderDuctItems;
@@ -92,22 +92,7 @@ public class ProxyClient extends Proxy {
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
-
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 2; j++) {
-				IconRegistry.addIcon("ServoBase" + (i * 2 + j), "thermaldynamics:blocks/duct/attachment/servo/servo_base_" + i + "" + j, event.getMap());
-				IconRegistry.addIcon("RetrieverBase" + (i * 2 + j), "thermaldynamics:blocks/duct/attachment/retriever/retriever_base_" + i + "" + j, event.getMap());
-			}
-		}
-
-		IconRegistry.addIcon("Signaller", "thermaldynamics:blocks/duct/attachment/signallers/signaller", event.getMap());
-
-		IconRegistry.addIcon("CoverBase", "thermaldynamics:blocks/duct/attachment/cover/support", event.getMap());
-
-		for (int i = 0; i < 5; i++) {
-			IconRegistry.addIcon("FilterBase" + i, "thermaldynamics:blocks/duct/attachment/filter/filter_" + i + "0", event.getMap());
-		}
-		IconRegistry.addIcon("SideDucts", "thermaldynamics:blocks/duct/side_ducts", event.getMap());
+		TDTextures.registerIcons(event);
 
 		for (int i = 0; i < TDDucts.ductList.size(); i++) {
 			if (TDDucts.isValid(i)) {
