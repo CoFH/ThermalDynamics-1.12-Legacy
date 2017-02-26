@@ -69,7 +69,7 @@ processResources {
 
 	from(sourceSets.main.resources.srcDirs) {
 		include 'mcmod.info'
-		expand 'VERSION': project.version, 'mc_version': project.config.mc_version
+		expand 'version': project.version, 'mc_version': project.config.mc_version
 	}
 	rename '(.+_at.cfg)', 'META-INF/$1'
 }
