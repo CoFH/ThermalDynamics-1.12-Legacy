@@ -78,8 +78,6 @@ public class LightGrid extends MultiBlockGrid {
 			shouldBeLit = false;
 		}
 
-		// shouldBeLit = false;
-
 		if (!shouldBeLit) {
 			for (Object object : Iterables.concat(nodeSet, idleSet)) {
 				TileLightDuct lamp = (TileLightDuct) object;
@@ -97,7 +95,7 @@ public class LightGrid extends MultiBlockGrid {
 
 	boolean lit = false;
 
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ("SuspiciousMethodCalls")
 	public void setLight(boolean lit) {
 
 		this.lit = lit;
@@ -110,7 +108,7 @@ public class LightGrid extends MultiBlockGrid {
 			PacketCoFHBase packet = new PacketLight(lit, this);
 			WorldServer dimension = (WorldServer) worldGrid.worldObj;
 			PlayerChunkMap manger = dimension.getPlayerChunkMap();
-			for (EntityPlayer player : (List<EntityPlayer>) dimension.playerEntities) {
+			for (EntityPlayer player : dimension.playerEntities) {
 				for (ChunkCoord chunk : chunks) {
 
 					PlayerChunkMapEntry inst = manger.getEntry(chunk.chunkX, chunk.chunkZ);
@@ -129,7 +127,7 @@ public class LightGrid extends MultiBlockGrid {
 
 	public void buildMap() {
 
-		chunks = new HashSet<ChunkCoord>();
+		chunks = new HashSet<>();
 		for (IMultiBlock iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
 			buildMapEntry(iMultiBlock);
 		}

@@ -25,15 +25,15 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 		super(renderManager);
 
-		List<LayerRenderer> layersToRemove = new ArrayList<LayerRenderer>();
-		for (LayerRenderer layer : layerRenderers) {
+		List<LayerRenderer<?>> layersToRemove = new ArrayList<>();
+		for (LayerRenderer<?> layer : layerRenderers) {
 			if (layer instanceof LayerBipedArmor || layer instanceof LayerDeadmau5Head || layer instanceof LayerCustomHead) {
 				continue;
 			}
 			layersToRemove.add(layer);
 		}
 
-		for (LayerRenderer layer : layersToRemove) {
+		for (LayerRenderer<?> layer : layersToRemove) {
 			removeLayer(layer);
 		}
 	}

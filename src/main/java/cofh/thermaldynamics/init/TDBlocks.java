@@ -43,7 +43,7 @@ public class TDBlocks {
 		initList.clear();
 	}
 
-	private static ArrayList<IInitializer> initList = new ArrayList<IInitializer>();
+	private static ArrayList<IInitializer> initList = new ArrayList<>();
 
 	/* REFERENCES */
 	public static BlockDuct[] blockDuct;

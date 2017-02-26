@@ -10,12 +10,12 @@ import java.util.LinkedHashSet;
 
 public class WorldGridList {
 
-	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<MultiBlockGrid>();
-	public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<IMultiBlock>();
+	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<>();
+	public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<>();
 
-	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<MultiBlockGrid>();
-	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<MultiBlockGrid>();
-	public LinkedHashSet<MultiBlockGrid> oldGrids = new LinkedHashSet<MultiBlockGrid>();
+	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<>();
+	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<>();
+	public LinkedHashSet<MultiBlockGrid> oldGrids = new LinkedHashSet<>();
 
 	public World worldObj;
 
@@ -53,7 +53,7 @@ public class WorldGridList {
 			}
 			gridsToRecreate.clear();
 		}
-		ArrayList<MultiBlockGrid> mtickinggrids = new ArrayList<MultiBlockGrid>();
+		ArrayList<MultiBlockGrid> mtickinggrids = new ArrayList<>();
 
 		for (MultiBlockGrid grid : tickingGrids) {
 			grid.tickGrid();

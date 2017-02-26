@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -120,7 +121,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	public List<ItemStack> getDrops() {
 
-		LinkedList<ItemStack> drops = new LinkedList<ItemStack>();
+		LinkedList<ItemStack> drops = new LinkedList<>();
 		drops.add(getPickBlock());
 		return drops;
 	}
@@ -411,7 +412,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public void sendGuiNetworkData(Container container, List player, boolean newGuy) {
+	public void sendGuiNetworkData(Container container, List<IContainerListener> player, boolean newGuy) {
 
 		super.sendGuiNetworkData(container, player, newGuy);
 

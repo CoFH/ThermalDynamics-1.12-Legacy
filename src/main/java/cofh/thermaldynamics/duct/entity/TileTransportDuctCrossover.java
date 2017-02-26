@@ -34,13 +34,6 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 		if (neighborTypes[i] != NeighborTypes.OUTPUT) {
 			if (i < 2 || worldObj.isBlockLoaded(pos.offset(EnumFacing.VALUES[i]))) {
 				rangePos[i] = null;
-				// if (worldObj.blockExists(rangePos[i].x, rangePos[i].y, rangePos[i].z)) {
-				// TileEntity theTile = worldObj.getTileEntity(rangePos[i].x, rangePos[i].y, rangePos[i].z);
-				//
-				// if (theTile instanceof TileTransportDuctCrossover){
-				// theTile`
-				// }
-				// }
 			}
 			return;
 		}

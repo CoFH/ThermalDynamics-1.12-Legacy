@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.entity;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 
 public class Camera extends EntityLivingBase {
 
@@ -61,7 +61,7 @@ public class Camera extends EntityLivingBase {
 	@Override
 	public Iterable<ItemStack> getArmorInventoryList() {
 
-		return Collections.EMPTY_LIST;
+		return ImmutableList.of();
 	}
 
 	public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {

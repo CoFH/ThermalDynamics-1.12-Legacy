@@ -18,13 +18,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
+import java.util.Random;
 
 public abstract class Attachment {
 
@@ -84,18 +84,18 @@ public abstract class Attachment {
 	public void dropItemStack(ItemStack item) {
 
 		Cuboid6 c = getCuboid();
-		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), new Vec3d(tile.x() + c.min.x + tile.world().rand.nextFloat() * (c.max.x - c.min.x), tile.y() + c.min.y + tile.world().rand.nextFloat() * (c.max.y - c.min.y), tile.z() + c.min.z + tile.world().rand.nextFloat() * (c.max.z - c.min.z))
-
-		);
+		Random rand = tile.getWorld().rand;
+		Vector3 dif = c.max.copy().subtract(c.max);
+		Vector3 vec = Vector3.fromBlockPos(tile.getPos()).add(c.min).add(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()).multiply(dif);
+		CoreUtils.dropItemStackIntoWorldWithVelocity(item, tile.getWorld(), vec.vec3());
 	}
 
 	@SideOnly (Side.CLIENT)
 	public abstract boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState);
 
-	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
 
-		Cuboid6 cuboid6 = getCuboid().add(new Vector3(tile.getPos()));
+		Cuboid6 cuboid6 = getCuboid().add(tile.getPos());
 		if (cuboid6.intersects(new Cuboid6(entityBox))) {
 			list.add(cuboid6.aabb());
 		}

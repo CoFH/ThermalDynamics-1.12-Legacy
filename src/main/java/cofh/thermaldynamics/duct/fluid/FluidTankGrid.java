@@ -10,7 +10,7 @@ public class FluidTankGrid extends FluidTankCore {
 	public int fluidThroughput = 120;
 	public int fluidPerDuct = 3000;
 	public FluidGrid myMaster;
-	static TObjectIntHashMap<String> fluidFlowrate = new TObjectIntHashMap<String>();
+	static TObjectIntHashMap<String> fluidFlowrate = new TObjectIntHashMap<>();
 
 	static {
 		fluidFlowrate.put("steam", 600);
@@ -52,7 +52,7 @@ public class FluidTankGrid extends FluidTankCore {
 
 	public void setFluidData(FluidStack fluid) {
 
-		int viscosity = 0;
+		int viscosity;
 
 		if (fluid != null) {
 			viscosity = Math.max(fluid.getFluid().getViscosity(), 100);

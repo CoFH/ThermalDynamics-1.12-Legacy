@@ -20,13 +20,7 @@ public class CoverBlockAccess implements IBlockAccess {
 
 	IBlockAccess world;
 
-	public static ThreadLocal<CoverBlockAccess> instances = new ThreadLocal<CoverBlockAccess>() {
-		@Override
-		protected CoverBlockAccess initialValue() {
-
-			return new CoverBlockAccess();
-		}
-	};
+	public static ThreadLocal<CoverBlockAccess> instances = ThreadLocal.withInitial(CoverBlockAccess::new);
 
 	public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
 
@@ -44,7 +38,11 @@ public class CoverBlockAccess implements IBlockAccess {
 	IBlockState state;
 
 	public enum Result {
-		ORIGINAL, AIR, BASE, BEDROCK, COVER
+		ORIGINAL,
+		AIR,
+		BASE,
+		BEDROCK,
+		COVER
 	}
 
 	public Result getAction(BlockPos pos) {
@@ -90,13 +88,6 @@ public class CoverBlockAccess implements IBlockAccess {
 		Result action = getAction(pos);
 		return action == ORIGINAL ? world.getBlockState(pos) : action == AIR ? Blocks.AIR.getDefaultState() : action == BEDROCK ? Blocks.BEDROCK.getDefaultState() : action == COVER ? ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side) : state;
 	}
-
-    /*@Override
-    public Block getBlock(int x, int y, int z) {
-
-        Result action = getAction(x, y, z);
-        return action == ORIGINAL ? world.getBlock(x, y, z) : action == AIR ? Blocks.air : action == BEDROCK ? Blocks.bedrock : action == COVER ? ((IBlockAppearance) world.getBlock(x, y, z)).getVisualBlock(world, x, y, z, ForgeDirection.getOrientation(side)) : block;
-    }*/
 
 	@Override
 	public TileEntity getTileEntity(BlockPos pos) {

@@ -131,7 +131,7 @@ public class Cover extends Attachment {
 	@Override
 	public List<ItemStack> getDrops() {
 
-		LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
+		LinkedList<ItemStack> itemStacks = new LinkedList<>();
 		itemStacks.add(getPickBlock());
 		return itemStacks;
 	}
@@ -221,19 +221,6 @@ public class Cover extends Attachment {
 			ccrs.alphaOverride = 80;
 			CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), null);
 			ccrs.draw();
-			//Tessellator tess = Tessellator.instance;
-			//tess.startDrawingQuads();
-			//Tessellator.instance.setNormal(0, 1, 0);
-			//tess.setColorRGBA_F(1, 1, 1, 0.5F);
-			//tess.setBrightness(tile.getBlockType().getMixedBrightnessForBlock(tile.world(), tile.xCoord, tile.yCoord, tile.zCoord));
-			//RenderBlocks renderBlocks = CoverRenderer.renderBlocks;
-			//renderBlocks.blockAccess = player.getEntityWorld();
-			//for (int i = 0; i < 2; i++) {
-			//	if (block.canRenderInPass(i)) {
-			//		CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, true, null);
-			//	}
-			//}
-			//tess.draw();
 		}
 		GlStateManager.popMatrix();
 		net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();

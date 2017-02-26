@@ -10,13 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerTransportConfig extends ContainerTDBase {
 
-	private final InventoryPlayer inventory;
-	private final TileTransportDuct transportDuct;
-
 	public ContainerTransportConfig(InventoryPlayer inventory, TileTransportDuct transportDuct) {
-
-		this.inventory = inventory;
-		this.transportDuct = transportDuct;
 
 		addPlayerInventory(inventory);
 

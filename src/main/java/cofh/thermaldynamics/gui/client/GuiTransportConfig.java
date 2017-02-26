@@ -16,7 +16,7 @@ public class GuiTransportConfig extends GuiCore {
 
 	public GuiTransportConfig(InventoryPlayer inventory, TileTransportDuct transportDuct) {
 
-		super(new ContainerTransportConfig(inventory, transportDuct), new ResourceLocation(TEX_PATH));
+		super(new ContainerTransportConfig(inventory, transportDuct), TEXTURE);
 		this.inventory = inventory;
 		this.transportDuct = transportDuct;
 

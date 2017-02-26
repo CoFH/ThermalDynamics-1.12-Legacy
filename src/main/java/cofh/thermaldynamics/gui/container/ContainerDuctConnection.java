@@ -16,7 +16,7 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 
 	private final ConnectionBase tile;
 	public final FilterLogic filter;
-	public LinkedList<SlotFilter> filterSlots = new LinkedList<SlotFilter>();
+	public LinkedList<SlotFilter> filterSlots = new LinkedList<>();
 	public final int gridWidth;
 	public final int gridHeight;
 	public final int gridX0;

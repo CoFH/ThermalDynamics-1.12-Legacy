@@ -25,7 +25,6 @@ public class Route implements Comparable<Route> {
 		endPoint = myParent;
 	}
 
-	@SuppressWarnings ("unchecked")
 	public Route(Route prevRoute, IMultiBlockRoute newPlace, byte direction, boolean isFinished) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
@@ -37,7 +36,6 @@ public class Route implements Comparable<Route> {
 	}
 
 	// Used to set as a node
-	@SuppressWarnings ("unchecked")
 	public Route(Route prevRoute, boolean endPath) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
@@ -47,7 +45,6 @@ public class Route implements Comparable<Route> {
 		routeFinished = true;
 	}
 
-	@SuppressWarnings ("unchecked")
 	public Route(Route prevRoute) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);

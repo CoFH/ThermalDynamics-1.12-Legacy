@@ -71,7 +71,6 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 	public boolean canConnectEnergy(EnumFacing from) {
 
 		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
-		// && (neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.STRUCTURE);
 	}
 
 }

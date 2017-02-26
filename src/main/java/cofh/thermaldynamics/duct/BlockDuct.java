@@ -221,7 +221,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	public enum ConnectionTypes {
-		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
+		NONE(false),
+		DUCT,
+		TILECONNECTION,
+		STRUCTURE,
+		CLEANDUCT;
 
 		private final boolean renderDuct;
 
@@ -294,15 +298,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			dropBlock.setTagCompound(nbt);
 		}
 		if (!simulate) {
-			World actualWorld = (World) world;
 			if (tile instanceof TileCore) {
 				((TileCore) tile).blockDismantled();
 			}
-			actualWorld.setBlockToAir(pos);
+			world.setBlockToAir(pos);
 
 			if (!returnDrops) {
 				for (ItemStack stack : ret) {
-					ItemUtils.dropItem(actualWorld, pos, stack, 0.3F);
+					ItemUtils.dropItem(world, pos, stack, 0.3F);
 				}
 
 				if (player != null) {

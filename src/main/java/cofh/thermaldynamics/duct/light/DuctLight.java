@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketHandler;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.DuctFactory;
+import cofh.thermaldynamics.duct.IDuctFactory;
 import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -15,7 +15,7 @@ public class DuctLight extends Duct {
 		GameRegistry.registerTileEntity(TileLightDuct.class, "thermaldynamics.LightDuct");
 	}
 
-	public DuctLight(int id, int type, String name, Type ductType, DuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency) {
+	public DuctLight(int id, int type, String name, Type ductType, IDuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency) {
 
 		super(id, false, 0, type, name, ductType, factory, baseTexture, connectionTexture, fluidTexture, fluidTransparency, null, null, 0);
 	}

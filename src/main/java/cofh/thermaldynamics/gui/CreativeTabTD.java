@@ -54,7 +54,7 @@ public class CreativeTabTD extends CreativeTabs {
 	@SideOnly (Side.CLIENT)
 	public void displayAllRelevantItems(List<ItemStack> list) {
 
-		LinkedList<ItemStack> itemStacks = new LinkedList<ItemStack>();
+		LinkedList<ItemStack> itemStacks = new LinkedList<>();
 		super.displayAllRelevantItems(itemStacks);
 
 		for (Duct d : TDDucts.getSortedDucts()) {

@@ -230,7 +230,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 			transport.setEntry(new DirectoryEntry(payload));
 
-			ArrayList<DirectoryEntry> entries = new ArrayList<DirectoryEntry>();
+			ArrayList<DirectoryEntry> entries = new ArrayList<>();
 
 			int size = payload.getShort();
 			for (int i = 0; i < size; i++) {
@@ -294,7 +294,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 		LinkedList<Route> outputRoutes = getCache().outputRoutes;
 
-		ArrayList<TileTransportDuct> ducts = new ArrayList<TileTransportDuct>(outputRoutes.size());
+		ArrayList<TileTransportDuct> ducts = new ArrayList<>(outputRoutes.size());
 
 		for (Route outputRoute : outputRoutes) {
 			if (outputRoute.endPoint.isOutput() && outputRoute.endPoint != this && outputRoute.endPoint instanceof TileTransportDuct) {

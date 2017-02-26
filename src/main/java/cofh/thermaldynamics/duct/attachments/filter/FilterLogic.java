@@ -64,10 +64,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		items = new ItemStack[maxFilterItems[type]];
 
 		if (transferType == Duct.Type.ITEM) {
-			quickItems = new LinkedList<ItemStack>();
+			quickItems = new LinkedList<>();
 		} else if (transferType == Duct.Type.FLUID) {
-			fluidsSimple = new HashSet<Fluid>();
-			fluidsNBT = new HashSet<FluidStack>();
+			fluidsSimple = new HashSet<>();
+			fluidsNBT = new HashSet<>();
 		}
 		this.connection = connection;
 
@@ -99,7 +99,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 				if (!flags[flagIgnoreMod]) {
 					if (modNames == null) {
-						modNames = new HashSet<String>();
+						modNames = new HashSet<>();
 					} else {
 						modNames.clear();
 					}
@@ -122,7 +122,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 					if (isItem()) {
 						if (item.getItem() instanceof ISpecialFilterItem) {
 							if (customFilterItems == null) {
-								customFilterItems = new LinkedList<CustomFilterItem>();
+								customFilterItems = new LinkedList<>();
 							}
 
 							customFilterItems.add(new CustomFilterItem(item));
@@ -136,7 +136,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							if (allOreIDs != null) {
 								for (Integer integer : allOreIDs) {
 									if (!oreIds.contains(integer)) {
-										oreIds.add(integer.intValue());
+										oreIds.add(integer);
 									}
 								}
 							}
@@ -160,7 +160,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 					} else if (isFluid()) {
 						if (item.getItem() instanceof ISpecialFilterFluid) {
 							if (customFilterFluids == null) {
-								customFilterFluids = new LinkedList<CustomFilterFluid>();
+								customFilterFluids = new LinkedList<>();
 							}
 
 							customFilterFluids.add(new CustomFilterFluid(item));
@@ -213,7 +213,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		}
 
 		if (!flags[flagIgnoreMod]) {
-			if (modNames.contains(CoreUtils.getModName(item.getItem()))) {
+			if (modNames.contains(item.getItem().getRegistryName().getResourceDomain())) {
 				return returnValue;
 			}
 		}
@@ -420,11 +420,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				flags[i] = defaultflags[i];
 			}
 		}
-	}
-
-	public int getNumLevels() {
-
-		return validLevels.length;
 	}
 
 	public enum Perm {

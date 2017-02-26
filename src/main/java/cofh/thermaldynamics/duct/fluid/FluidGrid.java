@@ -226,7 +226,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	/* Renders */
 	public void buildMap() {
 
-		chunks = new HashSet<ChunkCoord>();
+		chunks = new HashSet<>();
 		for (IMultiBlock iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
 			buildMapEntry(iMultiBlock);
 		}
@@ -237,7 +237,6 @@ public class FluidGrid extends MultiBlockGridTracking {
 		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
 
-	@SuppressWarnings ("unchecked")
 	public void updateAllRenders() {
 
 		int fl = renderFluidLevel;
@@ -270,7 +269,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 					}
 					PacketFluid packet = new PacketFluid(this, ducts);
 					WorldServer dimension = (WorldServer) worldGrid.worldObj;
-					for (EntityPlayer player : (List<EntityPlayer>) dimension.playerEntities) {
+					for (EntityPlayer player : dimension.playerEntities) {
 						for (ChunkCoord chunk : chunks) {
 							int dx = (chunk.chunkX - (MathHelper.floor(player.posX) >> 4)) * 16;
 							int dz = (chunk.chunkZ - (MathHelper.floor(player.posZ) >> 4)) * 16;

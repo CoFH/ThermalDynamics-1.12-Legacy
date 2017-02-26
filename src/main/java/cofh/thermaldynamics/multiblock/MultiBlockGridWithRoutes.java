@@ -35,8 +35,8 @@ public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
 		return !calculatingRoutes.isEmpty();
 	}
 
-	public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<IMultiBlockRoute, RouteCache>();
-	public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<RouteCache>();
+	public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<>();
+	public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<>();
 
 	@Override
 	public void onMinorGridChange() {

@@ -19,7 +19,7 @@ public class RenderTransport extends RenderEntity {
 
 	RenderPlayerRiding renderPlayer;
 
-	WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<EntityPlayer, EntityOtherPlayerMP>();
+	WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<>();
 
 	public RenderTransport(RenderManager renderManager) {
 

@@ -18,7 +18,12 @@ public class Duct implements IIconRegister {
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public enum Type {
-		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, CRAFTING
+		ENERGY,
+		FLUID,
+		ITEM,
+		TRANSPORT,
+		STRUCTURAL,
+		CRAFTING
 	}
 
 	public ItemStack itemStack = null;
@@ -36,7 +41,7 @@ public class Duct implements IIconRegister {
 	public final String unlocalizedName;
 	public final int pathWeight;
 	public final Type ductType;
-	public final DuctFactory factory;
+	public final IDuctFactory factory;
 	public final String baseTexture;
 	public final String connectionTexture;
 	public final String fluidTexture;
@@ -49,7 +54,7 @@ public class Duct implements IIconRegister {
 
 	public EnumRarity rarity = EnumRarity.COMMON;
 
-	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, DuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
+	public Duct(int id, boolean opaque, int pathWeight, int type, String name, Type ductType, IDuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency, String frameTexture, String frameFluidTexture, int frameFluidTransparency) {
 
 		this.id = id;
 		this.pathWeight = pathWeight;

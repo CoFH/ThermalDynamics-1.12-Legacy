@@ -89,14 +89,6 @@ public class RetrieverItem extends ServoItem {
 
 		IItemHandler simulatedInv = cachedInv;
 
-		//StackMap travelingItems = itemDuct.internalGrid.travelingItems.get(itemDuct.getPos().offset(EnumFacing.VALUES[side]));
-		//if (travelingItems != null) {
-		//    for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
-		//        iterator.advance();
-		//        InventoryHelper.insertStackIntoInventory(simulatedInv, iterator.key().toItemStack(iterator.value()), false);
-		//    }
-		//}
-
 		for (Route route : routeList) {
 			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
 

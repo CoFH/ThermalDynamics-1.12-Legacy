@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.render.ShaderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,32 +14,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 public class TransportHandler {
 
 	public static final TransportHandler INSTANCE = new TransportHandler();
 
-	// @SubscribeEvent
-	// public void cancelDamgage(LivingAttackEvent event) {
-	//
-	// EntityLivingBase entity = event.entityLiving;
-	// Entity ridingEntity = entity.ridingEntity;
-	// if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
-	// EntityTransport ridingEntity1 = (EntityTransport) ridingEntity;
-	// BlockPosition p = ridingEntity1.pos;
-	// if (p == null) {
-	// return;
-	// }
-	//
-	// TileEntity tileEntity = event.entity.worldObj.getTileEntity(p.x, p.y, p.z);
-	//
-	// if (tileEntity != null && !tileEntity.isInvalid() && tileEntity instanceof TileTransportDuctBase) {
-	// event.setCanceled(true);
-	// }
-	// }
-	// }
-
+	@SuppressWarnings ("unchecked")
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
 	@SideOnly (Side.CLIENT)
 	public void renderTravellers(RenderLivingEvent.Pre event) {
@@ -58,17 +39,17 @@ public class TransportHandler {
 			ridingEntity.updatePassenger(entity);
 			float rotation = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * f;
 
-			GL11.glPushMatrix();
+			GlStateManager.pushMatrix();
 			float max = Math.max(Math.max(Math.max(entity.height, entity.width), transport.originalWidth), transport.originalHeight);
 
-			GL11.glTranslated(event.getX(), event.getY(), event.getZ());
+			GlStateManager.translate(event.getX(), event.getY(), event.getZ());
 
 			if (max > 0.4) {
 				double h = 0.4 / max;
-				GL11.glTranslated(0, -h / 2, 0);
-				GL11.glScaled(h, h, h);
+				GlStateManager.translate(0, -h / 2, 0);
+				GlStateManager.scale(h, h, h);
 			} else {
-				GL11.glTranslated(0, -1 / 2, 0);
+				GlStateManager.translate(0, -1 / 2, 0);
 			}
 
 			try {
@@ -77,7 +58,7 @@ public class TransportHandler {
 			} finally {
 				entity.startRiding(transport);
 			}
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 
 		}
 	}

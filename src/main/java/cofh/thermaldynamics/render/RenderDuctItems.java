@@ -70,12 +70,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
-			//RenderUtils.preWorldRender(duct.getWorld(), duct.getPos());
-			//CCRenderState.useNormals = true;
-
 			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, duct.getWorld(), x, y, z, frame);
-			//CCRenderState.useNormals = false;
-			//ccrs.reset();
 		}
 
 		if (duct.centerLine > 0) {
@@ -86,7 +81,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 			ccrs.reset();
 			GlStateManager.enableAlpha();
 			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-			//CCRenderState.useNormals = true;
 			GlStateManager.color(1, 1, 1, 1);
 			GlStateManager.disableLighting();
 
@@ -116,7 +110,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 			GlStateManager.disableBlend();
 			GlStateManager.enableLighting();
 
-			//CCRenderState.useNormals = false;
 			GlStateManager.popMatrix();
 
 		}

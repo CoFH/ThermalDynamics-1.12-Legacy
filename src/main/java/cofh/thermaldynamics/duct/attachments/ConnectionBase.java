@@ -81,7 +81,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	@Override
 	public List<ItemStack> getDrops() {
 
-		LinkedList<ItemStack> drops = new LinkedList<ItemStack>();
+		LinkedList<ItemStack> drops = new LinkedList<>();
 		drops.add(getPickBlock());
 		return drops;
 	}

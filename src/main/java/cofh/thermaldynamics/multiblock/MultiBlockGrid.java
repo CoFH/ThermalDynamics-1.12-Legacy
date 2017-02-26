@@ -16,8 +16,8 @@ import java.util.List;
 
 public abstract class MultiBlockGrid {
 
-	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<IMultiBlock>();
-	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
+	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<>();
+	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<>();
 	public WorldGridList worldGrid;
 	public boolean signalsUpToDate;
 
@@ -182,7 +182,7 @@ public abstract class MultiBlockGrid {
 			}
 
 			if (rs.relaysIn == null) {
-				rs.relaysIn = new ArrayList<Relay>();
+				rs.relaysIn = new ArrayList<>();
 			}
 
 			rs.relaysIn.add(signaller);
@@ -196,7 +196,7 @@ public abstract class MultiBlockGrid {
 		}
 
 		if (rs.relaysOut == null) {
-			rs.relaysOut = new ArrayList<Attachment>();
+			rs.relaysOut = new ArrayList<>();
 		}
 		rs.relaysOut.add(attachment);
 	}

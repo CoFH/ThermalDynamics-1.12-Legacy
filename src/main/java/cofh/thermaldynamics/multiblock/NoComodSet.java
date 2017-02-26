@@ -13,7 +13,7 @@ public class NoComodSet<E> extends AbstractSet<E> {
 
 	public NoComodSet() {
 
-		this(new LinkedHashSet<E>());
+		this(new LinkedHashSet<>());
 	}
 
 	public NoComodSet(Set<E> set) {

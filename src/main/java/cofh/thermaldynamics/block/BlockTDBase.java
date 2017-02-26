@@ -11,6 +11,7 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
+import cofh.thermaldynamics.duct.entity.EntityTransport;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -106,9 +107,9 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
 
-		//if (entity instanceof EntityTransport) {
-		//    return;//TODO Entity Transport.
-		//}
+		if (entity instanceof EntityTransport) {
+		    return;
+		}
 
 		float min = getSize(state);
 		float max = 1 - min;
@@ -169,7 +170,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		if (theTile == null) {
 			return null;
 		}
-		List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
+		List<IndexedCuboid6> cuboids = new LinkedList<>();
 		theTile.addTraceableCuboids(cuboids);
 		return RayTracer.rayTraceCuboidsClosest(start, end, cuboids, pos);
 	}
@@ -207,31 +208,6 @@ public abstract class BlockTDBase extends BlockCoreTile {
 			WrenchHelper.usedWrench(player, traceResult);
 			return true;
 		}
-
-		// Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		//
-		// if (equipped instanceof ItemBlock) {
-		// Block block = ((ItemBlock) equipped).field_150939_a;
-		// int meta = player.getHeldItem().getItem().getMetadata(player.getHeldItem().getItemDamage());
-		// int side = -1;
-		// MovingObjectPosition position = RayTracer.retraceBlock(world, player, x, y, z);
-		// if (position != null) {
-		// int subHit = position.subHit;
-		// if (subHit < 6)
-		// side = subHit;
-		// else if (subHit < 12)
-		// side = subHit - 6;
-		// else if (subHit == 13)
-		// side = hitSide;
-		// if (side != -1) {
-		// if (!world.isRemote) {
-		// tile.addFacade(new Facade(tile, (byte) side, block, meta));
-		// }
-		// return true;
-		// }
-		// }
-		//
-		// }
 
 		return tile.openGui(player);
 	}

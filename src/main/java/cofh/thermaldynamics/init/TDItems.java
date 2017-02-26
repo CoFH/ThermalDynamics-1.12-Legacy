@@ -45,7 +45,7 @@ public class TDItems {
 		initList.clear();
 	}
 
-	private static ArrayList<IInitializer> initList = new ArrayList<IInitializer>();
+	private static ArrayList<IInitializer> initList = new ArrayList<>();
 
 	/* REFERENCES */
 	public static ItemServo itemServo;

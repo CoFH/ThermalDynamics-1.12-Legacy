@@ -46,9 +46,9 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 
 	public ItemGrid internalGrid;
 
-	public List<TravelingItem> myItems = new LinkedList<TravelingItem>();
-	public List<TravelingItem> itemsToRemove = new LinkedList<TravelingItem>();
-	public List<TravelingItem> itemsToAdd = new LinkedList<TravelingItem>();
+	public List<TravelingItem> myItems = new LinkedList<>();
+	public List<TravelingItem> itemsToRemove = new LinkedList<>();
+	public List<TravelingItem> itemsToAdd = new LinkedList<>();
 
 	public byte pathWeightType = 0;
 	public byte ticksExisted = 0;
@@ -300,43 +300,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		return urgent ? internalGrid.getRoutesFromOutput(this) : internalGrid.getRoutesFromOutputNonUrgent(this);
 	}
 
-	// @Override
-	// public boolean openGui(EntityPlayer player) {
-	// if (!isOutput())
-	// return false;
-	//
-	// if (ServerHelper.isClientWorld(worldObj) || !isOutput())
-	// return true;
-	//
-	// LinkedList<Route> routes = internalGrid.getRoutesFromOutput(this).outputRoutes;
-	//
-	// if (routes.size() <= 1)
-	// return true;
-	//
-	//
-	// for (Route route : routes) {
-	// if (route.pathDirections.size() < 1)
-	// continue;
-	//
-	// byte input;
-	// for (input = 0; input < 6 && neighborTypes[input ^ 1] != NeighborTypes.OUTPUT; ) input++;
-	// byte output;
-	// for (output = 0; output < 6 && ((TileItemDuct) route.endPoint).neighborTypes[output] != NeighborTypes.OUTPUT; )
-	// output++;
-	//
-	// Route itemRoute = route.copy();
-	// itemRoute.pathDirections.add(output);
-	// final TravelingItem travelingItem = new TravelingItem(new ItemStack(Blocks.glowstone), x(), y(), z(), itemRoute, input);
-	// travelingItem.goingToStuff = true;
-	// insertItem(travelingItem);
-	//
-	// break;
-	// }
-	// // player.addChatComponentMessage(new ChatComponentText("Routes: " + routes.size()));
-	//
-	// return true;
-	// }
-
 	public void pulseLineDo(int dir) {
 
 		if (!getDuctType().opaque) {
@@ -553,7 +516,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
 		cache.handlerCache[side] = capability;
 
-		//noinspection ConstantConditions
 		if (capability != null) {
 			for (EnumFacing facing : EnumFacing.values()) {
 				if (facing == oppositeSide) {
@@ -700,8 +662,8 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 			itemsToAdd.clear();
 		}
 		if (myItems.size() > 0) {
-			for (int i = 0; i < myItems.size(); i++) {
-				myItems.get(i).tickClientForward(this);
+			for (TravelingItem myItem : myItems) {
+				myItem.tickClientForward(this);
 			}
 			if (itemsToRemove.size() > 0) {
 				myItems.removeAll(itemsToRemove);
@@ -721,20 +683,6 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	public static final int maxCenterLine = 10;
 	public int centerLine = 0;
 	public int[] centerLineSub = new int[6];
-
-	// public int getIncoming(ItemStack anItem, int side) {
-	// int stackSize = 0;
-	// HashSet<TravelingItem> travelingItems = internalGrid.travelingItems.get(new BlockCoord(this).offset(side));
-	// if (travelingItems != null && !travelingItems.isEmpty()) {
-	// for (TravelingItem travelingItem : travelingItems) {
-	// if (ItemHelper.itemsEqualWithMetadata(anItem, travelingItem.stack, true)) {
-	// stackSize += travelingItem.stack.stackSize;
-	// }
-	// }
-	// }
-	//
-	// return stackSize;
-	// }
 
 	@Override
 	public RouteInfo canRouteItem(ItemStack anItem) {

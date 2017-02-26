@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.item;
 
 import cofh.lib.util.helpers.StringHelper;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.Duct;
@@ -13,12 +14,14 @@ import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.List;
@@ -41,7 +44,7 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 
 		for (int i = 0; i < 5; i++) {
 			list.add(new ItemStack(item, 1, i));
@@ -68,7 +71,7 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extraInfo) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean extraInfo) {
 
 		super.addInformation(stack, player, list, extraInfo);
 
@@ -106,11 +109,11 @@ public class ItemRetriever extends ItemAttachment {
 		addFiltering(list, type, Duct.Type.FLUID);
 	}
 
-	public static void addFiltering(List list, int type, Duct.Type duct) {
+	public static void addFiltering(List<String> list, int type, Duct.Type duct) {
 
 		StringBuilder b = new StringBuilder();
 
-		b.append(StringHelper.localize("info.thermaldynamics.filter.options") + ": " + StringHelper.WHITE);
+		b.append(StringHelper.localize("info.thermaldynamics.filter.options")).append(": ").append(StringHelper.WHITE);
 		boolean flag = false;
 		for (int i = 0; i < FilterLogic.flagTypes.length; i++) {
 			if (FilterLogic.canAlterFlag(duct, type, i)) {
@@ -136,7 +139,7 @@ public class ItemRetriever extends ItemAttachment {
 	@Override
 	public boolean preInit() {
 
-		GameRegistry.registerItem(this, "retriever");
+		GameRegistry.register(this.setRegistryName("retriever"));
 
 		basicRetriever = new ItemStack(this, 1, 0);
 		hardenedRetriever = new ItemStack(this, 1, 1);
@@ -144,7 +147,17 @@ public class ItemRetriever extends ItemAttachment {
 		signalumRetriever = new ItemStack(this, 1, 3);
 		resonantRetriever = new ItemStack(this, 1, 4);
 
+		ThermalDynamics.proxy.addIModelRegister(this);
 		return true;
 	}
 
+	@Override
+	public void registerModels() {
+
+		String[] names = { "basic", "hardened", "reinforced", "signalum", "resonant" };
+		for (int i = 0; i < names.length; i++) {
+			ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=" + this.getRegistryName().getResourcePath() + "_" + names[i]);
+			ModelLoader.setCustomModelResourceLocation(this, i, location);
+		}
+	}
 }

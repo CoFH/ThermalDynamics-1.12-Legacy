@@ -224,7 +224,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 					c = c | (1 << s);
 					if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
 						modelTransportConnection[64 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
-						// modelTransport[70 + s].render(x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 					}
 				}
 			}
@@ -304,10 +303,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
 					c = c | (1 << s);
-
-					// if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
-					// modelTransport[70 + s].render(x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
-					// }
 				}
 			}
 
@@ -366,8 +361,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			connections[i] = tile.getRenderConnectionType(i).ordinal();
 		}
 	}
-
-	/* ISimpleBlockRenderingHandler */
 
 	@Override
 	public void handleRenderBlockDamage(IBlockAccess world, BlockPos pos, IBlockState state, TextureAtlasSprite sprite, VertexBuffer buffer) {
@@ -434,34 +427,19 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		int metadata = duct.id;
 
 		GlStateManager.pushMatrix();
-		double offset = 0;
-		//if (type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-		//	offset = 0;
-		//}
+
 		RenderHelper.setBlockTextureSheet();
-		//RenderUtils.preItemRender();
-
-		//RenderHelper.enableGUIStandardItemLighting();
-
-		// GlStateManager.depthMask(true);
 		CCRenderState ccrs = CCRenderState.instance();
+
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		renderBase(ccrs, true, metadata, INV_CONNECTIONS, offset, offset, offset, duct.getBaseTexture(item));
+		renderBase(ccrs, true, metadata, INV_CONNECTIONS, 0, 0, 0, duct.getBaseTexture(item));
 		ccrs.draw();
 
-		// GlStateManager.depthMask(false);
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		renderWorldExtra(ccrs, true, metadata, INV_CONNECTIONS, offset, offset - RenderHelper.RENDER_OFFSET, offset);
+		renderWorldExtra(ccrs, true, metadata, INV_CONNECTIONS, 0, 0 - RenderHelper.RENDER_OFFSET, 0);
 		ccrs.draw();
 
-		// GlStateManager.depthMask(true);
 
-		//CCRenderState.useNormals = false;
-		//RenderHelper.setItemTextureSheet();
-
-		//RenderUtils.postItemRender();
-
-		//net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
 		GlStateManager.popMatrix();
 	}
 

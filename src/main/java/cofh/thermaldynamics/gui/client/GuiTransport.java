@@ -145,7 +145,6 @@ public class GuiTransport extends GuiCore {
 			directoryButtons[i].setPosX(x0);
 			directoryButtons[i].setEntry(index >= directory.size() ? null : directory.get(index));
 		}
-		//		buttonConfig.setPosition(x0, buttonConfig.getPosY());
 
 	}
 

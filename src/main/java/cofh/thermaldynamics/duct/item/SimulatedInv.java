@@ -37,7 +37,6 @@ public class SimulatedInv implements IItemHandler {
 
 	public SimulatedInv setTarget(IItemHandler target) {
 
-		//this.target = target;
 		size = target.getSlots();
 
 		if (items == null || items.length < size || (size < REBUILD_THRESHOLD && items.length >= REBUILD_THRESHOLD)) {
@@ -53,7 +52,6 @@ public class SimulatedInv implements IItemHandler {
 	}
 
 	IItemHandler target;
-	//IInventory target;
 	ItemStack[] items;
 	int size;
 
@@ -80,52 +78,4 @@ public class SimulatedInv implements IItemHandler {
 
 		return target.extractItem(slot, amount, simulate);
 	}
-
-	//Left here for reasons.
-	/*public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
-
-		ISidedInventory sided;
-
-		public SimulatedInvSided(ISidedInventory target) {
-
-			super(target);
-			this.sided = target;
-		}
-
-		public SimulatedInvSided() {
-
-		}
-
-		@Override
-		public int[] getSlotsForFace(EnumFacing side) {
-
-			return sided.getSlotsForFace(side);
-		}
-
-		@Override
-		public boolean canInsertItem(int slot, ItemStack item, EnumFacing side) {
-
-			return slot < target.getSizeInventory() && sided.canInsertItem(slot, item, side);
-		}
-
-		@Override
-		public boolean canExtractItem(int slot, ItemStack item, EnumFacing side) {
-
-			return slot < target.getSizeInventory() && sided.canExtractItem(slot, item, side);
-		}
-
-		public void setTargetSided(ISidedInventory target) {
-
-			setTarget(target);
-			sided = target;
-		}
-
-		@Override
-		public void clear() {
-
-			super.clear();
-			sided = null;
-		}
-	}*/
-
 }

@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IInitializer;
+import cofh.api.core.IModelRegister;
 import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.lib.util.helpers.BlockHelper;
@@ -28,7 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class ItemAttachment extends Item implements IInitializer {
+public abstract class ItemAttachment extends Item implements IInitializer, IModelRegister {
 
 	public ItemAttachment() {
 
@@ -97,6 +98,12 @@ public abstract class ItemAttachment extends Item implements IInitializer {
 	public boolean postInit() {
 
 		return true;
+	}
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void registerModels() {
+
 	}
 
 	@SideOnly (Side.CLIENT)

@@ -18,11 +18,8 @@ import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cofh.thermaldynamics.util.TickHandlerClient;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -47,17 +44,6 @@ public class ProxyClient extends Proxy {
 	public void preInit(FMLPreInitializationEvent event) {
 
 		MinecraftForge.EVENT_BUS.register(TickHandlerClient.INSTANCE);
-
-		String[] names = { "basic", "hardened", "reinforced", "signalum", "resonant" };
-		Item[] items = { TDItems.itemFilter, TDItems.itemRetriever, TDItems.itemServo };
-		for (Item item : items) {
-			for (int i = 0; i < names.length; i++) {
-				ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=" + item.getRegistryName().getResourcePath() + "_" + names[i]);
-				ModelLoader.setCustomModelResourceLocation(item, i, location);
-			}
-		}
-		ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
-		ModelLoader.setCustomModelResourceLocation(TDItems.itemRelay, 0, location);
 
 		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.instance);
 

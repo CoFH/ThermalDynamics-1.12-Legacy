@@ -60,7 +60,6 @@ public class EntityTransport extends Entity {
 	boolean initSound;
 	public static final float DEFAULT_WIDTH = 0.05F;
 	public static final float DEFAULT_HEIGHT = 0.05F;
-	public static final float DEFAULT_YOFFSET = 0;
 
 	@Override
 	public boolean isEntityInvulnerable(DamageSource source) {
@@ -254,7 +253,6 @@ public class EntityTransport extends Entity {
 
 		rider.width = DEFAULT_WIDTH;
 		rider.height = DEFAULT_HEIGHT;
-		//		rider.yOffset = DEFAULT_YOFFSET;  TODO figure out if this is needed at all (yOffset no longer exists as a field)
 		if (rider instanceof EntityPlayer) {
 			((EntityPlayer) rider).eyeHeight = 0.35F;
 		}
@@ -267,7 +265,6 @@ public class EntityTransport extends Entity {
 		if (rider != null && !rider.isDead) {
 			rider.height = originalHeight;
 			rider.width = originalWidth;
-			// 			rider.yOffset = originalYOffset;  TODO figure out if this is needed at all (yOffset no longer exists as a field)
 			if (rider instanceof EntityPlayer) {
 				((EntityPlayer) rider).eyeHeight = originalEyeHeight;
 			}
@@ -306,8 +303,6 @@ public class EntityTransport extends Entity {
 
 	@Override
 	public void onEntityUpdate() {
-
-		// super.onEntityUpdate();
 
 	}
 

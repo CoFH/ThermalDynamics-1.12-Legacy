@@ -4,11 +4,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Vector3;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -23,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -31,10 +28,6 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
-
-import static codechicken.lib.util.TransformUtils.get;
-import static codechicken.lib.util.TransformUtils.leftify;
-import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType.*;
 
 public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
@@ -70,10 +63,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-		ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
-		builder.putAll(TransformUtils.DEFAULT_BLOCK.getTransforms());
-		//builder.put(GUI, get(-4, 2, 0, 30, 225, 0, 0.625f));
-		return MapWrapper.handlePerspective(this, builder.build(), cameraTransformType);
+		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class ServoItem extends ServoBase {
 	public static int[] maxSize = { 4, 16, 64, 64, 64 };
 	public static boolean[] multiStack = { false, false, false, true, true };
 
-	public LinkedList<ItemStack> stuffedItems = new LinkedList<ItemStack>();
+	public LinkedList<ItemStack> stuffedItems = new LinkedList<>();
 
 	public TileItemDuct itemDuct;
 
@@ -109,7 +109,7 @@ public class ServoItem extends ServoBase {
 	}
 
 	public RouteCache cache = null;
-	public ListWrapper<Route> routeList = new ListWrapper<Route>();
+	public ListWrapper<Route> routeList = new ListWrapper<>();
 
 	@Override
 	public List<ItemStack> getDrops() {

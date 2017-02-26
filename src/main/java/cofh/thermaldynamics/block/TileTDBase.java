@@ -95,14 +95,14 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 
 	public Cover[] covers = new Cover[6];
 
-	LinkedList<Attachment> tickingAttachments = new LinkedList<Attachment>();
+	LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 
 	public static final SubTileMultiBlock[] blankSubTiles = {};
 	public SubTileMultiBlock[] subTiles = blankSubTiles;
 	public long lastUpdateTime = -1;
 	public int hashCode = 0;
 
-	public LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<WeakReference<Chunk>>();
+	public LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<>();
 
 	@Override
 	public void onChunkUnload() {
@@ -489,7 +489,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 				EnumFacing facing = EnumFacing.VALUES[i];
 				Chunk chunk = worldObj.getChunkFromBlockCoords(getPos().offset(facing));
 				if (chunk != base) {
-					neighbourChunks.add(new WeakReference<Chunk>(chunk));
+					neighbourChunks.add(new WeakReference<>(chunk));
 				}
 			}
 		}
@@ -1021,17 +1021,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 
 	public void randomDisplayTick() {
 
-	}
-
-	//@Override
-	public boolean canUpdate() {
-
-		return false;
-	}
-
-	public boolean renderAdditional(int renderType, int[] connections, int pass) {
-
-		return false;
 	}
 
 	public boolean isSubNode() {

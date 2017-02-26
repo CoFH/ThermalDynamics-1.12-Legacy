@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO Minor rework of this system. Move away from Vertex8. Not a huge issue, just some minor performance improvements.
 public class CoverHoleRender {
 
 	public static final ITransformer[] hollowDuct = CoverHoleRender.hollowCover(0.3125f);
@@ -34,7 +35,7 @@ public class CoverHoleRender {
 
 			float[][] uvTransform = getUVTransform(verts, side);
 
-			List<CCQuad> quads = new ArrayList<CCQuad>();
+			List<CCQuad> quads = new ArrayList<>();
 			if (uvTransform == null) {
 				quads.add(draw());
 				return quads;
@@ -211,7 +212,7 @@ public class CoverHoleRender {
 	public static List<CCQuad> holify(List<CCQuad> quads, int side, ITransformer[] transformers) {
 
 		List<Quad> tessQuads = loadFromQuads(quads);
-		List<CCQuad> transformedQuads = new ArrayList<CCQuad>();
+		List<CCQuad> transformedQuads = new ArrayList<>();
 
 		for (Quad tessQuad : tessQuads) {
 			transformedQuads.addAll(tessQuad.sliceStretchDraw(side, transformers));
@@ -222,7 +223,7 @@ public class CoverHoleRender {
 
 	public static List<Quad> loadFromQuads(List<CCQuad> ccQuads) {
 
-		List<Quad> quads = new ArrayList<Quad>();
+		List<Quad> quads = new ArrayList<>();
 
 		for (CCQuad quad : ccQuads) {
 
@@ -243,43 +244,6 @@ public class CoverHoleRender {
 		return quads;
 	}
 
-	/*public static List<Quad> loadFromTessellator(int startIndex, boolean pop) {
-
-		Tessellator tess = Tessellator.instance;
-		int endIndex = tess.rawBufferIndex;
-
-		int[] rb = tess.rawBuffer;
-
-		float dx = (float) tess.xOffset;
-		float dy = (float) tess.yOffset;
-		float dz = (float) tess.zOffset;
-
-		if (startIndex == endIndex) {
-			return Collections.emptyList();
-		}
-
-		List<Quad> list = new ArrayList<Quad>((endIndex - startIndex) >> 2);
-
-		for (int k = startIndex; k < endIndex; k += 32) {
-			Vertex8[] verts = new Vertex8[4];
-			for (int k2 = 0; k2 < 4; k2++) {
-				int i = k + k2 * 8;
-
-				verts[k2] = new Vertex8(Float.intBitsToFloat(rb[i]) - dx, Float.intBitsToFloat(rb[i + 1]) - dy, Float.intBitsToFloat(rb[i + 2]) - dz,
-						Float.intBitsToFloat(rb[i + 3]), Float.intBitsToFloat(rb[i + 4]), rb[i + 5], rb[i + 6], rb[i + 7]);
-			}
-
-			list.add(new Quad(verts));
-		}
-
-		if (pop) {
-			tess.rawBufferIndex = startIndex;
-			tess.vertexCount = startIndex >> 3;
-		}
-
-		return list;
-	}*/
-
 	public static ITransformer[] hollowCover(float w) {
 
 		return new ITransformer[] { new TransformSquare(0, w, 0, 1), new TransformSquare(1 - w, 1, 0, 1), new TransformSquare(w, 1 - w, 0, w), new TransformSquare(w, 1 - w, 1 - w, 1) };
@@ -295,7 +259,7 @@ public class CoverHoleRender {
 		return new ITransformer[] { new TriTransformer(0F, 0.5F - k, false, false), new TriTransformer(0F, 0.5F - k, false, true), new TriTransformer(0F, 0.5F - k, true, false), new TriTransformer(0F, 0.5F - k, true, true), };
 	}
 
-	public static interface ITransformer {
+	public interface ITransformer {
 
 		boolean shouldTransform(float dx, float dy);
 

@@ -15,8 +15,8 @@ public class EnergyGridGlowing extends EnergyGrid {
 
 	@Nullable
 	HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions;
-	HashMap<IMultiBlock, int[]> inputs = new HashMap<IMultiBlock, int[]>();
-	HashMap<IMultiBlock, int[]> outputs = new HashMap<IMultiBlock, int[]>();
+	HashMap<IMultiBlock, int[]> inputs = new HashMap<>();
+	HashMap<IMultiBlock, int[]> outputs = new HashMap<>();
 
 	public EnergyGridGlowing(World world, int type) {
 
@@ -56,7 +56,7 @@ public class EnergyGridGlowing extends EnergyGrid {
 
 		HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions = this.directions;
 		if (directions == null) {
-			this.directions = directions = new HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>>();
+			this.directions = directions = new HashMap<>();
 		}
 
 		processEntries(blocks, directions, false, inputs);
@@ -73,11 +73,7 @@ public class EnergyGridGlowing extends EnergyGrid {
 			Map.Entry<IMultiBlock, int[]> entry = iterator.next();
 			IMultiBlock key = entry.getKey();
 			int[] value = entry.getValue();
-			TObjectIntHashMap<IMultiBlock> facingMap = directions.get(key);
-			if (facingMap == null) {
-				facingMap = buildDirectionTable(key);
-				directions.put(key, facingMap);
-			}
+			TObjectIntHashMap<IMultiBlock> facingMap = directions.computeIfAbsent(key, k -> buildDirectionTable(key));
 
 			boolean nonEmpty = false;
 			for (byte side = 0; side < 6; side++) {
@@ -141,19 +137,15 @@ public class EnergyGridGlowing extends EnergyGrid {
 		if (amount == 0) {
 			return;
 		}
-		int[] sideData = map.get(block);
-		if (sideData == null) {
-			sideData = new int[6];
-			map.put(block, sideData);
-		}
+		int[] sideData = map.computeIfAbsent(block, k -> new int[6]);
 		sideData[side] += amount;
 	}
 
 	public TObjectIntHashMap<IMultiBlock> buildDirectionTable(IMultiBlock block) {
 
-		TObjectIntHashMap<IMultiBlock> facingMap = new TObjectIntHashMap<IMultiBlock>();
-		TObjectIntHashMap<IMultiBlock> directionMap = new TObjectIntHashMap<IMultiBlock>(10, 0.5F, -1);
-		LinkedList<IMultiBlock> toProcess = new LinkedList<IMultiBlock>();
+		TObjectIntHashMap<IMultiBlock> facingMap = new TObjectIntHashMap<>();
+		TObjectIntHashMap<IMultiBlock> directionMap = new TObjectIntHashMap<>(10, 0.5F, -1);
+		LinkedList<IMultiBlock> toProcess = new LinkedList<>();
 
 		directionMap.put(block, 0);
 		facingMap.put(block, (byte) 0);

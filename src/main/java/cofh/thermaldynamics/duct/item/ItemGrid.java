@@ -20,9 +20,8 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	}
 
 	public int travelingItemsCount = 0;
-	public static ArrayList<Attachment> toTick = new ArrayList<Attachment>();
-	// public HashMap<BlockCoord, LinkedList<TravelingItem>> travelingItems = new HashMap<BlockCoord, LinkedList<TravelingItem>>();
-	public HashMap<BlockPos, StackMap> travelingItems = new HashMap<BlockPos, StackMap>();
+	public static ArrayList<Attachment> toTick = new ArrayList<>();
+	public HashMap<BlockPos, StackMap> travelingItems = new HashMap<>();
 	public boolean shouldRepoll = true;
 	public boolean repoll = false;
 
@@ -78,11 +77,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 			return;
 		}
 		BlockPos dest = item.getDest();
-		StackMap list = travelingItems.get(dest);
-		if (list == null) {
-			list = new StackMap();
-			travelingItems.put(dest, list);
-		}
+		StackMap list = travelingItems.computeIfAbsent(dest, k -> new StackMap());
 		list.addItemEntry(item.getStackEntry(), item.stack.stackSize);
 	}
 

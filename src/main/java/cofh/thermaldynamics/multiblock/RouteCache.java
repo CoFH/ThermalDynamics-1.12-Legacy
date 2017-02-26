@@ -33,19 +33,19 @@ public class RouteCache {
 
 	public void init() {
 
-		outputRoutes = new LinkedList<Route>();
+		outputRoutes = new LinkedList<>();
 		if (origin.isOutput()) {
 			Route singleOutput = new Route(origin);
 
 			singleOutput.routeFinished = true;
 			outputRoutes.add(singleOutput);
 		}
-		stuffableRoutes = new LinkedList<Route>();
-		validRoutes = new LinkedList<Route>();
+		stuffableRoutes = new LinkedList<>();
+		validRoutes = new LinkedList<>();
 		validRoutes.add(new Route(origin));
-		visited = new HashSet<IMultiBlockRoute>();
+		visited = new HashSet<>();
 		visited.add(origin);
-		outputvisited = new HashSet<IMultiBlockRoute>();
+		outputvisited = new HashSet<>();
 		if (origin.isOutput()) {
 			outputvisited.add(origin);
 		}
@@ -66,7 +66,7 @@ public class RouteCache {
 
 		boolean continueLoop = false;
 
-		LinkedList<Route> newRoutes = new LinkedList<Route>();
+		LinkedList<Route> newRoutes = new LinkedList<>();
 		for (Route curRoute : validRoutes) {
 			moveForwards(curRoute, newRoutes);
 			if (!curRoute.routeFinished) {

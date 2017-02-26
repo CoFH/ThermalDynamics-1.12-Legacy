@@ -202,7 +202,7 @@ public class TDCrafting {
 
 	public static ShapelessOreRecipe addInputMetaRange(ShapelessOreRecipe recipe, ItemStack input, int minMeta, int maxMeta) {
 
-		ArrayList<ItemStack> itemStacks = new ArrayList<ItemStack>(maxMeta - minMeta + 1);
+		ArrayList<ItemStack> itemStacks = new ArrayList<>(maxMeta - minMeta + 1);
 		for (int i = minMeta; i <= maxMeta; i++) {
 			input = input.copy();
 			input.setItemDamage(i);
@@ -215,7 +215,7 @@ public class TDCrafting {
 	public static ShapelessOreRecipe addInput(ShapelessOreRecipe recipe, Collection<ItemStack>... inputs) {
 
 		for (Collection<ItemStack> input : inputs) {
-			ArrayList<ItemStack> itemStacks = new ArrayList<ItemStack>(input.size());
+			ArrayList<ItemStack> itemStacks = new ArrayList<>(input.size());
 			itemStacks.addAll(input);
 			recipe.getInput().add(itemStacks);
 		}
@@ -225,7 +225,7 @@ public class TDCrafting {
 	public static ShapelessOreRecipe addInput(ShapelessOreRecipe recipe, ItemStack[]... inputs) {
 
 		for (ItemStack[] input : inputs) {
-			ArrayList<ItemStack> itemStacks = new ArrayList<ItemStack>(input.length);
+			ArrayList<ItemStack> itemStacks = new ArrayList<>(input.length);
 			Collections.addAll(itemStacks, input);
 			recipe.getInput().add(itemStacks);
 		}

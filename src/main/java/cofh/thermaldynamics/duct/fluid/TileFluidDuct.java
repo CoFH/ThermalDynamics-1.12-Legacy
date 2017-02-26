@@ -29,7 +29,6 @@ public class TileFluidDuct extends TileTDBase {
 
 	public IFluidHandler[] cache;
 	public IFilterFluid[] filterCache;
-	private int input;
 
 	public FluidGrid fluidGrid;
 

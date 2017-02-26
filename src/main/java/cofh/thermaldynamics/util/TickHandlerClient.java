@@ -14,9 +14,9 @@ import java.util.Iterator;
 public class TickHandlerClient {
 
 	public static final TickHandlerClient INSTANCE = new TickHandlerClient();
-	public static HashSet<TileItemDuct> tickBlocks = new HashSet<TileItemDuct>();
-	public static HashSet<TileItemDuct> tickBlocksToAdd = new HashSet<TileItemDuct>();
-	public static HashSet<TileItemDuct> tickBlocksToRemove = new HashSet<TileItemDuct>();
+	public static HashSet<TileItemDuct> tickBlocks = new HashSet<>();
+	public static HashSet<TileItemDuct> tickBlocksToAdd = new HashSet<>();
+	public static HashSet<TileItemDuct> tickBlocksToRemove = new HashSet<>();
 
 	boolean needsMenu = false;
 

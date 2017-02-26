@@ -106,7 +106,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 	public void randomDisplayTick() {
 
 		if (getDuctType().opaque ? internalTemperature > MELTING_TEMPERATURE : myRenderFluid != null && myRenderFluid.amount > 0 && getTemperature(myRenderFluid) > MELTING_TEMPERATURE) {
-			List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
+			List<IndexedCuboid6> cuboids = new LinkedList<>();
 			addTraceableCuboids(cuboids);
 			if (cuboids.size() == 0) {
 				return;
@@ -170,13 +170,6 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 		for (ItemStack stack : drops) {
 			ItemUtils.dropItem(world(), getPos(), stack, 0.3);
-		    /*float f = 0.3F;
-			double x2 = worldObj.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-			double y2 = worldObj.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-			double z2 = worldObj.rand.nextFloat() * f + (1.0F - f) * 0.5D;
-			EntityItem item = new EntityItem(worldObj, xCoord + x2, yCoord + y2, zCoord + z2, stack);
-			item.delayBeforeCanPickup = 10;
-			worldObj.spawnEntityInWorld(item);*/
 		}
 
 		worldObj.setBlockToAir(getPos());
@@ -203,12 +196,10 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 					IBlockState levelState = block.getDefaultState().withProperty(BlockFluidBase.LEVEL, fullBucket ? 0 : 1);
 					worldObj.setBlockState(getPos(), levelState, 3);
 					worldObj.scheduleBlockUpdate(getPos(), block, worldObj.rand.nextInt(30) + 10, 0);
-					// block.updateTick(world Obj, xCoord, yCoord, zCoord, worldObj.rand);
 				} else if (block instanceof BlockFluidFinite && fullBucket) {
 					IBlockState levelState = block.getDefaultState().withProperty(BlockFluidBase.LEVEL, 0);
 					worldObj.setBlockState(getPos(), levelState, 3);
 					worldObj.scheduleBlockUpdate(getPos(), block, worldObj.rand.nextInt(30) + 10, 0);
-					// block.updateTick(worldObj, xCoord, yCoord, zCoord, worldObj.rand);
 				}
 				BlockUtils.fireBlockUpdate(world(), getPos());
 			}

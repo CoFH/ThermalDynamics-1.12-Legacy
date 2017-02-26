@@ -18,13 +18,10 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class ItemCover extends ItemAttachment {
-
-
 
 	private static List<ItemStack> coverList;
 
@@ -81,7 +78,7 @@ public class ItemCover extends ItemAttachment {
 	@Override
 	public boolean preInit() {
 
-		GameRegistry.registerItem(this, "cover");
+		GameRegistry.register(this.setRegistryName("cover"));
 		return true;
 	}
 
@@ -93,10 +90,9 @@ public class ItemCover extends ItemAttachment {
 
 		ArrayList<Item> data = new ArrayList<>();
 		for (Item item : ForgeRegistries.ITEMS) {
-			// iterate over the keySet instead of all values (compatible with overridden items)
 			data.add(item);
 		}
-		Collections.sort(data, Comparator.comparingInt(Item.REGISTRY::getIDForObject));
+		data.sort(Comparator.comparingInt(Item.REGISTRY::getIDForObject));
 		for (Item anItem : data) {
 			if (anItem instanceof ItemBlock) {
 				anItem.getSubItems(anItem, null, stacks);

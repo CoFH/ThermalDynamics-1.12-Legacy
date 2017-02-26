@@ -15,8 +15,8 @@ import java.util.WeakHashMap;
 public class TickHandler {
 
 	public static final TickHandler INSTANCE = new TickHandler();
-	public static final WeakHashMap<World, WorldGridList> HANDLERS = new WeakHashMap<World, WorldGridList>();
-	public static final LinkedHashSet<WeakReference<IMultiBlock>> MULTI_BLOCKS_TO_CALCULATE = new LinkedHashSet<WeakReference<IMultiBlock>>();
+	public static final WeakHashMap<World, WorldGridList> HANDLERS = new WeakHashMap<>();
+	public static final LinkedHashSet<WeakReference<IMultiBlock>> MULTI_BLOCKS_TO_CALCULATE = new LinkedHashSet<>();
 
 	public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
 
@@ -26,7 +26,7 @@ public class TickHandler {
 			}
 		} else {
 			synchronized (MULTI_BLOCKS_TO_CALCULATE) {
-				MULTI_BLOCKS_TO_CALCULATE.add(new WeakReference<IMultiBlock>(multiBlock));
+				MULTI_BLOCKS_TO_CALCULATE.add(new WeakReference<>(multiBlock));
 			}
 		}
 	}
