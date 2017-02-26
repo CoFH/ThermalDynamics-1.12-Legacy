@@ -6,6 +6,7 @@ import codechicken.lib.model.bakery.CCQuad;
 import codechicken.lib.render.CCRSConsumer;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Vector3;
 import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -164,6 +165,7 @@ public class CoverRenderer {
 		}
 
 		CCRSConsumer consumer = new CCRSConsumer(ccrs);
+		consumer.setOffset(Vector3.center.copy().subtract(bounds.center()));
 
 		for (CCQuad quad : renderQuads) {
 			quad.pipe(consumer);
