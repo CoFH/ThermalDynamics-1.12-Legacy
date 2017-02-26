@@ -4,7 +4,6 @@ import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.gui.CreativeTabTD;
 import cofh.thermaldynamics.gui.CreativeTabTDCovers;
-import cofh.thermaldynamics.item.ItemCover;
 
 public class TDProps {
 
@@ -42,17 +41,17 @@ public class TDProps {
 		largeInnerModelScaling = MathHelper.clamp((float) ThermalDynamics.CONFIG_CLIENT.get(category, "LargeInnerModelScaling", 0.99, comment), 0.50F, 0.99F);
 
 		category = "Interface";
-		boolean itemTabCovers = true;
-		boolean florbTabCommon = false;
 
 		comment = "If TRUE, Thermal Dynamics Covers will have a Creative Tab.";
-		itemTabCovers = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("ItemsInCommonTab", category, itemTabCovers, comment);
+		enableCoverCreativeTab = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("ItemsInCommonTab", category, enableCoverCreativeTab, comment);
+
+		comment = "If TRUE, Thermal Dynamics Covers will be shown in JEI.";
+		showCoversInJEI = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("CoversInJEI", category, showCoversInJEI, comment);
 
 		/* CREATIVE TABS */
 		ThermalDynamics.tabCommon = new CreativeTabTD();
 
-		if (itemTabCovers) {
-			ItemCover.enableCreativeTab = true;
+		if (enableCoverCreativeTab) {
 			ThermalDynamics.tabCovers = new CreativeTabTDCovers();
 		}
 	}
@@ -70,5 +69,9 @@ public class TDProps {
 	/* RENDER */
 	public static float smallInnerModelScaling = 0.99F;
 	public static float largeInnerModelScaling = 0.99F;
+
+	/* MISC */
+	public static boolean enableCoverCreativeTab = true;
+	public static boolean showCoversInJEI = false;
 
 }

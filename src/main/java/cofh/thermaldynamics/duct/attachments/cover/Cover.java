@@ -30,22 +30,24 @@ import java.util.List;
 
 public class Cover extends Attachment {
 
+	//@formatter:off
 	private static Cuboid6 bound = new Cuboid6(0, 0, 0, 1, 0.0625, 1);
 
-	public static Cuboid6[] bounds = { bound, bound.copy().apply(Rotation.sideRotations[1].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[2].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[3].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[4].at(Vector3.center)), bound.copy().apply(Rotation.sideRotations[5].at(Vector3.center)) };
+	public static Cuboid6[] bounds = { bound,
+			bound.copy().apply(Rotation.sideRotations[1].at(Vector3.center)),
+			bound.copy().apply(Rotation.sideRotations[2].at(Vector3.center)),
+			bound.copy().apply(Rotation.sideRotations[3].at(Vector3.center)),
+			bound.copy().apply(Rotation.sideRotations[4].at(Vector3.center)),
+			bound.copy().apply(Rotation.sideRotations[5].at(Vector3.center))
+	};
+	//@formatter:on
 
-	@Deprecated
-	public Block block;
-	@Deprecated
-	public int meta;
 	public IBlockState state;
 
 	public Cover(TileTDBase tile, byte side, IBlockState state) {
 
 		super(tile, side);
 		this.state = state;
-		this.block = state.getBlock();
-		this.meta = state.getBlock().getMetaFromState(state);
 	}
 
 	public Cover(TileTDBase tile, byte side) {
@@ -97,8 +99,8 @@ public class Cover extends Attachment {
 	@Override
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccrs) {
-		//IBlockState state = block.getStateFromMeta(meta);
-		if (!block.canRenderInLayer(state, layer)) {
+
+		if (!state.getBlock().canRenderInLayer(state, layer)) {
 			return false;
 		}
 
@@ -112,9 +114,6 @@ public class Cover extends Attachment {
 		}
 
 		return CoverRenderer.renderBlockCover(ccrs, world, tile.getPos(), side, state, getCuboid(), hollowMask);
-		//return CoverRenderer.renderCover(renderBlocks, tile.xCoord, tile.yCoord, tile.zCoord, side, block, meta, getCuboid(), false, false, hollowMask,
-		//		tile.covers);
-		//return CoverRenderer.renderCover(ccrs, tile.getPos(), state, side, tile.covers);
 	}
 
 	@Override
@@ -126,7 +125,7 @@ public class Cover extends Attachment {
 	@Override
 	public ItemStack getPickBlock() {
 
-		return CoverHelper.getCoverStack(block, meta);
+		return CoverHelper.getCoverStack(state);
 	}
 
 	@Override
@@ -146,15 +145,16 @@ public class Cover extends Attachment {
 	@Override
 	public void addDescriptionToPacket(PacketCoFHBase packet) {
 
-		packet.addShort(Block.getIdFromBlock(block));
-		packet.addByte(meta);
+		packet.addShort(Block.getIdFromBlock(state.getBlock()));
+		packet.addByte(state.getBlock().getMetaFromState(state));
 	}
 
+	@SuppressWarnings ("deprecation")
 	@Override
 	public void getDescriptionFromPacket(PacketCoFHBase packet) {
 
-		block = Block.getBlockById(packet.getShort());
-		meta = packet.getByte();
+		Block block = Block.getBlockById(packet.getShort());
+		int meta = packet.getByte();
 		state = block.getStateFromMeta(meta);
 	}
 
@@ -162,8 +162,8 @@ public class Cover extends Attachment {
 	public void writeToNBT(NBTTagCompound tag) {
 
 		super.writeToNBT(tag);
-		tag.setString("block", ForgeRegistries.BLOCKS.getKey(block).toString());
-		tag.setByte("meta", (byte) meta);
+		tag.setString("block", ForgeRegistries.BLOCKS.getKey(state.getBlock()).toString());
+		tag.setByte("meta", (byte) state.getBlock().getMetaFromState(state));
 	}
 
 	@Override
@@ -172,18 +172,16 @@ public class Cover extends Attachment {
 		return tileMultiBlock.covers[side] == null;
 	}
 
+	@SuppressWarnings ("deprecation")
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 
 		super.readFromNBT(tag);
-		block = Block.getBlockFromName(tag.getString("block"));
+		Block block = Block.getBlockFromName(tag.getString("block"));
 		if (block == null) {
-			block = Blocks.AIR;
-			meta = 0;
 			state = Blocks.AIR.getDefaultState();
 		} else {
-			meta = tag.getByte("meta");
-			state = block.getStateFromMeta(meta);
+			state = block.getStateFromMeta(tag.getByte("meta"));
 		}
 	}
 

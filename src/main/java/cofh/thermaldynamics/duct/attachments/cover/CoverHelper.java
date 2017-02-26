@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.attachments.cover;
 
 import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -13,35 +14,6 @@ import java.util.HashMap;
 
 public class CoverHelper {
 
-	public static HashMap<Fluid, Block> fluidToBlockMap;
-
-	public static void initFluids() {
-
-		fluidToBlockMap = new HashMap<Fluid, Block>();
-
-		fluidToBlockMap.put(FluidRegistry.WATER, Blocks.WATER);
-		fluidToBlockMap.put(FluidRegistry.LAVA, Blocks.LAVA);
-		for (Block block : ForgeRegistries.BLOCKS) {
-			if (block instanceof IFluidBlock) {
-				Fluid fluid = ((IFluidBlock) block).getFluid();
-				if (fluid != null) {
-					fluidToBlockMap.put(fluid, block);
-				}
-			}
-		}
-	}
-
-	public static Block getFluidBlock(FluidStack fluidStack) {
-
-		if (fluidStack == null) {
-			return null;
-		}
-		if (fluidToBlockMap == null) {
-			initFluids();
-		}
-		return fluidToBlockMap.get(fluidStack.getFluid());
-	}
-
 	public static boolean isValid(ItemStack stack) {
 
 		try {
@@ -50,7 +22,7 @@ public class CoverHelper {
 					return true;
 				}
 			}
-			return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,11 +31,15 @@ public class CoverHelper {
 
 	public static boolean isValid(Block block, int meta) {
 
-		if (block == null) {
-			return false;
-		}
-		return !(block.hasTileEntity(block.getStateFromMeta(meta)) || block.hasTileEntity());
-
+        try {
+            if (block == null) {
+                return false;
+            }
+            IBlockState state = block.getStateFromMeta(meta);
+            return !(block.hasTileEntity(state) || block.hasTileEntity()) && state.isFullCube();
+        } catch (Exception e) {
+            return false;
+        }
 	}
 
 	public static ItemStack getCoverStack(ItemStack stack) {
@@ -71,12 +47,13 @@ public class CoverHelper {
 		if (stack.getItem() instanceof ItemBlock) {
 			return getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()));
 		}
-		Block fluidBlock = getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack));
-		if (fluidBlock != null) {
-			return getCoverStack(fluidBlock, 0);
-		}
 		return null;
 	}
+
+	public static ItemStack getCoverStack(IBlockState state) {
+
+	    return getCoverStack(state.getBlock(), state.getBlock().getMetaFromState(state));
+    }
 
 	public static ItemStack getCoverStack(Block block, int meta) {
 

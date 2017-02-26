@@ -24,12 +24,7 @@ import java.util.List;
 
 public class ItemCover extends ItemAttachment {
 
-	private static float[] hitX = { 0.5F, 0.5F, 0.5F, 0.5F, 0, 1 };
-	private static float[] hitY = { 0, 1, 0.5F, 0.5F, 0.5F, 0.5F };
-	private static float[] hitZ = { 0.5F, 0.5F, 0, 1, 0.5F, 0.5F };
 
-	public static boolean enableCreativeTab = true;
-	public static boolean showInNEI = false;
 
 	private static List<ItemStack> coverList;
 
@@ -40,12 +35,9 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 
-		List<ItemStack> coverList = getCoverList();
-		for (int i = 0; i < coverList.size(); i++) {
-			list.add(coverList.get(i));
-		}
+        list.addAll(getCoverList());
 	}
 
 	@Override
@@ -95,16 +87,16 @@ public class ItemCover extends ItemAttachment {
 
 	public static void createCoverList() {
 
-		coverList = new ArrayList<ItemStack>();
+		coverList = new ArrayList<>();
 
-		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> stacks = new ArrayList<>();
 
-		ArrayList<Item> data = new ArrayList<Item>();
+		ArrayList<Item> data = new ArrayList<>();
 		for (Item item : ForgeRegistries.ITEMS) {
 			// iterate over the keySet instead of all values (compatible with overridden items)
 			data.add(item);
 		}
-		Collections.sort(data, (o1, o2) -> Item.REGISTRY.getIDForObject(o1) - Item.REGISTRY.getIDForObject(o2));
+		Collections.sort(data, Comparator.comparingInt(Item.REGISTRY::getIDForObject));
 		for (Item anItem : data) {
 			if (anItem instanceof ItemBlock) {
 				anItem.getSubItems(anItem, null, stacks);
@@ -114,14 +106,10 @@ public class ItemCover extends ItemAttachment {
 			if (!(stack.getItem() instanceof ItemBlock)) {
 				continue;
 			}
-			try {
-				if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-					continue;
-				}
-			} catch (Exception e) {
-				ThermalDynamics.LOG.error("Crashing on checking viability of cover, This cover will be ignored. " + stack.toString(), e);
-				continue;
-			}
+            if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+                continue;
+            }
+
 			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
 		}
 	}
