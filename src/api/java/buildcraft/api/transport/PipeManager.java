@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public abstract class PipeManager {
 
-	public static List<IExtractionHandler> extractionHandlers = new ArrayList<IExtractionHandler>();
+	public static List<IExtractionHandler> extractionHandlers = new ArrayList<>();
 
 	public static void registerExtractionHandler(IExtractionHandler handler) {
 
