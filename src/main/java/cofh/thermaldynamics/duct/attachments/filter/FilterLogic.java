@@ -292,7 +292,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (connection.tile.world().isRemote) {
 			connection.sendFilterConfigPacketFlag(flagType, flag);
 		} else {
-			connection.tile.markDirty();
+			connection.tile.markChunkDirty();
 		}
 		flags[flagType] = flag;
 		recalc = true;
@@ -538,7 +538,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (connection.tile.world().isRemote && sendUpdate) {
 			connection.sendFilterConfigPacketLevel(i, level);
 		} else {
-			connection.tile.markDirty();
+			connection.tile.markChunkDirty();
 			levelsChanged = true;
 		}
 		levels[i] = level;
