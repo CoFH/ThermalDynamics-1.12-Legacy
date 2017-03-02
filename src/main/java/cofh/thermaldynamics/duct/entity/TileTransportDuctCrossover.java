@@ -19,7 +19,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 	final BlockPosition[] rangePos = new BlockPosition[6];
 	final static BlockPosition clientValue = new BlockPosition(0, 0, 0, EnumFacing.DOWN);
 
-	public static byte CHARGE_TIME = 120;
+	public static byte CHARGE_TIME = 20;
 
 	@Override
 	public void handleTileSideUpdate(int i) {
