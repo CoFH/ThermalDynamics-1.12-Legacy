@@ -92,10 +92,10 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 			ccrs.colour = -1;
 			ccrs.brightness = 15728880;
 
-			RenderDuct.instance.getDuctConnections(duct);
+			int[] connections = RenderDuct.instance.getDuctConnections(duct);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[RenderDuct.connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
+				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
 					ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], frame);
 					RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 				} else {

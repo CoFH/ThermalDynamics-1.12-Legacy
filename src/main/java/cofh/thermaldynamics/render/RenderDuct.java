@@ -58,7 +58,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	public static final RenderDuct instance = new RenderDuct();
 
 	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionTypes.DUCT.ordinal(), BlockDuct.ConnectionTypes.DUCT.ordinal(), 0, 0, 0, 0 };
-	static int[] connections = new int[6];
+//	static int[] connections = new int[6];
 
 	static TextureAtlasSprite textureCenterLine;
 
@@ -355,11 +355,12 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		ccrs.draw();
 	}
 
-	public void getDuctConnections(TileTDBase tile) {
-
+	public int[] getDuctConnections(TileTDBase tile) {
+		int[] connections = new int[6];
 		for (int i = 0; i < 6; i++) {
 			connections[i] = tile.getRenderConnectionType(i).ordinal();
 		}
+		return connections;
 	}
 
 	@Override
@@ -382,7 +383,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		TileTDBase theTile = (TileTDBase) tile;
 
 		ccrs.preRenderWorld(world, pos);
-		getDuctConnections(theTile);
+		int[] connections = getDuctConnections(theTile);
 
 		boolean flag = false;
 		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();

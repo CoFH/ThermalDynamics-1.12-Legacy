@@ -57,13 +57,11 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 			GlStateManager.color(1, 1, 1, 1);
 
-			RenderDuct.instance.getDuctConnections(duct);
-			int[] connections = RenderDuct.connections;
+			int[] connections = RenderDuct.instance.getDuctConnections(duct);
 
 			drawEnderStarfield(ccrs, x, y, z, connections, frame, duct.centerLine, duct.centerLineSub);
 
 			ccrs.reset();
-
 		} else {
 			super.renderTileEntityAt(duct, x, y, z, frame, destroyStage);
 		}

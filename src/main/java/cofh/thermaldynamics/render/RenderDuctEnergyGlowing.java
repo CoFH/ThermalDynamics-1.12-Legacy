@@ -54,7 +54,7 @@ public class RenderDuctEnergyGlowing extends TileEntitySpecialRenderer<TileEnerg
 		ccrs.brightness = 15728880;
 		ccrs.alphaOverride = 255;
 
-		RenderDuct.instance.getDuctConnections(duct);
+		int[] connections = RenderDuct.instance.getDuctConnections(duct);
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 		for (int s = 0; s < 6; s++) {
 			float v = flux[s];
@@ -65,7 +65,7 @@ public class RenderDuctEnergyGlowing extends TileEntitySpecialRenderer<TileEnerg
 			} else {
 				ccrs.baseColour = -1;
 			}
-			if (BlockDuct.ConnectionTypes.values()[RenderDuct.connections[s]].renderDuct() && v != 0) {
+			if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && v != 0) {
 				RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 			} else {
 				RenderDuct.modelLineCenter.render(ccrs, s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
