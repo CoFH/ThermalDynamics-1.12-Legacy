@@ -107,6 +107,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 			ccrs.alphaOverride = -1;
 			ccrs.reset();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GlStateManager.disableAlpha();
 			GlStateManager.disableBlend();
 			GlStateManager.enableLighting();
 

@@ -431,6 +431,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 		RenderHelper.setBlockTextureSheet();
 		CCRenderState ccrs = CCRenderState.instance();
+		ccrs.reset();
 
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 		renderBase(ccrs, true, metadata, INV_CONNECTIONS, 0, 0, 0, duct.getBaseTexture(item));

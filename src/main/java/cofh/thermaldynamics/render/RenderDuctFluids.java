@@ -23,6 +23,8 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
 		int[] connections = RenderDuct.instance.getDuctConnections(duct);
 		RenderDuct.instance.renderFluid(ccrs, duct.myRenderFluid, connections, duct.getRenderFluidLevel(), x, y, z);
 		GlStateManager.enableLighting();
+		GlStateManager.disableBlend();
+		GlStateManager.disableAlpha();
 
 		GlStateManager.popMatrix();
 
