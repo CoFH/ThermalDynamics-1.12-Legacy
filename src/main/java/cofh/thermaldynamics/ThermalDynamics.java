@@ -16,7 +16,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.CustomProperty;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -28,15 +27,16 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod (modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, guiFactory = ThermalDynamics.MOD_GUI_FACTORY, customProperties = @CustomProperty (k = "cofhversion", v = "true"))
+@Mod (modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, updateJSON = ThermalDynamics.UPDATE_URL)
 public class ThermalDynamics {
 
-	public static final String MOD_ID = "ThermalDynamics";
+	public static final String MOD_ID = "thermaldynamics";
 	public static final String MOD_NAME = "Thermal Dynamics";
 
 	public static final String VERSION = "2.0.0";
 	public static final String VERSION_MAX = "2.1.0";
 	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + VERSION_MAX + ");";
+	public static final String UPDATE_URL = "https://raw.github.com/cofh/version/master/" + MOD_ID + "_update.json";
 
 	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP;
 	public static final String MOD_GUI_FACTORY = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
