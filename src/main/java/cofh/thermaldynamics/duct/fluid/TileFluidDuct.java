@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 
-public class TileFluidDuct extends TileTDBase {
+public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 
 	public IFluidHandler[] cache;
 	public IFilterFluid[] filterCache;
@@ -182,6 +182,21 @@ public class TileFluidDuct extends TileTDBase {
 	}
 
 	@Override
+	public FluidStack getFluidForGrid() {
+		return fluidForGrid;
+	}
+
+	@Override
+	public void setFluidForGrid(FluidStack fluidForGrid) {
+		fluidForGrid = null;
+	}
+
+	@Override
+	public boolean isOpaque() {
+		return getDuctType().opaque;
+	}
+
+	@Override
 	public boolean shouldRenderInPass(int pass) {
 
 		return !getDuctType().opaque && myRenderFluid != null && super.shouldRenderInPass(pass);
@@ -199,6 +214,11 @@ public class TileFluidDuct extends TileTDBase {
 			return myRenderFluid;
 		}
 		return fluidGrid == null ? myConnectionFluid : fluidGrid.getFluid();
+	}
+
+	@Override
+	public boolean canStoreFluid() {
+		return true;
 	}
 
 	@Override
@@ -398,7 +418,9 @@ public class TileFluidDuct extends TileTDBase {
 
 		if (fluidGrid != null && fluidGrid.hasValidFluid()) {
 			mySavedFluid = fluidGrid.getNodeShare(this);
-			mySavedFluid.writeToNBT(nbt);
+			if (mySavedFluid != null) {
+				mySavedFluid.writeToNBT(nbt);
+			}
 
 			nbt.setTag("ConnFluid", new NBTTagCompound());
 			myConnectionFluid = fluidGrid.getConnectionFluid();

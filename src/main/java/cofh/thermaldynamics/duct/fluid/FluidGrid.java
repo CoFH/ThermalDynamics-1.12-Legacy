@@ -18,10 +18,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 
-public class FluidGrid extends MultiBlockGridTracking {
+public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 
 	public final FluidTankGrid myTank = new FluidTankGrid(1000, this);
 	public int toDistribute = 0;
@@ -43,6 +44,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	public void onMajorGridChange() {
 
 		super.onMajorGridChange();
+		numStorable = -1;
 		chunks = null;
 	}
 
@@ -50,6 +52,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	public void onMinorGridChange() {
 
 		super.onMinorGridChange();
+		numStorable = -1;
 	}
 
 	@Override
@@ -59,29 +62,49 @@ public class FluidGrid extends MultiBlockGridTracking {
 	}
 
 	@Override
-	public void addBlock(IMultiBlock aMultiBlock) {
+	public void addBlock(IFluidDuctInternal aMultiBlock) {
 
 		super.addBlock(aMultiBlock);
 
-		TileFluidDuct theCondF = (TileFluidDuct) aMultiBlock;
-		if (theCondF.fluidForGrid != null) {
+		if (aMultiBlock.getFluidForGrid() != null) {
 			if (myTank.getFluid() == null) {
-				myTank.setFluid(theCondF.fluidForGrid);
+				myTank.setFluid(aMultiBlock.getFluidForGrid());
 			} else {
-				myTank.fill(theCondF.fluidForGrid, true);
+				myTank.fill(aMultiBlock.getFluidForGrid(), true);
 			}
-			theCondF.fluidForGrid = null;
+			aMultiBlock.setFluidForGrid(null);
 			recentRenderUpdate = true;
 		}
 		if (renderFluidLevel != 0) {
-			theCondF.updateFluid();
+			aMultiBlock.updateFluid();
 		}
 	}
+
+	int numStorable = -1;
 
 	@Override
 	public void balanceGrid() {
 
+		reworkNumberStorableDucts();
 		myTank.setCapacity(size() * myTank.fluidPerDuct);
+	}
+
+	protected int getStorableNumberDucts(){
+		int numBalancable = this.numStorable;
+		if(numBalancable == -1){
+			numBalancable = reworkNumberStorableDucts();
+		}
+		return numBalancable;
+	}
+
+	private int reworkNumberStorableDucts() {
+		int numBalancable = 0;
+		for (IFluidDuctInternal iFluidDuct : Iterables.concat(nodeSet, idleSet)) {
+			if (iFluidDuct.canStoreFluid())
+				numBalancable++;
+		}
+		this.numStorable = numBalancable;
+		return numBalancable;
 	}
 
 	public float getThroughPutModifier() {
@@ -98,7 +121,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	public void destroyNode(IMultiBlock node) {
 
 		if (hasValidFluid()) {
-			((TileFluidDuct) node).fluidForGrid = getNodeShare((TileFluidDuct) node);
+			((IFluidDuctInternal) node).setFluidForGrid(getNodeShare((IFluidDuctInternal) node));
 		}
 		super.destroyNode(node);
 	}
@@ -106,7 +129,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	@Override
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
-		return aBlock instanceof TileFluidDuct && FluidHelper.isFluidEqualOrNull(((TileFluidDuct) aBlock).getConnectionFluid(), myTank.getFluid());
+		return aBlock instanceof IFluidDuctInternal && FluidHelper.isFluidEqualOrNull(((IFluidDuctInternal) aBlock).getConnectionFluid(), myTank.getFluid());
 	}
 
 	public boolean doesPassiveTicking = false;
@@ -127,7 +150,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 			}
 
 			if (toDistribute > 0) {
-				for (IMultiBlock m : nodeSet) {
+				for (IFluidDuctInternal m : nodeSet) {
 					if (!m.tickPass(0) || m.getGrid() == null) {
 						break;
 					}
@@ -135,7 +158,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 			}
 		}
 		if (!nodeSet.isEmpty()) {
-			for (IMultiBlock m : nodeSet) {
+			for (IFluidDuctInternal m : nodeSet) {
 				if (!m.tickPass(1) || m.getGrid() == null) {
 					break;
 				}
@@ -144,7 +167,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 
 		if (doesPassiveTicking) {
 			if (!nodeSet.isEmpty()) {
-				for (IMultiBlock m : nodeSet) {
+				for (IFluidDuctInternal m : nodeSet) {
 					if (!m.tickPass(2) || m.getGrid() == null) {
 						break;
 					}
@@ -152,7 +175,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 			}
 
 			if (!idleSet.isEmpty()) {
-				for (IMultiBlock m : idleSet) {
+				for (IFluidDuctInternal m : idleSet) {
 					if (!m.tickPass(2) || m.getGrid() == null) {
 						break;
 					}
@@ -162,7 +185,7 @@ public class FluidGrid extends MultiBlockGridTracking {
 	}
 
 	@Override
-	public void mergeGrids(MultiBlockGrid theGrid) {
+	public void mergeGrids(MultiBlockGrid<IFluidDuctInternal> theGrid) {
 
 		super.mergeGrids(theGrid);
 
@@ -201,16 +224,24 @@ public class FluidGrid extends MultiBlockGridTracking {
 		balanceGrid();
 	}
 
-	public FluidStack getNodeShare(TileFluidDuct theCond) {
+	@Nullable
+	public FluidStack getNodeShare(IFluidDuctInternal theCond) {
 
-		FluidStack toReturn = myTank.getFluid().copy();
+		if (!theCond.canStoreFluid()) return null;
+
+		FluidStack fluid = myTank.getFluid();
+		if (fluid == null) return null;
+		FluidStack toReturn = fluid.copy();
 		toReturn.amount = getNodeAmount(theCond);
-		return toReturn;
+		return toReturn.amount > 0 ? toReturn : null;
 	}
 
-	public int getNodeAmount(TileFluidDuct theCond) {
+	public int getNodeAmount(IFluidDuctInternal theCond) {
 
-		return size() == 1 ? myTank.getFluidAmount() : isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size() + myTank.getFluidAmount() % size() : myTank.getFluidAmount() / size();
+		if(theCond.canStoreFluid()) return 0;
+		int size = getStorableNumberDucts();
+		if (size == 0) return 0;
+		return size == 1 ? myTank.getFluidAmount() : isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size + myTank.getFluidAmount() % size : myTank.getFluidAmount() / size;
 	}
 
 	public FluidStack getFluid() {
@@ -227,12 +258,12 @@ public class FluidGrid extends MultiBlockGridTracking {
 	public void buildMap() {
 
 		chunks = new HashSet<>();
-		for (IMultiBlock iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
+		for (IFluidDuctInternal iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
 			buildMapEntry(iMultiBlock);
 		}
 	}
 
-	private void buildMapEntry(IMultiBlock iMultiBlock) {
+	private void buildMapEntry(IFluidDuctInternal iMultiBlock) {
 
 		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
@@ -257,11 +288,10 @@ public class FluidGrid extends MultiBlockGridTracking {
 				if (worldGrid.worldObj instanceof WorldServer) {
 
 					int ducts = 0;
-					for (Object block : Iterables.concat(nodeSet, idleSet)) {
-						TileFluidDuct duct = ((TileFluidDuct) block);
-						if (!duct.getDuctType().opaque) {
+					for (IFluidDuctInternal block : Iterables.concat(nodeSet, idleSet)) {
+						if (!block.isOpaque()) {
 							++ducts;
-							duct.updateLighting();
+							block.updateLighting();
 						}
 					}
 					if (ducts == 0) {

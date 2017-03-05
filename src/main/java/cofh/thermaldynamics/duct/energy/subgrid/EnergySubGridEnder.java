@@ -6,7 +6,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import com.google.common.collect.Iterables;
 import net.minecraft.world.World;
 
-public class EnergySubGridEnder extends EnergySubGrid {
+public class EnergySubGridEnder extends EnergySubGrid<SubTileEnergyEnder> {
 
 	public EnergySubGridEnder(World world) {
 
@@ -22,14 +22,14 @@ public class EnergySubGridEnder extends EnergySubGrid {
 	public void tickGrid() {
 
 		if (updateRenderer) {
-			for (Object iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
-				((SubTileEnergyEnder) iMultiBlock).parentTile.updateRender();
+			for (SubTileEnergyEnder iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
+				iMultiBlock.parentTile.updateRender();
 			}
 		}
 	}
 
 	@Override
-	public void addBlock(IMultiBlock aBlock) {
+	public void addBlock(SubTileEnergyEnder aBlock) {
 
 		super.addBlock(aBlock);
 		updateRenderer = true;
@@ -38,7 +38,7 @@ public class EnergySubGridEnder extends EnergySubGrid {
 	boolean updateRenderer = false;
 
 	@Override
-	public void mergeGrids(MultiBlockGrid theGrid) {
+	public void mergeGrids(MultiBlockGrid<SubTileEnergyEnder> theGrid) {
 
 		super.mergeGrids(theGrid);
 		updateRenderer = true;

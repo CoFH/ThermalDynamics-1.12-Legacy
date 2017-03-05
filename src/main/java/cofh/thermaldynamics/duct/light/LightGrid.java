@@ -16,7 +16,7 @@ import net.minecraft.world.WorldServer;
 import java.util.HashSet;
 import java.util.List;
 
-public class LightGrid extends MultiBlockGrid {
+public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 
 	public HashSet<ChunkCoord> chunks;
 	public boolean upToDate = false;

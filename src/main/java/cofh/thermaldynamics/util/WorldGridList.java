@@ -40,7 +40,7 @@ public class WorldGridList {
 
 		if (!gridsToRecreate.isEmpty()) {
 			tickingGrids.removeAll(gridsToRecreate);
-			for (MultiBlockGrid grid : gridsToRecreate) {
+			for (MultiBlockGrid<?> grid : gridsToRecreate) {
 				for (IMultiBlock multiBlock : grid.idleSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);

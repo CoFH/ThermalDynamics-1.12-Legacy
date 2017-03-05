@@ -14,10 +14,10 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MultiBlockGrid {
+public abstract class MultiBlockGrid<T extends IMultiBlock> {
 
-	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<>();
-	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<>();
+	public NoComodSet<T> nodeSet = new NoComodSet<>();
+	public NoComodSet<T> idleSet = new NoComodSet<>();
 	public WorldGridList worldGrid;
 	public boolean signalsUpToDate;
 
@@ -34,7 +34,7 @@ public abstract class MultiBlockGrid {
 		this(TickHandler.getTickHandler(worldObj));
 	}
 
-	public void addIdle(IMultiBlock aMultiBlock) {
+	public void addIdle(T aMultiBlock) {
 
 		idleSet.add(aMultiBlock);
 
@@ -57,7 +57,7 @@ public abstract class MultiBlockGrid {
 		balanceGrid();
 	}
 
-	public void addNode(IMultiBlock aMultiBlock) {
+	public void addNode(T aMultiBlock) {
 
 		nodeSet.add(aMultiBlock);
 		if (idleSet.contains(aMultiBlock)) {
@@ -68,10 +68,10 @@ public abstract class MultiBlockGrid {
 		balanceGrid();
 	}
 
-	public void mergeGrids(MultiBlockGrid theGrid) {
+	public void mergeGrids(MultiBlockGrid<T> otherGrid) {
 
-		if (!theGrid.nodeSet.isEmpty()) {
-			for (IMultiBlock aBlock : theGrid.nodeSet) {
+		if (!otherGrid.nodeSet.isEmpty()) {
+			for (T aBlock : otherGrid.nodeSet) {
 				aBlock.setGrid(this);
 				addBlock(aBlock);
 			}
@@ -79,8 +79,8 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		}
 
-		if (!theGrid.idleSet.isEmpty()) {
-			for (IMultiBlock aBlock : theGrid.idleSet) {
+		if (!otherGrid.idleSet.isEmpty()) {
+			for (T aBlock : otherGrid.idleSet) {
 				aBlock.setGrid(this);
 				addBlock(aBlock);
 			}
@@ -89,7 +89,7 @@ public abstract class MultiBlockGrid {
 		}
 
 		onMinorGridChange();
-		theGrid.destroy();
+		otherGrid.destroy();
 	}
 
 	public void destroy() {
@@ -208,7 +208,7 @@ public abstract class MultiBlockGrid {
 
 	}
 
-	public void addBlock(IMultiBlock aBlock) {
+	public void addBlock(T aBlock) {
 
 		if (aBlock.isNode()) {
 			addNode(aBlock);
@@ -222,7 +222,7 @@ public abstract class MultiBlockGrid {
 		worldGrid.gridsToRecreate.add(this);
 	}
 
-	public void removeBlock(IMultiBlock oldBlock) {
+	public void removeBlock(T oldBlock) {
 
 		destroyNode(oldBlock);
 
@@ -294,7 +294,7 @@ public abstract class MultiBlockGrid {
 		node.setGrid(null);
 	}
 
-	public boolean isFirstMultiblock(IMultiBlock block) {
+	public boolean isFirstMultiblock(T block) {
 
 		return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block : !idleSet.isEmpty() && idleSet.iterator().next() == block;
 	}

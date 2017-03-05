@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public abstract class MultiBlockGridWithRoutes extends MultiBlockGrid {
+public abstract class MultiBlockGridWithRoutes<T extends IMultiBlockRoute> extends MultiBlockGrid<T> {
 
 	public MultiBlockGridWithRoutes(World world) {
 

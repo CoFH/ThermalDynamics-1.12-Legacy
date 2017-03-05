@@ -42,7 +42,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemDuct {
+public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemDuct, IItemDuctInternal {
 
 	public ItemGrid internalGrid;
 

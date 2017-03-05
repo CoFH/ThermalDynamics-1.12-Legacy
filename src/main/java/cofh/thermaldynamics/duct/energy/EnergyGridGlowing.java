@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class EnergyGridGlowing extends EnergyGrid {
+public class EnergyGridGlowing extends EnergyGrid<TileEnergyDuctGlowing> {
 
 	@Nullable
 	HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions;
@@ -48,7 +48,7 @@ public class EnergyGridGlowing extends EnergyGrid {
 
 	public void processDirections() {
 
-		Iterable<TileEnergyDuctGlowing> blocks = (Iterable<TileEnergyDuctGlowing>) Iterables.concat((Iterable) nodeSet, (Iterable) idleSet);
+		Iterable<TileEnergyDuctGlowing> blocks = Iterables.concat(nodeSet, idleSet);
 
 		for (TileEnergyDuctGlowing block : blocks) {
 			block.resetFlux();

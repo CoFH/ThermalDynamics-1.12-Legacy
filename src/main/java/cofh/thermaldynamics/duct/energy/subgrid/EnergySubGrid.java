@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class EnergySubGrid extends MultiBlockGrid {
+public class EnergySubGrid<T extends SubTileEnergy> extends MultiBlockGrid<T> {
 
 	public EnergyStorage myStorage = new EnergyStorage(1000);
 	public final int perStorage;
@@ -39,13 +39,13 @@ public class EnergySubGrid extends MultiBlockGrid {
 		return super.canGridsMerge(grid);
 	}
 
-	public int getNodeShare(IMultiBlock ductEnergy) {
+	public int getNodeShare(T ductEnergy) {
 
 		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size() + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
 
 	@Override
-	public void addBlock(IMultiBlock aBlock) {
+	public void addBlock(T aBlock) {
 
 		super.addBlock(aBlock);
 		SubTileEnergy theCondE = (SubTileEnergy) aBlock;
@@ -55,7 +55,7 @@ public class EnergySubGrid extends MultiBlockGrid {
 	}
 
 	@Override
-	public void mergeGrids(MultiBlockGrid theGrid) {
+	public void mergeGrids(MultiBlockGrid<T> theGrid) {
 
 		super.mergeGrids(theGrid);
 		balanceGrid();
@@ -66,7 +66,8 @@ public class EnergySubGrid extends MultiBlockGrid {
 	public void destroyNode(IMultiBlock node) {
 
 		if (node.isNode()) {
-			((SubTileEnergy) node).energyForGrid = getNodeShare(node);
+			T subTileEnergy = (T) node;
+			subTileEnergy.energyForGrid = getNodeShare(subTileEnergy);
 		}
 		super.destroyNode(node);
 	}

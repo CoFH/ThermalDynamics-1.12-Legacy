@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEnergyProvider {
+public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEnergyProvider, IEnergyDuctInternal {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
@@ -95,6 +95,16 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 
 		this.internalGrid.useEnergy(usedPower);
 		return true;
+	}
+
+	@Override
+	public int getEnergyForGrid() {
+		return energyForGrid;
+	}
+
+	@Override
+	public void setEnergyForGrid(int energy) {
+		energyForGrid = energy;
 	}
 
 	public int transmitEnergy(int energy, boolean simulate) {

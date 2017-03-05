@@ -1,15 +1,14 @@
 package cofh.thermaldynamics.duct.energy;
 
-import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 
-public class EnergyGridSuper extends EnergyGrid {
+public class EnergyGridSuper<T extends IEnergyDuctInternal> extends EnergyGrid<T> {
 
 	int nodeTracker;
 	boolean isSendingEnergy;
 
-	TileEnergyDuct[] nodeList = null;
+	IEnergyDuctInternal[] nodeList = null;
 
 	public EnergyGridSuper(World world, int type) {
 
@@ -23,9 +22,9 @@ public class EnergyGridSuper extends EnergyGrid {
 		super.tickGrid();
 		int i = 0;
 		if (nodeList == null) {
-			nodeList = new TileEnergyDuct[nodeSet.size()];
-			for (IMultiBlock multiBlock : nodeSet) {
-				nodeList[i] = (TileEnergyDuct) multiBlock;
+			nodeList = new IEnergyDuctInternal[nodeSet.size()];
+			for (IEnergyDuctInternal multiBlock : nodeSet) {
+				nodeList[i] = multiBlock;
 				i++;
 			}
 		}
@@ -38,7 +37,7 @@ public class EnergyGridSuper extends EnergyGrid {
 		}
 		int tempTracker = nodeTracker;
 
-		TileEnergyDuct[] list = nodeList;
+		IEnergyDuctInternal[] list = nodeList;
 		int startAmount = energy;
 
 		if (list == null || list.length == 0) {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ItemGrid extends MultiBlockGridWithRoutes {
+public class ItemGrid extends MultiBlockGridWithRoutes<IItemDuctInternal> {
 
 	public ItemGrid(World world) {
 
@@ -66,7 +66,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes {
 	@Override
 	public boolean canAddBlock(IMultiBlock aBlock) {
 
-		return aBlock instanceof TileItemDuct;
+		return aBlock instanceof IItemDuctInternal;
 	}
 
 	public void poll(TravelingItem item) {
