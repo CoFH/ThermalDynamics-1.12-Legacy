@@ -8,8 +8,21 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class SimulatedInv implements IItemHandler {
 
-	public static SimulatedInv INSTANCE = new SimulatedInv();
 	public static final int REBUILD_THRESHOLD = 128;
+	public static SimulatedInv INSTANCE = new SimulatedInv();
+	IItemHandler originalLogic;
+	IItemHandler slotHandler;
+	ItemStack[] items;
+	int size;
+
+	public SimulatedInv() {
+
+	}
+
+	public SimulatedInv(IInventory target) {
+
+		setTarget(new InvWrapper(target));
+	}
 
 	public static SimulatedInv wrapHandler(IItemHandler handler) {
 
@@ -21,39 +34,28 @@ public class SimulatedInv implements IItemHandler {
 		return INSTANCE.setTarget(new InvWrapper(inventory));
 	}
 
-	public SimulatedInv() {
-
-	}
-
-	public SimulatedInv(IInventory target) {
-
-		setTarget(new InvWrapper(target));
-	}
-
 	public void clear() {
 
-		this.target = null;
+		this.originalLogic = null;
 	}
 
 	public SimulatedInv setTarget(IItemHandler target) {
+
+		originalLogic = target;
 
 		size = target.getSlots();
 
 		if (items == null || items.length < size || (size < REBUILD_THRESHOLD && items.length >= REBUILD_THRESHOLD)) {
 			items = new ItemStack[target.getSlots()];
+			this.slotHandler = new ItemStackHandler(items);
 		}
 		ItemStack stackInSlot;
 		for (int i = 0; i < size; i++) {
 			stackInSlot = target.getStackInSlot(i);
 			items[i] = stackInSlot != null ? stackInSlot.copy() : null;
 		}
-		this.target = new ItemStackHandler(items);
 		return this;
 	}
-
-	IItemHandler target;
-	ItemStack[] items;
-	int size;
 
 	@Override
 	public int getSlots() {
@@ -70,12 +72,42 @@ public class SimulatedInv implements IItemHandler {
 	@Override
 	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 
-		return target.insertItem(slot, stack, simulate);
+		if (stack == null || stack.stackSize == 0) return null;
+
+		int originalStackSize = stack.stackSize;
+		ItemStack copy = stack.copy();
+		int maxStackSize = copy.getMaxStackSize();
+		copy.stackSize = maxStackSize;
+		ItemStack insertItem = originalLogic.insertItem(slot, copy, true);
+
+		// rejected
+		if (insertItem == copy) return stack;
+
+		int insertable = maxStackSize - (insertItem != null ? insertItem.stackSize : 0);
+
+		if (insertable == 0) return stack; // rejected
+
+		if (insertable >= originalStackSize) // whole stack would have been accepted
+			return slotHandler.insertItem(slot, stack, simulate);
+
+		// only partial stack would have been accepted
+		copy.stackSize = insertable;
+
+		int remainderStackSize = originalStackSize - insertable;
+
+		ItemStack simInsertStack = slotHandler.insertItem(slot, copy, simulate);
+
+		if (simInsertStack == null || simInsertStack.stackSize == 0) {
+			copy.stackSize = remainderStackSize;
+		} else {
+			copy.stackSize = remainderStackSize + simInsertStack.stackSize;
+		}
+		return copy;
 	}
 
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
 
-		return target.extractItem(slot, amount, simulate);
+		throw new UnsupportedOperationException();
 	}
 }
