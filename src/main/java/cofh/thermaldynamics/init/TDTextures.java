@@ -105,6 +105,7 @@ public class TDTextures {
 
 		return map.registerSprite(new ResourceLocation(sprite));
 	}
+
 	//Assign the TextureMap to a file to make things even more readable!.
 	private static TextureMap map;
 
@@ -121,9 +122,9 @@ public class TDTextures {
 
 	private static final String BLOCKS_ = "thermaldynamics:blocks/";
 	private static final String DUCT_ATTACHMENT_ = BLOCKS_ + "duct/attachment/";
-	private static final String SERVO_  = DUCT_ATTACHMENT_ + "servo/servo_base_";
-	private static final String RETRIEVER_  = DUCT_ATTACHMENT_ + "retriever/retriever_base_";
-	private static final String FILTER_  = DUCT_ATTACHMENT_ + "filter/filter_";
+	private static final String SERVO_ = DUCT_ATTACHMENT_ + "servo/servo_base_";
+	private static final String RETRIEVER_ = DUCT_ATTACHMENT_ + "retriever/retriever_base_";
+	private static final String FILTER_ = DUCT_ATTACHMENT_ + "filter/filter_";
 
 	/* REFERENCES */
 	public static TextureAtlasSprite[][] SERVO_BASE;

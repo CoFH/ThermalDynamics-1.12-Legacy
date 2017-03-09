@@ -5,8 +5,8 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -29,12 +29,12 @@ public class RetrieverItem extends ServoItem {
 
 	boolean baseTileHasOtherOutputs = false;
 
-	public RetrieverItem(TileTDBase tile, byte side) {
+	public RetrieverItem(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public RetrieverItem(TileTDBase tile, byte side, int type) {
+	public RetrieverItem(TileDuctBase tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
@@ -75,7 +75,7 @@ public class RetrieverItem extends ServoItem {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((tile.neighborTypes[i] == TileTDBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileTDBase.NeighborTypes.INPUT) && (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+			if ((tile.neighborTypes[i] == TileDuctBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileDuctBase.NeighborTypes.INPUT) && (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
@@ -99,7 +99,7 @@ public class RetrieverItem extends ServoItem {
 					continue;
 				}
 
-				if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
+				if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileDuctBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileDuctBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
 					continue;
 				}
 
@@ -181,9 +181,9 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+	public TileDuctBase.NeighborTypes getNeighborType() {
 
-		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
+		return isValidInput ? TileDuctBase.NeighborTypes.OUTPUT : TileDuctBase.NeighborTypes.DUCT_ATTACHMENT;
 	}
 
 	/* IPortableData */

@@ -15,7 +15,7 @@ public class SubTileEnergyEnder extends SubTileEnergy {
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new EnergySubGridEnder(parent.world());
 	}

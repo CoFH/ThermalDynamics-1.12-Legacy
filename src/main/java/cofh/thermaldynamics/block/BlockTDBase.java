@@ -7,6 +7,8 @@ import cofh.lib.util.RayTracer;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -43,6 +45,11 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	}
 
 	/* BLOCK METHODS */
+	//	@Override
+	//	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack) {
+	//
+	//	}
+
 	@Override
 	public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
 
@@ -70,7 +77,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 				return true;
 			}
 		}
-		TileTDBase tile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase tile = (TileDuctBase) world.getTileEntity(pos);
 
 		if (tile == null || tile.isInvalid()) {
 			return false;
@@ -88,17 +95,30 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	@Override
 	public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
 
+		TileDuctBase tile = (TileDuctBase) world.getTileEntity(pos);
+
+		// TODO
+		//		if (tile instanceof TileDuct) {
+		//
+		//		}
 		return blockHardness;
 	}
 
 	@Override
 	public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion) {
 
+		TileDuctBase tile = (TileDuctBase) world.getTileEntity(pos);
+
+		// TODO
+		//		if (tile instanceof TileDuct) {
+		//
+		//		}
 		return blockResistance / 5.0F;
 	}
 
 	/* RENDERING METHODS */
-//	@Override
+	// TODO
+	//	@Override
 	//	@SideOnly (Side.CLIENT)
 	//	public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
 	//
@@ -121,10 +141,11 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	//	}
 
 	/* HELPERS */
-//	@Override
-//	public NBTTagCompound getItemStackTag(IBlockAccess world, BlockPos pos) {
-//
-//	}
+	// TODO
+	//	@Override
+	//	public NBTTagCompound getItemStackTag(IBlockAccess world, BlockPos pos) {
+	//
+	//	}
 
 	@Override
 	public ArrayList<ItemStack> dropDelegate(NBTTagCompound nbt, IBlockAccess world, BlockPos pos, int fortune) {
@@ -139,7 +160,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		IBlockState state = world.getBlockState(pos);
 		int meta = getMetaFromState(state);
 
-		ItemStack dropBlock = tile instanceof TileTDBase ? ((TileTDBase) tile).getDrop() : new ItemStack(this, 1, meta);
+		ItemStack dropBlock = tile instanceof TileDuctBase ? ((TileDuctBase) tile).getDrop() : new ItemStack(this, 1, meta);
 
 		if (nbt != null) {
 			dropBlock.setTagCompound(nbt);
@@ -147,8 +168,8 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		ArrayList<ItemStack> ret = new ArrayList<>();
 		ret.add(dropBlock);
 
-		if (tile instanceof TileTDBase) {
-			TileTDBase ductBase = (TileTDBase) tile;
+		if (tile instanceof TileDuctBase) {
+			TileDuctBase ductBase = (TileDuctBase) tile;
 			for (Attachment attachment : ductBase.attachments) {
 				if (attachment != null) {
 					ret.addAll(attachment.getDrops());

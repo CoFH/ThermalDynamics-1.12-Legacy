@@ -18,6 +18,7 @@ public class JEIPluginTD extends BlankModPlugin {
 
 	@Override
 	public void register(IModRegistry registry) {
+
 		CoverRecipeCategory.initialize(registry);
 		if (!TDProps.showCoversInJEI) {
 			blacklistCovers(registry.getJeiHelpers().getIngredientBlacklist());
@@ -26,6 +27,7 @@ public class JEIPluginTD extends BlankModPlugin {
 
 	@Override
 	public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
+
 		subtypeRegistry.registerSubtypeInterpreter(TDItems.itemCover, (itemStack -> {
 			ItemStack block = CoverHelper.getCoverItemStack(itemStack, false);
 			return "thermaldynamics:cover" + "|" + block.getItem().getRegistryName() + "@" + block.getMetadata();
@@ -33,6 +35,7 @@ public class JEIPluginTD extends BlankModPlugin {
 	}
 
 	private static void blacklistCovers(IIngredientBlacklist ingredientBlacklist) {
+
 		for (ItemStack stack : ItemCover.getCoverList()) {
 			ItemStack coverBlock = CoverHelper.getCoverItemStack(stack, false);
 			if (coverBlock.getItem() == Item.getItemFromBlock(Blocks.STONE) && coverBlock.getMetadata() == 0) {

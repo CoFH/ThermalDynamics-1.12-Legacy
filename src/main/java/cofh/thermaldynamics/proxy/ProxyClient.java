@@ -71,6 +71,7 @@ public class ProxyClient extends Proxy {
 
 	@Override
 	public void addIModelRegister(IModelRegister register) {
+
 		modelRegisters.add(register);
 	}
 
@@ -78,6 +79,7 @@ public class ProxyClient extends Proxy {
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
+
 		TDTextures.registerIcons(event);
 
 		for (int i = 0; i < TDDucts.ductList.size(); i++) {

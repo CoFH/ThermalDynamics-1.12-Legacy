@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
@@ -23,13 +23,13 @@ public class ServoFluid extends ServoBase {
 		return AttachmentRegistry.SERVO_FLUID;
 	}
 
-	public ServoFluid(TileTDBase tile, byte side) {
+	public ServoFluid(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 		fluidDuct = (TileFluidDuct) tile;
 	}
 
-	public ServoFluid(TileTDBase tile, byte side, int type) {
+	public ServoFluid(TileDuctBase tile, byte side, int type) {
 
 		super(tile, side, type);
 		fluidDuct = (TileFluidDuct) tile;
@@ -56,7 +56,7 @@ public class ServoFluid extends ServoBase {
 	}
 
 	@Override
-	public boolean canAddToTile(TileTDBase tileMultiBlock) {
+	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
 
 		return tileMultiBlock instanceof TileFluidDuct;
 	}

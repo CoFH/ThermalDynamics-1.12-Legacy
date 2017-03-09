@@ -6,11 +6,11 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 
-public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
+public class TileFluidDuct extends TileDuctBase implements IFluidDuctInternal {
 
 	public IFluidHandler[] cache;
 	public IFilterFluid[] filterCache;
@@ -37,7 +37,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new FluidGrid(worldObj);
 	}
@@ -50,7 +50,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 	@Override
 	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-		if (theTile instanceof IMultiBlock) {
+		if (theTile instanceof IGridTile) {
 			return false;
 		}
 		return theTile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
@@ -183,16 +183,19 @@ public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 
 	@Override
 	public FluidStack getFluidForGrid() {
+
 		return fluidForGrid;
 	}
 
 	@Override
 	public void setFluidForGrid(FluidStack fluidForGrid) {
+
 		fluidForGrid = null;
 	}
 
 	@Override
 	public boolean isOpaque() {
+
 		return getDuctType().opaque;
 	}
 
@@ -218,6 +221,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 
 	@Override
 	public boolean canStoreFluid() {
+
 		return true;
 	}
 

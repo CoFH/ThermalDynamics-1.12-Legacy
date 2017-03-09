@@ -8,10 +8,9 @@ import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CrashHelper;
 import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.util.TickHandlerClient;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.attachments.IStuffable;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
@@ -19,6 +18,7 @@ import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.*;
+import cofh.thermaldynamics.util.TickHandlerClient;
 import com.google.common.collect.Iterables;
 import gnu.trove.iterator.TObjectIntIterator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -42,7 +42,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemDuct, IItemDuctInternal {
+public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemDuct, IItemDuctInternal {
 
 	public ItemGrid internalGrid;
 
@@ -122,7 +122,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 		}
 	}
 
-	public Route getRoute(IMultiBlockRoute itemDuct) {
+	public Route getRoute(IGridTileRoute itemDuct) {
 
 		for (Route outputRoute : getCache().outputRoutes) {
 			if (outputRoute.endPoint == itemDuct || (outputRoute.endPoint.x() == itemDuct.x() && outputRoute.endPoint.y() == itemDuct.y() && outputRoute.endPoint.z() == itemDuct.z())) {
@@ -180,7 +180,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new ItemGrid(worldObj);
 	}
@@ -261,7 +261,7 @@ public class TileItemDuct extends TileTDBase implements IMultiBlockRoute, IItemD
 	}
 
 	@Override
-	public IMultiBlock getCachedTile(byte side) {
+	public IGridTile getCachedTile(byte side) {
 
 		return neighborMultiBlocks[side];
 	}

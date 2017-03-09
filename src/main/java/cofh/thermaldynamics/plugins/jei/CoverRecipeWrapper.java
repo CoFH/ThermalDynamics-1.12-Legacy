@@ -16,13 +16,15 @@ public class CoverRecipeWrapper extends BlankRecipeWrapper {
 	protected final ItemStack coverStack;
 	protected final ItemStack coverBlock;
 
-	public CoverRecipeWrapper (ItemStack cover) {
+	public CoverRecipeWrapper(ItemStack cover) {
+
 		coverStack = ItemHelper.cloneStack(cover, 6);
 		coverBlock = CoverHelper.getCoverItemStack(coverStack, false);
 	}
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
+
 		ingredients.setInputs(ItemStack.class, ImmutableList.of(coverBlock, TDDucts.structure.itemStack));
 		ingredients.setOutputs(ItemStack.class, ImmutableList.of(coverStack));
 	}

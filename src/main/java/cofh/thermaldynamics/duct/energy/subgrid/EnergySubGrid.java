@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.energy.subgrid;
 
 import cofh.api.energy.EnergyStorage;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
@@ -28,7 +28,7 @@ public class EnergySubGrid<T extends SubTileEnergy> extends MultiBlockGrid<T> {
 	}
 
 	@Override
-	public boolean canAddBlock(IMultiBlock aBlock) {
+	public boolean canAddBlock(IGridTile aBlock) {
 
 		return aBlock instanceof SubTileEnergy;
 	}
@@ -63,7 +63,7 @@ public class EnergySubGrid<T extends SubTileEnergy> extends MultiBlockGrid<T> {
 	}
 
 	@Override
-	public void destroyNode(IMultiBlock node) {
+	public void destroyNode(IGridTile node) {
 
 		if (node.isNode()) {
 			T subTileEnergy = (T) node;

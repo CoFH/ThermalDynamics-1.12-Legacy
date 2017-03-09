@@ -7,10 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import java.util.HashMap;
 
 public class CoverHelper {
 
@@ -31,15 +28,15 @@ public class CoverHelper {
 
 	public static boolean isValid(Block block, int meta) {
 
-        try {
-            if (block == null) {
-                return false;
-            }
-            IBlockState state = block.getStateFromMeta(meta);
-            return !(block.hasTileEntity(state) || block.hasTileEntity()) && state.isFullCube();
-        } catch (Exception e) {
-            return false;
-        }
+		try {
+			if (block == null) {
+				return false;
+			}
+			IBlockState state = block.getStateFromMeta(meta);
+			return !(block.hasTileEntity(state) || block.hasTileEntity()) && state.isFullCube();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public static ItemStack getCoverStack(ItemStack stack) {
@@ -52,8 +49,8 @@ public class CoverHelper {
 
 	public static ItemStack getCoverStack(IBlockState state) {
 
-	    return getCoverStack(state.getBlock(), state.getBlock().getMetaFromState(state));
-    }
+		return getCoverStack(state.getBlock(), state.getBlock().getMetaFromState(state));
+	}
 
 	public static ItemStack getCoverStack(Block block, int meta) {
 

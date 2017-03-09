@@ -14,8 +14,8 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.render.RenderHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
@@ -58,7 +58,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	public static final RenderDuct instance = new RenderDuct();
 
 	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionTypes.DUCT.ordinal(), BlockDuct.ConnectionTypes.DUCT.ordinal(), 0, 0, 0, 0 };
-//	static int[] connections = new int[6];
+	//	static int[] connections = new int[6];
 
 	static TextureAtlasSprite textureCenterLine;
 
@@ -86,6 +86,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	private static CCModel[] modelLargeTubes;
 
 	public static void initialize() {
+
 		textureCenterLine = TextureUtils.getTexture(TFFluids.fluidSteam.getStill());
 	}
 
@@ -355,7 +356,8 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		ccrs.draw();
 	}
 
-	public int[] getDuctConnections(TileTDBase tile) {
+	public int[] getDuctConnections(TileDuctBase tile) {
+
 		int[] connections = new int[6];
 		for (int i = 0; i < 6; i++) {
 			connections[i] = tile.getRenderConnectionType(i).ordinal();
@@ -377,10 +379,10 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.bind(buffer);
 		TileEntity tile = world.getTileEntity(pos);
-		if (!(tile instanceof TileTDBase)) {
+		if (!(tile instanceof TileDuctBase)) {
 			return false;
 		}
-		TileTDBase theTile = (TileTDBase) tile;
+		TileDuctBase theTile = (TileDuctBase) tile;
 
 		ccrs.preRenderWorld(world, pos);
 		int[] connections = getDuctConnections(theTile);
@@ -440,7 +442,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 		renderWorldExtra(ccrs, true, metadata, INV_CONNECTIONS, 0, 0 - RenderHelper.RENDER_OFFSET, 0);
 		ccrs.draw();
-
 
 		GlStateManager.popMatrix();
 	}

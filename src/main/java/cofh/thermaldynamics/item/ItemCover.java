@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.item;
 
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import net.minecraft.block.Block;
@@ -34,17 +34,16 @@ public class ItemCover extends ItemAttachment {
 	@Override
 	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 
-        list.addAll(getCoverList());
+		list.addAll(getCoverList());
 	}
 
 	@Override
-	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileDuctBase tile) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return null;
 		}
-
 		int meta = nbt.getByte("Meta");//FIXME Use a state instead of meta and block.
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
@@ -56,7 +55,6 @@ public class ItemCover extends ItemAttachment {
 			}
 			return null;
 		}
-
 		return new Cover(tile, ((byte) (side.ordinal() ^ 1)), block.getStateFromMeta(meta));
 	}
 
@@ -102,9 +100,9 @@ public class ItemCover extends ItemAttachment {
 			if (!(stack.getItem() instanceof ItemBlock)) {
 				continue;
 			}
-            if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-                continue;
-            }
+			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+				continue;
+			}
 
 			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
 		}

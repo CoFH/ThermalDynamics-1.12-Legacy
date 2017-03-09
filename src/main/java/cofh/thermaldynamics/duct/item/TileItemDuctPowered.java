@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.item;
 
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.block.SubTileMultiBlock;
+import cofh.thermaldynamics.block.SubTileGridTile;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
 import net.minecraft.tileentity.TileEntity;
@@ -20,7 +20,7 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 	public void setSubEnergy(SubTileEnergy energy) {
 
 		this.energy = energy;
-		this.subTiles = new SubTileMultiBlock[] { energy };
+		this.subTiles = new SubTileGridTile[] { energy };
 	}
 
 	@Override

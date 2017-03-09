@@ -236,7 +236,7 @@ public class ModelHelper {
 		while (iter.hasNext()) {
 			Face f = Face.loadFromIterator(iter);
 
-            faces.removeIf(f::attemptToCombine);
+			faces.removeIf(f::attemptToCombine);
 			faces.add(f);
 		}
 

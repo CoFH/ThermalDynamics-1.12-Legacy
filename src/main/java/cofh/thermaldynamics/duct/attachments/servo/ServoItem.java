@@ -2,8 +2,8 @@ package cofh.thermaldynamics.duct.attachments.servo;
 
 import codechicken.lib.util.BlockUtils;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.ItemGrid;
@@ -35,13 +35,13 @@ public class ServoItem extends ServoBase {
 
 	public TileItemDuct itemDuct;
 
-	public ServoItem(TileTDBase tile, byte side, int type) {
+	public ServoItem(TileDuctBase tile, byte side, int type) {
 
 		super(tile, side, type);
 		itemDuct = ((TileItemDuct) tile);
 	}
 
-	public ServoItem(TileTDBase tile, byte side) {
+	public ServoItem(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 		itemDuct = ((TileItemDuct) tile);

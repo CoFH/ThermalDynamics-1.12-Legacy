@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.multiblock;
 
 import cofh.core.util.ChatHelper;
-import cofh.thermaldynamics.block.Attachment;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermaldynamics.util.WorldGridList;
-import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MultiBlockGrid<T extends IMultiBlock> {
+public abstract class MultiBlockGrid<T extends IGridTile> {
 
 	public NoComodSet<T> nodeSet = new NoComodSet<>();
 	public NoComodSet<T> idleSet = new NoComodSet<>();
@@ -107,10 +107,10 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 
 	public void resetMultiBlocks() {
 
-		for (IMultiBlock aBlock : nodeSet) {
+		for (IGridTile aBlock : nodeSet) {
 			aBlock.setValidForForming();
 		}
-		for (IMultiBlock aBlock : idleSet) {
+		for (IGridTile aBlock : idleSet) {
 			aBlock.setValidForForming();
 		}
 	}
@@ -142,7 +142,7 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 			if (rs != null) {
 				rs.relaysOut = null;
 			}
-			for (IMultiBlock multiBlock : nodeSet) {
+			for (IGridTile multiBlock : nodeSet) {
 				multiBlock.addRelays();
 			}
 		}
@@ -289,7 +289,7 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 		return false;
 	}
 
-	public void destroyNode(IMultiBlock node) {
+	public void destroyNode(IGridTile node) {
 
 		node.setGrid(null);
 	}
@@ -299,7 +299,7 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 		return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block : !idleSet.isEmpty() && idleSet.iterator().next() == block;
 	}
 
-	public abstract boolean canAddBlock(IMultiBlock aBlock);
+	public abstract boolean canAddBlock(IGridTile aBlock);
 
 	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 

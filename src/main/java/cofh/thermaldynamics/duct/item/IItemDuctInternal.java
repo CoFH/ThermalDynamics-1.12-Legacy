@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.item;
 
 import cofh.api.tileentity.IItemDuct;
-import cofh.thermaldynamics.multiblock.IMultiBlockRoute;
+import cofh.thermaldynamics.multiblock.IGridTileRoute;
 
-public interface IItemDuctInternal extends IMultiBlockRoute, IItemDuct {
-	
+public interface IItemDuctInternal extends IGridTileRoute, IItemDuct {
+
 }

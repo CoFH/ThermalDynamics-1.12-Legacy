@@ -5,7 +5,7 @@ import cofh.core.gui.element.TabInfo;
 import cofh.core.gui.element.TabRedstoneControl;
 import cofh.lib.gui.element.ElementButton;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;

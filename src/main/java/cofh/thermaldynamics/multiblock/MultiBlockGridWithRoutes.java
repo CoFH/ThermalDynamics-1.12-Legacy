@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public abstract class MultiBlockGridWithRoutes<T extends IMultiBlockRoute> extends MultiBlockGrid<T> {
+public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends MultiBlockGrid<T> {
 
 	public MultiBlockGridWithRoutes(World world) {
 
@@ -35,7 +35,7 @@ public abstract class MultiBlockGridWithRoutes<T extends IMultiBlockRoute> exten
 		return !calculatingRoutes.isEmpty();
 	}
 
-	public HashMap<IMultiBlockRoute, RouteCache> routeCacheMap = new HashMap<>();
+	public HashMap<IGridTileRoute, RouteCache> routeCacheMap = new HashMap<>();
 	public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<>();
 
 	@Override
@@ -61,7 +61,7 @@ public abstract class MultiBlockGridWithRoutes<T extends IMultiBlockRoute> exten
 		}
 	}
 
-	public RouteCache getRoutesFromOutputNonUrgent(IMultiBlockRoute start) {
+	public RouteCache getRoutesFromOutputNonUrgent(IGridTileRoute start) {
 
 		RouteCache cache;
 		cache = routeCacheMap.get(start);
@@ -76,7 +76,7 @@ public abstract class MultiBlockGridWithRoutes<T extends IMultiBlockRoute> exten
 		return cache;
 	}
 
-	public RouteCache getRoutesFromOutputRange(IMultiBlockRoute start, int maxRange) {
+	public RouteCache getRoutesFromOutputRange(IGridTileRoute start, int maxRange) {
 
 		RouteCache cache = routeCacheMap.get(start);
 		if (cache == null) {
@@ -91,7 +91,7 @@ public abstract class MultiBlockGridWithRoutes<T extends IMultiBlockRoute> exten
 		return cache;
 	}
 
-	public RouteCache getRoutesFromOutput(IMultiBlockRoute start) {
+	public RouteCache getRoutesFromOutput(IGridTileRoute start) {
 
 		RouteCache cache = routeCacheMap.get(start);
 		if (cache == null) {

@@ -2,14 +2,14 @@ package cofh.thermaldynamics.duct.entity;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
 import cofh.CoFHCore;
-import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.duct.TileDuctBase;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.List;
 
-public abstract class TileTransportDuctBase extends TileTDBase {
+public abstract class TileTransportDuctBase extends TileDuctBase {
 
 	@Override
 	public boolean cachesExist() {
@@ -44,7 +44,7 @@ public abstract class TileTransportDuctBase extends TileTDBase {
 
 	public abstract boolean advanceEntity(EntityTransport transport);
 
-	public IMultiBlock getPhysicalConnectedSide(byte direction) {
+	public IGridTile getPhysicalConnectedSide(byte direction) {
 
 		return super.getConnectedSide(direction);
 	}

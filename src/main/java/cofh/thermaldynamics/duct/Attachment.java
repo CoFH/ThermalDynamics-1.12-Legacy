@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.block;
+package cofh.thermaldynamics.duct;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
@@ -6,7 +6,6 @@ import codechicken.lib.vec.Vector3;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,10 +27,10 @@ import java.util.Random;
 
 public abstract class Attachment {
 
-	public final TileTDBase tile;
+	public final TileDuctBase tile;
 	public final byte side;
 
-	public Attachment(TileTDBase tile, byte side) {
+	public Attachment(TileDuctBase tile, byte side) {
 
 		this.tile = tile;
 		this.side = side;
@@ -68,7 +67,7 @@ public abstract class Attachment {
 		return true;
 	}
 
-	public abstract TileTDBase.NeighborTypes getNeighborType();
+	public abstract TileDuctBase.NeighborTypes getNeighborType();
 
 	public abstract boolean isNode();
 
@@ -112,7 +111,7 @@ public abstract class Attachment {
 
 	public abstract ItemStack getPickBlock();
 
-	public boolean canAddToTile(TileTDBase tileMultiBlock) {
+	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
 
 		return tileMultiBlock.attachments[side] == null;
 	}
@@ -167,7 +166,7 @@ public abstract class Attachment {
 
 	public BlockDuct.ConnectionTypes getRenderConnectionType() {
 
-		return TileTDBase.getDefaultConnectionType(getNeighborType(), TileTDBase.ConnectionTypes.NORMAL);
+		return TileDuctBase.getDefaultConnectionType(getNeighborType(), TileDuctBase.ConnectionTypes.NORMAL);
 	}
 
 	public boolean allowPipeConnection() {
@@ -216,4 +215,5 @@ public abstract class Attachment {
 
 		return null;
 	}
+
 }

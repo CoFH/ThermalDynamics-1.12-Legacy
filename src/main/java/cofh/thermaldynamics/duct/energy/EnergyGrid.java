@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.energy;
 import cofh.api.energy.EnergyStorage;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import net.minecraft.world.World;
@@ -59,7 +59,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	}
 
 	@Override
-	public boolean canAddBlock(IMultiBlock aBlock) {
+	public boolean canAddBlock(IGridTile aBlock) {
 
 		return aBlock instanceof TileEnergyDuct && ((TileEnergyDuct) aBlock).getDuctType().type == this.type;
 	}
@@ -77,7 +77,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 		if (!nodeSet.isEmpty() && myStorage.getEnergyStored() > 0) {
 			currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
 			extraEnergy = myStorage.getEnergyStored() % nodeSet.size();
-			for (IMultiBlock m : nodeSet) {
+			for (IGridTile m : nodeSet) {
 				if (!m.tickPass(0) || m.getGrid() == null) {
 					break;
 				}

@@ -38,11 +38,7 @@ public class CoverBlockAccess implements IBlockAccess {
 	IBlockState state;
 
 	public enum Result {
-		ORIGINAL,
-		AIR,
-		BASE,
-		BEDROCK,
-		COVER
+		ORIGINAL, AIR, BASE, BEDROCK, COVER
 	}
 
 	public Result getAction(BlockPos pos) {

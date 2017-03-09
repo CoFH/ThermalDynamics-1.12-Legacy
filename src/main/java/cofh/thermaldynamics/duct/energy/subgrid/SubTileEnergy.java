@@ -1,23 +1,23 @@
 package cofh.thermaldynamics.duct.energy.subgrid;
 
-import cofh.thermaldynamics.block.SubTileMultiBlock;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.block.SubTileGridTile;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class SubTileEnergy extends SubTileMultiBlock {
+public class SubTileEnergy extends SubTileGridTile {
 
 	public int energyForGrid;
 	public EnergySubGrid energyGrid;
 	public int lastStoredValue;
 
-	public SubTileEnergy(TileTDBase parent) {
+	public SubTileEnergy(TileDuctBase parent) {
 
 		super(parent);
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new EnergySubGridDistribute(world(), 2400, 400);
 	}

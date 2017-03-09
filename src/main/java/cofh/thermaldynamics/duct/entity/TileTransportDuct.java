@@ -9,8 +9,8 @@ import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.SubTileMultiBlock;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.block.SubTileGridTile;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.gui.GuiHandler;
@@ -19,7 +19,7 @@ import cofh.thermaldynamics.gui.client.GuiTransport;
 import cofh.thermaldynamics.gui.client.GuiTransportConfig;
 import cofh.thermaldynamics.gui.container.ContainerTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransportConfig;
-import cofh.thermaldynamics.multiblock.IMultiBlockRoute;
+import cofh.thermaldynamics.multiblock.IGridTileRoute;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,7 +83,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 				if (isConnectable(tile, i)) {
 					connectionTypes[i] = connectionTypes[i].next();
-					((TileTDBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
 				} else {
 					if (connectionTypes[i] == ConnectionTypes.FORCED) {
 						connectionTypes[i] = ConnectionTypes.NORMAL;
@@ -105,7 +105,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 					myGrid.destroyAndRecreate();
 				}
 
-				for (SubTileMultiBlock subTile : subTiles) {
+				for (SubTileGridTile subTile : subTiles) {
 					subTile.destroyAndRecreate();
 				}
 
@@ -315,7 +315,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	public boolean sendPlayerToDest(EntityPlayer player, int x, int y, int z) {
 
 		for (Route outputRoute : getCache().outputRoutes) {
-			IMultiBlockRoute endPoint = outputRoute.endPoint;
+			IGridTileRoute endPoint = outputRoute.endPoint;
 
 			if (endPoint.x() == x && endPoint.y() == y && endPoint.z() == z) {
 				Route route = outputRoute.copy();

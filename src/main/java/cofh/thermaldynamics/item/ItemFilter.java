@@ -2,8 +2,8 @@ package cofh.thermaldynamics.item;
 
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
@@ -55,7 +55,7 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileDuctBase tile) {
 
 		int type = stack.getItemDamage() % 5;
 		if (tile instanceof TileFluidDuct) {

@@ -13,10 +13,8 @@ import cofh.core.network.PacketHandler;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
 import cofh.thermaldynamics.block.BlockTDBase;
-import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
+import cofh.thermaldynamics.duct.TileDuctBase.NeighborTypes;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
@@ -83,7 +81,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		this.offset = offset * 16;
 	}
 
-
 	@Override
 	public int getMetaFromState(IBlockState state) {
 
@@ -115,7 +112,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase theTile = (TileDuctBase) world.getTileEntity(pos);
 		return (theTile != null && (theTile.covers[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid())) || super.isSideSolid(base_state, world, pos, side);
 	}
 
@@ -167,7 +164,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		AxisAlignedBB bb = new AxisAlignedBB(min, min, min, max, max, max);
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase theTile = (TileDuctBase) world.getTileEntity(pos);
 
 		if (theTile != null) {
 			for (byte i = 0; i < 6; i++) {
@@ -217,7 +214,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
 
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase theTile = (TileDuctBase) world.getTileEntity(pos);
 		if (theTile == null) {
 			return null;
 		}
@@ -247,14 +244,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
 
 		if (target.subHit >= 14 && target.subHit < 20) {
-			TileTDBase tileEntity = (TileTDBase) world.getTileEntity(pos);
+			TileDuctBase tileEntity = (TileDuctBase) world.getTileEntity(pos);
 			ItemStack pickBlock = tileEntity.attachments[target.subHit - 14].getPickBlock();
 			if (pickBlock != null) {
 				return pickBlock;
 			}
 		}
 		if (target.subHit >= 20 && target.subHit < 26) {
-			TileTDBase tileEntity = (TileTDBase) world.getTileEntity(pos);
+			TileDuctBase tileEntity = (TileDuctBase) world.getTileEntity(pos);
 			ItemStack pickBlock = tileEntity.covers[target.subHit - 20].getPickBlock();
 			if (pickBlock != null) {
 				return pickBlock;
@@ -287,8 +284,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	public IBlockState getVisualState(IBlockAccess world, BlockPos pos, EnumFacing side) {
 
 		TileEntity tileEntity = world.getTileEntity(pos);
-		if (tileEntity instanceof TileTDBase) {
-			Cover cover = ((TileTDBase) tileEntity).covers[side.ordinal()];
+		if (tileEntity instanceof TileDuctBase) {
+			Cover cover = ((TileDuctBase) tileEntity).covers[side.ordinal()];
 			if (cover != null) {
 				return cover.state;
 			}
@@ -305,7 +302,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
-		TileTDBase tile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase tile = (TileDuctBase) world.getTileEntity(pos);
 		if (tile instanceof IBlockConfigGui) {
 			return ((IBlockConfigGui) tile).openConfigGui(world, pos, side, player);
 		} else {
@@ -334,11 +331,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	public enum ConnectionTypes {
-		NONE(false),
-		DUCT,
-		TILECONNECTION,
-		STRUCTURE,
-		CLEANDUCT;
+		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
 
 		private final boolean renderDuct;
 
@@ -363,8 +356,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		super.onBlockPlacedBy(world, pos, state, living, stack);
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile instanceof TileTDBase) {
-			((TileTDBase) tile).onPlacedBy(living, stack);
+		if (tile instanceof TileDuctBase) {
+			((TileDuctBase) tile).onPlacedBy(living, stack);
 		}
 	}
 
@@ -375,8 +368,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		super.randomDisplayTick(state, world, pos, rand);
 
 		TileEntity tileEntity = world.getTileEntity(pos);
-		if (tileEntity instanceof TileTDBase) {
-			((TileTDBase) tileEntity).randomDisplayTick();
+		if (tileEntity instanceof TileDuctBase) {
+			((TileDuctBase) tileEntity).randomDisplayTick();
 		}
 	}
 
@@ -448,6 +441,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
+
 		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(META).build());
 		ModelResourceLocation normalLocation = new ModelResourceLocation(getRegistryName(), "normal");
 		ModelRegistryHelper.register(normalLocation, new DummyBakedModel());
@@ -457,7 +451,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
 
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase theTile = (TileDuctBase) world.getTileEntity(pos);
 		if (theTile != null && theTile.attachments[side.ordinal() ^ 1] != null) {
 			return theTile.attachments[side.ordinal() ^ 1].getRSOutput();
 		}
@@ -488,7 +482,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			s = 4;
 		}
 
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
+		TileDuctBase theTile = (TileDuctBase) world.getTileEntity(pos);
 		return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
 	}
 }

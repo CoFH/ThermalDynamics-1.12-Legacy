@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.energy;
 
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.world.World;
@@ -14,9 +14,9 @@ import java.util.Map;
 public class EnergyGridGlowing extends EnergyGrid<TileEnergyDuctGlowing> {
 
 	@Nullable
-	HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions;
-	HashMap<IMultiBlock, int[]> inputs = new HashMap<>();
-	HashMap<IMultiBlock, int[]> outputs = new HashMap<>();
+	HashMap<IGridTile, TObjectIntHashMap<IGridTile>> directions;
+	HashMap<IGridTile, int[]> inputs = new HashMap<>();
+	HashMap<IGridTile, int[]> outputs = new HashMap<>();
 
 	public EnergyGridGlowing(World world, int type) {
 
@@ -54,7 +54,7 @@ public class EnergyGridGlowing extends EnergyGrid<TileEnergyDuctGlowing> {
 			block.resetFlux();
 		}
 
-		HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions = this.directions;
+		HashMap<IGridTile, TObjectIntHashMap<IGridTile>> directions = this.directions;
 		if (directions == null) {
 			this.directions = directions = new HashMap<>();
 		}
@@ -67,13 +67,13 @@ public class EnergyGridGlowing extends EnergyGrid<TileEnergyDuctGlowing> {
 		}
 	}
 
-	protected void processEntries(Iterable<TileEnergyDuctGlowing> blocks, HashMap<IMultiBlock, TObjectIntHashMap<IMultiBlock>> directions, boolean output, HashMap<IMultiBlock, int[]> entrySet) {
+	protected void processEntries(Iterable<TileEnergyDuctGlowing> blocks, HashMap<IGridTile, TObjectIntHashMap<IGridTile>> directions, boolean output, HashMap<IGridTile, int[]> entrySet) {
 
-		for (Iterator<Map.Entry<IMultiBlock, int[]>> iterator = entrySet.entrySet().iterator(); iterator.hasNext(); ) {
-			Map.Entry<IMultiBlock, int[]> entry = iterator.next();
-			IMultiBlock key = entry.getKey();
+		for (Iterator<Map.Entry<IGridTile, int[]>> iterator = entrySet.entrySet().iterator(); iterator.hasNext(); ) {
+			Map.Entry<IGridTile, int[]> entry = iterator.next();
+			IGridTile key = entry.getKey();
 			int[] value = entry.getValue();
-			TObjectIntHashMap<IMultiBlock> facingMap = directions.computeIfAbsent(key, k -> buildDirectionTable(key));
+			TObjectIntHashMap<IGridTile> facingMap = directions.computeIfAbsent(key, k -> buildDirectionTable(key));
 
 			boolean nonEmpty = false;
 			for (byte side = 0; side < 6; side++) {
@@ -116,23 +116,23 @@ public class EnergyGridGlowing extends EnergyGrid<TileEnergyDuctGlowing> {
 	private void sendFlux(TileEnergyDuctGlowing block, float val, byte side, boolean output) {
 
 		block.addFlux(val, side, output);
-		IMultiBlock neighborMultiBlock = block.neighborMultiBlocks[side];
+		IGridTile neighborMultiBlock = block.neighborMultiBlocks[side];
 		if (neighborMultiBlock instanceof TileEnergyDuctGlowing) {
 			((TileEnergyDuctGlowing) neighborMultiBlock).addFlux(val, (byte) (side ^ 1), !output);
 		}
 	}
 
-	public void noteReceivingEnergy(IMultiBlock block, byte side, int amount) {
+	public void noteReceivingEnergy(IGridTile block, byte side, int amount) {
 
 		noteEnergy(block, side, amount, this.inputs);
 	}
 
-	public void noteExtractingEnergy(IMultiBlock block, byte side, int amount) {
+	public void noteExtractingEnergy(IGridTile block, byte side, int amount) {
 
 		noteEnergy(block, side, amount, this.outputs);
 	}
 
-	protected void noteEnergy(IMultiBlock block, byte side, int amount, HashMap<IMultiBlock, int[]> map) {
+	protected void noteEnergy(IGridTile block, byte side, int amount, HashMap<IGridTile, int[]> map) {
 
 		if (amount == 0) {
 			return;
@@ -141,22 +141,22 @@ public class EnergyGridGlowing extends EnergyGrid<TileEnergyDuctGlowing> {
 		sideData[side] += amount;
 	}
 
-	public TObjectIntHashMap<IMultiBlock> buildDirectionTable(IMultiBlock block) {
+	public TObjectIntHashMap<IGridTile> buildDirectionTable(IGridTile block) {
 
-		TObjectIntHashMap<IMultiBlock> facingMap = new TObjectIntHashMap<>();
-		TObjectIntHashMap<IMultiBlock> directionMap = new TObjectIntHashMap<>(10, 0.5F, -1);
-		LinkedList<IMultiBlock> toProcess = new LinkedList<>();
+		TObjectIntHashMap<IGridTile> facingMap = new TObjectIntHashMap<>();
+		TObjectIntHashMap<IGridTile> directionMap = new TObjectIntHashMap<>(10, 0.5F, -1);
+		LinkedList<IGridTile> toProcess = new LinkedList<>();
 
 		directionMap.put(block, 0);
 		facingMap.put(block, (byte) 0);
 		toProcess.add(block);
-		IMultiBlock processing;
+		IGridTile processing;
 		while ((processing = toProcess.poll()) != null) {
 			int bestDir = Integer.MAX_VALUE;
 			int sideMask = 0;
 			for (byte i = 0; i < 6; i++) {
 				if (processing.isSideConnected(i)) {
-					IMultiBlock connectedSide = processing.getConnectedSide(i);
+					IGridTile connectedSide = processing.getConnectedSide(i);
 					if (connectedSide == null || connectedSide.getGrid() != this) {
 						continue;
 					}

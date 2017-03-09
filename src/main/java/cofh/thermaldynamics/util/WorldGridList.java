@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.util;
 
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 
@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 public class WorldGridList {
 
 	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<>();
-	public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<>();
+	public LinkedHashSet<IGridTile> tickingBlocks = new LinkedHashSet<>();
 
 	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<>();
 	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<>();
@@ -41,12 +41,12 @@ public class WorldGridList {
 		if (!gridsToRecreate.isEmpty()) {
 			tickingGrids.removeAll(gridsToRecreate);
 			for (MultiBlockGrid<?> grid : gridsToRecreate) {
-				for (IMultiBlock multiBlock : grid.idleSet) {
+				for (IGridTile multiBlock : grid.idleSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);
 				}
 
-				for (IMultiBlock multiBlock : grid.nodeSet) {
+				for (IGridTile multiBlock : grid.nodeSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);
 				}
@@ -74,9 +74,9 @@ public class WorldGridList {
 			}
 		}
 		if (!tickingBlocks.isEmpty()) {
-			Iterator<IMultiBlock> iter = tickingBlocks.iterator();
+			Iterator<IGridTile> iter = tickingBlocks.iterator();
 			while (iter.hasNext()) {
-				IMultiBlock block = iter.next();
+				IGridTile block = iter.next();
 				if (block.existsYet()) {
 					block.tickMultiBlock();
 					iter.remove();

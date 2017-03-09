@@ -19,7 +19,7 @@ public class TileEnergyDuctSuper extends TileEnergyDuct {
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new EnergyGridSuper(worldObj, getDuctType().type);
 	}

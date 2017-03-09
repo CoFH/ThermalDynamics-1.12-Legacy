@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 public class TileTransportDuctLongRange extends TileTransportDuctBase {
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return null;
 	}
