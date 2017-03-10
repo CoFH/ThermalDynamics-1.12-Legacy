@@ -1,10 +1,9 @@
 package cofh.thermaldynamics.duct;
 
-import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileStructuralDuct extends TileTDBase {
+public class TileStructuralDuct extends TileDuctBase {
 
 	@Override
 	public boolean isConnectable(TileEntity theTile, int side) {
@@ -34,7 +33,7 @@ public class TileStructuralDuct extends TileTDBase {
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new GridStructural(worldObj);
 	}

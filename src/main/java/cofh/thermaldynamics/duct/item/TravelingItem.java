@@ -3,9 +3,9 @@ package cofh.thermaldynamics.duct.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.thermaldynamics.block.TileTDBase.ConnectionTypes;
-import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.duct.TileDuctBase.ConnectionTypes;
+import cofh.thermaldynamics.duct.TileDuctBase.NeighborTypes;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import cofh.thermaldynamics.util.TickHandlerClient;
@@ -39,7 +39,7 @@ public class TravelingItem {
 	public boolean shouldDie = false;
 	public int step = 1;
 
-	public TravelingItem(ItemStack theItem, IMultiBlock start, Route itemPath, byte oldDirection, byte speed) {
+	public TravelingItem(ItemStack theItem, IGridTile start, Route itemPath, byte oldDirection, byte speed) {
 
 		this(theItem, start.x(), start.y(), start.z(), itemPath, oldDirection, speed);
 	}

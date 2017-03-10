@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.light;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.lib.util.ChunkCoord;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.WorldGridList;
 import com.google.common.collect.Iterables;
@@ -31,7 +31,7 @@ public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 	}
 
 	@Override
-	public boolean canAddBlock(IMultiBlock aBlock) {
+	public boolean canAddBlock(IGridTile aBlock) {
 
 		return aBlock instanceof TileLightDuct;
 	}
@@ -127,14 +127,14 @@ public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 	public void buildMap() {
 
 		chunks = new HashSet<>();
-		for (IMultiBlock iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
-			buildMapEntry(iMultiBlock);
+		for (IGridTile iGridTile : Iterables.concat(nodeSet, idleSet)) {
+			buildMapEntry(iGridTile);
 		}
 	}
 
-	private void buildMapEntry(IMultiBlock iMultiBlock) {
+	private void buildMapEntry(IGridTile iGridTile) {
 
-		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
+		chunks.add(new ChunkCoord(iGridTile.x() >> 4, iGridTile.z() >> 4));
 	}
 
 }

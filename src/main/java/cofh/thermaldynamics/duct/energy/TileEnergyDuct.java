@@ -3,13 +3,13 @@ package cofh.thermaldynamics.duct.energy;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEnergyProvider, IEnergyDuctInternal {
+public class TileEnergyDuct extends TileDuctBase implements IEnergyReceiver, IEnergyProvider, IEnergyDuctInternal {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
@@ -27,7 +27,7 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new EnergyGrid(worldObj, getDuctType().type);
 	}

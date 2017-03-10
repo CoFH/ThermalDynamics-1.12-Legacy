@@ -7,7 +7,7 @@ import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.init.TDProps;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import com.google.common.collect.Iterables;
@@ -121,7 +121,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	}
 
 	@Override
-	public void destroyNode(IMultiBlock node) {
+	public void destroyNode(IGridTile node) {
 
 		if (hasValidFluid()) {
 			((IFluidDuctInternal) node).setFluidForGrid(getNodeShare((IFluidDuctInternal) node));
@@ -130,7 +130,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	}
 
 	@Override
-	public boolean canAddBlock(IMultiBlock aBlock) {
+	public boolean canAddBlock(IGridTile aBlock) {
 
 		return aBlock instanceof IFluidDuctInternal && FluidHelper.isFluidEqualOrNull(((IFluidDuctInternal) aBlock).getConnectionFluid(), myTank.getFluid());
 	}

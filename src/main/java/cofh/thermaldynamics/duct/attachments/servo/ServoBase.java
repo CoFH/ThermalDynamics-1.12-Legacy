@@ -4,11 +4,11 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.tileentity.IRedstoneControl;
+import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
@@ -35,12 +35,12 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 	}
 
-	public ServoBase(TileTDBase tile, byte side) {
+	public ServoBase(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public ServoBase(TileTDBase tile, byte side, int type) {
+	public ServoBase(TileDuctBase tile, byte side, int type) {
 
 		super(tile, side, type);
 	}

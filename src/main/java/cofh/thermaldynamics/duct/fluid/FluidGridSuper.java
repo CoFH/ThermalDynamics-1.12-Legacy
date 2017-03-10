@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import cofh.lib.util.helpers.FluidHelper;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -25,7 +25,7 @@ public class FluidGridSuper extends FluidGrid {
 		int i = 0;
 		if (nodeList == null) {
 			nodeList = new TileFluidDuct[nodeSet.size()];
-			for (IMultiBlock multiBlock : nodeSet) {
+			for (IGridTile multiBlock : nodeSet) {
 				nodeList[i] = (TileFluidDuct) multiBlock;
 				i++;
 			}

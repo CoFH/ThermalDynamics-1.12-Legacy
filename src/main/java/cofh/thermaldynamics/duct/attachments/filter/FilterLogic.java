@@ -1,12 +1,12 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.core.util.CoreUtils;
 import cofh.core.util.item.ISpecialFilterFluid;
 import cofh.core.util.item.ISpecialFilterItem;
+import cofh.core.util.CoreUtils;
 import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import gnu.trove.list.array.TIntArrayList;

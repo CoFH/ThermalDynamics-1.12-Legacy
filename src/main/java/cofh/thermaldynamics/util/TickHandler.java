@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.util;
 
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -16,9 +16,9 @@ public class TickHandler {
 
 	public static final TickHandler INSTANCE = new TickHandler();
 	public static final WeakHashMap<World, WorldGridList> HANDLERS = new WeakHashMap<>();
-	public static final LinkedHashSet<WeakReference<IMultiBlock>> MULTI_BLOCKS_TO_CALCULATE = new LinkedHashSet<>();
+	public static final LinkedHashSet<WeakReference<IGridTile>> MULTI_BLOCKS_TO_CALCULATE = new LinkedHashSet<>();
 
-	public static void addMultiBlockToCalculate(IMultiBlock multiBlock) {
+	public static void addMultiBlockToCalculate(IGridTile multiBlock) {
 
 		if (multiBlock.world() != null) {
 			if (ServerHelper.isServerWorld(multiBlock.world())) {
@@ -56,9 +56,9 @@ public class TickHandler {
 		}
 		synchronized (MULTI_BLOCKS_TO_CALCULATE) {
 			if (!MULTI_BLOCKS_TO_CALCULATE.isEmpty()) {
-				Iterator<WeakReference<IMultiBlock>> iterator = MULTI_BLOCKS_TO_CALCULATE.iterator();
+				Iterator<WeakReference<IGridTile>> iterator = MULTI_BLOCKS_TO_CALCULATE.iterator();
 				while (iterator.hasNext()) {
-					IMultiBlock multiBlock = iterator.next().get();
+					IGridTile multiBlock = iterator.next().get();
 					if (multiBlock == null) {
 						iterator.remove();
 					} else if (multiBlock.world() != null) {
@@ -104,9 +104,9 @@ public class TickHandler {
 		}
 		synchronized (MULTI_BLOCKS_TO_CALCULATE) {
 			if (!MULTI_BLOCKS_TO_CALCULATE.isEmpty()) {
-				Iterator<WeakReference<IMultiBlock>> iterator = MULTI_BLOCKS_TO_CALCULATE.iterator();
+				Iterator<WeakReference<IGridTile>> iterator = MULTI_BLOCKS_TO_CALCULATE.iterator();
 				while (iterator.hasNext()) {
-					IMultiBlock multiBlock = iterator.next().get();
+					IGridTile multiBlock = iterator.next().get();
 					if (multiBlock == null || multiBlock.world() == world) {
 						iterator.remove();
 					}

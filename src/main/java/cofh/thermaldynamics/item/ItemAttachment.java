@@ -3,14 +3,14 @@ package cofh.thermaldynamics.item;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
 import codechicken.lib.vec.Cuboid6;
+import cofh.core.util.core.IInitializer;
 import cofh.core.render.IModelRegister;
 import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
-import cofh.core.util.core.IInitializer;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,7 +58,7 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 		Attachment attachment = null;
 
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile instanceof TileTDBase) {
+		if (tile instanceof TileDuctBase) {
 			int s = -1;
 			RayTraceResult movingObjectPosition = RayTracer.retraceBlock(world, player, pos);
 			if (movingObjectPosition != null) {
@@ -73,19 +73,19 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 					s = ((subHit - 14) % 6);
 				}
 				if (s != -1) {
-					attachment = getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileTDBase) tile);
+					attachment = getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileDuctBase) tile);
 				}
 			}
 		} else {
 			tile = BlockHelper.getAdjacentTileEntity(world, pos, side);
-			if (tile instanceof TileTDBase) {
-				attachment = getAttachment(side, stack, (TileTDBase) tile);
+			if (tile instanceof TileDuctBase) {
+				attachment = getAttachment(side, stack, (TileDuctBase) tile);
 			}
 		}
 		return attachment;
 	}
 
-	public abstract Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile);
+	public abstract Attachment getAttachment(EnumFacing side, ItemStack stack, TileDuctBase tile);
 
 	@Override
 	public boolean initialize() {

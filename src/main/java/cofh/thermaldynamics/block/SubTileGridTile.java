@@ -1,20 +1,21 @@
 package cofh.thermaldynamics.block;
 
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.duct.TileDuctBase;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public abstract class SubTileMultiBlock implements IMultiBlock {
+public abstract class SubTileGridTile implements IGridTile {
 
 	public MultiBlockGrid grid;
 	private boolean isValid = true;
-	public TileTDBase parent;
+	public TileDuctBase parent;
 
-	public SubTileMultiBlock(TileTDBase parent) {
+	public SubTileGridTile(TileDuctBase parent) {
 
 		this.parent = parent;
 	}
@@ -28,19 +29,19 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 	@Override
 	public int x() {
 
-		return parent.getPos().getX();
+		return parent.x();
 	}
 
 	@Override
 	public int y() {
 
-		return parent.getPos().getY() + 1;
+		return parent.y() + 1;
 	}
 
 	@Override
 	public int z() {
 
-		return parent.getPos().getZ();
+		return parent.z();
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 	}
 
 	@Override
-	public abstract MultiBlockGrid getNewGrid();
+	public abstract MultiBlockGrid createGrid();
 
 	@Override
 	public void setGrid(MultiBlockGrid newGrid) {
@@ -77,17 +78,17 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 	}
 
 	@Override
-	public IMultiBlock getConnectedSide(byte side) {
+	public IGridTile getConnectedSide(byte side) {
 
-		IMultiBlock connectedSide = parent.getConnectedSide(side);
+		IGridTile connectedSide = parent.getConnectedSide(side);
 
 		if (connectedSide.getClass() != parent.getClass()) {
 			return null;
 		}
 
-		IMultiBlock[] subTiles = connectedSide.getSubTiles();
+		IGridTile[] subTiles = connectedSide.getSubTiles();
 		if (subTiles != null) {
-			for (IMultiBlock block : subTiles) {
+			for (IGridTile block : subTiles) {
 				if (sameType(block)) {
 					return block;
 				}
@@ -103,7 +104,7 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 		return parent.isBlockedSide(side);
 	}
 
-	public boolean sameType(IMultiBlock other) {
+	public boolean sameType(IGridTile other) {
 
 		return other.getClass() == this.getClass();
 	}
@@ -166,10 +167,10 @@ public abstract class SubTileMultiBlock implements IMultiBlock {
 
 	}
 
-	public final static IMultiBlock[] BLANK = new IMultiBlock[0];
+	public final static IGridTile[] BLANK = new IGridTile[0];
 
 	@Override
-	public final IMultiBlock[] getSubTiles() {
+	public final IGridTile[] getSubTiles() {
 
 		return BLANK;
 	}

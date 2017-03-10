@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import net.minecraft.item.ItemStack;
 
-public interface IMultiBlockRoute extends IMultiBlock {
+public interface IGridTileRoute extends IGridTile {
 
 	int getWeight();
 
@@ -14,15 +14,16 @@ public interface IMultiBlockRoute extends IMultiBlock {
 
 	int getMaxRange();
 
-	TileTDBase.NeighborTypes getCachedSideType(byte side);
+	TileDuctBase.NeighborTypes getCachedSideType(byte side);
 
-	TileTDBase.ConnectionTypes getConnectionType(byte side);
+	TileDuctBase.ConnectionTypes getConnectionType(byte side);
 
-	IMultiBlock getCachedTile(byte side);
+	IGridTile getCachedTile(byte side);
 
 	TileItemDuct.RouteInfo canRouteItem(ItemStack stack);
 
 	byte getStuffedSide();
 
 	boolean acceptingStuff();
+
 }

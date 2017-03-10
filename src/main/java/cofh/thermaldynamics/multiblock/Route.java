@@ -14,18 +14,18 @@ public class Route implements Comparable<Route> {
 
 	public TByteLinkedList pathDirections = new TByteLinkedList();
 
-	public IMultiBlockRoute endPoint;
+	public IGridTileRoute endPoint;
 	public int pathWeight = 0;
 	public boolean routeFinished = false;
 	public BlockPos dest;
 	public static final byte[] tmpBuffer = new byte[256];
 
-	public Route(IMultiBlockRoute myParent) {
+	public Route(IGridTileRoute myParent) {
 
 		endPoint = myParent;
 	}
 
-	public Route(Route prevRoute, IMultiBlockRoute newPlace, byte direction, boolean isFinished) {
+	public Route(Route prevRoute, IGridTileRoute newPlace, byte direction, boolean isFinished) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight + newPlace.getWeight();

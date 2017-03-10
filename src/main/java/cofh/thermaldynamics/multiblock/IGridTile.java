@@ -2,15 +2,14 @@ package cofh.thermaldynamics.multiblock;
 
 import net.minecraft.world.World;
 
-public interface IMultiBlock {
+public interface IGridTile {
 
-	World world();
+	/* GRID FORMATION */
+	void setGrid(MultiBlockGrid newGrid);
 
-	int x();
+	MultiBlockGrid createGrid();
 
-	int y();
-
-	int z();
+	MultiBlockGrid getGrid();
 
 	void setInvalidForForming();
 
@@ -18,13 +17,7 @@ public interface IMultiBlock {
 
 	boolean isValidForForming();
 
-	MultiBlockGrid getNewGrid();
-
-	void setGrid(MultiBlockGrid newGrid);
-
-	MultiBlockGrid getGrid();
-
-	IMultiBlock getConnectedSide(byte side);
+	IGridTile getConnectedSide(byte side);
 
 	boolean isBlockedSide(int side);
 
@@ -47,9 +40,19 @@ public interface IMultiBlock {
 	// Some tiles will have sub-grids that may not match the parent grid
 	// e.g. Ender-pipes will require power but will not share power through regular pipes
 	// we could also do stuff like pipe-wire using this if we were so inclined
-	IMultiBlock[] getSubTiles();
-
-	void onNeighborBlockChange();
+	IGridTile[] getSubTiles();
 
 	void addRelays();
+
+	/* PASSTHROUGH METHODS */
+	void onNeighborBlockChange();
+
+	int x();
+
+	int y();
+
+	int z();
+
+	World world();
+
 }

@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.energy.subgrid;
 
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 public class SubTileEnergyRedstone extends SubTileEnergy {
@@ -19,13 +19,13 @@ public class SubTileEnergyRedstone extends SubTileEnergy {
 
 	public EnergySubGridDistribute internalGrid;
 
-	public SubTileEnergyRedstone(TileTDBase parent) {
+	public SubTileEnergyRedstone(TileDuctBase parent) {
 
 		super(parent);
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new EnergySubGridDistribute(parent.world(), NODE_STORAGE, NODE_TRANSFER);
 	}

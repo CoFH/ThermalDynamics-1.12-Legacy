@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements IMultiBlockRoute {
+public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements IGridTileRoute {
 
 	public TransportGrid internalGrid;
 
@@ -18,7 +18,7 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new TransportGrid(worldObj);
 	}
@@ -95,7 +95,7 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 	}
 
 	@Override
-	public IMultiBlock getCachedTile(byte side) {
+	public IGridTile getCachedTile(byte side) {
 
 		return neighborMultiBlocks[side];
 	}

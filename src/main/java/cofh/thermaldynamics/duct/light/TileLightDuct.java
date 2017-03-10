@@ -2,19 +2,19 @@ package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class TileLightDuct extends TileTDBase {
+public class TileLightDuct extends TileDuctBase {
 
 	public LightGrid gridGlow = null;
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new LightGrid(worldObj);
 	}

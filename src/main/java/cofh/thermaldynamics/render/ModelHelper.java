@@ -5,8 +5,8 @@ import codechicken.lib.render.BlockRenderer;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.vec.*;
 import codechicken.lib.vec.uv.UV;
-import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.helpers.RenderHelper;
+import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.init.TDProps;
 
 import java.util.Collections;

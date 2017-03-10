@@ -13,9 +13,9 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.gui.GuiHandler;
@@ -53,12 +53,12 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	public byte invert = 0;
 	public byte threshold = 0;
 
-	public Relay(TileTDBase tile, byte side) {
+	public Relay(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public Relay(TileTDBase tile, byte side, int type) {
+	public Relay(TileDuctBase tile, byte side, int type) {
 
 		super(tile, side);
 		this.type = (byte) type;
@@ -79,11 +79,11 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	public Cuboid6 getCuboid() {
 
-		return TileTDBase.subSelection[side].copy();
+		return TileDuctBase.subSelection[side].copy();
 	}
 
 	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+	public TileDuctBase.NeighborTypes getNeighborType() {
 
 		return null;
 	}
@@ -172,7 +172,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		if (type == 0) { // should calc vanilla redstone level
 			if (isBlockDuct(block)) {
-				TileTDBase t = (TileTDBase) tile.world().getTileEntity(offsetPos);
+				TileDuctBase t = (TileDuctBase) tile.world().getTileEntity(offsetPos);
 				Attachment attachment = t.attachments[this.side ^ 1];
 				if (attachment != null) {
 					level = attachment.getRSOutput();
@@ -342,7 +342,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean canAddToTile(TileTDBase tileMultiBlock) {
+	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
 
 		return !tileMultiBlock.getDuctType().isLargeTube();
 	}

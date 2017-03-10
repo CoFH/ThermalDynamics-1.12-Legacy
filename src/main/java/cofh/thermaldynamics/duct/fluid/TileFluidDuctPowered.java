@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.fluid;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.block.SubTileMultiBlock;
+import cofh.thermaldynamics.block.SubTileGridTile;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
@@ -17,7 +17,7 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 	public void setSubEnergy(SubTileEnergy energy) {
 
 		this.energy = energy;
-		this.subTiles = new SubTileMultiBlock[] { energy };
+		this.subTiles = new SubTileGridTile[] { energy };
 	}
 
 	@Override

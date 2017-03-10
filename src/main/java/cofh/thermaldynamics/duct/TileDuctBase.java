@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.block;
+package cofh.thermaldynamics.duct;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
@@ -15,13 +15,11 @@ import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
-import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.block.SubTileGridTile;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
@@ -49,10 +47,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class TileTDBase extends TileCore implements IMultiBlock, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
+public abstract class TileDuctBase extends TileCore implements IGridTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
 
 	static {
-		GameRegistry.registerTileEntityWithAlternatives(TileTDBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
+		GameRegistry.registerTileEntityWithAlternatives(TileDuctBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
 	}
 
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -86,19 +84,18 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 	public boolean isValid = true;
 	public boolean isNode = false;
 	public MultiBlockGrid myGrid;
-	public IMultiBlock neighborMultiBlocks[] = new IMultiBlock[EnumFacing.VALUES.length];
+	public IGridTile neighborMultiBlocks[] = new IGridTile[EnumFacing.VALUES.length];
 	public NeighborTypes neighborTypes[] = { NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE, NeighborTypes.NONE };
 	public ConnectionTypes connectionTypes[] = { ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.NORMAL, ConnectionTypes.BLOCKED };
 	public byte internalSideCounter = 0;
 
 	public Attachment attachments[] = new Attachment[] { null, null, null, null, null, null };
-
 	public Cover[] covers = new Cover[6];
 
 	LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 
-	public static final SubTileMultiBlock[] blankSubTiles = {};
-	public SubTileMultiBlock[] subTiles = blankSubTiles;
+	public static final SubTileGridTile[] blankSubTiles = {};
+	public SubTileGridTile[] subTiles = blankSubTiles;
 	public long lastUpdateTime = -1;
 	public int hashCode = 0;
 
@@ -108,7 +105,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 	public void onChunkUnload() {
 
 		if (ServerHelper.isServerWorld(worldObj)) {
-			for (SubTileMultiBlock subTile : subTiles) {
+			for (SubTileGridTile subTile : subTiles) {
 				subTile.onChunkUnload();
 			}
 
@@ -126,130 +123,17 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 	}
 
 	@Override
-	public World world() {
-
-		return getWorld();
-	}
-
-	@Override
-	public int x() {
-
-		return getPos().getX();
-	}
-
-	@Override
-	public int y() {
-
-		return getPos().getY();
-	}
-
-	@Override
-	public int z() {
-
-		return getPos().getZ();
-	}
-
-	@Override
 	public void invalidate() {
 
 		super.invalidate();
 
 		if (ServerHelper.isServerWorld(worldObj)) {
-			for (SubTileMultiBlock subTile : subTiles) {
+			for (SubTileGridTile subTile : subTiles) {
 				subTile.invalidate();
 			}
 			if (myGrid != null) {
 				myGrid.removeBlock(this);
 			}
-		}
-	}
-
-	@Override
-	public void setInvalidForForming() {
-
-		isValid = false;
-	}
-
-	@Override
-	public void setValidForForming() {
-
-		isValid = true;
-	}
-
-	@Override
-	public boolean isValidForForming() {
-
-		return isValid;
-	}
-
-	@Override
-	public abstract MultiBlockGrid getNewGrid();
-
-	@Override
-	public MultiBlockGrid getGrid() {
-
-		return myGrid;
-	}
-
-	@Override
-	public void setGrid(MultiBlockGrid newGrid) {
-
-		myGrid = newGrid;
-	}
-
-	@Override
-	public IMultiBlock getConnectedSide(byte side) {
-
-		if (side >= neighborMultiBlocks.length) {
-			return null;
-		}
-		return neighborMultiBlocks[side];
-
-	}
-
-	@Override
-	public boolean isBlockedSide(int side) {
-
-		return connectionTypes[side] == ConnectionTypes.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
-	}
-
-	@Override
-	public boolean isSideConnected(byte side) {
-
-		if (side >= neighborMultiBlocks.length) {
-			return false;
-		}
-		IMultiBlock tileEntity = neighborMultiBlocks[side];
-		return tileEntity != null && !isBlockedSide(side) && !tileEntity.isBlockedSide(side ^ 1);
-	}
-
-	@Override
-	public void setNotConnected(byte side) {
-
-		TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, EnumFacing.VALUES[side]);
-
-		if (isSignificantTile(tileEntity, side)) {
-			neighborMultiBlocks[side] = null;
-			neighborTypes[side] = NeighborTypes.OUTPUT;
-			if (!isNode) {
-				isNode = true;
-				if (myGrid != null) {
-					myGrid.addBlock(this);
-				}
-			}
-		} else if (isStructureTile(tileEntity, side)) {
-			neighborMultiBlocks[side] = null;
-			neighborTypes[side] = NeighborTypes.STRUCTURE;
-		} else {
-			neighborTypes[side] = NeighborTypes.NONE;
-			neighborMultiBlocks[side] = null;
-			connectionTypes[side] = ConnectionTypes.BLOCKED;
-		}
-
-		BlockUtils.fireBlockUpdate(world(), getPos());
-
-		for (SubTileMultiBlock subTile : subTiles) {
-			subTile.onNeighbourChange();
 		}
 	}
 
@@ -263,7 +147,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		if (attachment == null) {
 			return false;
 		}
-
 		attachments[attachment.side] = null;
 		tickingAttachments.remove(attachment);
 		connectionTypes[attachment.side] = ConnectionTypes.NORMAL;
@@ -272,7 +155,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		if (myGrid != null) {
 			myGrid.destroyAndRecreate();
 		}
-		for (SubTileMultiBlock subTile : subTiles) {
+		for (SubTileGridTile subTile : subTiles) {
 			subTile.destroyAndRecreate();
 		}
 		BlockUtils.fireBlockUpdate(world(), getPos());
@@ -284,7 +167,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		if (attachments[attachment.side] != null || !attachment.canAddToTile(this)) {
 			return false;
 		}
-
 		if (ServerHelper.isClientWorld(worldObj)) {
 			return true;
 		}
@@ -299,7 +181,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		if (myGrid != null) {
 			myGrid.destroyAndRecreate();
 		}
-		for (SubTileMultiBlock subTile : subTiles) {
+		for (SubTileGridTile subTile : subTiles) {
 			subTile.destroyAndRecreate();
 		}
 		return true;
@@ -343,7 +225,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 			}
 		}
 
-		for (SubTileMultiBlock subTile : subTiles) {
+		for (SubTileGridTile subTile : subTiles) {
 			subTile.onNeighbourChange();
 		}
 
@@ -380,7 +262,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 			if (neighborTypes[i] == NeighborTypes.MULTIBLOCK) {
 				theTile = getAdjTileEntitySafe(i);
 				if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-					neighborMultiBlocks[i] = (IMultiBlock) theTile;
+					neighborMultiBlocks[i] = (IGridTile) theTile;
 				} else {
 					neighborTypes[i] = NeighborTypes.NONE;
 				}
@@ -423,7 +305,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 					connectionTypes[i] = ConnectionTypes.NORMAL;
 				}
 			} else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
-				neighborMultiBlocks[i] = (IMultiBlock) theTile;
+				neighborMultiBlocks[i] = (IGridTile) theTile;
 				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
 			} else if (connectionTypes[i].allowTransfer && isSignificantTile(theTile, i)) {
 				neighborMultiBlocks[i] = null;
@@ -516,7 +398,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 
 		handleSideUpdate(i);
 
-		for (SubTileMultiBlock subTile : subTiles) {
+		for (SubTileGridTile subTile : subTiles) {
 			subTile.onNeighbourChange();
 		}
 
@@ -570,16 +452,16 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 	}
 
 	/*
-	 * Should return true if theTile is an instance of this multiblock. This must also be an instance of IMultiBlock
+	 * Should return true if theTile is an instance of this multiblock. This must also be an instance of IGridTile
 	 */
 	public boolean isConnectable(TileEntity theTile, int side) {
 
-		return theTile instanceof TileTDBase;
+		return theTile instanceof TileDuctBase;
 	}
 
 	public boolean isUnblocked(TileEntity tile, int side) {
 
-		return !isBlockedSide(side) && !((TileTDBase) tile).isBlockedSide(side ^ 1);
+		return !isBlockedSide(side) && !((TileDuctBase) tile).isBlockedSide(side ^ 1);
 	}
 
 	/*
@@ -602,22 +484,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		return 0;
 	}
 
-	@Override
-	public void tickMultiBlock() {
-
-		if (isInvalid()) {
-			return;
-		}
-
-		onNeighborBlockChange();
-		formGrid();
-
-		for (SubTileMultiBlock subTile : subTiles) {
-			subTile.onNeighbourChange();
-			subTile.formGrid();
-		}
-	}
-
 	public void formGrid() {
 
 		if (myGrid == null && ServerHelper.isServerWorld(worldObj)) {
@@ -627,39 +493,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 			// DebugHelper.stopTimer("Grid");
 			// DebugHelper.info("Grid Formed: " + (myGrid != null ? myGrid.nodeSet.size() + myGrid.idleSet.size() : "Failed"));
 		}
-	}
-
-	@Override
-	public boolean tickPass(int pass) {
-
-		if (checkForChunkUnload()) {
-			return false;
-		}
-
-		if (!tickingAttachments.isEmpty()) {
-			for (Attachment attachment : tickingAttachments) {
-				attachment.tick(pass);
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public boolean isNode() {
-
-		return isNode;
-	}
-
-	@Override
-	public boolean existsYet() {
-
-		return worldObj != null && worldObj.isBlockLoaded(getPos()) && worldObj.getBlockState(getPos()).getBlock() instanceof BlockDuct;
-	}
-
-	@Override
-	public IMultiBlock[] getSubTiles() {
-
-		return subTiles;
 	}
 
 	@Override
@@ -723,7 +556,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		}
 
 		for (int i = 0; i < this.subTiles.length; i++) {
-			SubTileMultiBlock a = this.subTiles[i];
+			SubTileGridTile a = this.subTiles[i];
 			NBTTagCompound tag = new NBTTagCompound();
 			a.writeToNBT(tag);
 			nbt.setTag("subTile" + i, tag);
@@ -816,7 +649,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 				if (isConnectable(tile, i)) {
-					((TileTDBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
 				}
 
 				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
@@ -825,7 +658,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 					myGrid.destroyAndRecreate();
 				}
 
-				for (SubTileMultiBlock subTile : subTiles) {
+				for (SubTileGridTile subTile : subTiles) {
 					subTile.destroyAndRecreate();
 				}
 
@@ -899,7 +732,6 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 				attachmentMask = attachmentMask | (1 << i);
 			}
 		}
-
 		payload.addBool(isNode);
 
 		payload.addByte(attachmentMask);
@@ -909,14 +741,12 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 				attachments[i].addDescriptionToPacket(payload);
 			}
 		}
-
 		payload.addByte(facadeMask);
 		for (byte i = 0; i < 6; i++) {
 			if (covers[i] != null) {
 				covers[i].addDescriptionToPacket(payload);
 			}
 		}
-
 		payload.addInt(myGrid == null ? 0 : myGrid.hashCode());
 
 		return payload;
@@ -1108,6 +938,169 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		return "tile.thermaldynamics.duct";
 	}
 
+	/* IGridTile */
+	@Override
+	public World world() {
+
+		return getWorld();
+	}
+
+	@Override
+	public int x() {
+
+		return getPos().getX();
+	}
+
+	@Override
+	public int y() {
+
+		return getPos().getY();
+	}
+
+	@Override
+	public int z() {
+
+		return getPos().getZ();
+	}
+
+	@Override
+	public void setInvalidForForming() {
+
+		isValid = false;
+	}
+
+	@Override
+	public void setValidForForming() {
+
+		isValid = true;
+	}
+
+	@Override
+	public boolean isValidForForming() {
+
+		return isValid;
+	}
+
+	@Override
+	public abstract MultiBlockGrid createGrid();
+
+	@Override
+	public MultiBlockGrid getGrid() {
+
+		return myGrid;
+	}
+
+	@Override
+	public void setGrid(MultiBlockGrid newGrid) {
+
+		myGrid = newGrid;
+	}
+
+	@Override
+	public IGridTile getConnectedSide(byte side) {
+
+		if (side >= neighborMultiBlocks.length) {
+			return null;
+		}
+		return neighborMultiBlocks[side];
+
+	}
+
+	@Override
+	public boolean isBlockedSide(int side) {
+
+		return connectionTypes[side] == ConnectionTypes.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
+	}
+
+	@Override
+	public boolean isSideConnected(byte side) {
+
+		if (side >= neighborMultiBlocks.length) {
+			return false;
+		}
+		IGridTile tileEntity = neighborMultiBlocks[side];
+		return tileEntity != null && !isBlockedSide(side) && !tileEntity.isBlockedSide(side ^ 1);
+	}
+
+	@Override
+	public void setNotConnected(byte side) {
+
+		TileEntity tileEntity = BlockHelper.getAdjacentTileEntity(this, EnumFacing.VALUES[side]);
+
+		if (isSignificantTile(tileEntity, side)) {
+			neighborMultiBlocks[side] = null;
+			neighborTypes[side] = NeighborTypes.OUTPUT;
+			if (!isNode) {
+				isNode = true;
+				if (myGrid != null) {
+					myGrid.addBlock(this);
+				}
+			}
+		} else if (isStructureTile(tileEntity, side)) {
+			neighborMultiBlocks[side] = null;
+			neighborTypes[side] = NeighborTypes.STRUCTURE;
+		} else {
+			neighborTypes[side] = NeighborTypes.NONE;
+			neighborMultiBlocks[side] = null;
+			connectionTypes[side] = ConnectionTypes.BLOCKED;
+		}
+
+		BlockUtils.fireBlockUpdate(world(), getPos());
+
+		for (SubTileGridTile subTile : subTiles) {
+			subTile.onNeighbourChange();
+		}
+	}
+
+	@Override
+	public void tickMultiBlock() {
+
+		if (isInvalid()) {
+			return;
+		}
+
+		onNeighborBlockChange();
+		formGrid();
+
+		for (SubTileGridTile subTile : subTiles) {
+			subTile.onNeighbourChange();
+			subTile.formGrid();
+		}
+	}
+
+	@Override
+	public boolean tickPass(int pass) {
+
+		if (checkForChunkUnload()) {
+			return false;
+		}
+
+		if (!tickingAttachments.isEmpty()) {
+			for (Attachment attachment : tickingAttachments) {
+				attachment.tick(pass);
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean isNode() {
+
+		return isNode;
+	}
+
+	@Override
+	public boolean existsYet() {
+
+		return worldObj != null && worldObj.isBlockLoaded(getPos()) && worldObj.getBlockState(getPos()).getBlock() instanceof BlockDuct;
+	}
+
+	@Override
+	public IGridTile[] getSubTiles() {
+
+		return subTiles;
+	}
+
 	@Override
 	public void addRelays() {
 
@@ -1210,7 +1203,7 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 			grid.addInfo(info, player, debug);
 
 			if (subTiles.length != 0) {
-				for (SubTileMultiBlock subTile : subTiles) {
+				for (SubTileGridTile subTile : subTiles) {
 					if (subTile.grid != null) {
 						subTile.grid.addInfo(info, player, debug);
 					}
@@ -1259,3 +1252,4 @@ public abstract class TileTDBase extends TileCore implements IMultiBlock, ITileP
 		return null;
 	}
 }
+

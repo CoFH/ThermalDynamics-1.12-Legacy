@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import net.minecraft.util.EnumFacing;
 
 import java.util.Collections;
@@ -9,22 +9,22 @@ import java.util.LinkedList;
 
 public class RouteCache {
 
-	public IMultiBlockRoute origin;
+	public IGridTileRoute origin;
 	public LinkedList<Route> outputRoutes;
 	public LinkedList<Route> stuffableRoutes;
-	public HashSet<IMultiBlockRoute> visited;
-	public HashSet<IMultiBlockRoute> outputvisited;
+	public HashSet<IGridTileRoute> visited;
+	public HashSet<IGridTileRoute> outputvisited;
 	private LinkedList<Route> validRoutes;
 	public int maxPathLength;
 	private boolean isFinishedGenerating;
 	public boolean invalid = false;
 
-	public RouteCache(IMultiBlockRoute origin) {
+	public RouteCache(IGridTileRoute origin) {
 
 		this(origin, origin.getMaxRange());
 	}
 
-	public RouteCache(IMultiBlockRoute origin, int maxPathLength) {
+	public RouteCache(IGridTileRoute origin, int maxPathLength) {
 
 		this.origin = origin;
 		this.maxPathLength = maxPathLength;
@@ -94,7 +94,7 @@ public class RouteCache {
 	public void moveForwards(Route route, LinkedList<Route> newRoutes) {
 
 		boolean foundRoute = false;
-		IMultiBlockRoute foundPath = null;
+		IGridTileRoute foundPath = null;
 
 		if (route.routeFinished) {
 			return;
@@ -107,8 +107,8 @@ public class RouteCache {
 
 		byte foundDir = -1;
 		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
-			if (route.endPoint.getCachedSideType(i) == TileTDBase.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i).allowTransfer) {
-				IMultiBlockRoute validTile = (IMultiBlockRoute) route.endPoint.getCachedTile(i);
+			if (route.endPoint.getCachedSideType(i) == TileDuctBase.NeighborTypes.MULTIBLOCK && route.endPoint.getConnectionType(i).allowTransfer) {
+				IGridTileRoute validTile = (IGridTileRoute) route.endPoint.getCachedTile(i);
 
 				if (validTile != null) {
 					if (!visited.contains(validTile)) {

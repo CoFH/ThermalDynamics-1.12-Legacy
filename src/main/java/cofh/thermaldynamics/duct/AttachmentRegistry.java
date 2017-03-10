@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.block;
+package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
@@ -20,7 +20,7 @@ public class AttachmentRegistry {
 	public final static byte RETRIEVER_ITEM = 6;
 	public final static byte RELAY = 7;
 
-	public static Attachment createAttachment(TileTDBase tile, byte side, int id) {
+	public static Attachment createAttachment(TileDuctBase tile, byte side, int id) {
 
 		if (id == FACADE) {
 			return new Cover(tile, side);

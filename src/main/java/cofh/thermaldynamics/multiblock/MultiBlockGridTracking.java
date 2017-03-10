@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public abstract class MultiBlockGridTracking<T extends IMultiBlock> extends MultiBlockGrid<T> {
+public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiBlockGrid<T> {
 
 	public MultiBlockGridTracking(WorldGridList worldGrid) {
 

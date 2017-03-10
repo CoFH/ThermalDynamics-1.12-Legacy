@@ -7,12 +7,12 @@ import java.util.Queue;
 
 public class MultiBlockFormer {
 
-	Queue<IMultiBlock> blocksToCheck = new LinkedList<>();
+	Queue<IGridTile> blocksToCheck = new LinkedList<>();
 	MultiBlockGrid theGrid;
 
-	public void formGrid(IMultiBlock theMultiBlock) {
+	public void formGrid(IGridTile theMultiBlock) {
 
-		theGrid = theMultiBlock.getNewGrid();
+		theGrid = theMultiBlock.createGrid();
 		theMultiBlock.setGrid(theGrid);
 		theGrid.addBlock(theMultiBlock);
 
@@ -21,20 +21,18 @@ public class MultiBlockFormer {
 		while (!blocksToCheck.isEmpty()) {
 			checkMultiBlock(blocksToCheck.remove());
 		}
-
 		theMultiBlock.getGrid().resetMultiBlocks();
 	}
 
-	private void checkMultiBlock(IMultiBlock currentMultiBlock) {
+	private void checkMultiBlock(IGridTile currentMultiBlock) {
 
 		if (!currentMultiBlock.isValidForForming()) {
 			return;
 		}
-
 		currentMultiBlock.onNeighborBlockChange();
 		currentMultiBlock.setInvalidForForming();
 
-		IMultiBlock aBlock;
+		IGridTile aBlock;
 		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (currentMultiBlock.isSideConnected(i)) {
 				aBlock = currentMultiBlock.getConnectedSide(i);
@@ -60,4 +58,5 @@ public class MultiBlockFormer {
 			}
 		}
 	}
+
 }

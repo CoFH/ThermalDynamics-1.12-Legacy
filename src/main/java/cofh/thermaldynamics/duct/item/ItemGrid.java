@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -39,13 +39,13 @@ public class ItemGrid extends MultiBlockGridWithRoutes<IItemDuctInternal> {
 		}
 		shouldRepoll = false;
 
-		for (IMultiBlock m : nodeSet) {
+		for (IGridTile m : nodeSet) {
 			if (!m.tickPass(0)) {
 				break;
 			}
 		}
 		if (repoll || travelingItemsCount > 0) {
-			for (IMultiBlock m : idleSet) {
+			for (IGridTile m : idleSet) {
 				if (!m.tickPass(0)) {
 					break;
 				}
@@ -64,7 +64,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes<IItemDuctInternal> {
 	}
 
 	@Override
-	public boolean canAddBlock(IMultiBlock aBlock) {
+	public boolean canAddBlock(IGridTile aBlock) {
 
 		return aBlock instanceof IItemDuctInternal;
 	}

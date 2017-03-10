@@ -6,9 +6,9 @@ import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -44,13 +44,13 @@ public class Cover extends Attachment {
 
 	public IBlockState state;
 
-	public Cover(TileTDBase tile, byte side, IBlockState state) {
+	public Cover(TileDuctBase tile, byte side, IBlockState state) {
 
 		super(tile, side);
 		this.state = state;
 	}
 
-	public Cover(TileTDBase tile, byte side) {
+	public Cover(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 	}
@@ -85,9 +85,9 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+	public TileDuctBase.NeighborTypes getNeighborType() {
 
-		return TileTDBase.NeighborTypes.NONE;
+		return TileDuctBase.NeighborTypes.NONE;
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public boolean canAddToTile(TileTDBase tileMultiBlock) {
+	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
 
 		return tileMultiBlock.covers[side] == null;
 	}

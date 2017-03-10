@@ -3,8 +3,8 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.BlockPosition;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.duct.TileDuctBase;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,8 +49,8 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 		if (worldObj.isBlockLoaded(position)) {
 			theTile = worldObj.getTileEntity(position);
 
-			if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileTDBase) theTile).isBlockedSide(j ^ 1)) {
-				neighborMultiBlocks[i] = (IMultiBlock) theTile;
+			if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
+				neighborMultiBlocks[i] = (IGridTile) theTile;
 				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
 			} else {
 				rangePos[i] = null;
@@ -145,7 +145,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 	}
 
 	@Override
-	public IMultiBlock getPhysicalConnectedSide(byte direction) {
+	public IGridTile getPhysicalConnectedSide(byte direction) {
 
 		if (rangePos[direction] != null) {
 			TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, direction);

@@ -14,8 +14,8 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
@@ -356,7 +356,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		ccrs.draw();
 	}
 
-	public int[] getDuctConnections(TileTDBase tile) {
+	public int[] getDuctConnections(TileDuctBase tile) {
 
 		int[] connections = new int[6];
 		for (int i = 0; i < 6; i++) {
@@ -379,10 +379,10 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.bind(buffer);
 		TileEntity tile = world.getTileEntity(pos);
-		if (!(tile instanceof TileTDBase)) {
+		if (!(tile instanceof TileDuctBase)) {
 			return false;
 		}
-		TileTDBase theTile = (TileTDBase) tile;
+		TileDuctBase theTile = (TileDuctBase) tile;
 
 		ccrs.preRenderWorld(world, pos);
 		int[] connections = getDuctConnections(theTile);

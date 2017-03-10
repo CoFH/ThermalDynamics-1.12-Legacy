@@ -27,7 +27,7 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new FluidGridSuper(worldObj);
 	}

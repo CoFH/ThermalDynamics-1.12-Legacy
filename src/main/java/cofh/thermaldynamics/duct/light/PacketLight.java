@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,10 +29,10 @@ public class PacketLight extends PacketCoFHBase {
 
 		addVarInt(grid.idleSet.size() + grid.nodeSet.size());
 
-		for (IMultiBlock iMultiBlock : Iterables.concat(grid.nodeSet, grid.idleSet)) {
-			addVarInt(iMultiBlock.x());
-			addVarInt(iMultiBlock.y());
-			addVarInt(iMultiBlock.z());
+		for (IGridTile iGridTile : Iterables.concat(grid.nodeSet, grid.idleSet)) {
+			addVarInt(iGridTile.x());
+			addVarInt(iGridTile.y());
+			addVarInt(iGridTile.z());
 		}
 	}
 

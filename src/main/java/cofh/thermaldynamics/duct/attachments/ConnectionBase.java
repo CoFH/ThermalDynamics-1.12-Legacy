@@ -3,15 +3,15 @@ package cofh.thermaldynamics.duct.attachments;
 import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IPortableData;
+import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.RedstoneControlHelper;
-import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
@@ -45,12 +45,12 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	int prevFlag = -1;
 
-	public ConnectionBase(TileTDBase tile, byte side) {
+	public ConnectionBase(TileDuctBase tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public ConnectionBase(TileTDBase tile, byte side, int type) {
+	public ConnectionBase(TileDuctBase tile, byte side, int type) {
 
 		this(tile, side);
 		this.type = type;
@@ -73,9 +73,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+	public TileDuctBase.NeighborTypes getNeighborType() {
 
-		return isValidInput ? TileTDBase.NeighborTypes.INPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
+		return isValidInput ? TileDuctBase.NeighborTypes.INPUT : TileDuctBase.NeighborTypes.DUCT_ATTACHMENT;
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	@Override
 	public Cuboid6 getCuboid() {
 
-		return TileTDBase.subSelection[side].copy();
+		return TileDuctBase.subSelection[side].copy();
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 	int prevHash;
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		return new EnergyGridGlowing(worldObj, getDuctType().type);
 	}

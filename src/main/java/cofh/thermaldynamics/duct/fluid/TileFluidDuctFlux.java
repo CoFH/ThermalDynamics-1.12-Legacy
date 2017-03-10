@@ -73,7 +73,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 	}
 
 	@Override
-	public MultiBlockGrid getNewGrid() {
+	public MultiBlockGrid createGrid() {
 
 		FluidGrid grid = new FluidGrid(worldObj);
 		grid.doesPassiveTicking = true;
