@@ -4,5 +4,5 @@ import cofh.api.tileentity.IItemDuct;
 import cofh.thermaldynamics.multiblock.IMultiBlockRoute;
 
 public interface IItemDuctInternal extends IMultiBlockRoute, IItemDuct {
-	
+
 }

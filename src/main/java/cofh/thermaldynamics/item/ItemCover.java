@@ -34,7 +34,7 @@ public class ItemCover extends ItemAttachment {
 	@Override
 	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 
-        list.addAll(getCoverList());
+		list.addAll(getCoverList());
 	}
 
 	@Override
@@ -102,9 +102,9 @@ public class ItemCover extends ItemAttachment {
 			if (!(stack.getItem() instanceof ItemBlock)) {
 				continue;
 			}
-            if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-                continue;
-            }
+			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+				continue;
+			}
 
 			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
 		}

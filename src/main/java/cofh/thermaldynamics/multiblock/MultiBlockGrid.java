@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.core.util.ChatHelper;
+import cofh.core.util.helpers.ChatHelper;
 import cofh.thermaldynamics.block.Attachment;
+import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermaldynamics.util.WorldGridList;
-import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;

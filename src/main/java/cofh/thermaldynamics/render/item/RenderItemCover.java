@@ -63,6 +63,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+
 		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
 	}
 

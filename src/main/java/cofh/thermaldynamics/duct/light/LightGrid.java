@@ -3,9 +3,9 @@ package cofh.thermaldynamics.duct.light;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.lib.util.ChunkCoord;
-import cofh.thermaldynamics.util.WorldGridList;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import cofh.thermaldynamics.util.WorldGridList;
 import com.google.common.collect.Iterables;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.management.PlayerChunkMap;
@@ -14,7 +14,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import java.util.HashSet;
-import java.util.List;
 
 public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 

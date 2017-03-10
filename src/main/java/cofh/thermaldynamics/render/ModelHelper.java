@@ -5,8 +5,8 @@ import codechicken.lib.render.BlockRenderer;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.vec.*;
 import codechicken.lib.vec.uv.UV;
-import cofh.lib.render.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
+import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.init.TDProps;
 
 import java.util.Collections;
@@ -236,7 +236,7 @@ public class ModelHelper {
 		while (iter.hasNext()) {
 			Face f = Face.loadFromIterator(iter);
 
-            faces.removeIf(f::attemptToCombine);
+			faces.removeIf(f::attemptToCombine);
 			faces.add(f);
 		}
 

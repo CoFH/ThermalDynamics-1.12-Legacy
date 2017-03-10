@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import net.minecraftforge.fluids.FluidStack;
 

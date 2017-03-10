@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import cofh.api.block.IBlockAppearance;
+import cofh.core.render.IBlockAppearance;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -38,11 +38,7 @@ public class CoverBlockAccess implements IBlockAccess {
 	IBlockState state;
 
 	public enum Result {
-		ORIGINAL,
-		AIR,
-		BASE,
-		BEDROCK,
-		COVER
+		ORIGINAL, AIR, BASE, BEDROCK, COVER
 	}
 
 	public Result getAction(BlockPos pos) {

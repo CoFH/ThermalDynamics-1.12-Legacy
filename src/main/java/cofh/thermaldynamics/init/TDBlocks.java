@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.init;
 
-import cofh.api.core.IInitializer;
+import cofh.core.util.core.IInitializer;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 

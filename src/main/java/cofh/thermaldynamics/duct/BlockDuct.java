@@ -4,12 +4,12 @@ import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.ItemUtils;
-import cofh.api.block.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
-import cofh.api.core.IModelRegister;
 import cofh.core.block.TileCore;
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
+import cofh.core.render.IBlockAppearance;
+import cofh.core.render.IModelRegister;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.core.util.CoreUtils;
@@ -221,11 +221,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	public enum ConnectionTypes {
-		NONE(false),
-		DUCT,
-		TILECONNECTION,
-		STRUCTURE,
-		CLEANDUCT;
+		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
 
 		private final boolean renderDuct;
 
@@ -398,6 +394,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
+
 		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(META).build());
 		ModelResourceLocation normalLocation = new ModelResourceLocation(getRegistryName(), "normal");
 		ModelRegistryHelper.register(normalLocation, new DummyBakedModel());

@@ -72,7 +72,9 @@ public class SimulatedInv implements IItemHandler {
 	@Override
 	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 
-		if (stack == null || stack.stackSize == 0) return null;
+		if (stack == null || stack.stackSize == 0) {
+			return null;
+		}
 
 		int originalStackSize = stack.stackSize;
 		ItemStack copy = stack.copy();
@@ -81,14 +83,20 @@ public class SimulatedInv implements IItemHandler {
 		ItemStack insertItem = originalLogic.insertItem(slot, copy, true);
 
 		// rejected
-		if (insertItem == copy) return stack;
+		if (insertItem == copy) {
+			return stack;
+		}
 
 		int insertable = maxStackSize - (insertItem != null ? insertItem.stackSize : 0);
 
-		if (insertable == 0) return stack; // rejected
+		if (insertable == 0) {
+			return stack; // rejected
+		}
 
 		if (insertable >= originalStackSize) // whole stack would have been accepted
+		{
 			return slotHandler.insertItem(slot, stack, simulate);
+		}
 
 		// only partial stack would have been accepted
 		copy.stackSize = insertable;

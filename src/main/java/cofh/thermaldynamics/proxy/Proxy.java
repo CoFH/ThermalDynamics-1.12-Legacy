@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.proxy;
 
-import cofh.api.core.IModelRegister;
+import cofh.core.render.IModelRegister;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;

@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.block;
 
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermaldynamics.multiblock.IMultiBlock;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import cofh.thermaldynamics.util.TickHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 

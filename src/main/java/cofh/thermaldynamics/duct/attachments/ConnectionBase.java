@@ -2,12 +2,12 @@ package cofh.thermaldynamics.duct.attachments;
 
 import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
-import cofh.api.tileentity.IPortableData;
-import cofh.api.tileentity.IRedstoneControl;
+import cofh.api.core.IPortableData;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.lib.util.helpers.RedstoneControlHelper;
+import cofh.core.util.helpers.RedstoneControlHelper;
+import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.Attachment;

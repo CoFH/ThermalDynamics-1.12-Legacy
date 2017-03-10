@@ -183,16 +183,19 @@ public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 
 	@Override
 	public FluidStack getFluidForGrid() {
+
 		return fluidForGrid;
 	}
 
 	@Override
 	public void setFluidForGrid(FluidStack fluidForGrid) {
+
 		fluidForGrid = null;
 	}
 
 	@Override
 	public boolean isOpaque() {
+
 		return getDuctType().opaque;
 	}
 
@@ -218,6 +221,7 @@ public class TileFluidDuct extends TileTDBase implements IFluidDuctInternal {
 
 	@Override
 	public boolean canStoreFluid() {
+
 		return true;
 	}
 

@@ -108,7 +108,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
 
 		if (entity instanceof EntityTransport) {
-		    return;
+			return;
 		}
 
 		float min = getSize(state);

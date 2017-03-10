@@ -99,11 +99,13 @@ public class TileEnergyDuct extends TileTDBase implements IEnergyReceiver, IEner
 
 	@Override
 	public int getEnergyForGrid() {
+
 		return energyForGrid;
 	}
 
 	@Override
 	public void setEnergyForGrid(int energy) {
+
 		energyForGrid = energy;
 	}
 

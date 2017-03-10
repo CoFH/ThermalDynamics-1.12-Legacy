@@ -89,19 +89,22 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 		myTank.setCapacity(size() * myTank.fluidPerDuct);
 	}
 
-	protected int getStorableNumberDucts(){
+	protected int getStorableNumberDucts() {
+
 		int numBalancable = this.numStorable;
-		if(numBalancable == -1){
+		if (numBalancable == -1) {
 			numBalancable = reworkNumberStorableDucts();
 		}
 		return numBalancable;
 	}
 
 	private int reworkNumberStorableDucts() {
+
 		int numBalancable = 0;
 		for (IFluidDuctInternal iFluidDuct : Iterables.concat(nodeSet, idleSet)) {
-			if (iFluidDuct.canStoreFluid())
+			if (iFluidDuct.canStoreFluid()) {
 				numBalancable++;
+			}
 		}
 		this.numStorable = numBalancable;
 		return numBalancable;
@@ -227,10 +230,14 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	@Nullable
 	public FluidStack getNodeShare(IFluidDuctInternal theCond) {
 
-		if (!theCond.canStoreFluid()) return null;
+		if (!theCond.canStoreFluid()) {
+			return null;
+		}
 
 		FluidStack fluid = myTank.getFluid();
-		if (fluid == null) return null;
+		if (fluid == null) {
+			return null;
+		}
 		FluidStack toReturn = fluid.copy();
 		toReturn.amount = getNodeAmount(theCond);
 		return toReturn.amount > 0 ? toReturn : null;
@@ -238,9 +245,13 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 
 	public int getNodeAmount(IFluidDuctInternal theCond) {
 
-		if(theCond.canStoreFluid()) return 0;
+		if (theCond.canStoreFluid()) {
+			return 0;
+		}
 		int size = getStorableNumberDucts();
-		if (size == 0) return 0;
+		if (size == 0) {
+			return 0;
+		}
 		return size == 1 ? myTank.getFluidAmount() : isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size + myTank.getFluidAmount() % size : myTank.getFluidAmount() / size;
 	}
 

@@ -18,12 +18,7 @@ public class Duct implements IIconRegister {
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public enum Type {
-		ENERGY,
-		FLUID,
-		ITEM,
-		TRANSPORT,
-		STRUCTURAL,
-		CRAFTING
+		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, CRAFTING
 	}
 
 	public ItemStack itemStack = null;

@@ -2,7 +2,7 @@ package cofh.thermaldynamics.proxy;
 
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
-import cofh.api.core.IModelRegister;
+import cofh.core.render.IModelRegister;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
@@ -71,6 +71,7 @@ public class ProxyClient extends Proxy {
 
 	@Override
 	public void addIModelRegister(IModelRegister register) {
+
 		modelRegisters.add(register);
 	}
 
@@ -78,6 +79,7 @@ public class ProxyClient extends Proxy {
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
+
 		TDTextures.registerIcons(event);
 
 		for (int i = 0; i < TDDucts.ductList.size(); i++) {
