@@ -7,7 +7,7 @@ import codechicken.lib.render.CCRSConsumer;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
-import cofh.lib.render.RenderHelper;
+import cofh.lib.util.helpers.RenderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.init.TDTextures;
 import com.google.common.cache.Cache;

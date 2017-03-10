@@ -4,7 +4,7 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
-import cofh.api.tileentity.IPortableData;
+import cofh.api.core.IPortableData;
 import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.TileCore;
 import cofh.core.network.ITileInfoPacketHandler;

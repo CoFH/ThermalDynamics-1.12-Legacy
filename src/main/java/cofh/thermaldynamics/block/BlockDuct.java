@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.block;
 
-import cofh.api.core.IModelRegister;
+import cofh.core.render.IModelRegister;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.TileDuctBase.NeighborTypes;
 import cofh.thermaldynamics.duct.entity.EntityTransport;

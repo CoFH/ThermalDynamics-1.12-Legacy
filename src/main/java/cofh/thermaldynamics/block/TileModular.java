@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.block;
 
-import cofh.api.tileentity.IPortableData;
+import cofh.api.core.IPortableData;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.RayTracer;
 import cofh.thermaldynamics.duct.Attachment;

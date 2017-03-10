@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.api.item.ISpecialFilterFluid;
-import cofh.api.item.ISpecialFilterItem;
+import cofh.core.util.item.ISpecialFilterFluid;
+import cofh.core.util.item.ISpecialFilterItem;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;

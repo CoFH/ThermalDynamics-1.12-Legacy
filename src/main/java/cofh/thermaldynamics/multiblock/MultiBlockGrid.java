@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.core.util.ChatHelper;
+import cofh.core.util.helpers.ChatHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.util.TickHandler;

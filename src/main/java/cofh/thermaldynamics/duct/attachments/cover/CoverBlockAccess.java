@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import cofh.api.block.IBlockAppearance;
+import cofh.core.render.IBlockAppearance;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
