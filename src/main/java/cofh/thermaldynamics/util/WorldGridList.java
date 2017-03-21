@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.util;
 
 import cofh.thermaldynamics.multiblock.IGridTile;
+import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 
@@ -11,7 +12,7 @@ import java.util.LinkedHashSet;
 public class WorldGridList {
 
 	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<>();
-	public LinkedHashSet<IGridTile> tickingBlocks = new LinkedHashSet<>();
+	public LinkedHashSet<ISingleTick> tickingBlocks = new LinkedHashSet<>();
 
 	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<>();
 	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<>();
@@ -74,11 +75,13 @@ public class WorldGridList {
 			}
 		}
 		if (!tickingBlocks.isEmpty()) {
-			Iterator<IGridTile> iter = tickingBlocks.iterator();
+			Iterator<ISingleTick> iter = tickingBlocks.iterator();
 			while (iter.hasNext()) {
-				IGridTile block = iter.next();
+				ISingleTick block = iter.next();
 				if (block.existsYet()) {
-					block.tickMultiBlock();
+					block.singleTick();
+					iter.remove();
+				} else if (block.isOutdated()){
 					iter.remove();
 				}
 			}

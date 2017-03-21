@@ -121,7 +121,7 @@ public abstract class SubTileGridTile implements IGridTile {
 	}
 
 	@Override
-	public void tickMultiBlock() {
+	public void singleTick() {
 
 		if (!parent.isInvalid() && grid == null && ServerHelper.isServerWorld(parent.world())) {
 			onNeighbourChange();
@@ -156,6 +156,11 @@ public abstract class SubTileGridTile implements IGridTile {
 	public boolean existsYet() {
 
 		return parent.existsYet();
+	}
+
+	@Override
+	public boolean isOutdated() {
+		return parent.isOutdated();
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {

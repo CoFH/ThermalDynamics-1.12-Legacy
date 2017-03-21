@@ -16,7 +16,7 @@ public interface IDuctTile extends IGridTile {
 	void setNotConnected(byte side);
 
 	// Used by some multiblocks to start their formations. Removed from the ticking list after initial tick.
-	void tickMultiBlock();
+	void singleTick();
 
 	// Used to do multiblock steps passed off by the grid. IE: Distribute liquids.
 	// return false if the grid has altered

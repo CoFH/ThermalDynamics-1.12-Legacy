@@ -1053,7 +1053,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 	}
 
 	@Override
-	public void tickMultiBlock() {
+	public void singleTick() {
 
 		if (isInvalid()) {
 			return;
@@ -1093,6 +1093,11 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 	public boolean existsYet() {
 
 		return worldObj != null && worldObj.isBlockLoaded(getPos()) && worldObj.getBlockState(getPos()).getBlock() instanceof BlockDuct;
+	}
+
+	@Override
+	public boolean isOutdated() {
+		return isInvalid();
 	}
 
 	@Override
