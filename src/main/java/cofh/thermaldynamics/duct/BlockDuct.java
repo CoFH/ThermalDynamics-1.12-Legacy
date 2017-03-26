@@ -14,10 +14,9 @@ import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockTDBase;
-import cofh.thermaldynamics.duct.TileDuctBase.NeighborTypes;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
-import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
+import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.duct.entity.*;
@@ -176,27 +175,27 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 				}
 			}
 
-			if (theTile.neighborTypes[0] != NeighborTypes.NONE) {
+			if (theTile.neighborTypes[0] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, 0.0F, min, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.neighborTypes[1] != NeighborTypes.NONE) {
+			if (theTile.neighborTypes[1] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, min, max, 1.0F, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.neighborTypes[2] != NeighborTypes.NONE) {
+			if (theTile.neighborTypes[2] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, 0.0F, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.neighborTypes[3] != NeighborTypes.NONE) {
+			if (theTile.neighborTypes[3] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, min, max, max, 1.0F);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.neighborTypes[4] != NeighborTypes.NONE) {
+			if (theTile.neighborTypes[4] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(0.0F, min, min, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.neighborTypes[5] != NeighborTypes.NONE) {
+			if (theTile.neighborTypes[5] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, min, 1.0F, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
@@ -331,7 +330,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	public enum ConnectionTypes {
-		NONE(false), DUCT, TILECONNECTION, STRUCTURE, CLEANDUCT;
+		NONE(false), DUCT, STRUCTURE, TILECONNECTION, CLEANDUCT;
 
 		private final boolean renderDuct;
 
@@ -403,7 +402,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (offset != 0) {
 			return true;
 		}
-		GameRegistry.registerTileEntity(TileEnergyDuct.class, "thermaldynamics.FluxDuct");
+		GameRegistry.registerTileEntity(DuctUnitEnergy.class, "thermaldynamics.FluxDuct");
 		GameRegistry.registerTileEntity(TileEnergyDuctSuper.class, "thermaldynamics.FluxDuctSuperConductor");
 
 		EnergyGrid.initialize();
@@ -419,7 +418,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");
 		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
 
-		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.StructuralDuct");
+		GameRegistry.registerTileEntity(DuctUnitStructural.class, "thermaldynamics.StructuralDuct");
 
 		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.TransportDuct");
 		GameRegistry.registerTileEntity(TileTransportDuctLongRange.class, "thermaldynamics.TransportDuctLongRange");

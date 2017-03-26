@@ -4,11 +4,12 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 
-public class TileEnergyDuctGlowing extends TileEnergyDuct {
+public class TileEnergyDuctGlowing extends DuctUnitEnergy {
 
 	public float[] fluxIn = new float[6];
 	public float[] fluxOut = new float[6];
@@ -140,7 +141,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 		}
 		int numSides = 0;
 		for (int i = 0; i < 6; i++) {
-			if ((sideMask & (1 << i)) != 0 && neighborTypes[i] != NeighborTypes.NONE && connectionTypes[i].allowTransfer) {
+			if ((sideMask & (1 << i)) != 0 && neighborTypes[i] != NeighborType.NONE && connectionTypes[i].allowTransfer) {
 				numSides++;
 			}
 		}
@@ -149,7 +150,7 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 		}
 		float perSide = ((float) amount) / numSides;
 		for (int i = 0; i < 6; i++) {
-			if ((sideMask & (1 << i)) != 0 && neighborTypes[i] != NeighborTypes.NONE && connectionTypes[i].allowTransfer) {
+			if ((sideMask & (1 << i)) != 0 && neighborTypes[i] != NeighborType.NONE && connectionTypes[i].allowTransfer) {
 				fluxArray[i] += perSide;
 			}
 		}
@@ -159,8 +160,8 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 	protected int sendEnergy(IEnergyReceiver receiver, int maxReceive, byte side, boolean simulate) {
 
 		int energy = super.sendEnergy(receiver, maxReceive, side, simulate);
-		if (!simulate && internalGrid != null) {
-			((EnergyGridGlowing) internalGrid).noteExtractingEnergy(this, side, energy);
+		if (!simulate && grid != null) {
+			((EnergyGridGlowing) grid).noteExtractingEnergy(this, side, energy);
 		}
 		return energy;
 	}
@@ -169,8 +170,8 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
 
 		int energy = super.extractEnergy(from, maxExtract, simulate);
-		if (!simulate && internalGrid != null) {
-			((EnergyGridGlowing) internalGrid).noteExtractingEnergy(this, (byte) from.ordinal(), energy);
+		if (!simulate && grid != null) {
+			((EnergyGridGlowing) grid).noteExtractingEnergy(this, (byte) from.ordinal(), energy);
 		}
 		return energy;
 	}
@@ -179,8 +180,8 @@ public class TileEnergyDuctGlowing extends TileEnergyDuct {
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 
 		int energy = super.receiveEnergy(from, maxReceive, simulate);
-		if (!simulate && internalGrid != null) {
-			((EnergyGridGlowing) internalGrid).noteReceivingEnergy(this, (byte) from.ordinal(), energy);
+		if (!simulate && grid != null) {
+			((EnergyGridGlowing) grid).noteReceivingEnergy(this, (byte) from.ordinal(), energy);
 		}
 		return energy;
 	}

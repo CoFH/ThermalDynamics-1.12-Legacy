@@ -3,8 +3,9 @@ package cofh.thermaldynamics.duct.fluid;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.block.SubTileGridTile;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.tileentity.TileEntity;
@@ -25,8 +26,8 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 
 		if (attachments[side] != null) {
 			return attachments[side].getRenderConnectionType();
-		} else if (neighborTypes[side] == NeighborTypes.STRUCTURE) {
-			return connectionTypes[side] != ConnectionTypes.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
+		} else if (neighborTypes[side] == NeighborType.STRUCTURE) {
+			return connectionTypes[side] != ConnectionType.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
 		} else {
 			return super.getRenderConnectionType(side);
 		}
@@ -74,7 +75,7 @@ public abstract class TileFluidDuctPowered extends TileFluidDuct implements IEne
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 
-		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+		return connectionTypes[from.ordinal()] != ConnectionType.BLOCKED;
 	}
 
 }

@@ -11,6 +11,7 @@ import cofh.core.util.helpers.RedstoneControlHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
@@ -18,6 +19,7 @@ import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiDuctConnection;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
@@ -45,12 +47,12 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	int prevFlag = -1;
 
-	public ConnectionBase(TileDuctBase tile, byte side) {
+	public ConnectionBase(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public ConnectionBase(TileDuctBase tile, byte side, int type) {
+	public ConnectionBase(TileGrid tile, byte side, int type) {
 
 		this(tile, side);
 		this.type = type;
@@ -73,9 +75,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public TileDuctBase.NeighborTypes getNeighborType() {
+	public NeighborType getNeighborType() {
 
-		return isValidInput ? TileDuctBase.NeighborTypes.INPUT : TileDuctBase.NeighborTypes.DUCT_ATTACHMENT;
+		return isValidInput ? NeighborType.INPUT : NeighborType.DUCT_ATTACHMENT;
 	}
 
 	@Override

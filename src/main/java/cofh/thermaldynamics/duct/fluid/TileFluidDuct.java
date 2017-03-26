@@ -6,6 +6,8 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
@@ -118,7 +120,7 @@ public class TileFluidDuct extends TileDuctBase implements IFluidDuctInternal {
 
 	public int transfer(int bSide, int available, boolean simulate, FluidStack fluid, boolean drainGridTank) {
 
-		if (neighborTypes[bSide] != NeighborTypes.OUTPUT || connectionTypes[bSide] == ConnectionTypes.BLOCKED) {
+		if (neighborTypes[bSide] != NeighborType.OUTPUT || connectionTypes[bSide] == ConnectionType.BLOCKED) {
 			return 0;
 		}
 		if (cache[bSide] == null || fluid == null) {
@@ -412,7 +414,7 @@ public class TileFluidDuct extends TileDuctBase implements IFluidDuctInternal {
 
 	public boolean isOpen(EnumFacing from) {
 
-		return fluidGrid != null && (from == null || ((neighborTypes[from.ordinal()] == NeighborTypes.OUTPUT || neighborTypes[from.ordinal()] == NeighborTypes.INPUT) && connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED));
+		return fluidGrid != null && (from == null || ((neighborTypes[from.ordinal()] == NeighborType.OUTPUT || neighborTypes[from.ordinal()] == NeighborType.INPUT) && connectionTypes[from.ordinal()] != ConnectionType.BLOCKED));
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.block;
 
 import cofh.core.network.PacketCoFHBase;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,14 +10,14 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class Attachment2 {
 
-	private TileModular myTile;
+	private TileGrid myTile;
 	private byte mySide;
 
 	public Attachment2() {
 
 	}
 
-	public void init(TileModular tile, byte side) {
+	public void init(TileGrid tile, byte side) {
 
 		myTile = tile;
 		mySide = side;

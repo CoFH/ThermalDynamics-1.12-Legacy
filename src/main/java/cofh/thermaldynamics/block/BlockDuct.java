@@ -2,7 +2,7 @@ package cofh.thermaldynamics.block;
 
 import cofh.core.render.IModelRegister;
 import cofh.thermaldynamics.duct.TileDuctBase;
-import cofh.thermaldynamics.duct.TileDuctBase.NeighborTypes;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -99,27 +99,27 @@ public class BlockDuct extends BlockTDBase implements IModelRegister {
 					tile.covers[i].addCollisionBoxesToList(entityBox, collidingBoxes, entity);
 				}
 			}
-			if (tile.neighborTypes[0] != NeighborTypes.NONE) {
+			if (tile.neighborTypes[0] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, 0.0F, min, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (tile.neighborTypes[1] != NeighborTypes.NONE) {
+			if (tile.neighborTypes[1] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, min, max, 1.0F, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (tile.neighborTypes[2] != NeighborTypes.NONE) {
+			if (tile.neighborTypes[2] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, 0.0F, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (tile.neighborTypes[3] != NeighborTypes.NONE) {
+			if (tile.neighborTypes[3] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, min, max, max, 1.0F);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (tile.neighborTypes[4] != NeighborTypes.NONE) {
+			if (tile.neighborTypes[4] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(0.0F, min, min, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (tile.neighborTypes[5] != NeighborTypes.NONE) {
+			if (tile.neighborTypes[5] != NeighborType.NONE) {
 				bb = new AxisAlignedBB(min, min, min, 1.0F, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}

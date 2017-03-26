@@ -1,15 +1,18 @@
 package cofh.thermaldynamics.multiblock;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface IGridTile extends ISingleTick {
+import javax.annotation.Nullable;
+
+public interface IGridTile<T extends IGridTile<T, G>, G extends MultiBlockGrid<T>> {
 
 	/* GRID FORMATION */
-	void setGrid(MultiBlockGrid newGrid);
+	void setGrid(@Nullable G newGrid);
 
-	MultiBlockGrid createGrid();
+	G createGrid();
 
-	MultiBlockGrid getGrid();
+	G getGrid();
 
 	void setInvalidForForming();
 
@@ -17,17 +20,11 @@ public interface IGridTile extends ISingleTick {
 
 	boolean isValidForForming();
 
-	IGridTile getConnectedSide(byte side);
+	IGridTile<T, G> getConnectedSide(int side);
 
 	boolean isBlockedSide(int side);
 
 	boolean isSideConnected(byte side);
-
-	// This side contains a grid that will not form, mark that side as not connected.
-	void setNotConnected(byte side);
-
-	// Used by some multiblocks to start their formations. Removed from the ticking list after initial tick.
-	void singleTick();
 
 	// Used to do multiblock steps passed off by the grid. IE: Distribute liquids.
 	// return false if the grid has altered
@@ -35,23 +32,12 @@ public interface IGridTile extends ISingleTick {
 
 	boolean isNode();
 
-	boolean existsYet();
-
-	// Some tiles will have sub-grids that may not match the parent grid
-	// e.g. Ender-pipes will require power but will not share power through regular pipes
-	// we could also do stuff like pipe-wire using this if we were so inclined
-	IGridTile[] getSubTiles();
-
 	void addRelays();
 
 	/* PASSTHROUGH METHODS */
 	void onNeighborBlockChange();
 
-	int x();
-
-	int y();
-
-	int z();
+	BlockPos pos();
 
 	World world();
 

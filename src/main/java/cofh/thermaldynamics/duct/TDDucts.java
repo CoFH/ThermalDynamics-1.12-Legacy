@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct.Type;
-import cofh.thermaldynamics.duct.energy.TileEnergyDuct;
+import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.entity.TileTransportDuct;
 import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
@@ -31,7 +31,7 @@ public class TDDucts {
 	private static final IDuctFactory FLUID_FRAGILE = (duct, worldObj) -> new TileFluidDuctFragile();
 	private static final IDuctFactory FLUID = (duct, worldObj) -> new TileFluidDuct();
 	private static final IDuctFactory ENERGY_SUPER = (duct, worldObj) -> new TileEnergyDuctSuper();
-	private static final IDuctFactory ENERGY = (duct, worldObj) -> new TileEnergyDuct();
+	private static final IDuctFactory ENERGY = (duct, worldObj) -> new DuctUnitEnergy();
 	private static final IDuctFactory ITEM_FLUX = (duct, worldObj) -> new TileItemDuctFlux();
 	private static final IDuctFactory ITEM_ENDER = (duct, worldObj) -> new TileItemDuctEnder();
 	private static final IDuctFactory ITEM = (duct, worldObj) -> new TileItemDuct();
@@ -286,7 +286,7 @@ public class TDDucts {
 
 	public static DuctLight lightDuct;
 
-	private static final IDuctFactory structural = (duct, worldObj) -> new TileStructuralDuct();
+	private static final IDuctFactory structural = (duct, worldObj) -> new DuctUnitStructural();
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, structural, "support", null, null, 0, null, null, 0);
 

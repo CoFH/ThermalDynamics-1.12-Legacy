@@ -3,6 +3,8 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -44,7 +46,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 
 		connections = 0;
 		for (byte j = 5; j > 0; j--) {
-			if (neighborTypes[j] != NeighborTypes.NONE) {
+			if (neighborTypes[j] != NeighborType.NONE) {
 				if (connections == 0) {
 					d1 = j;
 					connections = 1;
@@ -99,10 +101,10 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 		v += t.step * 2;
 		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
 		if (v >= EntityTransport.PIPE_LENGTH) {
-			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && connectionTypes[t.direction] == ConnectionTypes.NORMAL) {
+			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && connectionTypes[t.direction] == ConnectionType.NORMAL) {
 				TileTransportDuctBase newHome = (TileTransportDuctBase) getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
-				if (newHome.neighborTypes[t.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+				if (newHome.neighborTypes[t.direction ^ 1] == NeighborType.MULTIBLOCK) {
 					t.pos = new BlockPos(newHome.getPos());
 
 					t.oldDirection = t.direction;
@@ -127,7 +129,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 				return true;
 			}
 		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
-			if (neighborTypes[t.direction] == NeighborTypes.NONE) {
+			if (neighborTypes[t.direction] == NeighborType.NONE) {
 				t.dropPassenger();
 				return true;
 			}

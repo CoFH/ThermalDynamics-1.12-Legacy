@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEnergyDuctSuper extends TileEnergyDuct {
+public class TileEnergyDuctSuper extends DuctUnitEnergy {
 
 	private EnergyGridSuper internalGridSC;
 

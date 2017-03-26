@@ -3,8 +3,8 @@ package cofh.thermaldynamics.duct.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.thermaldynamics.duct.TileDuctBase.ConnectionTypes;
-import cofh.thermaldynamics.duct.TileDuctBase.NeighborTypes;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
@@ -85,7 +85,7 @@ public class TravelingItem {
 			progress %= homeTile.getPipeLength();
 			advanceTile(homeTile);
 		} else if (progress >= homeTile.getPipeHalfLength() && progress - step < homeTile.getPipeHalfLength()) {
-			if (reRoute || homeTile.neighborTypes[direction] == NeighborTypes.NONE) {
+			if (reRoute || homeTile.neighborTypes[direction] == NeighborType.NONE) {
 				bounceItem(homeTile);
 			}
 		}
@@ -93,10 +93,10 @@ public class TravelingItem {
 
 	public void advanceTile(TileItemDuct homeTile) {
 
-		if (homeTile.neighborTypes[direction] == NeighborTypes.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
+		if (homeTile.neighborTypes[direction] == NeighborType.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
 			TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
 			if (newHome != null) {
-				if (newHome.neighborTypes[direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+				if (newHome.neighborTypes[direction ^ 1] == NeighborType.MULTIBLOCK) {
 					homeTile.removeItem(this, false);
 					newHome.transferItem(this);
 					if (myPath.hasNextDirection()) {
@@ -107,7 +107,7 @@ public class TravelingItem {
 					}
 				}
 			}
-		} else if (homeTile.neighborTypes[direction] == NeighborTypes.OUTPUT && homeTile.connectionTypes[direction] == ConnectionTypes.NORMAL) {
+		} else if (homeTile.neighborTypes[direction] == NeighborType.OUTPUT && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
 			stack.stackSize = homeTile.insertIntoInventory(stack.copy(), direction);
 
 			if (stack.stackSize > 0) {
@@ -115,7 +115,7 @@ public class TravelingItem {
 				return;
 			}
 			homeTile.removeItem(this, true);
-		} else if (homeTile.neighborTypes[direction] == NeighborTypes.INPUT && goingToStuff) {
+		} else if (homeTile.neighborTypes[direction] == NeighborType.INPUT && goingToStuff) {
 			if (homeTile.canStuffItem()) {
 				goingToStuff = false;
 				homeTile.stuffItem(this);

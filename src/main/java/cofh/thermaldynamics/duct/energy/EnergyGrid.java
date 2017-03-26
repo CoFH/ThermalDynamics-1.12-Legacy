@@ -61,7 +61,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof TileEnergyDuct && ((TileEnergyDuct) aBlock).getDuctType().type == this.type;
+		return aBlock instanceof DuctUnitEnergy && ((DuctUnitEnergy) aBlock).getDuctType().type == this.type;
 	}
 
 	@Override

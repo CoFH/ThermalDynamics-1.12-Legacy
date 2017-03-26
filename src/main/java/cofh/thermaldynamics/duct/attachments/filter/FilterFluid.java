@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.attachments.filter;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -10,12 +11,12 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class FilterFluid extends FilterBase {
 
-	public FilterFluid(TileDuctBase tile, byte side, int type) {
+	public FilterFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
 
-	public FilterFluid(TileDuctBase tile, byte side) {
+	public FilterFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}

@@ -3,7 +3,8 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.CoFHCore;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.helpers.SoundHelper;
-import cofh.thermaldynamics.duct.TileDuctBase;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
@@ -283,8 +284,8 @@ public class EntityTransport extends Entity {
 			pos = null;
 			return false;
 		}
-		TileDuctBase.NeighborTypes[] neighbours = ((TileTransportDuctBase) tileEntity).neighborTypes;
-		if (neighbours[direction ^ 1] != TileDuctBase.NeighborTypes.MULTIBLOCK) {
+		NeighborType[] neighbours = ((TileTransportDuctBase) tileEntity).neighborTypes;
+		if (neighbours[direction ^ 1] != NeighborType.MULTIBLOCK) {
 			pos = null;
 			return false;
 		}
@@ -403,9 +404,9 @@ public class EntityTransport extends Entity {
 
 	public void advanceTile(TileTransportDuctBaseRoute homeTile) {
 
-		if (homeTile.neighborTypes[direction] == TileDuctBase.NeighborTypes.MULTIBLOCK && homeTile.connectionTypes[direction] == TileDuctBase.ConnectionTypes.NORMAL) {
+		if (homeTile.neighborTypes[direction] == NeighborType.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
 			TileTransportDuctBase newHome = (TileTransportDuctBase) homeTile.getPhysicalConnectedSide(direction);
-			if (newHome != null && newHome.neighborTypes[direction ^ 1] == TileDuctBase.NeighborTypes.MULTIBLOCK) {
+			if (newHome != null && newHome.neighborTypes[direction ^ 1] == NeighborType.MULTIBLOCK) {
 				pos = new BlockPos(newHome.getPos());
 
 				if (myPath.hasNextDirection()) {
@@ -417,7 +418,7 @@ public class EntityTransport extends Entity {
 			} else {
 				reRoute = true;
 			}
-		} else if (homeTile.neighborTypes[direction] == TileDuctBase.NeighborTypes.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
+		} else if (homeTile.neighborTypes[direction] == NeighborType.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
 			dropPassenger();
 		} else {
 			bouncePassenger(homeTile);

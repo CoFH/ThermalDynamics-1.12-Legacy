@@ -13,11 +13,9 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.TileDuctBase;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
@@ -53,12 +51,12 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	public byte invert = 0;
 	public byte threshold = 0;
 
-	public Relay(TileDuctBase tile, byte side) {
+	public Relay(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public Relay(TileDuctBase tile, byte side, int type) {
+	public Relay(TileGrid tile, byte side, int type) {
 
 		super(tile, side);
 		this.type = (byte) type;
@@ -83,7 +81,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public TileDuctBase.NeighborTypes getNeighborType() {
+	public NeighborType getNeighborType() {
 
 		return null;
 	}
@@ -342,7 +340,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tileMultiBlock) {
 
 		return !tileMultiBlock.getDuctType().isLargeTube();
 	}

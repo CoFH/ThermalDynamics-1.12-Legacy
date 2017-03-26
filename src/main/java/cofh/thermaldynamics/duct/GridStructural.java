@@ -5,7 +5,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.WorldGridList;
 import net.minecraft.world.World;
 
-public class GridStructural extends MultiBlockGrid {
+public class GridStructural<T extends IGridTile> extends MultiBlockGrid<T> {
 
 	public GridStructural(WorldGridList worldGrid) {
 

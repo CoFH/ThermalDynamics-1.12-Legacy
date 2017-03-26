@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyEnder;
 import cofh.thermaldynamics.init.TDProps;
 
@@ -109,9 +110,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 
 		while (true) {
 			duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
-			if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.MULTIBLOCK) {
+			if (duct.neighborTypes[travelingItem.direction] == NeighborType.MULTIBLOCK) {
 				TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
-				if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborTypes.MULTIBLOCK) {
+				if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborType.MULTIBLOCK) {
 					duct = newHome;
 					if (travelingItem.myPath.hasNextDirection()) {
 						travelingItem.oldDirection = travelingItem.direction;
@@ -130,7 +131,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 					transferItem(travelingItem, duct, newInsert);
 					return;
 				}
-			} else if (duct.neighborTypes[travelingItem.direction] == NeighborTypes.OUTPUT) {
+			} else if (duct.neighborTypes[travelingItem.direction] == NeighborType.OUTPUT) {
 				travelingItem.stack.stackSize = duct.insertIntoInventory(travelingItem.stack, travelingItem.direction);
 
 				if (travelingItem.stack.stackSize > 0) {

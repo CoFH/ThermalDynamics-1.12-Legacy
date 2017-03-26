@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.block;
+package cofh.thermaldynamics.duct.nutypeducts;
 
 import codechicken.lib.util.BlockUtils;
 import cofh.api.core.IPortableData;
@@ -7,40 +7,235 @@ import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.RayTracer;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.multiblock.ISingleTick;
+import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import cofh.thermaldynamics.util.TickHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
-public abstract class TileDuct extends TileCore implements IPortableData, ITileInfoPacketHandler, ITilePacketHandler {
+import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
+import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
+public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleTick, IPortableData, ITileInfoPacketHandler, ITilePacketHandler {
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
-	@Nullable
-	AttachmentData attachmentData;
 
-	@Override
-	public String getTileName() {
-
-		return "";
+	static {
+		GameRegistry.registerTileEntityWithAlternatives(TileGrid.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
 	}
 
-	/* IPortableData */
+	public final LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<>();
+	@Nullable
+	public AttachmentData attachmentData;
+	private ConnectionType connectionTypes[] = {
+			NORMAL, NORMAL, NORMAL,
+			NORMAL, NORMAL, NORMAL};
+	private int lastUpdateTime;
+
 	@Override
 	public String getDataType() {
 
-		return "";
+		return "tile.thermaldynamics.duct";
+	}
+
+	public abstract Iterable<DuctUnit> getDuctUnits();
+
+	@Override
+	public boolean isSideBlocked(int side) {
+		return connectionTypes[side].allowTransfer;
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (ServerHelper.isServerWorld(worldObj)) {
+			for (DuctUnit unit : getDuctUnits()) {
+				unit.onChunkUnload();
+			}
+		}
+
+		super.onChunkUnload();
+	}
+
+	@Override
+	public void invalidate() {
+		if (ServerHelper.isServerWorld(worldObj)) {
+			for (DuctUnit unit : getDuctUnits()) {
+				unit.invalidate();
+			}
+		}
+		super.invalidate();
+	}
+
+	protected void onAttachmentsChanged() {
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			MultiBlockGrid grid = ductUnit.getGrid();
+			if (grid != null) {
+				grid.destroyAndRecreate();
+			}
+		}
+	}
+
+
+	@Override
+	public void blockPlaced() {
+
+		if (ServerHelper.isServerWorld(worldObj)) {
+
+			TickHandler.addMultiBlockToCalculate(this);
+		}
+	}
+
+
+	@Override
+	public void onNeighborBlockChange() {
+		if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
+			return;
+		}
+
+		if (isInvalid()) {
+			return;
+		}
+
+
+		TileEntity[] tiles = new TileEntity[6];
+		IDuctHolder[] holders = new IDuctHolder[6];
+		for (int i = 0; i < 6; i++) {
+			TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, i);
+			tiles[i] = adjacentTileEntity;
+			if (adjacentTileEntity instanceof IDuctHolder) {
+				holders[i] = (IDuctHolder) adjacentTileEntity;
+			}
+		}
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.updateAllSides(tiles, holders);
+		}
+	}
+
+	public void setConnectionType(byte i, ConnectionType type) {
+		if (connectionTypes == null) {
+			if (type == NORMAL) return;
+			connectionTypes = new ConnectionType[]{
+					NORMAL, NORMAL, NORMAL,
+					NORMAL, NORMAL, NORMAL
+			};
+			connectionTypes[i] = type;
+		} else {
+			connectionTypes[i] = type;
+			if (type == NORMAL) {
+				for (ConnectionType connectionType : connectionTypes) {
+					if (connectionType != NORMAL) {
+						return;
+					}
+				}
+				connectionTypes = null;
+			}
+		}
+	}
+
+	public ConnectionType getConnectionType(byte i) {
+		if (attachmentData != null && attachmentData.attachments[i] != null) return BLOCKED;
+		if (connectionTypes == null) return NORMAL;
+		return connectionTypes[i];
+	}
+
+
+	public boolean checkForChunkUnload() {
+
+		if (neighbourChunks.isEmpty()) {
+			return false;
+		}
+		for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
+			Object chunk = neighbourChunk.get();
+			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
+				neighbourChunks.clear();
+				onNeighborBlockChange();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void rebuildChunkCache() {
+		if (!neighbourChunks.isEmpty()) {
+			neighbourChunks.clear();
+		}
+
+		BlockPos pos = getPos();
+
+		int dx = pos.getX() & 15;
+		int dz = pos.getZ() & 15;
+		if (dx != 0 && dz != 0 && dx != 15 && dz != 15) return;
+
+		Chunk base = worldObj.getChunkFromBlockCoords(pos);
+
+		for (byte i = 0; i < 6; i++) {
+			boolean important = false;
+			for (DuctUnit ductUnit : getDuctUnits()) {
+				if (ductUnit.tileCaches[i] != null) {
+					important = true;
+					break;
+				}
+			}
+
+			if (!important) continue;
+
+			EnumFacing facing = EnumFacing.VALUES[i];
+			Chunk chunk = worldObj.getChunkFromBlockCoords(pos.offset(facing));
+			if (chunk != base) {
+				neighbourChunks.add(new WeakReference<>(chunk));
+			}
+		}
+	}
+
+	@Override
+	public boolean existsYet() {
+
+		return worldObj != null && worldObj.isBlockLoaded(getPos()) && worldObj.getBlockState(getPos()).getBlock() instanceof BlockDuct;
+	}
+
+	@Override
+	public boolean isOutdated() {
+		return isInvalid();
+	}
+
+	@Override
+	public void singleTick() {
+		if (isInvalid()) {
+			return;
+		}
+
+		onNeighborBlockChange();
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.formGrid();
+		}
+	}
+
+	@Override
+	public World world() {
+		return worldObj;
 	}
 
 	protected boolean readPortableTagInternal(EntityPlayer player, NBTTagCompound tag) {
@@ -117,10 +312,6 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 		return true;
 	}
 
-	protected void onAttachmentsChanged() {
-
-	}
-
 	public boolean removeCover(byte side) {
 
 		if (attachmentData == null || attachmentData.covers[side] == null) {
@@ -144,11 +335,11 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 			return null;
 		}
 		int subHit = rayTrace.subHit;
-		if (subHit >= TileGrid.ATTACHMENT_SUB_HIT && subHit < TileGrid.ATTACHMENT_SUB_HIT + 6) {
-			return attachmentData.attachments[subHit - TileGrid.ATTACHMENT_SUB_HIT];
+		if (subHit >= ATTACHMENT_SUB_HIT && subHit < ATTACHMENT_SUB_HIT + 6) {
+			return attachmentData.attachments[subHit - ATTACHMENT_SUB_HIT];
 		}
-		if (subHit >= TileGrid.COVER_SUB_HIT && subHit < TileGrid.COVER_SUB_HIT + 6) {
-			return attachmentData.covers[subHit - TileGrid.COVER_SUB_HIT];
+		if (subHit >= COVER_SUB_HIT && subHit < COVER_SUB_HIT + 6) {
+			return attachmentData.covers[subHit - COVER_SUB_HIT];
 		}
 		return null;
 	}
@@ -163,6 +354,7 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 		readCoversFromNBT(nbt);
 	}
 
+	@Nonnull
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
@@ -328,7 +520,7 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 		}
 	}
 
-	public Attachment getAttachment(byte side) {
+	public Attachment getAttachment(int side) {
 		AttachmentData attachmentData = this.attachmentData;
 		if (attachmentData == null)
 			return null;
@@ -338,19 +530,70 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 	@SideOnly(Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
-		cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		if (connectionType == cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes.TILECONNECTION) {
+		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
+		if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
-		} else if (connectionType == cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes.NONE) {
+		} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
 			return null;
 		} else {
 			return CoverHoleRender.hollowDuct;
 		}
 	}
 
+	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
+		Attachment attachment = getAttachment(side);
+		if (attachment != null) {
+			return attachment.getRenderConnectionType();
+		} else {
+			BlockDuct.ConnectionTypes connectionTypes = BlockDuct.ConnectionTypes.NONE;
+
+			for (DuctUnit ductUnit : getDuctUnits()) {
+				if (ductUnit.tileCaches[side] != null) {
+					return ductUnit.getConnectionType(side);
+				} else if (ductUnit.pipeCache[side] != null) {
+					connectionTypes = BlockDuct.ConnectionTypes.DUCT;
+				}
+			}
+
+			return connectionTypes;
+		}
+	}
+//
+//	public NeighborType getNeighbourType(int side){
+//		if (attachmentData != null) {
+//			Attachment attachment = attachmentData.attachments[side];
+//			if (attachment != null) {
+//				return NeighborType.DUCT_ATTACHMENT;
+//			}
+//		}
+//
+//		NeighborType type = NeighborType.NONE;
+//		for (DuctUnit ductUnit : getDuctUnits()) {
+//			if (ductUnit.tileCaches[side]!=null) {
+//				type = NeighborType.OUTPUT;
+//			}else if (ductUnit.pipeCache[side] != null){
+//
+//			}
+//
+//		}
+//	}
+
+
+	@Nonnull
+	@Override
+	@SideOnly(Side.CLIENT)
+	public AxisAlignedBB getRenderBoundingBox() {
+
+		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+	}
+
+	public abstract Duct getDuctType();
+
 	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[]{null, null, null, null, null, null};
 		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 		public final Cover[] covers = new Cover[6];
 	}
+
+
 }

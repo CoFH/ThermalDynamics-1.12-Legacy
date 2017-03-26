@@ -9,6 +9,7 @@ import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.ItemGrid;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
@@ -35,13 +36,13 @@ public class ServoItem extends ServoBase {
 
 	public TileItemDuct itemDuct;
 
-	public ServoItem(TileDuctBase tile, byte side, int type) {
+	public ServoItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 		itemDuct = ((TileItemDuct) tile);
 	}
 
-	public ServoItem(TileDuctBase tile, byte side) {
+	public ServoItem(TileGrid tile, byte side) {
 
 		super(tile, side);
 		itemDuct = ((TileItemDuct) tile);

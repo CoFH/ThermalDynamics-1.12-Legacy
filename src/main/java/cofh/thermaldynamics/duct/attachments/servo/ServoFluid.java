@@ -5,6 +5,7 @@ import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,13 +24,13 @@ public class ServoFluid extends ServoBase {
 		return AttachmentRegistry.SERVO_FLUID;
 	}
 
-	public ServoFluid(TileDuctBase tile, byte side) {
+	public ServoFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
 		fluidDuct = (TileFluidDuct) tile;
 	}
 
-	public ServoFluid(TileDuctBase tile, byte side, int type) {
+	public ServoFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 		fluidDuct = (TileFluidDuct) tile;
@@ -56,7 +57,7 @@ public class ServoFluid extends ServoBase {
 	}
 
 	@Override
-	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tileMultiBlock) {
 
 		return tileMultiBlock instanceof TileFluidDuct;
 	}

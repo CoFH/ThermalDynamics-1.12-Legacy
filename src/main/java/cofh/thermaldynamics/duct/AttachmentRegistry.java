@@ -8,6 +8,7 @@ import cofh.thermaldynamics.duct.attachments.retriever.RetrieverFluid;
 import cofh.thermaldynamics.duct.attachments.retriever.RetrieverItem;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 
 public class AttachmentRegistry {
 
@@ -20,7 +21,7 @@ public class AttachmentRegistry {
 	public final static byte RETRIEVER_ITEM = 6;
 	public final static byte RELAY = 7;
 
-	public static Attachment createAttachment(TileDuctBase tile, byte side, int id) {
+	public static Attachment createAttachment(TileGrid tile, byte side, int id) {
 
 		if (id == FACADE) {
 			return new Cover(tile, side);

@@ -1,5 +1,7 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.item.TileItemDuct;
 import cofh.thermaldynamics.multiblock.*;
 import net.minecraft.entity.Entity;
@@ -83,13 +85,13 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 	}
 
 	@Override
-	public NeighborTypes getCachedSideType(byte side) {
+	public NeighborType getCachedSideType(byte side) {
 
 		return neighborTypes[side];
 	}
 
 	@Override
-	public ConnectionTypes getConnectionType(byte side) {
+	public ConnectionType getConnectionType(byte side) {
 
 		return connectionTypes[side];
 	}
@@ -110,7 +112,7 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 	public byte getStuffedSide() {
 
 		for (byte i = 0; i < 6; i++) {
-			if (neighborTypes[i] == NeighborTypes.OUTPUT) {
+			if (neighborTypes[i] == NeighborType.OUTPUT) {
 				return i;
 			}
 		}
@@ -134,7 +136,7 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 			t.progress %= EntityTransport.PIPE_LENGTH;
 			advanceToNextTile(t);
 		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
-			if (t.reRoute || neighborTypes[t.direction] == NeighborTypes.NONE) {
+			if (t.reRoute || neighborTypes[t.direction] == NeighborType.NONE) {
 				t.bouncePassenger(this);
 			}
 		}

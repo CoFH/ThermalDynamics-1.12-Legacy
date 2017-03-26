@@ -4,8 +4,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -19,12 +21,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class FilterBase extends ConnectionBase {
 
-	public FilterBase(TileDuctBase tile, byte side) {
+	public FilterBase(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public FilterBase(TileDuctBase tile, byte side, int type) {
+	public FilterBase(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 
@@ -37,9 +39,9 @@ public abstract class FilterBase extends ConnectionBase {
 	}
 
 	@Override
-	public TileDuctBase.NeighborTypes getNeighborType() {
+	public NeighborType getNeighborType() {
 
-		return isValidInput ? TileDuctBase.NeighborTypes.OUTPUT : TileDuctBase.NeighborTypes.DUCT_ATTACHMENT;
+		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
 	}
 
 	@Override

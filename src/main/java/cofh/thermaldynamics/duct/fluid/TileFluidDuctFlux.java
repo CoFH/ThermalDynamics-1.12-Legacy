@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.fluid;
 
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.tileentity.TileEntity;
@@ -101,7 +102,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		}
 
 		for (byte i = this.internalSideCounter; i < this.neighborTypes.length && usedPower < power; i++) {
-			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+			if (this.connectionTypes[i] == ConnectionType.NORMAL) {
 				if (energyCache[i] != null) {
 					if (energyCache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
 						usedPower += energyCache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], power - usedPower, false);
@@ -115,7 +116,7 @@ public class TileFluidDuctFlux extends TileFluidDuctPowered {
 		}
 
 		for (byte i = 0; i < this.internalSideCounter && usedPower < power; i++) {
-			if (this.connectionTypes[i] == ConnectionTypes.NORMAL) {
+			if (this.connectionTypes[i] == ConnectionType.NORMAL) {
 				if (energyCache[i] != null) {
 					if (energyCache[i].canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
 						usedPower += energyCache[i].receiveEnergy(EnumFacing.VALUES[i ^ 1], power - usedPower, false);

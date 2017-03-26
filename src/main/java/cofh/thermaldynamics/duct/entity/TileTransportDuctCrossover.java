@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.BlockPosition;
 import cofh.lib.util.helpers.BlockHelper;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
@@ -31,7 +32,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 			return;
 		}
 
-		if (neighborTypes[i] != NeighborTypes.OUTPUT) {
+		if (neighborTypes[i] != NeighborType.OUTPUT) {
 			if (i < 2 || worldObj.isBlockLoaded(pos.offset(EnumFacing.VALUES[i]))) {
 				rangePos[i] = null;
 			}
@@ -51,14 +52,14 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 
 			if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
 				neighborMultiBlocks[i] = (IGridTile) theTile;
-				neighborTypes[i] = NeighborTypes.MULTIBLOCK;
+				neighborTypes[i] = NeighborType.MULTIBLOCK;
 			} else {
 				rangePos[i] = null;
 				super.handleTileSideUpdate(i);
 			}
 		} else {
 			neighborMultiBlocks[i] = null;
-			neighborTypes[i] = NeighborTypes.OUTPUT;
+			neighborTypes[i] = NeighborType.OUTPUT;
 		}
 
 	}
@@ -163,14 +164,14 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 		if (rangePos[t.direction] == null) {
 			super.advanceToNextTile(t);
 		} else {
-			if (this.neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && this.connectionTypes[t.direction].allowTransfer) {
+			if (this.neighborTypes[t.direction] == NeighborType.MULTIBLOCK && this.connectionTypes[t.direction].allowTransfer) {
 				TileTransportDuctBase newHome = (TileTransportDuctBase) this.getPhysicalConnectedSide(t.direction);
 				if (!(newHome instanceof TileTransportDuctLongRange)) {
 					t.bouncePassenger(this);
 					return;
 				}
 
-				if (newHome.neighborTypes[(t.direction ^ 1)] == NeighborTypes.MULTIBLOCK) {
+				if (newHome.neighborTypes[(t.direction ^ 1)] == NeighborType.MULTIBLOCK) {
 					t.pos = new BlockPos(newHome.getPos());
 
 					t.oldDirection = t.direction;
@@ -181,7 +182,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 				} else {
 					t.reRoute = true;
 				}
-			} else if (this.neighborTypes[t.direction] == NeighborTypes.OUTPUT && this.connectionTypes[t.direction].allowTransfer) {
+			} else if (this.neighborTypes[t.direction] == NeighborType.OUTPUT && this.connectionTypes[t.direction].allowTransfer) {
 				t.dropPassenger();
 			} else {
 				t.bouncePassenger(this);
@@ -193,7 +194,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 	public boolean advanceEntity(EntityTransport t) {
 
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
-			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
+			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
 				t.pause = CHARGE_TIME;
 				return true;
@@ -206,7 +207,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 	public boolean advanceEntityClient(EntityTransport t) {
 
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
-			if (neighborTypes[t.direction] == NeighborTypes.MULTIBLOCK && rangePos[t.direction] != null) {
+			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
 				t.pause = CHARGE_TIME;
 				return true;

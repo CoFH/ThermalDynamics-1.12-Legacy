@@ -12,9 +12,6 @@ public interface IDuctTile extends IGridTile {
 
 	boolean isSideConnected(byte side);
 
-	// This side contains a grid that will not form, mark that side as not connected.
-	void setNotConnected(byte side);
-
 	// Used by some multiblocks to start their formations. Removed from the ticking list after initial tick.
 	void singleTick();
 

@@ -7,6 +7,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -27,10 +28,10 @@ import java.util.Random;
 
 public abstract class Attachment {
 
-	public final TileDuctBase tile;
+	public final TileGrid tile;
 	public final byte side;
 
-	public Attachment(TileDuctBase tile, byte side) {
+	public Attachment(TileGrid tile, byte side) {
 
 		this.tile = tile;
 		this.side = side;
@@ -67,7 +68,7 @@ public abstract class Attachment {
 		return true;
 	}
 
-	public abstract TileDuctBase.NeighborTypes getNeighborType();
+	public abstract NeighborType getNeighborType();
 
 	public abstract boolean isNode();
 
@@ -111,9 +112,9 @@ public abstract class Attachment {
 
 	public abstract ItemStack getPickBlock();
 
-	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tileMultiBlock) {
 
-		return tileMultiBlock.attachments[side] == null;
+		return tileMultiBlock.getAttachment(side) == null;
 	}
 
 	public abstract List<ItemStack> getDrops();
@@ -166,7 +167,7 @@ public abstract class Attachment {
 
 	public BlockDuct.ConnectionTypes getRenderConnectionType() {
 
-		return TileDuctBase.getDefaultConnectionType(getNeighborType(), TileDuctBase.ConnectionTypes.NORMAL);
+		return TileDuctBase.getDefaultConnectionType(getNeighborType(), ConnectionType.NORMAL);
 	}
 
 	public boolean allowPipeConnection() {

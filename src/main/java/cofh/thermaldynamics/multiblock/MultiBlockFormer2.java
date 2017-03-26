@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MultiBlockFormer2<T extends DuctUnit<T, G, C> & IGridTile, G extends MultiBlockGrid<T>, C extends DuctCache> {
+public class MultiBlockFormer2<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C extends DuctCache> {
 
 
 	Queue<T> blocksToCheck = new LinkedList<>();
@@ -39,7 +39,7 @@ public class MultiBlockFormer2<T extends DuctUnit<T, G, C> & IGridTile, G extend
 		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (currentMultiBlock.isSideConnected(i)) {
 				aBlock = currentMultiBlock.getConnectedSide(i);
-				if (aBlock != null && aBlock.isValidForForming()) {
+				if (aBlock != null && aBlock.isValidForForming() && aBlock.getConnectedSide(i ^ 1) == currentMultiBlock) {
 					if (aBlock.getGrid() == null && theGrid.canAddBlock(aBlock)) {
 						aBlock.setGrid(theGrid);
 						theGrid.addBlock(aBlock);
@@ -53,9 +53,9 @@ public class MultiBlockFormer2<T extends DuctUnit<T, G, C> & IGridTile, G extend
 								theGrid = aBlock.getGrid();
 							}
 						}
-					} else {
-						currentMultiBlock.setNotConnected(i);
-						aBlock.setNotConnected((byte) (i ^ 1));
+					} else{
+						currentMultiBlock.onConnectionRejected(i);
+						aBlock.onConnectionRejected(i ^ 1);
 					}
 				}
 			}

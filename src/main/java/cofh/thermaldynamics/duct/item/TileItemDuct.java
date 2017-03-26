@@ -8,10 +8,7 @@ import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CrashHelper;
 import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.TileDuctBase;
-import cofh.thermaldynamics.duct.DuctItem;
+import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.IStuffable;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
@@ -95,7 +92,7 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 			return null;
 		}
 		int side = from.ordinal();
-		if (!((neighborTypes[side] == NeighborTypes.INPUT) || (neighborTypes[side] == NeighborTypes.OUTPUT && connectionTypes[side].allowTransfer))) {
+		if (!((neighborTypes[side] == NeighborType.INPUT) || (neighborTypes[side] == NeighborType.OUTPUT && connectionTypes[side].allowTransfer))) {
 			return item;
 		}
 		if (internalGrid == null) {
@@ -249,13 +246,13 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 	}
 
 	@Override
-	public NeighborTypes getCachedSideType(byte side) {
+	public NeighborType getCachedSideType(byte side) {
 
 		return neighborTypes[side];
 	}
 
 	@Override
-	public ConnectionTypes getConnectionType(byte side) {
+	public ConnectionType getConnectionType(byte side) {
 
 		return connectionTypes[side];
 	}
@@ -694,7 +691,7 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 		ItemStack curItem;
 
 		for (byte i = internalSideCounter; i < EnumFacing.VALUES.length; i++) {
-			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache != null && cache.handlerCache[i] != null) {
+			if (neighborTypes[i] == NeighborType.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache != null && cache.handlerCache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 
@@ -709,7 +706,7 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 			}
 		}
 		for (byte i = 0; i < internalSideCounter; i++) {
-			if (neighborTypes[i] == NeighborTypes.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache != null && cache.handlerCache[i] != null) {
+			if (neighborTypes[i] == NeighborType.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache != null && cache.handlerCache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 				if (curItem.stackSize > 0) {
@@ -980,5 +977,7 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 			return stack;
 		}
 	}
+
+
 
 }

@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.energy.subgrid;
 
-import cofh.thermaldynamics.block.SubTileGridTile;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;

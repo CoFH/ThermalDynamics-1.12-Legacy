@@ -10,6 +10,7 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -35,12 +36,12 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 	}
 
-	public ServoBase(TileDuctBase tile, byte side) {
+	public ServoBase(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public ServoBase(TileDuctBase tile, byte side, int type) {
+	public ServoBase(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}

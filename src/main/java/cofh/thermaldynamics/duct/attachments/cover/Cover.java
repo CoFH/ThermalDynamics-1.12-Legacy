@@ -8,7 +8,9 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -44,13 +46,13 @@ public class Cover extends Attachment {
 
 	public IBlockState state;
 
-	public Cover(TileDuctBase tile, byte side, IBlockState state) {
+	public Cover(TileGrid tile, byte side, IBlockState state) {
 
 		super(tile, side);
 		this.state = state;
 	}
 
-	public Cover(TileDuctBase tile, byte side) {
+	public Cover(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
@@ -76,7 +78,7 @@ public class Cover extends Attachment {
 	@Override
 	public boolean onWrenched() {
 
-		tile.removeFacade(this);
+		tile.removeCover(side);
 
 		for (ItemStack stack : getDrops()) {
 			dropItemStack(stack);
@@ -85,9 +87,9 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public TileDuctBase.NeighborTypes getNeighborType() {
+	public NeighborType getNeighborType() {
 
-		return TileDuctBase.NeighborTypes.NONE;
+		return NeighborType.NONE;
 	}
 
 	@Override
@@ -104,7 +106,7 @@ public class Cover extends Attachment {
 			return false;
 		}
 
-		Attachment attachment = tile.attachments[side];
+		Attachment attachment = tile.getAttachment(side);
 		CoverHoleRender.ITransformer[] hollowMask = null;
 		if (attachment != null) {
 			hollowMask = attachment.getHollowMask();

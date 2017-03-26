@@ -9,7 +9,8 @@ import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.SubTileGridTile;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
@@ -51,9 +52,9 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 		super.handleTileSideUpdate(i);
 
-		if (connectionTypes[i] == ConnectionTypes.FORCED) {
+		if (connectionTypes[i] == ConnectionType.FORCED) {
 			neighborMultiBlocks[i] = null;
-			neighborTypes[i] = NeighborTypes.OUTPUT;
+			neighborTypes[i] = NeighborType.OUTPUT;
 			isNode = true;
 			isOutput = true;
 		}
@@ -62,7 +63,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	@Override
 	public boolean isBlockedSide(int side) {
 
-		return super.isBlockedSide(side) || connectionTypes[side] == ConnectionTypes.FORCED;
+		return super.isBlockedSide(side) || connectionTypes[side] == ConnectionType.FORCED;
 	}
 
 	@Override
@@ -85,13 +86,13 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 					connectionTypes[i] = connectionTypes[i].next();
 					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
 				} else {
-					if (connectionTypes[i] == ConnectionTypes.FORCED) {
-						connectionTypes[i] = ConnectionTypes.NORMAL;
+					if (connectionTypes[i] == ConnectionType.FORCED) {
+						connectionTypes[i] = ConnectionType.NORMAL;
 					} else {
-						connectionTypes[i] = ConnectionTypes.FORCED;
+						connectionTypes[i] = ConnectionType.FORCED;
 						for (int j = 0; j < 6; j++) {
-							if (i != j && connectionTypes[j] == ConnectionTypes.FORCED) {
-								connectionTypes[j] = ConnectionTypes.NORMAL;
+							if (i != j && connectionTypes[j] == ConnectionType.FORCED) {
+								connectionTypes[j] = ConnectionType.NORMAL;
 							}
 						}
 					}
@@ -138,7 +139,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		onNeighborBlockChange();
 
 		for (int i = 0; i < 6; i++) {
-			if (connectionTypes[i] == ConnectionTypes.FORCED) {
+			if (connectionTypes[i] == ConnectionType.FORCED) {
 				if (neighborMultiBlocks[i] != null) {
 					continue;
 				}

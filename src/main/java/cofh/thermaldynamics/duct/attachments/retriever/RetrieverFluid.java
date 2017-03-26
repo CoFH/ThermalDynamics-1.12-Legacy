@@ -5,9 +5,11 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -25,12 +27,12 @@ import java.util.Iterator;
 
 public class RetrieverFluid extends ServoFluid {
 
-	public RetrieverFluid(TileDuctBase tile, byte side) {
+	public RetrieverFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public RetrieverFluid(TileDuctBase tile, byte side, int type) {
+	public RetrieverFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
@@ -62,7 +64,7 @@ public class RetrieverFluid extends ServoFluid {
 			}
 			for (int k = 0; k < 6 && maxInput > 0; k++) {
 				int i = (k + fluidDuct.internalSideCounter) % 6;
-				if (fluidDuct.cache[i] == null || (fluidDuct.neighborTypes[i] != TileDuctBase.NeighborTypes.OUTPUT && fluidDuct.neighborTypes[i] != TileDuctBase.NeighborTypes.INPUT)) {
+				if (fluidDuct.cache[i] == null || (fluidDuct.neighborTypes[i] != NeighborType.OUTPUT && fluidDuct.neighborTypes[i] != NeighborType.INPUT)) {
 					continue;
 				}
 				if (fluidDuct.attachments[i] != null) {
@@ -117,9 +119,9 @@ public class RetrieverFluid extends ServoFluid {
 	}
 
 	@Override
-	public TileDuctBase.NeighborTypes getNeighborType() {
+	public NeighborType getNeighborType() {
 
-		return isValidInput ? TileDuctBase.NeighborTypes.OUTPUT : TileDuctBase.NeighborTypes.DUCT_ATTACHMENT;
+		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
 	}
 
 	/* IPortableData */

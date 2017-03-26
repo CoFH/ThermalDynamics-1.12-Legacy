@@ -2,8 +2,9 @@ package cofh.thermaldynamics.duct.item;
 
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.block.SubTileGridTile;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergy;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -30,8 +31,8 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 			return attachments[side].getRenderConnectionType();
 		}
 
-		if (neighborTypes[side] == NeighborTypes.STRUCTURE) {
-			return connectionTypes[side] != ConnectionTypes.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
+		if (neighborTypes[side] == NeighborType.STRUCTURE) {
+			return connectionTypes[side] != ConnectionType.BLOCKED ? BlockDuct.ConnectionTypes.STRUCTURE : BlockDuct.ConnectionTypes.NONE;
 		} else {
 			return super.getRenderConnectionType(side);
 		}
@@ -70,7 +71,7 @@ public abstract class TileItemDuctPowered extends TileItemDuct implements IEnerg
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 
-		return connectionTypes[from.ordinal()] != ConnectionTypes.BLOCKED;
+		return connectionTypes[from.ordinal()] != ConnectionType.BLOCKED;
 	}
 
 }
