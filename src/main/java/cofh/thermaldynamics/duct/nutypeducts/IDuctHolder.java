@@ -11,4 +11,5 @@ public interface IDuctHolder {
 	<T extends DuctUnit<T, G, C> & IGridTile, G extends MultiBlockGrid<T>, C extends DuctCache> DuctUnit<T, G, C> getDuct(DuctToken<T, G, C> token);
 
 	boolean isSideBlocked(int side);
+
 }

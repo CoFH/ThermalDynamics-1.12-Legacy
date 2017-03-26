@@ -1,7 +1,5 @@
 package cofh.thermaldynamics.multiblock;
 
-import net.minecraft.util.EnumFacing;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;

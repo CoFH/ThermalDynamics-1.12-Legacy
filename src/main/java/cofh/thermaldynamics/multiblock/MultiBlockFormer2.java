@@ -9,7 +9,6 @@ import java.util.Queue;
 
 public class MultiBlockFormer2<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C extends DuctCache> {
 
-
 	Queue<T> blocksToCheck = new LinkedList<>();
 	G theGrid;
 
@@ -53,7 +52,7 @@ public class MultiBlockFormer2<T extends DuctUnit<T, G, C>, G extends MultiBlock
 								theGrid = aBlock.getGrid();
 							}
 						}
-					} else{
+					} else {
 						currentMultiBlock.onConnectionRejected(i);
 						aBlock.onConnectionRejected(i ^ 1);
 					}

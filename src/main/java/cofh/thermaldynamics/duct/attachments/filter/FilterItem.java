@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.inventory.IInventory;

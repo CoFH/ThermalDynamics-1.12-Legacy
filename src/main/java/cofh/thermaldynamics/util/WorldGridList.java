@@ -81,7 +81,7 @@ public class WorldGridList {
 				if (block.existsYet()) {
 					block.singleTick();
 					iter.remove();
-				} else if (block.isOutdated()){
+				} else if (block.isOutdated()) {
 					iter.remove();
 				}
 			}

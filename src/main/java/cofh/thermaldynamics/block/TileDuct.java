@@ -54,6 +54,7 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 	}
 
 	public boolean addAttachment(Attachment attachment) {
+
 		if (!attachment.canAddToTile(this)) {
 			return false;
 		}
@@ -85,6 +86,7 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 	}
 
 	public boolean removeAttachment(Attachment attachment) {
+
 		if (attachment == null || attachmentData == null) {
 			return false;
 		}
@@ -101,7 +103,9 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 
 	public boolean addCover(Cover cover, byte side) {
 
-		if (cover == null) return false;
+		if (cover == null) {
+			return false;
+		}
 		if (attachmentData == null) {
 			attachmentData = new AttachmentData();
 		} else if (attachmentData.covers[side] != null) {
@@ -138,7 +142,9 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 
 	Attachment getAttachmentSelected(EntityPlayer player) {
 
-		if (attachmentData == null) return null;
+		if (attachmentData == null) {
+			return null;
+		}
 		RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, getPos());
 		if (rayTrace == null) {
 			return null;
@@ -181,7 +187,9 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound tag = list.getCompoundTagAt(i);
 			byte side = tag.getByte("Side");
-			if (attachmentData == null) attachmentData = new AttachmentData();
+			if (attachmentData == null) {
+				attachmentData = new AttachmentData();
+			}
 
 			attachmentData.attachments[side].readFromNBT(nbt);
 		}
@@ -211,14 +219,19 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 			NBTTagCompound tag = list.getCompoundTagAt(i);
 			byte side = tag.getByte("Side");
 			// TODO: create
-			if (attachmentData == null) attachmentData = new AttachmentData();
+			if (attachmentData == null) {
+				attachmentData = new AttachmentData();
+			}
 			attachmentData.covers[side] = new Cover(this, side);
 			attachmentData.covers[side].readFromNBT(nbt);
 		}
 	}
 
 	public void writeCoversToNBT(NBTTagCompound nbt) {
-		if (attachmentData == null) return;
+
+		if (attachmentData == null) {
+			return;
+		}
 		NBTTagList list = new NBTTagList();
 		for (byte i = 0; i < 6; i++) {
 			if (attachmentData.covers[i] != null) {
@@ -280,7 +293,9 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 		int attachmentMask = payload.getByte();
 		for (byte i = 0; i < 6; i++) {
 			if ((attachmentMask & (1 << i)) != 0) {
-				if (attachmentData == null) attachmentData = new AttachmentData();
+				if (attachmentData == null) {
+					attachmentData = new AttachmentData();
+				}
 				int id = payload.getByte();
 				attachmentData.attachments[i] = AttachmentRegistry.createAttachment(this, i, id);
 				attachmentData.attachments[i].getDescriptionFromPacket(payload);
@@ -292,7 +307,9 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 		int coverMask = payload.getByte();
 		for (byte i = 0; i < 6; i++) {
 			if ((coverMask & (1 << i)) != 0) {
-				if (attachmentData == null) attachmentData = new AttachmentData();
+				if (attachmentData == null) {
+					attachmentData = new AttachmentData();
+				}
 				attachmentData.covers[i] = new Cover(this, i);
 				attachmentData.covers[i].getDescriptionFromPacket(payload);
 			} else if (attachmentData != null) {
@@ -329,13 +346,15 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 	}
 
 	public Attachment getAttachment(byte side) {
+
 		AttachmentData attachmentData = this.attachmentData;
-		if (attachmentData == null)
+		if (attachmentData == null) {
 			return null;
+		}
 		return attachmentData.attachments[side];
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
@@ -349,7 +368,8 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 	}
 
 	public static class AttachmentData {
-		public final Attachment attachments[] = new Attachment[]{null, null, null, null, null, null};
+
+		public final Attachment attachments[] = new Attachment[] { null, null, null, null, null, null };
 		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 		public final Cover[] covers = new Cover[6];
 	}

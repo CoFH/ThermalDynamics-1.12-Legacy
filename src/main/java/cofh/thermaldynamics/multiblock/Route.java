@@ -26,7 +26,7 @@ public class Route<T extends IGridTileRoute<T, G>, G extends MultiBlockGrid<T>> 
 		endPoint = myParent;
 	}
 
-	public Route(Route<T,G> prevRoute, T newPlace, byte direction, boolean isFinished) {
+	public Route(Route<T, G> prevRoute, T newPlace, byte direction, boolean isFinished) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight + newPlace.getWeight();
@@ -37,7 +37,7 @@ public class Route<T extends IGridTileRoute<T, G>, G extends MultiBlockGrid<T>> 
 	}
 
 	// Used to set as a node
-	public Route(Route<T,G> prevRoute, boolean endPath) {
+	public Route(Route<T, G> prevRoute, boolean endPath) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight;
@@ -46,7 +46,7 @@ public class Route<T extends IGridTileRoute<T, G>, G extends MultiBlockGrid<T>> 
 		routeFinished = true;
 	}
 
-	public Route(Route<T,G> prevRoute) {
+	public Route(Route<T, G> prevRoute) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight;

@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.attachments.servo;
 import codechicken.lib.util.BlockUtils;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.ItemGrid;

@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.block;
 
 import cofh.core.render.IModelRegister;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;

@@ -4,8 +4,6 @@ import net.minecraft.world.World;
 
 public interface IDuctTile extends IGridTile {
 
-
-
 	IDuctTile getConnectedSide(byte side);
 
 	boolean isBlockedSide(int side);

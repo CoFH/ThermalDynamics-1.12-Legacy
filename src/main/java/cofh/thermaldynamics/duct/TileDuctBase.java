@@ -47,7 +47,7 @@ import java.util.List;
 public abstract class TileDuctBase extends TileCore implements IGridTile, ITilePacketHandler, ICustomHitBox, ITileInfoPacketHandler, IPortableData, ITileInfo {
 
 	static {
-		GameRegistry.registerTileEntityWithAlternatives(TileDuctBase.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
+		GameRegistry.registerTileEntity(TileDuctBase.class, "thermaldynamics.duct");
 	}
 
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -873,7 +873,6 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 
 	}
 
-
 	@Override
 	@SideOnly (Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
@@ -1016,6 +1015,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 
 	@Override
 	public boolean isOutdated() {
+
 		return isInvalid();
 	}
 

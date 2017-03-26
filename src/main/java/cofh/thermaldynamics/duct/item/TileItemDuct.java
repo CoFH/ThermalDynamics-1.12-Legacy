@@ -978,6 +978,4 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 		}
 	}
 
-
-
 }

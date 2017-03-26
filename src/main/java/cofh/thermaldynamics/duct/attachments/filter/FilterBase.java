@@ -5,7 +5,6 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;

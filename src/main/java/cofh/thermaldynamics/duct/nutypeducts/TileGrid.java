@@ -38,6 +38,7 @@ import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleTick, IPortableData, ITileInfoPacketHandler, ITilePacketHandler {
+
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
 
@@ -48,9 +49,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	public final LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<>();
 	@Nullable
 	public AttachmentData attachmentData;
-	private ConnectionType connectionTypes[] = {
-			NORMAL, NORMAL, NORMAL,
-			NORMAL, NORMAL, NORMAL};
+	private ConnectionType connectionTypes[] = { NORMAL, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL };
 	private int lastUpdateTime;
 
 	@Override
@@ -63,11 +62,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	@Override
 	public boolean isSideBlocked(int side) {
+
 		return connectionTypes[side].allowTransfer;
 	}
 
 	@Override
 	public void onChunkUnload() {
+
 		if (ServerHelper.isServerWorld(worldObj)) {
 			for (DuctUnit unit : getDuctUnits()) {
 				unit.onChunkUnload();
@@ -79,6 +80,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	@Override
 	public void invalidate() {
+
 		if (ServerHelper.isServerWorld(worldObj)) {
 			for (DuctUnit unit : getDuctUnits()) {
 				unit.invalidate();
@@ -88,6 +90,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	protected void onAttachmentsChanged() {
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			MultiBlockGrid grid = ductUnit.getGrid();
 			if (grid != null) {
@@ -95,7 +98,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 			}
 		}
 	}
-
 
 	@Override
 	public void blockPlaced() {
@@ -106,9 +108,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 		}
 	}
 
-
 	@Override
 	public void onNeighborBlockChange() {
+
 		if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
 			return;
 		}
@@ -116,7 +118,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 		if (isInvalid()) {
 			return;
 		}
-
 
 		TileEntity[] tiles = new TileEntity[6];
 		IDuctHolder[] holders = new IDuctHolder[6];
@@ -134,12 +135,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public void setConnectionType(byte i, ConnectionType type) {
+
 		if (connectionTypes == null) {
-			if (type == NORMAL) return;
-			connectionTypes = new ConnectionType[]{
-					NORMAL, NORMAL, NORMAL,
-					NORMAL, NORMAL, NORMAL
-			};
+			if (type == NORMAL) {
+				return;
+			}
+			connectionTypes = new ConnectionType[] { NORMAL, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL };
 			connectionTypes[i] = type;
 		} else {
 			connectionTypes[i] = type;
@@ -155,11 +156,15 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public ConnectionType getConnectionType(byte i) {
-		if (attachmentData != null && attachmentData.attachments[i] != null) return BLOCKED;
-		if (connectionTypes == null) return NORMAL;
+
+		if (attachmentData != null && attachmentData.attachments[i] != null) {
+			return BLOCKED;
+		}
+		if (connectionTypes == null) {
+			return NORMAL;
+		}
 		return connectionTypes[i];
 	}
-
 
 	public boolean checkForChunkUnload() {
 
@@ -178,6 +183,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public void rebuildChunkCache() {
+
 		if (!neighbourChunks.isEmpty()) {
 			neighbourChunks.clear();
 		}
@@ -186,7 +192,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 		int dx = pos.getX() & 15;
 		int dz = pos.getZ() & 15;
-		if (dx != 0 && dz != 0 && dx != 15 && dz != 15) return;
+		if (dx != 0 && dz != 0 && dx != 15 && dz != 15) {
+			return;
+		}
 
 		Chunk base = worldObj.getChunkFromBlockCoords(pos);
 
@@ -199,7 +207,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 				}
 			}
 
-			if (!important) continue;
+			if (!important) {
+				continue;
+			}
 
 			EnumFacing facing = EnumFacing.VALUES[i];
 			Chunk chunk = worldObj.getChunkFromBlockCoords(pos.offset(facing));
@@ -217,11 +227,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	@Override
 	public boolean isOutdated() {
+
 		return isInvalid();
 	}
 
 	@Override
 	public void singleTick() {
+
 		if (isInvalid()) {
 			return;
 		}
@@ -235,6 +247,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	@Override
 	public World world() {
+
 		return worldObj;
 	}
 
@@ -249,6 +262,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public boolean addAttachment(Attachment attachment) {
+
 		if (!attachment.canAddToTile(this)) {
 			return false;
 		}
@@ -280,6 +294,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public boolean removeAttachment(Attachment attachment) {
+
 		if (attachment == null || attachmentData == null) {
 			return false;
 		}
@@ -296,7 +311,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	public boolean addCover(Cover cover, byte side) {
 
-		if (cover == null) return false;
+		if (cover == null) {
+			return false;
+		}
 		if (attachmentData == null) {
 			attachmentData = new AttachmentData();
 		} else if (attachmentData.covers[side] != null) {
@@ -329,7 +346,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	Attachment getAttachmentSelected(EntityPlayer player) {
 
-		if (attachmentData == null) return null;
+		if (attachmentData == null) {
+			return null;
+		}
 		RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, getPos());
 		if (rayTrace == null) {
 			return null;
@@ -373,7 +392,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound tag = list.getCompoundTagAt(i);
 			byte side = tag.getByte("Side");
-			if (attachmentData == null) attachmentData = new AttachmentData();
+			if (attachmentData == null) {
+				attachmentData = new AttachmentData();
+			}
 
 			attachmentData.attachments[side].readFromNBT(nbt);
 		}
@@ -403,14 +424,19 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 			NBTTagCompound tag = list.getCompoundTagAt(i);
 			byte side = tag.getByte("Side");
 			// TODO: create
-			if (attachmentData == null) attachmentData = new AttachmentData();
+			if (attachmentData == null) {
+				attachmentData = new AttachmentData();
+			}
 			attachmentData.covers[side] = new Cover(this, side);
 			attachmentData.covers[side].readFromNBT(nbt);
 		}
 	}
 
 	public void writeCoversToNBT(NBTTagCompound nbt) {
-		if (attachmentData == null) return;
+
+		if (attachmentData == null) {
+			return;
+		}
 		NBTTagList list = new NBTTagList();
 		for (byte i = 0; i < 6; i++) {
 			if (attachmentData.covers[i] != null) {
@@ -472,7 +498,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 		int attachmentMask = payload.getByte();
 		for (byte i = 0; i < 6; i++) {
 			if ((attachmentMask & (1 << i)) != 0) {
-				if (attachmentData == null) attachmentData = new AttachmentData();
+				if (attachmentData == null) {
+					attachmentData = new AttachmentData();
+				}
 				int id = payload.getByte();
 				attachmentData.attachments[i] = AttachmentRegistry.createAttachment(this, i, id);
 				attachmentData.attachments[i].getDescriptionFromPacket(payload);
@@ -484,7 +512,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 		int coverMask = payload.getByte();
 		for (byte i = 0; i < 6; i++) {
 			if ((coverMask & (1 << i)) != 0) {
-				if (attachmentData == null) attachmentData = new AttachmentData();
+				if (attachmentData == null) {
+					attachmentData = new AttachmentData();
+				}
 				attachmentData.covers[i] = new Cover(this, i);
 				attachmentData.covers[i].getDescriptionFromPacket(payload);
 			} else if (attachmentData != null) {
@@ -521,13 +551,15 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public Attachment getAttachment(int side) {
+
 		AttachmentData attachmentData = this.attachmentData;
-		if (attachmentData == null)
+		if (attachmentData == null) {
 			return null;
+		}
 		return attachmentData.attachments[side];
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
@@ -541,6 +573,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	}
 
 	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
+
 		Attachment attachment = getAttachment(side);
 		if (attachment != null) {
 			return attachment.getRenderConnectionType();
@@ -558,30 +591,29 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 			return connectionTypes;
 		}
 	}
-//
-//	public NeighborType getNeighbourType(int side){
-//		if (attachmentData != null) {
-//			Attachment attachment = attachmentData.attachments[side];
-//			if (attachment != null) {
-//				return NeighborType.DUCT_ATTACHMENT;
-//			}
-//		}
-//
-//		NeighborType type = NeighborType.NONE;
-//		for (DuctUnit ductUnit : getDuctUnits()) {
-//			if (ductUnit.tileCaches[side]!=null) {
-//				type = NeighborType.OUTPUT;
-//			}else if (ductUnit.pipeCache[side] != null){
-//
-//			}
-//
-//		}
-//	}
-
+	//
+	//	public NeighborType getNeighbourType(int side){
+	//		if (attachmentData != null) {
+	//			Attachment attachment = attachmentData.attachments[side];
+	//			if (attachment != null) {
+	//				return NeighborType.DUCT_ATTACHMENT;
+	//			}
+	//		}
+	//
+	//		NeighborType type = NeighborType.NONE;
+	//		for (DuctUnit ductUnit : getDuctUnits()) {
+	//			if (ductUnit.tileCaches[side]!=null) {
+	//				type = NeighborType.OUTPUT;
+	//			}else if (ductUnit.pipeCache[side] != null){
+	//
+	//			}
+	//
+	//		}
+	//	}
 
 	@Nonnull
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
 
 		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
@@ -590,10 +622,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 	public abstract Duct getDuctType();
 
 	public static class AttachmentData {
-		public final Attachment attachments[] = new Attachment[]{null, null, null, null, null, null};
-		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
-		public final Cover[] covers = new Cover[6];
-	}
 
+		public final Attachment attachments[] = new Attachment[6];
+		public final Cover[] covers = new Cover[6];
+		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
+
+	}
 
 }

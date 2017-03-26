@@ -16,21 +16,25 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 	byte internalSideCounter;
 
 	public DuctUnitEnergy(TileGrid parent) {
+
 		super(parent);
 	}
 
 	@Override
 	public DuctToken<E, G, DuctCacheEnergy> getToken() {
+
 		return null;
 	}
 
 	@Override
 	public G createGrid() {
+
 		return (G) new EnergyGrid<E>(world(), 0);
 	}
 
 	@Override
 	public DuctCacheEnergy newBlankCache(byte side) {
+
 		return new DuctCacheEnergy();
 	}
 
@@ -72,7 +76,6 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 	public int transmitEnergy(int energy, boolean simulate) {
 
 		int usedEnergy = 0;
-
 
 		for (byte i = this.internalSideCounter; i < 6 && usedEnergy < energy; i++) {
 			IEnergyReceiver receiver;
@@ -133,12 +136,13 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 		return nbt;
 	}
 
-
 	public static class DuctCacheEnergy extends DuctCache {
+
 		IEnergyReceiver receiver;
 
 		@Override
 		public boolean cache(TileEntity tile, byte side) {
+
 			if (tile instanceof IEnergyReceiver) {
 				receiver = (IEnergyReceiver) tile;
 				return true;

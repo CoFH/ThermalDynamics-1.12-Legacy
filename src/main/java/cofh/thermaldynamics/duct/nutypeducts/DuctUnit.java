@@ -16,9 +16,9 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C extends DuctCache> implements IGridTile<T, G> {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final C[] tileCaches = (C[]) new DuctCache[6];
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	final T[] pipeCache = (T[]) new DuctUnit[6];
 
 	final TileGrid parent;
@@ -30,6 +30,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	private byte nodeMask;
 
 	public DuctUnit(TileGrid parent) {
+
 		this.parent = parent;
 	}
 
@@ -37,29 +38,35 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Nullable
 	public G getGrid() {
+
 		return grid;
 	}
 
 	@Override
 	public void setGrid(@Nullable G newGrid) {
+
 		grid = newGrid;
 	}
 
 	public abstract G createGrid();
 
 	public void setInvalidForForming() {
+
 		isValidForForming = false;
 	}
 
 	public void setValidForForming() {
+
 		isValidForForming = true;
 	}
 
 	public boolean isValidForForming() {
+
 		return isValidForForming;
 	}
 
 	public T getConnectedSide(int side) {
+
 		return pipeCache[side];
 	}
 
@@ -71,6 +78,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type) {
+
 		nodeMask &= ~(1 << side);
 
 		if (tile == null || !type.allowTransfer) {
@@ -94,15 +102,18 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	protected boolean canConnectToOtherDuct(DuctUnit<T, G, C> adjDuct, byte side) {
+
 		return true;
 	}
 
 	protected void setSideToNone(byte side) {
+
 		pipeCache[side] = null;
 		clearCache(side);
 	}
 
 	public boolean loadSignificantCache(TileEntity tile, byte side) {
+
 		if (tile == null) {
 			tileCaches[side] = null;
 			return false;
@@ -125,11 +136,13 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public void clearCache(byte side) {
+
 		tileCaches[side] = null;
 	}
 
 	@OverridingMethodsMustInvokeSuper
 	public void onChunkUnload() {
+
 		if (grid != null) {
 			grid.removeBlock(this.cast());
 		}
@@ -137,12 +150,14 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@OverridingMethodsMustInvokeSuper
 	public void invalidate() {
+
 		if (grid != null) {
 			grid.removeBlock(this.cast());
 		}
 	}
 
 	public void updateSide(TileEntity tile, IDuctHolder holder, byte side) {
+
 		boolean nodeState = nodeMask == 0;
 		handleTileSideUpdate(tile, holder, side, parent.getConnectionType(side));
 		if (nodeMask == 0 != nodeState && grid != null) {
@@ -151,6 +166,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public void updateAllSides(TileEntity[] tiles, IDuctHolder[] holders) {
+
 		boolean nodeState = nodeMask == 0;
 		for (byte side = 0; side < 6; side++) {
 			handleTileSideUpdate(tiles[side], holders[side], side, parent.getConnectionType(side));
@@ -160,12 +176,14 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final T cast() {
+
 		return (T) this;
 	}
 
 	public void formGrid() {
+
 		if (grid != null) {
 			MultiBlockFormer2<T, G, C> multiBlockFormer = new MultiBlockFormer2<>();
 			multiBlockFormer.formGrid(this.cast());
@@ -174,32 +192,37 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Override
 	public boolean isBlockedSide(int side) {
+
 		return parent.isSideBlocked(side);
 	}
 
-
 	@Override
 	public World world() {
+
 		return parent.world();
 	}
 
 	@Override
 	public BlockPos pos() {
+
 		return parent.getPos();
 	}
 
 	@Override
 	public boolean isNode() {
+
 		return nodeMask != 0;
 	}
 
 	@Override
 	public boolean isSideConnected(byte side) {
+
 		return false;
 	}
 
 	@Override
 	public void onNeighborBlockChange() {
+
 		parent.onNeighborBlockChange();
 	}
 
@@ -208,6 +231,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public boolean tickPass(int pass) {
+
 		if (parent.checkForChunkUnload()) {
 			return false;
 		}
@@ -225,6 +249,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+
 		return nbt;
 	}
 
@@ -244,6 +269,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public void onConnectionRejected(int i) {
+
 		pipeCache[i] = null;
 	}
 }
