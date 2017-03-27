@@ -287,7 +287,7 @@ public class TileItemDuct extends TileDuctBase implements IGridTileRoute, IItemD
 		return pass == 0 && (!myItems.isEmpty() || !itemsToAdd.isEmpty() || centerLine > 0);
 	}
 
-	public RouteCache getCache() {
+	public RouteCache<?,?> getCache() {
 
 		return getCache(true);
 	}

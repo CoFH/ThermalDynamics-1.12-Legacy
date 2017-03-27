@@ -12,6 +12,7 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.multiblock.IOccasionalTick;
 import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
@@ -37,8 +38,7 @@ import java.util.LinkedList;
 import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
-public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleTick, IPortableData, ITileInfoPacketHandler, ITilePacketHandler {
-
+public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, IOccasionalTick {
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
 
@@ -104,7 +104,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 		if (ServerHelper.isServerWorld(worldObj)) {
 
-			TickHandler.addMultiBlockToCalculate(this);
+			for (DuctUnit ductUnit : getDuctUnits()) {
+				TickHandler.addMultiBlockToCalculate(ductUnit);
+			}
 		}
 	}
 
@@ -217,38 +219,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 				neighbourChunks.add(new WeakReference<>(chunk));
 			}
 		}
-	}
-
-	@Override
-	public boolean existsYet() {
-
-		return worldObj != null && worldObj.isBlockLoaded(getPos()) && worldObj.getBlockState(getPos()).getBlock() instanceof BlockDuct;
-	}
-
-	@Override
-	public boolean isOutdated() {
-
-		return isInvalid();
-	}
-
-	@Override
-	public void singleTick() {
-
-		if (isInvalid()) {
-			return;
-		}
-
-		onNeighborBlockChange();
-
-		for (DuctUnit ductUnit : getDuctUnits()) {
-			ductUnit.formGrid();
-		}
-	}
-
-	@Override
-	public World world() {
-
-		return worldObj;
 	}
 
 	protected boolean readPortableTagInternal(EntityPlayer player, NBTTagCompound tag) {
@@ -621,12 +591,18 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, ISingleT
 
 	public abstract Duct getDuctType();
 
-	public static class AttachmentData {
+	@Override
+	public void occasionalTick() {
+		if(attachmentData != null) {
+			for (Attachment attachment : attachmentData.tickingAttachments) {
+				attachment.tick(pass);
+			}
+		}
+	}
 
+	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[6];
 		public final Cover[] covers = new Cover[6];
 		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
-
 	}
-
 }

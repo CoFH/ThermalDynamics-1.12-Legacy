@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.duct.nutypeducts.DuctCache;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
@@ -9,7 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid<E>> extends DuctUnit<E, G, DuctUnitEnergy.DuctCacheEnergy> implements IEnergyDuctInternal<E, G> {
+import javax.annotation.Nullable;
+
+public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid<E>> extends DuctUnit<E, G, IEnergyReceiver> implements IEnergyDuctInternal<E, G> {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
@@ -21,8 +22,7 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 	}
 
 	@Override
-	public DuctToken<E, G, DuctCacheEnergy> getToken() {
-
+	public DuctToken<E, G, IEnergyReceiver> getToken() {
 		return null;
 	}
 
@@ -33,9 +33,15 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 	}
 
 	@Override
-	public DuctCacheEnergy newBlankCache(byte side) {
-
-		return new DuctCacheEnergy();
+	@Nullable
+	public IEnergyReceiver cacheTile(TileEntity tile, byte side) {
+		if (tile instanceof IEnergyReceiver) {
+			IEnergyReceiver energyReceiver = (IEnergyReceiver) tile;
+			if (energyReceiver.canConnectEnergy(EnumFacing.values()[side ^ 1])) {
+				return energyReceiver;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -78,8 +84,9 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 		int usedEnergy = 0;
 
 		for (byte i = this.internalSideCounter; i < 6 && usedEnergy < energy; i++) {
-			IEnergyReceiver receiver;
-			if (tileCaches[i] != null && (receiver = tileCaches[i].receiver) != null) {
+
+			if (tileCaches[i] != null) {
+				IEnergyReceiver receiver = tileCaches[i];
 				if (receiver.canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
 					usedEnergy += sendEnergy(receiver, energy - usedEnergy, i, simulate);
 				}
@@ -91,8 +98,8 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 		}
 
 		for (byte i = 0; i < this.internalSideCounter && usedEnergy < energy; i++) {
-			IEnergyReceiver receiver;
-			if (tileCaches[i] != null && (receiver = tileCaches[i].receiver) != null) {
+			if (tileCaches[i] != null) {
+				IEnergyReceiver receiver = tileCaches[i];
 				if (receiver.canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
 					usedEnergy += sendEnergy(receiver, energy - usedEnergy, i, simulate);
 				}
@@ -135,20 +142,4 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 		}
 		return nbt;
 	}
-
-	public static class DuctCacheEnergy extends DuctCache {
-
-		IEnergyReceiver receiver;
-
-		@Override
-		public boolean cache(TileEntity tile, byte side) {
-
-			if (tile instanceof IEnergyReceiver) {
-				receiver = (IEnergyReceiver) tile;
-				return true;
-			}
-			return false;
-		}
-	}
-
 }

@@ -165,7 +165,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		BlockPos offsetPos = tile.getPos().offset(side);
 		int level = 0;
 
-		IBlockState state = tile.world().getBlockState(offsetPos);
+		IBlockState state = tile.getWorld().getBlockState(offsetPos);
 		Block block = state.getBlock();
 
 		if (type == 0) { // should calc vanilla redstone level

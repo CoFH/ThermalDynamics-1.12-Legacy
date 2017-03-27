@@ -1,13 +1,12 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.duct.nutypeducts.DuctCache;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import net.minecraft.util.EnumFacing;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MultiBlockFormer2<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C extends DuctCache> {
+public class MultiBlockFormer2<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> {
 
 	Queue<T> blocksToCheck = new LinkedList<>();
 	G theGrid;

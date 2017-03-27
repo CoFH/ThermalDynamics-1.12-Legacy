@@ -91,8 +91,6 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 
 	LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 
-	public static final SubTileGridTile[] blankSubTiles = {};
-	public SubTileGridTile[] subTiles = blankSubTiles;
 	public long lastUpdateTime = -1;
 	public int hashCode = 0;
 
@@ -527,6 +525,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		for (int i = 0; i < this.subTiles.length; i++) {
 			this.subTiles[i].readFromNBT(nbt.getCompoundTag("subTile" + i));
 		}
+
 
 		TickHandler.addMultiBlockToCalculate(this);
 	}

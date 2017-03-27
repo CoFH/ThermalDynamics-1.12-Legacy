@@ -1,12 +1,11 @@
 package cofh.thermaldynamics.duct;
 
-import cofh.thermaldynamics.duct.nutypeducts.DuctCache;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 
-public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructural<DuctUnitStructural>, DuctCache> {
+public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructural<DuctUnitStructural>, Object> {
 
 	public DuctUnitStructural(TileGrid parent) {
 
@@ -14,8 +13,7 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 	}
 
 	@Override
-	public DuctToken<DuctUnitStructural, GridStructural<DuctUnitStructural>, DuctCache> getToken() {
-
+	public DuctToken<DuctUnitStructural, GridStructural<DuctUnitStructural>, Object> getToken() {
 		return DuctToken.STRUCTURAL;
 	}
 
@@ -26,16 +24,7 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 	}
 
 	@Override
-	public DuctCache newBlankCache(byte side) {
-
-		return BLANK_CACHE;
+	public Object cacheTile(TileEntity tile, byte side) {
+		return null;
 	}
-
-	public static DuctCache BLANK_CACHE = new DuctCache() {
-		@Override
-		public boolean cache(TileEntity tile, byte side) {
-
-			return false;
-		}
-	};
 }

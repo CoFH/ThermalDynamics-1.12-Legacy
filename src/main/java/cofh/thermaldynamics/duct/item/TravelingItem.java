@@ -75,6 +75,42 @@ public class TravelingItem {
 		this.step = step;
 	}
 
+	public TravelingItem(NBTTagCompound theNBT) {
+
+		stack = ItemStack.loadItemStackFromNBT(theNBT.getCompoundTag("stack"));
+		if (stack.getItem() == null) {
+			stack = null;
+		}
+
+		progress = theNBT.getByte("progress");
+		direction = theNBT.getByte("direction");
+		oldDirection = theNBT.getByte("oldDir");
+		goingToStuff = theNBT.getBoolean("goingToStuff");
+
+		if (theNBT.hasKey("destX")) {
+			hasDest = true;
+			destX = theNBT.getInteger("destX");
+			destY = theNBT.getInteger("destY");
+			destZ = theNBT.getInteger("destZ");
+			mustGoToDest = theNBT.getBoolean("mustGo");
+		}
+
+		step = theNBT.getByte("step");
+
+		startX = theNBT.getInteger("startX");
+		startY = theNBT.getInteger("startY");
+		startZ = theNBT.getInteger("startZ");
+
+		if (theNBT.hasKey("route", 7)) {
+			myPath = new Route(theNBT.getByteArray("route"));
+		}
+	}
+
+	public static TravelingItem fromPacket(PacketCoFHBase payload, TileItemDuct homeTile) {
+
+		return new TravelingItem(payload.getByte(), payload.getByte(), payload.getByte(), payload.getItemStack(), homeTile, payload.getByte());
+	}
+
 	public void tickForward(TileItemDuct homeTile) {
 
 		progress += step;
@@ -131,7 +167,7 @@ public class TravelingItem {
 
 	public void bounceItem(TileItemDuct homeTile) {
 
-		RouteCache routes = homeTile.getCache();
+		RouteCache<?, ?> routes = homeTile.getCache();
 
 		TileItemDuct.RouteInfo curInfo;
 
@@ -211,7 +247,7 @@ public class TravelingItem {
 		}
 	}
 
-	public Route getStuffedRoute(RouteCache homeTile) {
+	public Route getStuffedRoute(RouteCache<?, ?> homeTile) {
 
 		if (homeTile.stuffableRoutes.isEmpty()) {
 			return null;
@@ -267,11 +303,6 @@ public class TravelingItem {
 		myPayload.addByte(step);
 	}
 
-	public static TravelingItem fromPacket(PacketCoFHBase payload, TileItemDuct homeTile) {
-
-		return new TravelingItem(payload.getByte(), payload.getByte(), payload.getByte(), payload.getItemStack(), homeTile, payload.getByte());
-	}
-
 	public void toNBT(NBTTagCompound theNBT) {
 
 		theNBT.setTag("stack", new NBTTagCompound());
@@ -296,37 +327,6 @@ public class TravelingItem {
 
 		if (myPath != null) {
 			theNBT.setByteArray("route", myPath.toByteArray());
-		}
-	}
-
-	public TravelingItem(NBTTagCompound theNBT) {
-
-		stack = ItemStack.loadItemStackFromNBT(theNBT.getCompoundTag("stack"));
-		if (stack.getItem() == null) {
-			stack = null;
-		}
-
-		progress = theNBT.getByte("progress");
-		direction = theNBT.getByte("direction");
-		oldDirection = theNBT.getByte("oldDir");
-		goingToStuff = theNBT.getBoolean("goingToStuff");
-
-		if (theNBT.hasKey("destX")) {
-			hasDest = true;
-			destX = theNBT.getInteger("destX");
-			destY = theNBT.getInteger("destY");
-			destZ = theNBT.getInteger("destZ");
-			mustGoToDest = theNBT.getBoolean("mustGo");
-		}
-
-		step = theNBT.getByte("step");
-
-		startX = theNBT.getInteger("startX");
-		startY = theNBT.getInteger("startY");
-		startZ = theNBT.getInteger("startZ");
-
-		if (theNBT.hasKey("route", 7)) {
-			myPath = new Route(theNBT.getByteArray("route"));
 		}
 	}
 

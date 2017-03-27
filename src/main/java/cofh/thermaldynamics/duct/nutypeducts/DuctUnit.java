@@ -1,8 +1,10 @@
 package cofh.thermaldynamics.duct.nutypeducts;
 
 import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.multiblock.IGridTile;
+import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer2;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,11 +16,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
-public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C extends DuctCache> implements IGridTile<T, G> {
+public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> implements IGridTile<T, G>, ISingleTick {
 
-	@SuppressWarnings ("unchecked")
-	public final C[] tileCaches = (C[]) new DuctCache[6];
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings("unchecked")
+	public final C[] tileCaches = (C[]) new Object[6];
+	@SuppressWarnings("unchecked")
 	final T[] pipeCache = (T[]) new DuctUnit[6];
 
 	final TileGrid parent;
@@ -70,7 +72,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return pipeCache[side];
 	}
 
-	public abstract C newBlankCache(byte side);
 
 	@Override
 	public void addRelays() {
@@ -118,13 +119,11 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 			tileCaches[side] = null;
 			return false;
 		}
-		C tileCache = tileCaches[side];
-		if (tileCache == null) {
-			tileCache = newBlankCache(side);
-			tileCaches[side] = tileCache;
-		}
-		if (tileCache.cache(tile, side)) {
-			if (tileCache.isNode()) {
+
+		C c = cacheTile(tile, side);
+		if (c != null) {
+			tileCaches[side] = c;
+			if (isNode(c)) {
 				nodeMask |= (1 << side);
 			}
 
@@ -133,6 +132,13 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 			tileCaches[side] = null;
 			return false;
 		}
+	}
+
+	@Nullable
+	public abstract C cacheTile(TileEntity tile, byte side);
+
+	public boolean isNode(C cache) {
+		return true;
 	}
 
 	public void clearCache(byte side) {
@@ -198,8 +204,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Override
 	public World world() {
-
-		return parent.world();
+		return parent.getWorld();
 	}
 
 	@Override
@@ -230,18 +235,9 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	}
 
+	@OverridingMethodsMustInvokeSuper
 	public boolean tickPass(int pass) {
-
-		if (parent.checkForChunkUnload()) {
-			return false;
-		}
-
-		if (!tickingAttachments.isEmpty()) {
-			for (Attachment attachment : tickingAttachments) {
-				attachment.tick(pass);
-			}
-		}
-		return true;
+		return !parent.checkForChunkUnload();
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
@@ -253,9 +249,9 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return nbt;
 	}
 
-	public byte tickInternalSideCounter(byte start) {
+	public byte tickInternalSideCounter(int start) {
 
-		for (byte a = start; a < 6; a++) {
+		for (byte a = (byte)start; a < 6; a++) {
 			if (tileCaches[a] != null) {
 				return a;
 			}
@@ -271,5 +267,27 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public void onConnectionRejected(int i) {
 
 		pipeCache[i] = null;
+	}
+
+	@Override
+	public boolean existsYet() {
+
+		return parent.getWorld() != null && parent.getWorld().isBlockLoaded(parent.getPos()) && parent.getWorld().getBlockState(parent.getPos()).getBlock() instanceof BlockDuct;
+	}
+
+	@Override
+	public boolean isOutdated() {
+		return parent.isInvalid();
+	}
+
+	@Override
+	public void singleTick() {
+		if (parent.isInvalid()) {
+			return;
+		}
+
+		onNeighborBlockChange();
+
+		formGrid();
 	}
 }
