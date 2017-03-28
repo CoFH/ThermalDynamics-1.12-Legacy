@@ -66,7 +66,7 @@ public class TravelingItem {
 	}
 
 	// Client Only
-	public TravelingItem(byte progress, byte direction, byte oldDirection, ItemStack theItem, TileItemDuct homeTile, byte step) {
+	public TravelingItem(byte progress, byte direction, byte oldDirection, ItemStack theItem, DuctUnitItem homeTile, byte step) {
 
 		this.progress = progress;
 		this.direction = direction;
@@ -106,12 +106,12 @@ public class TravelingItem {
 		}
 	}
 
-	public static TravelingItem fromPacket(PacketCoFHBase payload, TileItemDuct homeTile) {
+	public static TravelingItem fromPacket(PacketCoFHBase payload, DuctUnitItem homeTile) {
 
 		return new TravelingItem(payload.getByte(), payload.getByte(), payload.getByte(), payload.getItemStack(), homeTile, payload.getByte());
 	}
 
-	public void tickForward(TileItemDuct homeTile) {
+	public void tickForward(DuctUnitItem homeTile) {
 
 		progress += step;
 
@@ -127,10 +127,10 @@ public class TravelingItem {
 		}
 	}
 
-	public void advanceTile(TileItemDuct homeTile) {
+	public void advanceTile(DuctUnitItem homeTile) {
 
 		if (homeTile.neighborTypes[direction] == NeighborType.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
-			TileItemDuct newHome = (TileItemDuct) homeTile.getConnectedSide(direction);
+			DuctUnitItem newHome = (DuctUnitItem) homeTile.getConnectedSide(direction);
 			if (newHome != null) {
 				if (newHome.neighborTypes[direction ^ 1] == NeighborType.MULTIBLOCK) {
 					homeTile.removeItem(this, false);
@@ -165,11 +165,11 @@ public class TravelingItem {
 		}
 	}
 
-	public void bounceItem(TileItemDuct homeTile) {
+	public void bounceItem(DuctUnitItem homeTile) {
 
 		RouteCache<?, ?> routes = homeTile.getCache();
 
-		TileItemDuct.RouteInfo curInfo;
+		DuctUnitItem.RouteInfo curInfo;
 
 		reRoute = false;
 
@@ -189,7 +189,7 @@ public class TravelingItem {
 				}
 			}
 
-			if (homeTile.ticksExisted < TileItemDuct.maxTicksExistedBeforeFindAlt) {
+			if (homeTile.ticksExisted < DuctUnitItem.maxTicksExistedBeforeFindAlt) {
 				return;
 			}
 		}
@@ -214,7 +214,7 @@ public class TravelingItem {
 			}
 		}
 
-		if (homeTile.ticksExisted <= TileItemDuct.maxTicksExistedBeforeStuff) {
+		if (homeTile.ticksExisted <= DuctUnitItem.maxTicksExistedBeforeStuff) {
 			return;
 		}
 
@@ -240,7 +240,7 @@ public class TravelingItem {
 				oldDirection = (byte) (direction ^ 1);
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
-			} else if (homeTile.ticksExisted == TileItemDuct.maxTicksExistedBeforeDump) {
+			} else if (homeTile.ticksExisted == DuctUnitItem.maxTicksExistedBeforeDump) {
 				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorld(), new Vec3d(homeTile.getPos()));
 				homeTile.removeItem(this, true);
 			}
@@ -269,7 +269,7 @@ public class TravelingItem {
 		return backup;
 	}
 
-	public void tickClientForward(TileItemDuct homeTile) {
+	public void tickClientForward(DuctUnitItem homeTile) {
 
 		progress += step;
 
@@ -282,8 +282,8 @@ public class TravelingItem {
 				homeTile.removeItem(this, false);
 				shouldDie = true;
 				TileEntity newTile = BlockHelper.getAdjacentTileEntity(homeTile, direction);
-				if (newTile instanceof TileItemDuct) {
-					TileItemDuct itemDuct = (TileItemDuct) newTile;
+				if (newTile instanceof DuctUnitItem) {
+					DuctUnitItem itemDuct = (DuctUnitItem) newTile;
 					oldDirection = direction;
 					itemDuct.myItems.add(this);
 					if (!TickHandlerClient.tickBlocks.contains(itemDuct) && !TickHandlerClient.tickBlocksToAdd.contains(itemDuct)) {

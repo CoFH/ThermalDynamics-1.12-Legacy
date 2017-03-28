@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class TileFluidDuctFragile extends TileFluidDuct {
+public class DuctUnitFluidFragile extends DuctUnitFluid {
 
 	public static final int ROOM_TEMPERATURE = FluidRegistry.WATER.getTemperature();
 	public static final int FREEZING_TEMPERATURE = 274;
@@ -33,7 +33,7 @@ public class TileFluidDuctFragile extends TileFluidDuct {
 
 	public float internalTemperature = ROOM_TEMPERATURE;
 
-	public TileFluidDuctFragile() {
+	public DuctUnitFluidFragile() {
 
 		super();
 	}

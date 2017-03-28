@@ -7,7 +7,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
@@ -56,7 +56,7 @@ public class RetrieverFluid extends ServoFluid {
 			}
 		}
 		for (Iterator<?> iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
-			TileFluidDuct fluidDuct = (TileFluidDuct) iterator.next();
+			DuctUnitFluid fluidDuct = (DuctUnitFluid) iterator.next();
 
 			if (!fluidDuct.cachesExist()) {
 				continue;

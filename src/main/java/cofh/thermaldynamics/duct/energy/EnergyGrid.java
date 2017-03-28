@@ -61,7 +61,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof DuctUnitEnergy && ((DuctUnitEnergy) aBlock).getDuctType().type == this.type;
+		return aBlock instanceof IEnergyDuctInternal && ((DuctUnitEnergy) aBlock).getDuctType().type == this.type;
 	}
 
 	@Override
@@ -124,6 +124,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 		super.removeBlock(oldBlock);
 	}
 
+	//TODO:Rework
 	public int getNodeShare(T ductEnergy) {
 
 		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size() + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();

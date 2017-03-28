@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.attachments.servo;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ServoFluid extends ServoBase {
 
-	public TileFluidDuct fluidDuct;
+	public DuctUnitFluid fluidDuct;
 
 	public static float[] throttle = { 0.5F, 0.75F, 1F, 1.5F, 2F };
 
@@ -26,13 +26,13 @@ public class ServoFluid extends ServoBase {
 	public ServoFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
-		fluidDuct = (TileFluidDuct) tile;
+		fluidDuct = (DuctUnitFluid) tile;
 	}
 
 	public ServoFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
-		fluidDuct = (TileFluidDuct) tile;
+		fluidDuct = (DuctUnitFluid) tile;
 	}
 
 	public IFluidHandler theTile;
@@ -58,7 +58,7 @@ public class ServoFluid extends ServoBase {
 	@Override
 	public boolean canAddToTile(TileGrid tileMultiBlock) {
 
-		return tileMultiBlock instanceof TileFluidDuct;
+		return tileMultiBlock instanceof DuctUnitFluid;
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
@@ -91,7 +91,7 @@ public class RetrieverItem extends ServoItem {
 		IItemHandler simulatedInv = cachedInv;
 
 		for (Route route : routeList) {
-			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
+			DuctUnitItem endPoint = (DuctUnitItem) route.endPoint;
 
 			for (int k = 0; k < 6; k++) {
 				int i = (endPoint.internalSideCounter + k) % 6;
@@ -121,7 +121,7 @@ public class RetrieverItem extends ServoItem {
 							continue;
 						}
 
-						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
+						ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
 						if (remainder != null) {
 							item.stackSize -= remainder.stackSize;

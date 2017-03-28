@@ -7,7 +7,7 @@ import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuctItemsEnder extends RenderDuctItems {
 
-	public static final TileEntitySpecialRenderer<TileItemDuct> instance = new RenderDuctItemsEnder();
+	public static final TileEntitySpecialRenderer<DuctUnitItem> instance = new RenderDuctItemsEnder();
 
 	// TEMA: this is the shader callback where the uniforms are set for this particular shader.
 	// it's called each frame when the shader is bound. Probably the most expensive part of the whole thing.
@@ -44,7 +44,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	};
 
 	@Override
-	public void renderTileEntityAt(TileItemDuct tile, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(DuctUnitItem tile, double x, double y, double z, float frame, int destroyStage) {
 
 		TileItemDuctEnder duct = (TileItemDuctEnder) tile;
 
@@ -82,7 +82,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE.ordinal()) {
 					models[s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
 				}
 			}
@@ -92,7 +92,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		} else {
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE.ordinal()) {
 					ShaderStarfield.alpha = getAlphaLevel(alphaSub[s], frame) / 255F;
 					ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 					ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);

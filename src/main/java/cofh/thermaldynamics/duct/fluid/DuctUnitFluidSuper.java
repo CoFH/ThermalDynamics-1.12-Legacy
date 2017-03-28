@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-public class TileFluidDuctSuper extends TileFluidDuct {
+public class DuctUnitFluidSuper extends DuctUnitFluid {
 
 	private FluidGridSuper internalGridFS;
 
@@ -84,10 +84,10 @@ public class TileFluidDuctSuper extends TileFluidDuct {
 	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
-		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		if (connectionType == BlockDuct.ConnectionTypes.TILECONNECTION) {
+		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
+		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
-		} else if (connectionType == BlockDuct.ConnectionTypes.NONE) {
+		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
 			return null;
 		} else {
 			return CoverHoleRender.hollowDuctLarge;

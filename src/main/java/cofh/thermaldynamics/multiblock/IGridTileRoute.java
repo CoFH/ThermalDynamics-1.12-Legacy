@@ -2,7 +2,7 @@ package cofh.thermaldynamics.multiblock;
 
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import net.minecraft.item.ItemStack;
 
 public interface IGridTileRoute<T extends IGridTileRoute<T, G>, G extends MultiBlockGrid<T>> extends IGridTile<T, G> {
@@ -21,7 +21,7 @@ public interface IGridTileRoute<T extends IGridTileRoute<T, G>, G extends MultiB
 
 	T getCachedTile(byte side);
 
-	TileItemDuct.RouteInfo canRouteItem(ItemStack stack);
+	DuctUnitItem.RouteInfo canRouteItem(ItemStack stack);
 
 	byte getStuffedSide();
 

@@ -6,7 +6,7 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import com.google.common.collect.Iterators;
 import net.minecraft.client.Minecraft;
@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 
-public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
+public class RenderDuctItems extends TileEntitySpecialRenderer<DuctUnitItem> {
 
 	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
 
@@ -66,7 +66,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 		travelingItemSpin %= 180;
 	}
 
-	public void renderTileEntityAt(TileItemDuct duct, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(DuctUnitItem duct, double x, double y, double z, float frame, int destroyStage) {
 
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
@@ -95,7 +95,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 			int[] connections = RenderDuct.instance.getDuctConnections(duct);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
+				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
 					ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], frame);
 					RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 				} else {
@@ -118,10 +118,10 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 
 	public static int getAlphaLevel(int centerLine, float frame) {
 
-		return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
+		return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (DuctUnitItem.maxCenterLine));
 	}
 
-	public void renderTravelingItems(Iterator<TravelingItem> items, TileItemDuct duct, World world, double x, double y, double z, float frame) {
+	public void renderTravelingItems(Iterator<TravelingItem> items, DuctUnitItem duct, World world, double x, double y, double z, float frame) {
 
 		if (!items.hasNext()) {
 			return;

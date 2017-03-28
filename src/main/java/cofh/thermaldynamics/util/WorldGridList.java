@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.util;
 
 import cofh.thermaldynamics.multiblock.IGridTile;
+import cofh.thermaldynamics.multiblock.IOccasionalTick;
 import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
@@ -13,6 +14,7 @@ public class WorldGridList {
 
 	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<>();
 	public LinkedHashSet<ISingleTick> tickingBlocks = new LinkedHashSet<>();
+	public ArrayList<LinkedHashSet<IOccasionalTick>> occasionalTickingBlocks = new ArrayList<>();
 
 	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<>();
 	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<>();
@@ -86,6 +88,28 @@ public class WorldGridList {
 				}
 			}
 		}
+
+		int lastNonEmptyList = -1;
+		for (int i = 0; i < occasionalTickingBlocks.size(); i++) {
+			LinkedHashSet<IOccasionalTick> list = occasionalTickingBlocks.get(i);
+			for (Iterator<IOccasionalTick> iterator = list.iterator(); iterator.hasNext(); ) {
+				IOccasionalTick iOccasionalTick = iterator.next();
+				if (!iOccasionalTick.occasionalTick(i)) {
+					iterator.remove();
+				}
+			}
+			if (!list.isEmpty()) {
+				lastNonEmptyList = i;
+			}
+		}
+		if (lastNonEmptyList == -1) {
+			occasionalTickingBlocks.clear();
+		} else if ((lastNonEmptyList + 1) < occasionalTickingBlocks.size()) {
+			for (int i = occasionalTickingBlocks.size() - 1; i >= lastNonEmptyList + 1; i--) {
+				occasionalTickingBlocks.remove(i);
+			}
+		}
 	}
+
 
 }

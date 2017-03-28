@@ -340,9 +340,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public BlockDuct.ConnectionTypes getRenderConnectionType() {
+	public BlockDuct.ConnectionType getRenderConnectionType() {
 
-		return BlockDuct.ConnectionTypes.DUCT;
+		return BlockDuct.ConnectionType.DUCT;
 	}
 
 	@Override

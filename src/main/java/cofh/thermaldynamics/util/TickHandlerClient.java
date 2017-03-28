@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.util;
 
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -14,9 +14,9 @@ import java.util.Iterator;
 public class TickHandlerClient {
 
 	public static final TickHandlerClient INSTANCE = new TickHandlerClient();
-	public static HashSet<TileItemDuct> tickBlocks = new HashSet<>();
-	public static HashSet<TileItemDuct> tickBlocksToAdd = new HashSet<>();
-	public static HashSet<TileItemDuct> tickBlocksToRemove = new HashSet<>();
+	public static HashSet<DuctUnitItem> tickBlocks = new HashSet<>();
+	public static HashSet<DuctUnitItem> tickBlocksToAdd = new HashSet<>();
+	public static HashSet<DuctUnitItem> tickBlocksToRemove = new HashSet<>();
 
 	boolean needsMenu = false;
 
@@ -40,8 +40,8 @@ public class TickHandlerClient {
 				tickBlocksToAdd.clear();
 			}
 			if (!mc.isGamePaused() && !tickBlocks.isEmpty()) {
-				for (Iterator<TileItemDuct> iterator = tickBlocks.iterator(); iterator.hasNext(); ) {
-					TileItemDuct aCond = iterator.next();
+				for (Iterator<DuctUnitItem> iterator = tickBlocks.iterator(); iterator.hasNext(); ) {
+					DuctUnitItem aCond = iterator.next();
 					if (aCond.isInvalid()) {
 						iterator.remove();
 					} else {

@@ -16,7 +16,7 @@ public class FluidGridSuper extends FluidGrid {
 	int nodeTracker;
 	boolean isSendingFluid;
 
-	TileFluidDuct[] nodeList = null;
+	DuctUnitFluid[] nodeList = null;
 
 	@Override
 	public void tickGrid() {
@@ -24,9 +24,9 @@ public class FluidGridSuper extends FluidGrid {
 		super.tickGrid();
 		int i = 0;
 		if (nodeList == null) {
-			nodeList = new TileFluidDuct[nodeSet.size()];
+			nodeList = new DuctUnitFluid[nodeSet.size()];
 			for (IGridTile multiBlock : nodeSet) {
-				nodeList[i] = (TileFluidDuct) multiBlock;
+				nodeList[i] = (DuctUnitFluid) multiBlock;
 				i++;
 			}
 		}
@@ -47,7 +47,7 @@ public class FluidGridSuper extends FluidGrid {
 		}
 		int tempTracker = nodeTracker;
 
-		TileFluidDuct[] list = nodeList;
+		DuctUnitFluid[] list = nodeList;
 		if (list == null || list.length == 0) {
 			return fluid.amount - fluidToSend;
 		}

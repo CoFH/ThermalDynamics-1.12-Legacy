@@ -7,8 +7,8 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.entity.SoundWoosh;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
@@ -58,8 +58,8 @@ public class ProxyClient extends Proxy {
 	public void initialize(FMLInitializationEvent event) {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(DuctUnitItem.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(DuctUnitFluid.class, RenderDuctFluids.instance);
 	}
 
 	@Override

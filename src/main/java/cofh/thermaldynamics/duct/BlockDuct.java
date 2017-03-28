@@ -5,25 +5,24 @@ import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
-import cofh.core.render.IBlockAppearance;
 import cofh.api.block.IBlockConfigGui;
-import cofh.core.render.IModelRegister;
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
+import cofh.core.render.IBlockAppearance;
+import cofh.core.render.IModelRegister;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
+import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
 import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import cofh.thermaldynamics.duct.entity.*;
 import cofh.thermaldynamics.duct.fluid.*;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
-import cofh.thermaldynamics.duct.item.TileItemDuctFlux;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.material.Material;
@@ -59,6 +58,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,9 +66,8 @@ import java.util.Random;
 
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister {
 
-	public int offset;
-
 	public static PropertyInteger META = new PropertyInteger("meta", 15);
+	public int offset;
 
 	public BlockDuct(int offset) {
 
@@ -222,8 +221,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return RayTracer.rayTraceCuboidsClosest(start, end, cuboids, pos);
 	}
 
-	@SideOnly (Side.CLIENT)
-	@SubscribeEvent (priority = EventPriority.HIGH)
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onBlockHighlight(DrawBlockHighlightEvent event) {
 
 		RayTraceResult target = event.getTarget();
@@ -260,14 +259,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	@Override
-	@SideOnly (Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 
 		return ProxyClient.renderType;
 	}
 
 	@Override
-	@SideOnly (Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 
 		return BlockRenderLayer.CUTOUT;
@@ -329,27 +328,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return false;
 	}
 
-	public enum ConnectionTypes {
-		NONE(false), DUCT, STRUCTURE, TILECONNECTION, CLEANDUCT;
-
-		private final boolean renderDuct;
-
-		ConnectionTypes() {
-
-			renderDuct = true;
-		}
-
-		ConnectionTypes(boolean renderDuct) {
-
-			this.renderDuct = renderDuct;
-		}
-
-		public boolean renderDuct() {
-
-			return renderDuct;
-		}
-	}
-
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack) {
 
@@ -361,7 +339,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	@Override
-	@SideOnly (Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
 
 		super.randomDisplayTick(state, world, pos, rand);
@@ -409,12 +387,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		SubTileEnergyRedstone.initialize();
 
 		PacketHandler.instance.registerPacket(PacketFluid.class);
-		GameRegistry.registerTileEntity(TileFluidDuct.class, "thermaldynamics.FluidDuct");
-		GameRegistry.registerTileEntity(TileFluidDuctFragile.class, "thermaldynamics.FluidDuctFragile");
-		GameRegistry.registerTileEntity(TileFluidDuctFlux.class, "thermaldynamics.FluidDuctFlux");
-		GameRegistry.registerTileEntity(TileFluidDuctSuper.class, "thermaldynamics.FluidDuctSuper");
+		GameRegistry.registerTileEntity(DuctUnitFluid.class, "thermaldynamics.FluidDuct");
+		GameRegistry.registerTileEntity(DuctUnitFluidFragile.class, "thermaldynamics.FluidDuctFragile");
+		GameRegistry.registerTileEntity(DuctUnitFluidFlux.class, "thermaldynamics.FluidDuctFlux");
+		GameRegistry.registerTileEntity(DuctUnitFluidSuper.class, "thermaldynamics.FluidDuctSuper");
 
-		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.ItemDuct");
+		GameRegistry.registerTileEntity(DuctUnitItem.class, "thermaldynamics.ItemDuct");
 		GameRegistry.registerTileEntity(TileItemDuctEnder.class, "thermaldynamics.ItemDuctEnder");
 		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
 
@@ -438,7 +416,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	/* IModelRegister */
 	@Override
-	@SideOnly (Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public void registerModels() {
 
 		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(META).build());
@@ -483,5 +461,31 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		TileDuctBase theTile = (TileDuctBase) world.getTileEntity(pos);
 		return theTile != null && theTile.attachments[s] != null && theTile.attachments[s].shouldRSConnect();
+	}
+
+	public enum ConnectionType {
+		NONE(false), DUCT, CLEANDUCT, STRUCTURE, TILECONNECTION;
+
+		private final boolean renderDuct;
+
+		ConnectionType() {
+
+			renderDuct = true;
+		}
+
+		ConnectionType(boolean renderDuct) {
+
+			this.renderDuct = renderDuct;
+		}
+
+		public static ConnectionType getPriority(@Nonnull ConnectionType a, @Nonnull ConnectionType b) {
+			if (a.ordinal() < b.ordinal()) return b;
+			return a;
+		}
+
+		public boolean renderDuct() {
+
+			return renderDuct;
+		}
 	}
 }

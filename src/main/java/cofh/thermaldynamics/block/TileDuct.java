@@ -8,8 +8,8 @@ import cofh.core.network.ITilePacketHandler;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.RayTracer;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.*;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
@@ -357,10 +357,10 @@ public abstract class TileDuct extends TileCore implements IPortableData, ITileI
 	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
-		cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		if (connectionType == cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes.TILECONNECTION) {
+		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
+		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
-		} else if (connectionType == cofh.thermaldynamics.duct.BlockDuct.ConnectionTypes.NONE) {
+		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
 			return null;
 		} else {
 			return CoverHoleRender.hollowDuct;

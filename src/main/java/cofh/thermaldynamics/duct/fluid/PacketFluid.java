@@ -30,7 +30,7 @@ public class PacketFluid extends PacketCoFHBase {
 		addVarInt(size);
 
 		for (Object block : Iterables.concat(grid.nodeSet, grid.idleSet)) {
-			TileFluidDuct duct = ((TileFluidDuct) block);
+			DuctUnitFluid duct = ((DuctUnitFluid) block);
 			if (!duct.getDuctType().opaque) {
 				addVarInt(duct.x());
 				addVarInt(duct.y());
@@ -56,8 +56,8 @@ public class PacketFluid extends PacketCoFHBase {
 			}
 
 			TileEntity tile = world.getTileEntity(pos);
-			if (tile instanceof TileFluidDuct) {
-				TileFluidDuct duct = (TileFluidDuct) tile;
+			if (tile instanceof DuctUnitFluid) {
+				DuctUnitFluid duct = (DuctUnitFluid) tile;
 				duct.myRenderFluid = fluid;
 				duct.updateLighting();
 				BlockUtils.fireBlockUpdate(world, new BlockPos(x, y, z));

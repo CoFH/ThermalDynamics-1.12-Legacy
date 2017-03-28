@@ -6,7 +6,7 @@ import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.ItemGrid;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
@@ -33,18 +33,18 @@ public class ServoItem extends ServoBase {
 
 	public LinkedList<ItemStack> stuffedItems = new LinkedList<>();
 
-	public TileItemDuct itemDuct;
+	public DuctUnitItem itemDuct;
 
 	public ServoItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
-		itemDuct = ((TileItemDuct) tile);
+		itemDuct = ((DuctUnitItem) tile);
 	}
 
 	public ServoItem(TileGrid tile, byte side) {
 
 		super(tile, side);
-		itemDuct = ((TileItemDuct) tile);
+		itemDuct = ((DuctUnitItem) tile);
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public class ServoItem extends ServoBase {
 		return speedBoost[type];
 	}
 
-	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route> routes, TileItemDuct duct, int side, int maxRange, byte speed) {
+	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
 
 		if (item == null || item.stackSize == 0) {
 			return null;
@@ -292,7 +292,7 @@ public class ServoItem extends ServoBase {
 
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
-				TileItemDuct.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
+				DuctUnitItem.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
 				if (routeInfo.canRoute) {
 					int stackSize = item.stackSize - routeInfo.stackSize;
 					if (stackSize <= 0) {

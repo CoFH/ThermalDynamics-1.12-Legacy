@@ -83,7 +83,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 	public MultiBlockGrid myGrid;
 	public IGridTile neighborMultiBlocks[] = new IGridTile[EnumFacing.VALUES.length];
 	public NeighborType neighborTypes[] = { NeighborType.NONE, NeighborType.NONE, NeighborType.NONE, NeighborType.NONE, NeighborType.NONE, NeighborType.NONE };
-	public ConnectionType connectionTypes[] = { ConnectionType.NORMAL, ConnectionType.NORMAL, ConnectionType.NORMAL, ConnectionType.NORMAL, ConnectionType.NORMAL, ConnectionType.NORMAL, ConnectionType.BLOCKED };
+	public ConnectionType connectionTypes[] = { cofh.thermaldynamics.duct.ConnectionType.NORMAL, cofh.thermaldynamics.duct.ConnectionType.NORMAL, cofh.thermaldynamics.duct.ConnectionType.NORMAL, cofh.thermaldynamics.duct.ConnectionType.NORMAL, cofh.thermaldynamics.duct.ConnectionType.NORMAL, cofh.thermaldynamics.duct.ConnectionType.NORMAL, cofh.thermaldynamics.duct.ConnectionType.BLOCKED };
 	public byte internalSideCounter = 0;
 
 	public Attachment attachments[] = new Attachment[] { null, null, null, null, null, null };
@@ -144,7 +144,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		}
 		attachments[attachment.side] = null;
 		tickingAttachments.remove(attachment);
-		connectionTypes[attachment.side] = ConnectionType.NORMAL;
+		connectionTypes[attachment.side] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
 		onNeighborBlockChange();
 		if (myGrid != null) {
@@ -170,7 +170,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		if (attachment.doesTick()) {
 			tickingAttachments.add(attachment);
 		}
-		connectionTypes[attachment.side] = ConnectionType.BLOCKED;
+		connectionTypes[attachment.side] = cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
 		onNeighborBlockChange();
 		if (myGrid != null) {
@@ -283,7 +283,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 				neighborMultiBlocks[i] = null;
 			}
 
-			connectionTypes[i] = ConnectionType.NORMAL;
+			connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 			isNode = attachments[i].isNode();
 		}
 	}
@@ -296,8 +296,8 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 			if (theTile == null) {
 				neighborMultiBlocks[i] = null;
 				neighborTypes[i] = NeighborType.NONE;
-				if (connectionTypes[i] != ConnectionType.FORCED) {
-					connectionTypes[i] = ConnectionType.NORMAL;
+				if (connectionTypes[i] != cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+					connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 				}
 			} else if (isConnectable(theTile, i) && isUnblocked(theTile, i)) {
 				neighborMultiBlocks[i] = (IGridTile) theTile;
@@ -433,13 +433,13 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 	public void tickInternalSideCounter(int start) {
 
 		for (int a = start; a < neighborTypes.length; a++) {
-			if (neighborTypes[a] == NeighborType.OUTPUT && connectionTypes[a] == ConnectionType.NORMAL) {
+			if (neighborTypes[a] == NeighborType.OUTPUT && connectionTypes[a] == cofh.thermaldynamics.duct.ConnectionType.NORMAL) {
 				internalSideCounter = (byte) a;
 				return;
 			}
 		}
 		for (int a = 0; a < start; a++) {
-			if (neighborTypes[a] == NeighborType.OUTPUT && connectionTypes[a] == ConnectionType.NORMAL) {
+			if (neighborTypes[a] == NeighborType.OUTPUT && connectionTypes[a] == cofh.thermaldynamics.duct.ConnectionType.NORMAL) {
 				internalSideCounter = (byte) a;
 				return;
 			}
@@ -517,7 +517,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 				covers[i] = null;
 			}
 
-			connectionTypes[i] = ConnectionType.values()[nbt.getByte("conTypes" + i)];
+			connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.values()[nbt.getByte("conTypes" + i)];
 		}
 
 		recalcFacadeMask();
@@ -778,7 +778,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		if (!isServer) {
 			for (byte i = 0; i < neighborTypes.length; i++) {
 				neighborTypes[i] = NeighborType.values()[payload.getByte()];
-				connectionTypes[i] = ConnectionType.values()[payload.getByte()];
+				connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.values()[payload.getByte()];
 			}
 
 			isNode = payload.getBool();
@@ -815,7 +815,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 	public boolean isOutput = false;
 	public boolean isInput = false;
 
-	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
+	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
 
 		if (attachments[side] != null) {
 			return attachments[side].getRenderConnectionType();
@@ -824,24 +824,24 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		}
 	}
 
-	public static BlockDuct.ConnectionTypes getDefaultConnectionType(NeighborType neighborType, ConnectionType connectionType) {
+	public static BlockDuct.ConnectionType getDefaultConnectionType(NeighborType neighborType, ConnectionType connectionType) {
 
 		if (neighborType == NeighborType.STRUCTURE) {
-			return BlockDuct.ConnectionTypes.STRUCTURE;
+			return BlockDuct.ConnectionType.STRUCTURE;
 		} else if (neighborType == NeighborType.INPUT) {
-			return BlockDuct.ConnectionTypes.DUCT;
+			return BlockDuct.ConnectionType.DUCT;
 		} else if (neighborType == NeighborType.NONE) {
-			if (connectionType == ConnectionType.FORCED) {
-				return BlockDuct.ConnectionTypes.DUCT;
+			if (connectionType == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+				return BlockDuct.ConnectionType.DUCT;
 			}
 
-			return BlockDuct.ConnectionTypes.NONE;
-		} else if (connectionType == ConnectionType.BLOCKED || connectionType == ConnectionType.REJECTED) {
-			return BlockDuct.ConnectionTypes.NONE;
+			return BlockDuct.ConnectionType.NONE;
+		} else if (connectionType == cofh.thermaldynamics.duct.ConnectionType.BLOCKED || connectionType == cofh.thermaldynamics.duct.ConnectionType.REJECTED) {
+			return BlockDuct.ConnectionType.NONE;
 		} else if (neighborType == NeighborType.OUTPUT) {
-			return BlockDuct.ConnectionTypes.TILECONNECTION;
+			return BlockDuct.ConnectionType.TILECONNECTION;
 		} else {
-			return BlockDuct.ConnectionTypes.DUCT;
+			return BlockDuct.ConnectionType.DUCT;
 		}
 	}
 
@@ -956,7 +956,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 	@Override
 	public boolean isBlockedSide(int side) {
 
-		return connectionTypes[side] == ConnectionType.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
+		return connectionTypes[side] == cofh.thermaldynamics.duct.ConnectionType.BLOCKED || (attachments[side] != null && !attachments[side].allowPipeConnection());
 	}
 
 	@Override

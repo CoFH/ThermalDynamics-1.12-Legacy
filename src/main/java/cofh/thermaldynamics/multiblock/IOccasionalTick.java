@@ -1,5 +1,7 @@
 package cofh.thermaldynamics.multiblock;
 
 public interface IOccasionalTick {
-	void occasionalTick();
+	boolean occasionalTick(int pass);
+
+	int numPasses();
 }

@@ -106,12 +106,12 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 
 	public void multiAdvance(TravelingItem travelingItem, boolean newInsert) {
 
-		TileItemDuct duct = this;
+		DuctUnitItem duct = this;
 
 		while (true) {
 			duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
 			if (duct.neighborTypes[travelingItem.direction] == NeighborType.MULTIBLOCK) {
-				TileItemDuct newHome = (TileItemDuct) duct.getConnectedSide(travelingItem.direction);
+				DuctUnitItem newHome = (DuctUnitItem) duct.getConnectedSide(travelingItem.direction);
 				if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborType.MULTIBLOCK) {
 					duct = newHome;
 					if (travelingItem.myPath.hasNextDirection()) {
@@ -149,7 +149,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 		}
 	}
 
-	public void transferItem(TravelingItem travelingItem, TileItemDuct duct, boolean newInsert) {
+	public void transferItem(TravelingItem travelingItem, DuctUnitItem duct, boolean newInsert) {
 
 		if (newInsert) {
 			internalGrid.shouldRepoll = true;

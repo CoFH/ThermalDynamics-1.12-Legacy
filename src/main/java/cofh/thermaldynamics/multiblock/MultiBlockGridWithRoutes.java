@@ -5,7 +5,10 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends MultiBlockGrid<T> {
+public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute<T, G>, G extends MultiBlockGridWithRoutes<T, G>> extends MultiBlockGrid<T> {
+
+	public final LinkedList<RouteCache<T, G>> calculatingRoutes = new LinkedList<>();
+	public HashMap<IGridTileRoute, RouteCache<T, G>> routeCacheMap = new HashMap<>();
 
 	public MultiBlockGridWithRoutes(World world) {
 
@@ -35,9 +38,6 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends
 		return !calculatingRoutes.isEmpty();
 	}
 
-	public HashMap<IGridTileRoute, RouteCache> routeCacheMap = new HashMap<>();
-	public final LinkedList<RouteCache> calculatingRoutes = new LinkedList<>();
-
 	@Override
 	public void onMinorGridChange() {
 
@@ -50,7 +50,7 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends
 
 		super.onMajorGridChange();
 		if (!routeCacheMap.isEmpty()) {
-			for (RouteCache routeCache : routeCacheMap.values()) {
+			for (RouteCache<T, G> routeCache : routeCacheMap.values()) {
 				routeCache.invalidate();
 			}
 			routeCacheMap.clear();
@@ -61,7 +61,7 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends
 		}
 	}
 
-	public RouteCache getRoutesFromOutputNonUrgent(IGridTileRoute start) {
+	public RouteCache getRoutesFromOutputNonUrgent(T start) {
 
 		RouteCache cache;
 		cache = routeCacheMap.get(start);
@@ -69,18 +69,18 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends
 			return cache;
 		}
 
-		cache = new RouteCache(start);
+		cache = new RouteCache<T, G>(start);
 		calculatingRoutes.add(cache);
 
 		routeCacheMap.put(start, cache);
 		return cache;
 	}
 
-	public RouteCache getRoutesFromOutputRange(IGridTileRoute start, int maxRange) {
+	public RouteCache<T,G> getRoutesFromOutputRange(IGridTileRoute start, int maxRange) {
 
-		RouteCache cache = routeCacheMap.get(start);
+		RouteCache<T,G> cache = routeCacheMap.get(start);
 		if (cache == null) {
-			cache = new RouteCache(start, maxRange);
+			cache = new RouteCache<>(start, maxRange);
 			cache.generateCache();
 			routeCacheMap.put(start, cache);
 		} else if (cache.maxPathLength < maxRange) {
@@ -91,11 +91,11 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute> extends
 		return cache;
 	}
 
-	public RouteCache getRoutesFromOutput(IGridTileRoute start) {
+	public RouteCache<T,G> getRoutesFromOutput(T start) {
 
-		RouteCache cache = routeCacheMap.get(start);
+		RouteCache<T,G> cache = routeCacheMap.get(start);
 		if (cache == null) {
-			cache = new RouteCache(start);
+			cache = new RouteCache<T,G>(start);
 			cache.generateCache();
 			routeCacheMap.put(start, cache);
 		} else if (!cache.isFinishedGenerating() || cache.maxPathLength < Integer.MAX_VALUE) {

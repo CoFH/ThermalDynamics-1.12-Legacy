@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.multiblock.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -103,9 +103,9 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 	}
 
 	@Override
-	public TileItemDuct.RouteInfo canRouteItem(ItemStack stack) {
+	public DuctUnitItem.RouteInfo canRouteItem(ItemStack stack) {
 
-		return TileItemDuct.noRoute;
+		return DuctUnitItem.noRoute;
 	}
 
 	@Override

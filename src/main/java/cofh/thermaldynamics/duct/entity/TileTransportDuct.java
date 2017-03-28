@@ -10,7 +10,6 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
@@ -52,7 +51,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 		super.handleTileSideUpdate(i);
 
-		if (connectionTypes[i] == ConnectionType.FORCED) {
+		if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
 			neighborMultiBlocks[i] = null;
 			neighborTypes[i] = NeighborType.OUTPUT;
 			isNode = true;
@@ -63,7 +62,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	@Override
 	public boolean isBlockedSide(int side) {
 
-		return super.isBlockedSide(side) || connectionTypes[side] == ConnectionType.FORCED;
+		return super.isBlockedSide(side) || connectionTypes[side] == cofh.thermaldynamics.duct.ConnectionType.FORCED;
 	}
 
 	@Override
@@ -86,13 +85,13 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 					connectionTypes[i] = connectionTypes[i].next();
 					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
 				} else {
-					if (connectionTypes[i] == ConnectionType.FORCED) {
-						connectionTypes[i] = ConnectionType.NORMAL;
+					if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 					} else {
-						connectionTypes[i] = ConnectionType.FORCED;
+						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.FORCED;
 						for (int j = 0; j < 6; j++) {
-							if (i != j && connectionTypes[j] == ConnectionType.FORCED) {
-								connectionTypes[j] = ConnectionType.NORMAL;
+							if (i != j && connectionTypes[j] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+								connectionTypes[j] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 							}
 						}
 					}
@@ -139,7 +138,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		onNeighborBlockChange();
 
 		for (int i = 0; i < 6; i++) {
-			if (connectionTypes[i] == ConnectionType.FORCED) {
+			if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
 				if (neighborMultiBlocks[i] != null) {
 					continue;
 				}
@@ -436,8 +435,8 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 	@SideOnly (Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
-		BlockDuct.ConnectionTypes connectionType = getRenderConnectionType(side);
-		return connectionType == BlockDuct.ConnectionTypes.NONE ? null : CoverHoleRender.hollowDuctTransport;
+		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
+		return connectionType == BlockDuct.ConnectionType.NONE ? null : CoverHoleRender.hollowDuctTransport;
 	}
 
 }

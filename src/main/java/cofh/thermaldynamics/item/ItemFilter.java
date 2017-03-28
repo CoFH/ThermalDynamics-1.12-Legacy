@@ -8,8 +8,8 @@ import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -58,10 +58,10 @@ public class ItemFilter extends ItemAttachment {
 	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileDuctBase tile) {
 
 		int type = stack.getItemDamage() % 5;
-		if (tile instanceof TileFluidDuct) {
+		if (tile instanceof DuctUnitFluid) {
 			return new FilterFluid(tile, (byte) (side.ordinal() ^ 1), type);
 		}
-		if (tile instanceof TileItemDuct) {
+		if (tile instanceof DuctUnitItem) {
 			return new FilterItem(tile, (byte) (side.ordinal() ^ 1), type);
 		}
 		return null;

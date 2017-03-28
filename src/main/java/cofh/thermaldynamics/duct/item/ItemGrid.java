@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ItemGrid extends MultiBlockGridWithRoutes<IItemDuctInternal> {
+public class ItemGrid extends MultiBlockGridWithRoutes<DuctUnitItem, ItemGrid> {
 
 	public ItemGrid(World world) {
 

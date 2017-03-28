@@ -1,16 +1,16 @@
 package cofh.thermaldynamics.duct.nutypeducts;
 
-import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer2;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,11 +19,11 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> implements IGridTile<T, G>, ISingleTick {
 
 	@SuppressWarnings("unchecked")
-	public final C[] tileCaches = (C[]) new Object[6];
+	protected final C[] tileCaches = (C[]) new Object[6];
 	@SuppressWarnings("unchecked")
-	final T[] pipeCache = (T[]) new DuctUnit[6];
+	protected final T[] pipeCache = (T[]) new DuctUnit[6];
 
-	final TileGrid parent;
+	protected final TileGrid parent;
 
 	@Nullable
 	protected G grid;
@@ -78,7 +78,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	}
 
-	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type) {
+	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull cofh.thermaldynamics.duct.ConnectionType type) {
 
 		nodeMask &= ~(1 << side);
 
@@ -135,7 +135,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	@Nullable
-	public abstract C cacheTile(TileEntity tile, byte side);
+	public abstract C cacheTile(@Nonnull TileEntity tile, byte side);
 
 	public boolean isNode(C cache) {
 		return true;
@@ -244,8 +244,19 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	}
 
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+	@Nullable
+	public <Cap> Cap getCapability(Capability<Cap> capability, EnumFacing from){
+		return null;
+	}
 
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		return nbt;
+	}
+
+	@Nullable
+	public  NBTTagCompound saveToNBT(){
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt = writeToNBT(nbt);
 		return nbt;
 	}
 
@@ -290,4 +301,29 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 		formGrid();
 	}
+
+	@Nonnull
+	protected BlockDuct.ConnectionType getConnectionTypeTile(C cacheValue, int side){
+		return BlockDuct.ConnectionType.TILECONNECTION;
+	}
+
+	@Nonnull
+	public BlockDuct.ConnectionType getConnectionType(int side) {
+		if(tileCaches[side] != null){
+			return getConnectionTypeTile(tileCaches[side], side);
+		} else if (pipeCache[side] != null){
+			return getConnectionTypeDuct(pipeCache[side], side);
+		}
+		return BlockDuct.ConnectionType.NONE;
+	}
+
+	@Nonnull
+	protected BlockDuct.ConnectionType getConnectionTypeDuct(T duct, int side) {
+		return BlockDuct.ConnectionType.DUCT;
+	}
+
+	public int getLightValue() {
+		return 0;
+	}
+
 }

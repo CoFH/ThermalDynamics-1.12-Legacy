@@ -7,7 +7,10 @@ import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid<E>> extends DuctUnit<E, G, IEnergyReceiver> implements IEnergyDuctInternal<E, G> {
@@ -34,13 +37,52 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 
 	@Override
 	@Nullable
-	public IEnergyReceiver cacheTile(TileEntity tile, byte side) {
+	public IEnergyReceiver cacheTile(@Nonnull TileEntity tile, byte side) {
+		EnumFacing facing = EnumFacing.values()[side ^ 1];
 		if (tile instanceof IEnergyReceiver) {
 			IEnergyReceiver energyReceiver = (IEnergyReceiver) tile;
-			if (energyReceiver.canConnectEnergy(EnumFacing.values()[side ^ 1])) {
+			if (energyReceiver.canConnectEnergy(facing)) {
 				return energyReceiver;
 			}
 		}
+		if (tile.hasCapability(CapabilityEnergy.ENERGY, facing)) {
+			IEnergyStorage capability = tile.getCapability(CapabilityEnergy.ENERGY, facing);
+			if (capability != null && capability.canReceive()) {
+				return new IEnergyReceiver() {
+
+					public IEnergyStorage getStorage(EnumFacing facing1) {
+						if (tile.hasCapability(CapabilityEnergy.ENERGY, facing1)) {
+							return tile.getCapability(CapabilityEnergy.ENERGY, facing1);
+						}
+						return null;
+					}
+
+					@Override
+					public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+						IEnergyStorage storage = getStorage(from);
+						return storage == null ? 0 : storage.receiveEnergy(maxReceive, simulate);
+					}
+
+					@Override
+					public int getEnergyStored(EnumFacing from) {
+						IEnergyStorage storage = getStorage(from);
+						return storage == null ? 0 : storage.getEnergyStored();
+					}
+
+					@Override
+					public int getMaxEnergyStored(EnumFacing from) {
+						IEnergyStorage storage = getStorage(from);
+						return storage == null ? 0 : storage.getMaxEnergyStored();
+					}
+
+					@Override
+					public boolean canConnectEnergy(EnumFacing from) {
+						return true;
+					}
+				};
+			}
+		}
+
 		return null;
 	}
 
@@ -110,6 +152,18 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 			}
 		}
 		return usedEnergy;
+	}
+
+	int type;
+
+	@Override
+	public int getTransferLimit() {
+		return EnergyGrid.NODE_TRANSFER[type];
+	}
+
+	@Override
+	public int getCapacity() {
+		return EnergyGrid.NODE_STORAGE[type];
 	}
 
 	protected int sendEnergy(IEnergyReceiver receiver, int maxReceive, byte side, boolean simulate) {

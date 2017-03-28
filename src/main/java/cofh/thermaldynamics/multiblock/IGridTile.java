@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public interface IGridTile<T extends IGridTile<T, G>, G extends MultiBlockGrid<T>> {
+public interface IGridTile<T extends IGridTile<T, G>, G extends MultiBlockGrid<T>> extends ISingleTick {
 
 	G createGrid();
 

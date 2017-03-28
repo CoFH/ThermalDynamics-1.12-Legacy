@@ -9,4 +9,8 @@ public interface IEnergyDuctInternal<T extends IEnergyDuctInternal<T, G>, G exte
 	void setEnergyForGrid(int energy);
 
 	int transmitEnergy(int energy, boolean simulate);
+
+	int getTransferLimit();
+
+	int getCapacity();
 }

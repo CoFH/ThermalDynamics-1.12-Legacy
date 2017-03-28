@@ -5,10 +5,11 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nonnull;
+
 public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructural<DuctUnitStructural>, Object> {
 
 	public DuctUnitStructural(TileGrid parent) {
-
 		super(parent);
 	}
 
@@ -19,12 +20,11 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 
 	@Override
 	public GridStructural<DuctUnitStructural> createGrid() {
-
 		return new GridStructural<>(world());
 	}
 
 	@Override
-	public Object cacheTile(TileEntity tile, byte side) {
+	public Object cacheTile(@Nonnull TileEntity tile, byte side) {
 		return null;
 	}
 }

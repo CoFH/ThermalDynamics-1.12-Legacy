@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
@@ -101,7 +100,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 		v += t.step * 2;
 		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
 		if (v >= EntityTransport.PIPE_LENGTH) {
-			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && connectionTypes[t.direction] == ConnectionType.NORMAL) {
+			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && connectionTypes[t.direction] == cofh.thermaldynamics.duct.ConnectionType.NORMAL) {
 				TileTransportDuctBase newHome = (TileTransportDuctBase) getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
 				if (newHome.neighborTypes[t.direction ^ 1] == NeighborType.MULTIBLOCK) {
@@ -178,15 +177,15 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 	}
 
 	@Override
-	public BlockDuct.ConnectionTypes getRenderConnectionType(int side) {
+	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
 
-		BlockDuct.ConnectionTypes connectionType = super.getRenderConnectionType(side);
-		if (connectionType == BlockDuct.ConnectionTypes.NONE || connections == 0) {
+		BlockDuct.ConnectionType connectionType = super.getRenderConnectionType(side);
+		if (connectionType == BlockDuct.ConnectionType.NONE || connections == 0) {
 			return connectionType;
 		}
 
 		if (side != d1 && side != d2) {
-			return BlockDuct.ConnectionTypes.NONE;
+			return BlockDuct.ConnectionType.NONE;
 		}
 
 		// TODO: Optimize this - find someplace in the tile update dance to precalculate this
@@ -197,7 +196,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 			if ((t.d1 ^ 1) == side || (t.d2 ^ 1) == side) {
 				return connectionType;
 			}
-			return BlockDuct.ConnectionTypes.NONE;
+			return BlockDuct.ConnectionType.NONE;
 		}
 
 		return connectionType;

@@ -1,16 +1,16 @@
 package cofh.thermaldynamics.render;
 
 import codechicken.lib.render.CCRenderState;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 
-public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
+public class RenderDuctFluids extends TileEntitySpecialRenderer<DuctUnitFluid> {
 
 	public static final RenderDuctFluids instance = new RenderDuctFluids();
 
 	@Override
-	public void renderTileEntityAt(TileFluidDuct duct, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(DuctUnitFluid duct, double x, double y, double z, float frame, int destroyStage) {
 
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.preRenderWorld(duct.getWorld(), duct.getPos());
