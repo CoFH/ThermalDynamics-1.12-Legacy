@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 
-public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
+public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 
 	public final FluidTankGrid myTank = new FluidTankGrid(1000, this);
 	public int toDistribute = 0;
@@ -62,7 +62,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	}
 
 	@Override
-	public void addBlock(IFluidDuctInternal aMultiBlock) {
+	public void addBlock(DuctUnitFluid aMultiBlock) {
 
 		super.addBlock(aMultiBlock);
 
@@ -101,7 +101,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	private int reworkNumberStorableDucts() {
 
 		int numBalancable = 0;
-		for (IFluidDuctInternal iFluidDuct : Iterables.concat(nodeSet, idleSet)) {
+		for (DuctUnitFluid iFluidDuct : Iterables.concat(nodeSet, idleSet)) {
 			if (iFluidDuct.canStoreFluid()) {
 				numBalancable++;
 			}
@@ -124,7 +124,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	public void destroyNode(IGridTile node) {
 
 		if (hasValidFluid()) {
-			((IFluidDuctInternal) node).setFluidForGrid(getNodeShare((IFluidDuctInternal) node));
+			((DuctUnitFluid) node).setFluidForGrid(getNodeShare((DuctUnitFluid) node));
 		}
 		super.destroyNode(node);
 	}
@@ -132,7 +132,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof IFluidDuctInternal && FluidHelper.isFluidEqualOrNull(((IFluidDuctInternal) aBlock).getConnectionFluid(), myTank.getFluid());
+		return aBlock instanceof DuctUnitFluid && FluidHelper.isFluidEqualOrNull(((DuctUnitFluid) aBlock).getConnectionFluid(), myTank.getFluid());
 	}
 
 	public boolean doesPassiveTicking = false;
@@ -153,7 +153,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 			}
 
 			if (toDistribute > 0) {
-				for (IFluidDuctInternal m : nodeSet) {
+				for (DuctUnitFluid m : nodeSet) {
 					if (!m.tickPass(0) || m.getGrid() == null) {
 						break;
 					}
@@ -161,7 +161,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 			}
 		}
 		if (!nodeSet.isEmpty()) {
-			for (IFluidDuctInternal m : nodeSet) {
+			for (DuctUnitFluid m : nodeSet) {
 				if (!m.tickPass(1) || m.getGrid() == null) {
 					break;
 				}
@@ -170,7 +170,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 
 		if (doesPassiveTicking) {
 			if (!nodeSet.isEmpty()) {
-				for (IFluidDuctInternal m : nodeSet) {
+				for (DuctUnitFluid m : nodeSet) {
 					if (!m.tickPass(2) || m.getGrid() == null) {
 						break;
 					}
@@ -178,7 +178,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 			}
 
 			if (!idleSet.isEmpty()) {
-				for (IFluidDuctInternal m : idleSet) {
+				for (DuctUnitFluid m : idleSet) {
 					if (!m.tickPass(2) || m.getGrid() == null) {
 						break;
 					}
@@ -188,7 +188,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	}
 
 	@Override
-	public void mergeGrids(MultiBlockGrid<IFluidDuctInternal> theGrid) {
+	public void mergeGrids(MultiBlockGrid<DuctUnitFluid> theGrid) {
 
 		super.mergeGrids(theGrid);
 
@@ -228,7 +228,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	}
 
 	@Nullable
-	public FluidStack getNodeShare(IFluidDuctInternal theCond) {
+	public FluidStack getNodeShare(DuctUnitFluid theCond) {
 
 		if (!theCond.canStoreFluid()) {
 			return null;
@@ -243,7 +243,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 		return toReturn.amount > 0 ? toReturn : null;
 	}
 
-	public int getNodeAmount(IFluidDuctInternal theCond) {
+	public int getNodeAmount(DuctUnitFluid theCond) {
 
 		if (theCond.canStoreFluid()) {
 			return 0;
@@ -269,12 +269,12 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 	public void buildMap() {
 
 		chunks = new HashSet<>();
-		for (IFluidDuctInternal iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
+		for (DuctUnitFluid iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
 			buildMapEntry(iMultiBlock);
 		}
 	}
 
-	private void buildMapEntry(IFluidDuctInternal iMultiBlock) {
+	private void buildMapEntry(DuctUnitFluid iMultiBlock) {
 
 		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
@@ -299,7 +299,7 @@ public class FluidGrid extends MultiBlockGridTracking<IFluidDuctInternal> {
 				if (worldGrid.worldObj instanceof WorldServer) {
 
 					int ducts = 0;
-					for (IFluidDuctInternal block : Iterables.concat(nodeSet, idleSet)) {
+					for (DuctUnitFluid block : Iterables.concat(nodeSet, idleSet)) {
 						if (!block.isOpaque()) {
 							++ducts;
 							block.updateLighting();

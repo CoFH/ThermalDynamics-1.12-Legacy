@@ -167,7 +167,7 @@ public abstract class Attachment {
 
 	public BlockDuct.ConnectionType getRenderConnectionType() {
 
-		return TileDuctBase.getDefaultConnectionType(getNeighborType(), cofh.thermaldynamics.duct.ConnectionType.NORMAL);
+		return TileGrid.getDefaultConnectionType(getNeighborType(), cofh.thermaldynamics.duct.ConnectionType.NORMAL);
 	}
 
 	public boolean allowPipeConnection() {

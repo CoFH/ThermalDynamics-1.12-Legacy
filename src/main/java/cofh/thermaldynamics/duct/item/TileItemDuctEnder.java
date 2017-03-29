@@ -4,19 +4,15 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyEnder;
 import cofh.thermaldynamics.init.TDProps;
 
-public class TileItemDuctEnder extends TileItemDuctPowered {
+public class TileItemDuctEnder extends DuctUnitItem {
 
 	public boolean powered = false;
-
-	final SubTileEnergyEnder enderEnergy;
 
 	public TileItemDuctEnder() {
 
 		super();
-		setSubEnergy(enderEnergy = new SubTileEnergyEnder(this));
 	}
 
 	@Override
@@ -38,21 +34,9 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 	}
 
 	@Override
-	public float[][] getSideCoordsModifier() {
-
-		return _SIDE_MODS[isPowered() ? 3 : 2];
-	}
-
-	@Override
 	public boolean acceptingItems() {
 
 		return enderEnergy.internalGrid != null && enderEnergy.internalGrid.isPowered();
-	}
-
-	@Override
-	public boolean isSubNode() {
-
-		return true;
 	}
 
 	@Override
@@ -67,8 +51,8 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 		}
 		if (myItems.size() > 0) {
 			for (TravelingItem travelingItem : myItems) {
-				if (internalGrid.repoll) {
-					internalGrid.poll(travelingItem);
+				if (grid.repoll) {
+					grid.poll(travelingItem);
 				}
 				if (travelingItem.reRoute || travelingItem.myPath == null) {
 					travelingItem.bounceItem(this);
@@ -87,7 +71,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 		}
 
 		if (hasChanged) {
-			internalGrid.shouldRepoll = true;
+			grid.shouldRepoll = true;
 		}
 
 		updateRender();
@@ -152,7 +136,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 	public void transferItem(TravelingItem travelingItem, DuctUnitItem duct, boolean newInsert) {
 
 		if (newInsert) {
-			internalGrid.shouldRepoll = true;
+			grid.shouldRepoll = true;
 			duct.transferItem(travelingItem);
 		} else if (duct != this) {
 			duct.transferItem(travelingItem);
@@ -162,7 +146,7 @@ public class TileItemDuctEnder extends TileItemDuctPowered {
 
 	public void sendPowerPacket() {
 
-		PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
+		PacketTileInfo myPayload = this.getPacketTileInfo();
 		myPayload.addByte(0);
 		myPayload.addByte(TileInfoPackets.ENDER_POWER);
 		myPayload.addBool(powered);

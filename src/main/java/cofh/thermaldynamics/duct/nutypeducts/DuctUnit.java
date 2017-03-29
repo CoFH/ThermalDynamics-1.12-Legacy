@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.nutypeducts;
 
+import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.ISingleTick;
@@ -34,6 +35,11 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public DuctUnit(TileGrid parent) {
 
 		this.parent = parent;
+	}
+
+	@Nonnull
+	public PacketTileInfo getPacketTileInfo() {
+		return PacketTileInfo.newPacket(this);
 	}
 
 	public abstract DuctToken<T, G, C> getToken();
@@ -326,4 +332,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return 0;
 	}
 
+	public void onPlaced() {
+
+	}
 }

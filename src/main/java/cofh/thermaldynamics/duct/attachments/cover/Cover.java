@@ -141,7 +141,7 @@ public class Cover extends Attachment {
 	@Override
 	public boolean addToTile() {
 
-		return tile.addFacade(this);
+		return tile.addCover(this);
 	}
 
 	@Override
@@ -169,9 +169,9 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public boolean canAddToTile(TileDuctBase tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tileMultiBlock) {
 
-		return tileMultiBlock.covers[side] == null;
+		return tileMultiBlock.getCover(side) == null;
 	}
 
 	@SuppressWarnings ("deprecation")

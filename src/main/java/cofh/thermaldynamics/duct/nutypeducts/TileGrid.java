@@ -1,6 +1,8 @@
 package cofh.thermaldynamics.duct.nutypeducts;
 
+import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.util.BlockUtils;
+import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IPortableData;
 import cofh.core.block.TileCore;
 import cofh.core.network.ITileInfoPacketHandler;
@@ -9,6 +11,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.RayTracer;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
+import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
@@ -22,6 +25,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,6 +35,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
+import java.util.List;
 
 import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
@@ -38,6 +43,20 @@ import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler {
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
+	public static Cuboid6[] subSelection = new Cuboid6[12];
+	public static Cuboid6 selection;
+	public static Cuboid6[] subSelection_large = new Cuboid6[12];
+	public static Cuboid6 selectionlarge;
+
+	static {
+		TileGrid.genSelectionBoxes(TileGrid.subSelection, 0, 0.25, 0.2, 0.8);
+		TileGrid.genSelectionBoxes(TileGrid.subSelection, 6, 0.3, 0.3, 0.7);
+		TileGrid.selection = new Cuboid6(0.3, 0.3, 0.3, 0.7, 0.7, 0.7);
+
+		TileGrid.genSelectionBoxes(TileGrid.subSelection_large, 0, 0.1, 0.1, 0.9);
+		TileGrid.genSelectionBoxes(TileGrid.subSelection_large, 6, 0.1, 0.1, 0.9);
+		TileGrid.selectionlarge = new Cuboid6(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+	}
 
 	static {
 		GameRegistry.registerTileEntityWithAlternatives(TileGrid.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
@@ -49,6 +68,37 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	private ConnectionType connectionTypes[] = {NORMAL, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL};
 	private int lastUpdateTime;
 
+	public static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
+
+		subSelection[i] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
+		subSelection[i + 1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
+		subSelection[i + 2] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
+		subSelection[i + 3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
+		subSelection[i + 4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
+		subSelection[i + 5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
+	}
+
+	public static BlockDuct.ConnectionType getDefaultConnectionType(NeighborType neighborType, ConnectionType connectionType) {
+
+		if (neighborType == NeighborType.STRUCTURE) {
+			return BlockDuct.ConnectionType.STRUCTURE;
+		} else if (neighborType == NeighborType.INPUT) {
+			return BlockDuct.ConnectionType.DUCT;
+		} else if (neighborType == NeighborType.NONE) {
+			if (connectionType == ConnectionType.FORCED) {
+				return BlockDuct.ConnectionType.DUCT;
+			}
+
+			return BlockDuct.ConnectionType.NONE;
+		} else if (connectionType == BLOCKED || connectionType == ConnectionType.REJECTED) {
+			return BlockDuct.ConnectionType.NONE;
+		} else if (neighborType == NeighborType.OUTPUT) {
+			return BlockDuct.ConnectionType.TILECONNECTION;
+		} else {
+			return BlockDuct.ConnectionType.DUCT;
+		}
+	}
+
 	@Override
 	public String getDataType() {
 
@@ -59,8 +109,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Override
 	public boolean isSideBlocked(int side) {
+		Attachment attachment = getAttachment(side);
+		return attachment != null && !attachment.allowPipeConnection() || !connectionTypes[side].allowTransfer;
 
-		return connectionTypes[side].allowTransfer;
 	}
 
 	@Override
@@ -74,6 +125,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		super.onChunkUnload();
 	}
+
 
 	@Override
 	public void invalidate() {
@@ -102,6 +154,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (ServerHelper.isServerWorld(worldObj)) {
 
 			for (DuctUnit ductUnit : getDuctUnits()) {
+				ductUnit.onPlaced();
 				TickHandler.addMultiBlockToCalculate(ductUnit);
 			}
 		}
@@ -276,11 +329,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return true;
 	}
 
-	public boolean addCover(Cover cover, byte side) {
-
+	public boolean addCover(Cover cover) {
 		if (cover == null) {
 			return false;
 		}
+
+		byte side = cover.side;
 		if (attachmentData == null) {
 			attachmentData = new AttachmentData();
 		} else if (attachmentData.covers[side] != null) {
@@ -355,7 +409,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			String key = ductUnit.getToken().key;
-			if(nbt.hasKey(key, 10)){
+			if (nbt.hasKey(key, 10)) {
 				ductUnit.readFromNBT(nbt.getCompoundTag(key));
 			}
 		}
@@ -372,7 +426,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			NBTTagCompound tag = ductUnit.saveToNBT();
-			if(tag != null){
+			if (tag != null) {
 				nbt.setTag(ductUnit.getToken().key, tag);
 			}
 		}
@@ -596,6 +650,156 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public abstract Duct getDuctType();
 
+	@Nullable
+	public Cover getCover(int side) {
+		if (attachmentData == null) {
+			return null;
+		}
+		return attachmentData.covers[side];
+	}
+
+	public int x() {
+		return getPos().getX();
+	}
+
+	public int y() {
+		return getPos().getY();
+	}
+
+
+	public int z() {
+		return getPos().getZ();
+	}
+
+	public World world() {
+		return getWorld();
+	}
+
+	public boolean isPowered() {
+		return worldObj.isBlockPowered(pos);
+	}
+
+	@Override
+	public boolean openGui(EntityPlayer player) {
+
+		RayTraceResult movingObjectPosition = codechicken.lib.raytracer.RayTracer.retrace(player);
+		if (movingObjectPosition == null) {
+			return false;
+		}
+
+		int subHit = movingObjectPosition.subHit;
+
+		if (subHit > 13 && subHit < 20) {
+			return getAttachment(subHit - 14).openGui(player);
+		}
+		return super.openGui(player);
+	}
+
+	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
+
+		if (!getDuctType().isLargeTube()) {
+			addTraceableCuboids(cuboids, TileGrid.selection, TileGrid.subSelection);
+		} else {
+			addTraceableCuboids(cuboids, TileGrid.selectionlarge, TileGrid.subSelection_large);
+		}
+	}
+
+	public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
+
+		for (int i = 0; i < 6; i++) {
+			BlockDuct.ConnectionType renderConnectionType = getRenderConnectionType(i);
+
+			// Add ATTACHMENT sides
+			Attachment attachment = getAttachment(i);
+			if (attachment != null) {
+				cuboids.add(new IndexedCuboid6(i + 14, attachment.getCuboid()));
+
+
+				if (renderConnectionType != BlockDuct.ConnectionType.NONE) {
+					cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy()));
+				}
+			}
+
+			Cover cover = getCover(i);
+			if (cover != null) {
+				cuboids.add(new IndexedCuboid6(i + 20, cover.getCuboid()));
+			}
+
+			{
+				// Add TILE sides
+				switch (renderConnectionType) {
+					case TILECONNECTION:
+						cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
+						break;
+					case DUCT:
+					case CLEANDUCT:
+						cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
+						break;
+					case STRUCTURE:
+						cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
+						break;
+				}
+
+			}
+		}
+
+		cuboids.add(new IndexedCuboid6(13, centerSelection.copy()));
+	}
+
+	@Override
+	public boolean onWrench(EntityPlayer player, EnumFacing side) {
+
+		RayTraceResult rayTrace = codechicken.lib.raytracer.RayTracer.retraceBlock(worldObj, player, getPos());
+		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
+			if (rayTrace == null) {
+				return false;
+			}
+
+			int subHit = rayTrace.subHit;
+			if (subHit >= 0 && subHit <= 13) {
+				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
+
+				onNeighborBlockChange();
+
+				connectionTypes[i] = connectionTypes[i].next();
+
+				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
+				if (isConnectable(tile, i)) {
+					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+				}
+
+				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
+
+				for (DuctUnit ductUnit : getDuctUnits()) {
+					if (ductUnit.grid != null) {
+						ductUnit.grid.destroyAndRecreate();
+					}
+				}
+
+				BlockUtils.fireBlockUpdate(world(), getPos());
+				return true;
+			}
+			if (subHit > 13 && subHit < 20) {
+				return getAttachment(subHit - 14).onWrenched();
+			}
+
+			if (subHit >= 20 && subHit < 26) {
+				return getCover(subHit - 20).onWrenched();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+
+		byte b = payload.getByte();
+		if (b == 0) {
+			handleInfoPacket(payload, isServer, thePlayer);
+		} else if (b >= 1 && b <= 6) {
+			getAttachment(b - 1).handleInfoPacket(payload, isServer, thePlayer);
+		}
+	}
 
 	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[6];

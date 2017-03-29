@@ -17,6 +17,7 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
@@ -50,33 +51,9 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		GameRegistry.registerTileEntity(TileDuctBase.class, "thermaldynamics.duct");
 	}
 
-	public static Cuboid6[] subSelection = new Cuboid6[12];
-	public static Cuboid6 selection;
 
-	public static Cuboid6[] subSelection_large = new Cuboid6[12];
-	public static Cuboid6 selectionlarge;
-
-	static {
-		genSelectionBoxes(subSelection, 0, 0.25, 0.2, 0.8);
-		genSelectionBoxes(subSelection, 6, 0.3, 0.3, 0.7);
-		selection = new Cuboid6(0.3, 0.3, 0.3, 0.7, 0.7, 0.7);
-
-		genSelectionBoxes(subSelection_large, 0, 0.1, 0.1, 0.9);
-		genSelectionBoxes(subSelection_large, 6, 0.1, 0.1, 0.9);
-		selectionlarge = new Cuboid6(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
-	}
 
 	public int facadeMask;
-
-	private static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
-
-		subSelection[i] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
-		subSelection[i + 1] = new Cuboid6(min2, 1.0 - min, min2, max2, 1.0, max2);
-		subSelection[i + 2] = new Cuboid6(min2, min2, 0.0, max2, max2, min);
-		subSelection[i + 3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
-		subSelection[i + 4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
-		subSelection[i + 5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
-	}
 
 	public boolean isValid = true;
 	public boolean isNode = false;
@@ -560,21 +537,6 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		return nbt;
 	}
 
-	@Override
-	public boolean openGui(EntityPlayer player) {
-
-		RayTraceResult movingObjectPosition = RayTracer.retrace(player);
-		if (movingObjectPosition == null) {
-			return false;
-		}
-
-		int subHit = movingObjectPosition.subHit;
-
-		if (subHit > 13 && subHit < 20) {
-			return attachments[subHit - 14].openGui(player);
-		}
-		return super.openGui(player);
-	}
 
 	Duct duct = null;
 
@@ -586,178 +548,8 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		return duct;
 	}
 
-	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
 
-		if (!getDuctType().isLargeTube()) {
-			addTraceableCuboids(cuboids, selection, subSelection);
-		} else {
-			addTraceableCuboids(cuboids, selectionlarge, subSelection_large);
-		}
-	}
 
-	public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
-
-		for (int i = 0; i < 6; i++) {
-			// Add ATTACHMENT sides
-			if (attachments[i] != null) {
-				cuboids.add(new IndexedCuboid6(i + 14, attachments[i].getCuboid()));
-
-				if (neighborTypes[i] != NeighborType.NONE) {
-					cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy()));
-				}
-			}
-			if (covers[i] != null) {
-				cuboids.add(new IndexedCuboid6(i + 20, covers[i].getCuboid()));
-			}
-
-			{
-				// Add TILE sides
-				if (neighborTypes[i] == NeighborType.OUTPUT) {
-					cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
-				} else if (neighborTypes[i] == NeighborType.MULTIBLOCK) {
-					cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
-				} else if (neighborTypes[i] == NeighborType.STRUCTURE) {
-					cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
-				}
-
-			}
-		}
-
-		cuboids.add(new IndexedCuboid6(13, centerSelection.copy()));
-	}
-
-	@Override
-	public boolean onWrench(EntityPlayer player, EnumFacing side) {
-
-		RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, getPos());
-		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
-			if (rayTrace == null) {
-				return false;
-			}
-
-			int subHit = rayTrace.subHit;
-			if (subHit >= 0 && subHit <= 13) {
-				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
-
-				onNeighborBlockChange();
-
-				connectionTypes[i] = connectionTypes[i].next();
-
-				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
-				if (isConnectable(tile, i)) {
-					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
-				}
-
-				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
-
-				if (myGrid != null) {
-					myGrid.destroyAndRecreate();
-				}
-
-				for (SubTileGridTile subTile : subTiles) {
-					subTile.destroyAndRecreate();
-				}
-
-				BlockUtils.fireBlockUpdate(world(), getPos());
-				return true;
-			}
-			if (subHit > 13 && subHit < 20) {
-				return attachments[subHit - 14].onWrenched();
-			}
-
-			if (subHit >= 20 && subHit < 26) {
-				return covers[subHit - 20].onWrenched();
-			}
-		}
-		return false;
-	}
-
-	public void doDebug(EntityPlayer thePlayer) {
-
-		// thePlayer.addChatMessage(new ChatComponentText("Neighbors: " + StringUtils.join(neighborTypes, ",")));
-		// thePlayer.addChatMessage(new ChatComponentText("Connections: " + StringUtils.join(connectionTypes, ",")));
-		// thePlayer.addChatMessage(new ChatComponentText("isNode: " + isNode));
-		//
-	}
-
-	public boolean addFacade(Cover cover) {
-
-		if (covers[cover.side] != null) {
-			return false;
-		}
-
-		covers[cover.side] = cover;
-		recalcFacadeMask();
-		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
-		onNeighborBlockChange();
-		BlockUtils.fireBlockUpdate(getWorld(), getPos());
-		return true;
-	}
-
-	public void removeFacade(Cover cover) {
-
-		covers[cover.side] = null;
-		recalcFacadeMask();
-		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
-		onNeighborBlockChange();
-		BlockUtils.fireBlockUpdate(getWorld(), getPos());
-	}
-
-	public void recalcFacadeMask() {
-
-		facadeMask = 0;
-		for (byte i = 0; i < 6; i++) {
-			if (covers[i] != null) {
-				facadeMask = facadeMask | (1 << i);
-			}
-		}
-	}
-
-	/* NETWORK METHODS */
-	@Override
-	public PacketCoFHBase getTilePacket() {
-
-		PacketCoFHBase payload = super.getTilePacket();
-
-		int attachmentMask = 0;
-		recalcFacadeMask();
-		for (byte i = 0; i < neighborTypes.length; i++) {
-			payload.addByte(neighborTypes[i].ordinal());
-			payload.addByte(connectionTypes[i].ordinal());
-			if (attachments[i] != null) {
-				attachmentMask = attachmentMask | (1 << i);
-			}
-		}
-		payload.addBool(isNode);
-
-		payload.addByte(attachmentMask);
-		for (byte i = 0; i < 6; i++) {
-			if (attachments[i] != null) {
-				payload.addByte(attachments[i].getId());
-				attachments[i].addDescriptionToPacket(payload);
-			}
-		}
-		payload.addByte(facadeMask);
-		for (byte i = 0; i < 6; i++) {
-			if (covers[i] != null) {
-				covers[i].addDescriptionToPacket(payload);
-			}
-		}
-		payload.addInt(myGrid == null ? 0 : myGrid.hashCode());
-
-		return payload;
-	}
-
-	@Override
-	public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
-
-		byte b = payload.getByte();
-		if (b == 0) {
-			handleInfoPacket(payload, isServer, thePlayer);
-		} else if (b >= 1 && b <= 6) {
-			attachments[b - 1].handleInfoPacket(payload, isServer, thePlayer);
-		}
-	}
 
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
@@ -820,28 +612,7 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		if (attachments[side] != null) {
 			return attachments[side].getRenderConnectionType();
 		} else {
-			return getDefaultConnectionType(neighborTypes[side], connectionTypes[side]);
-		}
-	}
-
-	public static BlockDuct.ConnectionType getDefaultConnectionType(NeighborType neighborType, ConnectionType connectionType) {
-
-		if (neighborType == NeighborType.STRUCTURE) {
-			return BlockDuct.ConnectionType.STRUCTURE;
-		} else if (neighborType == NeighborType.INPUT) {
-			return BlockDuct.ConnectionType.DUCT;
-		} else if (neighborType == NeighborType.NONE) {
-			if (connectionType == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-				return BlockDuct.ConnectionType.DUCT;
-			}
-
-			return BlockDuct.ConnectionType.NONE;
-		} else if (connectionType == cofh.thermaldynamics.duct.ConnectionType.BLOCKED || connectionType == cofh.thermaldynamics.duct.ConnectionType.REJECTED) {
-			return BlockDuct.ConnectionType.NONE;
-		} else if (neighborType == NeighborType.OUTPUT) {
-			return BlockDuct.ConnectionType.TILECONNECTION;
-		} else {
-			return BlockDuct.ConnectionType.DUCT;
+			return TileGrid.getDefaultConnectionType(neighborTypes[side], connectionTypes[side]);
 		}
 	}
 
@@ -910,48 +681,6 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		return getPos().getZ();
 	}
 
-	@Override
-	public void setInvalidForForming() {
-
-		isValid = false;
-	}
-
-	@Override
-	public void setValidForForming() {
-
-		isValid = true;
-	}
-
-	@Override
-	public boolean isValidForForming() {
-
-		return isValid;
-	}
-
-	@Override
-	public abstract MultiBlockGrid createGrid();
-
-	@Override
-	public MultiBlockGrid getGrid() {
-
-		return myGrid;
-	}
-
-	@Override
-	public void setGrid(MultiBlockGrid newGrid) {
-
-		myGrid = newGrid;
-	}
-
-	@Override
-	public IGridTile getConnectedSide(byte side) {
-
-		if (side >= neighborMultiBlocks.length) {
-			return null;
-		}
-		return neighborMultiBlocks[side];
-
-	}
 
 	@Override
 	public boolean isBlockedSide(int side) {
@@ -1018,11 +747,6 @@ public abstract class TileDuctBase extends TileCore implements IGridTile, ITileP
 		return isInvalid();
 	}
 
-	@Override
-	public IGridTile[] getSubTiles() {
-
-		return subTiles;
-	}
 
 	@Override
 	public void addRelays() {

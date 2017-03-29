@@ -10,6 +10,7 @@ import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,9 +23,10 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitFluid<F extends DuctUnitFluid<F, G>, G extends FluidGrid<F>> extends DuctUnit<F,G, DuctUnitFluid.Cache> implements IFluidDuctInternal {
+public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFluid.Cache> {
 	public FluidGrid fluidGrid;
 
 	byte internalSideCounter;
@@ -229,8 +231,25 @@ public class DuctUnitFluid<F extends DuctUnitFluid<F, G>, G extends FluidGrid<F>
 
 		if (b == TileFluidPackets.UPDATE_RENDER) {
 			myRenderFluid = payload.getFluidStack();
-			BlockUtils.fireBlockUpdate(world(), getPos());
+			BlockUtils.fireBlockUpdate(world(), pos());
 		}
+	}
+
+
+	@Override
+	public DuctToken<DuctUnitFluid, FluidGrid, Cache> getToken() {
+		return DuctToken.FLUID;
+	}
+
+	@Override
+	public FluidGrid createGrid() {
+		return new FluidGrid(world());
+	}
+
+	@Nullable
+	@Override
+	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
+		return null;
 	}
 
 	@Override
@@ -256,7 +275,7 @@ public class DuctUnitFluid<F extends DuctUnitFluid<F, G>, G extends FluidGrid<F>
 	}
 
 	@Override
-	public PacketCoFHBase getTilePacket() {
+	public PacketCoFHBase getTilePattcket() {
 
 		PacketCoFHBase packet = super.getTilePacket();
 		if (fluidGrid != null) {

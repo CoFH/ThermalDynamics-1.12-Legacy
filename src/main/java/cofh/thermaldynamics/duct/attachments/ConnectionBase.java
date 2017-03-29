@@ -8,12 +8,12 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.RedstoneControlHelper;
 import cofh.core.util.tileentity.IRedstoneControl;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
@@ -107,7 +107,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 		super.onNeighborChange();
 
-		TileEntity adjacentTileEntity = tile.getAdjTileEntitySafe(side);
+		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(tile, side);
 
 		clearCache();
 		boolean wasValidInput = isValidInput;
@@ -140,14 +140,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	public boolean getPowerState() {
-
-		if (tile.myGrid != null && tile.myGrid.rs != null) {
-			if (tile.myGrid.rs.redstoneLevel > 0) {
-				return true;
-			}
-		}
-
-		return tile.getWorld().isBlockPowered(tile.getPos());
+		return tile.isPowered();
 	}
 
 	@Override
@@ -165,7 +158,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	@Override
 	public Cuboid6 getCuboid() {
 
-		return TileDuctBase.subSelection[side].copy();
+		return TileGrid.subSelection[side].copy();
 	}
 
 	@Override

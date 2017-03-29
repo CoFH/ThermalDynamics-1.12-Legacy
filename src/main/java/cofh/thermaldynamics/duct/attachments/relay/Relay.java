@@ -77,7 +77,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	public Cuboid6 getCuboid() {
 
-		return TileDuctBase.subSelection[side].copy();
+		return TileGrid.subSelection[side].copy();
 	}
 
 	@Override

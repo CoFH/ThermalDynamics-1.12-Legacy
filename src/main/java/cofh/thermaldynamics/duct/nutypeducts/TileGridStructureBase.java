@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Map;
 
-public abstract class TileGridDuctBase extends TileGrid {
+public abstract class TileGridStructureBase extends TileGrid {
 
 
 	private Map<DuctToken, DuctUnit> ducts;
@@ -37,4 +37,16 @@ public abstract class TileGridDuctBase extends TileGrid {
 		return ducts.values();
 	}
 
+
+	@Override
+	public boolean isPowered() {
+		DuctUnitStructural ductUnit = (DuctUnitStructural) ducts.get(DuctToken.STRUCTURAL);
+		if (ductUnit != null && ductUnit.grid != null && ductUnit.grid.rs != null) {
+			if (ductUnit.grid.rs.redstoneLevel > 0) {
+				return true;
+			}
+		}
+
+		return super.isPowered();
+	}
 }
