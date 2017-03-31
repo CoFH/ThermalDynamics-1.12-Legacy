@@ -10,7 +10,9 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.gui.client.GuiTransport;
@@ -33,6 +35,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -45,23 +49,21 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 	}
 
 	@Override
-	public void handleTileSideUpdate(int i) {
+	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type)  {
 
-		super.handleTileSideUpdate(i);
+		super.handleTileSideUpdate(tile, holder, side, type);
 
-		if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-			neighborMultiBlocks[i] = null;
-			neighborTypes[i] = NeighborType.OUTPUT;
-			isNode = true;
-			isOutput = true;
+		if (type == ConnectionType.FORCED) {
+			pipeCache[side] = null;
+			nodeMask |= (1 << side);
 		}
 	}
 
-	@Override
-	public boolean isBlockedSide(int side) {
-
-		return super.isBlockedSide(side) || connectionTypes[side] == cofh.thermaldynamics.duct.ConnectionType.FORCED;
-	}
+//	@Override
+//	public boolean isBlockedSide(int side) {
+//
+//		return super.isBlockedSide(side) || parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED;
+//	}
 
 	@Override
 	public boolean onWrench(EntityPlayer player, EnumFacing side) {
@@ -137,12 +139,12 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 
 		for (int i = 0; i < 6; i++) {
 			if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-				if (neighborMultiBlocks[i] != null) {
+				if (pipeCache[i] != null) {
 					continue;
 				}
 
-				PacketHandler.sendTo(getTilePacket(), player);
-				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, worldObj, pos.getX(), pos.getY(), pos.getZ());
+				PacketHandler.sendTo(parent.getTilePacket(), player);
+				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, world(), pos().getX(), pos().getY(), pos().getZ());
 				return true;
 			}
 		}
@@ -172,22 +174,18 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 	}
 
 	@Override
-	public PacketCoFHBase getTilePacket() {
-
-		PacketCoFHBase packet = super.getTilePacket();
+	public void writeToTilePacket(PacketCoFHBase packet) {
 		if (data != BLANK_NAME) {
 			packet.addBool(true);
 			data.addToPacket(packet);
 		} else {
 			packet.addBool(false);
 		}
-		return packet;
 	}
 
 	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-
-		super.handleTilePacket(payload, isServer);
+	public void handleTilePacket(PacketCoFHBase payload) {
+		super.handleTilePacket(payload);
 		if (payload.getBool()) {
 			if (data == BLANK_NAME) {
 				data = new OutputData();
@@ -238,7 +236,7 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 			transport.setDirectory(entries);
 		} else if (type == NETWORK_CONFIG && isServer) {
 			PacketHandler.sendTo(getTilePacket(), thePlayer);
-			thePlayer.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, worldObj, pos.getX(), pos.getY(), pos.getZ());
+			thePlayer.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, world(), pos().getX(), pos().getY(), pos().getZ());
 		}
 	}
 
@@ -290,11 +288,11 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 		myPayload.addByte(0);
 		myPayload.addByte(NETWORK_LIST);
 
-		LinkedList<Route> outputRoutes = getCache().outputRoutes;
+		LinkedList<Route<DuctUnitTransportBase, TransportGrid>> outputRoutes = getCache().outputRoutes;
 
 		ArrayList<DuctUnitTransport> ducts = new ArrayList<>(outputRoutes.size());
 
-		for (Route outputRoute : outputRoutes) {
+		for (Route<DuctUnitTransportBase, TransportGrid> outputRoute : outputRoutes) {
 			if (outputRoute.endPoint.isOutput() && outputRoute.endPoint != this && outputRoute.endPoint instanceof DuctUnitTransport) {
 				ducts.add((DuctUnitTransport) outputRoute.endPoint);
 			}

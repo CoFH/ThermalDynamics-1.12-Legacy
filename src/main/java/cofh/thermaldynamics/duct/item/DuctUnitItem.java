@@ -591,12 +591,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Override
 	public void onPlaced() {
 		super.onPlaced();
-		if (stack.hasTagCompound()) {
-			byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
-			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM) {
-				pathWeightType = b;
-			}
-		}
+//		if (stack.hasTagCompound()) {
+//			byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
+//			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM) {
+//				pathWeightType = b;
+//			}
+//		}
 		ticksExisted = maxTicksExistedBeforeDump;
 	}
 

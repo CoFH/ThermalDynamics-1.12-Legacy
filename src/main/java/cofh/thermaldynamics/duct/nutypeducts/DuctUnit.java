@@ -34,8 +34,8 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	@Nullable
 	protected G grid;
 	private boolean isValidForForming;
-	private byte nodeMask;
-	private byte inputMask;
+	protected byte nodeMask;
+	protected byte inputMask;
 
 	public DuctUnit(TileGrid parent, Duct duct) {
 		this.parent = parent;

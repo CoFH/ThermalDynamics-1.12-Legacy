@@ -1,9 +1,10 @@
 package cofh.thermaldynamics.duct.nutypeducts;
 
+import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctUnitStructural;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import javax.annotation.Nullable;
@@ -13,7 +14,24 @@ import java.util.Map;
 public abstract class TileGridStructureBase extends TileGrid {
 
 
-	private Map<DuctToken, DuctUnit> ducts;
+	private Map<DuctToken, DuctUnit> ducts = null;
+
+	public TileGridStructureBase() {
+
+	}
+
+	public <T extends TileGridStructureBase> T setDuctUnits(Map<DuctToken, DuctUnit> ducts) {
+		this.ducts = ducts;
+		return (T) this;
+	}
+
+	public <T extends TileGridStructureBase> T setDuctUnits(DuctToken token, DuctUnit unit) {
+		this.ducts = ImmutableSortedMap.of(token, unit);
+		return (T) this;
+	}
+
+
+
 
 	@SuppressWarnings("unchecked")
 	@Nullable
@@ -22,26 +40,31 @@ public abstract class TileGridStructureBase extends TileGrid {
 	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getDuct(DuctToken<T, G, C> token) {
 		DuctUnit ductUnit = ducts.get(token);
 		if (ductUnit == null && token == DuctToken.STRUCTURAL) {
-			ImmutableMap.Builder<DuctToken, DuctUnit> builder = ImmutableMap.builder();
+			ImmutableSortedMap.Builder<DuctToken, DuctUnit> builder = ImmutableSortedMap.naturalOrder();
 			builder.putAll(ducts);
 			DuctUnitStructural structural;
 			builder.put(DuctToken.STRUCTURAL, structural = new DuctUnitStructural(this, ducts.get(getPrimaryDuctToken())));
 			TickHandler.addMultiBlockToCalculate(structural);
 			ducts = builder.build();
-			return (T)structural;
+			return (T) structural;
 		}
 		return (T) ductUnit;
 	}
 
 	protected abstract DuctToken getPrimaryDuctToken();
 
-	public DuctUnit getPrimaryDuctUnit(){
+	public DuctUnit getPrimaryDuctUnit() {
 		return getDuct(getPrimaryDuctToken());
 	}
 
 	@Override
 	public Iterable<DuctUnit> getDuctUnits() {
 		return ducts.values();
+	}
+
+	@Nullable
+	public DuctUnitStructural getStructureUnitIfPresent() {
+		return (DuctUnitStructural) ducts.get(DuctToken.STRUCTURAL);
 	}
 
 
@@ -55,6 +78,11 @@ public abstract class TileGridStructureBase extends TileGrid {
 		}
 
 		return super.isPowered();
+	}
+
+	@Override
+	public Duct getDuctType() {
+		return getPrimaryDuctUnit().getDuctType();
 	}
 
 	@Override

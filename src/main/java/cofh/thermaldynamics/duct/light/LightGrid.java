@@ -56,6 +56,9 @@ public class LightGrid extends MultiBlockGrid<DuctUnitLight> {
 
 		super.tickGrid();
 
+		// TODO: Fix
+		RedstoneControl rs = null;
+
 		if (upToDate && worldGrid.worldObj.getTotalWorldTime() % 160 != 0) {
 			if (rs != null && rs.nextRedstoneLevel != -128) {
 				upToDate = false;
@@ -118,8 +121,8 @@ public class LightGrid extends MultiBlockGrid<DuctUnitLight> {
 				}
 			}
 
-			for (Object block : Iterables.concat(nodeSet, idleSet)) {
-				((DuctUnitLight) block).checkLight();
+			for (DuctUnitLight block : Iterables.concat(nodeSet, idleSet)) {
+				block.checkLight();
 			}
 		}
 	}
@@ -127,12 +130,12 @@ public class LightGrid extends MultiBlockGrid<DuctUnitLight> {
 	public void buildMap() {
 
 		chunks = new HashSet<>();
-		for (IGridTile iGridTile : Iterables.concat(nodeSet, idleSet)) {
+		for (DuctUnitLight iGridTile : Iterables.concat(nodeSet, idleSet)) {
 			buildMapEntry(iGridTile);
 		}
 	}
 
-	private void buildMapEntry(IGridTile iGridTile) {
+	private void buildMapEntry(DuctUnitLight iGridTile) {
 
 		chunks.add(new ChunkCoord(iGridTile.x() >> 4, iGridTile.z() >> 4));
 	}

@@ -134,7 +134,8 @@ public class ItemBlockDuct extends ItemBlockCore {
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
 				} else if (duct.type == 2) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					// TODO: ReAdd
+					//list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 				} else if (duct.type == 3) {
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info"));
 				}
@@ -150,7 +151,8 @@ public class ItemBlockDuct extends ItemBlockCore {
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
 				} else if (duct.type == 3) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
-					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					// TODO: ReAdd
+//					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 					list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
 				}
 				if (stack.hasTagCompound()) {
