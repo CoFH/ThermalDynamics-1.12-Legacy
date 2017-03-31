@@ -3,8 +3,8 @@ package cofh.thermaldynamics.item;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,7 @@ public class ItemRelay extends ItemAttachment {
 	}
 
 	@Override
-	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileDuctBase tile) {
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileGrid tile) {
 
 		return new Relay(tile, (byte) (side.ordinal() ^ 1));
 	}

@@ -3,13 +3,14 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
-public class TileTransportDuctLongRange extends TileTransportDuctBase {
+import javax.annotation.Nonnull;
+
+public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public MultiBlockGrid createGrid() {
@@ -101,15 +102,15 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
 		if (v >= EntityTransport.PIPE_LENGTH) {
 			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && connectionTypes[t.direction] == cofh.thermaldynamics.duct.ConnectionType.NORMAL) {
-				TileTransportDuctBase newHome = (TileTransportDuctBase) getConnectedSide(t.direction);
+				DuctUnitTransportBase newHome = (DuctUnitTransportBase) getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
 				if (newHome.neighborTypes[t.direction ^ 1] == NeighborType.MULTIBLOCK) {
 					t.pos = new BlockPos(newHome.getPos());
 
 					t.oldDirection = t.direction;
 
-					if (newHome instanceof TileTransportDuctLongRange) {
-						TileTransportDuctLongRange lr = (TileTransportDuctLongRange) newHome;
+					if (newHome instanceof DuctUnitTransportLongRange) {
+						DuctUnitTransportLongRange lr = (DuctUnitTransportLongRange) newHome;
 						t.direction = lr.nextDirection(t.direction);
 						if (t.direction == -1) {
 							t.dropPassenger();
@@ -153,7 +154,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 	@Override
 	public boolean isConnectable(TileEntity theTile, int side) {
 
-		return theTile instanceof TileTransportDuctLongRange || theTile instanceof TileTransportDuctCrossover;
+		return theTile instanceof DuctUnitTransportLongRange || theTile instanceof DuctUnitTransportCrossover;
 	}
 
 	@Override
@@ -176,6 +177,7 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 		d2 = nbt.getByte("SimpleConnect2");
 	}
 
+	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
 
@@ -190,8 +192,8 @@ public class TileTransportDuctLongRange extends TileTransportDuctBase {
 
 		// TODO: Optimize this - find someplace in the tile update dance to precalculate this
 		TileEntity tile = BlockHelper.getAdjacentTileEntity(this, side);
-		if (tile != null && tile.getClass() == TileTransportDuctLongRange.class) {
-			TileTransportDuctLongRange t = (TileTransportDuctLongRange) tile;
+		if (tile != null && tile.getClass() == DuctUnitTransportLongRange.class) {
+			DuctUnitTransportLongRange t = (DuctUnitTransportLongRange) tile;
 
 			if ((t.d1 ^ 1) == side || (t.d2 ^ 1) == side) {
 				return connectionType;

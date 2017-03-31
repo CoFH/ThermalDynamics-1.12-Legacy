@@ -15,7 +15,7 @@ import net.minecraft.world.WorldServer;
 
 import java.util.HashSet;
 
-public class LightGrid extends MultiBlockGrid<TileLightDuct> {
+public class LightGrid extends MultiBlockGrid<DuctUnitLight> {
 
 	public HashSet<ChunkCoord> chunks;
 	public boolean upToDate = false;
@@ -33,7 +33,7 @@ public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof TileLightDuct;
+		return aBlock instanceof DuctUnitLight;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 
 		if (!shouldBeLit) {
 			for (Object object : Iterables.concat(nodeSet, idleSet)) {
-				TileLightDuct lamp = (TileLightDuct) object;
+				DuctUnitLight lamp = (DuctUnitLight) object;
 				if (lamp.lit) {
 					shouldBeLit = true;
 					break;
@@ -119,7 +119,7 @@ public class LightGrid extends MultiBlockGrid<TileLightDuct> {
 			}
 
 			for (Object block : Iterables.concat(nodeSet, idleSet)) {
-				((TileLightDuct) block).checkLight();
+				((DuctUnitLight) block).checkLight();
 			}
 		}
 	}

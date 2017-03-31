@@ -2,7 +2,8 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -144,9 +145,13 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 		} else if (stepTime < 0.5F) {
 			if (transport.pos != null) {
 				TileEntity tile = transport.worldObj.getTileEntity(transport.pos.offset(EnumFacing.VALUES[d].getOpposite()));
-				if (tile instanceof TileTransportDuctBase) {
-					if (((TileTransportDuctBase) tile).neighborTypes[d ^ 1] == NeighborType.NONE) {
-						GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
+
+				if (tile instanceof IDuctHolder) {
+					DuctUnitTransportBase base = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT);
+					if(base != null) {
+						if (base.isInput(d^1) || base.isOutput(d ^ 1) ) {
+							GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
+						}
 					}
 				} else {
 					GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);

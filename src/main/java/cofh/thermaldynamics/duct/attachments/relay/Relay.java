@@ -15,6 +15,7 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiRelay;
@@ -22,7 +23,6 @@ import cofh.thermaldynamics.gui.container.ContainerRelay;
 import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
@@ -46,6 +46,7 @@ import java.util.List;
 
 public class Relay extends Attachment implements IBlockConfigGui, IPortableData {
 
+	public final DuctUnitStructural structureUnit;
 	public byte type = 0;
 	public int powerLevel;
 	public byte invert = 0;
@@ -54,12 +55,24 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	public Relay(TileGrid tile, byte side) {
 
 		super(tile, side);
+		structureUnit = tile.getDuct(DuctToken.STRUCTURAL);
 	}
 
 	public Relay(TileGrid tile, byte side, int type) {
 
 		super(tile, side);
 		this.type = (byte) type;
+		structureUnit = tile.getDuct(DuctToken.STRUCTURAL);
+	}
+
+	public static boolean isBlockDuct(Block block) {
+
+		for (BlockDuct blockDuct : TDBlocks.blockDuct) {
+			if (block == blockDuct) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -81,12 +94,11 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public NeighborType getNeighborType() {
+	public BlockDuct.ConnectionType getNeighborType() {
 
 		return null;
 	}
 
-	@Override
 	public BlockDuct.ConnectionType getRenderConnectionType() {
 
 		return BlockDuct.ConnectionType.DUCT;
@@ -170,8 +182,8 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		if (type == 0) { // should calc vanilla redstone level
 			if (isBlockDuct(block)) {
-				TileDuctBase t = (TileDuctBase) tile.world().getTileEntity(offsetPos);
-				Attachment attachment = t.attachments[this.side ^ 1];
+				TileGrid t = (TileGrid) tile.world().getTileEntity(offsetPos);
+				Attachment attachment = t.getAttachment(this.side ^ 1);
 				if (attachment != null) {
 					level = attachment.getRSOutput();
 				}
@@ -202,16 +214,6 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		return level;
 	}
 
-	public static boolean isBlockDuct(Block block) {
-
-		for (BlockDuct blockDuct : TDBlocks.blockDuct) {
-			if (block == blockDuct) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public boolean isInput() {
 
 		return type == 0 || type == 2;
@@ -230,19 +232,14 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		return powerLevel;
 	}
 
-	@Override
-	public int getRSOutput() {
-
-		return isOutput() ? getPowerLevel() : 0;
-	}
-
 	public void setPowerLevel(int powerLevel) {
 
 		if (this.powerLevel != powerLevel) {
 			this.powerLevel = powerLevel;
 
-			if (tile.myGrid != null) {
-				tile.myGrid.signalsUpToDate = false;
+			GridStructural grid = structureUnit.getGrid();
+			if (grid != null) {
+				grid.signalsUpToDate = false;
 			}
 
 			if (isOutput()) {
@@ -263,9 +260,15 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
+	public int getRSOutput() {
+
+		return isOutput() ? getPowerLevel() : 0;
+	}
+
+	@Override
 	public void checkSignal() {
 
-		MultiBlockGrid grid = tile.myGrid;
+		GridStructural grid = structureUnit.getGrid();
 		if (grid == null || grid.rs == null) {
 			return;
 		}
@@ -273,7 +276,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	@SideOnly (Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask() {
 
 		return CoverHoleRender.hollowDuctTile;
@@ -399,8 +402,9 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		if (isServer) {
 			tile.world().notifyNeighborsOfStateChange(tile.getPos(), tile.getBlockType());
 			onNeighborChange();
-			if (type != prevType && tile.myGrid != null) {
-				tile.myGrid.resetRelays();
+			GridStructural grid = structureUnit.getGrid();
+			if (type != prevType && grid != null) {
+				grid.resetRelays();
 			}
 
 		}
@@ -437,8 +441,9 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		tile.world().notifyNeighborsOfStateChange(tile.getPos(), tile.getBlockType());
 		onNeighborChange();
-		if (tile.myGrid != null) {
-			tile.myGrid.resetRelays();
+		GridStructural grid = structureUnit.getGrid();
+		if (grid != null) {
+			grid.resetRelays();
 		}
 
 		onNeighborChange();

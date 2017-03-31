@@ -5,8 +5,9 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.ItemHelper;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -76,7 +77,7 @@ public class RetrieverItem extends ServoItem {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((tile.neighborTypes[i] == NeighborType.OUTPUT || tile.neighborTypes[i] == NeighborType.INPUT) && (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (tile.getAttachment(side) == null || tile.getAttachment(side).getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
@@ -96,16 +97,21 @@ public class RetrieverItem extends ServoItem {
 			for (int k = 0; k < 6; k++) {
 				int i = (endPoint.internalSideCounter + k) % 6;
 
-				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+				Attachment attachment = endPoint.parent.getAttachment(i);
+				if (attachment != null && attachment.getId() == AttachmentRegistry.RETRIEVER_ITEM) {
 					continue;
 				}
 
-				if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != NeighborType.OUTPUT && endPoint.neighborTypes[i] != NeighborType.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
+				DuctUnitItem.Cache cache = endPoint.tileCaches[i];
+
+				if (cache == null || (!endPoint.isInput(side) && !endPoint.isOutput(side)) || !endPoint.parent.getConnectionType(i).allowTransfer) {
 					continue;
 				}
 
 				{
-					IItemHandler inv = endPoint.cache.handlerCache[i];
+					IItemHandler inv = cache.getItemHandler(i ^ 1);
+					if(inv == null) continue;
+
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
 						ItemStack item = inv.getStackInSlot(slot);
 						if (item == null) {
@@ -117,7 +123,7 @@ public class RetrieverItem extends ServoItem {
 							continue;
 						}
 
-						if (!filter.matchesFilter(item) || !endPoint.cache.filterCache[i].matchesFilter(item)) {
+						if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
 							continue;
 						}
 
@@ -181,11 +187,11 @@ public class RetrieverItem extends ServoItem {
 		super.handleStuffedItems();
 	}
 
-	@Override
-	public NeighborType getNeighborType() {
-
-		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
-	}
+//	@Override
+//	public BlockDuct.ConnectionType getNeighborType() {
+//
+//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
+//	}
 
 	/* IPortableData */
 	@Override

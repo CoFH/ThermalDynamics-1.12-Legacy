@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.api.tileentity.IInventoryConnection;
 import cofh.api.tileentity.IItemDuct;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
@@ -8,16 +7,14 @@ import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CrashHelper;
 import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.DuctItem;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.IStuffable;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.IGridTileRoute;
 import cofh.thermaldynamics.multiblock.Route;
@@ -27,7 +24,6 @@ import com.google.common.collect.Iterables;
 import gnu.trove.iterator.TObjectIntIterator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +34,6 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
-import org.apache.commons.lang3.Validate;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 import javax.annotation.Nonnull;
@@ -54,11 +49,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public final static byte maxTicksExistedBeforeFindAlt = 2;
 	public final static byte maxTicksExistedBeforeStuff = 6;
 	public final static byte maxTicksExistedBeforeDump = 10;
-	public static final RouteInfo noRoute = new RouteInfo();
 	public static final int maxCenterLine = 10;
-
-	static final int[][] equivalencySideMasks;
-	static final int[] equivalencyClearMasks;
 	// Type Helper Arrays
 	static int[] _PIPE_LEN = {40, 10, 60, 40};
 	static int[] _PIPE_HALF_LEN = {_PIPE_LEN[0] / 2, _PIPE_LEN[1] / 2, _PIPE_LEN[2] / 2, _PIPE_LEN[3] / 2};
@@ -78,41 +69,19 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		}
 	}
 
-	static {
-		equivalencySideMasks = new int[6][6];
-		equivalencyClearMasks = new int[6];
-		int mask = 0;
-		for (int side = 0; side < 6; side++) {
-			equivalencyClearMasks[side] = 0;
-			for (int otherSide = 0; otherSide < 6; otherSide++) {
-				if (side != (otherSide ^ 1)) {
-					equivalencySideMasks[side][otherSide] = 1 << mask;
-					equivalencyClearMasks[side] |= (1 << mask);
-					mask++;
-				} else {
-					equivalencySideMasks[side][otherSide] = 0;
-				}
-			}
-			equivalencyClearMasks[side] = ~equivalencyClearMasks[side];
-		}
-	}
 
+	public byte internalSideCounter;
 	public List<TravelingItem> myItems = new LinkedList<>();
 	public List<TravelingItem> itemsToRemove = new LinkedList<>();
 	public List<TravelingItem> itemsToAdd = new LinkedList<>();
 	public byte pathWeightType = 0;
 	public byte ticksExisted = 0;
-
 	public boolean hasChanged = false;
 	public int centerLine = 0;
 	public int[] centerLineSub = new int[6];
 
-	public static int getSideEquivalencyMask(int side, int tileSide) {
-
-		if (side == (tileSide ^ 1)) {
-			throw new IllegalStateException("checking original side: " + side);
-		}
-		return equivalencySideMasks[side][tileSide];
+	public DuctUnitItem(TileGrid parent, Duct duct) {
+		super(parent, duct);
 	}
 
 	public static int getNumItems(IItemHandler inv, int side, ItemStack insertingItem, int cap) {
@@ -185,29 +154,40 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
+	public boolean isOutput(int side) {
+		Cache cache = tileCaches[side];
+		return cache != null;
+	}
+
+	@Override
 	public ItemStack insertItem(EnumFacing from, ItemStack item) {
 
 		if (item == null) {
 			return null;
 		}
 		int side = from.ordinal();
-		if (!((neighborTypes[side] == NeighborType.INPUT) || (neighborTypes[side] == NeighborType.OUTPUT && connectionTypes[side].allowTransfer))) {
+		if (!((isInput(side)) || (isOutput(side) && parent.getConnectionType(side).allowTransfer))) {
 			return item;
 		}
 		if (grid == null) {
 			return item;
 		}
-		Attachment attachment = attachments[side];
+		Attachment attachment = parent.getAttachment(side);
 		if (attachment != null && attachment.getId() == AttachmentRegistry.SERVO_ITEM) {
 			return ((ServoItem) attachment).insertItem(item);
 		} else {
 			ItemStack itemCopy = ItemHelper.cloneStack(item);
 
-			if (cache != null && cache.filterCache != null && !cache.filterCache[side].matchesFilter(item)) {
+			Cache cache = tileCaches[side];
+
+			if (cache != null && cache.filter != null && !cache.filter.matchesFilter(item)) {
 				return item;
 			}
 
-			TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)), getCache(false).outputRoutes, this, side, ServoItem.range[0], (byte) 1);
+			RouteCache<DuctUnitItem, ItemGrid> routeCache = getCache(false);
+			TravelingItem routeForItem = ServoItem.findRouteForItem(
+					ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)),
+					routeCache.outputRoutes, this, side, ServoItem.range[0], (byte) 1);
 			if (routeForItem == null) {
 				return item;
 			}
@@ -217,6 +197,26 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			return itemCopy.stackSize > 0 ? itemCopy : null;
 		}
 	}
+//
+//	/*
+//	 * Should return true if theTile is significant to this multiblock
+//	 *
+//	 * IE: Inventory's to ItemDuct's
+//	 */
+//	@Override
+//	public boolean isSignificantTile(TileEntity theTile, int side) {
+//
+//		if ((theTile instanceof IInventoryConnection)) {
+//			IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile).canConnectInventory(EnumFacing.VALUES[side ^ 1]);
+//			if (connectionType == IInventoryConnection.ConnectionType.DENY) {
+//				return false;
+//			}
+//			if (connectionType == IInventoryConnection.ConnectionType.FORCE) {
+//				return true;
+//			}
+//		}
+//		return theTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+//	}
 
 	public Route getRoute(IGridTileRoute itemDuct) {
 
@@ -228,26 +228,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		return null;
 	}
 
-	/*
-	 * Should return true if theTile is significant to this multiblock
-	 *
-	 * IE: Inventory's to ItemDuct's
-	 */
-	@Override
-	public boolean isSignificantTile(TileEntity theTile, int side) {
-
-		if ((theTile instanceof IInventoryConnection)) {
-			IInventoryConnection.ConnectionType connectionType = ((IInventoryConnection) theTile).canConnectInventory(EnumFacing.VALUES[side ^ 1]);
-			if (connectionType == IInventoryConnection.ConnectionType.DENY) {
-				return false;
-			}
-			if (connectionType == IInventoryConnection.ConnectionType.FORCE) {
-				return true;
-			}
-		}
-		return theTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
-	}
-
 	@Override
 	public DuctToken<DuctUnitItem, ItemGrid, Cache> getToken() {
 		return DuctToken.ITEMS;
@@ -257,6 +237,11 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public ItemGrid createGrid() {
 
 		return new ItemGrid(parent.getWorld());
+	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitItem, ItemGrid, Cache> adjDuct, byte side) {
+		return false;
 	}
 
 	@Nullable
@@ -315,7 +300,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Override
 	public boolean canStuffItem() {
 		for (Cache tileCach : tileCaches) {
-			if(tileCach != null && tileCach.stuffableAttachment != null){
+			if (tileCach != null && tileCach.stuffableAttachment != null) {
 				return true;
 			}
 		}
@@ -326,6 +311,16 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public int getMaxRange() {
 
 		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public ConnectionType getConnectionType(byte side) {
+		return parent.getConnectionType(side);
+	}
+
+	@Override
+	public DuctUnitItem getCachedTile(byte side) {
+		return pipeCache[side];
 	}
 
 	@Override
@@ -352,12 +347,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public void pulseLineDo(int dir) {
 
 		if (!isOpaque()) {
-			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-			myPayload.addByte(0);
+
+			PacketTileInfo myPayload = newPacketTileInfo();
 			myPayload.addByte(TileInfoPackets.PULSE_LINE);
 			myPayload.addByte(dir);
 
-			PacketHandler.sendToAllAround(myPayload, this);
+			PacketHandler.sendToAllAround(myPayload, parent);
 		}
 	}
 
@@ -392,7 +387,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	public void stuffItem(TravelingItem travelingItem) {
 
-		Attachment attachment = attachments[travelingItem.direction];
+		Attachment attachment = parent.getAttachment(travelingItem.direction);
 		if (attachment instanceof IStuffable) {
 			signalRepoll();
 			((IStuffable) attachment).stuffItem(travelingItem.stack);
@@ -486,8 +481,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public void sendTravelingItemsPacket() {
 
 		if (!getDuctType().opaque) {
-			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-			myPayload.addByte(0);
+			PacketTileInfo myPayload = newPacketTileInfo();
 			myPayload.addByte(TileInfoPackets.TRAVELING_ITEMS);
 
 			int loopStop = myItems.size();
@@ -497,7 +491,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 				myItems.get(i).writePacket(myPayload);
 			}
 
-			PacketHandler.sendToAllAround(myPayload, this);
+			PacketHandler.sendToAllAround(myPayload, parent);
 		}
 	}
 
@@ -545,37 +539,37 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		}
 	}
 
-	@Override
-	public void cacheImportant(TileEntity tile, int side) {
+//	@Override
+//	public void cacheImportant(TileEntity tile, int side) {
+//
+//		Validate.notNull(cache);
+//
+//		if (tile instanceof IDeepStorageUnit) {
+//			cache.cache3[side] = (IDeepStorageUnit) tile;
+//		}
+//		EnumFacing oppositeSide = EnumFacing.VALUES[side ^ 1];
+//		IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
+//		cache.handlerCache[side] = capability;
+//
+//		if (capability != null) {
+//			for (EnumFacing facing : EnumFacing.values()) {
+//				if (facing == oppositeSide) {
+//					continue;
+//				}
+//				int bitMask = getSideEquivalencyMask(side, facing.ordinal());
+//				if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) == capability) {
+//					cache.handlerCacheEquivalencyBitSet |= bitMask;
+//				} else {
+//					cache.handlerCacheEquivalencyBitSet &= ~bitMask;
+//				}
+//			}
+//		}
+//
+//		if (parent.getAttachment(side) instanceof IFilterAttachment) {
+//			cache.filterCache[side] = ((IFilterAttachment) parent.getAttachment(side)).getItemFilter();
+//		}
+//	}
 
-		Validate.notNull(cache);
-
-		if (tile instanceof IDeepStorageUnit) {
-			cache.cache3[side] = (IDeepStorageUnit) tile;
-		}
-		EnumFacing oppositeSide = EnumFacing.VALUES[side ^ 1];
-		IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
-		cache.handlerCache[side] = capability;
-
-		if (capability != null) {
-			for (EnumFacing facing : EnumFacing.values()) {
-				if (facing == oppositeSide) {
-					continue;
-				}
-				int bitMask = getSideEquivalencyMask(side, facing.ordinal());
-				if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) == capability) {
-					cache.handlerCacheEquivalencyBitSet |= bitMask;
-				} else {
-					cache.handlerCacheEquivalencyBitSet &= ~bitMask;
-				}
-			}
-		}
-
-		if (attachments[side] instanceof IFilterAttachment) {
-			cache.filterCache[side] = ((IFilterAttachment) attachments[side]).getItemFilter();
-		}
-	}
-	
 	public void removeItem(TravelingItem travelingItem, boolean disappearing) {
 
 		if (disappearing) {
@@ -585,26 +579,18 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
-	public PacketCoFHBase getTilePacket() {
-
-		PacketCoFHBase packet = super.getTilePacket();
-		packet.addByte(pathWeightType);
-		return packet;
+	public void writeToTilePacket(PacketCoFHBase payload) {
+		payload.addByte(pathWeightType);
 	}
 
 	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-
-		super.handleTilePacket(payload, isServer);
-		if (!isServer) {
-			pathWeightType = payload.getByte();
-		}
+	public void handleTilePacket(PacketCoFHBase payload) {
+		pathWeightType = payload.getByte();
 	}
 
 	@Override
-	public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
-
-		super.onPlacedBy(living, stack);
+	public void onPlaced() {
+		super.onPlaced();
 		if (stack.hasTagCompound()) {
 			byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
 			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM) {
@@ -624,9 +610,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
-	public ItemStack getDrop() {
-
-		ItemStack drop = super.getDrop();
+	public ItemStack addNBTToItemStackDrop(ItemStack drop) {
 		if (pathWeightType != 0) {
 			if (!drop.hasTagCompound()) {
 				drop.setTagCompound(new NBTTagCompound());
@@ -667,14 +651,14 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Override
 	public RouteInfo canRouteItem(ItemStack anItem) {
 
-		if (grid == null || !cachesExist()) {
-			return noRoute;
+		if (grid == null) {
+			return RouteInfo.noRoute;
 		}
 		int stackSizeLeft;
 		ItemStack curItem;
 
 		for (byte i = internalSideCounter; i < EnumFacing.VALUES.length; i++) {
-			if (neighborTypes[i] == NeighborType.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache != null && cache.handlerCache[i] != null) {
+			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCaches[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 
@@ -689,7 +673,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			}
 		}
 		for (byte i = 0; i < internalSideCounter; i++) {
-			if (neighborTypes[i] == NeighborType.OUTPUT && connectionTypes[i].allowTransfer && itemPassesFiltering(i, anItem) && cache != null && cache.handlerCache[i] != null) {
+			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCaches[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 				if (curItem.stackSize > 0) {
@@ -702,11 +686,15 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 				}
 			}
 		}
-		return noRoute;
+		return RouteInfo.noRoute;
 	}
 
 	public int simTransferI(int side, ItemStack insertingItem) {
 
+		if (grid == null) {
+			return 0;
+		}
+		Cache cache = tileCaches[side];
 		if (cache == null) {
 			return 0;
 		}
@@ -714,10 +702,10 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			ItemStack itemStack = simTransfer(side, insertingItem);
 			return itemStack == null ? 0 : itemStack.stackSize;
 		} catch (Exception err) {
-			IItemHandler handler = cache.handlerCache[side];
+			IItemHandler handler = cache.getItemHandler(side ^ 1);
 
 			CrashReport crashReport = CrashHelper.makeDetailedCrashReport(err, "Inserting", this, "Inserting Item", insertingItem, "Side", side, "Cache", handler, "Grid", grid);
-			CrashHelper.addSurroundingDetails(crashReport, "ItemDuct", this);
+			CrashHelper.addSurroundingDetails(crashReport, "ItemDuct", parent);
 			CrashHelper.addInventoryContents(crashReport, "Destination Inventory", handler);
 			throw new ReportedException(crashReport);
 		}
@@ -729,20 +717,23 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		if (insertingItem == null) {
 			return null;
 		}
+
+		Cache cache = tileCaches[side];
+
 		if (grid == null || cache == null) {
 			return insertingItem;
 		}
-		boolean routeItems = cache.filterCache[side].shouldIncRouteItems();
+		boolean routeItems = cache.filter.shouldIncRouteItems();
 
-		int maxStock = cache.filterCache[side].getMaxStock();
+		int maxStock = cache.filter.getMaxStock();
 
-		if (cache.cache3[side] != null) { // IDeepStorage
-			ItemStack cacheStack = cache.cache3[side].getStoredItemType();
+		if (cache.dsuCache != null) { // IDeepStorage
+			ItemStack cacheStack = cache.dsuCache.getStoredItemType();
 			if (cacheStack != null && !ItemHelper.itemsIdentical(cacheStack, insertingItem)) {
 				return insertingItem;
 			}
 			int s = cacheStack != null ? cacheStack.stackSize : 0;
-			int m = Math.min(cache.cache3[side].getMaxStoredCount(), maxStock);
+			int m = Math.min(cache.dsuCache.getMaxStoredCount(), maxStock);
 
 			if (s >= m) {
 				return insertingItem;
@@ -771,18 +762,19 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			}
 			return insertingItem;
 		} else {
+			IItemHandler itemHandler = cache.getItemHandler(side ^ 1);
 			if (!routeItems) {
-				return simulateInsertItemStackIntoInventory(cache.handlerCache[side], insertingItem, side ^ 1, maxStock);
+				return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
 			}
 
 			StackMap travelingItems = grid.travelingItems.get(pos().offset(face));
 			if (travelingItems == null || travelingItems.isEmpty()) {
-				return simulateInsertItemStackIntoInventory(cache.handlerCache[side], insertingItem, side ^ 1, maxStock);
+				return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
 			}
 			if (travelingItems.size() == 1) {
 				if (ItemHelper.itemsIdentical(insertingItem, travelingItems.getItems().next())) {
 					insertingItem.stackSize += travelingItems.getItems().next().stackSize;
-					return simulateInsertItemStackIntoInventory(cache.handlerCache[side], insertingItem, side ^ 1, maxStock);
+					return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
 				}
 			} else {
 				int s = 0;
@@ -796,18 +788,18 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 				}
 				if (s >= 0) {
 					insertingItem.stackSize += s;
-					return simulateInsertItemStackIntoInventory(cache.handlerCache[side], insertingItem, side ^ 1, maxStock);
+					return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
 				}
 			}
 
-			SimulatedInv simulatedInv = SimulatedInv.wrapHandler(cache.handlerCache[side]);
+			SimulatedInv simulatedInv = SimulatedInv.wrapHandler(itemHandler);
 
 			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
 				iterator.advance();
 
 				StackMap.ItemEntry itemEntry = iterator.key();
 
-				if (itemEntry.side != side && (cache.handlerCacheEquivalencyBitSet & getSideEquivalencyMask(side, itemEntry.side ^ 1)) == 0) {
+				if (itemEntry.side != side && (cache.areEquivalentHandlers(itemHandler, itemEntry.side))) {
 					continue;
 				}
 
@@ -825,15 +817,16 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public byte getStuffedSide() {
 
 		for (byte i = 0; i < 6; i++) {
-			if (attachments[i] instanceof IStuffable) {
-				if (((IStuffable) attachments[i]).canStuff()) {
+			Attachment attachment = parent.getAttachment(i);
+			if (attachment instanceof IStuffable) {
+				if (((IStuffable) attachment).canStuff()) {
 					return i;
 				}
 
 			}
 		}
 		for (byte i = 0; i < 6; i++) {
-			if (attachments[i] instanceof IStuffable) {
+			if (parent.getAttachment(i) instanceof IStuffable) {
 				return i;
 			}
 		}
@@ -844,8 +837,8 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public boolean acceptingStuff() {
 
 		for (byte i = 0; i < 6; i++) {
-			if (attachments[i] instanceof IStuffable) {
-				return ((IStuffable) attachments[i]).canStuff();
+			if (parent.getAttachment(i) instanceof IStuffable) {
+				return ((IStuffable) parent.getAttachment(i)).canStuff();
 			}
 		}
 		return false;
@@ -857,8 +850,8 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	private boolean itemPassesFiltering(byte i, ItemStack anItem) {
-
-		return cache == null || cache.filterCache[i] == null || cache.filterCache[i].matchesFilter(anItem);
+		Cache cache = tileCaches[i];
+		return cache == null || cache.filter == null || cache.filter.matchesFilter(anItem);
 	}
 
 	public int getMoveStackSize(byte side) {
@@ -868,10 +861,11 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	public int insertIntoInventory(ItemStack stack, int direction) {
 
-		if (!cachesExist() || cache == null || cache.handlerCache[direction] == null) {
+		Cache cache = tileCaches[direction];
+		if (cache == null) {
 			return stack.stackSize;
 		}
-		if (!cache.filterCache[direction].matchesFilter(stack)) {
+		if (!cache.filter.matchesFilter(stack)) {
 			return stack.stackSize;
 		}
 		return insertIntoInventory_do(stack, direction);
@@ -887,8 +881,13 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public int insertIntoInventory_do(ItemStack stack, int direction) {
 
 		Cache cache = tileCaches[direction];
+		IItemHandler itemHandler = cache.getItemHandler(direction ^ 1);
+		if (itemHandler == null) {
+			return stack.stackSize;
+		}
+
 		signalRepoll();
-		stack = insertItemStackIntoInventory(cache.getItemHandler(direction ^ 1), stack, direction ^ 1, cache.filter.getMaxStock());
+		stack = insertItemStackIntoInventory(itemHandler, stack, direction ^ 1, cache.filter.getMaxStock());
 		return stack == null ? 0 : stack.stackSize;
 	}
 
@@ -902,16 +901,16 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		@Nullable
 		public final IStuffable stuffableAttachment;
 
-		public Cache(@Nonnull TileEntity tile, @Nullable Attachment attachment){
+		public Cache(@Nonnull TileEntity tile, @Nullable Attachment attachment) {
 			this.tile = tile;
-			if(attachment instanceof IFilterAttachment){
-				filter = ((IFilterAttachment)attachment).getItemFilter();
-			}else{
+			if (attachment instanceof IFilterAttachment) {
+				filter = ((IFilterAttachment) attachment).getItemFilter();
+			} else {
 				filter = IFilterItems.nullFilter;
 			}
-			if(tile instanceof IDeepStorageUnit){
+			if (tile instanceof IDeepStorageUnit) {
 				dsuCache = (IDeepStorageUnit) tile;
-			} else{
+			} else {
 				dsuCache = null;
 			}
 			if (attachment instanceof IStuffable) {
@@ -921,35 +920,25 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			}
 		}
 
-		public IItemHandler getItemHandler(int face){
+		public IItemHandler getItemHandler(int face) {
 			return getItemHandler(EnumFacing.values()[face]);
 		}
 
-		public IItemHandler getItemHandler(EnumFacing face){
+		public IItemHandler getItemHandler(EnumFacing face) {
 			if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)) {
 				IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
-				if(capability != null){
+				if (capability != null) {
 					return capability;
 				}
 			}
 
 			return EmptyHandler.INSTANCE;
 		}
-	}
 
-	public static class RouteInfo {
-
-		public boolean canRoute = false;
-		public int stackSize = -1;
-		public byte side = -1;
-		public RouteInfo(int stackSizeLeft, byte i) {
-
-			canRoute = true;
-			stackSize = stackSizeLeft;
-			side = i;
-		}
-		public RouteInfo() {
-
+		public boolean areEquivalentHandlers(@Nonnull IItemHandler itemHandler, int side) {
+			EnumFacing facing = EnumFacing.values()[side];
+			return tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)
+					&& itemHandler.equals(tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing));
 		}
 	}
 

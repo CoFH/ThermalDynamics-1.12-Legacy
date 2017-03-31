@@ -4,6 +4,7 @@ import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -26,13 +27,13 @@ public class ServoFluid extends ServoBase {
 	public ServoFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
-		fluidDuct = (DuctUnitFluid) tile;
+		fluidDuct = tile.getDuct(DuctToken.FLUID);
 	}
 
 	public ServoFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
-		fluidDuct = (DuctUnitFluid) tile;
+		fluidDuct = tile.getDuct(DuctToken.FLUID);
 	}
 
 	public IFluidHandler theTile;
@@ -58,7 +59,7 @@ public class ServoFluid extends ServoBase {
 	@Override
 	public boolean canAddToTile(TileGrid tileMultiBlock) {
 
-		return tileMultiBlock instanceof DuctUnitFluid;
+		return fluidDuct != null;
 	}
 
 	@Override
@@ -71,10 +72,11 @@ public class ServoFluid extends ServoBase {
 		}
 
 		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
-		IFluidHandler ductHandler = fluidDuct.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
+		IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[side]);
+
+		if (ductHandler == null) return;
 
 		maxInput = ductHandler.fill(theTile.drain(maxInput, false), false);
-
 		FluidStack returned = theTile.drain(maxInput, true);
 		ductHandler.fill(returned, true);
 	}

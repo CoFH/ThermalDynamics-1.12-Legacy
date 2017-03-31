@@ -10,12 +10,14 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
+import javax.annotation.Nonnull;
+
 public class RecipeCover implements IRecipe {
 
 	public static final RecipeCover instance = new RecipeCover();
 
 	@Override
-	public boolean matches(InventoryCrafting craft, World world) {
+	public boolean matches(@Nonnull InventoryCrafting craft, @Nonnull World world) {
 
 		boolean a = false;
 		boolean b = false;
@@ -46,7 +48,7 @@ public class RecipeCover implements IRecipe {
 	}
 
 	@Override
-	public ItemStack getCraftingResult(InventoryCrafting craft) {
+	public ItemStack getCraftingResult(@Nonnull InventoryCrafting craft) {
 
 		for (int i = 0; i < craft.getSizeInventory(); i++) {
 			ItemStack stack = craft.getStackInSlot(i);
@@ -74,7 +76,7 @@ public class RecipeCover implements IRecipe {
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+	public ItemStack[] getRemainingItems(@Nonnull InventoryCrafting inv) {
 
 		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
 	}

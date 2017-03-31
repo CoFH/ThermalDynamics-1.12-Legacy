@@ -1,6 +1,8 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.IEnergyReceiver;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
@@ -13,26 +15,31 @@ import net.minecraftforge.energy.IEnergyStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid<E>> extends DuctUnit<E, G, IEnergyReceiver> implements IEnergyDuctInternal<E, G> {
+public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
 	byte internalSideCounter;
+	int type;
 
-	public DuctUnitEnergy(TileGrid parent) {
+	public DuctUnitEnergy(TileGrid parent, Duct duct) {
 
-		super(parent);
+		super(parent, duct);
 	}
 
 	@Override
-	public DuctToken<E, G, IEnergyReceiver> getToken() {
-		return null;
+	public DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> getToken() {
+		return DuctToken.ENERGY;
 	}
 
 	@Override
-	public G createGrid() {
+	public EnergyGrid createGrid() {
+		return new EnergyGrid(world(), getTransferLimit(), getCapacity());
+	}
 
-		return (G) new EnergyGrid<E>(world(), 0);
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side) {
+		return getTransferLimit() == adjDuct.cast().getTransferLimit();
 	}
 
 	@Override
@@ -97,10 +104,11 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 	@Override
 	public boolean tickPass(int pass) {
 
-		if (!super.tickPass(pass)) {
-			return false;
-		}
+		return super.tickPass(pass) && sendEnergy();
 
+	}
+
+	public boolean sendEnergy() {
 		int power = this.grid.getSendableEnergy();
 
 		int usedPower = transmitEnergy(power, false);
@@ -109,13 +117,11 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 		return true;
 	}
 
-	@Override
 	public int getEnergyForGrid() {
 
 		return energyForGrid;
 	}
 
-	@Override
 	public void setEnergyForGrid(int energy) {
 
 		energyForGrid = energy;
@@ -154,14 +160,10 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 		return usedEnergy;
 	}
 
-	int type;
-
-	@Override
 	public int getTransferLimit() {
 		return EnergyGrid.NODE_TRANSFER[type];
 	}
 
-	@Override
 	public int getCapacity() {
 		return EnergyGrid.NODE_STORAGE[type];
 	}
@@ -186,7 +188,7 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 
 		if (grid != null) {
 			if (isNode()) {
-				lastStoredValue = grid.getNodeShare((E) this);
+				lastStoredValue = grid.getNodeShare(this);
 				nbt.setInteger("Energy", lastStoredValue);
 			}
 		} else if (energyForGrid > 0) {
@@ -195,5 +197,15 @@ public class DuctUnitEnergy<E extends DuctUnitEnergy<E, G>, G extends EnergyGrid
 			energyForGrid = 0;
 		}
 		return nbt;
+	}
+
+
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+		if(grid == null) return 0;
+		return grid.receiveEnergy(maxReceive, simulate);
+	}
+
+	public boolean canConnectEnergy(EnumFacing facing){
+		return tileCaches[facing.ordinal()] != null;
 	}
 }

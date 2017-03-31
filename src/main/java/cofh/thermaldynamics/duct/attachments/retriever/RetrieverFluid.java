@@ -4,8 +4,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
@@ -45,7 +46,7 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public void tick(int pass) {
 
-		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput || !tile.cachesExist()) {
+		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
 			return;
 		}
 		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
@@ -58,30 +59,38 @@ public class RetrieverFluid extends ServoFluid {
 		for (Iterator<?> iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
 			DuctUnitFluid fluidDuct = (DuctUnitFluid) iterator.next();
 
-			if (!fluidDuct.cachesExist()) {
-				continue;
-			}
 			for (int k = 0; k < 6 && maxInput > 0; k++) {
 				int i = (k + fluidDuct.internalSideCounter) % 6;
-				if (fluidDuct.cache[i] == null || (fluidDuct.neighborTypes[i] != NeighborType.OUTPUT && fluidDuct.neighborTypes[i] != NeighborType.INPUT)) {
+
+				DuctUnitFluid.Cache cache = fluidDuct.tileCaches[i];
+
+				if (cache == null || (!fluidDuct.isOutput(side) && !fluidDuct.isInput(side))) {
 					continue;
 				}
-				if (fluidDuct.attachments[i] != null) {
-					if (fluidDuct.attachments[i].getId() == this.getId()) {
-						continue;
-					}
+
+				Attachment attachment = fluidDuct.parent.getAttachment(side);
+				if (attachment != null && attachment.getId() == this.getId()) {
+					continue;
 				}
-				IFluidHandler ductHandler = fluidDuct.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[i]);
-				int input = ductHandler.fill(fluidDuct.cache[i].drain(maxInput, false), false);
+
+				IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[i]);
+
+				if(ductHandler == null) continue;
+
+				IFluidHandler handler = cache.getHandler(side ^ 1);
+
+				if(handler == null) continue;
+
+				int input = ductHandler.fill(handler.drain(maxInput, false), false);
 
 				if (input == 0) {
 					continue;
 				}
-				FluidStack fluid = fluidDuct.cache[i].drain(input, false);
+				FluidStack fluid = handler.drain(input, false);
 
-				if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid) && fluidDuct.cache[i].getTankProperties()[0].canDrainFluidType(fluid)) {
+				if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid) && handler.getTankProperties()[0].canDrainFluidType(fluid)) {
 
-					fluid = fluidDuct.cache[i].drain(input, true);
+					fluid = handler.drain(input, true);
 
 					maxInput -= ductHandler.fill(fluid, true);
 
@@ -115,12 +124,6 @@ public class RetrieverFluid extends ServoFluid {
 		Translation trans = Vector3.fromTileCenter(tile).translation();
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(TDTextures.RETRIEVER_BASE[stuffed ? 1 : 0][type]));
 		return true;
-	}
-
-	@Override
-	public NeighborType getNeighborType() {
-
-		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
 	}
 
 	/* IPortableData */

@@ -42,7 +42,7 @@ public class TickHandlerClient {
 			if (!mc.isGamePaused() && !tickBlocks.isEmpty()) {
 				for (Iterator<DuctUnitItem> iterator = tickBlocks.iterator(); iterator.hasNext(); ) {
 					DuctUnitItem aCond = iterator.next();
-					if (aCond.isInvalid()) {
+					if (aCond.isOutdated()) {
 						iterator.remove();
 					} else {
 						aCond.tickItemsClient();

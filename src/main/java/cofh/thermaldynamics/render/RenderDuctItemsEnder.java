@@ -7,8 +7,8 @@ import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitEnder;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
 import net.minecraft.client.Minecraft;
@@ -46,7 +46,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	@Override
 	public void renderTileEntityAt(DuctUnitItem tile, double x, double y, double z, float frame, int destroyStage) {
 
-		TileItemDuctEnder duct = (TileItemDuctEnder) tile;
+		DuctUnitEnder duct = (DuctUnitEnder) tile;
 
 		if (duct.powered) {
 			CCRenderState ccrs = CCRenderState.instance();

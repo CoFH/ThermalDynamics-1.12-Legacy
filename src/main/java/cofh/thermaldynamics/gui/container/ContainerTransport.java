@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.core.network.PacketHandler;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,10 +15,10 @@ import java.util.Comparator;
 
 public class ContainerTransport extends Container {
 
-	public final TileTransportDuct transportDuct;
+	public final DuctUnitTransport transportDuct;
 	public DirectoryEntry directoryEntry;
 
-	public ContainerTransport(TileTransportDuct transportDuct) {
+	public ContainerTransport(DuctUnitTransport transportDuct) {
 
 		this.transportDuct = transportDuct;
 	}
@@ -47,7 +47,7 @@ public class ContainerTransport extends Container {
 
 		if (!this.listeners.isEmpty()) {
 			if (cache == null || cache.invalid) {
-				if (transportDuct.internalGrid == null) {
+				if (transportDuct.grid == null) {
 					cache = null;
 				} else {
 					cache = transportDuct.getCache();

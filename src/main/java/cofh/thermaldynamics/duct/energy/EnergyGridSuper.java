@@ -3,16 +3,16 @@ package cofh.thermaldynamics.duct.energy;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 
-public class EnergyGridSuper<T extends IEnergyDuctInternal> extends EnergyGrid<T> {
+public class EnergyGridSuper extends EnergyGrid {
 
 	int nodeTracker;
 	boolean isSendingEnergy;
 
-	IEnergyDuctInternal[] nodeList = null;
+	DuctUnitEnergy[] nodeList = null;
 
-	public EnergyGridSuper(World world, int type) {
+	public EnergyGridSuper(World world, int transferLimit, int capacity) {
 
-		super(world, type);
+		super(world, transferLimit, capacity);
 		myStorage.setMaxExtract(myStorage.getMaxEnergyStored());
 	}
 
@@ -22,27 +22,29 @@ public class EnergyGridSuper<T extends IEnergyDuctInternal> extends EnergyGrid<T
 		super.tickGrid();
 		int i = 0;
 		if (nodeList == null) {
-			nodeList = new IEnergyDuctInternal[nodeSet.size()];
-			for (IEnergyDuctInternal multiBlock : nodeSet) {
+			nodeList = new DuctUnitEnergy[nodeSet.size()];
+			for (DuctUnitEnergy multiBlock : nodeSet) {
 				nodeList[i] = multiBlock;
 				i++;
 			}
 		}
 	}
 
-	public int sendEnergy(int energy, boolean simulate) {
+	@Override
+	public int receiveEnergy(int energy, boolean simulate) {
 
 		if (isSendingEnergy) {
 			return 0;
 		}
 		int tempTracker = nodeTracker;
 
-		IEnergyDuctInternal[] list = nodeList;
-		int startAmount = energy;
+		DuctUnitEnergy[] list = nodeList;
 
 		if (list == null || list.length == 0) {
 			return 0;
 		}
+
+		int startAmount = energy;
 		isSendingEnergy = true;
 		for (int i = nodeTracker; i < list.length && energy > 0; i++) {
 			energy -= trackInOut(list[i].transmitEnergy(energy, simulate), simulate);

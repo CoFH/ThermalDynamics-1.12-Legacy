@@ -6,7 +6,7 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.gui.element.ElementButtonManaged;
 import cofh.lib.gui.element.listbox.SliderVertical;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransport;
 import cofh.thermaldynamics.gui.element.ElementDirectoryButton;
 import net.minecraft.util.ResourceLocation;
@@ -50,7 +50,7 @@ public class GuiTransport extends GuiCore {
 
 	final static int SLIDER_WIDTH = 6;
 
-	public GuiTransport(TileTransportDuct transportDuct) {
+	public GuiTransport(DuctUnitTransport transportDuct) {
 
 		this(new ContainerTransport(transportDuct));
 	}
@@ -82,9 +82,10 @@ public class GuiTransport extends GuiCore {
 			@Override
 			public void onClick() {
 
-				PacketTileInfo myPayload = PacketTileInfo.newPacket(container.transportDuct);
+				container.transportDuct.getTilePacket();
+				PacketTileInfo myPayload = PacketTileInfo.newPacket(container.transportDuct.parent);
 				myPayload.addByte(0);
-				myPayload.addByte(TileTransportDuct.NETWORK_CONFIG);
+				myPayload.addByte(DuctUnitTransport.NETWORK_CONFIG);
 				PacketHandler.sendToServer(myPayload);
 			}
 		};

@@ -13,7 +13,6 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.NeighborType;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
@@ -75,9 +74,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public NeighborType getNeighborType() {
+	public BlockDuct.ConnectionType getNeighborType() {
 
-		return isValidInput ? NeighborType.INPUT : NeighborType.DUCT_ATTACHMENT;
+		return BlockDuct.ConnectionType.DUCT;
 	}
 
 	@Override
@@ -332,11 +331,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return false;
 	}
 
-	@Override
-	public BlockDuct.ConnectionType getRenderConnectionType() {
-
-		return BlockDuct.ConnectionType.DUCT;
-	}
 
 	@Override
 	public IFilterItems getItemFilter() {

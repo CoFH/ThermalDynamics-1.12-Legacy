@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GridStructural<T extends IGridTile> extends MultiBlockGrid<T> {
+public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 
 	public GridStructural(WorldGridList worldGrid) {
 
@@ -59,7 +59,7 @@ public class GridStructural<T extends IGridTile> extends MultiBlockGrid<T> {
 			if (rs != null) {
 				rs.relaysOut = null;
 			}
-			for (IGridTile multiBlock : nodeSet) {
+			for (DuctUnitStructural multiBlock : nodeSet) {
 				multiBlock.addRelays();
 			}
 		}

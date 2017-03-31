@@ -10,8 +10,6 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
@@ -38,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBlockConfigGui {
+public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBlockConfigGui {
 
 	@Override
 	public boolean isOutput() {
@@ -131,7 +129,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 			return true;
 		}
 
-		if (internalGrid == null) {
+		if (grid == null) {
 			return false;
 		}
 
@@ -217,8 +215,8 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 				data = new OutputData();
 			}
 			data.loadConfigData(payload);
-			if (internalGrid != null) {
-				internalGrid.onMajorGridChange();
+			if (grid != null) {
+				grid.onMajorGridChange();
 			}
 		} else if (type == NETWORK_LIST && !isServer) {
 			Container openContainer = thePlayer.openContainer;
@@ -294,18 +292,18 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 
 		LinkedList<Route> outputRoutes = getCache().outputRoutes;
 
-		ArrayList<TileTransportDuct> ducts = new ArrayList<>(outputRoutes.size());
+		ArrayList<DuctUnitTransport> ducts = new ArrayList<>(outputRoutes.size());
 
 		for (Route outputRoute : outputRoutes) {
-			if (outputRoute.endPoint.isOutput() && outputRoute.endPoint != this && outputRoute.endPoint instanceof TileTransportDuct) {
-				ducts.add((TileTransportDuct) outputRoute.endPoint);
+			if (outputRoute.endPoint.isOutput() && outputRoute.endPoint != this && outputRoute.endPoint instanceof DuctUnitTransport) {
+				ducts.add((DuctUnitTransport) outputRoute.endPoint);
 			}
 		}
 
 		DirectoryEntry.addDirectoryEntry(myPayload, this);
 
 		myPayload.addShort(ducts.size());
-		for (TileTransportDuct endPoint : ducts) {
+		for (DuctUnitTransport endPoint : ducts) {
 			DirectoryEntry.addDirectoryEntry(myPayload, endPoint);
 		}
 
@@ -377,7 +375,7 @@ public class TileTransportDuct extends TileTransportDuctBaseRoute implements IBl
 		public String name = "";
 		public ItemStack item = null;
 
-		public void write(NBTTagCompound nbt, TileTransportDuct transportDuct) {
+		public void write(NBTTagCompound nbt, DuctUnitTransport transportDuct) {
 
 			if (!"".equals(name)) {
 				nbt.setString("DestinationName", name);

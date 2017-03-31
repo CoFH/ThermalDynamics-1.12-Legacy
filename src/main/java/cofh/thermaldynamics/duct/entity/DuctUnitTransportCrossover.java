@@ -3,8 +3,6 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.BlockPosition;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.TileDuctBase;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
@@ -15,7 +13,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 
-public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
+public class DuctUnitTransportCrossover extends DuctUnitTransportBaseRoute {
 
 	final BlockPosition[] rangePos = new BlockPosition[6];
 	final static BlockPosition clientValue = new BlockPosition(0, 0, 0, EnumFacing.DOWN);
@@ -50,7 +48,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 		if (worldObj.isBlockLoaded(position)) {
 			theTile = worldObj.getTileEntity(position);
 
-			if (theTile instanceof TileTransportDuctCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
+			if (theTile instanceof DuctUnitTransportCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
 				neighborMultiBlocks[i] = (IGridTile) theTile;
 				neighborTypes[i] = NeighborType.MULTIBLOCK;
 			} else {
@@ -90,15 +88,15 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 			k = 1;
 
 			TileEntity adjTileEntitySafe = getAdjTileEntitySafe(i);
-			if (!(adjTileEntitySafe instanceof TileTransportDuctLongRange)) {
+			if (!(adjTileEntitySafe instanceof DuctUnitTransportLongRange)) {
 				continue;
 			}
 
 			player.addChatComponentMessage(new TextComponentString("Searching on side - " + EnumFacing.VALUES[i].toString()));
 
-			TileTransportDuctLongRange travel = (TileTransportDuctLongRange) adjTileEntitySafe;
+			DuctUnitTransportLongRange travel = (DuctUnitTransportLongRange) adjTileEntitySafe;
 
-			TileTransportDuctCrossover finalDest = null;
+			DuctUnitTransportCrossover finalDest = null;
 
 			byte d = travel.nextDirection(i);
 
@@ -113,11 +111,11 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 				}
 				TileEntity side = worldObj.getTileEntity(pos);
 
-				if (side instanceof TileTransportDuctCrossover) {
-					finalDest = ((TileTransportDuctCrossover) side);
+				if (side instanceof DuctUnitTransportCrossover) {
+					finalDest = ((DuctUnitTransportCrossover) side);
 					break;
-				} else if (side instanceof TileTransportDuctLongRange) {
-					travel = (TileTransportDuctLongRange) side;
+				} else if (side instanceof DuctUnitTransportLongRange) {
+					travel = (DuctUnitTransportLongRange) side;
 				} else {
 					break;
 				}
@@ -131,12 +129,12 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 				finalDest.rangePos[d ^ 1] = new BlockPosition(this).setOrientation(EnumFacing.VALUES[i].getOpposite());
 				rangePos[i] = new BlockPosition(finalDest).setOrientation(EnumFacing.VALUES[d]);
 
-				if (internalGrid != null) {
-					internalGrid.destroyAndRecreate();
+				if (grid != null) {
+					grid.destroyAndRecreate();
 				}
 
-				if (finalDest.internalGrid != null) {
-					finalDest.internalGrid.destroyAndRecreate();
+				if (finalDest.grid != null) {
+					finalDest.grid.destroyAndRecreate();
 				}
 			} else {
 				player.addChatComponentMessage(new TextComponentString("Failed at - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
@@ -150,8 +148,8 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 
 		if (rangePos[direction] != null) {
 			TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, direction);
-			if (adjacentTileEntity instanceof TileTransportDuctLongRange) {
-				return ((TileTransportDuctLongRange) adjacentTileEntity);
+			if (adjacentTileEntity instanceof DuctUnitTransportLongRange) {
+				return ((DuctUnitTransportLongRange) adjacentTileEntity);
 			}
 			return null;
 		}
@@ -165,8 +163,8 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 			super.advanceToNextTile(t);
 		} else {
 			if (this.neighborTypes[t.direction] == NeighborType.MULTIBLOCK && this.connectionTypes[t.direction].allowTransfer) {
-				TileTransportDuctBase newHome = (TileTransportDuctBase) this.getPhysicalConnectedSide(t.direction);
-				if (!(newHome instanceof TileTransportDuctLongRange)) {
+				DuctUnitTransportBase newHome = (DuctUnitTransportBase) this.getPhysicalConnectedSide(t.direction);
+				if (!(newHome instanceof DuctUnitTransportLongRange)) {
 					t.bouncePassenger(this);
 					return;
 				}
@@ -175,7 +173,7 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 					t.pos = new BlockPos(newHome.getPos());
 
 					t.oldDirection = t.direction;
-					t.direction = ((TileTransportDuctLongRange) newHome).nextDirection(t.direction);
+					t.direction = ((DuctUnitTransportLongRange) newHome).nextDirection(t.direction);
 					if (t.direction == -1) {
 						t.dropPassenger();
 					}
@@ -246,13 +244,13 @@ public class TileTransportDuctCrossover extends TileTransportDuctBaseRoute {
 	@Override
 	public boolean isConnectable(TileEntity theTile, int side) {
 
-		return theTile instanceof TileTransportDuctBaseRoute && !(theTile instanceof TileTransportDuctCrossover);
+		return theTile instanceof DuctUnitTransportBaseRoute && !(theTile instanceof DuctUnitTransportCrossover);
 	}
 
 	@Override
 	public boolean isSignificantTile(TileEntity theTile, int side) {
 
-		return theTile instanceof TileTransportDuctLongRange;
+		return theTile instanceof DuctUnitTransportLongRange;
 	}
 
 	@Override

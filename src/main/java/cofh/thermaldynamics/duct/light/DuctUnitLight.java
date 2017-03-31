@@ -2,49 +2,46 @@ package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.duct.TileDuctBase;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class TileLightDuct extends TileDuctBase {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	public LightGrid gridGlow = null;
+public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 
-	@Override
-	public MultiBlockGrid createGrid() {
 
-		return new LightGrid(worldObj);
+	public DuctUnitLight(TileGrid parent, Duct duct) {
+		super(parent, duct);
 	}
 
 	@Override
-	public void setGrid(MultiBlockGrid newGrid) {
-
-		super.setGrid(newGrid);
-		gridGlow = (LightGrid) newGrid;
+	public DuctToken<DuctUnitLight, LightGrid, Void> getToken() {
+		return DuctToken.LIGHT;
 	}
 
 	@Override
-	public boolean cachesExist() {
+	public LightGrid createGrid() {
 
+		return new LightGrid(world());
+	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitLight, LightGrid, Void> adjDuct, byte side) {
 		return true;
 	}
 
+	@Nullable
 	@Override
-	public void createCaches() {
-
-	}
-
-	@Override
-	public void cacheImportant(TileEntity tile, int side) {
-
-	}
-
-	@Override
-	public void clearCache(int side) {
-
+	public Void cacheTile(@Nonnull TileEntity tile, byte side) {
+		return null;
 	}
 
 	boolean lit = false;
@@ -60,27 +57,26 @@ public class TileLightDuct extends TileDuctBase {
 
 	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
 	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
-	private static TileLightDuct lightingUpdate = null;
+	private static DuctUnitLight lightingUpdate = null;
 
-	@Override
+
 	protected void updateLighting() {
 
 		lightingUpdate = this;
-		super.updateLighting();
+		parent.updateLighting();
 		lightingUpdate = null;
 	}
 
 	public boolean isLit() {
 
-		return ServerHelper.isClientWorld(worldObj) || gridGlow == null ? lit : gridGlow.lit;
+		return ServerHelper.isClientWorld(world()) || grid == null ? lit : grid.lit;
 	}
 
 	@Override
-	public void blockPlaced() {
-
-		super.blockPlaced();
-		if (ServerHelper.isServerWorld(worldObj)) {
-			lit = worldObj.isBlockPowered(getPos());
+	public void onPlaced() {
+		super.onPlaced();
+		if (ServerHelper.isServerWorld(world())) {
+			lit = world().isBlockPowered(pos());
 		}
 	}
 
@@ -88,38 +84,37 @@ public class TileLightDuct extends TileDuctBase {
 	public void onNeighborBlockChange() {
 
 		super.onNeighborBlockChange();
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world())) {
 			return;
 		}
 
 		lit = false;
 		EnumFacing[] valid_directions = EnumFacing.VALUES;
 		for (int i = 0; !lit && i < valid_directions.length; i++) {
-			if (attachments[i] != null && attachments[i].shouldRSConnect()) {
+			Attachment attachment = parent.getAttachment(i);
+			if (attachment != null && attachment.shouldRSConnect()) {
 				continue;
 			}
 
 			EnumFacing dir = valid_directions[i];
-			lit = worldObj.isSidePowered(pos.offset(dir), dir);
+			lit = world().isSidePowered(pos().offset(dir), dir);
 		}
 
-		if (gridGlow != null && gridGlow.lit != lit) {
-			gridGlow.upToDate = false;
+		if (grid != null && grid.lit != lit) {
+			grid.upToDate = false;
 		}
 	}
 
-	@Override
-	public PacketCoFHBase getTilePacket() {
 
-		PacketCoFHBase packet = super.getTilePacket();
-		packet.addBool(lit || (gridGlow != null && gridGlow.lit));
-		return packet;
+	@Override
+	public void writeToTilePacket(PacketCoFHBase packet) {
+		packet.addBool(lit || (grid != null && grid.lit));
 	}
 
 	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+	public void handleTilePacket(PacketCoFHBase payload) {
 
-		super.handleTilePacket(payload, isServer);
+		super.handleTilePacket(payload);
 		boolean b = payload.getBool();
 
 		if (b != lit) {
@@ -135,14 +130,7 @@ public class TileLightDuct extends TileDuctBase {
 	}
 
 	public void checkLight() {
-
 		updateLighting();
-	}
-
-	@Override
-	public boolean isConnectable(TileEntity theTile, int side) {
-
-		return theTile instanceof TileLightDuct;
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import cofh.core.block.ItemBlockCore;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
-import cofh.thermaldynamics.duct.energy.subgrid.SubTileEnergyRedstone;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;

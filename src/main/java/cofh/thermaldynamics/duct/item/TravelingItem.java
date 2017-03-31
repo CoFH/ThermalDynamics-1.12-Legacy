@@ -3,8 +3,9 @@ package cofh.thermaldynamics.duct.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.helpers.BlockHelper;
-import cofh.thermaldynamics.duct.ConnectionType;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
@@ -39,7 +40,7 @@ public class TravelingItem {
 	public boolean shouldDie = false;
 	public int step = 1;
 
-	public TravelingItem(ItemStack theItem, IGridTile start, Route itemPath, byte oldDirection, byte speed) {
+	public TravelingItem(ItemStack theItem, IGridTile<DuctUnitItem, ItemGrid> start, Route itemPath, byte oldDirection, byte speed) {
 
 		this(theItem, start.x(), start.y(), start.z(), itemPath, oldDirection, speed);
 	}
@@ -121,7 +122,7 @@ public class TravelingItem {
 			progress %= homeTile.getPipeLength();
 			advanceTile(homeTile);
 		} else if (progress >= homeTile.getPipeHalfLength() && progress - step < homeTile.getPipeHalfLength()) {
-			if (reRoute || homeTile.neighborTypes[direction] == NeighborType.NONE) {
+			if (reRoute || homeTile.getRenderConnectionType(direction) == BlockDuct.ConnectionType.NONE) {
 				bounceItem(homeTile);
 			}
 		}
@@ -129,21 +130,19 @@ public class TravelingItem {
 
 	public void advanceTile(DuctUnitItem homeTile) {
 
-		if (homeTile.neighborTypes[direction] == NeighborType.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
-			DuctUnitItem newHome = (DuctUnitItem) homeTile.getConnectedSide(direction);
-			if (newHome != null) {
-				if (newHome.neighborTypes[direction ^ 1] == NeighborType.MULTIBLOCK) {
-					homeTile.removeItem(this, false);
-					newHome.transferItem(this);
-					if (myPath.hasNextDirection()) {
-						oldDirection = direction;
-						direction = myPath.getNextDirection();
-					} else {
-						reRoute = true;
-					}
+		DuctUnitItem newHome = homeTile.getConnectedSide(direction);
+		if (newHome != null) {
+			if (newHome.pipeCache[direction ^ 1] != null) {
+				homeTile.removeItem(this, false);
+				newHome.transferItem(this);
+				if (myPath.hasNextDirection()) {
+					oldDirection = direction;
+					direction = myPath.getNextDirection();
+				} else {
+					reRoute = true;
 				}
 			}
-		} else if (homeTile.neighborTypes[direction] == NeighborType.OUTPUT && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
+		} else if (homeTile.isOutput(direction) && homeTile.parent.getConnectionType(direction).allowTransfer) {
 			stack.stackSize = homeTile.insertIntoInventory(stack.copy(), direction);
 
 			if (stack.stackSize > 0) {
@@ -151,7 +150,7 @@ public class TravelingItem {
 				return;
 			}
 			homeTile.removeItem(this, true);
-		} else if (homeTile.neighborTypes[direction] == NeighborType.INPUT && goingToStuff) {
+		} else if (homeTile.isInput(direction) && goingToStuff) {
 			if (homeTile.canStuffItem()) {
 				goingToStuff = false;
 				homeTile.stuffItem(this);
@@ -169,7 +168,7 @@ public class TravelingItem {
 
 		RouteCache<?, ?> routes = homeTile.getCache();
 
-		DuctUnitItem.RouteInfo curInfo;
+		RouteInfo curInfo;
 
 		reRoute = false;
 
@@ -241,7 +240,7 @@ public class TravelingItem {
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
 			} else if (homeTile.ticksExisted == DuctUnitItem.maxTicksExistedBeforeDump) {
-				CoreUtils.dropItemStackIntoWorld(stack, homeTile.getWorld(), new Vec3d(homeTile.getPos()));
+				CoreUtils.dropItemStackIntoWorld(stack, homeTile.world(), new Vec3d(homeTile.pos()));
 				homeTile.removeItem(this, true);
 			}
 		}
@@ -281,13 +280,15 @@ public class TravelingItem {
 			} else {
 				homeTile.removeItem(this, false);
 				shouldDie = true;
-				TileEntity newTile = BlockHelper.getAdjacentTileEntity(homeTile, direction);
-				if (newTile instanceof DuctUnitItem) {
-					DuctUnitItem itemDuct = (DuctUnitItem) newTile;
-					oldDirection = direction;
-					itemDuct.myItems.add(this);
-					if (!TickHandlerClient.tickBlocks.contains(itemDuct) && !TickHandlerClient.tickBlocksToAdd.contains(itemDuct)) {
-						TickHandlerClient.tickBlocksToAdd.add(itemDuct);
+				TileEntity newTile = BlockHelper.getAdjacentTileEntity(homeTile.parent, direction);
+				if (newTile instanceof IDuctHolder) {
+					DuctUnitItem itemDuct = ((IDuctHolder) newTile).getDuct(DuctToken.ITEMS);
+					if (itemDuct != null) {
+						oldDirection = direction;
+						itemDuct.myItems.add(this);
+						if (!TickHandlerClient.tickBlocks.contains(itemDuct) && !TickHandlerClient.tickBlocksToAdd.contains(itemDuct)) {
+							TickHandlerClient.tickBlocksToAdd.add(itemDuct);
+						}
 					}
 				}
 			}

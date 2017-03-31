@@ -4,10 +4,13 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IPortableData;
+import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.TileCore;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
 import cofh.core.network.PacketCoFHBase;
+import cofh.core.render.hitbox.CustomHitBox;
+import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.lib.util.RayTracer;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
@@ -17,7 +20,11 @@ import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -25,22 +32,26 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
-public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler {
+public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -76,27 +87,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		subSelection[i + 3] = new Cuboid6(min2, min2, 1.0 - min, max2, max2, 1.0);
 		subSelection[i + 4] = new Cuboid6(0.0, min2, min2, min, max2, max2);
 		subSelection[i + 5] = new Cuboid6(1.0 - min, min2, min2, 1.0, max2, max2);
-	}
-
-	public static BlockDuct.ConnectionType getDefaultConnectionType(NeighborType neighborType, ConnectionType connectionType) {
-
-		if (neighborType == NeighborType.STRUCTURE) {
-			return BlockDuct.ConnectionType.STRUCTURE;
-		} else if (neighborType == NeighborType.INPUT) {
-			return BlockDuct.ConnectionType.DUCT;
-		} else if (neighborType == NeighborType.NONE) {
-			if (connectionType == ConnectionType.FORCED) {
-				return BlockDuct.ConnectionType.DUCT;
-			}
-
-			return BlockDuct.ConnectionType.NONE;
-		} else if (connectionType == BLOCKED || connectionType == ConnectionType.REJECTED) {
-			return BlockDuct.ConnectionType.NONE;
-		} else if (neighborType == NeighborType.OUTPUT) {
-			return BlockDuct.ConnectionType.TILECONNECTION;
-		} else {
-			return BlockDuct.ConnectionType.DUCT;
-		}
 	}
 
 	@Override
@@ -207,7 +197,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
-	public ConnectionType getConnectionType(byte i) {
+	public ConnectionType getConnectionType(int i) {
 
 		if (attachmentData != null && attachmentData.attachments[i] != null) {
 			return BLOCKED;
@@ -269,16 +259,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				neighbourChunks.add(new WeakReference<>(chunk));
 			}
 		}
-	}
-
-	protected boolean readPortableTagInternal(EntityPlayer player, NBTTagCompound tag) {
-
-		return true;
-	}
-
-	protected boolean writePortableTagInternal(EntityPlayer player, NBTTagCompound tag) {
-
-		return true;
 	}
 
 	public boolean addAttachment(Attachment attachment) {
@@ -506,6 +486,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		PacketCoFHBase payload = super.getTilePacket();
 
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.writeToTilePacket(payload);
+		}
+
+
 		if (attachmentData == null) {
 			payload.addByte(0);
 			payload.addByte(0);
@@ -545,6 +530,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Override
 	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+		if(!isServer) return;
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.handleTilePacket(payload);
+		}
 
 		int attachmentMask = payload.getByte();
 		for (byte i = 0; i < 6; i++) {
@@ -601,6 +591,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
+	@Nullable
 	public Attachment getAttachment(int side) {
 
 		AttachmentData attachmentData = this.attachmentData;
@@ -627,12 +618,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		Attachment attachment = getAttachment(side);
 		if (attachment != null) {
-			return attachment.getRenderConnectionType();
+
+			return attachment.getNeighborType();
 		} else {
 			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.NONE;
 
 			for (DuctUnit ductUnit : getDuctUnits()) {
-				BlockDuct.ConnectionType ductType = ductUnit.getConnectionType(side);
+				BlockDuct.ConnectionType ductType = ductUnit.getRenderConnectionType(side);
 				connectionType = BlockDuct.ConnectionType.getPriority(connectionType, ductType);
 			}
 
@@ -696,7 +688,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
-
 		if (!getDuctType().isLargeTube()) {
 			addTraceableCuboids(cuboids, TileGrid.selection, TileGrid.subSelection);
 		} else {
@@ -764,8 +755,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				connectionTypes[i] = connectionTypes[i].next();
 
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
-				if (isConnectable(tile, i)) {
-					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+				if (tile instanceof TileGrid) {
+					((TileGrid) tile).connectionTypes[i ^ 1] = connectionTypes[i];
 				}
 
 				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
@@ -795,15 +786,129 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		byte b = payload.getByte();
 		if (b == 0) {
-			handleInfoPacket(payload, isServer, thePlayer);
+			byte t = payload.getByte();
+			DuctToken token = DuctToken.TOKENS[t];
+			DuctUnit duct = Validate.notNull(getDuct(token));
+			duct.handleInfoPacket(payload, isServer, thePlayer);
 		} else if (b >= 1 && b <= 6) {
-			getAttachment(b - 1).handleInfoPacket(payload, isServer, thePlayer);
+			Validate.notNull(getAttachment(b - 1)).handleInfoPacket(payload, isServer, thePlayer);
 		}
 	}
+
+
+
+	/* ICustomHitBox */
+	@Override
+	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
+
+		return subHit == 13 || (subHit > 5 && subHit < 13 && !WrenchHelper.isHoldingUsableWrench(thePlayer, codechicken.lib.raytracer.RayTracer.retrace(thePlayer)));
+	}
+
+	@Override
+	public CustomHitBox getCustomHitBox(int subHit, EntityPlayer thePlayer) {
+
+		double v1 = getDuctType().isLargeTube() ? 0.075 : .3;
+		double v = (1 - v1 * 2);
+
+		CustomHitBox hb = new CustomHitBox(v, v, v, pos.getX() + v1, pos.getY() + v1, pos.getZ() + v1);
+
+		for (int i = 0; i < 6; i++) {
+			BlockDuct.ConnectionType renderConnectionType = getRenderConnectionType(i);
+
+			if (renderConnectionType == BlockDuct.ConnectionType.DUCT) {
+				hb.drawSide(i, true);
+				hb.setSideLength(i, v1);
+			} else if (renderConnectionType != BlockDuct.ConnectionType.NONE) {
+				hb.drawSide(i, true);
+				hb.setSideLength(i, .04);
+			}
+		}
+		return hb;
+	}
+
+	public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.onPlaced();
+		}
+	}
+
+	public void randomDisplayTick() {
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.randomDisplayTick();
+		}
+	}
+
+	public ItemStack getDrop() {
+		ItemStack stack = new ItemStack(getBlockType(), 1, getBlockMetadata());
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			stack = ductUnit.addNBTToItemStackDrop(stack);
+		}
+
+		return stack;
+	}
+
+	public void dropAdditional(ArrayList<ItemStack> ret) {
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.dropAdditional(ret);
+		}
+	}
+
+	public TextureAtlasSprite getBaseIcon(){
+		return getDuctType().iconBaseTexture;
+	}
+
 
 	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[6];
 		public final Cover[] covers = new Cover[6];
 		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 	}
+
+
+	@Override
+	public void getTileInfo(List<ITextComponent> info, EnumFacing side, EntityPlayer player, boolean debug) {
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			MultiBlockGrid grid = ductUnit.getGrid();
+			if (grid != null) {
+				info.add(new TextComponentTranslation("info.thermaldynamics.info.duct"));
+				grid.addInfo(info, player, debug);
+			}
+		}
+
+		Attachment attachment = getAttachmentSelected(player);
+		if (attachment != null) {
+
+			info.add(new TextComponentTranslation("info.thermaldynamics.info.attachment"));
+			int v = info.size();
+			attachment.addInfo(info, player, debug);
+			if (info.size() == v) {
+				info.remove(v - 1);
+			}
+		}
+	}
+
+
+	public Object getConfigGuiServer(InventoryPlayer inventory) {
+
+		return null;
+	}
+
+	public Object getConfigGuiClient(InventoryPlayer inventory) {
+
+		return null;
+	}
+
+	@Override
+	public int getType() {
+		return getDuctType().type;
+	}
+
+	@Override
+	public String getTileName() {
+		return getDuctType().unlocalizedName;
+	}
+
+
 }

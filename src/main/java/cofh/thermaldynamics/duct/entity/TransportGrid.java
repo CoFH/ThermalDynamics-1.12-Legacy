@@ -5,7 +5,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class TransportGrid extends MultiBlockGridWithRoutes {
+public class TransportGrid extends MultiBlockGridWithRoutes<DuctUnitTransportBase, TransportGrid> {
 
 	public TransportGrid(World world) {
 
@@ -27,6 +27,6 @@ public class TransportGrid extends MultiBlockGridWithRoutes {
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof TileTransportDuctBaseRoute;
+		return aBlock instanceof DuctUnitTransportBaseRoute;
 	}
 }

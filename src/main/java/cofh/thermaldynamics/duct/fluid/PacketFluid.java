@@ -2,6 +2,8 @@ package cofh.thermaldynamics.duct.fluid;
 
 import codechicken.lib.util.BlockUtils;
 import cofh.core.network.PacketCoFHBase;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -56,11 +58,14 @@ public class PacketFluid extends PacketCoFHBase {
 			}
 
 			TileEntity tile = world.getTileEntity(pos);
-			if (tile instanceof DuctUnitFluid) {
-				DuctUnitFluid duct = (DuctUnitFluid) tile;
-				duct.myRenderFluid = fluid;
-				duct.updateLighting();
-				BlockUtils.fireBlockUpdate(world, new BlockPos(x, y, z));
+
+			if (tile instanceof IDuctHolder) {
+				DuctUnitFluid duct = ((IDuctHolder) tile).getDuct(DuctToken.FLUID);
+				if(duct != null) {
+					duct.myRenderFluid = fluid;
+					duct.updateLighting();
+					BlockUtils.fireBlockUpdate(world, new BlockPos(x, y, z));
+				}
 			}
 		}
 	}

@@ -1,38 +1,50 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.thermaldynamics.duct.ConnectionType;
-import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.multiblock.*;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.item.RouteInfo;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.multiblock.Route;
+import cofh.thermaldynamics.multiblock.RouteCache;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements IGridTileRoute {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	public TransportGrid internalGrid;
+public class DuctUnitTransportBaseRoute extends DuctUnitTransportBase {
 
-	@Override
-	public void setGrid(MultiBlockGrid newGrid) {
-
-		super.setGrid(newGrid);
-		internalGrid = (TransportGrid) newGrid;
+	public DuctUnitTransportBaseRoute(TileGrid parent, Duct duct) {
+		super(parent, duct);
 	}
 
 	@Override
-	public MultiBlockGrid createGrid() {
+	public TransportGrid createGrid() {
 
-		return new TransportGrid(worldObj);
+		return new TransportGrid(world());
 	}
 
-	public RouteCache getCache() {
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, Void> adjDuct, byte side) {
+		return true;
+	}
+
+	@Nullable
+	@Override
+	public Void cacheTile(@Nonnull TileEntity tile, byte side) {
+		return null;
+	}
+
+	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache() {
 
 		return getCache(true);
 	}
 
-	public RouteCache getCache(boolean urgent) {
+	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache(boolean urgent) {
 
-		return urgent ? internalGrid.getRoutesFromOutput(this) : internalGrid.getRoutesFromOutputNonUrgent(this);
+		assert grid != null;
+		return urgent ? grid.getRoutesFromOutput(this) : grid.getRoutesFromOutputNonUrgent(this);
 	}
 
 	public Route getRoute(Entity entity, int side, byte speed) {
@@ -84,35 +96,18 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 		return Integer.MAX_VALUE;
 	}
 
-	@Override
-	public NeighborType getCachedSideType(byte side) {
-
-		return neighborTypes[side];
-	}
 
 	@Override
-	public ConnectionType getConnectionType(byte side) {
+	public RouteInfo canRouteItem(ItemStack stack) {
 
-		return connectionTypes[side];
-	}
-
-	@Override
-	public IGridTile getCachedTile(byte side) {
-
-		return neighborMultiBlocks[side];
-	}
-
-	@Override
-	public DuctUnitItem.RouteInfo canRouteItem(ItemStack stack) {
-
-		return DuctUnitItem.noRoute;
+		return RouteInfo.noRoute;
 	}
 
 	@Override
 	public byte getStuffedSide() {
 
 		for (byte i = 0; i < 6; i++) {
-			if (neighborTypes[i] == NeighborType.OUTPUT) {
+			if (isOutput(i)) {
 				return i;
 			}
 		}
@@ -136,7 +131,7 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 			t.progress %= EntityTransport.PIPE_LENGTH;
 			advanceToNextTile(t);
 		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
-			if (t.reRoute || neighborTypes[t.direction] == NeighborType.NONE) {
+			if (t.reRoute || pipeCache[t.direction] != null) {
 				t.bouncePassenger(this);
 			}
 		}
@@ -147,11 +142,4 @@ public class TileTransportDuctBaseRoute extends TileTransportDuctBase implements
 
 		t.advanceTile(this);
 	}
-
-	@Override
-	public boolean isConnectable(TileEntity theTile, int side) {
-
-		return theTile instanceof TileTransportDuctBaseRoute;
-	}
-
 }

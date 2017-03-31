@@ -4,7 +4,8 @@ import cofh.CoFHCore;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.helpers.SoundHelper;
 import cofh.thermaldynamics.duct.ConnectionType;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
@@ -95,12 +96,12 @@ public class EntityTransport extends Entity {
 		this.isImmuneToFire = true;
 	}
 
-	public EntityTransport(TileTransportDuctBase origin, Route route, byte startDirection, byte step) {
+	public EntityTransport(DuctUnitTransportBase origin, Route route, byte startDirection, byte step) {
 
 		this(origin.world());
 
 		this.step = step;
-		pos = new BlockPos(origin.getPos());
+		pos = new BlockPos(origin.pos());
 		myPath = route;
 
 		progress = 0;
@@ -199,7 +200,9 @@ public class EntityTransport extends Entity {
 
 		TileEntity tile = worldObj.getTileEntity(pos);
 
-		if (tile == null || !(tile instanceof TileTransportDuctBase)) {
+		DuctUnitTransportBase homeTile;
+
+		if (tile == null || !(tile instanceof IDuctHolder) || (homeTile = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT)) == null) {
 			if (worldObj.isRemote) {
 				pos = null;
 			} else {
@@ -207,8 +210,6 @@ public class EntityTransport extends Entity {
 			}
 			return;
 		}
-
-		TileTransportDuctBase homeTile = ((TileTransportDuctBase) tile);
 
 		if (pause > 0) {
 			pause--;
@@ -221,7 +222,7 @@ public class EntityTransport extends Entity {
 					if (pause == 0) {
 						CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
 					} else {
-						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (TileTransportDuctCrossover.CHARGE_TIME - pause) + " / " + TileTransportDuctCrossover.CHARGE_TIME), -515781222);
+						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (DuctUnitTransportCrossover.CHARGE_TIME - pause) + " / " + DuctUnitTransportCrossover.CHARGE_TIME), -515781222);
 					}
 				}
 
@@ -280,11 +281,11 @@ public class EntityTransport extends Entity {
 		BlockPos p = pos.offset(EnumFacing.VALUES[direction]);
 
 		TileEntity tileEntity = worldObj.getTileEntity(p);
-		if (!(tileEntity instanceof TileTransportDuctBase)) {
+		if (!(tileEntity instanceof DuctUnitTransportBase)) {
 			pos = null;
 			return false;
 		}
-		NeighborType[] neighbours = ((TileTransportDuctBase) tileEntity).neighborTypes;
+		NeighborType[] neighbours = ((DuctUnitTransportBase) tileEntity).neighborTypes;
 		if (neighbours[direction ^ 1] != NeighborType.MULTIBLOCK) {
 			pos = null;
 			return false;
@@ -402,10 +403,10 @@ public class EntityTransport extends Entity {
 		return false;
 	}
 
-	public void advanceTile(TileTransportDuctBaseRoute homeTile) {
+	public void advanceTile(DuctUnitTransportBaseRoute homeTile) {
 
 		if (homeTile.neighborTypes[direction] == NeighborType.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
-			TileTransportDuctBase newHome = (TileTransportDuctBase) homeTile.getPhysicalConnectedSide(direction);
+			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);
 			if (newHome != null && newHome.neighborTypes[direction ^ 1] == NeighborType.MULTIBLOCK) {
 				pos = new BlockPos(newHome.getPos());
 
@@ -425,9 +426,9 @@ public class EntityTransport extends Entity {
 		}
 	}
 
-	public void bouncePassenger(TileTransportDuctBaseRoute homeTile) {
+	public void bouncePassenger(DuctUnitTransportBaseRoute homeTile) {
 
-		if (homeTile.internalGrid == null) {
+		if (homeTile.getGrid() == null) {
 			return;
 		}
 
@@ -583,7 +584,7 @@ public class EntityTransport extends Entity {
 		return p_70112_1_ < 4096;
 	}
 
-	public void teleport(TileTransportDuctBaseRoute dest) {
+	public void teleport(DuctUnitTransportBaseRoute dest) {
 
 		if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
 			return;
@@ -614,7 +615,7 @@ public class EntityTransport extends Entity {
 			destinationWorld.resetUpdateEntityTick();
 		}
 
-		pos = new BlockPos(dest.getPos());
+		pos = new BlockPos(dest.pos());
 
 		if (myPath.hasNextDirection()) {
 			oldDirection = direction;

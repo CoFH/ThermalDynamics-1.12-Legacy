@@ -5,18 +5,24 @@ import cofh.thermaldynamics.duct.DuctUnitStructural;
 import cofh.thermaldynamics.duct.GridStructural;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransportBase;
+import cofh.thermaldynamics.duct.entity.TransportGrid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.ItemGrid;
+import cofh.thermaldynamics.duct.light.LightGrid;
+import cofh.thermaldynamics.duct.light.DuctUnitLight;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
-public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> {
+import javax.annotation.Nonnull;
+
+public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> implements Comparable<DuctToken> {
 	// Structure grid, for redstone signals relays
-	public static final DuctToken<DuctUnitStructural, GridStructural<DuctUnitStructural>, Object> STRUCTURAL = new DuctToken<>("Structural");
+	public static final DuctToken<DuctUnitStructural, GridStructural, Void> STRUCTURAL = new DuctToken<>("Structural");
 
 	// Energy grid, for any energy transfer
-	public static final DuctToken<? extends DuctUnitEnergy<?, EnergyGrid<?>>, ? extends EnergyGrid<?>, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
+	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
 
 	// Storage energy grid, for storing internal energy
 
@@ -27,10 +33,34 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 
 	// Fluid grid
 	public static final DuctToken<DuctUnitFluid, FluidGrid, DuctUnitFluid.Cache> FLUID = new DuctToken<>("Fluid");
+	public final static DuctToken[] TOKENS = new DuctToken[]{
+			STRUCTURAL,
+			ENERGY,
+			ITEMS,
+			FLUID
+	};
+	public static DuctToken<DuctUnitTransportBase, TransportGrid, Void> TRANSPORT;
+	public static DuctToken<DuctUnitLight, LightGrid, Void> LIGHT;
 
-	final String key;
+	static {
+		for (int i = 0; i < TOKENS.length; i++) {
+			TOKENS[i].id = (byte) i;
+		}
+	}
+
+	public final String key;
+	private byte id;
 
 	public DuctToken(String key) {
 		this.key = key;
+	}
+
+	public byte getId() {
+		return id;
+	}
+
+	@Override
+	public int compareTo(@Nonnull DuctToken o) {
+		return Integer.compare(id, o.id);
 	}
 }

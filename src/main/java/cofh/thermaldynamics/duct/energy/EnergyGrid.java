@@ -8,13 +8,15 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import net.minecraft.world.World;
 
-public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTracking<T> {
+public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 	public final EnergyStorage myStorage;
 	private int currentEnergy = 0;
 	private int extraEnergy = 0;
 
-	private final int type;
+	private final int transferLimit;
+
+	private final int capacity;
 
 	public static int NODE_STORAGE[] = { 1200, 4800, 48000, 192000, 0 };
 	public static int NODE_TRANSFER[] = { 200, 800, 8000, 32000, 0 };
@@ -32,11 +34,12 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 		}
 	}
 
-	public EnergyGrid(World world, int type) {
+	public EnergyGrid(World world, int transferLimit, int capacity) {
 
 		super(world);
-		this.type = type;
-		myStorage = new EnergyStorage(NODE_STORAGE[type], NODE_TRANSFER[type]) {
+		this.transferLimit = transferLimit;
+		this.capacity = capacity;
+		myStorage = new EnergyStorage(EnergyGrid.this.capacity, EnergyGrid.this.transferLimit) {
 
 			@Override
 			public int receiveEnergy(int maxReceive, boolean simulate) {
@@ -55,13 +58,13 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	@Override
 	public void balanceGrid() {
 
-		myStorage.setCapacity(nodeSet.size() * NODE_STORAGE[type]);
+		myStorage.setCapacity(nodeSet.size() * capacity);
 	}
 
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof IEnergyDuctInternal && ((DuctUnitEnergy) aBlock).getDuctType().type == this.type;
+		return aBlock instanceof DuctUnitEnergy && ((DuctUnitEnergy) aBlock).getTransferLimit() == transferLimit;
 	}
 
 	@Override
@@ -102,11 +105,11 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return super.canGridsMerge(grid) && ((EnergyGrid) grid).type == this.type;
+		return super.canGridsMerge(grid) && ((EnergyGrid) grid).transferLimit == this.transferLimit;
 	}
 
 	@Override
-	public void addNode(T aMultiBlock) {
+	public void addNode(DuctUnitEnergy aMultiBlock) {
 
 		super.addNode(aMultiBlock);
 
@@ -116,7 +119,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	}
 
 	@Override
-	public void removeBlock(T oldBlock) {
+	public void removeBlock(DuctUnitEnergy oldBlock) {
 
 		if (oldBlock.isNode()) {
 			oldBlock.setEnergyForGrid(getNodeShare(oldBlock));
@@ -125,7 +128,7 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	}
 
 	//TODO:Rework
-	public int getNodeShare(T ductEnergy) {
+	public int getNodeShare(DuctUnitEnergy ductEnergy) {
 
 		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size() + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
@@ -134,5 +137,13 @@ public class EnergyGrid<T extends IEnergyDuctInternal> extends MultiBlockGridTra
 	protected String getUnit() {
 
 		return "RF";
+	}
+
+	public int receiveEnergy(int maxReceive, boolean simulate) {
+		return myStorage.receiveEnergy(maxReceive, simulate);
+	}
+
+	public boolean isPowered() {
+		return myStorage.getEnergyStored() > 0;
 	}
 }

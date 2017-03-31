@@ -32,8 +32,6 @@ public interface IGridTile<T extends IGridTile<T, G>, G extends MultiBlockGrid<T
 
 	boolean isNode();
 
-	void addRelays();
-
 	/* PASSTHROUGH METHODS */
 	void onNeighborBlockChange();
 

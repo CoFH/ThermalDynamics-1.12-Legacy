@@ -6,17 +6,16 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.duct.ConnectionType;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -27,20 +26,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFluid.Cache> {
+	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
+	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
+	private static DuctUnitFluid lightingUpdate = null;
 	public FluidGrid fluidGrid;
-
-	byte internalSideCounter;
-
+	public byte internalSideCounter;
 	public FluidStack mySavedFluid;
 	public FluidStack myRenderFluid;
 	public FluidStack fluidForGrid;
 	public FluidStack myConnectionFluid;
 
-	public static class Cache {
-		TileEntity tile;
-		IFilterFluid filter;
-
-
+	public DuctUnitFluid(TileGrid parent, Duct duct) {
+		super(parent, duct);
 	}
 
 	@Override
@@ -49,7 +46,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		if (!super.tickPass(pass)) {
 			return false;
 		}
-		if (fluidGrid == null || !cachesExist()) {
+		if (fluidGrid == null) {
 			return true;
 		}
 		if (pass == 0) {
@@ -79,9 +76,6 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 	public int transfer(int available, boolean simulate, FluidStack base, boolean drainGridTank) {
 
-		if (!cachesExist()) {
-			return 0;
-		}
 		int sent = 0;
 
 		for (int i = this.internalSideCounter; i < 6 && sent < available; i++) {
@@ -104,7 +98,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	}
 
 	public int transfer(int bSide, int available, boolean simulate, FluidStack fluid, boolean drainGridTank) {
-		if(fluid == null) return 0;
+		if (fluid == null) return 0;
 
 		DuctUnitFluid.Cache cache = tileCaches[bSide];
 
@@ -117,9 +111,9 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			return 0;
 		}
 
-		IFluidHandler capability = cache.tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing);
+		IFluidHandler capability = cache.getHandler(facing.ordinal());
 
-		if(capability == null) return 0;
+		if (capability == null) return 0;
 
 		if (!cache.filter.allowFluid(fluid)) {
 			return 0;
@@ -160,11 +154,6 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		return light & (~light >> 31);
 	}
 
-	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
-	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
-	private static DuctUnitFluid lightingUpdate = null;
-
-	@Override
 	public void updateLighting() {
 
 		lightingUpdate = this;
@@ -179,19 +168,19 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		}
 	}
 
-	@Override
+
 	public FluidStack getFluidForGrid() {
 
 		return fluidForGrid;
 	}
 
-	@Override
+
 	public void setFluidForGrid(FluidStack fluidForGrid) {
 
 		fluidForGrid = null;
 	}
 
-	@Override
+
 	public boolean isOpaque() {
 
 		return getDuctType().opaque;
@@ -211,7 +200,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		return fluidGrid == null ? myConnectionFluid : fluidGrid.getFluid();
 	}
 
-	@Override
+
 	public boolean canStoreFluid() {
 
 		return true;
@@ -220,12 +209,11 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	@Override
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world())) {
 			byte b = payload.getByte();
 			handleTileInfoPacketType(payload, b);
 		}
 	}
-
 
 	public void handleTileInfoPacketType(PacketCoFHBase payload, byte b) {
 
@@ -235,7 +223,6 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		}
 	}
 
-
 	@Override
 	public DuctToken<DuctUnitFluid, FluidGrid, Cache> getToken() {
 		return DuctToken.FLUID;
@@ -244,6 +231,12 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	@Override
 	public FluidGrid createGrid() {
 		return new FluidGrid(world());
+	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side) {
+		//TODO: SOLVE
+		return false;
 	}
 
 	@Nullable
@@ -275,21 +268,17 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	}
 
 	@Override
-	public PacketCoFHBase getTilePattcket() {
-
-		PacketCoFHBase packet = super.getTilePacket();
+	public void writeToTilePacket(PacketCoFHBase payload) {
 		if (fluidGrid != null) {
-			packet.addFluidStack(fluidGrid.getRenderFluid());
+			payload.addFluidStack(fluidGrid.getRenderFluid());
 		} else {
-			packet.addFluidStack(myConnectionFluid);
+			payload.addFluidStack(myConnectionFluid);
 		}
-		return packet;
 	}
 
 	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+	public void handleTilePacket(PacketCoFHBase payload) {
 
-		super.handleTilePacket(payload, isServer);
 		myRenderFluid = payload.getFluidStack();
 	}
 
@@ -301,78 +290,63 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		if (!getDuctType().opaque) {
 			updateLighting();
 
-			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-			myPayload.addByte(0);
+			PacketTileInfo myPayload = newPacketTileInfo();
 			myPayload.addByte(TileFluidPackets.UPDATE_RENDER);
 			myPayload.addFluidStack(fluidGrid.getRenderFluid());
-			PacketHandler.sendToAllAround(myPayload, this);
+			PacketHandler.sendToAllAround(myPayload, parent);
 		}
 	}
 
-	public class TileFluidPackets {
+	public IFluidHandler getFluidCapability(final EnumFacing from) {
+		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new IFluidHandler() {
 
-		public static final byte GUI_BUTTON = 0;
-		public static final byte SET_FILTER = 1;
-		public static final byte FILTERS = 2;
-		public static final byte UPDATE_RENDER = 3;
-		public static final byte TEMPERATURE = 4;
-	}
+			@Override
+			public IFluidTankProperties[] getTankProperties() {
 
-	@Override
-	@Nullable
-	public <T> T getCapability(Capability<T> capability, final EnumFacing from) {
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new IFluidHandler() {
+				FluidStack info = fluidGrid != null ? fluidGrid.myTank.getInfo().fluid : null;
+				int capacity = fluidGrid != null ? fluidGrid.myTank.getInfo().capacity : 0;
+				return new IFluidTankProperties[]{new FluidTankProperties(info, capacity, isOpen(from), isOpen(from))};
+			}
 
-				@Override
-				public IFluidTankProperties[] getTankProperties() {
+			@Override
+			public int fill(FluidStack resource, boolean doFill) {
 
-					FluidStack info = fluidGrid != null ? fluidGrid.myTank.getInfo().fluid : null;
-					int capacity = fluidGrid != null ? fluidGrid.myTank.getInfo().capacity : 0;
-					return new IFluidTankProperties[] { new FluidTankProperties(info, capacity, isOpen(from), isOpen(from)) };
+				if (isOpen(from) && matchesFilter(from, resource)) {
+					return fluidGrid.myTank.fill(resource, doFill);
 				}
+				return 0;
+			}
 
-				@Override
-				public int fill(FluidStack resource, boolean doFill) {
+			@Nullable
+			@Override
+			public FluidStack drain(FluidStack resource, boolean doDrain) {
 
-					if (isOpen(from) && matchesFilter(from, resource)) {
-						return fluidGrid.myTank.fill(resource, doFill);
-					}
-					return 0;
+				if (isOpen(from)) {
+					return fluidGrid.myTank.drain(resource, doDrain);
 				}
+				return null;
+			}
 
-				@Nullable
-				@Override
-				public FluidStack drain(FluidStack resource, boolean doDrain) {
+			@Nullable
+			@Override
+			public FluidStack drain(int maxDrain, boolean doDrain) {
 
-					if (isOpen(from)) {
-						return fluidGrid.myTank.drain(resource, doDrain);
-					}
-					return null;
+				if (isOpen(from)) {
+					return fluidGrid.myTank.drain(maxDrain, doDrain);
 				}
-
-				@Nullable
-				@Override
-				public FluidStack drain(int maxDrain, boolean doDrain) {
-
-					if (isOpen(from)) {
-						return fluidGrid.myTank.drain(maxDrain, doDrain);
-					}
-					return null;
-				}
-			});
-		}
-		return super.getExternalCap(capability, from);
+				return null;
+			}
+		});
 	}
 
 	public boolean matchesFilter(EnumFacing from, FluidStack resource) {
-
-		return filterCache == null || from == null || filterCache[from.ordinal()].allowFluid(resource);
+		Cache cache = tileCaches[from.ordinal()];
+		return from == null || cache == null || cache.filter.allowFluid(resource);
 	}
 
 	public boolean isOpen(EnumFacing from) {
 
-		return fluidGrid != null && (from == null || ((neighborTypes[from.ordinal()] == NeighborType.OUTPUT || neighborTypes[from.ordinal()] == NeighborType.INPUT) && connectionTypes[from.ordinal()] != ConnectionType.BLOCKED));
+		return fluidGrid != null && (from == null || ((isOutput(from.ordinal()) || isInput(from.ordinal())) && parent.getConnectionType(from.ordinal()).allowTransfer));
 	}
 
 	@Override
@@ -405,6 +379,28 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		if (nbt.hasKey("ConnFluid")) {
 			myConnectionFluid = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("ConnFluid"));
 		}
+	}
+
+	public static class Cache {
+		public TileEntity tile;
+		public IFilterFluid filter;
+
+		public IFluidHandler getHandler(int side) {
+			if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side])) {
+				return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side]);
+			}
+			return null;
+		}
+
+	}
+
+	public class TileFluidPackets {
+
+		public static final byte GUI_BUTTON = 0;
+		public static final byte SET_FILTER = 1;
+		public static final byte FILTERS = 2;
+		public static final byte UPDATE_RENDER = 3;
+		public static final byte TEMPERATURE = 4;
 	}
 
 

@@ -3,16 +3,21 @@ package cofh.thermaldynamics.duct.item;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.thermaldynamics.duct.NeighborType;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.energy.DuctUnitEnergyStorage;
+import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 
-public class TileItemDuctEnder extends DuctUnitItem {
+public class DuctUnitEnder extends DuctUnitItem {
 
+	final DuctUnitEnergyStorage enderEnergy;
 	public boolean powered = false;
 
-	public TileItemDuctEnder() {
+	public DuctUnitEnder(TileGrid grid, Duct duct, DuctUnitEnergyStorage enderEnergy) {
 
-		super();
+		super(grid, duct);
+		this.enderEnergy = enderEnergy;
 	}
 
 	@Override
@@ -36,7 +41,8 @@ public class TileItemDuctEnder extends DuctUnitItem {
 	@Override
 	public boolean acceptingItems() {
 
-		return enderEnergy.internalGrid != null && enderEnergy.internalGrid.isPowered();
+		EnergyGrid grid = enderEnergy.getGrid();
+		return grid != null && grid.isPowered();
 	}
 
 	@Override
@@ -56,8 +62,8 @@ public class TileItemDuctEnder extends DuctUnitItem {
 				}
 				if (travelingItem.reRoute || travelingItem.myPath == null) {
 					travelingItem.bounceItem(this);
-				} else if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
-					energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
+				} else if (enderEnergy.getGrid() != null && enderEnergy.getGrid().myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && enderEnergy.getGrid().myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+					enderEnergy.getGrid().myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
 					multiAdvance(travelingItem, false);
 				} else {
 					travelingItem.tickForward(this);
@@ -80,8 +86,8 @@ public class TileItemDuctEnder extends DuctUnitItem {
 	@Override
 	public void insertNewItem(TravelingItem travelingItem) {
 
-		if (energy.energyGrid != null && energy.energyGrid.myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
-			energy.energyGrid.myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
+		if (enderEnergy.getGrid() != null && enderEnergy.getGrid().myStorage.getEnergyStored() >= TDProps.ENDER_TRANSMIT_COST && enderEnergy.getGrid().myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, true) >= TDProps.ENDER_TRANSMIT_COST) {
+			enderEnergy.getGrid().myStorage.extractEnergy(TDProps.ENDER_TRANSMIT_COST, false);
 			multiAdvance(travelingItem, true);
 		} else {
 			super.insertNewItem(travelingItem);
@@ -94,9 +100,9 @@ public class TileItemDuctEnder extends DuctUnitItem {
 
 		while (true) {
 			duct.pulseLine(travelingItem.direction, (byte) (travelingItem.oldDirection ^ 1));
-			if (duct.neighborTypes[travelingItem.direction] == NeighborType.MULTIBLOCK) {
-				DuctUnitItem newHome = (DuctUnitItem) duct.getConnectedSide(travelingItem.direction);
-				if (newHome != null && newHome.neighborTypes[travelingItem.direction ^ 1] == NeighborType.MULTIBLOCK) {
+			DuctUnitItem newHome = duct.getConnectedSide(travelingItem.direction);
+			if (newHome != null) {
+				if (newHome.getConnectedSide(travelingItem.direction ^ 1) != null) {
 					duct = newHome;
 					if (travelingItem.myPath.hasNextDirection()) {
 						travelingItem.oldDirection = travelingItem.direction;
@@ -106,7 +112,7 @@ public class TileItemDuctEnder extends DuctUnitItem {
 						transferItem(travelingItem, duct, newInsert);
 						return;
 					}
-					if (duct.getClass() != TileItemDuctEnder.class) {
+					if (duct.getClass() != DuctUnitEnder.class) {
 						transferItem(travelingItem, duct, newInsert);
 						return;
 					}
@@ -115,7 +121,7 @@ public class TileItemDuctEnder extends DuctUnitItem {
 					transferItem(travelingItem, duct, newInsert);
 					return;
 				}
-			} else if (duct.neighborTypes[travelingItem.direction] == NeighborType.OUTPUT) {
+			} else if (duct.isOutput(travelingItem.direction)) {
 				travelingItem.stack.stackSize = duct.insertIntoInventory(travelingItem.stack, travelingItem.direction);
 
 				if (travelingItem.stack.stackSize > 0) {
@@ -146,11 +152,10 @@ public class TileItemDuctEnder extends DuctUnitItem {
 
 	public void sendPowerPacket() {
 
-		PacketTileInfo myPayload = this.getPacketTileInfo();
-		myPayload.addByte(0);
+		PacketTileInfo myPayload = newPacketTileInfo();
 		myPayload.addByte(TileInfoPackets.ENDER_POWER);
 		myPayload.addBool(powered);
-		PacketHandler.sendToAllAround(myPayload, this);
+		PacketHandler.sendToAllAround(myPayload, parent);
 	}
 
 	@Override
@@ -174,33 +179,25 @@ public class TileItemDuctEnder extends DuctUnitItem {
 	}
 
 	@Override
-	public PacketCoFHBase getTilePacket() {
-
-		PacketCoFHBase packet = super.getTilePacket();
-
-		packet.addBool(isPowered());
-
-		return packet;
+	public void writeToTilePacket(PacketCoFHBase payload) {
+		payload.addBool(isPowered());
 	}
 
 	public boolean isPowered() {
 
-		return enderEnergy.internalGrid != null ? enderEnergy.internalGrid.isPowered() : powered;
+		return enderEnergy.getGrid() != null ? enderEnergy.getGrid().isPowered() : powered;
 	}
 
 	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-
-		super.handleTilePacket(payload, isServer);
-
+	public void handleTilePacket(PacketCoFHBase payload) {
 		powered = payload.getBool();
 	}
 
 	public void updateRender() {
 
-		if (enderEnergy.internalGrid != null) {
-			if (enderEnergy.internalGrid.isPowered() != powered) {
-				powered = enderEnergy.internalGrid.isPowered();
+		if (enderEnergy.getGrid() != null) {
+			if (enderEnergy.getGrid().isPowered() != powered) {
+				powered = enderEnergy.getGrid().isPowered();
 				sendPowerPacket();
 			}
 		}

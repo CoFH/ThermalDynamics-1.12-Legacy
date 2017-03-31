@@ -116,6 +116,9 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 	/*
 	 * Called at the end of a world tick
 	 */
+	public void tickGrid(){
+
+	}
 
 
 	/*

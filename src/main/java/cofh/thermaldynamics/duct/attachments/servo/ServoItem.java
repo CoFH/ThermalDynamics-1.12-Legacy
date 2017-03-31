@@ -7,7 +7,9 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.ItemGrid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
+import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.Route;
@@ -38,13 +40,13 @@ public class ServoItem extends ServoBase {
 	public ServoItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
-		itemDuct = ((DuctUnitItem) tile);
+		itemDuct = tile.getDuct(DuctToken.ITEMS);
 	}
 
 	public ServoItem(TileGrid tile, byte side) {
 
 		super(tile, side);
-		itemDuct = ((DuctUnitItem) tile);
+		itemDuct = tile.getDuct(DuctToken.ITEMS);
 	}
 
 	@Override
@@ -108,8 +110,8 @@ public class ServoItem extends ServoBase {
 		onNeighborChange();
 	}
 
-	public RouteCache cache = null;
-	public ListWrapper<Route> routeList = new ListWrapper<>();
+	public RouteCache<DuctUnitItem, ItemGrid> cache = null;
+	public ListWrapper<Route<DuctUnitItem, ItemGrid>> routeList = new ListWrapper<>();
 
 	@Override
 	public List<ItemStack> getDrops() {
@@ -191,7 +193,7 @@ public class ServoItem extends ServoBase {
 
 	public boolean verifyCache() {
 
-		RouteCache cache1 = itemDuct.getCache(false);
+		RouteCache<DuctUnitItem, ItemGrid> cache1 = itemDuct.getCache(false);
 		if (!cache1.isFinishedGenerating()) {
 			return false;
 		}
@@ -278,7 +280,7 @@ public class ServoItem extends ServoBase {
 		return speedBoost[type];
 	}
 
-	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
+	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route<DuctUnitItem, ItemGrid>> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
 
 		if (item == null || item.stackSize == 0) {
 			return null;
@@ -292,7 +294,7 @@ public class ServoItem extends ServoBase {
 
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
-				DuctUnitItem.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
+				RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
 				if (routeInfo.canRoute) {
 					int stackSize = item.stackSize - routeInfo.stackSize;
 					if (stackSize <= 0) {

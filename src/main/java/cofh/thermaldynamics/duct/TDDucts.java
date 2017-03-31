@@ -3,36 +3,36 @@ package cofh.thermaldynamics.duct;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct.Type;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.TileEnergyDuctSuper;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctCrossover;
-import cofh.thermaldynamics.duct.entity.TileTransportDuctLongRange;
+import cofh.thermaldynamics.duct.energy.DuctUnitEnergySuper;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransportCrossover;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransportLongRange;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidFragile;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidSuper;
+import cofh.thermaldynamics.duct.item.DuctUnitEnder;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
 import cofh.thermaldynamics.duct.light.DuctLight;
-import cofh.thermaldynamics.duct.light.TileLightDuct;
+import cofh.thermaldynamics.duct.light.DuctUnitLight;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TDDucts {
 
-	private static final IDuctFactory TRANSPORT_CROSSOVER = (duct, worldObj) -> new TileTransportDuctCrossover();
-	private static final IDuctFactory TRANSPORT_LONGRANGE = (duct, worldObj) -> new TileTransportDuctLongRange();
-	private static final IDuctFactory TRANSPORT = (duct, worldObj) -> new TileTransportDuct();
+	private static final IDuctFactory TRANSPORT_CROSSOVER = (duct, worldObj) -> new DuctUnitTransportCrossover();
+	private static final IDuctFactory TRANSPORT_LONGRANGE = (duct, worldObj) -> new DuctUnitTransportLongRange();
+	private static final IDuctFactory TRANSPORT = (duct, worldObj) -> new DuctUnitTransport();
 	private static final IDuctFactory FLUID_SUPER = (duct, worldObj) -> new DuctUnitFluidSuper();
-	private static final IDuctFactory GLOW = (duct, worldObj) -> new TileLightDuct();
+	private static final IDuctFactory GLOW = (duct, worldObj) -> new DuctUnitLight();
 	private static final IDuctFactory FLUID_FLUX = (duct, worldObj) -> new DuctUnitFluidFlux();
-	private static final IDuctFactory FLUID_FRAGILE = (duct, worldObj) -> new DuctUnitFluidFragile();
+	private static final IDuctFactory FLUID_FRAGILE = (duct, worldObj) -> new DuctUnitFluidFragile(parent, duct);
 	private static final IDuctFactory FLUID = (duct, worldObj) -> new DuctUnitFluid();
-	private static final IDuctFactory ENERGY_SUPER = (duct, worldObj) -> new TileEnergyDuctSuper();
+	private static final IDuctFactory ENERGY_SUPER = (duct, worldObj) -> new DuctUnitEnergySuper(duct);
 	private static final IDuctFactory ENERGY = (duct, worldObj) -> new DuctUnitEnergy();
 	private static final IDuctFactory ITEM_FLUX = (duct, worldObj) -> new TileItemDuctFlux();
-	private static final IDuctFactory ITEM_ENDER = (duct, worldObj) -> new TileItemDuctEnder();
-	private static final IDuctFactory ITEM = (duct, worldObj) -> new DuctUnitItem();
+	private static final IDuctFactory ITEM_ENDER = (duct, worldObj) -> new DuctUnitEnder(getGrid(), duct, enderEnergy);
+	private static final IDuctFactory ITEM = (duct, worldObj) -> new DuctUnitItem(getGrid(), duct);
 
 	private static final String REDSTONE_STILL = "thermalfoundation:blocks/fluid/redstone_still";
 	private static final String GLOWSTONE_STILL = "thermalfoundation:blocks/fluid/glowstone_still";

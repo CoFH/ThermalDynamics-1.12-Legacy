@@ -14,8 +14,12 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.duct.*;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermalfoundation.init.TFFluids;
@@ -53,33 +57,27 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 	public static final RenderDuct instance = new RenderDuct();
 
-	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionType.DUCT.ordinal(), BlockDuct.ConnectionType.DUCT.ordinal(), 0, 0, 0, 0 };
+	static final int[] INV_CONNECTIONS = {BlockDuct.ConnectionType.DUCT.ordinal(), BlockDuct.ConnectionType.DUCT.ordinal(), 0, 0, 0, 0};
 	//	static int[] connections = new int[6];
-
-	static TextureAtlasSprite textureCenterLine;
-
-	static CCModel[][] modelFluid = new CCModel[6][7];
 	public static CCModel[][] modelConnection = new CCModel[3][6];
+	public static CCModel[] modelOpaqueTubes;
+	public static CCModel[] modelTransTubes;
+	static TextureAtlasSprite textureCenterLine;
+	static CCModel[][] modelFluid = new CCModel[6][7];
 	static CCModel modelCenter;
-
 	static CCModel[] modelLine = new CCModel[6];
 	static CCModel modelLineCenter;
-
 	static CCModel[] modelFrameConnection = new CCModel[64];
 	static CCModel[] modelFrame = new CCModel[64];
-
 	static CCModel[] modelTransportConnection = new CCModel[64];
 	static CCModel[] modelTransport = new CCModel[64];
+	private static CCModel[] modelFluidTubes;
+	private static CCModel[] modelLargeTubes;
 
 	static {
 		generateModels();
 		generateFluidModels();
 	}
-
-	public static CCModel[] modelOpaqueTubes;
-	public static CCModel[] modelTransTubes;
-	private static CCModel[] modelFluidTubes;
-	private static CCModel[] modelLargeTubes;
 
 	public static void initialize() {
 
@@ -94,7 +92,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			double d3 = 0.32 + 0.06 * i;
 			double c1 = 0.32;
 			double c2 = 0.68;
-			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 }, { 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 }, { c1, c1, c1, c2, d3, c2 } };
+			double[][] boxes = new double[][]{{d1, 0, d1, d2, c1, d2}, {d1, d3, d1, d2, 1, d2}, {c1, c1, 0, c2, d3, c1}, {c1, c1, c2, c2, d3, 1}, {0, c1, c1, c1, d3, c2}, {c2, c1, c1, 1, d3, c2}, {c1, c1, c1, c2, d3, c2}};
 
 			for (int s = 0; s < 7; s++) {
 				modelFluid[i - 1][s] = CCModel.quadModel(24).generateBlock(0, boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]).computeNormals();
@@ -133,7 +131,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		for (CCModel[] aModelConnection1 : modelConnection) {
 			CCModel.generateSidedModels(aModelConnection1, 1, Vector3.zero);
 		}
-		Scale[] mirrors = new Scale[] { new Scale(1, -1, 1), new Scale(1, 1, -1), new Scale(-1, 1, 1) };
+		Scale[] mirrors = new Scale[]{new Scale(1, -1, 1), new Scale(1, 1, -1), new Scale(-1, 1, 1)};
 		for (CCModel[] sideModels : modelConnection) {
 			for (int s = 2; s < 6; s += 2) {
 				sideModels[s] = sideModels[0].sidedCopy(0, s, Vector3.zero);
@@ -352,7 +350,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		ccrs.draw();
 	}
 
-	public int[] getDuctConnections(TileDuctBase tile) {
+	public int[] getDuctConnections(TileGrid tile) {
 
 		int[] connections = new int[6];
 		for (int i = 0; i < 6; i++) {
@@ -375,24 +373,26 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.bind(buffer);
 		TileEntity tile = world.getTileEntity(pos);
-		if (!(tile instanceof TileDuctBase)) {
+		if (!(tile instanceof TileGrid)) {
 			return false;
 		}
-		TileDuctBase theTile = (TileDuctBase) tile;
+		TileGrid theTile = (TileGrid) tile;
 
 		ccrs.preRenderWorld(world, pos);
 		int[] connections = getDuctConnections(theTile);
 
 		boolean flag = false;
 		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
-		for (Attachment attachment : theTile.attachments) {
-			if (attachment != null) {
-				flag = attachment.render(world, layer, ccrs) || flag;
+		if (theTile.attachmentData != null) {
+			for (Attachment attachment : theTile.attachmentData.attachments) {
+				if (attachment != null) {
+					flag = attachment.render(world, layer, ccrs) || flag;
+				}
 			}
-		}
-		for (Cover cover : theTile.covers) {
-			if (cover != null) {
-				flag = cover.render(world, layer, ccrs) || flag;
+			for (Cover cover : theTile.attachmentData.covers) {
+				if (cover != null) {
+					flag = cover.render(world, layer, ccrs) || flag;
+				}
 			}
 		}
 		int renderType = TDDucts.getDuct(((BlockDuct) state.getBlock()).offset + state.getBlock().getMetaFromState(state)).id;

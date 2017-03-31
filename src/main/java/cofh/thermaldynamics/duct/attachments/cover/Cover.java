@@ -8,8 +8,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.NeighborType;
-import cofh.thermaldynamics.duct.TileDuctBase;
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -87,9 +86,9 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public NeighborType getNeighborType() {
+	public BlockDuct.ConnectionType getNeighborType() {
 
-		return NeighborType.NONE;
+		return BlockDuct.ConnectionType.NONE;
 	}
 
 	@Override

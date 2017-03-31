@@ -68,7 +68,7 @@ public abstract class Attachment {
 		return true;
 	}
 
-	public abstract NeighborType getNeighborType();
+	public abstract BlockDuct.ConnectionType getNeighborType();
 
 	public abstract boolean isNode();
 
@@ -163,11 +163,6 @@ public abstract class Attachment {
 
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
-	}
-
-	public BlockDuct.ConnectionType getRenderConnectionType() {
-
-		return TileGrid.getDefaultConnectionType(getNeighborType(), cofh.thermaldynamics.duct.ConnectionType.NORMAL);
 	}
 
 	public boolean allowPipeConnection() {

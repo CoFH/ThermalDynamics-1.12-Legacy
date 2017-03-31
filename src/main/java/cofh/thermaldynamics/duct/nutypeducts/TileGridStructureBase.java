@@ -4,6 +4,7 @@ import cofh.thermaldynamics.duct.DuctUnitStructural;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -18,18 +19,24 @@ public abstract class TileGridStructureBase extends TileGrid {
 	@Nullable
 	@Override
 	@OverridingMethodsMustInvokeSuper
-	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> DuctUnit<T, G, C> getDuct(DuctToken<T, G, C> token) {
+	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getDuct(DuctToken<T, G, C> token) {
 		DuctUnit ductUnit = ducts.get(token);
 		if (ductUnit == null && token == DuctToken.STRUCTURAL) {
 			ImmutableMap.Builder<DuctToken, DuctUnit> builder = ImmutableMap.builder();
 			builder.putAll(ducts);
 			DuctUnitStructural structural;
-			builder.put(DuctToken.STRUCTURAL, structural = new DuctUnitStructural(this));
+			builder.put(DuctToken.STRUCTURAL, structural = new DuctUnitStructural(this, ducts.get(getPrimaryDuctToken())));
 			TickHandler.addMultiBlockToCalculate(structural);
 			ducts = builder.build();
-			return (DuctUnit<T, G, C>) structural;
+			return (T)structural;
 		}
-		return ductUnit;
+		return (T) ductUnit;
+	}
+
+	protected abstract DuctToken getPrimaryDuctToken();
+
+	public DuctUnit getPrimaryDuctUnit(){
+		return getDuct(getPrimaryDuctToken());
 	}
 
 	@Override
@@ -48,5 +55,10 @@ public abstract class TileGridStructureBase extends TileGrid {
 		}
 
 		return super.isPowered();
+	}
+
+	@Override
+	public TextureAtlasSprite getBaseIcon() {
+		return getPrimaryDuctUnit().getBaseIcon();
 	}
 }

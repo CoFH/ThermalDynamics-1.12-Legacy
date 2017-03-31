@@ -12,7 +12,6 @@ public class DuctLight extends Duct {
 
 	static {
 		PacketHandler.instance.registerPacket(PacketLight.class);
-		GameRegistry.registerTileEntity(TileLightDuct.class, "thermaldynamics.LightDuct");
 	}
 
 	public DuctLight(int id, int type, String name, Type ductType, IDuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency) {
