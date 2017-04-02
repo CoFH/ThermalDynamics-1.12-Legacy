@@ -6,6 +6,8 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
 import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
@@ -90,4 +92,7 @@ public abstract class TileGridStructureBase extends TileGrid {
 	public TextureAtlasSprite getBaseIcon() {
 		return getPrimaryDuctUnit().getBaseIcon();
 	}
+
+
+
 }

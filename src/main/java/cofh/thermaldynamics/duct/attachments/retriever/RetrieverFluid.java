@@ -6,9 +6,9 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.fluid.FluidGrid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
@@ -20,7 +20,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Iterator;
@@ -46,17 +45,18 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public void tick(int pass) {
 
-		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
+		FluidGrid grid = fluidDuct.getGrid();
+		if (pass != 1 || grid == null || !isPowered || !isValidInput) {
 			return;
 		}
-		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
+		int maxInput = (int) Math.ceil(grid.myTank.fluidThroughput * throttle[type]);
 
-		if (fluidDuct.fluidGrid.myTank.getFluid() != null) {
-			if (!fluidPassesFiltering(fluidDuct.fluidGrid.myTank.getFluid())) {
+		if (grid.myTank.getFluid() != null) {
+			if (!fluidPassesFiltering(grid.myTank.getFluid())) {
 				return;
 			}
 		}
-		for (Iterator<?> iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
+		for (Iterator<?> iterator = grid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
 			DuctUnitFluid fluidDuct = (DuctUnitFluid) iterator.next();
 
 			for (int k = 0; k < 6 && maxInput > 0; k++) {
@@ -94,8 +94,11 @@ public class RetrieverFluid extends ServoFluid {
 
 					maxInput -= ductHandler.fill(fluid, true);
 
-					if (this.fluidDuct.fluidGrid.toDistribute > 0 && this.fluidDuct.fluidGrid.myTank.getFluid() != null) {
-						this.fluidDuct.transfer(side, Math.min(this.fluidDuct.fluidGrid.myTank.getFluid().amount, this.fluidDuct.fluidGrid.toDistribute), false, this.fluidDuct.fluidGrid.myTank.getFluid(), true);
+					if (this.fluidDuct.getGrid().toDistribute > 0 && this.fluidDuct.getGrid().myTank.getFluid() != null) {
+						FluidGrid otherGrid = fluidDuct.getGrid();
+						if(otherGrid != null) {
+							this.fluidDuct.transfer(side, Math.min(otherGrid.myTank.getFluid().amount, otherGrid.toDistribute), false, otherGrid.myTank.getFluid(), true);
+						}
 					}
 				}
 			}

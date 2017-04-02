@@ -109,4 +109,14 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	public static class TransportDestination {
 
 	}
+
+	@Override
+	protected TransportDestination[] createTileCaches() {
+		return new TransportDestination[6];
+	}
+
+	@Override
+	protected DuctUnitTransportBase[] createPipeCache() {
+		return new DuctUnitTransportBase[6];
+	}
 }

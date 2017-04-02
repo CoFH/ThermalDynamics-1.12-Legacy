@@ -237,7 +237,7 @@ public class TDDucts {
 		itemEnergyOpaque.setRarity(1);
 	}
 
-	public static final IDuctFactory ERROR = (duct, worldObj) -> {throw new IllegalStateException("Unimplemented yet!");};
+	public static final IDuctFactory ERROR = (duct, worldObj) -> {return STRUCTURAL.createTileEntity(duct, worldObj);};
 
 	static void addTransportDucts() {
 

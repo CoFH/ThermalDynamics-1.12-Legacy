@@ -24,6 +24,7 @@ import com.google.common.collect.Iterables;
 import gnu.trove.iterator.TObjectIntIterator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,8 +45,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.Cache> implements IGridTileRoute<DuctUnitItem, ItemGrid>, IItemDuct {
-
-
 	public final static byte maxTicksExistedBeforeFindAlt = 2;
 	public final static byte maxTicksExistedBeforeStuff = 6;
 	public final static byte maxTicksExistedBeforeDump = 10;
@@ -154,6 +153,16 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
+	protected Cache[] createTileCaches() {
+		return new Cache[6];
+	}
+
+	@Override
+	protected DuctUnitItem[] createPipeCache() {
+		return new DuctUnitItem[6];
+	}
+
+	@Override
 	public boolean isOutput(int side) {
 		Cache cache = tileCaches[side];
 		return cache != null;
@@ -241,14 +250,16 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitItem, ItemGrid, Cache> adjDuct, byte side) {
-		return false;
+		return true;
 	}
 
 	@Nullable
 	@Override
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
-
-		return new Cache(tile, parent.getAttachment(side));
+		if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.values()[side ^ 1])) {
+			return new Cache(tile, parent.getAttachment(side));
+		}
+		return null;
 	}
 
 	@Override
@@ -589,8 +600,8 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
-	public void onPlaced() {
-		super.onPlaced();
+	public void onPlaced(EntityLivingBase living, ItemStack stack) {
+		super.onPlaced(living, stack);
 //		if (stack.hasTagCompound()) {
 //			byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
 //			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM) {

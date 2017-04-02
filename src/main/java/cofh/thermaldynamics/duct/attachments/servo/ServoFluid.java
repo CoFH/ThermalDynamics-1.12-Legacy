@@ -67,11 +67,11 @@ public class ServoFluid extends ServoBase {
 
 		super.tick(pass);
 
-		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
+		if (pass != 1 || fluidDuct.getGrid() == null || !isPowered || !isValidInput) {
 			return;
 		}
 
-		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
+		int maxInput = (int) Math.ceil(fluidDuct.getGrid().myTank.fluidThroughput * throttle[type]);
 		IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[side]);
 
 		if (ductHandler == null) return;

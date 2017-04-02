@@ -4,18 +4,20 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.duct.tiles.TileEnergyDuct;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> {
+public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> implements cofh.api.energy.IEnergyStorage {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
@@ -34,6 +36,16 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		super(tileEnergyDuct, duct);
 		transferLimit = EnergyGrid.NODE_TRANSFER[duct.type];
 		capacity = EnergyGrid.NODE_STORAGE[duct.type];
+	}
+
+	@Override
+	protected IEnergyReceiver[] createTileCaches() {
+		return new IEnergyReceiver[6];
+	}
+
+	@Override
+	protected DuctUnitEnergy[] createPipeCache() {
+		return new DuctUnitEnergy[6];
 	}
 
 	@Override
@@ -58,6 +70,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		if (tile instanceof IEnergyReceiver) {
 			IEnergyReceiver energyReceiver = (IEnergyReceiver) tile;
 			if (energyReceiver.canConnectEnergy(facing)) {
+				return energyReceiver;
+			} else if (tile instanceof IDuctHolder){
 				return energyReceiver;
 			}
 		}
@@ -216,5 +230,65 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 	public boolean canConnectEnergy(EnumFacing facing) {
 		return tileCaches[facing.ordinal()] != null;
+	}
+
+	@Override
+	public int receiveEnergy(int maxReceive, boolean simulate) {
+		return grid != null ? grid.receiveEnergy(maxReceive, simulate) : 0;
+	}
+
+	@Override
+	public int extractEnergy(int maxExtract, boolean simulate) {
+		return 0;
+	}
+
+	public int getEnergyStored() {
+		return grid != null ? grid.myStorage.getEnergyStored() : 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored() {
+		return grid != null ? grid.myStorage.getMaxEnergyStored() : 0;
+	}
+
+	@Override
+	public boolean hasCapability(Capability<?> capability) {
+		return capability == CapabilityEnergy.ENERGY;
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		return CapabilityEnergy.ENERGY.cast( new IEnergyStorage(){
+
+			@Override
+			public int receiveEnergy(int maxReceive, boolean simulate) {
+				return DuctUnitEnergy.this.receiveEnergy(maxReceive, simulate);
+			}
+
+			@Override
+			public int extractEnergy(int maxExtract, boolean simulate) {
+				return 0;
+			}
+
+			@Override
+			public int getEnergyStored() {
+				return DuctUnitEnergy.this.getEnergyStored();
+			}
+
+			@Override
+			public int getMaxEnergyStored() {
+				return DuctUnitEnergy.this.getMaxEnergyStored();
+			}
+
+			@Override
+			public boolean canExtract() {
+				return false;
+			}
+
+			@Override
+			public boolean canReceive() {
+				return true;
+			}
+		});
 	}
 }

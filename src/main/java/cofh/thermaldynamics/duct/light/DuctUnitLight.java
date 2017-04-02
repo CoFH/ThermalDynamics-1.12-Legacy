@@ -8,6 +8,8 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -16,7 +18,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
+	private static final Void[] voids = new Void[6];
 
+	@Override
+	protected Void[] createTileCaches() {
+		return voids;
+	}
+
+	@Override
+	protected DuctUnitLight[] createPipeCache() {
+		return new DuctUnitLight[6];
+	}
 
 	public DuctUnitLight(TileGrid parent, Duct duct) {
 		super(parent, duct);
@@ -73,8 +85,8 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 	}
 
 	@Override
-	public void onPlaced() {
-		super.onPlaced();
+	public void onPlaced(EntityLivingBase living, ItemStack stack) {
+		super.onPlaced(living, stack);
 		if (ServerHelper.isServerWorld(world())) {
 			lit = world().isBlockPowered(pos());
 		}

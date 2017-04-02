@@ -6,9 +6,10 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.ISingleTick;
-import cofh.thermaldynamics.multiblock.MultiBlockFormer2;
+import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,15 +30,22 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public final TileGrid parent;
 	@SuppressWarnings("unchecked")
-	public final C[] tileCaches = (C[]) new Object[6];
+	public final C[] tileCaches = createTileCaches();
+
+	protected abstract C[] createTileCaches();
+
 	@SuppressWarnings("unchecked")
-	public final T[] pipeCache = (T[]) new DuctUnit[6];
+	public final T[] pipeCache = createPipeCache();
+
+	protected abstract T[] createPipeCache();
+
 	final Duct duct;
 	@Nullable
 	protected G grid;
 	protected byte nodeMask;
 	protected byte inputMask;
 	private boolean isValidForForming = true;
+
 	public DuctUnit(TileGrid parent, Duct duct) {
 		this.parent = parent;
 		this.duct = duct;
@@ -226,7 +235,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public void formGrid() {
 
 		if (grid == null) {
-			MultiBlockFormer2<T, G, C> multiBlockFormer = new MultiBlockFormer2<>();
+			MultiBlockFormer<T, G, C> multiBlockFormer = new MultiBlockFormer<>();
 			multiBlockFormer.formGrid(this.cast());
 		}
 	}
@@ -313,8 +322,10 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Override
 	public boolean existsYet() {
-
-		return parent.getWorld() != null && parent.getWorld().isBlockLoaded(parent.getPos()) && parent.getWorld().getBlockState(parent.getPos()).getBlock() instanceof BlockDuct;
+		World world = parent.getWorld();
+		return world != null
+				&& world.isBlockLoaded(parent.getPos())
+				&& world.getTileEntity(parent.getPos()) == parent;
 	}
 
 	@Override
@@ -369,7 +380,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	}
 
-	public void onPlaced() {
+	public void onPlaced(EntityLivingBase living, ItemStack stack) {
 
 	}
 
@@ -407,5 +418,13 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public boolean isOutput(int side) {
 		return tileCaches[side] != null;
+	}
+
+	public boolean hasCapability(Capability<?> capability) {
+		return false;
+	}
+
+	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
+		return null;
 	}
 }

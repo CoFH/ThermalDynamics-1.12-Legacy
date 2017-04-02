@@ -37,6 +37,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -145,13 +146,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public void blockPlaced() {
 
-		if (ServerHelper.isServerWorld(worldObj)) {
-
-			for (DuctUnit ductUnit : getDuctUnits()) {
-				ductUnit.onPlaced();
-				TickHandler.addMultiBlockToCalculate(ductUnit);
-			}
-		}
 	}
 
 	@Override
@@ -450,6 +444,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (nbt.hasKey(key, 10)) {
 				ductUnit.readFromNBT(nbt.getCompoundTag(key));
 			}
+		}
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			TickHandler.addMultiBlockToCalculate(ductUnit);
 		}
 	}
 
@@ -824,11 +822,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 				onNeighborBlockChange();
 
-				connectionTypes[i] = connectionTypes[i].next();
+				setConnectionType((byte)i,getConnectionType(i).next());
 
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 				if (tile instanceof TileGrid) {
-					((TileGrid) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+					((TileGrid) tile).setConnectionType((byte) (i ^ 1), getConnectionType(i));
 				}
 
 				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
@@ -898,7 +896,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public void onPlacedBy(EntityLivingBase living, ItemStack stack) {
 		for (DuctUnit ductUnit : getDuctUnits()) {
-			ductUnit.onPlaced();
+			ductUnit.onPlaced(living, stack);
+		}
+
+
+		if (ServerHelper.isServerWorld(worldObj)) {
+			for (DuctUnit ductUnit : getDuctUnits()) {
+				TickHandler.addMultiBlockToCalculate(ductUnit);
+			}
 		}
 	}
 
@@ -945,7 +950,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 			if (isDebug) {
 				StringBuilder builder = new StringBuilder("  Tiles={");
-				for (int i = 0; i < ductUnit.tileCaches.length; i++) {
+				for (int i = 0; i < 6; i++) {
 					if (ductUnit.tileCaches[i] != null) {
 						builder.append(i).append("=").append(ductUnit.tileCaches[i]);
 					}
@@ -996,11 +1001,53 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return getDuctType().unlocalizedName;
 	}
 
+	public int getEnergyStored(EnumFacing from) {
+		return Validate.notNull(getDuct(DuctToken.ENERGY)).getEnergyStored();
+	}
+
+	public int getMaxEnergyStored(EnumFacing from) {
+		return Validate.notNull(getDuct(DuctToken.ENERGY)).getMaxEnergyStored();
+	}
+
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+		return Validate.notNull(getDuct(DuctToken.ENERGY)).receiveEnergy(maxReceive, simulate);
+	}
+
+	public boolean canConnectEnergy(EnumFacing from) {
+		return getVisualConnectionType(from.ordinal()).renderDuct();
+	}
+
+	@Override
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
+		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
+			for (DuctUnit<?,?,?> ductUnit : getDuctUnits()) {
+				if (ductUnit.hasCapability(capability)) {
+					return true;
+				}
+			}
+		}
+		return super.hasCapability(capability, facing);
+	}
+
+	@Nonnull
+	@Override
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
+		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
+			for (DuctUnit<?,?,?> ductUnit : getDuctUnits()) {
+				if (ductUnit.hasCapability(capability)) {
+					T cap = ductUnit.getCapability(capability, facing);
+					if (cap != null) {
+						return capability.cast(cap);
+					}
+				}
+			}
+		}
+		return super.getCapability(capability, facing);
+	}
+
 	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[6];
 		public final Cover[] covers = new Cover[6];
 		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 	}
-
-
 }

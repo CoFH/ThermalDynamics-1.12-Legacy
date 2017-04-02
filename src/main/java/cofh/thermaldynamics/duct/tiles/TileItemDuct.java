@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
+import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
@@ -43,7 +44,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Flux extends TileItemDuct {
+	public static class Flux extends TileItemDuct implements IEnergyReceiver {
 		public Flux(DuctItem ductType) {
 			super(ductType);
 			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, ductType, 400, 1000));
@@ -64,7 +65,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Ender extends TileItemDuct {
+	public static class Ender extends TileItemDuct implements IEnergyReceiver {
 		public Ender(DuctItem ductType) {
 			super(ductType);
 			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, ductType, 1000, 1000);

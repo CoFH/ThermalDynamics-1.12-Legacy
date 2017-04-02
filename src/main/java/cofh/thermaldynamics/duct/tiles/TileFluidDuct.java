@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
+import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
@@ -83,7 +84,7 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 	}
 
 
-	public static class Flux extends TileFluidDuct {
+	public static class Flux extends TileFluidDuct implements IEnergyReceiver {
 
 		public Flux(Duct ductType) {
 			super(ductType);

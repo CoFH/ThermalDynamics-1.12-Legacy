@@ -6,7 +6,9 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
@@ -16,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -29,7 +32,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
 	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
 	private static DuctUnitFluid lightingUpdate = null;
-	public FluidGrid fluidGrid;
+
 	public byte internalSideCounter;
 	public FluidStack mySavedFluid;
 	public FluidStack myRenderFluid;
@@ -41,20 +44,30 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	}
 
 	@Override
+	protected Cache[] createTileCaches() {
+		return new Cache[6];
+	}
+
+	@Override
+	protected DuctUnitFluid[] createPipeCache() {
+		return new DuctUnitFluid[6];
+	}
+
+	@Override
 	public boolean tickPass(int pass) {
 
 		if (!super.tickPass(pass)) {
 			return false;
 		}
-		if (fluidGrid == null) {
+		if (grid == null) {
 			return true;
 		}
 		if (pass == 0) {
-			int available = fluidGrid.toDistribute;
+			int available = grid.toDistribute;
 			int sent = 0;
 
 			for (int i = this.internalSideCounter; i < 6 && sent < available; i++) {
-				sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid(), true);
+				sent += transfer(i, available - sent, false, grid.myTank.getFluid(), true);
 
 				if (sent >= available) {
 					internalSideCounter = this.tickInternalSideCounter(i + 1);
@@ -63,7 +76,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 			}
 			for (int i = 0; i < this.internalSideCounter && sent < available; i++) {
-				sent += transfer(i, available - sent, false, fluidGrid.myTank.getFluid(), true);
+				sent += transfer(i, available - sent, false, grid.myTank.getFluid(), true);
 
 				if (sent >= available) {
 					internalSideCounter = this.tickInternalSideCounter(i + 1);
@@ -128,7 +141,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 				return amountSent;
 			} else {
 				if (drainGridTank) {
-					tempFluid = fluidGrid.myTank.drain(amountSent, true);
+					tempFluid = grid.myTank.drain(amountSent, true);
 				} else {
 					tempFluid.amount = amountSent;
 				}
@@ -177,7 +190,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 	public void setFluidForGrid(FluidStack fluidForGrid) {
 
-		fluidForGrid = null;
+		this.fluidForGrid = fluidForGrid;
 	}
 
 
@@ -197,7 +210,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		if (ServerHelper.isClientWorld(parent.getWorld())) {
 			return myRenderFluid;
 		}
-		return fluidGrid == null ? myConnectionFluid : fluidGrid.getFluid();
+		return grid == null ? myConnectionFluid : grid.getFluid();
 	}
 
 
@@ -235,21 +248,46 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side) {
-		//TODO: SOLVE
-		return false;
+		DuctUnitFluid ductUnitFluid = adjDuct.cast();
+		if (ductUnitFluid.getDuctType() != getDuctType()) {
+			return false;
+		}
+		FluidStack myFluid = getConnectionFluid();
+		if (myFluid != null) {
+			FluidStack connectionFluid = ductUnitFluid.getConnectionFluid();
+			if (connectionFluid != null) {
+				if (!myFluid.isFluidEqual(connectionFluid)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
+
 
 	@Nullable
 	@Override
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
+		if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.values()[side ^ 1])) {
+			Attachment attachment = parent.getAttachment(side);
+			IFilterFluid filter;
+			if (attachment instanceof IFilterAttachment) {
+				filter = ((IFilterAttachment) attachment).getFluidFilter();
+			} else {
+				filter = IFilterFluid.nullFilter;
+			}
+			return new Cache(tile, filter);
+		}
+
 		return null;
 	}
 
 	@Override
 	public void tileUnloading() {
 
-		if (mySavedFluid != null && fluidGrid != null) {
-			fluidGrid.myTank.drain(mySavedFluid.amount, true);
+		if (mySavedFluid != null && grid != null) {
+			grid.myTank.drain(mySavedFluid.amount, true);
 		}
 	}
 
@@ -257,20 +295,20 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 		if (myRenderFluid != null) {
 			return myRenderFluid.amount;
-		} else if (fluidGrid == null) {
+		} else if (grid == null) {
 			if (myConnectionFluid != null) {
 				return myConnectionFluid.amount;
 			}
 		} else {
-			return fluidGrid.getRenderLevel();
+			return grid.getRenderLevel();
 		}
 		return 0;
 	}
 
 	@Override
 	public void writeToTilePacket(PacketCoFHBase payload) {
-		if (fluidGrid != null) {
-			payload.addFluidStack(fluidGrid.getRenderFluid());
+		if (grid != null) {
+			payload.addFluidStack(grid.getRenderFluid());
 		} else {
 			payload.addFluidStack(myConnectionFluid);
 		}
@@ -284,7 +322,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 	public void sendRenderPacket() {
 
-		if (fluidGrid == null) {
+		if (grid == null) {
 			return;
 		}
 		if (!getDuctType().opaque) {
@@ -292,7 +330,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 			PacketTileInfo myPayload = newPacketTileInfo();
 			myPayload.addByte(TileFluidPackets.UPDATE_RENDER);
-			myPayload.addFluidStack(fluidGrid.getRenderFluid());
+			myPayload.addFluidStack(grid.getRenderFluid());
 			PacketHandler.sendToAllAround(myPayload, parent);
 		}
 	}
@@ -303,8 +341,8 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			@Override
 			public IFluidTankProperties[] getTankProperties() {
 
-				FluidStack info = fluidGrid != null ? fluidGrid.myTank.getInfo().fluid : null;
-				int capacity = fluidGrid != null ? fluidGrid.myTank.getInfo().capacity : 0;
+				FluidStack info = grid != null ? grid.myTank.getInfo().fluid : null;
+				int capacity = grid != null ? grid.myTank.getInfo().capacity : 0;
 				return new IFluidTankProperties[]{new FluidTankProperties(info, capacity, isOpen(from), isOpen(from))};
 			}
 
@@ -312,7 +350,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			public int fill(FluidStack resource, boolean doFill) {
 
 				if (isOpen(from) && matchesFilter(from, resource)) {
-					return fluidGrid.myTank.fill(resource, doFill);
+					return grid.myTank.fill(resource, doFill);
 				}
 				return 0;
 			}
@@ -322,7 +360,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			public FluidStack drain(FluidStack resource, boolean doDrain) {
 
 				if (isOpen(from)) {
-					return fluidGrid.myTank.drain(resource, doDrain);
+					return grid.myTank.drain(resource, doDrain);
 				}
 				return null;
 			}
@@ -332,7 +370,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			public FluidStack drain(int maxDrain, boolean doDrain) {
 
 				if (isOpen(from)) {
-					return fluidGrid.myTank.drain(maxDrain, doDrain);
+					return grid.myTank.drain(maxDrain, doDrain);
 				}
 				return null;
 			}
@@ -346,7 +384,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 	public boolean isOpen(EnumFacing from) {
 
-		return fluidGrid != null && (from == null || ((isOutput(from.ordinal()) || isInput(from.ordinal())) && parent.getConnectionType(from.ordinal()).allowTransfer));
+		return grid != null && (from == null || ((isOutput(from.ordinal()) || isInput(from.ordinal())) && parent.getConnectionType(from.ordinal()).allowTransfer));
 	}
 
 	@Override
@@ -354,14 +392,14 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 		super.writeToNBT(nbt);
 
-		if (fluidGrid != null && fluidGrid.hasValidFluid()) {
-			mySavedFluid = fluidGrid.getNodeShare(this);
+		if (grid != null && grid.hasValidFluid()) {
+			mySavedFluid = grid.getNodeShare(this);
 			if (mySavedFluid != null) {
 				mySavedFluid.writeToNBT(nbt);
 			}
 
 			nbt.setTag("ConnFluid", new NBTTagCompound());
-			myConnectionFluid = fluidGrid.getConnectionFluid();
+			myConnectionFluid = grid.getConnectionFluid();
 			myConnectionFluid.writeToNBT(nbt.getCompoundTag("ConnFluid"));
 		} else {
 			mySavedFluid = null;
@@ -381,9 +419,24 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		}
 	}
 
+	@Override
+	public boolean hasCapability(Capability<?> capability) {
+		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this.getFluidCapability(facing));
+	}
+
 	public static class Cache {
 		public TileEntity tile;
 		public IFilterFluid filter;
+
+		public Cache(TileEntity tile, @Nonnull IFilterFluid filter) {
+			this.tile = tile;
+			this.filter = filter;
+		}
 
 		public IFluidHandler getHandler(int side) {
 			if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side])) {
@@ -402,6 +455,4 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		public static final byte UPDATE_RENDER = 3;
 		public static final byte TEMPERATURE = 4;
 	}
-
-
 }

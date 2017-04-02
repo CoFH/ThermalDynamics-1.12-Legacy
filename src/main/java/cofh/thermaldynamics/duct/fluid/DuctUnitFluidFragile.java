@@ -10,7 +10,6 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -69,11 +68,11 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 
 	public void sendOpaqueTempPacket() {
 
-		if (fluidGrid == null) {
+		if (grid == null) {
 			return;
 		}
 
-		int temp = getTemperature(fluidGrid.getRenderFluid());
+		int temp = getTemperature(grid.getRenderFluid());
 		if (temp != prevTemperature) {
 			temp = prevTemperature;
 			PacketTileInfo myPayload = newPacketTileInfo();
@@ -128,7 +127,7 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 			return false;
 		}
 		if (pass == 2) {
-			FluidStack fluid = fluidGrid.getFluid();
+			FluidStack fluid = grid.getFluid();
 			int fluidTemp;
 			fluidTemp = getTemperature(fluid);
 
@@ -140,9 +139,9 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 					if (fluid != null && fluid.amount > 0) {
 						fluid = fluid.copy();
 						if (fluid.amount < 100 || world().rand.nextInt(5) == 0) {
-							fluidGrid.myTank.setFluid(null);
+							grid.myTank.setFluid(null);
 						} else {
-							fluidGrid.myTank.drain(world().rand.nextInt(fluid.amount), false);
+							grid.myTank.drain(world().rand.nextInt(fluid.amount), false);
 						}
 					}
 					breakAndSpill(fluid);

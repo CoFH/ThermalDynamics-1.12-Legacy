@@ -12,10 +12,13 @@ import javax.annotation.Nullable;
 
 public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructural, Void> {
 
+	private static final Void[] VOIDS = new Void[6];
+
 	@Nullable
 	private final DuctUnit mainDuct;
+	;
 
-	public DuctUnitStructural(TileGrid parent, DuctUnit mainDuct) {
+	public DuctUnitStructural(TileGrid parent, @Nonnull DuctUnit mainDuct) {
 		super(parent, mainDuct.getDuctType());
 		this.mainDuct = mainDuct;
 	}
@@ -23,6 +26,17 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 	public DuctUnitStructural(TileStructuralDuct parent, Duct duct) {
 		super(parent, duct);
 		this.mainDuct = null;
+	}
+
+	@Override
+	protected Void[] createTileCaches() {
+
+		return VOIDS;
+	}
+
+	@Override
+	protected DuctUnitStructural[] createPipeCache() {
+		return new DuctUnitStructural[6];
 	}
 
 	@Override

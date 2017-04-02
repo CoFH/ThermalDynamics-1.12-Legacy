@@ -36,8 +36,8 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			@Override
 			public IFluidTankProperties[] getTankProperties() {
 
-				FluidStack info = fluidGrid != null ? fluidGrid.myTank.getInfo().fluid : null;
-				int capacity = fluidGrid != null ? fluidGrid.myTank.getInfo().capacity : 0;
+				FluidStack info = grid != null ? grid.myTank.getInfo().fluid : null;
+				int capacity = grid != null ? grid.myTank.getInfo().capacity : 0;
 				return new IFluidTankProperties[] { new FluidTankProperties(info, capacity, isOpen(from), isOpen(from)) };
 			}
 
@@ -55,7 +55,7 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			public FluidStack drain(FluidStack resource, boolean doDrain) {
 
 				if (isOpen(from)) {
-					return fluidGrid.myTank.drain(resource, doDrain);
+					return grid.myTank.drain(resource, doDrain);
 				}
 				return null;
 			}
@@ -65,7 +65,7 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			public FluidStack drain(int maxDrain, boolean doDrain) {
 
 				if (isOpen(from)) {
-					return fluidGrid.myTank.drain(maxDrain, doDrain);
+					return grid.myTank.drain(maxDrain, doDrain);
 				}
 				return null;
 			}
