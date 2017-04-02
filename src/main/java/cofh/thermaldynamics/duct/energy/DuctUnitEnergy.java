@@ -1,11 +1,11 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.IEnergyReceiver;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileEnergyDuct;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -20,11 +20,20 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
 	byte internalSideCounter;
-	int type;
+	private int transferLimit;
+	private int capacity;
 
-	public DuctUnitEnergy(TileGrid parent, Duct duct) {
+	public DuctUnitEnergy(TileGrid parent, Duct duct, int transferLimit, int capacity) {
 
 		super(parent, duct);
+		this.transferLimit = transferLimit;
+		this.capacity = capacity;
+	}
+
+	public DuctUnitEnergy(TileEnergyDuct tileEnergyDuct, Duct duct) {
+		super(tileEnergyDuct, duct);
+		transferLimit = EnergyGrid.NODE_TRANSFER[duct.type];
+		capacity = EnergyGrid.NODE_STORAGE[duct.type];
 	}
 
 	@Override
@@ -161,11 +170,11 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	}
 
 	public int getTransferLimit() {
-		return EnergyGrid.NODE_TRANSFER[type];
+		return transferLimit;
 	}
 
 	public int getCapacity() {
-		return EnergyGrid.NODE_STORAGE[type];
+		return capacity;
 	}
 
 	protected int sendEnergy(IEnergyReceiver receiver, int maxReceive, byte side, boolean simulate) {
@@ -201,11 +210,11 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-		if(grid == null) return 0;
+		if (grid == null) return 0;
 		return grid.receiveEnergy(maxReceive, simulate);
 	}
 
-	public boolean canConnectEnergy(EnumFacing facing){
+	public boolean canConnectEnergy(EnumFacing facing) {
 		return tileCaches[facing.ordinal()] != null;
 	}
 }

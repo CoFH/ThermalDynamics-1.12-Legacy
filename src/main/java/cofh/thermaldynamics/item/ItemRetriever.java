@@ -12,6 +12,7 @@ import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -61,10 +62,10 @@ public class ItemRetriever extends ItemAttachment {
 	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileGrid tile) {
 
 		int type = stack.getItemDamage() % 5;
-		if (tile instanceof DuctUnitFluid) {
+		if (tile.getDuct(DuctToken.FLUID) != null) {
 			return new RetrieverFluid(tile, (byte) (side.ordinal() ^ 1), type);
 		}
-		if (tile instanceof DuctUnitItem) {
+		if (tile.getDuct(DuctToken.ITEMS) != null) {
 			return new RetrieverItem(tile, (byte) (side.ordinal() ^ 1), type);
 		}
 		return null;

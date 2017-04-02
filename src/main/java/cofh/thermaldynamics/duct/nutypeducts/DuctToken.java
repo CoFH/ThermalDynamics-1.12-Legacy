@@ -11,8 +11,8 @@ import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.ItemGrid;
-import cofh.thermaldynamics.duct.light.LightGrid;
 import cofh.thermaldynamics.duct.light.DuctUnitLight;
+import cofh.thermaldynamics.duct.light.LightGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import javax.annotation.Nonnull;
@@ -23,6 +23,8 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 
 	// Energy grid, for any energy transfer
 	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
+
+	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
 
 	// Storage energy grid, for storing internal energy
 
@@ -39,7 +41,7 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 			ITEMS,
 			FLUID
 	};
-	public static DuctToken<DuctUnitTransportBase, TransportGrid, Void> TRANSPORT;
+	public static DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> TRANSPORT;
 	public static DuctToken<DuctUnitLight, LightGrid, Void> LIGHT;
 
 	static {
@@ -57,6 +59,11 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 
 	public byte getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + key + "=" + id + "]";
 	}
 
 	@Override

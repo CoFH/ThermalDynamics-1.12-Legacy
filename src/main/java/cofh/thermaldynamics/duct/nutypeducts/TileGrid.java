@@ -33,6 +33,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -52,6 +53,7 @@ import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
+	public final static boolean isDebug = true;
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -76,7 +78,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public final LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<>();
 	@Nullable
 	public AttachmentData attachmentData;
-	private ConnectionType connectionTypes[] = {NORMAL, NORMAL, NORMAL, NORMAL, NORMAL, NORMAL};
+	@Nullable
+	public BlockDuct.ConnectionType[] clientConnections;
+	@Nullable
+	private ConnectionType connectionTypes[];
 	private int lastUpdateTime;
 
 	public static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
@@ -100,7 +105,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public boolean isSideBlocked(int side) {
 		Attachment attachment = getAttachment(side);
-		return attachment != null && !attachment.allowPipeConnection() || !connectionTypes[side].allowTransfer;
+		return attachment != null && !attachment.allowPipeConnection() || (connectionTypes != null && !connectionTypes[side].allowTransfer);
 
 	}
 
@@ -115,7 +120,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		super.onChunkUnload();
 	}
-
 
 	@Override
 	public void invalidate() {
@@ -152,8 +156,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Override
 	public void onNeighborBlockChange() {
-
-		if (ServerHelper.isClientWorld(worldObj) && lastUpdateTime == worldObj.getTotalWorldTime()) {
+		if (ServerHelper.isClientWorld(worldObj)) {
 			return;
 		}
 
@@ -171,9 +174,64 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 
+		int hash = getRenderHash();
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.updateAllSides(tiles, holders);
 		}
+
+		if (hash != getRenderHash()) {
+			callBlockUpdate();
+		}
+	}
+
+	@Override
+	public void onNeighborTileChange(BlockPos pos) {
+		byte side = (byte) getNeighbourDirection(getPos(), pos).ordinal();
+		BlockDuct.ConnectionType visualConnectionType = getVisualConnectionType(side);
+		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, side);
+		IDuctHolder holder = adjacentTileEntity instanceof IDuctHolder ? (IDuctHolder) adjacentTileEntity : null;
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			ductUnit.updateSide(adjacentTileEntity, holder, side);
+		}
+
+		if (visualConnectionType != getVisualConnectionType(side)) {
+			callBlockUpdate();
+		}
+	}
+
+	public EnumFacing getNeighbourDirection(BlockPos pos, BlockPos neighbour) {
+		int dx = pos.getX() - neighbour.getX();
+		if (dx == 0) {
+			int dz = pos.getZ() - neighbour.getZ();
+			if (dz == 0) {
+				int dy = pos.getY() - neighbour.getY();
+				if (dy == 1) {
+					return EnumFacing.UP;
+				} else if (dy == -1) {
+					return EnumFacing.DOWN;
+				}
+			} else if (dz == 1) {
+				return EnumFacing.SOUTH;
+			} else if (dz == -1) {
+				return EnumFacing.NORTH;
+			}
+		} else if (dx == 1) {
+			return EnumFacing.EAST;
+		} else if (dx == -1) {
+			return EnumFacing.WEST;
+		}
+		throw new IllegalStateException("Positions " + pos + " and " + neighbour + " are not adjacent");
+	}
+
+	private int getRenderHash() {
+		int prev = 0;
+		for (int i = 0; i < 6; i++) {
+			BlockDuct.ConnectionType type = getVisualConnectionType(i);
+			prev = prev * 5 + type.ordinal();
+		}
+		return prev;
 	}
 
 	public void setConnectionType(byte i, ConnectionType type) {
@@ -486,10 +544,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		PacketCoFHBase payload = super.getTilePacket();
 
+		for (int i = 0; i < 6; i++) {
+			payload.addByte(getVisualConnectionType(i).ordinal());
+		}
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.writeToTilePacket(payload);
 		}
-
 
 		if (attachmentData == null) {
 			payload.addByte(0);
@@ -530,7 +591,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Override
 	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-		if(!isServer) return;
+		if (isServer) return;
+
+		if (clientConnections == null)
+			clientConnections = new BlockDuct.ConnectionType[6];
+		for (int i = 0; i < 6; i++) {
+			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.values()[payload.getByte()];
+			clientConnections[i] = connectionType;
+		}
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.handleTilePacket(payload);
@@ -604,7 +672,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@SideOnly(Side.CLIENT)
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
-		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
+		BlockDuct.ConnectionType connectionType = getVisualConnectionType(side);
 		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
 		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
@@ -614,13 +682,18 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
-	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
-
+	public BlockDuct.ConnectionType getVisualConnectionType(int side) {
 		Attachment attachment = getAttachment(side);
 		if (attachment != null) {
 
 			return attachment.getNeighborType();
 		} else {
+			if (ServerHelper.isClientWorld(worldObj)) {
+				if (clientConnections == null)
+					return BlockDuct.ConnectionType.NONE;
+				return clientConnections[side];
+			}
+
 			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.NONE;
 
 			for (DuctUnit ductUnit : getDuctUnits()) {
@@ -657,7 +730,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public int y() {
 		return getPos().getY();
 	}
-
 
 	public int z() {
 		return getPos().getZ();
@@ -698,7 +770,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids, Cuboid6 centerSelection, Cuboid6[] subSelection) {
 
 		for (int i = 0; i < 6; i++) {
-			BlockDuct.ConnectionType renderConnectionType = getRenderConnectionType(i);
+			BlockDuct.ConnectionType renderConnectionType = getVisualConnectionType(i);
 
 			// Add ATTACHMENT sides
 			Attachment attachment = getAttachment(i);
@@ -795,8 +867,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
-
-
 	/* ICustomHitBox */
 	@Override
 	public boolean shouldRenderCustomHitBox(int subHit, EntityPlayer thePlayer) {
@@ -813,7 +883,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		CustomHitBox hb = new CustomHitBox(v, v, v, pos.getX() + v1, pos.getY() + v1, pos.getZ() + v1);
 
 		for (int i = 0; i < 6; i++) {
-			BlockDuct.ConnectionType renderConnectionType = getRenderConnectionType(i);
+			BlockDuct.ConnectionType renderConnectionType = getVisualConnectionType(i);
 
 			if (renderConnectionType == BlockDuct.ConnectionType.DUCT) {
 				hb.drawSide(i, true);
@@ -854,26 +924,43 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
-	public TextureAtlasSprite getBaseIcon(){
+	public TextureAtlasSprite getBaseIcon() {
 		return getDuctType().iconBaseTexture;
 	}
-
-
-	public static class AttachmentData {
-		public final Attachment attachments[] = new Attachment[6];
-		public final Cover[] covers = new Cover[6];
-		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
-	}
-
 
 	@Override
 	public void getTileInfo(List<ITextComponent> info, EnumFacing side, EntityPlayer player, boolean debug) {
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
+			if (isDebug) {
+				info.add(new TextComponentString(ductUnit.toString()));
+			}
 			MultiBlockGrid grid = ductUnit.getGrid();
 			if (grid != null) {
 				info.add(new TextComponentTranslation("info.thermaldynamics.info.duct"));
-				grid.addInfo(info, player, debug);
+				grid.addInfo(info, player, debug || isDebug);
+			} else if (isDebug) {
+				info.add(new TextComponentString("No Grid"));
+			}
+
+			if (isDebug) {
+				StringBuilder builder = new StringBuilder("  Tiles={");
+				for (int i = 0; i < ductUnit.tileCaches.length; i++) {
+					if (ductUnit.tileCaches[i] != null) {
+						builder.append(i).append("=").append(ductUnit.tileCaches[i]);
+					}
+				}
+				builder.append("}");
+
+				info.add(new TextComponentString(builder.toString()));
+				builder = new StringBuilder("  Pipes={");
+				for (int i = 0; i < ductUnit.pipeCache.length; i++) {
+					if (ductUnit.pipeCache[i] != null) {
+						builder.append(i).append("=").append(ductUnit.pipeCache[i]);
+					}
+				}
+				builder.append("}");
+				info.add(new TextComponentString(builder.toString()));
 			}
 		}
 
@@ -888,7 +975,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 	}
-
 
 	public Object getConfigGuiServer(InventoryPlayer inventory) {
 
@@ -908,6 +994,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public String getTileName() {
 		return getDuctType().unlocalizedName;
+	}
+
+	public static class AttachmentData {
+		public final Attachment attachments[] = new Attachment[6];
+		public final Cover[] covers = new Cover[6];
+		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
 	}
 
 

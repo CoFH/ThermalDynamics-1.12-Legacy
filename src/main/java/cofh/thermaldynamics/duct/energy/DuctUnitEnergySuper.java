@@ -5,8 +5,8 @@ import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 
 public class DuctUnitEnergySuper extends DuctUnitEnergy {
 
-	public DuctUnitEnergySuper(TileGrid parent, Duct duct) {
-		super(parent, duct);
+	public DuctUnitEnergySuper(TileGrid parent, Duct duct, int transferLimit, int capacity) {
+		super(parent, duct, transferLimit, capacity);
 	}
 
 	@Override

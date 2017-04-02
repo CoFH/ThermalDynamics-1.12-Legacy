@@ -9,12 +9,12 @@ import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 
-public class DuctUnitEnder extends DuctUnitItem {
+public class DuctUnitItemEnder extends DuctUnitItem {
 
 	final DuctUnitEnergyStorage enderEnergy;
 	public boolean powered = false;
 
-	public DuctUnitEnder(TileGrid grid, Duct duct, DuctUnitEnergyStorage enderEnergy) {
+	public DuctUnitItemEnder(TileGrid grid, Duct duct, DuctUnitEnergyStorage enderEnergy) {
 
 		super(grid, duct);
 		this.enderEnergy = enderEnergy;
@@ -112,7 +112,7 @@ public class DuctUnitEnder extends DuctUnitItem {
 						transferItem(travelingItem, duct, newInsert);
 						return;
 					}
-					if (duct.getClass() != DuctUnitEnder.class) {
+					if (duct.getClass() != DuctUnitItemEnder.class) {
 						transferItem(travelingItem, duct, newInsert);
 						return;
 					}

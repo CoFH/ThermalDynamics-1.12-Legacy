@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,13 +34,34 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	final Duct duct;
 	@Nullable
 	protected G grid;
-	private boolean isValidForForming;
 	protected byte nodeMask;
 	protected byte inputMask;
-
+	private boolean isValidForForming = true;
 	public DuctUnit(TileGrid parent, Duct duct) {
 		this.parent = parent;
 		this.duct = duct;
+	}
+
+	public static String getSideArrayNonNull(Object[] array) {
+		StringBuilder builder = new StringBuilder("[");
+		for (int i = 0; i < 6; i++) {
+			if (array[i] != null) {
+				builder.append(EnumFacing.values()[i].toString().substring(0, 1));
+			}
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	@Override
+	public String toString() {
+		return "Duct{"
+//				+ duct.unlocalizedName + ","
+				+ getClass().getSimpleName() + ","
+//				+ getToken() + ",t="
+				+ getSideArrayNonNull(tileCaches) + ",p="
+				+ getSideArrayNonNull(pipeCache)
+				+ "}";
 	}
 
 	@Nonnull
@@ -96,7 +118,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 		if (holder != null && !holder.isSideBlocked(side ^ 1)) {
 			DuctUnit<T, G, C> adjDuct = holder.getDuct(getToken());
-			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side)) {
+			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side) && adjDuct.canConnectToOtherDuct(this, side)) {
 				pipeCache[side] = adjDuct.cast();
 				return;
 			}
@@ -203,7 +225,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public void formGrid() {
 
-		if (grid != null) {
+		if (grid == null) {
 			MultiBlockFormer2<T, G, C> multiBlockFormer = new MultiBlockFormer2<>();
 			multiBlockFormer.formGrid(this.cast());
 		}
@@ -235,7 +257,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	@Override
 	public boolean isSideConnected(byte side) {
 
-		return false;
+		return pipeCache[side] != null;
 	}
 
 	@Override

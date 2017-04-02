@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitTransportBaseRoute extends DuctUnitTransportBase {
+public abstract class DuctUnitTransportBaseRoute extends DuctUnitTransportBase {
 
 	public DuctUnitTransportBaseRoute(TileGrid parent, Duct duct) {
 		super(parent, duct);
@@ -26,13 +26,13 @@ public class DuctUnitTransportBaseRoute extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, Void> adjDuct, byte side) {
-		return true;
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
+		return adjDuct.cast().isRoutable();
 	}
 
 	@Nullable
 	@Override
-	public Void cacheTile(@Nonnull TileEntity tile, byte side) {
+	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
 		return null;
 	}
 

@@ -11,8 +11,10 @@ import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.gui.client.GuiTransport;
@@ -42,10 +44,9 @@ import java.util.LinkedList;
 
 public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBlockConfigGui {
 
-	@Override
-	public boolean isOutput() {
 
-		return isOutput;
+	public DuctUnitTransport(TileGrid parent, Duct duct) {
+		super(parent, duct);
 	}
 
 	@Override
@@ -64,93 +65,93 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 //
 //		return super.isBlockedSide(side) || parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED;
 //	}
-
-	@Override
-	public boolean onWrench(EntityPlayer player, EnumFacing side) {
-
-		RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, pos);
-		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
-			if (rayTrace == null) {
-				return false;
-			}
-
-			int subHit = rayTrace.subHit;
-			if (subHit >= 0 && subHit <= 13) {
-				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
-
-				onNeighborBlockChange();
-
-				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
-				if (isConnectable(tile, i)) {
-					connectionTypes[i] = connectionTypes[i].next();
-					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
-				} else {
-					if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
-					} else {
-						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.FORCED;
-						for (int j = 0; j < 6; j++) {
-							if (i != j && connectionTypes[j] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-								connectionTypes[j] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
-							}
-						}
-					}
-				}
-
-				onNeighborBlockChange();
-
-				worldObj.notifyNeighborsOfStateChange(pos, getBlockType());
-
-				if (myGrid != null) {
-					myGrid.destroyAndRecreate();
-				}
-
-				for (SubTileGridTile subTile : subTiles) {
-					subTile.destroyAndRecreate();
-				}
-
-				IBlockState state = worldObj.getBlockState(pos);
-				worldObj.notifyBlockUpdate(pos, state, state, 1);
-				return true;
-			}
-			if (subHit > 13 && subHit < 20) {
-				return attachments[subHit - 14].onWrenched();
-			}
-
-			if (subHit >= 20 && subHit < 26) {
-				return covers[subHit - 20].onWrenched();
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean openGui(EntityPlayer player) {
-
-		if (super.openGui(player) || ServerHelper.isClientWorld(worldObj)) {
-			return true;
-		}
-
-		if (grid == null) {
-			return false;
-		}
-
-		onNeighborBlockChange();
-
-		for (int i = 0; i < 6; i++) {
-			if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-				if (pipeCache[i] != null) {
-					continue;
-				}
-
-				PacketHandler.sendTo(parent.getTilePacket(), player);
-				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, world(), pos().getX(), pos().getY(), pos().getZ());
-				return true;
-			}
-		}
-
-		return false;
-	}
+//
+//	@Override
+//	public boolean onWrench(EntityPlayer player, EnumFacing side) {
+//
+//		RayTraceResult rayTrace = RayTracer.retraceBlock(world(), player, pos());
+//		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
+//			if (rayTrace == null) {
+//				return false;
+//			}
+//
+//			int subHit = rayTrace.subHit;
+//			if (subHit >= 0 && subHit <= 13) {
+//				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
+//
+//				onNeighborBlockChange();
+//
+//				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
+//				if (isConnectable(tile, i)) {
+//					connectionTypes[i] = connectionTypes[i].next();
+//					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+//				} else {
+//					if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+//						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
+//					} else {
+//						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.FORCED;
+//						for (int j = 0; j < 6; j++) {
+//							if (i != j && connectionTypes[j] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+//								connectionTypes[j] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
+//							}
+//						}
+//					}
+//				}
+//
+//				onNeighborBlockChange();
+//
+//				worldObj.notifyNeighborsOfStateChange(pos, getBlockType());
+//
+//				if (myGrid != null) {
+//					myGrid.destroyAndRecreate();
+//				}
+//
+//				for (SubTileGridTile subTile : subTiles) {
+//					subTile.destroyAndRecreate();
+//				}
+//
+//				IBlockState state = worldObj.getBlockState(pos);
+//				worldObj.notifyBlockUpdate(pos, state, state, 1);
+//				return true;
+//			}
+//			if (subHit > 13 && subHit < 20) {
+//				return attachments[subHit - 14].onWrenched();
+//			}
+//
+//			if (subHit >= 20 && subHit < 26) {
+//				return covers[subHit - 20].onWrenched();
+//			}
+//		}
+//		return false;
+//	}
+//
+//	@Override
+//	public boolean openGui(EntityPlayer player) {
+//
+//		if (super.openGui(player) || ServerHelper.isClientWorld(worldObj)) {
+//			return true;
+//		}
+//
+//		if (grid == null) {
+//			return false;
+//		}
+//
+//		onNeighborBlockChange();
+//
+//		for (int i = 0; i < 6; i++) {
+//			if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
+//				if (pipeCache[i] != null) {
+//					continue;
+//				}
+//
+//				PacketHandler.sendTo(parent.getTilePacket(), player);
+//				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, world(), pos().getX(), pos().getY(), pos().getZ());
+//				return true;
+//			}
+//		}
+//
+//		return false;
+//	}
 
 	private static final OutputData BLANK_NAME = new OutputData();
 	public OutputData data = BLANK_NAME;
@@ -235,7 +236,7 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 
 			transport.setDirectory(entries);
 		} else if (type == NETWORK_CONFIG && isServer) {
-			PacketHandler.sendTo(getTilePacket(), thePlayer);
+			PacketHandler.sendTo(parent.getTilePacket(), thePlayer);
 			thePlayer.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, world(), pos().getX(), pos().getY(), pos().getZ());
 		}
 	}
@@ -262,9 +263,8 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 
 	public void sendOutputDataConfigPacket() {
 
-		if (this.worldObj.isRemote) {
-			PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-			myPayload.addByte(0);
+		if (this.world().isRemote) {
+			PacketTileInfo myPayload = newPacketTileInfo();
 			myPayload.addByte(NETWORK_SETOUTPUTDATA);
 			data.saveConfigData(myPayload);
 			PacketHandler.sendToServer(myPayload);
@@ -273,8 +273,7 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 
 	public void sendRequest(int x, int y, int z) {
 
-		PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-		myPayload.addByte(0);
+		PacketTileInfo myPayload = newPacketTileInfo();
 		myPayload.addByte(NETWORK_REQUEST);
 		myPayload.addInt(x);
 		myPayload.addInt(y);
@@ -284,8 +283,7 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 
 	public PacketCoFHBase getDirectoryPacket() {
 
-		PacketTileInfo myPayload = PacketTileInfo.newPacket(this);
-		myPayload.addByte(0);
+		PacketTileInfo myPayload = newPacketTileInfo();
 		myPayload.addByte(NETWORK_LIST);
 
 		LinkedList<Route<DuctUnitTransportBase, TransportGrid>> outputRoutes = getCache().outputRoutes;
@@ -331,41 +329,51 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 		return false;
 	}
 
-	@Override
-	public Object getGuiServer(InventoryPlayer inventory) {
-
-		return new ContainerTransport(this);
-	}
-
-	@Override
-	@SideOnly (Side.CLIENT)
-	public Object getGuiClient(InventoryPlayer inventory) {
-
-		return new GuiTransport(this);
-	}
-
-	@Override
-	public Object getConfigGuiServer(InventoryPlayer inventory) {
-
-		return new ContainerTransportConfig(inventory, this);
-	}
-
-	@Override
-	public Object getConfigGuiClient(InventoryPlayer inventory) {
-
-		return new GuiTransportConfig(inventory, this);
-	}
+//	@Override
+//	public Object getGuiServer(InventoryPlayer inventory) {
+//
+//		return new ContainerTransport(this);
+//	}
+//
+//	@Override
+//	@SideOnly (Side.CLIENT)
+//	public Object getGuiClient(InventoryPlayer inventory) {
+//
+//		return new GuiTransport(this);
+//	}
+//
+//	@Override
+//	public Object getConfigGuiServer(InventoryPlayer inventory) {
+//
+//		return new ContainerTransportConfig(inventory, this);
+//	}
+//
+//	@Override
+//	public Object getConfigGuiClient(InventoryPlayer inventory) {
+//
+//		return new GuiTransportConfig(inventory, this);
+//	}
 
 	@Override
 	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world())) {
 			return true;
 		}
 
-		PacketHandler.sendTo(getTilePacket(), player);
-		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, worldObj, pos.getX(), pos.getY(), pos.getZ());
+		PacketHandler.sendTo(parent.getTilePacket(), player);
+		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, world(), pos.getX(), pos.getY(), pos.getZ());
 		return true;
+	}
+
+	@Override
+	public boolean isRoutable() {
+		return true;
+	}
+
+	@Override
+	public boolean isCrossover() {
+		return false;
 	}
 
 	public static class OutputData {
@@ -426,13 +434,13 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 			payload.addItemStack(item);
 		}
 	}
-
-	@Override
-	@SideOnly (Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-
-		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
-		return connectionType == BlockDuct.ConnectionType.NONE ? null : CoverHoleRender.hollowDuctTransport;
-	}
+//
+//	@Override
+//	@SideOnly (Side.CLIENT)
+//	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+//
+//		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
+//		return connectionType == BlockDuct.ConnectionType.NONE ? null : CoverHoleRender.hollowDuctTransport;
+//	}
 
 }

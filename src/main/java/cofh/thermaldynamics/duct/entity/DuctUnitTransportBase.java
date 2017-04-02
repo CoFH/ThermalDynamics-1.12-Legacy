@@ -16,16 +16,18 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBase, TransportGrid, Void> implements IGridTileRoute<DuctUnitTransportBase, TransportGrid> {
+public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> implements IGridTileRoute<DuctUnitTransportBase, TransportGrid> {
 
 	public DuctUnitTransportBase(TileGrid parent, Duct duct) {
 		super(parent, duct);
 	}
 
 	@Override
-	public DuctToken<DuctUnitTransportBase, TransportGrid, Void> getToken() {
+	public DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> getToken() {
 		return DuctToken.TRANSPORT;
 	}
+
+
 
 	//	@Override
 //	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
@@ -98,5 +100,13 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	@Override
 	public boolean acceptingStuff() {
 		return false;
+	}
+
+	public abstract boolean isRoutable();
+
+	public abstract boolean isCrossover();
+
+	public static class TransportDestination {
+
 	}
 }

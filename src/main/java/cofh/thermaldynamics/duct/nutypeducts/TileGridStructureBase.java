@@ -20,18 +20,19 @@ public abstract class TileGridStructureBase extends TileGrid {
 
 	}
 
-	public <T extends TileGridStructureBase> T setDuctUnits(Map<DuctToken, DuctUnit> ducts) {
-		this.ducts = ducts;
+	public <T extends TileGridStructureBase> T addDuctUnits(DuctToken token, DuctUnit unit) {
+		ImmutableSortedMap.Builder<DuctToken, DuctUnit> builder = ImmutableSortedMap.naturalOrder();
+		if (ducts != null) {
+			for (Map.Entry<DuctToken, DuctUnit> entry : ducts.entrySet()) {
+				if (!entry.getKey().equals(token)) {
+					builder.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		builder.put(token, unit);
+		this.ducts = builder.build();
 		return (T) this;
 	}
-
-	public <T extends TileGridStructureBase> T setDuctUnits(DuctToken token, DuctUnit unit) {
-		this.ducts = ImmutableSortedMap.of(token, unit);
-		return (T) this;
-	}
-
-
-
 
 	@SuppressWarnings("unchecked")
 	@Nullable

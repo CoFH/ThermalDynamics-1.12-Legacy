@@ -15,17 +15,12 @@ import cofh.core.render.hitbox.RenderHitbox;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockTDBase;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.DuctUnitEnergySuper;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
-import cofh.thermaldynamics.duct.entity.*;
-import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.fluid.DuctUnitFluidFragile;
-import cofh.thermaldynamics.duct.fluid.DuctUnitFluidSuper;
+import cofh.thermaldynamics.duct.entity.EntityTransport;
+import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
-import cofh.thermaldynamics.duct.item.DuctUnitEnder;
-import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.material.Material;
@@ -185,27 +180,27 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 				}
 			}
 
-			if (theTile.getRenderConnectionType(0).renderDuct) {
+			if (theTile.getVisualConnectionType(0).renderDuct) {
 				bb = new AxisAlignedBB(min, 0.0F, min, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.getRenderConnectionType(1).renderDuct) {
+			if (theTile.getVisualConnectionType(1).renderDuct) {
 				bb = new AxisAlignedBB(min, min, min, max, 1.0F, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.getRenderConnectionType(2).renderDuct) {
+			if (theTile.getVisualConnectionType(2).renderDuct) {
 				bb = new AxisAlignedBB(min, min, 0.0F, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.getRenderConnectionType(3).renderDuct) {
+			if (theTile.getVisualConnectionType(3).renderDuct) {
 				bb = new AxisAlignedBB(min, min, min, max, max, 1.0F);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.getRenderConnectionType(4).renderDuct) {
+			if (theTile.getVisualConnectionType(4).renderDuct) {
 				bb = new AxisAlignedBB(0.0F, min, min, max, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
-			if (theTile.getRenderConnectionType(5).renderDuct) {
+			if (theTile.getVisualConnectionType(5).renderDuct) {
 				bb = new AxisAlignedBB(min, min, min, 1.0F, max, max);
 				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
 			}
@@ -395,26 +390,56 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (offset != 0) {
 			return true;
 		}
-		GameRegistry.registerTileEntity(DuctUnitEnergy.class, "thermaldynamics.FluxDuct");
-		GameRegistry.registerTileEntity(DuctUnitEnergySuper.class, "thermaldynamics.FluxDuctSuperConductor");
+
 
 		EnergyGrid.initialize();
 
 		PacketHandler.instance.registerPacket(PacketFluid.class);
-		GameRegistry.registerTileEntity(DuctUnitFluid.class, "thermaldynamics.FluidDuct");
-		GameRegistry.registerTileEntity(DuctUnitFluidFragile.class, "thermaldynamics.FluidDuctFragile");
-		GameRegistry.registerTileEntity(DuctUnitFluidFlux.class, "thermaldynamics.FluidDuctFlux");
-		GameRegistry.registerTileEntity(DuctUnitFluidSuper.class, "thermaldynamics.FluidDuctSuper");
 
-		GameRegistry.registerTileEntity(DuctUnitItem.class, "thermaldynamics.ItemDuct");
-		GameRegistry.registerTileEntity(DuctUnitEnder.class, "thermaldynamics.ItemDuctEnder");
-		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
+		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.itemduct.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Opaque.class, "thermaldynamics.itemduct.opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Fast.class, "thermaldynamics.itemduct.fast.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.FastOpaque.class, "thermaldynamics.itemduct.fast.opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Flux.Transparent.class, "thermaldynamics.itemduct.flux.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Flux.Opaque.class, "thermaldynamics.itemduct.flux.opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Ender.Transparent.class, "thermaldynamics.itemduct.ender.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Ender.Opaque.class, "thermaldynamics.itemduct.ender.opaque");
 
-		GameRegistry.registerTileEntity(DuctUnitStructural.class, "thermaldynamics.StructuralDuct");
 
-		GameRegistry.registerTileEntity(DuctUnitTransport.class, "thermaldynamics.TransportDuct");
-		GameRegistry.registerTileEntity(DuctUnitTransportLongRange.class, "thermaldynamics.TransportDuctLongRange");
-		GameRegistry.registerTileEntity(DuctUnitTransportCrossover.class, "thermaldynamics.TransportDuctCrossover");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Basic.class, "thermaldynamics.fluxduct.basic");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Hardened.class, "thermaldynamics.fluxduct.hardened");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Reinforced.class, "thermaldynamics.fluxduct.reinforced");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Resonant.class, "thermaldynamics.fluxduct.resonant");
+		GameRegistry.registerTileEntity(TileEnergySuperDuct.class, "thermaldynamics.fluxduct.super");
+
+		GameRegistry.registerTileEntity(TileFluidDuct.Fragile.Transparent.class, "thermaldynamics.fluidduct.fragile.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Fragile.Opaque.class, "thermaldynamics.fluidduct.fragile.opaque");
+		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Transparent.class, "thermaldynamics.fluidduct.hardened.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Opaque.class, "thermaldynamics.fluidduct.hardened.opaque");
+		GameRegistry.registerTileEntity(TileFluidDuct.Flux.Transparent.class, "thermaldynamics.fluidduct.flux.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Flux.Opaque.class, "thermaldynamics.fluidduct.flux.opaque");
+		GameRegistry.registerTileEntity(TileFluidDuct.Super.Transparent.class, "thermaldynamics.fluidduct.super.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Super.Opaque.class, "thermaldynamics.fluidduct.super.opaque");
+
+		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.structure");
+
+		GameRegistry.registerTileEntity(TileLuxDuct.class, "thermaldynamics.luxduct");
+
+//		GameRegistry.registerTileEntity(DuctUnitEnergy.class, "thermaldynamics.FluxDuct");
+//		GameRegistry.registerTileEntity(DuctUnitEnergySuper.class, "thermaldynamics.FluxDuctSuperConductor");
+//		GameRegistry.registerTileEntity(DuctUnitFluid.class, "thermaldynamics.FluidDuct");
+//		GameRegistry.registerTileEntity(DuctUnitFluidFragile.class, "thermaldynamics.FluidDuctFragile");
+//		GameRegistry.registerTileEntity(DuctUnitFluidFlux.class, "thermaldynamics.FluidDuctFlux");
+//		GameRegistry.registerTileEntity(DuctUnitFluidSuper.class, "thermaldynamics.FluidDuctSuper");
+//		GameRegistry.registerTileEntity(DuctUnitItem.class, "thermaldynamics.ItemDuct");
+//		GameRegistry.registerTileEntity(DuctUnitEnder.class, "thermaldynamics.ItemDuctEnder");
+//		GameRegistry.registerTileEntity(TileItemDuctFlux.class, "thermaldynamics.ItemDuctFlux");
+//		GameRegistry.registerTileEntity(DuctUnitStructural.class, "thermaldynamics.StructuralDuct");
+//		GameRegistry.registerTileEntity(DuctUnitTransport.class, "thermaldynamics.TransportDuct");
+//		GameRegistry.registerTileEntity(DuctUnitTransportLongRange.class, "thermaldynamics.TransportDuctLongRange");
+//		GameRegistry.registerTileEntity(DuctUnitTransportCrossover.class, "thermaldynamics.TransportDuctCrossover");
+//
+
 		EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
 		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
 		FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);

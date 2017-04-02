@@ -151,5 +151,6 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 			}
 			addInfo(info, "redstone", r);
 		}
+		super.addInfo(info, player, debug);
 	}
 }

@@ -1,66 +1,25 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.core.network.PacketCoFHBase;
-import cofh.lib.util.helpers.BlockHelper;
-import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
+	public DuctUnitTransportLongRange(TileGrid parent, Duct duct) {
+		super(parent, duct);
+	}
+
 	@Override
-	public MultiBlockGrid createGrid() {
+	public TransportGrid createGrid() {
 
 		return null;
-	}
-
-	byte d1, d2;
-	byte connections;
-
-	@Override
-	public void onNeighborBlockChange() {
-
-		d1 = 7;
-		d2 = 7;
-		super.onNeighborBlockChange();
-
-		checkConnections();
-	}
-
-	@Override
-	public void onNeighborTileChange(BlockPos pos) {
-
-		d1 = 7;
-		d2 = 7;
-
-		super.onNeighborTileChange(pos);
-
-		checkConnections();
-	}
-
-	public void checkConnections() {
-
-		connections = 0;
-		for (byte j = 5; j > 0; j--) {
-			if (neighborTypes[j] != NeighborType.NONE) {
-				if (connections == 0) {
-					d1 = j;
-					connections = 1;
-				} else if (connections == 1) {
-					d2 = j;
-					connections = 2;
-				} else {
-					d1 = 7;
-					d2 = 7;
-					connections = 3;
-					break;
-				}
-			}
-		}
 	}
 
 	@Override
@@ -70,29 +29,20 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public boolean isValidForForming() {
-
 		return false;
 	}
 
 	public byte nextDirection(byte k) {
 
-		if (connections != 2) {
-			return -1;
+		for (byte i = 0; i < 6; i++) {
+			if (k == (i ^ 1)) {
+				continue;
+			}
+			if (pipeCache[i] != null) return i;
 		}
-		if ((k ^ 1) == d1) {
-			return d2;
-		} else if ((k ^ 1) == d2) {
-			return d1;
-		} else {
-			return -1;
-		}
+		return -1;
 	}
 
-	@Override
-	public void handleTileSideUpdate(int i) {
-
-		super.handleTileSideUpdate(i);
-	}
 
 	@Override
 	public boolean advanceEntity(EntityTransport t) {
@@ -101,11 +51,11 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		v += t.step * 2;
 		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
 		if (v >= EntityTransport.PIPE_LENGTH) {
-			if (neighborTypes[t.direction] == NeighborType.MULTIBLOCK && connectionTypes[t.direction] == cofh.thermaldynamics.duct.ConnectionType.NORMAL) {
-				DuctUnitTransportBase newHome = (DuctUnitTransportBase) getConnectedSide(t.direction);
+			if (pipeCache[t.direction] != null) {
+				DuctUnitTransportBase newHome = getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
-				if (newHome.neighborTypes[t.direction ^ 1] == NeighborType.MULTIBLOCK) {
-					t.pos = new BlockPos(newHome.getPos());
+				if (newHome.pipeCache[t.direction ^ 1] != null) {
+					t.pos = new BlockPos(newHome.pos());
 
 					t.oldDirection = t.direction;
 
@@ -129,7 +79,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 				return true;
 			}
 		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
-			if (neighborTypes[t.direction] == NeighborType.NONE) {
+			if (pipeCache[t.direction] == null) {
 				t.dropPassenger();
 				return true;
 			}
@@ -152,19 +102,30 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public boolean isConnectable(TileEntity theTile, int side) {
+	public boolean isRoutable() {
+		return false;
+	}
 
-		return theTile instanceof DuctUnitTransportLongRange || theTile instanceof DuctUnitTransportCrossover;
+	@Override
+	public boolean isCrossover() {
+		return false;
+	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
+		return !adjDuct.cast().isRoutable() && !adjDuct.cast().isCrossover();
+	}
+
+	@Nullable
+	@Override
+	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
+		return null;
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
-		nbt.setByte("SimpleConnect", connections);
-		nbt.setByte("SimpleConnect1", d1);
-		nbt.setByte("SimpleConnect2", d2);
-
 		return nbt;
 	}
 
@@ -172,53 +133,50 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	public void readFromNBT(NBTTagCompound nbt) {
 
 		super.readFromNBT(nbt);
-		connections = nbt.getByte("SimpleConnect");
-		d1 = nbt.getByte("SimpleConnect1");
-		d2 = nbt.getByte("SimpleConnect2");
 	}
 
-	@Nonnull
-	@Override
-	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
-
-		BlockDuct.ConnectionType connectionType = super.getRenderConnectionType(side);
-		if (connectionType == BlockDuct.ConnectionType.NONE || connections == 0) {
-			return connectionType;
-		}
-
-		if (side != d1 && side != d2) {
-			return BlockDuct.ConnectionType.NONE;
-		}
-
-		// TODO: Optimize this - find someplace in the tile update dance to precalculate this
-		TileEntity tile = BlockHelper.getAdjacentTileEntity(this, side);
-		if (tile != null && tile.getClass() == DuctUnitTransportLongRange.class) {
-			DuctUnitTransportLongRange t = (DuctUnitTransportLongRange) tile;
-
-			if ((t.d1 ^ 1) == side || (t.d2 ^ 1) == side) {
-				return connectionType;
-			}
-			return BlockDuct.ConnectionType.NONE;
-		}
-
-		return connectionType;
-	}
-
-	@Override
-	public PacketCoFHBase getTilePacket() {
-
-		PacketCoFHBase packet = super.getTilePacket();
-		packet.addShort(connections << 6 | d1 << 3 | d2);
-		return packet;
-	}
-
-	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-
-		super.handleTilePacket(payload, isServer);
-		int b = payload.getShort();
-		connections = (byte) ((b >> 6) & 7);
-		d1 = (byte) ((b >> 3) & 7);
-		d2 = (byte) (b & 7);
-	}
+//	@Nonnull
+//	@Override
+//	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
+//
+//		BlockDuct.ConnectionType connectionType = super.getRenderConnectionType(side);
+//		if (connectionType == BlockDuct.ConnectionType.NONE || connections == 0) {
+//			return connectionType;
+//		}
+//
+//		if (side != d1 && side != d2) {
+//			return BlockDuct.ConnectionType.NONE;
+//		}
+//
+//		// TODO: Optimize this - find someplace in the tile update dance to precalculate this
+//		TileEntity tile = BlockHelper.getAdjacentTileEntity(this, side);
+//		if (tile != null && tile.getClass() == DuctUnitTransportLongRange.class) {
+//			DuctUnitTransportLongRange t = (DuctUnitTransportLongRange) tile;
+//
+//			if ((t.d1 ^ 1) == side || (t.d2 ^ 1) == side) {
+//				return connectionType;
+//			}
+//			return BlockDuct.ConnectionType.NONE;
+//		}
+//
+//		return connectionType;
+//	}
+//
+//	@Override
+//	public PacketCoFHBase getTilePacket() {
+//
+//		PacketCoFHBase packet = super.getTilePacket();
+//		packet.addShort(connections << 6 | d1 << 3 | d2);
+//		return packet;
+//	}
+//
+//	@Override
+//	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+//
+//		super.handleTilePacket(payload, isServer);
+//		int b = payload.getShort();
+//		connections = (byte) ((b >> 6) & 7);
+//		d1 = (byte) ((b >> 3) & 7);
+//		d2 = (byte) (b & 7);
+//	}
 }

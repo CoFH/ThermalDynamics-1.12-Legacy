@@ -8,6 +8,8 @@ import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileItemDuct;
 import com.google.common.collect.Iterators;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,7 +26,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 
-public class RenderDuctItems extends TileEntitySpecialRenderer<DuctUnitItem> {
+public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 
 	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
 
@@ -66,11 +68,13 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<DuctUnitItem> {
 		travelingItemSpin %= 180;
 	}
 
-	public void renderTileEntityAt(DuctUnitItem duct, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(TileItemDuct tile, double x, double y, double z, float frame, int destroyStage) {
+
+		DuctUnitItem duct = tile.getDuct(DuctToken.ITEMS);
 
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
-			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, duct.getWorld(), x, y, z, frame);
+			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, tile.getWorld(), x, y, z, frame);
 		}
 
 		if (duct.centerLine > 0) {
@@ -88,11 +92,11 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<DuctUnitItem> {
 			GlStateManager.enableCull();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 			RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
-			ccrs.preRenderWorld(duct.getWorld(), duct.getPos());
+			ccrs.preRenderWorld(tile.getWorld(), tile.getPos());
 			ccrs.colour = -1;
 			ccrs.brightness = 15728880;
 
-			int[] connections = RenderDuct.instance.getDuctConnections(duct);
+			int[] connections = RenderDuct.instance.getDuctConnections(tile);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {

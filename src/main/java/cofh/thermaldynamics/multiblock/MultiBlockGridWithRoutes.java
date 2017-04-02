@@ -76,11 +76,11 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute<T, G>, G
 		return cache;
 	}
 
-	public RouteCache<T,G> getRoutesFromOutputRange(IGridTileRoute start, int maxRange) {
+	public RouteCache<T,G> getRoutesFromOutputRange(T start, int maxRange) {
 
 		RouteCache<T,G> cache = routeCacheMap.get(start);
 		if (cache == null) {
-			cache = new RouteCache<>(start, maxRange);
+			cache = new RouteCache<T, G>(start, maxRange);
 			cache.generateCache();
 			routeCacheMap.put(start, cache);
 		} else if (cache.maxPathLength < maxRange) {

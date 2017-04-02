@@ -354,7 +354,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 		int[] connections = new int[6];
 		for (int i = 0; i < 6; i++) {
-			connections[i] = tile.getRenderConnectionType(i).ordinal();
+			connections[i] = tile.getVisualConnectionType(i).ordinal();
 		}
 		return connections;
 	}

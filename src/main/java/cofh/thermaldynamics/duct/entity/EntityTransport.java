@@ -281,12 +281,13 @@ public class EntityTransport extends Entity {
 		BlockPos p = pos.offset(EnumFacing.VALUES[direction]);
 
 		TileEntity tileEntity = worldObj.getTileEntity(p);
-		if (!(tileEntity instanceof DuctUnitTransportBase)) {
+		DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.TRANSPORT);
+		if (transportBase == null) {
 			pos = null;
 			return false;
 		}
-		NeighborType[] neighbours = ((DuctUnitTransportBase) tileEntity).neighborTypes;
-		if (neighbours[direction ^ 1] != NeighborType.MULTIBLOCK) {
+
+		if (transportBase.pipeCache[direction ^ 1] == null) {
 			pos = null;
 			return false;
 		}
@@ -405,10 +406,10 @@ public class EntityTransport extends Entity {
 
 	public void advanceTile(DuctUnitTransportBaseRoute homeTile) {
 
-		if (homeTile.neighborTypes[direction] == NeighborType.MULTIBLOCK && homeTile.connectionTypes[direction] == ConnectionType.NORMAL) {
+		if (homeTile.pipeCache[direction] != null) {
 			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);
-			if (newHome != null && newHome.neighborTypes[direction ^ 1] == NeighborType.MULTIBLOCK) {
-				pos = new BlockPos(newHome.getPos());
+			if (newHome != null && newHome.pipeCache[direction ^ 1] != null) {
+				pos = new BlockPos(newHome.pos());
 
 				if (myPath.hasNextDirection()) {
 					oldDirection = direction;
@@ -419,7 +420,7 @@ public class EntityTransport extends Entity {
 			} else {
 				reRoute = true;
 			}
-		} else if (homeTile.neighborTypes[direction] == NeighborType.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
+		} else if (homeTile.tileCaches[direction] != null) {
 			dropPassenger();
 		} else {
 			bouncePassenger(homeTile);

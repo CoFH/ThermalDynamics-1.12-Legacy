@@ -2,6 +2,8 @@ package cofh.thermaldynamics.gui;
 
 import cofh.core.block.TileCore;
 import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -29,14 +31,14 @@ public class GuiHandler implements IGuiHandler {
 				return null;
 			case TILE_CONFIG:
 				tile = world.getTileEntity(pos);
-				if (tile instanceof TileDuctBase) {
-					return ((TileDuctBase) tile).getConfigGuiClient(player.inventory);
+				if (tile instanceof TileGrid) {
+					return ((TileGrid) tile).getConfigGuiClient(player.inventory);
 				}
 				return null;
 			default:
 				if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID + 5) {
-					if (tile instanceof TileDuctBase) {
-						Attachment attachment = ((TileDuctBase) tile).attachments[id - TILE_ATTACHMENT_ID];
+					if (tile instanceof TileGrid) {
+						Attachment attachment = ((TileGrid) tile).getAttachment(id - TILE_ATTACHMENT_ID);
 						if (attachment != null) {
 							return attachment.getGuiClient(player.inventory);
 						}
@@ -61,14 +63,14 @@ public class GuiHandler implements IGuiHandler {
 				return null;
 			case TILE_CONFIG:
 				tile = world.getTileEntity(pos);
-				if (tile instanceof TileDuctBase) {
-					return ((TileDuctBase) tile).getConfigGuiServer(player.inventory);
+				if (tile instanceof TileGrid) {
+					return ((TileGrid) tile).getConfigGuiServer(player.inventory);
 				}
 				return null;
 			default:
 				if (id >= TILE_ATTACHMENT_ID && id <= TILE_ATTACHMENT_ID + 5) {
-					if (tile instanceof TileDuctBase) {
-						Attachment attachment = ((TileDuctBase) tile).attachments[id - TILE_ATTACHMENT_ID];
+					if (tile instanceof TileGrid) {
+						Attachment attachment = ((TileGrid) tile).getAttachment(id - TILE_ATTACHMENT_ID);
 						if (attachment != null) {
 							return attachment.getGuiServer(player.inventory);
 						}
