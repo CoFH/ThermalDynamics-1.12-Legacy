@@ -269,6 +269,10 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			return false;
 		}
 
+		for (Attachment attachment : parent.getTickingAttachments(DuctToken.ITEMS)) {
+			attachment.tick(pass);
+		}
+
 		if (pass == 0) {
 			if (ticksExisted < maxTicksExistedBeforeDump) {
 				ticksExisted++;

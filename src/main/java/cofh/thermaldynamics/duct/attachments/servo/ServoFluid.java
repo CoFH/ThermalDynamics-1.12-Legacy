@@ -36,7 +36,12 @@ public class ServoFluid extends ServoBase {
 		fluidDuct = tile.getDuct(DuctToken.FLUID);
 	}
 
-	public IFluidHandler theTile;
+	@Override
+	public DuctToken tickUnit() {
+		return DuctToken.FLUID;
+	}
+
+	private TileEntity theTile;
 
 	@Override
 	public void clearCache() {
@@ -47,7 +52,7 @@ public class ServoFluid extends ServoBase {
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		theTile = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+		theTile = tile;
 	}
 
 	@Override
@@ -76,8 +81,8 @@ public class ServoFluid extends ServoBase {
 
 		if (ductHandler == null) return;
 
-		maxInput = ductHandler.fill(theTile.drain(maxInput, false), false);
-		FluidStack returned = theTile.drain(maxInput, true);
+		maxInput = ductHandler.fill(getTheTile().drain(maxInput, false), false);
+		FluidStack returned = getTheTile().drain(maxInput, true);
 		ductHandler.fill(returned, true);
 	}
 
@@ -92,4 +97,8 @@ public class ServoFluid extends ServoBase {
 		return new FilterLogic(type, Duct.Type.FLUID, this);
 	}
 
+	public IFluidHandler getTheTile() {
+		if(tile == null) return null;
+		return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+	}
 }

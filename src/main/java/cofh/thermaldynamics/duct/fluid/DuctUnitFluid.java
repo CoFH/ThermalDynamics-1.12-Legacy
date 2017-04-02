@@ -59,6 +59,11 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		if (!super.tickPass(pass)) {
 			return false;
 		}
+
+		for (Attachment attachment : parent.getTickingAttachments(DuctToken.FLUID)) {
+			attachment.tick(pass);
+		}
+
 		if (grid == null) {
 			return true;
 		}

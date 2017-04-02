@@ -7,6 +7,8 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -72,9 +74,8 @@ public abstract class Attachment {
 
 	public abstract boolean isNode();
 
-	public boolean doesTick() {
-
-		return false;
+	public DuctToken tickUnit(){
+		return null;
 	}
 
 	public void tick(int pass) {

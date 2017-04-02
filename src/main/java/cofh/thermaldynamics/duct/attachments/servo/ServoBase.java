@@ -9,6 +9,7 @@ import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
@@ -130,10 +131,7 @@ public abstract class ServoBase extends ConnectionBase {
 	}
 
 	@Override
-	public boolean doesTick() {
-
-		return true;
-	}
+	public abstract DuctToken tickUnit();
 
 	/* IPortableData */
 	@Override

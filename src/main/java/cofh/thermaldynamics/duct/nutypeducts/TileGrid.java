@@ -20,6 +20,7 @@ import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,9 +47,7 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
@@ -170,6 +169,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		int hash = getRenderHash();
 
+		if (attachmentData != null) {
+			for (Attachment attachment : attachmentData.attachments) {
+				if (attachment != null) {
+					attachment.onNeighborChange();
+				}
+			}
+		}
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.updateAllSides(tiles, holders);
 		}
@@ -183,6 +190,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public void onNeighborTileChange(BlockPos pos) {
 		byte side = (byte) getNeighbourDirection(getPos(), pos).ordinal();
 		BlockDuct.ConnectionType visualConnectionType = getVisualConnectionType(side);
+
+		if (attachmentData != null) {
+
+			Attachment attachment = attachmentData.attachments[side];
+			if (attachment != null)
+				attachment.onNeighborChange();
+		}
+
 		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, side);
 		IDuctHolder holder = adjacentTileEntity instanceof IDuctHolder ? (IDuctHolder) adjacentTileEntity : null;
 
@@ -223,7 +238,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		int prev = 0;
 		for (int i = 0; i < 6; i++) {
 			BlockDuct.ConnectionType type = getVisualConnectionType(i);
-			prev = prev * 5 + type.ordinal();
+			prev = prev * 8 + type.ordinal();
 		}
 		return prev;
 	}
@@ -251,9 +266,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public ConnectionType getConnectionType(int i) {
 
-		if (attachmentData != null && attachmentData.attachments[i] != null) {
-			return BLOCKED;
-		}
 		if (connectionTypes == null) {
 			return NORMAL;
 		}
@@ -333,8 +345,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		attachmentData.attachments[attachment.side] = attachment;
 
-		if (attachment.doesTick()) {
-			attachmentData.tickingAttachments.add(attachment);
+		DuctToken tickUnit = attachment.tickUnit();
+		if (tickUnit != null) {
+			attachmentData.tickingAttachments.computeIfAbsent(tickUnit, t -> new ArrayList<>()).add(attachment);
 		}
 
 		callNeighborStateChange();
@@ -351,7 +364,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			return false;
 		}
 		attachmentData.attachments[attachment.side] = null;
-		attachmentData.tickingAttachments.remove(attachment);
+		DuctToken tickUnit = attachment.tickUnit();
+		if (tickUnit != null) {
+			List<Attachment> attachments = attachmentData.tickingAttachments.get(tickUnit);
+			if (attachments != null) attachments.remove(attachment);
+		}
+
 		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
 		onNeighborBlockChange();
 
@@ -482,7 +500,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 			int id = tag.getInteger("id");
 			attachmentData.attachments[side] = AttachmentRegistry.createAttachment(this, side, id);
-			attachmentData.attachments[side].readFromNBT(nbt);
+			Attachment attachment = attachmentData.attachments[side];
+			attachment.readFromNBT(nbt);
+
+			DuctToken tickUnit = attachment.tickUnit();
+			if (tickUnit != null) {
+				attachmentData.tickingAttachments.computeIfAbsent(tickUnit, t -> new ArrayList<>()).add(attachment);
+			}
 		}
 	}
 
@@ -681,16 +705,18 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	public BlockDuct.ConnectionType getVisualConnectionType(int side) {
+		if (ServerHelper.isClientWorld(worldObj)) {
+			if (clientConnections == null)
+				return BlockDuct.ConnectionType.NONE;
+			return clientConnections[side];
+		}
+
 		Attachment attachment = getAttachment(side);
 		if (attachment != null) {
 
 			return attachment.getNeighborType();
 		} else {
-			if (ServerHelper.isClientWorld(worldObj)) {
-				if (clientConnections == null)
-					return BlockDuct.ConnectionType.NONE;
-				return clientConnections[side];
-			}
+
 
 			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.NONE;
 
@@ -822,7 +848,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 				onNeighborBlockChange();
 
-				setConnectionType((byte)i,getConnectionType(i).next());
+				setConnectionType((byte) i, getConnectionType(i).next());
 
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 				if (tile instanceof TileGrid) {
@@ -952,7 +978,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				StringBuilder builder = new StringBuilder("  Tiles={");
 				for (int i = 0; i < 6; i++) {
 					if (ductUnit.tileCaches[i] != null) {
-						builder.append(i).append("=").append(ductUnit.tileCaches[i]);
+						builder.append(i).append("=").append(ductUnit.tileCaches[i]).append(",");
 					}
 				}
 				builder.append("}");
@@ -961,11 +987,34 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				builder = new StringBuilder("  Pipes={");
 				for (int i = 0; i < ductUnit.pipeCache.length; i++) {
 					if (ductUnit.pipeCache[i] != null) {
-						builder.append(i).append("=").append(ductUnit.pipeCache[i]);
+						builder.append(i).append("=").append(ductUnit.pipeCache[i]).append(",");
 					}
 				}
 				builder.append("}");
 				info.add(new TextComponentString(builder.toString()));
+
+				builder = new StringBuilder("  Attach={");
+				if(attachmentData != null){
+					for (int i = 0; i < 6; i++) {
+						Attachment attachment = attachmentData.attachments[i];
+						if(attachment != null){
+							builder.append(i).append("=").append(attachment.getId()).append(",");
+						}
+					}
+				}
+				info.add(new TextComponentString(builder.append("}").toString()));
+
+				builder = new StringBuilder("  Tickers={");
+				if(attachmentData != null){
+					for (Map.Entry<DuctToken, List<Attachment>> entry : attachmentData.tickingAttachments.entrySet()) {
+						builder.append(entry.getKey()).append("=[");
+						for (Attachment attachment : entry.getValue()) {
+							builder.append(attachment.getId()).append(",");
+						}
+						builder.append("],");
+					}
+				}
+				info.add(new TextComponentString(builder.append("}").toString()));
 			}
 		}
 
@@ -1020,7 +1069,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
 		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
-			for (DuctUnit<?,?,?> ductUnit : getDuctUnits()) {
+			for (DuctUnit<?, ?, ?> ductUnit : getDuctUnits()) {
 				if (ductUnit.hasCapability(capability)) {
 					return true;
 				}
@@ -1033,7 +1082,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
 		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
-			for (DuctUnit<?,?,?> ductUnit : getDuctUnits()) {
+			for (DuctUnit<?, ?, ?> ductUnit : getDuctUnits()) {
 				if (ductUnit.hasCapability(capability)) {
 					T cap = ductUnit.getCapability(capability, facing);
 					if (cap != null) {
@@ -1045,9 +1094,19 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return super.getCapability(capability, facing);
 	}
 
+	public List<Attachment> getTickingAttachments(DuctToken unit) {
+		if (attachmentData != null) {
+			List<Attachment> attachments = attachmentData.tickingAttachments.get(unit);
+			if (attachments != null) return attachments;
+		}
+		return ImmutableList.of();
+	}
+
 	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[6];
 		public final Cover[] covers = new Cover[6];
-		public final LinkedList<Attachment> tickingAttachments = new LinkedList<>();
+		public final HashMap<DuctToken, List<Attachment>> tickingAttachments = new HashMap<>();
+
+
 	}
 }

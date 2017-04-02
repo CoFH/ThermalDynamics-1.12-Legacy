@@ -207,14 +207,14 @@ public class ServoItem extends ServoBase {
 
 	public void handleItemSending() {
 
-		if (cachedInv != null) {
-			for (int slot = 0; slot < cachedInv.getSlots(); slot++) {
-				ItemStack itemStack = cachedInv.getStackInSlot(slot);
+		if (getCachedInv() != null) {
+			for (int slot = 0; slot < getCachedInv().getSlots(); slot++) {
+				ItemStack itemStack = getCachedInv().getStackInSlot(slot);
 				if (itemStack == null) {
 					continue;
 				}
 
-				itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+				itemStack = limitOutput(itemStack.copy(), getCachedInv(), slot, side);
 
 				if (itemStack == null || itemStack.stackSize == 0) {
 					continue;
@@ -230,17 +230,17 @@ public class ServoItem extends ServoBase {
 
 				int totalSendSize = travelingItem.stack.stackSize;
 
-				travelingItem.stack = cachedInv.extractItem(slot, travelingItem.stack.stackSize, false);
+				travelingItem.stack = getCachedInv().extractItem(slot, travelingItem.stack.stackSize, false);
 
 				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
 					continue;
 				}
 				if (multiStack[type]) {
 					if (travelingItem.stack.stackSize < totalSendSize) {
-						for (slot++; slot < cachedInv.getSlots() && travelingItem.stack.stackSize < totalSendSize; slot++) {
-							itemStack = cachedInv.getStackInSlot(slot);
+						for (slot++; slot < getCachedInv().getSlots() && travelingItem.stack.stackSize < totalSendSize; slot++) {
+							itemStack = getCachedInv().getStackInSlot(slot);
 							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-								itemStack = cachedInv.extractItem(slot, totalSendSize - travelingItem.stack.stackSize, false);
+								itemStack = getCachedInv().extractItem(slot, totalSendSize - travelingItem.stack.stackSize, false);
 								if (itemStack != null) {
 									travelingItem.stack.stackSize += itemStack.stackSize;
 								}
@@ -326,9 +326,14 @@ public class ServoItem extends ServoBase {
 
 		if (stuffed != !stuffedItems.isEmpty()) {
 			stuffed = isStuffed();
-			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+			BlockUtils.fireBlockUpdate(myTile.getWorld(), myTile.getPos());
 		}
 		super.onNeighborChange();
+	}
+
+	@Override
+	public DuctToken tickUnit() {
+		return DuctToken.ITEMS;
 	}
 
 	@Override
@@ -346,16 +351,16 @@ public class ServoItem extends ServoBase {
 	@Override
 	public void clearCache() {
 
-		cachedInv = null;
+		this.myTile = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		cachedInv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+		this.myTile = tile;
 	}
 
-	public IItemHandler cachedInv;
+	TileEntity myTile;
 
 	public ItemStack insertItem(ItemStack item) {
 
@@ -393,4 +398,10 @@ public class ServoItem extends ServoBase {
 		return new FilterLogic(type, Duct.Type.ITEM, this);
 	}
 
+	public IItemHandler getCachedInv() {
+		if(myTile != null) {
+			return myTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+		}
+		return null;
+	}
 }

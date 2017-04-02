@@ -66,7 +66,7 @@ public class ItemGrid extends MultiBlockGridWithRoutes<DuctUnitItem, ItemGrid> {
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof IItemDuctInternal;
+		return aBlock instanceof DuctUnitItem;
 	}
 
 	public void poll(TravelingItem item) {

@@ -7,7 +7,6 @@ import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -89,7 +88,7 @@ public class RetrieverItem extends ServoItem {
 	@Override
 	public void handleItemSending() {
 
-		IItemHandler simulatedInv = cachedInv;
+		IItemHandler simulatedInv = getCachedInv();
 
 		for (Route route : routeList) {
 			DuctUnitItem endPoint = (DuctUnitItem) route.endPoint;

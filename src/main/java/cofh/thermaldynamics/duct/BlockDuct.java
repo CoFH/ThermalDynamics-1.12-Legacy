@@ -396,7 +396,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		PacketHandler.instance.registerPacket(PacketFluid.class);
 
-		GameRegistry.registerTileEntity(TileItemDuct.class, "thermaldynamics.itemduct.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Basic.class, "thermaldynamics.itemduct.transparent");
 		GameRegistry.registerTileEntity(TileItemDuct.Opaque.class, "thermaldynamics.itemduct.opaque");
 		GameRegistry.registerTileEntity(TileItemDuct.Fast.class, "thermaldynamics.itemduct.fast.transparent");
 		GameRegistry.registerTileEntity(TileItemDuct.FastOpaque.class, "thermaldynamics.itemduct.fast.opaque");
