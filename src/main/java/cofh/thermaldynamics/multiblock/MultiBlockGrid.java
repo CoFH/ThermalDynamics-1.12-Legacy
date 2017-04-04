@@ -213,6 +213,7 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		if (debug) {
+			addInfo(info, "Type", getClass().getSimpleName());
 			addInfo(info, "size", size());
 		}
 	}
