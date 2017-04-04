@@ -47,7 +47,7 @@ public abstract class TileGridStructureBase extends TileGrid {
 			builder.putAll(ducts);
 			DuctUnitStructural structural;
 			builder.put(DuctToken.STRUCTURAL, structural = new DuctUnitStructural(this, ducts.get(getPrimaryDuctToken())));
-			TickHandler.addMultiBlockToCalculate(structural);
+			TickHandler.addMultiBlockToNextTickBatch(structural);
 			ducts = builder.build();
 			return (T) structural;
 		}

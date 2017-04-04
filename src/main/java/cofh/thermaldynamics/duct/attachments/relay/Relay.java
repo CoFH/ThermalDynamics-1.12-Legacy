@@ -41,6 +41,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,10 +94,11 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		return TileGrid.subSelection[side].copy();
 	}
 
+	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getNeighborType() {
 
-		return null;
+		return BlockDuct.ConnectionType.STRUCTURE;
 	}
 
 	public BlockDuct.ConnectionType getRenderConnectionType() {

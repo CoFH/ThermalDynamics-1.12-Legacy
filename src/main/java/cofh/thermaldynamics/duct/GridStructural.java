@@ -62,6 +62,9 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 			for (DuctUnitStructural multiBlock : nodeSet) {
 				multiBlock.addRelays();
 			}
+			for (DuctUnitStructural multiBlock : idleSet) {
+				multiBlock.addRelays();
+			}
 		}
 
 		if (rs == null) {

@@ -57,7 +57,13 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitStructural, GridStructural, Void> adjDuct, byte side) {
-		return mainDuct == null || mainDuct.canConnectToOtherDuct(adjDuct.cast().mainDuct, side);
+		return mainDuct == null || adjDuct.cast().mainDuct == null || mainDuct.canConnectToOtherDuct(adjDuct.cast().mainDuct, side);
+	}
+
+	@Nonnull
+	@Override
+	protected BlockDuct.ConnectionType getConnectionTypeDuct(DuctUnitStructural duct, int side) {
+		return BlockDuct.ConnectionType.STRUCTURE;
 	}
 
 	public void addRelays() {

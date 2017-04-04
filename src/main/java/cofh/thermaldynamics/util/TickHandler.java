@@ -25,9 +25,13 @@ public class TickHandler {
 				getTickHandler(multiBlock.world()).tickingBlocks.add(multiBlock);
 			}
 		} else {
-			synchronized (MULTI_BLOCKS_TO_CALCULATE) {
-				MULTI_BLOCKS_TO_CALCULATE.add(new WeakReference<>(multiBlock));
-			}
+			addMultiBlockToNextTickBatch(multiBlock);
+		}
+	}
+
+	public static void addMultiBlockToNextTickBatch(ISingleTick multiBlock) {
+		synchronized (MULTI_BLOCKS_TO_CALCULATE) {
+			MULTI_BLOCKS_TO_CALCULATE.add(new WeakReference<>(multiBlock));
 		}
 	}
 
