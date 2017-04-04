@@ -123,6 +123,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		if (tile == null || !type.allowTransfer) {
 			if (isInputTile(tile, side)) {
 				inputMask |= (1 << side);
+				nodeMask |= (1 << side);
 			}
 			return;
 		}
@@ -164,6 +165,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		} else {
 			if (isInputTile(tile, side)) {
 				inputMask |= (1 << side);
+				nodeMask |= (1 << side);
 			}
 
 			tileCaches[side] = null;
