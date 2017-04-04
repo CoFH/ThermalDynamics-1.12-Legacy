@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -85,6 +86,7 @@ public class Cover extends Attachment {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getNeighborType() {
 

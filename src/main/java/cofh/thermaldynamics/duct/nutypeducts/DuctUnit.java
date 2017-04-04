@@ -121,7 +121,9 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		setSideToNone(side);
 
 		if (tile == null || !type.allowTransfer) {
-			setSideToNone(side);
+			if (isInputTile(tile, side)) {
+				inputMask |= (1 << side);
+			}
 			return;
 		}
 
@@ -169,7 +171,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		}
 	}
 
-	public boolean isInputTile(TileEntity tile, byte side) {
+	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
 		return false;
 	}
 
@@ -420,7 +422,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return tileCaches[side] != null;
 	}
 
-	public boolean hasCapability(Capability<?> capability) {
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		return false;
 	}
 

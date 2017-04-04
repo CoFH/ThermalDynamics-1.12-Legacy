@@ -70,4 +70,8 @@ public abstract class FilterBase extends ConnectionBase {
 		tag.setString("DisplayType", "item.thermaldynamics.filter.0.name");
 	}
 
+	@Override
+	public boolean allowPipeConnection() {
+		return true;
+	}
 }

@@ -266,6 +266,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public ConnectionType getConnectionType(int i) {
 
+		if(attachmentData != null){
+			Attachment attachment = attachmentData.attachments[i];
+			if(attachment != null ){
+				return attachment.allowPipeConnection() ? NORMAL : BLOCKED;
+			}
+		}
+
 		if (connectionTypes == null) {
 			return NORMAL;
 		}
@@ -704,6 +711,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
+	@Nonnull
 	public BlockDuct.ConnectionType getVisualConnectionType(int side) {
 		if (ServerHelper.isClientWorld(worldObj)) {
 			if (clientConnections == null)
@@ -1070,7 +1078,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
 		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
 			for (DuctUnit<?, ?, ?> ductUnit : getDuctUnits()) {
-				if (ductUnit.hasCapability(capability)) {
+				if (ductUnit.hasCapability(capability, facing)) {
 					return true;
 				}
 			}
@@ -1083,7 +1091,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
 		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
 			for (DuctUnit<?, ?, ?> ductUnit : getDuctUnits()) {
-				if (ductUnit.hasCapability(capability)) {
+				if (ductUnit.hasCapability(capability, facing)) {
 					T cap = ductUnit.getCapability(capability, facing);
 					if (cap != null) {
 						return capability.cast(cap);

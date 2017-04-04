@@ -32,6 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		filter.readFromNBT(tag);
 	}
 
+	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getNeighborType() {
 

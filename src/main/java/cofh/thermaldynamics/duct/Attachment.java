@@ -25,6 +25,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 
@@ -70,6 +71,7 @@ public abstract class Attachment {
 		return true;
 	}
 
+	@Nonnull
 	public abstract BlockDuct.ConnectionType getNeighborType();
 
 	public abstract boolean isNode();
