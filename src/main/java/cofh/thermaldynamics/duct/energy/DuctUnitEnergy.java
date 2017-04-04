@@ -71,7 +71,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 			IEnergyReceiver energyReceiver = (IEnergyReceiver) tile;
 			if (energyReceiver.canConnectEnergy(facing)) {
 				return energyReceiver;
-			} else if (tile instanceof IDuctHolder){
+			} else if (tile instanceof IDuctHolder) {
 				return energyReceiver;
 			}
 		}
@@ -252,13 +252,13 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability) {
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		return capability == CapabilityEnergy.ENERGY;
 	}
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return CapabilityEnergy.ENERGY.cast( new IEnergyStorage(){
+		return CapabilityEnergy.ENERGY.cast(new IEnergyStorage() {
 
 			@Override
 			public int receiveEnergy(int maxReceive, boolean simulate) {
