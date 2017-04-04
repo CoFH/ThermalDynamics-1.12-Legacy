@@ -208,7 +208,13 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			return itemCopy.stackSize > 0 ? itemCopy : null;
 		}
 	}
-//
+
+	@Override
+	public boolean isInputTile(TileEntity tile, byte side) {
+		return !(tile instanceof IDuctHolder) && parent.getAttachment(side) instanceof ServoItem;
+	}
+
+	//
 //	/*
 //	 * Should return true if theTile is significant to this multiblock
 //	 *
@@ -258,6 +264,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Nullable
 	@Override
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
+		if (parent.getAttachment(side) instanceof ServoItem) return null;
 		if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.values()[side ^ 1])) {
 			return new Cache(tile, parent.getAttachment(side));
 		}
