@@ -246,14 +246,14 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 			if (isOutput()) {
 				BlockPos offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
-				tile.world().notifyNeighborsOfStateChange(offsetPos, tile.getBlockType());
+				tile.world().notifyBlockOfStateChange(offsetPos, tile.getBlockType());
 
 				for (int i = 0; i < 6; i++) {
 					if (side == (i ^ 1)) {
 						continue;
 					}
 					offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
-					tile.world().notifyNeighborsOfStateChange(offsetPos, tile.getBlockType());
+					tile.world().notifyBlockOfStateChange(offsetPos, tile.getBlockType());
 				}
 
 			}
