@@ -98,7 +98,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	public BlockDuct.ConnectionType getNeighborType() {
 
-		return BlockDuct.ConnectionType.STRUCTURE;
+		return BlockDuct.ConnectionType.STRUCTURE_CONNECTION;
 	}
 
 	public BlockDuct.ConnectionType getRenderConnectionType() {

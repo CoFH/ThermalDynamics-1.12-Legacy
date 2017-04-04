@@ -348,7 +348,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Nonnull
 	protected BlockDuct.ConnectionType getConnectionTypeTile(C cacheValue, int side) {
-		return BlockDuct.ConnectionType.TILECONNECTION;
+		return BlockDuct.ConnectionType.TILE_CONNECTION;
 	}
 
 	@Nonnull

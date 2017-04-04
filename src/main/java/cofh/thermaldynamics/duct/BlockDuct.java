@@ -503,7 +503,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	public enum ConnectionType {
-		NONE(false), DUCT, CLEANDUCT, STRUCTURE, TILECONNECTION;
+		NONE(false), STRUCTURE_CLEAN, DUCT, CLEAN_DUCT, STRUCTURE_CONNECTION, TILE_CONNECTION;
 
 		private final boolean renderDuct;
 

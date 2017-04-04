@@ -716,7 +716,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
 
 		BlockDuct.ConnectionType connectionType = getVisualConnectionType(side);
-		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
+		if (connectionType == BlockDuct.ConnectionType.TILE_CONNECTION) {
 			return CoverHoleRender.hollowDuctTile;
 		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
 			return null;
@@ -837,14 +837,15 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			{
 				// Add TILE sides
 				switch (renderConnectionType) {
-					case TILECONNECTION:
+					case TILE_CONNECTION:
 						cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
 						break;
 					case DUCT:
-					case CLEANDUCT:
+					case CLEAN_DUCT:
 						cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
 						break;
-					case STRUCTURE:
+					case STRUCTURE_CONNECTION:
+					case STRUCTURE_CLEAN:
 						cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
 						break;
 				}
