@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -362,7 +363,7 @@ public class ServoItem extends ServoBase {
 
 	TileEntity myTile;
 
-	public ItemStack insertItem(ItemStack item) {
+	public ItemStack insertItem(ItemStack item, boolean simulate) {
 
 		if (!filter.matchesFilter(item)) {
 			return item;
@@ -373,9 +374,11 @@ public class ServoItem extends ServoBase {
 		if (routeForItem == null) {
 			return item;
 		}
-		item.stackSize -= routeForItem.stack.stackSize;
-		itemDuct.insertNewItem(routeForItem);
-		return item.stackSize > 0 ? item : null;
+
+		if(!simulate) {
+			itemDuct.insertNewItem(routeForItem);
+		}
+		return ItemHandlerHelper.copyStackWithSize(item, item.stackSize- routeForItem.stack.stackSize );
 	}
 
 	public TravelingItem getRouteForItem(ItemStack item) {

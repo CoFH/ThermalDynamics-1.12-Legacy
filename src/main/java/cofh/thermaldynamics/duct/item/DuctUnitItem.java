@@ -14,6 +14,7 @@ import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.IGridTileRoute;
@@ -32,6 +33,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
@@ -183,7 +185,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		}
 		Attachment attachment = parent.getAttachment(side);
 		if (attachment != null && attachment.getId() == AttachmentRegistry.SERVO_ITEM) {
-			return ((ServoItem) attachment).insertItem(item);
+			return ((ServoItem) attachment).insertItem(item, false);
 		} else {
 			ItemStack itemCopy = ItemHelper.cloneStack(item);
 
@@ -906,6 +908,46 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		return stack == null ? 0 : stack.stackSize;
 	}
 
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+	}
+
+	@Override
+	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
+		Attachment attachment = parent.getAttachment(facing.ordinal());
+		if (attachment instanceof ServoItem) {
+			ServoItem servo = (ServoItem) attachment;
+			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new IItemHandler() {
+
+				@Override
+				public int getSlots() {
+					return 1;
+				}
+
+				@Override
+				public ItemStack getStackInSlot(int slot) {
+					return null;
+				}
+
+				@Override
+				public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+					if (stack == null)
+						return null;
+
+					return servo.insertItem(stack, simulate);
+				}
+
+				@Override
+				public ItemStack extractItem(int slot, int amount, boolean simulate) {
+					return null;
+				}
+			});
+		}
+
+		return null;
+	}
+
 	public static class Cache {
 		@Nonnull
 		public final TileEntity tile;
@@ -967,5 +1009,4 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		public static final byte PULSE_LINE = 5;
 		public static final byte ENDER_POWER = 6;
 	}
-
 }
