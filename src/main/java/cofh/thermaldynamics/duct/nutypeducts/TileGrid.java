@@ -167,7 +167,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 
-		int hash = getRenderHash();
+		int renderHash = getRenderHash();
+		int tileHash = getTileHash();
 
 		if (attachmentData != null) {
 			for (Attachment attachment : attachmentData.attachments) {
@@ -181,8 +182,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			ductUnit.updateAllSides(tiles, holders);
 		}
 
-		if (hash != getRenderHash()) {
+		if (renderHash != getRenderHash()) {
 			callBlockUpdate();
+		}
+
+		if(tileHash != getTileHash()) {
+			rebuildChunkCache();
 		}
 	}
 
@@ -232,6 +237,16 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			return EnumFacing.WEST;
 		}
 		throw new IllegalStateException("Positions " + pos + " and " + neighbour + " are not adjacent");
+	}
+
+	private int getTileHash(){
+		int hash = 0;
+		for (int i = 0; i < 6; i++) {
+			for (DuctUnit unit : getDuctUnits()) {
+				hash = hash * 31 + ((unit.isInput(i) || unit.isOutput(i)) ? 1 : 0);
+			}
+		}
+		return hash;
 	}
 
 	private int getRenderHash() {
@@ -296,17 +311,16 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	public void rebuildChunkCache() {
-
-		if (!neighbourChunks.isEmpty()) {
-			neighbourChunks.clear();
-		}
-
 		BlockPos pos = getPos();
 
 		int dx = pos.getX() & 15;
 		int dz = pos.getZ() & 15;
 		if (dx != 0 && dz != 0 && dx != 15 && dz != 15) {
 			return;
+		}
+
+		if (!neighbourChunks.isEmpty()) {
+			neighbourChunks.clear();
 		}
 
 		Chunk base = worldObj.getChunkFromBlockCoords(pos);
