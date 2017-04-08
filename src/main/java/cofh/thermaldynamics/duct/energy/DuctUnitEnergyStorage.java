@@ -6,11 +6,14 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 
+import javax.annotation.Nonnull;
+
 public class DuctUnitEnergyStorage extends DuctUnitEnergy {
 	public DuctUnitEnergyStorage(TileGrid parent, Duct duct, int transferLimit, int capacity) {
 		super(parent, duct, transferLimit, capacity);
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> getToken() {
 		return DuctToken.ENERGY_STORAGE;

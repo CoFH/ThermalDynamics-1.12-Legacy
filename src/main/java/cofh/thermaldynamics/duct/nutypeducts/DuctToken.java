@@ -35,14 +35,20 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 
 	// Fluid grid
 	public static final DuctToken<DuctUnitFluid, FluidGrid, DuctUnitFluid.Cache> FLUID = new DuctToken<>("Fluid");
+
+	public static final DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> TRANSPORT = new DuctToken<>("Transport");
+
+	public static final DuctToken<DuctUnitLight, LightGrid, Void> LIGHT = new DuctToken<>("Light");
+
 	public final static DuctToken[] TOKENS = new DuctToken[]{
 			STRUCTURAL,
 			ENERGY,
 			ITEMS,
-			FLUID
+			FLUID,
+			TRANSPORT,
+			LIGHT
 	};
-	public static DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> TRANSPORT;
-	public static DuctToken<DuctUnitLight, LightGrid, Void> LIGHT;
+
 
 	static {
 		for (int i = 0; i < TOKENS.length; i++) {

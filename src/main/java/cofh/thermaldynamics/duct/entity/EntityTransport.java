@@ -222,7 +222,7 @@ public class EntityTransport extends Entity {
 					if (pause == 0) {
 						CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
 					} else {
-						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (DuctUnitTransportCrossover.CHARGE_TIME - pause) + " / " + DuctUnitTransportCrossover.CHARGE_TIME), -515781222);
+						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (DuctUnitTransportLinking.CHARGE_TIME - pause) + " / " + DuctUnitTransportLinking.CHARGE_TIME), -515781222);
 					}
 				}
 
@@ -404,7 +404,7 @@ public class EntityTransport extends Entity {
 		return false;
 	}
 
-	public void advanceTile(DuctUnitTransportBaseRoute homeTile) {
+	public void advanceTile(DuctUnitTransport homeTile) {
 
 		if (homeTile.pipeCache[direction] != null) {
 			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);
@@ -420,14 +420,14 @@ public class EntityTransport extends Entity {
 			} else {
 				reRoute = true;
 			}
-		} else if (homeTile.tileCaches[direction] != null) {
+		} else if (homeTile.parent.getConnectionType(direction) == ConnectionType.FORCED) {
 			dropPassenger();
 		} else {
 			bouncePassenger(homeTile);
 		}
 	}
 
-	public void bouncePassenger(DuctUnitTransportBaseRoute homeTile) {
+	public void bouncePassenger(DuctUnitTransportBase homeTile) {
 
 		if (homeTile.getGrid() == null) {
 			return;
@@ -530,7 +530,7 @@ public class EntityTransport extends Entity {
 
 	public Vec3d getPos(byte progress, double framePos) {
 
-		double v = (progress + step * framePos) / (PIPE_LENGTH) - 0.5;
+		double v = ((double) progress + step * framePos) / (PIPE_LENGTH) - 0.5;
 		int dir = v < 0 ? oldDirection : direction;
 
 		Vec3i vec = EnumFacing.VALUES[dir].getDirectionVec();
@@ -585,7 +585,7 @@ public class EntityTransport extends Entity {
 		return p_70112_1_ < 4096;
 	}
 
-	public void teleport(DuctUnitTransportBaseRoute dest) {
+	public void teleport(DuctUnitTransport dest) {
 
 		if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
 			return;

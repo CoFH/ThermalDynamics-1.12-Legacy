@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct;
 
 public enum ConnectionType {
-	NORMAL(true), ONEWAY(true), REJECTED(false), BLOCKED(false), FORCED(true);
+	NORMAL(true), ONEWAY(true), BLOCKED(false), FORCED(true);
 
 	ConnectionType(boolean allowTransfer) {
 

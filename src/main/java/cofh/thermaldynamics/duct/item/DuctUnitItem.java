@@ -245,6 +245,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		return null;
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitItem, ItemGrid, Cache> getToken() {
 		return DuctToken.ITEMS;
@@ -278,8 +279,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			return false;
 		}
 
-		for (Attachment attachment : parent.getTickingAttachments(DuctToken.ITEMS)) {
-			attachment.tick(pass);
+		if (parent.attachmentData != null) {
+			for (Attachment attachment : parent.attachmentData.attachments) {
+				if(attachment != null && attachment.tickUnit() == DuctToken.ITEMS){
+					attachment.tick(pass);
+				}
+			}
 		}
 
 		if (pass == 0) {

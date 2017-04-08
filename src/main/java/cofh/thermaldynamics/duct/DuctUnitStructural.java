@@ -39,6 +39,7 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 		return new DuctUnitStructural[6];
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitStructural, GridStructural, Void> getToken() {
 		return DuctToken.STRUCTURAL;

@@ -2,31 +2,58 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
+import cofh.lib.util.helpers.ServerHelper;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
+import cofh.thermaldynamics.multiblock.RouteCache;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class DuctUnitTransportCrossover extends DuctUnitTransportBaseRoute {
+public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 	final static SidedBlockPos clientValue = SidedBlockPos.ORIGIN;
 	public static byte CHARGE_TIME = 20;
 	final SidedBlockPos[] rangePos = new SidedBlockPos[6];
 
-	public DuctUnitTransportCrossover(TileGrid parent, Duct duct) {
+	public DuctUnitTransportLinking(TileGrid parent, Duct duct) {
 		super(parent, duct);
 	}
-//
-//	@Override
+
+	@Override
+	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type) {
+		SidedBlockPos sidedBlockPos = rangePos[side];
+		if (sidedBlockPos != null) {
+			if (world().isBlockLoaded(sidedBlockPos.pos)) {
+				TileEntity distantTile = world().getTileEntity(sidedBlockPos.pos);
+				DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(distantTile, DuctToken.TRANSPORT);
+				if (transportBase != null && transportBase.isCrossover()) {
+					super.handleTileSideUpdate(distantTile, (IDuctHolder) distantTile, (byte) sidedBlockPos.side.ordinal(), type);
+				}
+			}
+		} else {
+			super.handleTileSideUpdate(tile, holder, side, type);
+		}
+	}
+
+
+	//	@Override
 //	public void handleTileSideUpdate(int i) {
 //
 //		super.handleTileSideUpdate(i);
@@ -85,79 +112,83 @@ public class DuctUnitTransportCrossover extends DuctUnitTransportBaseRoute {
 	}
 
 	@Override
-	public Route getRoute(Entity entity, int side, byte speed) {
-
+	public Route getRoute(Entity entityTransport, int direction, byte step) {
 		return null;
 	}
 
-//	@Override
-//	public boolean openGui(EntityPlayer player) {
-//
-//		if (worldObj.isRemote) {
-//			return true;
-//		}
-//		@SuppressWarnings("unused") int k;
-//
-//		for (byte i = 0; i < 6; i++) {
-//			rangePos[i] = null;
-//
-//			k = 1;
-//
-//			TileEntity adjTileEntitySafe = getAdjTileEntitySafe(i);
-//			if (!(adjTileEntitySafe instanceof DuctUnitTransportLongRange)) {
-//				continue;
-//			}
-//
-//			player.addChatComponentMessage(new TextComponentString("Searching on side - " + EnumFacing.VALUES[i].toString()));
-//
-//			DuctUnitTransportLongRange travel = (DuctUnitTransportLongRange) adjTileEntitySafe;
-//
-//			DuctUnitTransportCrossover finalDest = null;
-//
-//			byte d = travel.nextDirection(i);
-//
-//			BlockPos pos = new BlockPos(travel.getPos());
-//
-//			while (d != -1) {
-//				k++;
-//				pos = pos.offset(EnumFacing.VALUES[d]);
-//
-//				for (int j = 2; j < 6; j++) {
-//					worldObj.getChunkFromBlockCoords(pos.offset(EnumFacing.VALUES[j]));
-//				}
-//				TileEntity side = worldObj.getTileEntity(pos);
-//
-//				if (side instanceof DuctUnitTransportCrossover) {
-//					finalDest = ((DuctUnitTransportCrossover) side);
-//					break;
-//				} else if (side instanceof DuctUnitTransportLongRange) {
-//					travel = (DuctUnitTransportLongRange) side;
-//				} else {
-//					break;
-//				}
-//
-//				travel.onNeighborBlockChange();
-//
-//				d = travel.nextDirection(d);
-//			}
-//			if (finalDest != null) {
-//				player.addChatComponentMessage(new TextComponentString("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
-//				finalDest.rangePos[d ^ 1] = new BlockPosition(this).setOrientation(EnumFacing.VALUES[i].getOpposite());
-//				rangePos[i] = new BlockPosition(finalDest).setOrientation(EnumFacing.VALUES[d]);
-//
-//				if (grid != null) {
-//					grid.destroyAndRecreate();
-//				}
-//
-//				if (finalDest.grid != null) {
-//					finalDest.grid.destroyAndRecreate();
-//				}
-//			} else {
-//				player.addChatComponentMessage(new TextComponentString("Failed at - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
-//			}
-//		}
-//		return true;
-//	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
+		return !adjDuct.cast().isCrossover();
+	}
+
+	@Override
+	public boolean openGui(EntityPlayer player) {
+
+		if (ServerHelper.isClientWorld(world())) {
+			return true;
+		}
+
+		for (byte i = 0; i < 6; i++) {
+			rangePos[i] = null;
+
+			TileEntity adjTileEntitySafe = BlockHelper.getAdjacentTileEntity(parent, i);
+			DuctUnitTransportBase duct = IDuctHolder.getTokenFromTile(adjTileEntitySafe, DuctToken.TRANSPORT);
+			if (duct == null || !duct.isLongRange()) {
+				continue;
+			}
+
+			player.addChatComponentMessage(new TextComponentString("Searching on side - " + EnumFacing.VALUES[i].toString()));
+
+			DuctUnitTransportLongRange travel = (DuctUnitTransportLongRange) duct;
+
+			DuctUnitTransportLinking finalDest = null;
+
+			byte d = travel.nextDirection(i);
+
+			BlockPos pos = travel.pos();
+
+			while (d != -1) {
+				pos = pos.offset(EnumFacing.VALUES[d]);
+
+				for (int j = 2; j < 6; j++) {
+					world().getChunkFromBlockCoords(pos.offset(EnumFacing.VALUES[j]));
+				}
+				DuctUnitTransportBase side = IDuctHolder.getTokenFromTile(world().getTileEntity(pos), DuctToken.TRANSPORT);
+
+				if (side == null) {
+					break;
+				} else if (side.isCrossover()) {
+					finalDest = ((DuctUnitTransportLinking) side);
+					break;
+				} else if (side.isLongRange()) {
+					travel = (DuctUnitTransportLongRange) side;
+				} else {
+					break;
+				}
+
+				travel.onNeighborBlockChange();
+
+				d = travel.nextDirection(d);
+			}
+			if (finalDest != null) {
+				player.addChatComponentMessage(new TextComponentString("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
+				finalDest.rangePos[d ^ 1] = new SidedBlockPos(pos(), EnumFacing.VALUES[i].getOpposite());
+				rangePos[i] = new SidedBlockPos(finalDest.pos(), EnumFacing.VALUES[d]);
+
+				if (grid != null) {
+					grid.destroyAndRecreate();
+				}
+
+				if (finalDest.grid != null && finalDest.grid != grid) {
+					finalDest.grid.destroyAndRecreate();
+				}
+			} else {
+				player.addChatComponentMessage(new TextComponentString("Failed at - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public IGridTile getPhysicalConnectedSide(byte direction) {
@@ -173,11 +204,10 @@ public class DuctUnitTransportCrossover extends DuctUnitTransportBaseRoute {
 		return super.getPhysicalConnectedSide(direction);
 	}
 
-	@Override
 	public void advanceToNextTile(EntityTransport t) {
 
 		if (rangePos[t.direction] == null) {
-			super.advanceToNextTile(t);
+			advanceToNextTile(t);
 		} else {
 			if (this.pipeCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = (DuctUnitTransportBase) this.getPhysicalConnectedSide(t.direction);
@@ -215,7 +245,7 @@ public class DuctUnitTransportCrossover extends DuctUnitTransportBaseRoute {
 				return true;
 			}
 		}
-		return super.advanceEntity(t);
+		return advanceEntity(t);
 	}
 
 	@Override
@@ -285,7 +315,81 @@ public class DuctUnitTransportCrossover extends DuctUnitTransportBaseRoute {
 	@Override
 	public int getWeight() {
 
-		return super.getWeight() * 100;
+		return getWeight() * 100;
+	}
+
+	@Override
+	public TransportGrid createGrid() {
+
+		return new TransportGrid(world());
+	}
+
+	@Nullable
+	@Override
+	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
+		return null;
+	}
+
+	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache() {
+
+		return getCache(true);
+	}
+
+	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache(boolean urgent) {
+
+		assert grid != null;
+		return urgent ? grid.getRoutesFromOutput(this) : grid.getRoutesFromOutputNonUrgent(this);
+	}
+
+	public EntityTransport findRoute(Entity entity, int side, byte speed) {
+
+		Route route = getRoute(entity, side, speed);
+		return route != null ? new EntityTransport(this, route, (byte) side, speed) : null;
+	}
+
+	@Override
+	public boolean canStuffItem() {
+
+		return false;
+	}
+
+	@Override
+	public int getMaxRange() {
+
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public RouteInfo canRouteItem(ItemStack stack) {
+
+		return RouteInfo.noRoute;
+	}
+
+	@Override
+	public byte getStuffedSide() {
+
+		for (byte i = 0; i < 6; i++) {
+			if (isOutput(i)) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	@Override
+	public boolean acceptingStuff() {
+
+		return false;
+	}
+
+	@Nonnull
+	@Override
+	protected BlockDuct.ConnectionType getConnectionTypeDuct(DuctUnitTransportBase duct, int side) {
+		if (rangePos[side] == null && duct.isLongRange()) {
+			return BlockDuct.ConnectionType.TILE_CONNECTION;
+		}
+		return super.getConnectionTypeDuct(duct, side);
 	}
 
 	public static class SidedBlockPos {

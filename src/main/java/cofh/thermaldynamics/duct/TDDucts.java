@@ -237,15 +237,13 @@ public class TDDucts {
 		itemEnergyOpaque.setRarity(1);
 	}
 
-	public static final IDuctFactory ERROR = (duct, worldObj) -> {return STRUCTURAL.createTileEntity(duct, worldObj);};
-
 	static void addTransportDucts() {
 
-		transportBasic = addDuctTransport(OFFSET_TRANSPORT, false, 1, 4, "transport", Type.TRANSPORT, ERROR, null, null, null, 255, "electrum", GREEN_GLASS, 96);
+		transportBasic = addDuctTransport(OFFSET_TRANSPORT, false, 1, 4, "transport", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct(), null, null, null, 255, "electrum", GREEN_GLASS, 96);
 
-		transportLongRange = addDuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT, ERROR, null, null, null, 255, "copper", GREEN_GLASS, 80);
+		transportLongRange = addDuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct.LongRange(), null, null, null, 255, "copper", GREEN_GLASS, 80);
 
-		transportCrossover = addDuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT, ERROR, null, null, null, 255, "enderium", GREEN_GLASS, 128);
+		transportCrossover = addDuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct.Linking(), null, null, null, 255, "enderium", GREEN_GLASS, 128);
 
 		transportFrame = addDuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.CRAFTING, STRUCTURAL, null, null, null, 255, "electrum", null, 128);
 

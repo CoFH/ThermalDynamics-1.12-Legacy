@@ -1,7 +1,5 @@
 package cofh.thermaldynamics.duct.entity;
 
-import codechicken.lib.raytracer.IndexedCuboid6;
-import cofh.CoFHCore;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.item.RouteInfo;
@@ -10,11 +8,11 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.IGridTileRoute;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
-import net.minecraft.entity.player.EntityPlayer;
+import cofh.thermaldynamics.multiblock.Route;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
 public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> implements IGridTileRoute<DuctUnitTransportBase, TransportGrid> {
 
@@ -22,6 +20,7 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 		super(parent, duct);
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> getToken() {
 		return DuctToken.TRANSPORT;
@@ -69,7 +68,7 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 
 	@Override
 	public boolean isOutput() {
-		return false;
+		return nodeMask != 0;
 	}
 
 	@Override
@@ -105,6 +104,16 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	public abstract boolean isRoutable();
 
 	public abstract boolean isCrossover();
+
+	public boolean isLongRange() {
+		return !isRoutable() && !isCrossover();
+	}
+
+	public boolean hasTooManyConnections(){
+		return false;
+	}
+
+	public abstract Route getRoute(Entity entityTransport, int direction, byte step);
 
 	public static class TransportDestination {
 

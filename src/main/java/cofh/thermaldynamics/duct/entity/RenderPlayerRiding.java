@@ -149,7 +149,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 				if (tile instanceof IDuctHolder) {
 					DuctUnitTransportBase base = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT);
 					if(base != null) {
-						if (base.isInput(d^1) || base.isOutput(d ^ 1) ) {
+						if (base.getRenderConnectionType(d ^ 1).renderDuct()) {
 							GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
 						}
 					}

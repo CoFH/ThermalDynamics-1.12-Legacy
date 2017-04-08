@@ -11,11 +11,13 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -74,10 +76,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	@Nonnull
-	public PacketTileInfo getPacketTileInfo() {
-		return PacketTileInfo.newPacket(parent);
-	}
-
 	public abstract DuctToken<T, G, C> getToken();
 
 	@Nullable
@@ -431,4 +429,34 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
 		return null;
 	}
+
+	public boolean onWrench(EntityPlayer player, int side, RayTraceResult rayTrace) {
+		return false;
+	}
+
+	public boolean openGui(EntityPlayer player) {
+
+		return false;
+	}
+
+	public Object getGuiClient(InventoryPlayer inventory) {
+		return null;
+	}
+
+	public Object getGuiServer(InventoryPlayer inventory) {
+		return null;
+	}
+
+	public Object getConfigGuiServer(InventoryPlayer inventory) {
+
+		return null;
+	}
+
+	public Object getConfigGuiClient(InventoryPlayer inventory) {
+
+		return null;
+	}
+
+
+
 }

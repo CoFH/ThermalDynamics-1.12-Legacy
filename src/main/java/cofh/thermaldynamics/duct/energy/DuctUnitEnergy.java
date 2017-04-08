@@ -48,6 +48,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		return new DuctUnitEnergy[6];
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> getToken() {
 		return DuctToken.ENERGY;

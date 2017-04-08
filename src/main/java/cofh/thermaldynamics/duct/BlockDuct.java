@@ -19,6 +19,7 @@ import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
@@ -313,7 +314,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		TileGrid tile = (TileGrid) world.getTileEntity(pos);
 		if (tile instanceof IBlockConfigGui) {
 			return ((IBlockConfigGui) tile).openConfigGui(world, pos, side, player);
-		} else {
+		} else if (tile != null) {
 			int subHit = side.ordinal();
 			if (world instanceof World) {
 				RayTraceResult rayTrace = RayTracer.retraceBlock((World) world, player, pos);
@@ -330,6 +331,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 				Attachment attachment = tile.getAttachment(subHit - 14);
 				if (attachment instanceof IBlockConfigGui) {
 					return ((IBlockConfigGui) attachment).openConfigGui(world, pos, side, player);
+				}
+			}
+
+			for (DuctUnit ductUnit : tile.getDuctUnits()) {
+				if(ductUnit instanceof IBlockConfigGui){
+					return ((IBlockConfigGui) ductUnit).openConfigGui(world, pos, side, player);
 				}
 			}
 
@@ -424,6 +431,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.structure");
 
 		GameRegistry.registerTileEntity(TileLuxDuct.class, "thermaldynamics.luxduct");
+
+		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.viaduct");
+		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics.viaduct.longrange");
+		GameRegistry.registerTileEntity(TileTransportDuct.Linking.class, "thermaldynamics.viaduct.linking");
 
 //		GameRegistry.registerTileEntity(DuctUnitEnergy.class, "thermaldynamics.FluxDuct");
 //		GameRegistry.registerTileEntity(DuctUnitEnergySuper.class, "thermaldynamics.FluxDuctSuperConductor");

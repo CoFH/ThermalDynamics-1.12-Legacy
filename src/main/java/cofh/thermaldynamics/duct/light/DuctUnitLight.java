@@ -34,6 +34,7 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 		super(parent, duct);
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitLight, LightGrid, Void> getToken() {
 		return DuctToken.LIGHT;

@@ -1,18 +1,16 @@
 package cofh.thermaldynamics.duct.entity;
 
-import codechicken.lib.raytracer.RayTracer;
 import cofh.api.block.IBlockConfigGui;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
-import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.item.RouteInfo;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
@@ -23,7 +21,8 @@ import cofh.thermaldynamics.gui.container.ContainerTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransportConfig;
 import cofh.thermaldynamics.multiblock.IGridTileRoute;
 import cofh.thermaldynamics.multiblock.Route;
-import net.minecraft.block.state.IBlockState;
+import cofh.thermaldynamics.multiblock.RouteCache;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -42,7 +41,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBlockConfigGui {
+public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockConfigGui {
 
 
 	public DuctUnitTransport(TileGrid parent, Duct duct) {
@@ -60,13 +59,44 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 		}
 	}
 
-//	@Override
-//	public boolean isBlockedSide(int side) {
-//
-//		return super.isBlockedSide(side) || parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED;
-//	}
-//
-//	@Override
+	@Override
+	public boolean onWrench(EntityPlayer player, int side, RayTraceResult rayTrace) {
+		if (pipeCache[side] == null) {
+			if (parent.getConnectionType(side) == ConnectionType.FORCED) {
+				parent.setConnectionType(side, ConnectionType.NORMAL);
+			} else {
+				parent.setConnectionType(side, ConnectionType.FORCED);
+
+				for (int j = 0; j < 6; j++) {
+					if (side != j && parent.getConnectionType(j) == ConnectionType.FORCED) {
+						parent.setConnectionType(j, ConnectionType.NORMAL);
+					}
+				}
+			}
+
+			onNeighborBlockChange();
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isBlockedSide(int side) {
+		return super.isBlockedSide(side) || parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED;
+	}
+
+	@Nonnull
+	@Override
+	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
+		if(parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED)
+			return BlockDuct.ConnectionType.TILE_CONNECTION;
+
+		return super.getRenderConnectionType(side);
+	}
+
+	//	@Override
 //	public boolean onWrench(EntityPlayer player, EnumFacing side) {
 //
 //		RayTraceResult rayTrace = RayTracer.retraceBlock(world(), player, pos());
@@ -125,33 +155,33 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 //		return false;
 //	}
 //
-//	@Override
-//	public boolean openGui(EntityPlayer player) {
-//
-//		if (super.openGui(player) || ServerHelper.isClientWorld(worldObj)) {
-//			return true;
-//		}
-//
-//		if (grid == null) {
-//			return false;
-//		}
-//
-//		onNeighborBlockChange();
-//
-//		for (int i = 0; i < 6; i++) {
-//			if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-//				if (pipeCache[i] != null) {
-//					continue;
-//				}
-//
-//				PacketHandler.sendTo(parent.getTilePacket(), player);
-//				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, world(), pos().getX(), pos().getY(), pos().getZ());
-//				return true;
-//			}
-//		}
-//
-//		return false;
-//	}
+	@Override
+	public boolean openGui(EntityPlayer player) {
+
+		if (super.openGui(player) || ServerHelper.isClientWorld(world())) {
+			return true;
+		}
+
+		if (grid == null) {
+			return false;
+		}
+
+		onNeighborBlockChange();
+
+		for (int i = 0; i < 6; i++) {
+			if (parent.getConnectionType(i) == ConnectionType.FORCED) {
+				if (pipeCache[i] != null) {
+					continue;
+				}
+
+				PacketHandler.sendTo(parent.getTilePacket(), player);
+				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, world(), pos().getX(), pos().getY(), pos().getZ());
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	private static final OutputData BLANK_NAME = new OutputData();
 	public OutputData data = BLANK_NAME;
@@ -329,30 +359,30 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 		return false;
 	}
 
-//	@Override
-//	public Object getGuiServer(InventoryPlayer inventory) {
-//
-//		return new ContainerTransport(this);
-//	}
-//
-//	@Override
-//	@SideOnly (Side.CLIENT)
-//	public Object getGuiClient(InventoryPlayer inventory) {
-//
-//		return new GuiTransport(this);
-//	}
-//
-//	@Override
-//	public Object getConfigGuiServer(InventoryPlayer inventory) {
-//
-//		return new ContainerTransportConfig(inventory, this);
-//	}
-//
-//	@Override
-//	public Object getConfigGuiClient(InventoryPlayer inventory) {
-//
-//		return new GuiTransportConfig(inventory, this);
-//	}
+	@Override
+	public Object getGuiServer(InventoryPlayer inventory) {
+
+		return new ContainerTransport(this);
+	}
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public Object getGuiClient(InventoryPlayer inventory) {
+
+		return new GuiTransport(this);
+	}
+
+	@Override
+	public Object getConfigGuiServer(InventoryPlayer inventory) {
+
+		return new ContainerTransportConfig(inventory, this);
+	}
+
+	@Override
+	public Object getConfigGuiClient(InventoryPlayer inventory) {
+
+		return new GuiTransportConfig(inventory, this);
+	}
 
 	@Override
 	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
@@ -374,6 +404,132 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 	@Override
 	public boolean isCrossover() {
 		return false;
+	}
+
+
+
+	@Override
+	public TransportGrid createGrid() {
+
+		return new TransportGrid(world());
+	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
+		return adjDuct.cast().isRoutable();
+	}
+
+	@Nullable
+	@Override
+	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
+		return null;
+	}
+
+	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache() {
+
+		return getCache(true);
+	}
+
+	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache(boolean urgent) {
+
+		assert grid != null;
+		return urgent ? grid.getRoutesFromOutput(this) : grid.getRoutesFromOutputNonUrgent(this);
+	}
+
+	@Override
+	public Route getRoute(Entity entity, int side, byte speed) {
+
+		if (entity == null || entity.isDead) {
+			return null;
+		}
+
+		for (Route outputRoute : getCache().outputRoutes) {
+			if (outputRoute.endPoint == this || !outputRoute.endPoint.isOutput()) {
+				continue;
+			}
+
+			Route route = outputRoute.copy();
+			byte outSide = outputRoute.endPoint.getStuffedSide();
+			route.pathDirections.add(outSide);
+			return route;
+		}
+		return null;
+	}
+
+	public EntityTransport findRoute(Entity entity, int side, byte speed) {
+
+		Route route = getRoute(entity, side, speed);
+		return route != null ? new EntityTransport(this, route, (byte) side, speed) : null;
+	}
+
+	@Override
+	public int getWeight() {
+
+		return 1;
+	}
+
+	@Override
+	public boolean canStuffItem() {
+
+		return false;
+	}
+
+	@Override
+	public boolean isOutput() {
+
+		return nodeMask != 0;
+	}
+
+	@Override
+	public int getMaxRange() {
+
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public RouteInfo canRouteItem(ItemStack stack) {
+
+		return RouteInfo.noRoute;
+	}
+
+	@Override
+	public byte getStuffedSide() {
+
+		for (byte i = 0; i < 6; i++) {
+			if (parent.getConnectionType(i) == ConnectionType.FORCED) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	@Override
+	public boolean acceptingStuff() {
+
+		return false;
+	}
+
+	@Override
+	public boolean advanceEntity(EntityTransport t) {
+
+		t.progress += t.step;
+		if (t.myPath == null) {
+			t.bouncePassenger(this);
+		} else if (t.progress >= EntityTransport.PIPE_LENGTH) {
+			t.progress %= EntityTransport.PIPE_LENGTH;
+			advanceToNextTile(t);
+		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
+			if (t.reRoute || getRenderConnectionType(t.direction) == BlockDuct.ConnectionType.NONE) {
+				t.bouncePassenger(this);
+			}
+		}
+		return false;
+	}
+
+	public void advanceToNextTile(EntityTransport t) {
+
+		t.advanceTile(this);
 	}
 
 	public static class OutputData {
@@ -434,7 +590,7 @@ public class DuctUnitTransport extends DuctUnitTransportBaseRoute implements IBl
 			payload.addItemStack(item);
 		}
 	}
-//
+
 //	@Override
 //	@SideOnly (Side.CLIENT)
 //	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {

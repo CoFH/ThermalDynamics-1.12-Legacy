@@ -1,8 +1,12 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.multiblock.Route;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -33,12 +37,17 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	}
 
 	public byte nextDirection(byte k) {
-
-		for (byte i = 0; i < 6; i++) {
+		byte dir = -1;
+		for (int i = 0; i < 6; i++) {
 			if (k == (i ^ 1)) {
 				continue;
 			}
-			if (pipeCache[i] != null) return i;
+			if (pipeCache[i] != null) {
+				if(dir != -1){
+					return -1;
+				}
+				dir = (byte) i;
+			}
 		}
 		return -1;
 	}
@@ -55,7 +64,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 				DuctUnitTransportBase newHome = getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
 				if (newHome.pipeCache[t.direction ^ 1] != null) {
-					t.pos = new BlockPos(newHome.pos());
+					t.pos = newHome.pos();
 
 					t.oldDirection = t.direction;
 
@@ -135,48 +144,41 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		super.readFromNBT(nbt);
 	}
 
-//	@Nonnull
-//	@Override
-//	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
-//
-//		BlockDuct.ConnectionType connectionType = super.getRenderConnectionType(side);
-//		if (connectionType == BlockDuct.ConnectionType.NONE || connections == 0) {
-//			return connectionType;
-//		}
-//
-//		if (side != d1 && side != d2) {
-//			return BlockDuct.ConnectionType.NONE;
-//		}
-//
-//		// TODO: Optimize this - find someplace in the tile update dance to precalculate this
-//		TileEntity tile = BlockHelper.getAdjacentTileEntity(this, side);
-//		if (tile != null && tile.getClass() == DuctUnitTransportLongRange.class) {
-//			DuctUnitTransportLongRange t = (DuctUnitTransportLongRange) tile;
-//
-//			if ((t.d1 ^ 1) == side || (t.d2 ^ 1) == side) {
-//				return connectionType;
-//			}
-//			return BlockDuct.ConnectionType.NONE;
-//		}
-//
-//		return connectionType;
-//	}
-//
-//	@Override
-//	public PacketCoFHBase getTilePacket() {
-//
-//		PacketCoFHBase packet = super.getTilePacket();
-//		packet.addShort(connections << 6 | d1 << 3 | d2);
-//		return packet;
-//	}
-//
-//	@Override
-//	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
-//
-//		super.handleTilePacket(payload, isServer);
-//		int b = payload.getShort();
-//		connections = (byte) ((b >> 6) & 7);
-//		d1 = (byte) ((b >> 3) & 7);
-//		d2 = (byte) (b & 7);
-//	}
+	@Override
+	public boolean hasTooManyConnections() {
+		int i = 0;
+		for (DuctUnitTransportBase ductUnitTransportBase : pipeCache) {
+			if (ductUnitTransportBase != null) {
+				i++;
+				if (i > 2) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Route getRoute(Entity entityTransport, int direction, byte step) {
+		return null;
+	}
+
+	@Nonnull
+	@Override
+	protected BlockDuct.ConnectionType getConnectionTypeDuct(DuctUnitTransportBase duct, int side) {
+		if (hasTooManyConnections() || duct.hasTooManyConnections()) {
+			return BlockDuct.ConnectionType.NONE;
+		}
+		return super.getConnectionTypeDuct(duct, side);
+	}
+
+	@Override
+	public void updateSide(TileEntity tile, IDuctHolder holder, byte side) {
+		super.updateSide(tile, holder, side);
+	}
+
+	@Override
+	public void updateAllSides(TileEntity[] tiles, IDuctHolder[] holders) {
+		super.updateAllSides(tiles, holders);
+	}
 }

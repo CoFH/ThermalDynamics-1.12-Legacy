@@ -258,7 +258,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return prev;
 	}
 
-	public void setConnectionType(byte i, ConnectionType type) {
+	public void setConnectionType(int i, ConnectionType type) {
 
 		if (connectionTypes == null) {
 			if (type == NORMAL) {
@@ -800,9 +800,19 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		int subHit = movingObjectPosition.subHit;
 
 		if (subHit > 13 && subHit < 20) {
-			return getAttachment(subHit - 14).openGui(player);
+			Attachment attachment = getAttachment(subHit - 14);
+			if (attachment != null) {
+				return attachment.openGui(player);
+			}
 		}
-		return super.openGui(player);
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			if(ductUnit.openGui(player)){
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
@@ -870,6 +880,21 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
 
 				onNeighborBlockChange();
+
+				for (DuctUnit ductUnit : getDuctUnits()) {
+					if(ductUnit.onWrench(player, i, rayTrace)){
+						worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
+
+						for (DuctUnit ductUnit2 : getDuctUnits()) {
+							if (ductUnit2.grid != null) {
+								ductUnit2.grid.destroyAndRecreate();
+							}
+						}
+
+						BlockUtils.fireBlockUpdate(world(), getPos());
+						return true;
+					}
+				}
 
 				setConnectionType((byte) i, getConnectionType(i).next());
 
@@ -1053,13 +1078,39 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
+	@Override
+	public Object getGuiClient(InventoryPlayer inventory) {
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			Object object = ductUnit.getGuiClient(inventory);
+			if(object != null) return object;
+		}
+		return null;
+	}
+
+	@Override
+	public Object getGuiServer(InventoryPlayer inventory) {
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			Object object = ductUnit.getGuiServer(inventory);
+			if(object != null) return object;
+		}
+		return null;
+	}
+
 	public Object getConfigGuiServer(InventoryPlayer inventory) {
 
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			Object object = ductUnit.getConfigGuiServer(inventory);
+			if(object != null) return object;
+		}
 		return null;
 	}
 
 	public Object getConfigGuiClient(InventoryPlayer inventory) {
 
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			Object object = ductUnit.getConfigGuiClient(inventory);
+			if(object != null) return object;
+		}
 		return null;
 	}
 

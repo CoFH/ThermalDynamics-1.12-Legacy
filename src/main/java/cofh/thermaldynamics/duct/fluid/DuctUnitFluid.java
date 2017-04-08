@@ -241,6 +241,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		}
 	}
 
+	@Nonnull
 	@Override
 	public DuctToken<DuctUnitFluid, FluidGrid, Cache> getToken() {
 		return DuctToken.FLUID;

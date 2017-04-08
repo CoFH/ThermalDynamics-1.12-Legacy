@@ -27,6 +27,6 @@ public class TransportGrid extends MultiBlockGridWithRoutes<DuctUnitTransportBas
 	@Override
 	public boolean canAddBlock(IGridTile aBlock) {
 
-		return aBlock instanceof DuctUnitTransportBaseRoute;
+		return aBlock instanceof DuctUnitTransport;
 	}
 }
