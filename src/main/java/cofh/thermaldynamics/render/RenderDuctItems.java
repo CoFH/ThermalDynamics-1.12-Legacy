@@ -9,6 +9,7 @@ import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.duct.tiles.TileItemDuct;
 import com.google.common.collect.Iterators;
 import net.minecraft.client.Minecraft;
@@ -26,7 +27,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 
-public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
+public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
 	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
 
@@ -68,9 +69,12 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 		travelingItemSpin %= 180;
 	}
 
-	public void renderTileEntityAt(TileItemDuct tile, double x, double y, double z, float frame, int destroyStage) {
+	@Override
+	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
 
 		DuctUnitItem duct = tile.getDuct(DuctToken.ITEMS);
+
+		if(duct == null) return;
 
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {

@@ -15,23 +15,29 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
 	@Override
 	public void renderTileEntityAt(TileFluidDuct duct, double x, double y, double z, float frame, int destroyStage) {
 
+		DuctUnitFluid fluid = Validate.notNull(duct.getDuct(DuctToken.FLUID));
+
+		renderFluids(fluid, x, y, z);
+
+	}
+
+	public void renderFluids(DuctUnitFluid fluid, double x, double y, double z) {
+		int[] connections = fluid.getRenderFluidConnections();
 		CCRenderState ccrs = CCRenderState.instance();
-		ccrs.preRenderWorld(duct.getWorld(), duct.getPos());
+		ccrs.preRenderWorld(fluid.parent.getWorld(), fluid.parent.getPos());
 
 		GlStateManager.pushMatrix();
 
 		GlStateManager.enableBlend();
 		GlStateManager.enableAlpha();
 		GlStateManager.disableLighting();
-		int[] connections = RenderDuct.instance.getDuctConnections(duct);
-		DuctUnitFluid fluid = Validate.notNull(duct.getDuct(DuctToken.FLUID));
+
 		RenderDuct.instance.renderFluid(ccrs, fluid.myRenderFluid, connections, fluid.getRenderFluidLevel(), x, y, z);
 		GlStateManager.enableLighting();
 		GlStateManager.disableBlend();
 		GlStateManager.disableAlpha();
 
 		GlStateManager.popMatrix();
-
 	}
 
 }

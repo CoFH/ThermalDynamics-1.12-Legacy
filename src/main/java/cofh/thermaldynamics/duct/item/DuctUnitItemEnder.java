@@ -4,6 +4,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergyStorage;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
@@ -11,10 +12,10 @@ import cofh.thermaldynamics.init.TDProps;
 
 public class DuctUnitItemEnder extends DuctUnitItem {
 
-	final DuctUnitEnergyStorage enderEnergy;
+	final DuctUnitEnergy enderEnergy;
 	public boolean powered = false;
 
-	public DuctUnitItemEnder(TileGrid grid, Duct duct, DuctUnitEnergyStorage enderEnergy) {
+	public DuctUnitItemEnder(TileGrid grid, Duct duct, DuctUnitEnergy enderEnergy) {
 
 		super(grid, duct);
 		this.enderEnergy = enderEnergy;

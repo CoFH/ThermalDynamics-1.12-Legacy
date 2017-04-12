@@ -37,19 +37,26 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type) {
+	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide) {
 		SidedBlockPos sidedBlockPos = rangePos[side];
 		if (sidedBlockPos != null) {
-			if (world().isBlockLoaded(sidedBlockPos.pos)) {
-				TileEntity distantTile = world().getTileEntity(sidedBlockPos.pos);
-				DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(distantTile, DuctToken.TRANSPORT);
-				if (transportBase != null && transportBase.isCrossover()) {
-					super.handleTileSideUpdate(distantTile, (IDuctHolder) distantTile, (byte) sidedBlockPos.side.ordinal(), type);
+			if (tile != null) {
+				if (world().isBlockLoaded(sidedBlockPos.pos)) {
+					TileEntity distantTile = world().getTileEntity(sidedBlockPos.pos);
+					DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(distantTile, DuctToken.TRANSPORT);
+					if (transportBase != null && transportBase.isCrossover()) {
+						super.handleTileSideUpdate(distantTile, (IDuctHolder) distantTile, side, type, (byte) sidedBlockPos.side.ordinal());
+						return;
+					}
+					rangePos[side] = null;
 				}
+			}else{
+				rangePos[side] = null;
 			}
-		} else {
-			super.handleTileSideUpdate(tile, holder, side, type);
+
 		}
+
+		super.handleTileSideUpdate(tile, holder, side, type, oppositeSide);
 	}
 
 
@@ -118,8 +125,8 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
-		return !adjDuct.cast().isCrossover();
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+		return true;
 	}
 
 	@Override
@@ -143,6 +150,8 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			DuctUnitTransportLongRange travel = (DuctUnitTransportLongRange) duct;
 
 			DuctUnitTransportLinking finalDest = null;
+
+			int dist = 0;
 
 			byte d = travel.nextDirection(i);
 
@@ -170,6 +179,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				travel.onNeighborBlockChange();
 
 				d = travel.nextDirection(d);
+				dist++;
 			}
 			if (finalDest != null) {
 				player.addChatComponentMessage(new TextComponentString("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
@@ -183,10 +193,14 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				if (finalDest.grid != null && finalDest.grid != grid) {
 					finalDest.grid.destroyAndRecreate();
 				}
+
+				finalDest.parent.callBlockUpdate();
 			} else {
-				player.addChatComponentMessage(new TextComponentString("Failed at - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
+				player.addChatComponentMessage(new TextComponentString("Failed after " + dist + " blocks - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
 			}
 		}
+
+		parent.callBlockUpdate();
 		return true;
 	}
 
@@ -201,13 +215,17 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			}
 			return null;
 		}
-		return super.getPhysicalConnectedSide(direction);
+		IGridTile physicalConnectedSide = super.getPhysicalConnectedSide(direction);
+		if(physicalConnectedSide instanceof DuctUnitTransportLongRange){
+			return null;
+		}
+		return physicalConnectedSide;
 	}
 
 	public void advanceToNextTile(EntityTransport t) {
 
 		if (rangePos[t.direction] == null) {
-			advanceToNextTile(t);
+			t.advanceTile(this);;
 		} else {
 			if (this.pipeCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = (DuctUnitTransportBase) this.getPhysicalConnectedSide(t.direction);
@@ -236,16 +254,15 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public boolean advanceEntity(EntityTransport t) {
+	public void advanceEntity(EntityTransport t) {
 
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
 			if (pipeCache[t.direction] != null && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
 				t.pause = CHARGE_TIME;
-				return true;
 			}
 		}
-		return advanceEntity(t);
+		super.advanceEntity(t);
 	}
 
 	@Override
@@ -315,7 +332,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Override
 	public int getWeight() {
 
-		return getWeight() * 100;
+		return super.getWeight() * 100;
 	}
 
 	@Override
@@ -328,6 +345,12 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Override
 	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
 		return null;
+	}
+
+	@Override
+	public DuctUnitTransportBase getCachedTile(byte side) {
+		if (pipeCache[side] != null && pipeCache[side].isLongRange()) return null;
+		return super.getCachedTile(side);
 	}
 
 	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache() {
@@ -381,6 +404,13 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public boolean acceptingStuff() {
 
 		return false;
+	}
+
+	@Override
+	public ConnectionType getConnectionType(byte side) {
+		if (rangePos[side] == null) {
+		}
+		return super.getConnectionType(side);
 	}
 
 	@Nonnull

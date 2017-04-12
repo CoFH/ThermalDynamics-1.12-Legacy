@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
+import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.util.BlockUtils;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
@@ -7,17 +8,23 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -253,11 +260,8 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side, byte oppositeSide) {
 		DuctUnitFluid ductUnitFluid = adjDuct.cast();
-		if (ductUnitFluid.getDuctType() != getDuctType()) {
-			return false;
-		}
 		FluidStack myFluid = getConnectionFluid();
 		if (myFluid != null) {
 			FluidStack connectionFluid = ductUnitFluid.getConnectionFluid();
@@ -435,6 +439,56 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this.getFluidCapability(facing));
 	}
 
+	@Override
+	public void onPlaced(EntityLivingBase living, ItemStack stack) {
+		if (ServerHelper.isClientWorld(world())) return;
+
+		EnumFacing placingSide = null;
+		FluidStack fluidStack = null;
+
+		if (living instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) living;
+			RayTraceResult retrace;
+			try {
+				BlockDuct.IGNORE_RAY_TRACE.set(pos());
+				retrace = RayTracer.retrace(player, false);
+			} finally {
+				BlockDuct.IGNORE_RAY_TRACE.set(null);
+			}
+
+			if (retrace != null && retrace.sideHit != null) {
+				EnumFacing sideHit = retrace.sideHit.getOpposite();
+				DuctUnitFluid fluids = IDuctHolder.getTokenFromTile(world().getTileEntity(pos().offset(sideHit)), DuctToken.FLUID);
+				if (fluids != null) {
+					fluidStack = fluids.getConnectionFluid();
+				}
+			}
+		}
+
+		for (EnumFacing facing : EnumFacing.values()) {
+			TileEntity tileEntity = world().getTileEntity(pos().offset(facing));
+			DuctUnitFluid fluids = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.FLUID);
+			if (fluids != null) {
+				FluidStack connectionFluid = fluids.getConnectionFluid();
+				if (fluidStack == null) {
+					fluidStack = connectionFluid;
+				} else if (connectionFluid != null && !fluidStack.isFluidEqual(connectionFluid)) {
+					parent.setConnectionType(facing.ordinal(), ConnectionType.BLOCKED);
+					((TileGrid) tileEntity).setConnectionType(facing.ordinal() ^ 1, ConnectionType.BLOCKED);
+					((TileGrid) tileEntity).callBlockUpdate();
+				}
+			}
+		}
+	}
+
+	public int[] getRenderFluidConnections() {
+		int[] connections = new int[6];
+		for (int i = 0; i < 6; i++) {
+			connections[i] = parent.getVisualConnectionType(i).ordinal();
+		}
+		return connections;
+	}
+
 	public static class Cache {
 		public TileEntity tile;
 		public IFilterFluid filter;
@@ -461,4 +515,6 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		public static final byte UPDATE_RENDER = 3;
 		public static final byte TEMPERATURE = 4;
 	}
+
+
 }

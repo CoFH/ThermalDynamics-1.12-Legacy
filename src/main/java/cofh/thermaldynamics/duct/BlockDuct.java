@@ -66,7 +66,8 @@ import java.util.Random;
 
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister {
 
-	public static PropertyInteger META = new PropertyInteger("meta", 15);
+	public static final PropertyInteger META = new PropertyInteger("meta", 15);
+	public static final ThreadLocal<BlockPos> IGNORE_RAY_TRACE = new ThreadLocal<>();
 	public int offset;
 
 	public BlockDuct(int offset) {
@@ -220,6 +221,9 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState blockState, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
 
+		BlockPos ignore_pos = IGNORE_RAY_TRACE.get();
+		if (ignore_pos != null && ignore_pos.equals(pos)) return null;
+
 		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
 		if (theTile == null) {
 			return null;
@@ -335,7 +339,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			}
 
 			for (DuctUnit ductUnit : tile.getDuctUnits()) {
-				if(ductUnit instanceof IBlockConfigGui){
+				if (ductUnit instanceof IBlockConfigGui) {
 					return ((IBlockConfigGui) ductUnit).openConfigGui(world, pos, side, player);
 				}
 			}
@@ -343,6 +347,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		}
 
 		return false;
+	}
+
+	@Nonnull
+	@Override
+	public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer, ItemStack stack) {
+		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, stack);
 	}
 
 	@Override
@@ -409,8 +419,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		GameRegistry.registerTileEntity(TileItemDuct.FastOpaque.class, "thermaldynamics.itemduct.fast.opaque");
 		GameRegistry.registerTileEntity(TileItemDuct.Flux.Transparent.class, "thermaldynamics.itemduct.flux.transparent");
 		GameRegistry.registerTileEntity(TileItemDuct.Flux.Opaque.class, "thermaldynamics.itemduct.flux.opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.Ender.Transparent.class, "thermaldynamics.itemduct.ender.transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Ender.Opaque.class, "thermaldynamics.itemduct.ender.opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Warp.Transparent.class, "thermaldynamics.itemduct.warp.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Warp.Opaque.class, "thermaldynamics.itemduct.warp.opaque");
+		GameRegistry.registerTileEntity(TileDuctOmni.Transparent.class, "thermaldynamics.itemduct.ender.transparent");
+		GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics.itemduct.ender.opaque");
 
 
 		GameRegistry.registerTileEntity(TileEnergyDuct.Basic.class, "thermaldynamics.fluxduct.basic");

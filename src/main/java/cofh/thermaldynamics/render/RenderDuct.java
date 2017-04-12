@@ -215,6 +215,13 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 				modelFrameConnection[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 			}
 		} else if (ductType.frameType == 3 && ductType.iconFrameTexture != null) {
+			c = 0;
+			if (!invRender)
+				for (int s = 0; s < 6; s++) {
+					if (BlockDuct.ConnectionType.values()[connection[s]] == BlockDuct.ConnectionType.CLEAN_DUCT) {
+						c = c | (1 << s);
+					}
+				}
 			modelLargeTubes[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 		} else if (ductType.frameType == 4 && ductType.iconFrameTexture != null) {
 			c = 0;

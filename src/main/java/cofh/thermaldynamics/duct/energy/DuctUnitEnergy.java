@@ -60,7 +60,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 		return getTransferLimit() == adjDuct.cast().getTransferLimit();
 	}
 

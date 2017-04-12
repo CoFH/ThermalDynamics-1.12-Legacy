@@ -47,7 +47,7 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitLight, LightGrid, Void> adjDuct, byte side) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitLight, LightGrid, Void> adjDuct, byte side, byte oppositeSide) {
 		return true;
 	}
 

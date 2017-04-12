@@ -7,8 +7,10 @@ import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.duct.tiles.TileItemDuct;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
@@ -21,7 +23,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuctItemsEnder extends RenderDuctItems {
 
-	public static final TileEntitySpecialRenderer<TileItemDuct> instance = new RenderDuctItemsEnder();
+	public static final TileEntitySpecialRenderer<TileGrid> instance = new RenderDuctItemsEnder();
 
 	// TEMA: this is the shader callback where the uniforms are set for this particular shader.
 	// it's called each frame when the shader is bound. Probably the most expensive part of the whole thing.
@@ -45,7 +47,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	};
 
 	@Override
-	public void renderTileEntityAt(TileItemDuct tile, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
 
 		DuctUnitItemEnder duct = (DuctUnitItemEnder) tile.getDuct(DuctToken.ITEMS);
 

@@ -9,7 +9,6 @@ import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,12 +48,12 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 				dir = (byte) i;
 			}
 		}
-		return -1;
+		return dir;
 	}
 
 
 	@Override
-	public boolean advanceEntity(EntityTransport t) {
+	public void advanceEntity(EntityTransport t) {
 
 		int v = t.progress;
 		v += t.step * 2;
@@ -73,7 +72,6 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 						t.direction = lr.nextDirection(t.direction);
 						if (t.direction == -1) {
 							t.dropPassenger();
-							return true;
 						}
 					} else if (t.myPath != null) {
 						if (t.myPath.hasNextDirection()) {
@@ -85,15 +83,12 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 				}
 			} else {
 				t.dropPassenger();
-				return true;
 			}
 		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
 			if (pipeCache[t.direction] == null) {
 				t.dropPassenger();
-				return true;
 			}
 		}
-		return false;
 	}
 
 	@Override
@@ -121,8 +116,8 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
-		return !adjDuct.cast().isRoutable() && !adjDuct.cast().isCrossover();
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+		return adjDuct.cast().isLongRange() || adjDuct.cast().isCrossover();
 	}
 
 	@Nullable

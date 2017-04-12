@@ -13,15 +13,9 @@ public class DuctUnitEnergyStorage extends DuctUnitEnergy {
 		super(parent, duct, transferLimit, capacity);
 	}
 
-	@Nonnull
 	@Override
-	public DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> getToken() {
-		return DuctToken.ENERGY_STORAGE;
-	}
-
-	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side) {
-		return super.canConnectToOtherDuct(adjDuct, side) && adjDuct.cast() instanceof DuctUnitEnergyStorage;
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+		return super.canConnectToOtherDuct(adjDuct, side, oppositeSide) && adjDuct.cast() instanceof DuctUnitEnergyStorage;
 	}
 
 	@Override

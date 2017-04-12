@@ -258,7 +258,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitItem, ItemGrid, Cache> adjDuct, byte side) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitItem, ItemGrid, Cache> adjDuct, byte side, byte oppositeSide) {
 		return true;
 	}
 
@@ -1009,6 +1009,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			return tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)
 					&& itemHandler.equals(tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing));
 		}
+	}
+
+	@Override
+	public boolean openGui(EntityPlayer player) {
+
+		return super.openGui(player);
 	}
 
 	public class TileInfoPackets {

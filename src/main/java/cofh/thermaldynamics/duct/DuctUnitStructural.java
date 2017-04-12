@@ -57,12 +57,13 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitStructural, GridStructural, Void> adjDuct, byte side) {
-		DuctUnit otherMainDuct = adjDuct.cast().mainDuct;
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitStructural, GridStructural, Void> adjDuct, byte side, byte oppositeSide) {
+
 		if (this.mainDuct == null) return true;
+		DuctUnit otherMainDuct = adjDuct.cast().mainDuct;
 		if (otherMainDuct == null) return true;
 		if (mainDuct.getToken() != otherMainDuct.getToken()) return false;
-		return this.mainDuct.canConnectToOtherDuct(otherMainDuct, side);
+		return this.mainDuct.canConnectToOtherDuct(otherMainDuct, side, oppositeSide);
 	}
 
 	@Nonnull

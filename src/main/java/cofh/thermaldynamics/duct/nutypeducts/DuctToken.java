@@ -24,7 +24,7 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 	// Energy grid, for any energy transfer
 	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
 
-	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
+//	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
 
 	// Storage energy grid, for storing internal energy
 

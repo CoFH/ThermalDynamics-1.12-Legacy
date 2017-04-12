@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.item.RouteInfo;
@@ -38,7 +39,24 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 //		super.addTraceableCuboids(cuboids);
 //	}
 
-	public abstract boolean advanceEntity(EntityTransport transport);
+	public void advanceEntity(EntityTransport t) {
+
+		t.progress += t.step;
+		if (t.myPath == null) {
+			t.bouncePassenger(this);
+		} else if (t.progress >= EntityTransport.PIPE_LENGTH) {
+			t.progress %= EntityTransport.PIPE_LENGTH;
+			advanceToNextTile(t);
+		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
+			if (t.reRoute || getRenderConnectionType(t.direction) == BlockDuct.ConnectionType.NONE) {
+				t.bouncePassenger(this);
+			}
+		}
+	}
+
+	public void advanceToNextTile(EntityTransport t) {
+
+	}
 
 	public IGridTile getPhysicalConnectedSide(byte direction) {
 

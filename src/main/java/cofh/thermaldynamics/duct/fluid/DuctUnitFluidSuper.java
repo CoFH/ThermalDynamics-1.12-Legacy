@@ -1,6 +1,8 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -22,6 +24,12 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 	public FluidGridSuper createGrid() {
 
 		return new FluidGridSuper(world());
+	}
+
+	@Override
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side, byte oppositeSide) {
+		Duct ductType = adjDuct.getDuctType();
+		return (ductType == TDDucts.fluidSuper || ductType == TDDucts.fluidSuperOpaque) && super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
 	}
 
 	@Override

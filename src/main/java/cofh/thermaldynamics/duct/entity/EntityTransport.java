@@ -404,7 +404,7 @@ public class EntityTransport extends Entity {
 		return false;
 	}
 
-	public void advanceTile(DuctUnitTransport homeTile) {
+	public void advanceTile(DuctUnitTransportBase homeTile) {
 
 		if (homeTile.pipeCache[direction] != null) {
 			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);

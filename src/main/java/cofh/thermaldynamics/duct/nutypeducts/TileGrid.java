@@ -39,6 +39,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -75,14 +76,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		GameRegistry.registerTileEntityWithAlternatives(TileGrid.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
 	}
 
-	public final LinkedList<WeakReference<Chunk>> neighbourChunks = new LinkedList<>();
+	@Nullable
+	private LinkedList<WeakReference<Chunk>> neighbourChunks;
 	@Nullable
 	public AttachmentData attachmentData;
 	@Nullable
 	public BlockDuct.ConnectionType[] clientConnections;
 	@Nullable
 	private ConnectionType connectionTypes[];
-	private int lastUpdateTime;
 
 	public static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
 
@@ -165,6 +166,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (adjacentTileEntity instanceof IDuctHolder) {
 				holders[i] = (IDuctHolder) adjacentTileEntity;
 			}
+			else if(adjacentTileEntity == null && connectionTypes != null){
+				if (getConnectionType(i) == BLOCKED) {
+					setConnectionType(i, NORMAL);
+				}
+			}
 		}
 
 		int renderHash = getRenderHash();
@@ -193,8 +199,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Override
 	public void onNeighborTileChange(BlockPos pos) {
+		if(ServerHelper.isClientWorld(worldObj)) return;
+
+		int renderHash = getRenderHash();
+		int tileHash = getTileHash();
+
 		byte side = (byte) getNeighbourDirection(getPos(), pos).ordinal();
-		BlockDuct.ConnectionType visualConnectionType = getVisualConnectionType(side);
 
 		if (attachmentData != null) {
 
@@ -206,12 +216,18 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, side);
 		IDuctHolder holder = adjacentTileEntity instanceof IDuctHolder ? (IDuctHolder) adjacentTileEntity : null;
 
+
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.updateSide(adjacentTileEntity, holder, side);
 		}
 
-		if (visualConnectionType != getVisualConnectionType(side)) {
+		if (renderHash != getRenderHash()) {
 			callBlockUpdate();
+		}
+
+		if(tileHash != getTileHash()) {
+			rebuildChunkCache();
 		}
 	}
 
@@ -253,7 +269,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		int prev = 0;
 		for (int i = 0; i < 6; i++) {
 			BlockDuct.ConnectionType type = getVisualConnectionType(i);
-			prev = prev * 8 + type.ordinal();
+			prev = prev * 31 + type.ordinal();
 		}
 		return prev;
 	}
@@ -288,6 +304,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 
+		ConnectionType[] connectionTypes = this.connectionTypes;
 		if (connectionTypes == null) {
 			return NORMAL;
 		}
@@ -296,7 +313,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public boolean checkForChunkUnload() {
 
-		if (neighbourChunks.isEmpty()) {
+		LinkedList<WeakReference<Chunk>> neighbourChunks = this.neighbourChunks;
+		if (neighbourChunks == null || neighbourChunks.isEmpty()) {
 			return false;
 		}
 		for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
@@ -313,13 +331,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public void rebuildChunkCache() {
 		BlockPos pos = getPos();
 
-		int dx = pos.getX() & 15;
-		int dz = pos.getZ() & 15;
-		if (dx != 0 && dz != 0 && dx != 15 && dz != 15) {
-			return;
-		}
-
-		if (!neighbourChunks.isEmpty()) {
+		if (neighbourChunks != null && !neighbourChunks.isEmpty()) {
 			neighbourChunks.clear();
 		}
 
@@ -328,7 +340,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (byte i = 0; i < 6; i++) {
 			boolean important = false;
 			for (DuctUnit ductUnit : getDuctUnits()) {
-				if (ductUnit.tileCaches[i] != null) {
+				if (ductUnit.shouldTrackChunk(i)) {
 					important = true;
 					break;
 				}
@@ -341,8 +353,33 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			EnumFacing facing = EnumFacing.VALUES[i];
 			Chunk chunk = worldObj.getChunkFromBlockCoords(pos.offset(facing));
 			if (chunk != base) {
+				if(neighbourChunks == null){
+					neighbourChunks = new LinkedList<>();
+				}
 				neighbourChunks.add(new WeakReference<>(chunk));
 			}
+		}
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			Collection<BlockPos> additionalImportantPositions = ductUnit.getAdditionalImportantPositions();
+			if(additionalImportantPositions.isEmpty())
+				continue;
+			for (BlockPos p2 : additionalImportantPositions) {
+				Chunk otherChunk = worldObj.getChunkFromBlockCoords(p2);
+				if(otherChunk != base){
+					if (neighbourChunks == null) {
+						neighbourChunks = new LinkedList<>();
+
+					} else if (!neighbourChunks.stream().noneMatch(chunkWeakReference -> chunkWeakReference.get() == otherChunk)) {
+						continue;
+					}
+					neighbourChunks.add(new WeakReference<>(otherChunk));
+				}
+			}
+		}
+
+		if (neighbourChunks != null && neighbourChunks.isEmpty()) {
+			neighbourChunks = null;
 		}
 	}
 
@@ -485,6 +522,21 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 
+		if (nbt.hasKey("Connections", Constants.NBT.TAG_BYTE_ARRAY)) {
+			connectionTypes = new ConnectionType[6];
+			byte[] connections = nbt.getByteArray("Connections");
+			boolean flag = false;
+			for (int i = 0; i < 6; i++) {
+				ConnectionType connectionType = ConnectionType.values()[connections[i]];
+				if (connectionType != NORMAL) flag = true;
+				connectionTypes[i] = connectionType;
+			}
+
+			if (!flag) {
+				connectionTypes = null;
+			}
+		}
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			TickHandler.addMultiBlockToCalculate(ductUnit);
 		}
@@ -504,6 +556,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (tag != null) {
 				nbt.setTag(ductUnit.getToken().key, tag);
 			}
+		}
+
+		if (connectionTypes != null) {
+			byte[] connections = new byte[6];
+			for (int i = 0; i < 6; i++) {
+				connections[i] = (byte) connectionTypes[i].ordinal();
+			}
+			nbt.setByteArray("Connections", connections);
 		}
 
 		return nbt;
@@ -1023,7 +1083,23 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 
 			if (isDebug) {
-				StringBuilder builder = new StringBuilder("  Tiles={");
+				StringBuilder builder;
+				if(connectionTypes != null){
+					builder = new StringBuilder("  Con={");
+					for (int i = 0; i < 6; i++) {
+						builder.append(getConnectionType(i).name().substring(0,1));
+					}
+					info.add(new TextComponentString(builder.toString()));
+				}
+
+				builder = new StringBuilder("  Vis={");
+				for (int i = 0; i < 6; i++) {
+					builder.append(getVisualConnectionType(i).name().substring(0,1));
+				}
+				info.add(new TextComponentString(builder.toString()));
+
+
+				builder = new StringBuilder("  Tiles={");
 				for (int i = 0; i < 6; i++) {
 					if (ductUnit.tileCaches[i] != null) {
 						builder.append(i).append("=").append(ductUnit.tileCaches[i]).append(",");
@@ -1032,8 +1108,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				builder.append("}");
 
 				info.add(new TextComponentString(builder.toString()));
+
 				builder = new StringBuilder("  Pipes={");
-				for (int i = 0; i < ductUnit.pipeCache.length; i++) {
+				for (int i = 0; i < 6; i++) {
 					if (ductUnit.pipeCache[i] != null) {
 						builder.append(i).append("=").append(ductUnit.pipeCache[i]).append(",");
 					}

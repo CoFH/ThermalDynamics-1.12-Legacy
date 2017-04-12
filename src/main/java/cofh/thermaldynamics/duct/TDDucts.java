@@ -9,21 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TDDucts {
-
-//	private static final IDuctFactory TRANSPORT_CROSSOVER = (duct, worldObj) -> new DuctUnitTransportCrossover();
-//	private static final IDuctFactory TRANSPORT_LONGRANGE = (duct, worldObj) -> new DuctUnitTransportLongRange();
-//	private static final IDuctFactory TRANSPORT = (duct, worldObj) -> new DuctUnitTransport();
-//	private static final IDuctFactory FLUID_SUPER = (duct, worldObj) -> new DuctUnitFluidSuper();
-//	private static final IDuctFactory GLOW = (duct, worldObj) -> new DuctUnitLight();
-//	private static final IDuctFactory FLUID_FLUX = (duct, worldObj) -> new DuctUnitFluidFlux();
-//	private static final IDuctFactory FLUID_FRAGILE = (duct, worldObj) -> new DuctUnitFluidFragile(parent, duct);
-//	private static final IDuctFactory FLUID = (duct, worldObj) -> new DuctUnitFluid();
-//	private static final IDuctFactory ENERGY_SUPER = (duct, worldObj) -> new DuctUnitEnergySuper(duct);
-//	private static final IDuctFactory ENERGY = (duct, worldObj) -> new DuctUnitEnergy();
-//	private static final IDuctFactory ITEM_FLUX = (duct, worldObj) -> new TileItemDuctFlux();
-//	private static final IDuctFactory ITEM_ENDER = (duct, worldObj) -> new DuctUnitItemEnder(getGrid(), duct, enderEnergy);
-//	private static final IDuctFactory ITEM = (duct, worldObj) -> new TileItemDuct.();
-
 	private static final String REDSTONE_STILL = "thermalfoundation:blocks/fluid/redstone_still";
 	private static final String GLOWSTONE_STILL = "thermalfoundation:blocks/fluid/glowstone_still";
 	private static final String CRYOTHEUM_STILL = "thermalfoundation:blocks/fluid/cryotheum_still";
@@ -59,10 +44,13 @@ public class TDDucts {
 	public static DuctItem itemBasicOpaque;
 	public static DuctItem itemFast;
 	public static DuctItem itemFastOpaque;
-	public static DuctItem itemEnder;
-	public static DuctItem itemEnderOpaque;
+	public static DuctItem itemOmni;
+	public static DuctItem itemOmniOpaque;
 	public static DuctItem itemEnergy;
 	public static DuctItem itemEnergyOpaque;
+	public static DuctItem itemEnder;
+	public static DuctItem itemEnderOpaque;
+
 	/* TRANSPORT */
 	public static DuctTransport transportBasic;
 	public static DuctTransport transportLongRange;
@@ -220,18 +208,20 @@ public class TDDucts {
 		itemFast = addDuctItem(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Fast(), "tin", "tin", GLOWSTONE_STILL, 128, null, null, 0);
 		itemFastOpaque = addDuctItem(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, (duct, worldObj) -> new TileItemDuct.FastOpaque(), "tin_1", "tin", null, 0, null, null, 0);
 
-		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Ender.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
-		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Ender.Opaque(), "enderium", "enderium", null, 48, null, null, 0);
+		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Warp.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
+		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Warp.Opaque(), "enderium", "enderium", null, 48, null, null, 0);
 
 		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Flux.Transparent(), "tin", "tin", REDSTONE_STILL, 48, null, null, 0);
-
 		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Flux.Opaque(), "tin_2", "tin", null, 0, null, null, 0);
+
+		itemOmni = addDuctItem(OFFSET_ITEM + 8, false, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "platinum", "platinum", null, 48, "enderium_trans_large", null, 0);
+		itemOmniOpaque = addDuctItem(OFFSET_ITEM + 9, true, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "platinum", "platinum", null, 48, "enderium_large", null, 0);
 
 		itemFast.setRarity(1);
 		itemFastOpaque.setRarity(1);
 
-		itemEnder.setRarity(2);
-		itemEnderOpaque.setRarity(2);
+		itemOmni.setRarity(2);
+		itemOmniOpaque.setRarity(2);
 
 		itemEnergy.setRarity(1);
 		itemEnergyOpaque.setRarity(1);

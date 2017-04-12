@@ -7,14 +7,12 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.entity.SoundWoosh;
+import cofh.thermaldynamics.duct.tiles.TileDuctOmni;
 import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
 import cofh.thermaldynamics.duct.tiles.TileItemDuct;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
-import cofh.thermaldynamics.render.RenderDuct;
-import cofh.thermaldynamics.render.RenderDuctFluids;
-import cofh.thermaldynamics.render.RenderDuctItems;
-import cofh.thermaldynamics.render.RenderDuctItemsEnder;
+import cofh.thermaldynamics.render.*;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cofh.thermaldynamics.util.TickHandlerClient;
 import net.minecraft.util.EnumBlockRenderType;
@@ -60,7 +58,8 @@ public class ProxyClient extends Proxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Basic.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Fast.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Flux.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Ender.Transparent.class, RenderDuctItemsEnder.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Warp.Transparent.class, RenderDuctItemsEnder.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.instance);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Fragile.Transparent.class, RenderDuctFluids.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Fragile.Super.class, RenderDuctFluids.instance);

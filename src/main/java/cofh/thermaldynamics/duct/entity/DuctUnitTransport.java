@@ -49,9 +49,9 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	}
 
 	@Override
-	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type)  {
+	protected void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide)  {
 
-		super.handleTileSideUpdate(tile, holder, side, type);
+		super.handleTileSideUpdate(tile, holder, side, type, oppositeSide);
 
 		if (type == ConnectionType.FORCED) {
 			pipeCache[side] = null;
@@ -415,7 +415,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
 		return adjDuct.cast().isRoutable();
 	}
 
@@ -510,22 +510,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		return false;
 	}
 
-	@Override
-	public boolean advanceEntity(EntityTransport t) {
 
-		t.progress += t.step;
-		if (t.myPath == null) {
-			t.bouncePassenger(this);
-		} else if (t.progress >= EntityTransport.PIPE_LENGTH) {
-			t.progress %= EntityTransport.PIPE_LENGTH;
-			advanceToNextTile(t);
-		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
-			if (t.reRoute || getRenderConnectionType(t.direction) == BlockDuct.ConnectionType.NONE) {
-				t.bouncePassenger(this);
-			}
-		}
-		return false;
-	}
 
 	public void advanceToNextTile(EntityTransport t) {
 

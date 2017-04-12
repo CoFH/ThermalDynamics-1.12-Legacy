@@ -3,11 +3,13 @@ package cofh.thermaldynamics.duct.nutypeducts;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockFormer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,27 +29,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> implements IGridTile<T, G>, ISingleTick {
 
 	public final TileGrid parent;
 	@SuppressWarnings("unchecked")
 	public final C[] tileCaches = createTileCaches();
-
-	protected abstract C[] createTileCaches();
-
 	@SuppressWarnings("unchecked")
 	public final T[] pipeCache = createPipeCache();
-
-	protected abstract T[] createPipeCache();
-
 	final Duct duct;
 	@Nullable
 	protected G grid;
 	protected byte nodeMask;
 	protected byte inputMask;
 	private boolean isValidForForming = true;
-
 	public DuctUnit(TileGrid parent, Duct duct) {
 		this.parent = parent;
 		this.duct = duct;
@@ -63,6 +59,10 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		builder.append("]");
 		return builder.toString();
 	}
+
+	protected abstract C[] createTileCaches();
+
+	protected abstract T[] createPipeCache();
 
 	@Override
 	public String toString() {
@@ -113,6 +113,10 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull cofh.thermaldynamics.duct.ConnectionType type) {
+		handleTileSideUpdate(tile, holder, side, type, (byte)(side ^ 1));
+	}
+
+	protected void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide) {
 		nodeMask &= ~(1 << side);
 		inputMask &= ~(1 << side);
 
@@ -126,9 +130,11 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 			return;
 		}
 
-		if (holder != null && !holder.isSideBlocked(side ^ 1)) {
+		if (holder != null && !holder.isSideBlocked(oppositeSide)) {
 			DuctUnit<T, G, C> adjDuct = holder.getDuct(getToken());
-			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side) && adjDuct.canConnectToOtherDuct(this, side)) {
+			if (adjDuct != null
+					&& canConnectToOtherDuct(adjDuct, side, oppositeSide)
+					&& adjDuct.canConnectToOtherDuct(this, oppositeSide, side)) {
 				pipeCache[side] = adjDuct.cast();
 				return;
 			}
@@ -137,7 +143,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		loadSignificantCache(tile, side);
 	}
 
-	public abstract boolean canConnectToOtherDuct(DuctUnit<T, G, C> adjDuct, byte side);
+	public abstract boolean canConnectToOtherDuct(DuctUnit<T, G, C> adjDuct, byte side, byte oppositeSide);
 
 	protected void setSideToNone(byte side) {
 
@@ -320,6 +326,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public void onConnectionRejected(int i) {
 
 		pipeCache[i] = null;
+		parent.callBlockUpdate();
 	}
 
 	@Override
@@ -458,5 +465,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 
+	public boolean shouldTrackChunk(byte i) {
+		return isOutput(i) || isInput(i);
+	}
 
+	@Nonnull
+	public Collection<BlockPos> getAdditionalImportantPositions() {
+		return ImmutableList.of();
+	}
 }

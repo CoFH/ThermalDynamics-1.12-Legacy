@@ -90,10 +90,10 @@ public class TDCrafting {
 		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened));
 		GameRegistry.addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasicOpaque.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "ingotLead"));
 
-		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnder.itemStack, 2), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
-		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnderOpaque.itemStack, 2), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
-		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnder.itemStack, 6), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "ingotEnderium"));
-		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnderOpaque.itemStack, 6), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "ingotEnderium"));
+		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 2), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
+		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 2), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
+		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 6), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "ingotEnderium"));
+		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 6), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "ingotEnderium"));
 
 		/* ITEMS - TE Integration */
 		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemFast.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
@@ -149,7 +149,7 @@ public class TDCrafting {
 		}
 
 		/* CONVERSIONS */
-		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnder, TDDucts.itemEnderOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque } }) {
+		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemOmni, TDDucts.itemOmniOpaque}, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque } }) {
 
 			final ItemStack t = duct[0].itemStack;
 			final ItemStack o = duct[1].itemStack;
@@ -167,7 +167,7 @@ public class TDCrafting {
 		}
 
 		/* DENSE / VACUUM - TE Integration */
-		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque, TDDucts.itemEnder, TDDucts.itemEnderOpaque, TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }) {
+		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque, TDDucts.itemOmni, TDDucts.itemOmniOpaque, TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }) {
 			GameRegistry.addRecipe(ShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "dustLead"));
 			GameRegistry.addRecipe(ShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "dustSilver"));
 			GameRegistry.addRecipe(ShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
