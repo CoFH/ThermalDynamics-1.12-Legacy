@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
+import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
@@ -8,7 +9,7 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGridStructureBase;
 import net.minecraft.util.EnumFacing;
 
-public abstract class TileEnergyDuct extends TileGridStructureBase implements IEnergyReceiver {
+public abstract class TileEnergyDuct extends TileGridStructureBase implements IEnergyReceiver, IEnergyProvider {
 
 	public TileEnergyDuct(Duct duct) {
 		addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct));
@@ -37,6 +38,13 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 
 		public Hardened() {
 			super(TDDucts.energyHardened);
+		}
+	}
+
+	public static class Signamlum extends TileEnergyDuct{
+
+		public Signamlum(Duct duct) {
+			super(duct);
 		}
 	}
 

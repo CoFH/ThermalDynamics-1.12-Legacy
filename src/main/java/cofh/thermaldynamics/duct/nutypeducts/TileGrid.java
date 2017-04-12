@@ -1213,6 +1213,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return Validate.notNull(getDuct(DuctToken.ENERGY)).receiveEnergy(maxReceive, simulate);
 	}
 
+	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+		return Validate.notNull(getDuct(DuctToken.ENERGY)).extractEnergy(maxExtract, simulate);
+	}
+
 	public boolean canConnectEnergy(EnumFacing from) {
 		return getVisualConnectionType(from.ordinal()).renderDuct();
 	}

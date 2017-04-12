@@ -240,7 +240,11 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate) {
-		return 0;
+		return (canExtract() && grid != null) ? grid.myStorage.extractEnergy(maxExtract, simulate) : 0;
+	}
+
+	public boolean canExtract() {
+		return true;
 	}
 
 	public int getEnergyStored() {
@@ -268,7 +272,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 			@Override
 			public int extractEnergy(int maxExtract, boolean simulate) {
-				return 0;
+				return DuctUnitEnergy.this.extractEnergy(maxExtract, simulate);
 			}
 
 			@Override
@@ -283,7 +287,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 			@Override
 			public boolean canExtract() {
-				return false;
+				return DuctUnitEnergy.this.canExtract();
 			}
 
 			@Override
