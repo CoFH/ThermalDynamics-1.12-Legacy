@@ -16,7 +16,8 @@ import javax.annotation.Nonnull;
 
 public class Duct implements IIconRegister, Comparable<Duct> {
 
-	public static final String REDSTONE_BLOCK = "minecraft:blocks/redstone_block";
+//	public static final String REDSTONE_BLOCK = "minecraft:blocks/redstone_block";
+public static final String REDSTONE_BLOCK = "thermaldynamics:blocks/duct/base/redstone_background";
 
 
 	public static final String SIDE_DUCTS = "sideDucts";
