@@ -369,8 +369,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if(otherChunk != base){
 					if (neighbourChunks == null) {
 						neighbourChunks = new LinkedList<>();
-
-					} else if (!neighbourChunks.stream().noneMatch(chunkWeakReference -> chunkWeakReference.get() == otherChunk)) {
+					} else if (neighbourChunks.stream().anyMatch(chunkWeakReference -> chunkWeakReference.get() == otherChunk)) {
 						continue;
 					}
 					neighbourChunks.add(new WeakReference<>(otherChunk));
@@ -403,10 +402,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		attachmentData.attachments[attachment.side] = attachment;
 
-		DuctToken tickUnit = attachment.tickUnit();
-		if (tickUnit != null) {
-			attachmentData.tickingAttachments.computeIfAbsent(tickUnit, t -> new ArrayList<>()).add(attachment);
-		}
+
 
 		callNeighborStateChange();
 		onNeighborBlockChange();
@@ -422,11 +418,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			return false;
 		}
 		attachmentData.attachments[attachment.side] = null;
-		DuctToken tickUnit = attachment.tickUnit();
-		if (tickUnit != null) {
-			List<Attachment> attachments = attachmentData.tickingAttachments.get(tickUnit);
-			if (attachments != null) attachments.remove(attachment);
-		}
 
 		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
 		onNeighborBlockChange();
@@ -580,14 +571,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				attachmentData = new AttachmentData();
 			}
 			int id = tag.getInteger("id");
-			attachmentData.attachments[side] = AttachmentRegistry.createAttachment(this, side, id);
-			Attachment attachment = attachmentData.attachments[side];
-			attachment.readFromNBT(nbt);
+			Attachment attachment = AttachmentRegistry.createAttachment(this, side, id);
+			attachmentData.attachments[side] = attachment;
 
-			DuctToken tickUnit = attachment.tickUnit();
-			if (tickUnit != null) {
-				attachmentData.tickingAttachments.computeIfAbsent(tickUnit, t -> new ArrayList<>()).add(attachment);
-			}
+			attachment.readFromNBT(tag);
 		}
 	}
 
@@ -615,12 +602,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound tag = list.getCompoundTagAt(i);
-			byte side = tag.getByte("Side");
+			byte side = tag.getByte("side");
 			if (attachmentData == null) {
 				attachmentData = new AttachmentData();
 			}
 			attachmentData.covers[side] = new Cover(this, side);
-			attachmentData.covers[side].readFromNBT(nbt);
+			attachmentData.covers[side].readFromNBT(tag);
 		}
 	}
 
@@ -633,7 +620,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (byte i = 0; i < 6; i++) {
 			if (attachmentData.covers[i] != null) {
 				NBTTagCompound tag = new NBTTagCompound();
-				tag.setInteger("Side", i);
+				tag.setInteger("side", i);
 				attachmentData.covers[i].writeToNBT(tag);
 				list.appendTag(tag);
 			}
@@ -1129,16 +1116,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				}
 				info.add(new TextComponentString(builder.append("}").toString()));
 
-				builder = new StringBuilder("  Tickers={");
-				if(attachmentData != null){
-					for (Map.Entry<DuctToken, List<Attachment>> entry : attachmentData.tickingAttachments.entrySet()) {
-						builder.append(entry.getKey()).append("=[");
-						for (Attachment attachment : entry.getValue()) {
-							builder.append(attachment.getId()).append(",");
-						}
-						builder.append("],");
-					}
-				}
 				info.add(new TextComponentString(builder.append("}").toString()));
 			}
 		}
@@ -1249,19 +1226,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return super.getCapability(capability, facing);
 	}
 
-	public List<Attachment> getTickingAttachments(DuctToken unit) {
-		if (attachmentData != null) {
-			List<Attachment> attachments = attachmentData.tickingAttachments.get(unit);
-			if (attachments != null) return attachments;
-		}
-		return ImmutableList.of();
-	}
-
 	public static class AttachmentData {
 		public final Attachment attachments[] = new Attachment[6];
 		public final Cover[] covers = new Cover[6];
-		public final HashMap<DuctToken, List<Attachment>> tickingAttachments = new HashMap<>();
-
-
 	}
 }

@@ -364,8 +364,15 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 			return getConnectionTypeTile(tileCaches[side], side);
 		} else if (pipeCache[side] != null) {
 			return getConnectionTypeDuct(pipeCache[side], side);
+		} else if (isInput(side)){
+			return getInputConnection(side);
 		}
 		return BlockDuct.ConnectionType.NONE;
+	}
+
+	@Nonnull
+	public BlockDuct.ConnectionType getInputConnection(int side) {
+		return BlockDuct.ConnectionType.TILE_CONNECTION;
 	}
 
 	@Nonnull

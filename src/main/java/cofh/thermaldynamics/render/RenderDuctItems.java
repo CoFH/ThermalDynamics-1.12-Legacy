@@ -10,7 +10,6 @@ import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
-import cofh.thermaldynamics.duct.tiles.TileItemDuct;
 import com.google.common.collect.Iterators;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
@@ -65,6 +65,8 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 	@SubscribeEvent
 	public void clientTick(TickEvent.ClientTickEvent event) {
 
+		if(Minecraft.getMinecraft().isGamePaused())
+			return;
 		travelingItemSpin += spinStep;
 		travelingItemSpin %= 180;
 	}
@@ -135,7 +137,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 			return;
 		}
 
-		travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
+
 
 		TravelingItem renderItem;
 
@@ -166,7 +168,8 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
 					GlStateManager.scale(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
-					travelingEntityItem.setEntityItemStack(renderItem.stack);
+					travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
+					travelingEntityItem.setEntityItemStack(ItemHandlerHelper.copyStackWithSize(renderItem.stack, 1));
 					travelingItemRender.doRender(travelingEntityItem, 0, -0.3F, 0, 0, 0);
 				}
 				GlStateManager.popMatrix();

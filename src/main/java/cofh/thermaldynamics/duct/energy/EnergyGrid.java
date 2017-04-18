@@ -10,29 +10,14 @@ import net.minecraft.world.World;
 
 public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
+	public static int NODE_STORAGE[] = {1000, 800 * 5, 8000 * 5, 16000 * 5, 32000 * 5, 0};
+	public static int NODE_TRANSFER[] = {200, 800, 8000, 16000, 32000, 0};
 	public final EnergyStorage myStorage;
-	private int currentEnergy = 0;
-	private int extraEnergy = 0;
-
 	private final int transferLimit;
 
 	private final int capacity;
-
-	public static int NODE_STORAGE[] = { 1200, 4800, 48000, 192000, 0 };
-	public static int NODE_TRANSFER[] = { 200, 800, 8000, 32000, 0 };
-
-	public static void initialize() {
-
-		String names[] = { "Basic", "Hardened", "Reinforced", "Resonant" };
-		String category;
-		String category2 = "Duct.Energy.";
-
-		for (int i = 0; i < 4; i++) {
-			category = category2 + names[i];
-			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
-			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
-		}
-	}
+	private int currentEnergy = 0;
+	private int extraEnergy = 0;
 
 	public EnergyGrid(World world, int transferLimit, int capacity) {
 
@@ -53,6 +38,19 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 				return trackOut(super.extractEnergy(maxExtract, simulate), simulate);
 			}
 		};
+	}
+
+	public static void initialize() {
+
+		String names[] = {"Basic", "Hardened", "Reinforced", "Resonant"};
+		String category;
+		String category2 = "Duct.Energy.";
+
+		for (int i = 0; i < 4; i++) {
+			category = category2 + names[i];
+			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
+			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
+		}
 	}
 
 	@Override

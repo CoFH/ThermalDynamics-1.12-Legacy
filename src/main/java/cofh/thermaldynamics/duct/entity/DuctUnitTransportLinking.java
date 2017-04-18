@@ -14,6 +14,7 @@ import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
@@ -420,6 +422,16 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			return BlockDuct.ConnectionType.TILE_CONNECTION;
 		}
 		return super.getConnectionTypeDuct(duct, side);
+	}
+
+	@Nonnull
+	@Override
+	public Collection<BlockPos> getAdditionalImportantPositions() {
+		ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+		for (SidedBlockPos sidedBlockPos : rangePos) {
+			builder.add(sidedBlockPos.pos);
+		}
+		return builder.build();
 	}
 
 	public static class SidedBlockPos {

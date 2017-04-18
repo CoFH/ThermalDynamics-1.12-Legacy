@@ -67,8 +67,12 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			return false;
 		}
 
-		for (Attachment attachment : parent.getTickingAttachments(DuctToken.FLUID)) {
-			attachment.tick(pass);
+		if (parent.attachmentData != null) {
+			for (Attachment attachment : parent.attachmentData.attachments) {
+				if(attachment != null && attachment.tickUnit() == DuctToken.FLUID){
+					attachment.tick(pass);
+				}
+			}
 		}
 
 		if (grid == null) {

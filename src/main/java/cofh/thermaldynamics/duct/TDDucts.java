@@ -28,6 +28,8 @@ public class TDDucts {
 	public static Duct energyReinforcedEmpty;
 	public static Duct energyResonant;
 	public static Duct energyResonantEmpty;
+	public static Duct energySignalum;
+	public static Duct energySignalumEmpty;
 	public static Duct energySuperCond;
 	public static Duct energySuperCondEmpty;
 	/* FLUID */
@@ -158,15 +160,20 @@ public class TDDucts {
 
 		energyHardened = addDuct(OFFSET_ENERGY + 1, false, 1, 1, "energyHardened", Type.ENERGY, (duct, worldObj) -> new TileEnergyDuct.Hardened(), "invar", "invar", Duct.REDSTONE_BLOCK, 255, null, null, 0);
 
-		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, (duct, worldObj) -> new TileEnergyDuct.Reinforced(), "electrum", "electrum", REDSTONE_STILL, 128, null, null, 0);
+		final int redstoneFluidTransparency = 192;
 
+		energyReinforced = addDuct(OFFSET_ENERGY + 2, false, 1, 2, "energyReinforced", Type.ENERGY, (duct, worldObj) -> new TileEnergyDuct.Reinforced(), "electrum", "electrum", REDSTONE_STILL, redstoneFluidTransparency, null, null, 0);
 		energyReinforcedEmpty = addDuct(OFFSET_ENERGY + 3, false, 1, -1, "energyReinforcedEmpty", Type.CRAFTING, STRUCTURAL, "electrum", "electrum", null, 0, null, null, 0);
 
-		energyResonant = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energyResonant", Type.ENERGY, (duct, worldObj) -> new TileEnergyDuct.Resonant(), "enderium", "enderium", REDSTONE_STILL, 128, null, null, 0);
-		energyResonantEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, STRUCTURAL, "enderium", "enderium", null, 0, null, null, 0);
+		energySignalum = addDuct(OFFSET_ENERGY + 4, false, 1, 3, "energySignallum", Type.ENERGY, (duct, worldObj) -> new TileEnergyDuct.Signamlum(), "signalum", "signalum", REDSTONE_STILL, redstoneFluidTransparency, null, null, 0);
+		energySignalumEmpty = addDuct(OFFSET_ENERGY + 5, false, 1, -1, "energySignallumEmpty", Type.CRAFTING, STRUCTURAL, "enderium", "enderium", null, 0, null, null, 0);
 
-		energySuperCond = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energySuperconductor", Type.ENERGY, (duct, worldObj) -> new TileEnergySuperDuct(), "electrum", "electrum", REDSTONE_STILL, 255, "electrum", CRYOTHEUM_STILL, 96);
-		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, STRUCTURAL, "electrum", "electrum", REDSTONE_STILL, 192, "electrum", null, 0);
+		energyResonant = addDuct(OFFSET_ENERGY + 6, false, 1, 4, "energyResonant", Type.ENERGY, (duct, worldObj) -> new TileEnergyDuct.Resonant(), "enderium", "enderium", REDSTONE_STILL, redstoneFluidTransparency, null, null, 0);
+		energyResonantEmpty = addDuct(OFFSET_ENERGY + 7, false, 1, -1, "energyResonantEmpty", Type.CRAFTING, STRUCTURAL, "enderium", "enderium", null, 0, null, null, 0);
+
+
+		energySuperCond = addDuct(OFFSET_ENERGY + 8, false, 1, 5, "energySuperconductor", Type.ENERGY, (duct, worldObj) -> new TileEnergySuperDuct(), "electrum", "electrum", REDSTONE_STILL, 255, "electrum", CRYOTHEUM_STILL, 96);
+		energySuperCondEmpty = addDuct(OFFSET_ENERGY + 9, false, 1, -1, "energySuperconductorEmpty", Type.CRAFTING, STRUCTURAL, "electrum", "electrum", REDSTONE_STILL, 192, "electrum", null, 0);
 
 		energyReinforced.setRarity(1);
 		energyReinforcedEmpty.setRarity(1);
@@ -214,8 +221,8 @@ public class TDDucts {
 		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Flux.Transparent(), "tin", "tin", REDSTONE_STILL, 48, null, null, 0);
 		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Flux.Opaque(), "tin_2", "tin", null, 0, null, null, 0);
 
-		itemOmni = addDuctItem(OFFSET_ITEM + 8, false, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "platinum", "platinum", null, 48, "enderium_trans_large", null, 0);
-		itemOmniOpaque = addDuctItem(OFFSET_ITEM + 9, true, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "platinum", "platinum", null, 48, "enderium_large", null, 0);
+		itemOmni = addDuctItem(OFFSET_ITEM + 8, false, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "enderium", "enderium", null, 48, "enderium_trans_large", null, 0);
+		itemOmniOpaque = addDuctItem(OFFSET_ITEM + 9, true, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "enderium", "enderium", null, 48, "enderium_large", null, 0);
 
 		itemFast.setRarity(1);
 		itemFastOpaque.setRarity(1);

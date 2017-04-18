@@ -7,12 +7,14 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +34,12 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 
 	public DuctUnitLight(TileGrid parent, Duct duct) {
 		super(parent, duct);
+	}
+
+	@Override
+	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
+		BlockPos offset = pos().offset(EnumFacing.values()[side]);
+		return world().isBlockLoaded(offset) && world().getBlockState(offset).canProvidePower();
 	}
 
 	@Nonnull
