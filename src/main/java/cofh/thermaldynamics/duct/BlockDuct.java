@@ -522,7 +522,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		}
 
 		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
-		return theTile != null && theTile.getAttachment(s) != null && theTile.getAttachment(s).shouldRSConnect();
+		return theTile != null && theTile.getAttachment(s^1) != null && theTile.getAttachment(s^1).shouldRSConnect();
 	}
 
 	public enum ConnectionType {
