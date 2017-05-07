@@ -109,7 +109,9 @@ public class RetrieverItem extends ServoItem {
 
 				{
 					IItemHandler inv = cache.getItemHandler(i ^ 1);
-					if(inv == null) continue;
+					if (inv == null) {
+						continue;
+					}
 
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
 						ItemStack item = inv.getStackInSlot(slot);
@@ -186,11 +188,11 @@ public class RetrieverItem extends ServoItem {
 		super.handleStuffedItems();
 	}
 
-//	@Override
-//	public BlockDuct.ConnectionType getNeighborType() {
-//
-//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
-//	}
+	//	@Override
+	//	public BlockDuct.ConnectionType getNeighborType() {
+	//
+	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
+	//	}
 
 	/* IPortableData */
 	@Override

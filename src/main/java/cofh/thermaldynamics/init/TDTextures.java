@@ -106,7 +106,7 @@ public class TDTextures {
 		return map.registerSprite(new ResourceLocation(sprite));
 	}
 
-	//Assign the TextureMap to a file to make things even more readable!.
+	//Assign the TextureMap to a file to make things even more readable!
 	private static TextureMap map;
 
 	// Bouncer for registering ColorBlind textures.

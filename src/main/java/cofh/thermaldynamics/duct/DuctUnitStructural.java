@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct;
 
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
@@ -19,11 +20,13 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 	;
 
 	public DuctUnitStructural(TileGrid parent, @Nonnull DuctUnit mainDuct) {
+
 		super(parent, mainDuct.getDuctType());
 		this.mainDuct = mainDuct;
 	}
 
 	public DuctUnitStructural(TileStructuralDuct parent, Duct duct) {
+
 		super(parent, duct);
 		this.mainDuct = null;
 	}
@@ -36,43 +39,55 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 
 	@Override
 	protected DuctUnitStructural[] createPipeCache() {
+
 		return new DuctUnitStructural[6];
 	}
 
 	@Nonnull
 	@Override
 	public DuctToken<DuctUnitStructural, GridStructural, Void> getToken() {
+
 		return DuctToken.STRUCTURAL;
 	}
 
 	@Override
 	public GridStructural createGrid() {
+
 		return new GridStructural(world());
 	}
 
 	@Override
 	public Void cacheTile(@Nonnull TileEntity tile, byte side) {
+
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitStructural, GridStructural, Void> adjDuct, byte side, byte oppositeSide) {
 
-		if (this.mainDuct == null) return true;
+		if (this.mainDuct == null) {
+			return true;
+		}
 		DuctUnit otherMainDuct = adjDuct.cast().mainDuct;
-		if (otherMainDuct == null) return true;
-		if (mainDuct.getToken() != otherMainDuct.getToken()) return false;
+		if (otherMainDuct == null) {
+			return true;
+		}
+		if (mainDuct.getToken() != otherMainDuct.getToken()) {
+			return false;
+		}
 		return this.mainDuct.canConnectToOtherDuct(otherMainDuct, side, oppositeSide);
 	}
 
 	@Nonnull
 	@Override
 	protected BlockDuct.ConnectionType getConnectionTypeDuct(DuctUnitStructural duct, int side) {
+
 		return BlockDuct.ConnectionType.STRUCTURE_CLEAN;
 	}
 
 	public void addRelays() {
+
 		if (parent.attachmentData != null && grid != null) {
 			for (Attachment attachment : parent.attachmentData.attachments) {
 				if (attachment != null) {

@@ -6,6 +6,7 @@ import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 public class DuctUnitEnergySuper extends DuctUnitEnergy {
 
 	public DuctUnitEnergySuper(TileGrid parent, Duct duct, int transferLimit, int capacity) {
+
 		super(parent, duct, transferLimit, capacity);
 	}
 
@@ -14,4 +15,5 @@ public class DuctUnitEnergySuper extends DuctUnitEnergy {
 
 		return new EnergyGridSuper(parent.world(), getTransferLimit(), getCapacity());
 	}
+
 }

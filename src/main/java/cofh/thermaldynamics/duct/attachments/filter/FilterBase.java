@@ -4,7 +4,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.thermaldynamics.duct.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
@@ -37,11 +36,11 @@ public abstract class FilterBase extends ConnectionBase {
 		return "item.thermaldynamics.filter." + type + ".name";
 	}
 
-//	@Override
-//	public BlockDuct.ConnectionType getNeighborType() {
-//
-//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
-//	}
+	//	@Override
+	//	public BlockDuct.ConnectionType getNeighborType() {
+	//
+	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
+	//	}
 
 	@Override
 	public ItemStack getPickBlock() {
@@ -72,6 +71,7 @@ public abstract class FilterBase extends ConnectionBase {
 
 	@Override
 	public boolean allowPipeConnection() {
+
 		return true;
 	}
 }

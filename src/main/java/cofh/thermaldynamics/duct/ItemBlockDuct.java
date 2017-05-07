@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct;
 import cofh.core.block.ItemBlockCore;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -152,7 +153,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 				} else if (duct.type == 3) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 					// TODO: ReAdd
-//					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					//					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 					list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
 				}
 				if (stack.hasTagCompound()) {

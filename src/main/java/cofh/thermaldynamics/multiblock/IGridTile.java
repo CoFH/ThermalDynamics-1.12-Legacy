@@ -40,14 +40,17 @@ public interface IGridTile<T extends IGridTile<T, G>, G extends MultiBlockGrid<T
 	World world();
 
 	default int x() {
+
 		return pos().getX();
 	}
 
 	default int y() {
+
 		return pos().getY();
 	}
 
 	default int z() {
+
 		return pos().getZ();
 	}
 }

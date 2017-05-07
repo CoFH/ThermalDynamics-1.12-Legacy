@@ -5,8 +5,8 @@ import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.item.ItemGrid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
+import cofh.thermaldynamics.duct.item.ItemGrid;
 import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
@@ -334,6 +334,7 @@ public class ServoItem extends ServoBase {
 
 	@Override
 	public DuctToken tickUnit() {
+
 		return DuctToken.ITEMS;
 	}
 
@@ -375,10 +376,10 @@ public class ServoItem extends ServoBase {
 			return item;
 		}
 
-		if(!simulate) {
+		if (!simulate) {
 			itemDuct.insertNewItem(routeForItem);
 		}
-		return ItemHandlerHelper.copyStackWithSize(item, item.stackSize- routeForItem.stack.stackSize );
+		return ItemHandlerHelper.copyStackWithSize(item, item.stackSize - routeForItem.stack.stackSize);
 	}
 
 	public TravelingItem getRouteForItem(ItemStack item) {
@@ -402,7 +403,8 @@ public class ServoItem extends ServoBase {
 	}
 
 	public IItemHandler getCachedInv() {
-		if(myTile != null) {
+
+		if (myTile != null) {
 			return myTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 		}
 		return null;

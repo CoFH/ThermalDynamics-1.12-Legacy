@@ -14,37 +14,49 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGridStructureBase;
 
 public class TileItemDuct extends TileGridStructureBase {
+
 	@Override
 	protected DuctToken getPrimaryDuctToken() {
+
 		return DuctToken.ITEMS;
 	}
 
 	public static class Basic extends TileItemDuct {
+
 		public Basic() {
+
 			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemBasic));
 		}
 	}
 
 	public static class Opaque extends TileItemDuct {
+
 		public Opaque() {
+
 			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemBasicOpaque));
 		}
 	}
 
 	public static class Fast extends TileItemDuct {
+
 		public Fast() {
+
 			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemFast));
 		}
 	}
 
 	public static class FastOpaque extends TileItemDuct {
+
 		public FastOpaque() {
+
 			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemFastOpaque));
 		}
 	}
 
 	public static class Flux extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
+
 		public Flux(DuctItem ductType) {
+
 			super();
 			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, ductType, 400, 1000));
 			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, ductType));
@@ -53,6 +65,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		public static class Transparent extends TileItemDuct {
 
 			public Transparent() {
+
 				super();
 			}
 		}
@@ -60,17 +73,20 @@ public class TileItemDuct extends TileGridStructureBase {
 		public static class Opaque extends TileItemDuct {
 
 			public Opaque() {
+
 				super();
 			}
 		}
 	}
 
-
 	public static class Warp extends TileItemDuct implements IEnergyReceiver {
+
 		public Warp(DuctItem ductType) {
-			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, ductType, 400, 1000){
+
+			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, ductType, 400, 1000) {
 				@Override
 				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+
 					return super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
 				}
 			};
@@ -81,6 +97,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		public static class Transparent extends Warp {
 
 			public Transparent() {
+
 				super(TDDucts.itemEnder);
 			}
 		}
@@ -88,6 +105,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		public static class Opaque extends Warp {
 
 			public Opaque() {
+
 				super(TDDucts.itemEnder);
 			}
 		}

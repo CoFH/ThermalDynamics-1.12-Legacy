@@ -33,6 +33,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	}
 
 	public DuctUnitEnergy(TileEnergyDuct tileEnergyDuct, Duct duct) {
+
 		super(tileEnergyDuct, duct);
 		transferLimit = EnergyGrid.NODE_TRANSFER[duct.type];
 		capacity = EnergyGrid.NODE_STORAGE[duct.type];
@@ -40,33 +41,39 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 	@Override
 	protected IEnergyReceiver[] createTileCaches() {
+
 		return new IEnergyReceiver[6];
 	}
 
 	@Override
 	protected DuctUnitEnergy[] createPipeCache() {
+
 		return new DuctUnitEnergy[6];
 	}
 
 	@Nonnull
 	@Override
 	public DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> getToken() {
+
 		return DuctToken.ENERGY;
 	}
 
 	@Override
 	public EnergyGrid createGrid() {
+
 		return new EnergyGrid(world(), getTransferLimit(), getCapacity());
 	}
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+
 		return getTransferLimit() == adjDuct.cast().getTransferLimit();
 	}
 
 	@Override
 	@Nullable
 	public IEnergyReceiver cacheTile(@Nonnull TileEntity tile, byte side) {
+
 		EnumFacing facing = EnumFacing.values()[side ^ 1];
 		if (tile instanceof IEnergyReceiver) {
 			IEnergyReceiver energyReceiver = (IEnergyReceiver) tile;
@@ -82,6 +89,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 				return new IEnergyReceiver() {
 
 					public IEnergyStorage getStorage(EnumFacing facing1) {
+
 						if (tile.hasCapability(CapabilityEnergy.ENERGY, facing1)) {
 							return tile.getCapability(CapabilityEnergy.ENERGY, facing1);
 						}
@@ -90,24 +98,28 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 					@Override
 					public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+
 						IEnergyStorage storage = getStorage(from);
 						return storage == null ? 0 : storage.receiveEnergy(maxReceive, simulate);
 					}
 
 					@Override
 					public int getEnergyStored(EnumFacing from) {
+
 						IEnergyStorage storage = getStorage(from);
 						return storage == null ? 0 : storage.getEnergyStored();
 					}
 
 					@Override
 					public int getMaxEnergyStored(EnumFacing from) {
+
 						IEnergyStorage storage = getStorage(from);
 						return storage == null ? 0 : storage.getMaxEnergyStored();
 					}
 
 					@Override
 					public boolean canConnectEnergy(EnumFacing from) {
+
 						return true;
 					}
 				};
@@ -133,6 +145,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	}
 
 	public boolean sendEnergy() {
+
 		int power = this.grid.getSendableEnergy();
 
 		int usedPower = transmitEnergy(power, false);
@@ -185,10 +198,12 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	}
 
 	public int getTransferLimit() {
+
 		return transferLimit;
 	}
 
 	public int getCapacity() {
+
 		return capacity;
 	}
 
@@ -223,77 +238,94 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		return nbt;
 	}
 
-
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-		if (grid == null) return 0;
+
+		if (grid == null) {
+			return 0;
+		}
 		return grid.receiveEnergy(maxReceive, simulate);
 	}
 
 	public boolean canConnectEnergy(EnumFacing facing) {
+
 		return tileCaches[facing.ordinal()] != null;
 	}
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
+
 		return grid != null ? grid.receiveEnergy(maxReceive, simulate) : 0;
 	}
 
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate) {
+
 		return (canExtract() && grid != null) ? grid.myStorage.extractEnergy(maxExtract, simulate) : 0;
 	}
 
 	public boolean canExtract() {
+
 		return true;
 	}
 
 	public int getEnergyStored() {
+
 		return grid != null ? grid.myStorage.getEnergyStored() : 0;
 	}
 
 	@Override
 	public int getMaxEnergyStored() {
+
 		return grid != null ? grid.myStorage.getMaxEnergyStored() : 0;
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+
 		return capability == CapabilityEnergy.ENERGY;
 	}
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+
 		return CapabilityEnergy.ENERGY.cast(new IEnergyStorage() {
 
 			@Override
 			public int receiveEnergy(int maxReceive, boolean simulate) {
+
 				return DuctUnitEnergy.this.receiveEnergy(maxReceive, simulate);
 			}
 
 			@Override
 			public int extractEnergy(int maxExtract, boolean simulate) {
+
 				return DuctUnitEnergy.this.extractEnergy(maxExtract, simulate);
 			}
 
 			@Override
 			public int getEnergyStored() {
+
 				return DuctUnitEnergy.this.getEnergyStored();
 			}
 
 			@Override
 			public int getMaxEnergyStored() {
+
 				return DuctUnitEnergy.this.getMaxEnergyStored();
 			}
 
 			@Override
 			public boolean canExtract() {
+
 				return DuctUnitEnergy.this.canExtract();
 			}
 
 			@Override
 			public boolean canReceive() {
+
 				return true;
 			}
 		});
 	}
+	
 }

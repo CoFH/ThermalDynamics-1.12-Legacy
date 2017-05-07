@@ -13,8 +13,9 @@ public interface IDuctHolder {
 	boolean isSideBlocked(int side);
 
 	@Nullable
-	static <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getTokenFromTile(TileEntity tile, DuctToken<T, G, C> token){
-		if(tile instanceof IDuctHolder){
+	static <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getTokenFromTile(TileEntity tile, DuctToken<T, G, C> token) {
+
+		if (tile instanceof IDuctHolder) {
 			return ((IDuctHolder) tile).getDuct(token);
 		}
 		return null;

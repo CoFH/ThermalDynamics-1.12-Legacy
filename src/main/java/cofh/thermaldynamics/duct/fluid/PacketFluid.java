@@ -61,7 +61,7 @@ public class PacketFluid extends PacketCoFHBase {
 
 			if (tile instanceof IDuctHolder) {
 				DuctUnitFluid duct = ((IDuctHolder) tile).getDuct(DuctToken.FLUID);
-				if(duct != null) {
+				if (duct != null) {
 					duct.myRenderFluid = fluid;
 					duct.updateLighting();
 					BlockUtils.fireBlockUpdate(world, new BlockPos(x, y, z));

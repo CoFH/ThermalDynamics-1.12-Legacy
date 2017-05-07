@@ -81,6 +81,7 @@ public class GuiTransport extends GuiCore {
 
 			@Override
 			public void onClick() {
+
 				PacketTileInfo myPayload = container.transportDuct.newPacketTileInfo();
 				myPayload.addByte(DuctUnitTransport.NETWORK_CONFIG);
 				PacketHandler.sendToServer(myPayload);

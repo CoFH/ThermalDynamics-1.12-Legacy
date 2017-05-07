@@ -20,7 +20,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 	public NoComodSet<T> idleSet = new NoComodSet<>();
 	public WorldGridList worldGrid;
 
-
 	public MultiBlockGrid(WorldGridList worldGrid) {
 
 		this.worldGrid = worldGrid;
@@ -116,10 +115,9 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 	/*
 	 * Called at the end of a world tick
 	 */
-	public void tickGrid(){
+	public void tickGrid() {
 
 	}
-
 
 	/*
 	 * Called whenever a set changes so that grids that rely on set sizes can rebalance.

@@ -18,25 +18,30 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class TileTransportDuct extends TileGrid {
+
 	DuctUnitTransportBase transport;
 
 	public TileTransportDuct() {
+
 		this(TDDucts.transportBasic);
 	}
 
 	public TileTransportDuct(DuctTransport transportBasic) {
+
 		transport = createDuctUnit(transportBasic);
 	}
 
 	@Nonnull
 	public DuctUnitTransportBase createDuctUnit(DuctTransport transportBasic) {
+
 		return new DuctUnitTransport(this, transportBasic);
 	}
 
 	@Nullable
 	@Override
 	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getDuct(DuctToken<T, G, C> token) {
-		if(token == DuctToken.TRANSPORT){
+
+		if (token == DuctToken.TRANSPORT) {
 			return (T) transport;
 		}
 		return null;
@@ -44,16 +49,19 @@ public class TileTransportDuct extends TileGrid {
 
 	@Override
 	public Iterable<DuctUnit> getDuctUnits() {
+
 		return ImmutableList.of(transport);
 	}
 
 	@Override
 	public Duct getDuctType() {
+
 		return TDDucts.transportBasic;
 	}
 
 	@Override
 	public void addTraceableCuboids(List<IndexedCuboid6> cuboids) {
+
 		EntityPlayer player = CoFHCore.proxy.getClientPlayer();
 		if (player != null && player.getRidingEntity() != null && player.getRidingEntity().getClass() == EntityTransport.class) {
 			return;
@@ -62,25 +70,31 @@ public class TileTransportDuct extends TileGrid {
 	}
 
 	public static class Linking extends TileTransportDuct {
+
 		public Linking() {
+
 			super(TDDucts.transportCrossover);
 		}
 
 		@Nonnull
 		@Override
 		public DuctUnitTransportBase createDuctUnit(DuctTransport duct) {
+
 			return new DuctUnitTransportLinking(this, duct);
 		}
 	}
 
 	public static class LongRange extends TileTransportDuct {
+
 		public LongRange() {
+
 			super(TDDucts.transportLongRange);
 		}
 
 		@Nonnull
 		@Override
 		public DuctUnitTransportBase createDuctUnit(DuctTransport duct) {
+
 			return new DuctUnitTransportLongRange(this, duct);
 		}
 	}

@@ -6,15 +6,12 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
 import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Map;
 
 public abstract class TileGridStructureBase extends TileGrid {
-
 
 	private Map<DuctToken, DuctUnit> ducts = null;
 
@@ -23,6 +20,7 @@ public abstract class TileGridStructureBase extends TileGrid {
 	}
 
 	public <T extends TileGridStructureBase> T addDuctUnits(DuctToken token, DuctUnit unit) {
+
 		ImmutableSortedMap.Builder<DuctToken, DuctUnit> builder = ImmutableSortedMap.naturalOrder();
 		if (ducts != null) {
 			for (Map.Entry<DuctToken, DuctUnit> entry : ducts.entrySet()) {
@@ -36,11 +34,12 @@ public abstract class TileGridStructureBase extends TileGrid {
 		return (T) this;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Nullable
 	@Override
 	@OverridingMethodsMustInvokeSuper
 	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getDuct(DuctToken<T, G, C> token) {
+
 		DuctUnit ductUnit = ducts.get(token);
 		if (ductUnit == null && token == DuctToken.STRUCTURAL) {
 			ImmutableSortedMap.Builder<DuctToken, DuctUnit> builder = ImmutableSortedMap.naturalOrder();
@@ -57,22 +56,25 @@ public abstract class TileGridStructureBase extends TileGrid {
 	protected abstract DuctToken getPrimaryDuctToken();
 
 	public DuctUnit getPrimaryDuctUnit() {
+
 		return getDuct(getPrimaryDuctToken());
 	}
 
 	@Override
 	public Iterable<DuctUnit> getDuctUnits() {
+
 		return ducts.values();
 	}
 
 	@Nullable
 	public DuctUnitStructural getStructureUnitIfPresent() {
+
 		return (DuctUnitStructural) ducts.get(DuctToken.STRUCTURAL);
 	}
 
-
 	@Override
 	public boolean isPowered() {
+
 		DuctUnitStructural ductUnit = (DuctUnitStructural) ducts.get(DuctToken.STRUCTURAL);
 		if (ductUnit != null && ductUnit.grid != null && ductUnit.grid.rs != null) {
 			if (ductUnit.grid.rs.redstoneLevel > 0) {
@@ -85,14 +87,14 @@ public abstract class TileGridStructureBase extends TileGrid {
 
 	@Override
 	public Duct getDuctType() {
+
 		return getPrimaryDuctUnit().getDuctType();
 	}
 
 	@Override
 	public TextureAtlasSprite getBaseIcon() {
+
 		return getPrimaryDuctUnit().getBaseIcon();
 	}
-
-
 
 }

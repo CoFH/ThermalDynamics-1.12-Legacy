@@ -6,7 +6,6 @@ import cofh.thermaldynamics.duct.IDuctFactory;
 import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class DuctLight extends Duct {
 

@@ -30,6 +30,7 @@ public class TickHandler {
 	}
 
 	public static void addMultiBlockToNextTickBatch(ISingleTick multiBlock) {
+
 		synchronized (MULTI_BLOCKS_TO_CALCULATE) {
 			MULTI_BLOCKS_TO_CALCULATE.add(new WeakReference<>(multiBlock));
 		}

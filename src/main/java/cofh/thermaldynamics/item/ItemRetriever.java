@@ -10,8 +10,6 @@ import cofh.thermaldynamics.duct.attachments.retriever.RetrieverItem;
 import cofh.thermaldynamics.duct.attachments.servo.ServoBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.client.Minecraft;
@@ -161,4 +159,5 @@ public class ItemRetriever extends ItemAttachment {
 			ModelLoader.setCustomModelResourceLocation(this, i, location);
 		}
 	}
+
 }

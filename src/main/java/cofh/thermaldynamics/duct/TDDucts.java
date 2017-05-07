@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TDDucts {
+
 	private static final String REDSTONE_STILL = "thermalfoundation:blocks/fluid/redstone_still";
 	private static final String GLOWSTONE_STILL = "thermalfoundation:blocks/fluid/glowstone_still";
 	private static final String CRYOTHEUM_STILL = "thermalfoundation:blocks/fluid/cryotheum_still";
@@ -216,23 +217,23 @@ public class TDDucts {
 		itemFast = addDuctItem(OFFSET_ITEM + 2, false, 1, 1, "itemFast", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Fast(), "tin", "tin", GLOWSTONE_STILL, 128, null, null, 0);
 		itemFastOpaque = addDuctItem(OFFSET_ITEM + 3, true, 1, 1, "itemFast", Type.ITEM, (duct, worldObj) -> new TileItemDuct.FastOpaque(), "tin_1", "tin", null, 0, null, null, 0);
 
-//		TODO: Readd Omni/Warp Ducts
-//		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Warp.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
-//		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Warp.Opaque(), "enderium", "enderium", null, 48, null, null, 0);
+		//		TODO: Readd Omni/Warp Ducts
+		//		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Warp.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
+		//		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Warp.Opaque(), "enderium", "enderium", null, 48, null, null, 0);
 
 		itemEnergy = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemFlux", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Flux.Transparent(), "tin", "tin", REDSTONE_STILL, 48, null, null, 0);
 		itemEnergyOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemFlux", Type.ITEM, (duct, worldObj) -> new TileItemDuct.Flux.Opaque(), "tin_2", "tin", null, 0, null, null, 0);
 
-//		TODO: Readd Omni/Warp Ducts
-//		itemOmni = addDuctItem(OFFSET_ITEM + 8, false, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "enderium", "enderium", null, 48, "enderium_trans_large", null, 0);
-//		itemOmniOpaque = addDuctItem(OFFSET_ITEM + 9, true, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "enderium", "enderium", null, 48, "enderium_large", null, 0);
+		//		TODO: Readd Omni/Warp Ducts
+		//		itemOmni = addDuctItem(OFFSET_ITEM + 8, false, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "enderium", "enderium", null, 48, "enderium_trans_large", null, 0);
+		//		itemOmniOpaque = addDuctItem(OFFSET_ITEM + 9, true, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "enderium", "enderium", null, 48, "enderium_large", null, 0);
 
 		itemFast.setRarity(1);
 		itemFastOpaque.setRarity(1);
 
-//		TODO: Readd Omni/Warp Ducts
-//		itemOmni.setRarity(2);
-//		itemOmniOpaque.setRarity(2);
+		//		TODO: Readd Omni/Warp Ducts
+		//		itemOmni.setRarity(2);
+		//		itemOmniOpaque.setRarity(2);
 
 		itemEnergy.setRarity(1);
 		itemEnergyOpaque.setRarity(1);
@@ -241,11 +242,8 @@ public class TDDucts {
 	static void addTransportDucts() {
 
 		transportBasic = addDuctTransport(OFFSET_TRANSPORT, false, 1, 4, "transport", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct(), null, null, null, 255, "electrum", GREEN_GLASS, 96);
-
 		transportLongRange = addDuctTransport(OFFSET_TRANSPORT + 1, false, 1, 4, "transportLongRange", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct.LongRange(), null, null, null, 255, "copper", GREEN_GLASS, 80);
-
 		transportCrossover = addDuctTransport(OFFSET_TRANSPORT + 2, false, 1, 4, "transportAcceleration", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct.Linking(), null, null, null, 255, "enderium", GREEN_GLASS, 128);
-
 		transportFrame = addDuctTransport(OFFSET_TRANSPORT + 3, false, 1, 4, "transportCrafting", Type.CRAFTING, STRUCTURAL, null, null, null, 255, "electrum", null, 128);
 
 		transportBasic.setRarity(1);

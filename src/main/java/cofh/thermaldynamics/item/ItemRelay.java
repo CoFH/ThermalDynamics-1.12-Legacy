@@ -51,4 +51,5 @@ public class ItemRelay extends ItemAttachment {
 		ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
 		ModelLoader.setCustomModelResourceLocation(this, 0, location);
 	}
+
 }

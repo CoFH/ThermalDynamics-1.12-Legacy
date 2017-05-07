@@ -15,7 +15,7 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.RenderHelper;
 import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
@@ -57,7 +57,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 	public static final RenderDuct instance = new RenderDuct();
 
-	static final int[] INV_CONNECTIONS = {BlockDuct.ConnectionType.DUCT.ordinal(), BlockDuct.ConnectionType.DUCT.ordinal(), 0, 0, 0, 0};
+	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionType.DUCT.ordinal(), BlockDuct.ConnectionType.DUCT.ordinal(), 0, 0, 0, 0 };
 	//	static int[] connections = new int[6];
 	public static CCModel[][] modelConnection = new CCModel[3][6];
 	public static CCModel[] modelOpaqueTubes;
@@ -92,7 +92,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			double d3 = 0.32 + 0.06 * i;
 			double c1 = 0.32;
 			double c2 = 0.68;
-			double[][] boxes = new double[][]{{d1, 0, d1, d2, c1, d2}, {d1, d3, d1, d2, 1, d2}, {c1, c1, 0, c2, d3, c1}, {c1, c1, c2, c2, d3, 1}, {0, c1, c1, c1, d3, c2}, {c2, c1, c1, 1, d3, c2}, {c1, c1, c1, c2, d3, c2}};
+			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 }, { 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 }, { c1, c1, c1, c2, d3, c2 } };
 
 			for (int s = 0; s < 7; s++) {
 				modelFluid[i - 1][s] = CCModel.quadModel(24).generateBlock(0, boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]).computeNormals();
@@ -131,7 +131,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		for (CCModel[] aModelConnection1 : modelConnection) {
 			CCModel.generateSidedModels(aModelConnection1, 1, Vector3.zero);
 		}
-		Scale[] mirrors = new Scale[]{new Scale(1, -1, 1), new Scale(1, 1, -1), new Scale(-1, 1, 1)};
+		Scale[] mirrors = new Scale[] { new Scale(1, -1, 1), new Scale(1, 1, -1), new Scale(-1, 1, 1) };
 		for (CCModel[] sideModels : modelConnection) {
 			for (int s = 2; s < 6; s += 2) {
 				sideModels[s] = sideModels[0].sidedCopy(0, s, Vector3.zero);
@@ -203,7 +203,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		} else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal() ) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
 						modelFrameConnection[64 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
@@ -216,12 +216,13 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			}
 		} else if (ductType.frameType == 3 && ductType.iconFrameTexture != null) {
 			c = 0;
-			if (!invRender)
+			if (!invRender) {
 				for (int s = 0; s < 6; s++) {
 					if (BlockDuct.ConnectionType.values()[connection[s]] == BlockDuct.ConnectionType.CLEAN_DUCT) {
 						c = c | (1 << s);
 					}
 				}
+			}
 			modelLargeTubes[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 		} else if (ductType.frameType == 4 && ductType.iconFrameTexture != null) {
 			c = 0;

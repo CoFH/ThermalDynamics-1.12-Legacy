@@ -7,8 +7,6 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import net.minecraft.client.Minecraft;

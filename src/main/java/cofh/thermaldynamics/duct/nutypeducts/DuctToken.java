@@ -18,13 +18,14 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import javax.annotation.Nonnull;
 
 public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> implements Comparable<DuctToken> {
+
 	// Structure grid, for redstone signals relays
 	public static final DuctToken<DuctUnitStructural, GridStructural, Void> STRUCTURAL = new DuctToken<>("Structural");
 
 	// Energy grid, for any energy transfer
 	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
 
-//	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
+	//	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
 
 	// Storage energy grid, for storing internal energy
 
@@ -40,15 +41,7 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 
 	public static final DuctToken<DuctUnitLight, LightGrid, Void> LIGHT = new DuctToken<>("Light");
 
-	public final static DuctToken[] TOKENS = new DuctToken[]{
-			STRUCTURAL,
-			ENERGY,
-			ITEMS,
-			FLUID,
-			TRANSPORT,
-			LIGHT
-	};
-
+	public final static DuctToken[] TOKENS = new DuctToken[] { STRUCTURAL, ENERGY, ITEMS, FLUID, TRANSPORT, LIGHT };
 
 	static {
 		for (int i = 0; i < TOKENS.length; i++) {
@@ -60,20 +53,24 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 	private byte id;
 
 	public DuctToken(String key) {
+
 		this.key = key;
 	}
 
 	public byte getId() {
+
 		return id;
 	}
 
 	@Override
 	public String toString() {
+
 		return "[" + key + "=" + id + "]";
 	}
 
 	@Override
 	public int compareTo(@Nonnull DuctToken o) {
+
 		return Integer.compare(id, o.id);
 	}
 }

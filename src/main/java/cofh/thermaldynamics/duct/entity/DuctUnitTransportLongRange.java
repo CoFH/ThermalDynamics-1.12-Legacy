@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	public DuctUnitTransportLongRange(TileGrid parent, Duct duct) {
+
 		super(parent, duct);
 	}
 
@@ -32,17 +33,19 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public boolean isValidForForming() {
+
 		return false;
 	}
 
 	public byte nextDirection(byte k) {
+
 		byte dir = -1;
 		for (int i = 0; i < 6; i++) {
 			if (k == (i ^ 1)) {
 				continue;
 			}
 			if (pipeCache[i] != null) {
-				if(dir != -1){
+				if (dir != -1) {
 					return -1;
 				}
 				dir = (byte) i;
@@ -50,7 +53,6 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		}
 		return dir;
 	}
-
 
 	@Override
 	public void advanceEntity(EntityTransport t) {
@@ -107,22 +109,26 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public boolean isRoutable() {
+
 		return false;
 	}
 
 	@Override
 	public boolean isCrossover() {
+
 		return false;
 	}
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+
 		return adjDuct.cast().isLongRange() || adjDuct.cast().isCrossover();
 	}
 
 	@Nullable
 	@Override
 	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
+
 		return null;
 	}
 
@@ -141,6 +147,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public boolean hasTooManyConnections() {
+
 		int i = 0;
 		for (DuctUnitTransportBase ductUnitTransportBase : pipeCache) {
 			if (ductUnitTransportBase != null) {
@@ -155,12 +162,14 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public Route getRoute(Entity entityTransport, int direction, byte step) {
+
 		return null;
 	}
 
 	@Nonnull
 	@Override
 	protected BlockDuct.ConnectionType getConnectionTypeDuct(DuctUnitTransportBase duct, int side) {
+
 		if (hasTooManyConnections() || duct.hasTooManyConnections()) {
 			return BlockDuct.ConnectionType.NONE;
 		}
@@ -169,11 +178,13 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 	@Override
 	public void updateSide(TileEntity tile, IDuctHolder holder, byte side) {
+
 		super.updateSide(tile, holder, side);
 	}
 
 	@Override
 	public void updateAllSides(TileEntity[] tiles, IDuctHolder[] holders) {
+
 		super.updateAllSides(tiles, holders);
 	}
 }

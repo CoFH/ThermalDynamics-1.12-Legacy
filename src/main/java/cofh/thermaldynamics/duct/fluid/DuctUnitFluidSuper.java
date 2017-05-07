@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
 public class DuctUnitFluidSuper extends DuctUnitFluid {
 
 	public DuctUnitFluidSuper(TileGrid parent, Duct duct) {
+
 		super(parent, duct);
 	}
 
@@ -28,14 +29,16 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side, byte oppositeSide) {
+
 		Duct ductType = adjDuct.getDuctType();
 		return (ductType == TDDucts.fluidSuper || ductType == TDDucts.fluidSuperOpaque) && super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
 	}
 
 	@Override
 	public IFluidHandler getFluidCapability(EnumFacing from) {
+
 		FluidGridSuper fluidGridSuper = (FluidGridSuper) this.grid;
-		if(fluidGridSuper == null){
+		if (fluidGridSuper == null) {
 			return EmptyFluidHandler.INSTANCE;
 		}
 
@@ -79,18 +82,18 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			}
 		});
 	}
-//
-//	@Override
-//	@SideOnly (Side.CLIENT)
-//	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-//
-//		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
-//		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
-//			return CoverHoleRender.hollowDuctTile;
-//		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
-//			return null;
-//		} else {
-//			return CoverHoleRender.hollowDuctLarge;
-//		}
-//	}
+	//
+	//	@Override
+	//	@SideOnly (Side.CLIENT)
+	//	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+	//
+	//		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
+	//		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
+	//			return CoverHoleRender.hollowDuctTile;
+	//		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
+	//			return null;
+	//		} else {
+	//			return CoverHoleRender.hollowDuctLarge;
+	//		}
+	//	}
 }

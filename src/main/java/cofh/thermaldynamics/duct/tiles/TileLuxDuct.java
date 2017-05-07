@@ -8,12 +8,15 @@ import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGridSingle;
 
 public class TileLuxDuct extends TileGridSingle {
+
 	public TileLuxDuct() {
+
 		super(DuctToken.LIGHT, TDDucts.lightDuct);
 	}
 
 	@Override
 	protected DuctUnit createDuctUnit(DuctToken token, Duct ductType) {
+
 		return new DuctUnitLight(this, ductType);
 	}
 }

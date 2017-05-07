@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.nutypeducts;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.multiblock.IGridTile;
@@ -34,9 +34,9 @@ import java.util.Collection;
 public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> implements IGridTile<T, G>, ISingleTick {
 
 	public final TileGrid parent;
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final C[] tileCaches = createTileCaches();
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final T[] pipeCache = createPipeCache();
 	final Duct duct;
 	@Nullable
@@ -44,12 +44,15 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	protected byte nodeMask;
 	protected byte inputMask;
 	private boolean isValidForForming = true;
+
 	public DuctUnit(TileGrid parent, Duct duct) {
+
 		this.parent = parent;
 		this.duct = duct;
 	}
 
 	public static String getSideArrayNonNull(Object[] array) {
+
 		StringBuilder builder = new StringBuilder("[");
 		for (int i = 0; i < 6; i++) {
 			if (array[i] != null) {
@@ -66,13 +69,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Override
 	public String toString() {
+
 		return "Duct{"
-//				+ duct.unlocalizedName + ","
+				//				+ duct.unlocalizedName + ","
 				+ getClass().getSimpleName() + ","
-//				+ getToken() + ",t="
-				+ getSideArrayNonNull(tileCaches) + ",p="
-				+ getSideArrayNonNull(pipeCache)
-				+ "}";
+				//				+ getToken() + ",t="
+				+ getSideArrayNonNull(tileCaches) + ",p=" + getSideArrayNonNull(pipeCache) + "}";
 	}
 
 	@Nonnull
@@ -113,10 +115,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull cofh.thermaldynamics.duct.ConnectionType type) {
-		handleTileSideUpdate(tile, holder, side, type, (byte)(side ^ 1));
+
+		handleTileSideUpdate(tile, holder, side, type, (byte) (side ^ 1));
 	}
 
 	protected void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide) {
+
 		nodeMask &= ~(1 << side);
 		inputMask &= ~(1 << side);
 
@@ -132,9 +136,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 		if (holder != null && !holder.isSideBlocked(oppositeSide)) {
 			DuctUnit<T, G, C> adjDuct = holder.getDuct(getToken());
-			if (adjDuct != null
-					&& canConnectToOtherDuct(adjDuct, side, oppositeSide)
-					&& adjDuct.canConnectToOtherDuct(this, oppositeSide, side)) {
+			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side, oppositeSide) && adjDuct.canConnectToOtherDuct(this, oppositeSide, side)) {
 				pipeCache[side] = adjDuct.cast();
 				return;
 			}
@@ -178,10 +180,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
+
 		return false;
 	}
 
 	public boolean isInput(int side) {
+
 		return (inputMask & (1 << side)) != 0;
 	}
 
@@ -189,6 +193,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public abstract C cacheTile(@Nonnull TileEntity tile, byte side);
 
 	public boolean isNode(C cache) {
+
 		return true;
 	}
 
@@ -234,7 +239,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final T cast() {
 
 		return (T) this;
@@ -256,6 +261,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Override
 	public World world() {
+
 		return parent.getWorld();
 	}
 
@@ -289,6 +295,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@OverridingMethodsMustInvokeSuper
 	public boolean tickPass(int pass) {
+
 		return !parent.checkForChunkUnload();
 	}
 
@@ -297,12 +304,13 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+
 		return nbt;
 	}
 
-
 	@Nullable
 	public NBTTagCompound saveToNBT() {
+
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt = writeToNBT(nbt);
 		return nbt;
@@ -331,19 +339,20 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Override
 	public boolean existsYet() {
+
 		World world = parent.getWorld();
-		return world != null
-				&& world.isBlockLoaded(parent.getPos())
-				&& world.getTileEntity(parent.getPos()) == parent;
+		return world != null && world.isBlockLoaded(parent.getPos()) && world.getTileEntity(parent.getPos()) == parent;
 	}
 
 	@Override
 	public boolean isOutdated() {
+
 		return parent.isInvalid();
 	}
 
 	@Override
 	public void singleTick() {
+
 		if (parent.isInvalid()) {
 			return;
 		}
@@ -355,16 +364,18 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Nonnull
 	protected BlockDuct.ConnectionType getConnectionTypeTile(C cacheValue, int side) {
+
 		return BlockDuct.ConnectionType.TILE_CONNECTION;
 	}
 
 	@Nonnull
 	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
+
 		if (tileCaches[side] != null) {
 			return getConnectionTypeTile(tileCaches[side], side);
 		} else if (pipeCache[side] != null) {
 			return getConnectionTypeDuct(pipeCache[side], side);
-		} else if (isInput(side)){
+		} else if (isInput(side)) {
 			return getInputConnection(side);
 		}
 		return BlockDuct.ConnectionType.NONE;
@@ -372,15 +383,18 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Nonnull
 	public BlockDuct.ConnectionType getInputConnection(int side) {
+
 		return BlockDuct.ConnectionType.TILE_CONNECTION;
 	}
 
 	@Nonnull
 	protected BlockDuct.ConnectionType getConnectionTypeDuct(T duct, int side) {
+
 		return BlockDuct.ConnectionType.DUCT;
 	}
 
 	public int getLightValue() {
+
 		return 0;
 	}
 
@@ -405,6 +419,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public boolean shouldRenderInPass(int pass) {
+
 		return false;
 	}
 
@@ -413,6 +428,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public PacketTileInfo newPacketTileInfo() {
+
 		PacketTileInfo packet = PacketTileInfo.newPacket(parent);
 		packet.addByte(0);
 		packet.addByte(getToken().getId());
@@ -420,31 +436,38 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public ItemStack addNBTToItemStackDrop(ItemStack stack) {
+
 		return stack;
 	}
 
 	public Duct getDuctType() {
+
 		return duct;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public TextureAtlasSprite getBaseIcon() {
+
 		return getDuctType().iconBaseTexture;
 	}
 
 	public boolean isOutput(int side) {
+
 		return tileCaches[side] != null;
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+
 		return false;
 	}
 
 	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
+
 		return null;
 	}
 
 	public boolean onWrench(EntityPlayer player, int side, RayTraceResult rayTrace) {
+
 		return false;
 	}
 
@@ -454,10 +477,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	public Object getGuiClient(InventoryPlayer inventory) {
+
 		return null;
 	}
 
 	public Object getGuiServer(InventoryPlayer inventory) {
+
 		return null;
 	}
 
@@ -471,13 +496,15 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return null;
 	}
 
-
 	public boolean shouldTrackChunk(byte i) {
+
 		return isOutput(i) || isInput(i);
 	}
 
 	@Nonnull
 	public Collection<BlockPos> getAdditionalImportantPositions() {
+
 		return ImmutableList.of();
 	}
+
 }

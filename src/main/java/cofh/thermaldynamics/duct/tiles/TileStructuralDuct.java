@@ -18,17 +18,22 @@ public class TileStructuralDuct extends TileGrid {
 	@Nullable
 	@Override
 	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getDuct(DuctToken<T, G, C> token) {
-		if (token == DuctToken.STRUCTURAL) return (T) structural;
+
+		if (token == DuctToken.STRUCTURAL) {
+			return (T) structural;
+		}
 		return null;
 	}
 
 	@Override
 	public Iterable<DuctUnit> getDuctUnits() {
+
 		return Collections.singleton(structural);
 	}
 
 	@Override
 	public Duct getDuctType() {
+
 		return TDDucts.structure;
 	}
 }

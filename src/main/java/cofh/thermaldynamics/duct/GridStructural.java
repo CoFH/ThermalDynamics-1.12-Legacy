@@ -29,11 +29,9 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 		return true;
 	}
 
-
 	public boolean signalsUpToDate;
 
 	public RedstoneControl rs;
-
 
 	public void tickGrid() {
 
@@ -94,7 +92,6 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 
 	}
 
-
 	public void addSignalInput(Relay signaller) {
 
 		if (signaller.isInput()) {
@@ -110,8 +107,6 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 		}
 	}
 
-
-
 	public void addSignalOutput(Attachment attachment) {
 
 		if (rs == null) {
@@ -124,7 +119,6 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 		rs.relaysOut.add(attachment);
 	}
 
-
 	public void resetRelays() {
 
 		if (rs != null) {
@@ -133,7 +127,6 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 		}
 		signalsUpToDate = false;
 	}
-
 
 	public void onMinorGridChange() {
 
@@ -147,6 +140,7 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 
 	@Override
 	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
+
 		if (rs != null) {
 			int r = rs.redstoneLevel;
 			if (rs.nextRedstoneLevel != -128) {

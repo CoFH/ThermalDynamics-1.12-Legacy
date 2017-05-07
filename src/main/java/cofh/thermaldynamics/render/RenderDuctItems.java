@@ -5,7 +5,7 @@ import codechicken.lib.render.RenderUtils;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
@@ -65,8 +65,9 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 	@SubscribeEvent
 	public void clientTick(TickEvent.ClientTickEvent event) {
 
-		if(Minecraft.getMinecraft().isGamePaused())
+		if (Minecraft.getMinecraft().isGamePaused()) {
 			return;
+		}
 		travelingItemSpin += spinStep;
 		travelingItemSpin %= 180;
 	}
@@ -76,7 +77,9 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
 		DuctUnitItem duct = tile.getDuct(DuctToken.ITEMS);
 
-		if(duct == null) return;
+		if (duct == null) {
+			return;
+		}
 
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
@@ -136,8 +139,6 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 		if (!items.hasNext()) {
 			return;
 		}
-
-
 
 		TravelingItem renderItem;
 

@@ -25,8 +25,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,6 @@ import java.util.List;
 public class ProxyClient extends Proxy {
 
 	public static EnumBlockRenderType renderType;
-	public static List<IModelRegister> modelRegisters = new ArrayList<>();
 
 	/* INIT */
 	@Override
@@ -53,7 +50,6 @@ public class ProxyClient extends Proxy {
 
 	@Override
 	public void initialize(FMLInitializationEvent event) {
-
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Basic.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Fast.class, RenderDuctItems.instance);
@@ -74,14 +70,7 @@ public class ProxyClient extends Proxy {
 		BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.instance);
 	}
 
-	@Override
-	public void addIModelRegister(IModelRegister register) {
-
-		modelRegisters.add(register);
-	}
-
-	@Override
-	@SideOnly (Side.CLIENT)
+	/* EVENT HANDLERS */
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
 
@@ -95,12 +84,19 @@ public class ProxyClient extends Proxy {
 		TDDucts.structureInvis.registerIcons(event.getMap());
 	}
 
-	@Override
-	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
 
 		RenderDuct.initialize();
 	}
+
+	/* HELPERS */
+	@Override
+	public boolean addIModelRegister(IModelRegister register) {
+
+		return modelRegisters.add(register);
+	}
+
+	private static List<IModelRegister> modelRegisters = new ArrayList<>();
 
 }

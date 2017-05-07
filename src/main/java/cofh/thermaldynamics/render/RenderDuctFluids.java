@@ -22,6 +22,7 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
 	}
 
 	public void renderFluids(DuctUnitFluid fluid, double x, double y, double z) {
+
 		int[] connections = fluid.getRenderFluidConnections();
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.preRenderWorld(fluid.parent.getWorld(), fluid.parent.getPos());

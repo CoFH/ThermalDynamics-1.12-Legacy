@@ -2,7 +2,6 @@ package cofh.thermaldynamics.gui.container;
 
 import cofh.thermaldynamics.duct.GridStructural;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.inventory.IContainerListener;
 
 public class ContainerRelay extends ContainerAttachmentBase {

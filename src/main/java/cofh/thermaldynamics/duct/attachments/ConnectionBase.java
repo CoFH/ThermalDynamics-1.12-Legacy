@@ -12,7 +12,7 @@ import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
@@ -141,6 +141,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	public boolean getPowerState() {
+
 		return tile.isPowered();
 	}
 
@@ -332,7 +333,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 		return false;
 	}
-
 
 	@Override
 	public IFilterItems getItemFilter() {

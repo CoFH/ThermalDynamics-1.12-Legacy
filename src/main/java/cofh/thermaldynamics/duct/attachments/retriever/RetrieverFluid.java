@@ -75,11 +75,15 @@ public class RetrieverFluid extends ServoFluid {
 
 				IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[i]);
 
-				if(ductHandler == null) continue;
+				if (ductHandler == null) {
+					continue;
+				}
 
 				IFluidHandler handler = cache.getHandler(side ^ 1);
 
-				if(handler == null) continue;
+				if (handler == null) {
+					continue;
+				}
 
 				int input = ductHandler.fill(handler.drain(maxInput, false), false);
 
@@ -96,7 +100,7 @@ public class RetrieverFluid extends ServoFluid {
 
 					if (this.fluidDuct.getGrid().toDistribute > 0 && this.fluidDuct.getGrid().myTank.getFluid() != null) {
 						FluidGrid otherGrid = fluidDuct.getGrid();
-						if(otherGrid != null) {
+						if (otherGrid != null) {
 							this.fluidDuct.transfer(side, Math.min(otherGrid.myTank.getFluid().amount, otherGrid.toDistribute), false, otherGrid.myTank.getFluid(), true);
 						}
 					}

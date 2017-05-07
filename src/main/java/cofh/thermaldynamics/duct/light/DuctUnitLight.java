@@ -7,7 +7,6 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
 import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -20,24 +19,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
+
 	private static final Void[] voids = new Void[6];
 
 	@Override
 	protected Void[] createTileCaches() {
+
 		return voids;
 	}
 
 	@Override
 	protected DuctUnitLight[] createPipeCache() {
+
 		return new DuctUnitLight[6];
 	}
 
 	public DuctUnitLight(TileGrid parent, Duct duct) {
+
 		super(parent, duct);
 	}
 
 	@Override
 	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
+
 		BlockPos offset = pos().offset(EnumFacing.values()[side]);
 		return world().isBlockLoaded(offset) && world().getBlockState(offset).canProvidePower();
 	}
@@ -45,6 +49,7 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 	@Nonnull
 	@Override
 	public DuctToken<DuctUnitLight, LightGrid, Void> getToken() {
+
 		return DuctToken.LIGHT;
 	}
 
@@ -56,12 +61,14 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitLight, LightGrid, Void> adjDuct, byte side, byte oppositeSide) {
+
 		return true;
 	}
 
 	@Nullable
 	@Override
 	public Void cacheTile(@Nonnull TileEntity tile, byte side) {
+
 		return null;
 	}
 
@@ -80,7 +87,6 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
 	private static DuctUnitLight lightingUpdate = null;
 
-
 	protected void updateLighting() {
 
 		lightingUpdate = this;
@@ -95,6 +101,7 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 
 	@Override
 	public void onPlaced(EntityLivingBase living, ItemStack stack) {
+
 		super.onPlaced(living, stack);
 		if (ServerHelper.isServerWorld(world())) {
 			lit = world().isBlockPowered(pos());
@@ -126,9 +133,9 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 		}
 	}
 
-
 	@Override
 	public void writeToTilePacket(PacketCoFHBase packet) {
+
 		packet.addBool(lit || (grid != null && grid.lit));
 	}
 
@@ -151,6 +158,7 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 	}
 
 	public void checkLight() {
+
 		updateLighting();
 	}
 

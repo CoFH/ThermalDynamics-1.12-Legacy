@@ -38,6 +38,7 @@ public class ServoFluid extends ServoBase {
 
 	@Override
 	public DuctToken tickUnit() {
+
 		return DuctToken.FLUID;
 	}
 
@@ -79,7 +80,9 @@ public class ServoFluid extends ServoBase {
 		int maxInput = (int) Math.ceil(fluidDuct.getGrid().myTank.fluidThroughput * throttle[type]);
 		IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[side]);
 
-		if (ductHandler == null) return;
+		if (ductHandler == null) {
+			return;
+		}
 
 		maxInput = ductHandler.fill(getTheTile().drain(maxInput, false), false);
 		FluidStack returned = getTheTile().drain(maxInput, true);
@@ -98,7 +101,10 @@ public class ServoFluid extends ServoBase {
 	}
 
 	public IFluidHandler getTheTile() {
-		if(tile == null) return null;
+
+		if (tile == null) {
+			return null;
+		}
 		return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 }

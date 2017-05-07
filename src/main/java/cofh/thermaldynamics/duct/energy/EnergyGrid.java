@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 
 public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
-	public static int NODE_STORAGE[] = {1000, 800 * 5, 8000 * 5, 16000 * 5, 32000 * 5, 0};
-	public static int NODE_TRANSFER[] = {200, 800, 8000, 16000, 32000, 0};
+	public static int NODE_STORAGE[] = { 1000, 800 * 5, 8000 * 5, 16000 * 5, 32000 * 5, 0 };
+	public static int NODE_TRANSFER[] = { 200, 800, 8000, 16000, 32000, 0 };
 	public final EnergyStorage myStorage;
 	private final int transferLimit;
 
@@ -42,7 +42,7 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 	public static void initialize() {
 
-		String names[] = {"Basic", "Hardened", "Reinforced", "Resonant"};
+		String names[] = { "Basic", "Hardened", "Reinforced", "Resonant" };
 		String category;
 		String category2 = "Duct.Energy.";
 
@@ -138,10 +138,12 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 	}
 
 	public int receiveEnergy(int maxReceive, boolean simulate) {
+
 		return myStorage.receiveEnergy(maxReceive, simulate);
 	}
 
 	public boolean isPowered() {
+
 		return myStorage.getEnergyStored() > 0;
 	}
 }

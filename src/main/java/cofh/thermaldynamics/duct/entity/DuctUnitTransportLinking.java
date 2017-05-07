@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.item.RouteInfo;
@@ -35,11 +35,13 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	final SidedBlockPos[] rangePos = new SidedBlockPos[6];
 
 	public DuctUnitTransportLinking(TileGrid parent, Duct duct) {
+
 		super(parent, duct);
 	}
 
 	@Override
 	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide) {
+
 		SidedBlockPos sidedBlockPos = rangePos[side];
 		if (sidedBlockPos != null) {
 			if (tile != null) {
@@ -52,7 +54,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 					}
 					rangePos[side] = null;
 				}
-			}else{
+			} else {
 				rangePos[side] = null;
 			}
 
@@ -61,48 +63,47 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 		super.handleTileSideUpdate(tile, holder, side, type, oppositeSide);
 	}
 
-
 	//	@Override
-//	public void handleTileSideUpdate(int i) {
-//
-//		super.handleTileSideUpdate(i);
-//
-//		if (rangePos[i] == null || rangePos[i].orientation == null) {
-//			rangePos[i] = null;
-//			return;
-//		}
-//
-//		if (neighborTypes[i] != NeighborType.OUTPUT) {
-//			if (i < 2 || worldObj.isBlockLoaded(pos.offset(EnumFacing.VALUES[i]))) {
-//				rangePos[i] = null;
-//			}
-//			return;
-//		}
-//
-//		if (rangePos[i] == clientValue) {
-//			return;
-//		}
-//
-//		int j = rangePos[i].orientation.ordinal();
-//		TileEntity theTile;
-//
-//		BlockPos position = new BlockPos(rangePos[i].x, rangePos[i].y, rangePos[i].z);
-//		if (worldObj.isBlockLoaded(position)) {
-//			theTile = worldObj.getTileEntity(position);
-//
-//			if (theTile instanceof DuctUnitTransportCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
-//				neighborMultiBlocks[i] = (IGridTile) theTile;
-//				neighborTypes[i] = NeighborType.MULTIBLOCK;
-//			} else {
-//				rangePos[i] = null;
-//				super.handleTileSideUpdate(i);
-//			}
-//		} else {
-//			neighborMultiBlocks[i] = null;
-//			neighborTypes[i] = NeighborType.OUTPUT;
-//		}
-//
-//	}
+	//	public void handleTileSideUpdate(int i) {
+	//
+	//		super.handleTileSideUpdate(i);
+	//
+	//		if (rangePos[i] == null || rangePos[i].orientation == null) {
+	//			rangePos[i] = null;
+	//			return;
+	//		}
+	//
+	//		if (neighborTypes[i] != NeighborType.OUTPUT) {
+	//			if (i < 2 || worldObj.isBlockLoaded(pos.offset(EnumFacing.VALUES[i]))) {
+	//				rangePos[i] = null;
+	//			}
+	//			return;
+	//		}
+	//
+	//		if (rangePos[i] == clientValue) {
+	//			return;
+	//		}
+	//
+	//		int j = rangePos[i].orientation.ordinal();
+	//		TileEntity theTile;
+	//
+	//		BlockPos position = new BlockPos(rangePos[i].x, rangePos[i].y, rangePos[i].z);
+	//		if (worldObj.isBlockLoaded(position)) {
+	//			theTile = worldObj.getTileEntity(position);
+	//
+	//			if (theTile instanceof DuctUnitTransportCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
+	//				neighborMultiBlocks[i] = (IGridTile) theTile;
+	//				neighborTypes[i] = NeighborType.MULTIBLOCK;
+	//			} else {
+	//				rangePos[i] = null;
+	//				super.handleTileSideUpdate(i);
+	//			}
+	//		} else {
+	//			neighborMultiBlocks[i] = null;
+	//			neighborTypes[i] = NeighborType.OUTPUT;
+	//		}
+	//
+	//	}
 
 	@Override
 	public boolean isOutput() {
@@ -112,22 +113,25 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 	@Override
 	public boolean isRoutable() {
+
 		return true;
 	}
 
 	@Override
 	public boolean isCrossover() {
+
 		return true;
 	}
 
 	@Override
 	public Route getRoute(Entity entityTransport, int direction, byte step) {
+
 		return null;
 	}
 
-
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+
 		return true;
 	}
 
@@ -218,7 +222,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			return null;
 		}
 		IGridTile physicalConnectedSide = super.getPhysicalConnectedSide(direction);
-		if(physicalConnectedSide instanceof DuctUnitTransportLongRange){
+		if (physicalConnectedSide instanceof DuctUnitTransportLongRange) {
 			return null;
 		}
 		return physicalConnectedSide;
@@ -227,7 +231,8 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public void advanceToNextTile(EntityTransport t) {
 
 		if (rangePos[t.direction] == null) {
-			t.advanceTile(this);;
+			t.advanceTile(this);
+			;
 		} else {
 			if (this.pipeCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = (DuctUnitTransportBase) this.getPhysicalConnectedSide(t.direction);
@@ -307,9 +312,9 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 		return nbt;
 	}
 
-
 	@Override
 	public void writeToTilePacket(PacketCoFHBase packet) {
+
 		int rangeMask = 0;
 
 		for (byte i = 0; i < 6; i++) {
@@ -323,6 +328,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 	@Override
 	public void handleTilePacket(PacketCoFHBase payload) {
+
 		int rangeMask = payload.getInt();
 		for (int i = 0; i < rangePos.length; i++) {
 			if ((rangeMask & (1 << i)) != 0) {
@@ -346,12 +352,16 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Nullable
 	@Override
 	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
+
 		return null;
 	}
 
 	@Override
 	public DuctUnitTransportBase getCachedTile(byte side) {
-		if (pipeCache[side] != null && pipeCache[side].isLongRange()) return null;
+
+		if (pipeCache[side] != null && pipeCache[side].isLongRange()) {
+			return null;
+		}
 		return super.getCachedTile(side);
 	}
 
@@ -410,6 +420,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 	@Override
 	public ConnectionType getConnectionType(byte side) {
+
 		if (rangePos[side] == null) {
 		}
 		return super.getConnectionType(side);
@@ -418,6 +429,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Nonnull
 	@Override
 	protected BlockDuct.ConnectionType getConnectionTypeDuct(DuctUnitTransportBase duct, int side) {
+
 		if (rangePos[side] == null && duct.isLongRange()) {
 			return BlockDuct.ConnectionType.TILE_CONNECTION;
 		}
@@ -427,6 +439,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Nonnull
 	@Override
 	public Collection<BlockPos> getAdditionalImportantPositions() {
+
 		ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
 		for (SidedBlockPos sidedBlockPos : rangePos) {
 			builder.add(sidedBlockPos.pos);
@@ -435,6 +448,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	public static class SidedBlockPos {
+
 		public static SidedBlockPos ORIGIN = new SidedBlockPos(BlockPos.ORIGIN, EnumFacing.DOWN);
 		@Nonnull
 		final BlockPos pos;
@@ -442,15 +456,18 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 		final EnumFacing side;
 
 		public SidedBlockPos(@Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+
 			this.pos = pos;
 			this.side = side;
 		}
 
 		public SidedBlockPos(NBTTagCompound tag) {
+
 			this(new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")), EnumFacing.values()[tag.getInteger("s")]);
 		}
 
 		public void writeToNBT(NBTTagCompound tag) {
+
 			tag.setInteger("x", pos.getX());
 			tag.setInteger("y", pos.getY());
 			tag.setInteger("z", pos.getZ());

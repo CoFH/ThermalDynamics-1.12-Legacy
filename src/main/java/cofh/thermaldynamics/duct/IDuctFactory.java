@@ -6,4 +6,5 @@ import net.minecraft.world.World;
 public interface IDuctFactory {
 
 	TileGrid createTileEntity(Duct duct, World worldObj);
+
 }

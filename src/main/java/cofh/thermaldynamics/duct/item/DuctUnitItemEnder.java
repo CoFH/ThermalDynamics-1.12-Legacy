@@ -5,7 +5,6 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.DuctUnitEnergyStorage;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
@@ -181,6 +180,7 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 
 	@Override
 	public void writeToTilePacket(PacketCoFHBase payload) {
+
 		payload.addBool(isPowered());
 	}
 
@@ -191,6 +191,7 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 
 	@Override
 	public void handleTilePacket(PacketCoFHBase payload) {
+
 		powered = payload.getBool();
 	}
 

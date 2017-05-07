@@ -95,20 +95,20 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	@Override
 	public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
 
-//		TileGrid tile = (TileGrid) world.getTileEntity(pos);
-//
-//		// TODO
-//		//		if (tile instanceof TileDuct) {
-//		//
-//		//		}
+		// TileGrid tile = (TileGrid) world.getTileEntity(pos);
+		//
+		// TODO
+		//		if (tile instanceof TileDuct) {
+		//
+		//		}
 		return blockHardness;
 	}
 
 	@Override
 	public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion) {
 
-		TileGrid tile = (TileGrid) world.getTileEntity(pos);
-
+		// TileGrid tile = (TileGrid) world.getTileEntity(pos);
+		//
 		// TODO
 		//		if (tile instanceof TileDuct) {
 		//
@@ -171,7 +171,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		if (tile instanceof TileGrid) {
 			TileGrid ductBase = (TileGrid) tile;
 			TileGrid.AttachmentData attachmentData = ductBase.attachmentData;
-			if(attachmentData != null) {
+			if (attachmentData != null) {
 				for (Attachment attachment : attachmentData.attachments) {
 					if (attachment != null) {
 						ret.addAll(attachment.getDrops());

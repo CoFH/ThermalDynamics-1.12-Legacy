@@ -12,13 +12,14 @@ import cofh.thermaldynamics.duct.nutypeducts.TileGridSingle;
 public class TileEnergySuperDuct extends TileGridSingle implements IEnergyProvider, IEnergyReceiver {
 
 	public TileEnergySuperDuct() {
+
 		super(DuctToken.ENERGY, TDDucts.energySuperCond);
 	}
 
 	@Override
 	public DuctUnit createDuctUnit(DuctToken token, Duct ductType) {
+
 		return new DuctUnitEnergySuper(this, ductType, 1000, 1000);
 	}
-
 
 }
