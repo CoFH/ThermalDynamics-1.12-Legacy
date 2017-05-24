@@ -251,20 +251,17 @@ public class TravelingItem {
 		if (homeTile.stuffableRoutes.isEmpty()) {
 			return null;
 		}
-
 		Route backup = null;
 		for (Route aRoute : homeTile.stuffableRoutes) {
 			if (aRoute.endPoint.acceptingStuff()) {
 				if (backup == null) {
 					backup = aRoute.copy();
 				}
-
 				if (aRoute.endPoint.x() == startX && aRoute.endPoint.y() == startY && aRoute.endPoint.z() == startZ) {
 					return aRoute.copy();
 				}
 			}
 		}
-
 		return backup;
 	}
 

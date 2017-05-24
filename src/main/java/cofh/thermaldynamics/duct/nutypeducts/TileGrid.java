@@ -112,7 +112,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		Attachment attachment = getAttachment(side);
 		return attachment != null && !attachment.allowPipeConnection() || (connectionTypes != null && !connectionTypes[side].allowTransfer);
-
 	}
 
 	@Override
@@ -123,7 +122,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				unit.onChunkUnload();
 			}
 		}
-
 		super.onChunkUnload();
 	}
 

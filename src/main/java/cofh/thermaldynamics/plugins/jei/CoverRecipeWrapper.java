@@ -8,9 +8,6 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeWrapper;
 import net.minecraft.item.ItemStack;
 
-/**
- * Created by covers1624 on 26/02/2017.
- */
 public class CoverRecipeWrapper extends BlankRecipeWrapper {
 
 	protected final ItemStack coverStack;

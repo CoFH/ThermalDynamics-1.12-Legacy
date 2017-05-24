@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,7 +72,7 @@ public class ThermalDynamics {
 		TDBlocks.preInit();
 		TDItems.preInit();
 
-		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, RecipeSorter.Category.UNKNOWN, "after:forge:shapedore");
+		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, Category.SHAPELESS, "after:forge:shapelessore");
 
 		proxy.preInit(event);
 	}

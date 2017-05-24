@@ -119,4 +119,5 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 			}
 		}
 	}
+
 }
