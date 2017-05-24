@@ -15,7 +15,6 @@ import cofh.core.render.hitbox.RenderHitbox;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.ItemBlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
@@ -28,6 +27,7 @@ import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -68,7 +68,9 @@ import java.util.Random;
 
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister {
 
-	public static final PropertyInteger VARIANT = new PropertyInteger("meta", 15);
+	public static final PropertyEnum<BlockDuct.Type> VARIANT = PropertyEnum.create("type", Type.class);
+
+	public static final PropertyInteger META = new PropertyInteger("meta", 15);
 	public static final ThreadLocal<BlockPos> IGNORE_RAY_TRACE = new ThreadLocal<>();
 	public int offset;
 
@@ -80,7 +82,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		setHardness(1.0F);
 		setResistance(10.0F);
-		setDefaultState(getBlockState().getBaseState().withProperty(VARIANT, 0));
+		setDefaultState(getBlockState().getBaseState().withProperty(META, 0));
 
 		this.offset = offset * 16;
 	}
@@ -88,7 +90,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	protected BlockStateContainer createBlockState() {
 
-		return new BlockStateContainer(this, VARIANT);
+		return new BlockStateContainer(this, META);
 	}
 
 	@Override
@@ -106,19 +108,19 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 
-		return getDefaultState().withProperty(VARIANT, meta);
+		return getDefaultState().withProperty(META, meta);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
 
-		return state.getValue(VARIANT);
+		return state.getValue(META);
 	}
 
 	@Override
 	public int damageDropped(IBlockState state) {
 
-		return state.getValue(VARIANT);
+		return state.getValue(META);
 	}
 
 	/* ITileEntityProvider */
@@ -358,10 +360,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (target.typeOfHit == RayTraceResult.Type.BLOCK && player.worldObj.getBlockState(event.getTarget().getBlockPos()).getBlock().getUnlocalizedName().equals(getUnlocalizedName())) {
 			RayTracer.retraceBlock(player.worldObj, player, target.getBlockPos());
 
-			ICustomHitBox theTile = ((ICustomHitBox) player.worldObj.getTileEntity(target.getBlockPos()));
-			if (theTile.shouldRenderCustomHitBox(target.subHit, player)) {
+			ICustomHitBox tile = ((ICustomHitBox) player.worldObj.getTileEntity(target.getBlockPos()));
+			if (tile != null && tile.shouldRenderCustomHitBox(target.subHit, player)) {
 				event.setCanceled(true);
-				RenderHitbox.drawSelectionBox(player, target, event.getPartialTicks(), theTile.getCustomHitBox(target.subHit, player));
+				RenderHitbox.drawSelectionBox(player, target, event.getPartialTicks(), tile.getCustomHitBox(target.subHit, player));
 			}
 		}
 	}
@@ -401,7 +403,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 				if (rayTrace == null) {
 					return false;
 				}
-
 				if (subHit > 13 && subHit < 20) {
 					subHit = rayTrace.subHit - 14;
 				}
@@ -426,7 +427,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
 
-		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(VARIANT).build());
+		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(META).build());
 		ModelResourceLocation normalLocation = new ModelResourceLocation(getRegistryName(), "normal");
 		ModelRegistryHelper.register(normalLocation, new DummyBakedModel());
 		ModelRegistryHelper.registerItemRenderer(Item.getItemFromBlock(this), RenderDuct.instance);

@@ -1,9 +1,11 @@
-package cofh.thermaldynamics.duct;
+package cofh.thermaldynamics.block;
 
 import cofh.core.block.ItemBlockCore;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.DuctItem;
+import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

@@ -146,4 +146,5 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 		return myStorage.getEnergyStored() > 0;
 	}
+
 }

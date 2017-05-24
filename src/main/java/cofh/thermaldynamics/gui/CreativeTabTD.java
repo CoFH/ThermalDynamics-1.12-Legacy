@@ -6,7 +6,7 @@ import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
-import cofh.thermaldynamics.duct.ItemBlockDuct;
+import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
