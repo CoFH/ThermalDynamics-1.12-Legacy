@@ -7,6 +7,7 @@ import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import org.apache.commons.lang3.Validate;
+import org.lwjgl.opengl.GL11;
 
 public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
 
@@ -30,13 +31,13 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
 		GlStateManager.pushMatrix();
 
 		GlStateManager.enableBlend();
-		GlStateManager.enableAlpha();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableLighting();
 
 		RenderDuct.instance.renderFluid(ccrs, fluid.myRenderFluid, connections, fluid.getRenderFluidLevel(), x, y, z);
+
 		GlStateManager.enableLighting();
 		GlStateManager.disableBlend();
-		GlStateManager.disableAlpha();
 
 		GlStateManager.popMatrix();
 	}

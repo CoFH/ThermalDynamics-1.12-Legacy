@@ -327,7 +327,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		if (stack == null || stack.amount <= 0 || level <= 0) {
 			return;
 		}
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		Fluid fluid = stack.getFluid();
