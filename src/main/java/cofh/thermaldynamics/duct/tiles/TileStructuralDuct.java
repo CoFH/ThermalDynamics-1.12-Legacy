@@ -3,9 +3,6 @@ package cofh.thermaldynamics.duct.tiles;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctUnitStructural;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import javax.annotation.Nullable;

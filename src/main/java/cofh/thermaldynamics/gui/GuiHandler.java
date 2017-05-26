@@ -2,7 +2,7 @@ package cofh.thermaldynamics.gui;
 
 import cofh.core.block.TileCore;
 import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

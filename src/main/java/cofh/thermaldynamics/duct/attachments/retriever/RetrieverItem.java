@@ -10,7 +10,7 @@ import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.multiblock.Route;
@@ -66,22 +66,22 @@ public class RetrieverItem extends ServoItem {
 			return false;
 		}
 
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(TDTextures.RETRIEVER_BASE[stuffed ? 1 : 0][type]));
 		return true;
 	}
 
 	@Override
-	public void postNeighbourChange() {
+	public void postNeighborChange() {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (tile.getAttachment(side) == null || tile.getAttachment(side).getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (baseTile.getAttachment(side) == null || baseTile.getAttachment(side).getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
 		}
-		super.postNeighbourChange();
+		super.postNeighborChange();
 
 	}
 

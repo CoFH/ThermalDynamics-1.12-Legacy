@@ -2,9 +2,9 @@ package cofh.thermaldynamics.duct;
 
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.duct.tiles.TileStructuralDuct;
 import net.minecraft.tileentity.TileEntity;
 
@@ -98,7 +98,7 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 						} else {
 							grid.addSignalOutput(attachment);
 						}
-					} else if (attachment.respondsToSignallum()) {
+					} else if (attachment.respondsToSignalum()) {
 						grid.addSignalOutput(attachment);
 					}
 				}

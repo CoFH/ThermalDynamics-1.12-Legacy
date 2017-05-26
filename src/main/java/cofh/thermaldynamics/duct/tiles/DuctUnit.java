@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.nutypeducts;
+package cofh.thermaldynamics.duct.tiles;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;

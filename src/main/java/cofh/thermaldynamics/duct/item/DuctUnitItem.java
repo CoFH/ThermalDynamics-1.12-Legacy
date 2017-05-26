@@ -12,10 +12,10 @@ import cofh.thermaldynamics.duct.attachments.IStuffable;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.IGridTileRoute;
 import cofh.thermaldynamics.multiblock.Route;
@@ -109,7 +109,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			}
 		}
 		return storedNo;
-
 	}
 
 	public static ItemStack insertItemStackIntoInventory(IItemHandler inventory, ItemStack stack, int side, int cap) {
@@ -138,7 +137,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		if (cap < 0 || cap == Integer.MAX_VALUE) {
 			return InventoryHelper.insertStackIntoInventory(inventory, stack, true);
 		}
-
 		int toInsert = cap - getNumItems(inventory, side, stack, cap);
 
 		if (toInsert <= 0) {
@@ -580,15 +578,15 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	//	@Override
-	//	public void cacheImportant(TileEntity tile, int side) {
+	//	public void cacheImportant(TileEntity baseTile, int side) {
 	//
 	//		Validate.notNull(cache);
 	//
-	//		if (tile instanceof IDeepStorageUnit) {
-	//			cache.cache3[side] = (IDeepStorageUnit) tile;
+	//		if (baseTile instanceof IDeepStorageUnit) {
+	//			cache.cache3[side] = (IDeepStorageUnit) baseTile;
 	//		}
 	//		EnumFacing oppositeSide = EnumFacing.VALUES[side ^ 1];
-	//		IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
+	//		IItemHandler capability = baseTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
 	//		cache.handlerCache[side] = capability;
 	//
 	//		if (capability != null) {
@@ -597,7 +595,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	//					continue;
 	//				}
 	//				int bitMask = getSideEquivalencyMask(side, facing.ordinal());
-	//				if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) == capability) {
+	//				if (baseTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && baseTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) == capability) {
 	//					cache.handlerCacheEquivalencyBitSet |= bitMask;
 	//				} else {
 	//					cache.handlerCacheEquivalencyBitSet &= ~bitMask;
@@ -979,7 +977,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 				}
 			});
 		}
-
 		return null;
 	}
 
@@ -1027,7 +1024,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 					return capability;
 				}
 			}
-
 			return EmptyHandler.INSTANCE;
 		}
 
@@ -1054,4 +1050,5 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		public static final byte PULSE_LINE = 5;
 		public static final byte ENDER_POWER = 6;
 	}
+
 }

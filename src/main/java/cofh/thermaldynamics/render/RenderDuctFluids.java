@@ -2,7 +2,7 @@ package cofh.thermaldynamics.render;
 
 import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

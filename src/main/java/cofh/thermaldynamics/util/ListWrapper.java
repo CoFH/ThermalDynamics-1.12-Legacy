@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.multiblock.listtypes;
+package cofh.thermaldynamics.util;
 
 import cofh.lib.util.helpers.MathHelper;
 

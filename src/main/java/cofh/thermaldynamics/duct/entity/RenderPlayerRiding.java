@@ -2,8 +2,8 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;

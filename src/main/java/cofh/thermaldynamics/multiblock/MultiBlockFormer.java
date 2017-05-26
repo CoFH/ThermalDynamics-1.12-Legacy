@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
 import net.minecraft.util.EnumFacing;
 
 import java.util.LinkedList;

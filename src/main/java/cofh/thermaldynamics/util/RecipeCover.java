@@ -17,7 +17,7 @@ public class RecipeCover implements IRecipe {
 	public static final RecipeCover instance = new RecipeCover();
 
 	@Override
-	public boolean matches(@Nonnull InventoryCrafting craft, @Nonnull World world) {
+	public boolean matches(InventoryCrafting craft, World world) {
 
 		boolean a = false;
 		boolean b = false;
@@ -48,7 +48,7 @@ public class RecipeCover implements IRecipe {
 	}
 
 	@Override
-	public ItemStack getCraftingResult(@Nonnull InventoryCrafting craft) {
+	public ItemStack getCraftingResult(InventoryCrafting craft) {
 
 		for (int i = 0; i < craft.getSizeInventory(); i++) {
 			ItemStack stack = craft.getStackInSlot(i);

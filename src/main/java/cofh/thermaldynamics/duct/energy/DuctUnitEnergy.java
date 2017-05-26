@@ -2,11 +2,7 @@ package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
-import cofh.thermaldynamics.duct.tiles.TileEnergyDuct;
+import cofh.thermaldynamics.duct.tiles.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -327,5 +323,5 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 			}
 		});
 	}
-	
+
 }

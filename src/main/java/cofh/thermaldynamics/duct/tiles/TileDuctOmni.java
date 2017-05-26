@@ -8,9 +8,6 @@ import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidOmni;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.TileGridStructureBase;
 
 import javax.annotation.Nonnull;
 

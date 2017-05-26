@@ -5,8 +5,6 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.TileGridStructureBase;
 
 public abstract class TileEnergyDuct extends TileGridStructureBase implements IEnergyReceiver, IEnergyProvider {
 
@@ -45,9 +43,9 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 		}
 	}
 
-	public static class Signamlum extends TileEnergyDuct {
+	public static class Signalum extends TileEnergyDuct {
 
-		public Signamlum() {
+		public Signalum() {
 
 			super(TDDucts.energySignalum);
 		}
@@ -60,4 +58,5 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 			super(TDDucts.energyResonant);
 		}
 	}
+
 }

@@ -8,6 +8,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.WorldGridList;
 import com.google.common.collect.Iterables;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.world.World;
@@ -114,7 +115,7 @@ public class LightGrid extends MultiBlockGrid<DuctUnitLight> {
 				for (ChunkCoord chunk : chunks) {
 
 					PlayerChunkMapEntry inst = manger.getEntry(chunk.chunkX, chunk.chunkZ);
-					if (inst != null && inst.players.contains(player)) {
+					if (inst != null && inst.containsPlayer((EntityPlayerMP) player)) {
 						PacketHandler.sendTo(packet, player);
 						break;
 					}

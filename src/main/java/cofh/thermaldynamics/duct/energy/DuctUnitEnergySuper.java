@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 
 public class DuctUnitEnergySuper extends DuctUnitEnergy {
 

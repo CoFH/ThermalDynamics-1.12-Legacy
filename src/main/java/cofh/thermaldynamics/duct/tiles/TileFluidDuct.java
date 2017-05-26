@@ -6,14 +6,12 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidSuper;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.TileGridStructureBase;
 
 public abstract class TileFluidDuct extends TileGridStructureBase {
 
-	public TileFluidDuct(Duct ductType) {
+	public TileFluidDuct(Duct duct) {
 
-		addDuctUnits(DuctToken.FLUID, new DuctUnitFluid(this, ductType));
+		addDuctUnits(DuctToken.FLUID, new DuctUnitFluid(this, duct));
 	}
 
 	@Override
@@ -22,14 +20,14 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		return DuctToken.FLUID;
 	}
 
-	public static class Fragile extends TileFluidDuct {
+	public static class Basic extends TileFluidDuct {
 
-		public Fragile(Duct ductType) {
+		public Basic(Duct duct) {
 
-			super(ductType);
+			super(duct);
 		}
 
-		public static class Transparent extends Fragile {
+		public static class Transparent extends Basic {
 
 			public Transparent() {
 
@@ -37,7 +35,7 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 			}
 		}
 
-		public static class Opaque extends Fragile {
+		public static class Opaque extends Basic {
 
 			public Opaque() {
 
@@ -46,36 +44,11 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Super extends TileFluidDuct {
-
-		public Super(Duct ductType) {
-
-			super(ductType);
-			addDuctUnits(DuctToken.FLUID, new DuctUnitFluidSuper(this, ductType));
-		}
-
-		public static class Transparent extends Super {
-
-			public Transparent() {
-
-				super(TDDucts.fluidSuper);
-			}
-		}
-
-		public static class Opaque extends Super {
-
-			public Opaque() {
-
-				super(TDDucts.fluidSuperOpaque);
-			}
-		}
-	}
-
 	public static class Hardened extends TileFluidDuct {
 
-		public Hardened(Duct ductType) {
+		public Hardened(Duct duct) {
 
-			super(ductType);
+			super(duct);
 		}
 
 		public static class Transparent extends Hardened {
@@ -95,27 +68,52 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Flux extends TileFluidDuct implements IEnergyReceiver {
+	public static class Energy extends TileFluidDuct implements IEnergyReceiver {
 
-		public Flux(Duct ductType) {
+		public Energy(Duct duct) {
 
-			super(ductType);
-			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, ductType, 1000, 1000));
+			super(duct);
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, 2000, 2000));
 		}
 
-		public static class Transparent extends Flux {
+		public static class Transparent extends Energy {
 
 			public Transparent() {
 
-				super(TDDucts.fluidFlux);
+				super(TDDucts.fluidEnergy);
 			}
 		}
 
-		public static class Opaque extends Flux {
+		public static class Opaque extends Energy {
 
 			public Opaque() {
 
-				super(TDDucts.fluidFluxOpaque);
+				super(TDDucts.fluidEnergyOpaque);
+			}
+		}
+	}
+
+	public static class Super extends TileFluidDuct {
+
+		public Super(Duct duct) {
+
+			super(duct);
+			addDuctUnits(DuctToken.FLUID, new DuctUnitFluidSuper(this, duct));
+		}
+
+		public static class Transparent extends Super {
+
+			public Transparent() {
+
+				super(TDDucts.fluidSuper);
+			}
+		}
+
+		public static class Opaque extends Super {
+
+			public Opaque() {
+
+				super(TDDucts.fluidSuperOpaque);
 			}
 		}
 	}

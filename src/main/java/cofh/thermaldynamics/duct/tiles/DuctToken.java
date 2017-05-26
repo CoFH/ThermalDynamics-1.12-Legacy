@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.nutypeducts;
+package cofh.thermaldynamics.duct.tiles;
 
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.DuctUnitStructural;

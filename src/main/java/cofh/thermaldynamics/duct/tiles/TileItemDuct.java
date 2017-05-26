@@ -2,6 +2,7 @@ package cofh.thermaldynamics.duct.tiles;
 
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
@@ -9,11 +10,17 @@ import cofh.thermaldynamics.duct.energy.DuctUnitEnergyStorage;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.TileGridStructureBase;
 
 public class TileItemDuct extends TileGridStructureBase {
+
+	public TileItemDuct() {
+		// TODO: Temporary
+	}
+
+	public TileItemDuct(Duct duct) {
+
+		addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, duct));
+	}
 
 	@Override
 	protected DuctToken getPrimaryDuctToken() {
@@ -23,67 +30,107 @@ public class TileItemDuct extends TileGridStructureBase {
 
 	public static class Basic extends TileItemDuct {
 
-		public Basic() {
+		public Basic(Duct duct) {
 
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemBasic));
+			super(duct);
 		}
-	}
 
-	public static class Opaque extends TileItemDuct {
+		public static class Transparent extends Basic {
 
-		public Opaque() {
+			public Transparent() {
 
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemBasicOpaque));
+				super(TDDucts.itemBasic);
+			}
+		}
+
+		public static class Opaque extends Basic {
+
+			public Opaque() {
+
+				super(TDDucts.itemBasicOpaque);
+			}
 		}
 	}
 
 	public static class Fast extends TileItemDuct {
 
-		public Fast() {
+		public Fast(Duct duct) {
 
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemFast));
-		}
-	}
-
-	public static class FastOpaque extends TileItemDuct {
-
-		public FastOpaque() {
-
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, TDDucts.itemFastOpaque));
-		}
-	}
-
-	public static class Flux extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
-
-		public Flux(DuctItem ductType) {
-
-			super();
-			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, ductType, 400, 1000));
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, ductType));
+			super(duct);
 		}
 
-		public static class Transparent extends TileItemDuct {
+		public static class Transparent extends Fast {
 
 			public Transparent() {
 
-				super();
+				super(TDDucts.itemFast);
 			}
 		}
 
-		public static class Opaque extends TileItemDuct {
+		public static class Opaque extends Fast {
 
 			public Opaque() {
 
-				super();
+				super(TDDucts.itemFastOpaque);
+			}
+		}
+	}
+
+	public static class Energy extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
+
+		public Energy(Duct duct) {
+
+			super(duct);
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, 2000, 2000));
+		}
+
+		public static class Transparent extends Energy {
+
+			public Transparent() {
+
+				super(TDDucts.itemEnergy);
+			}
+		}
+
+		public static class Opaque extends Energy {
+
+			public Opaque() {
+
+				super(TDDucts.itemEnergyOpaque);
+			}
+		}
+	}
+
+	public static class EnergyFast extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
+
+		public EnergyFast(Duct duct) {
+
+			super(duct);
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, 2000, 2000));
+		}
+
+		public static class Transparent extends EnergyFast {
+
+			public Transparent() {
+
+				super(TDDucts.itemEnergyFast);
+			}
+		}
+
+		public static class Opaque extends EnergyFast {
+
+			public Opaque() {
+
+				super(TDDucts.itemEnergyFastOpaque);
 			}
 		}
 	}
 
 	public static class Warp extends TileItemDuct implements IEnergyReceiver {
 
-		public Warp(DuctItem ductType) {
+		public Warp(DuctItem duct) {
 
-			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, ductType, 400, 1000) {
+			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, duct, 400, 1000) {
 				@Override
 				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 
@@ -91,7 +138,7 @@ public class TileItemDuct extends TileGridStructureBase {
 				}
 			};
 			addDuctUnits(DuctToken.ENERGY, energyStorage);
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItemEnder(this, ductType, energyStorage));
+			addDuctUnits(DuctToken.ITEMS, new DuctUnitItemEnder(this, duct, energyStorage));
 		}
 
 		public static class Transparent extends Warp {
@@ -106,7 +153,7 @@ public class TileItemDuct extends TileGridStructureBase {
 
 			public Opaque() {
 
-				super(TDDucts.itemEnder);
+				super(TDDucts.itemEnderOpaque);
 			}
 		}
 	}

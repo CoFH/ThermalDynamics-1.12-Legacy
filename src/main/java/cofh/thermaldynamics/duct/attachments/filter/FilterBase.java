@@ -5,7 +5,7 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -56,7 +56,7 @@ public abstract class FilterBase extends ConnectionBase {
 			return false;
 		}
 
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(ccRenderState, trans, new IconTransformation(TDTextures.FILTER_BASE[type]));
 		return true;
 	}

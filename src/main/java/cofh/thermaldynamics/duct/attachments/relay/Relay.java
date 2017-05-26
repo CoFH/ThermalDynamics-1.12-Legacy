@@ -14,10 +14,13 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockDuct;
-import cofh.thermaldynamics.duct.*;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.DuctUnitStructural;
+import cofh.thermaldynamics.duct.GridStructural;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiRelay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
@@ -120,7 +123,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			return false;
 		}
 
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		RenderDuct.modelConnection[1 + (type & 1)][side].render(ccRenderState, trans, new IconTransformation(TDTextures.SIGNALLER));
 		return true;
 	}
@@ -177,22 +180,22 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	public int getRawRedstoneLevel() {
 
 		EnumFacing side = EnumFacing.VALUES[this.side];
-		BlockPos offsetPos = tile.getPos().offset(side);
+		BlockPos offsetPos = baseTile.getPos().offset(side);
 		int level = 0;
 
-		IBlockState state = tile.getWorld().getBlockState(offsetPos);
+		IBlockState state = baseTile.getWorld().getBlockState(offsetPos);
 		Block block = state.getBlock();
 
 		if (type == 0) { // should calc vanilla redstone level
 			if (isBlockDuct(block)) {
-				TileGrid t = (TileGrid) tile.world().getTileEntity(offsetPos);
+				TileGrid t = (TileGrid) baseTile.world().getTileEntity(offsetPos);
 				Attachment attachment = t.getAttachment(this.side ^ 1);
 				if (attachment != null) {
 					level = attachment.getRSOutput();
 				}
 
 			} else {
-				level = Math.max(level, tile.world().getRedstonePower(offsetPos, side));
+				level = Math.max(level, baseTile.world().getRedstonePower(offsetPos, side));
 
 				if (block == Blocks.REDSTONE_WIRE) {
 					level = Math.max(level, state.getValue(BlockRedstoneWire.POWER));
@@ -202,14 +205,14 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		if (type == 2) { // should calc comparator redstone level
 			if (state.hasComparatorInputOverride()) {
-				level = state.getComparatorInputOverride(tile.world(), offsetPos);
-			} else if (block.isNormalCube(state, tile.world(), offsetPos)) {
+				level = state.getComparatorInputOverride(baseTile.world(), offsetPos);
+			} else if (block.isNormalCube(state, baseTile.world(), offsetPos)) {
 				BlockPos offset2 = offsetPos.offset(side);
 
-				IBlockState otherState = tile.getWorld().getBlockState(offset2);
+				IBlockState otherState = baseTile.getWorld().getBlockState(offset2);
 
 				if (otherState.hasComparatorInputOverride()) {
-					level = otherState.getComparatorInputOverride(tile.world(), offsetPos);
+					level = otherState.getComparatorInputOverride(baseTile.world(), offsetPos);
 				}
 			}
 		}
@@ -246,15 +249,15 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			}
 
 			if (isOutput()) {
-				BlockPos offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
-				tile.world().notifyBlockOfStateChange(offsetPos, tile.getBlockType());
+				BlockPos offsetPos = baseTile.getPos().offset(EnumFacing.VALUES[side]);
+				baseTile.world().notifyBlockOfStateChange(offsetPos, baseTile.getBlockType());
 
 				for (int i = 0; i < 6; i++) {
 					if (side == (i ^ 1)) {
 						continue;
 					}
-					offsetPos = tile.getPos().offset(EnumFacing.VALUES[side]);
-					tile.world().notifyBlockOfStateChange(offsetPos, tile.getBlockType());
+					offsetPos = baseTile.getPos().offset(EnumFacing.VALUES[side]);
+					baseTile.world().notifyBlockOfStateChange(offsetPos, baseTile.getBlockType());
 				}
 
 			}
@@ -286,7 +289,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean respondsToSignallum() {
+	public boolean respondsToSignalum() {
 
 		return true;
 	}
@@ -330,12 +333,12 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	@Override
 	public boolean openGui(EntityPlayer player) {
 
-		if (ServerHelper.isClientWorld(tile.world())) {
+		if (ServerHelper.isClientWorld(baseTile.world())) {
 			return true;
 		}
 
 		PacketHandler.sendTo(getPacket(), player);
-		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + this.side, tile.getWorld(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
+		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + this.side, baseTile.getWorld(), baseTile.getPos().getX(), baseTile.getPos().getY(), baseTile.getPos().getZ());
 		return true;
 	}
 
@@ -346,9 +349,9 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean canAddToTile(TileGrid tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tile) {
 
-		return !tileMultiBlock.getDuctType().isLargeTube();
+		return !tile.getDuctType().isLargeTube();
 	}
 
 	public void setInvert(byte invert) {
@@ -394,16 +397,16 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer player) {
 
-		super.handleInfoPacket(payload, isServer, thePlayer);
+		super.handleInfoPacket(payload, isServer, player);
 		byte prevType = type;
 		type = payload.getByte();
 		threshold = payload.getByte();
 		invert = payload.getByte();
 
 		if (isServer) {
-			tile.world().notifyNeighborsOfStateChange(tile.getPos(), tile.getBlockType());
+			baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType());
 			onNeighborChange();
 			GridStructural grid = structureUnit.getGrid();
 			if (type != prevType && grid != null) {
@@ -412,16 +415,16 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		}
 
-		BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+		BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 
 	}
 
 	@Override
-	public void sendGuiNetworkData(Container container, List<IContainerListener> player, boolean newGuy) {
+	public void sendGuiNetworkData(Container container, List<IContainerListener> player, boolean newListener) {
 
-		super.sendGuiNetworkData(container, player, newGuy);
+		super.sendGuiNetworkData(container, player, newListener);
 
-		if (newGuy) {
+		if (newListener) {
 			for (Object p : player) {
 				if (p instanceof EntityPlayer) {
 					PacketHandler.sendTo(getPacket(), (EntityPlayer) p);
@@ -442,7 +445,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		readFromNBT(tag);
 
-		tile.world().notifyNeighborsOfStateChange(tile.getPos(), tile.getBlockType());
+		baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType());
 		onNeighborChange();
 		GridStructural grid = structureUnit.getGrid();
 		if (grid != null) {
@@ -450,7 +453,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		}
 
 		onNeighborChange();
-		BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+		BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 	}
 
 	@Override

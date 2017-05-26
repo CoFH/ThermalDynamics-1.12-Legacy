@@ -28,7 +28,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 	@Override
 	public String getUnlocalizedName(ItemStack item) {
 
-		return TDDucts.isValid(id(item)) ? "tile.thermaldynamics.duct." + TDDucts.getType(id(item)).unlocalizedName : super.getUnlocalizedName(item);
+		return TDDucts.isValid(id(item)) ? "baseTile.thermaldynamics.duct." + TDDucts.getType(id(item)).unlocalizedName : super.getUnlocalizedName(item);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 				if (I18n.canTranslate(unloc + ".opaque.name")) {
 					unloc += ".opaque";
 				} else {
-					opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
+					opaqueLocalized = "baseTile.thermaldynamics.duct.opaque.name";
 				}
 			}
 			/* Dense / Vacuum */
@@ -53,13 +53,13 @@ public class ItemBlockDuct extends ItemBlockCore {
 					if (I18n.canTranslate(unloc + ".dense.name")) {
 						unloc += ".dense";
 					} else {
-						modeLocalized = "tile.thermaldynamics.duct.dense.name";
+						modeLocalized = "baseTile.thermaldynamics.duct.dense.name";
 					}
 				} else if (item.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_VACUUM) {
 					if (I18n.canTranslate(unloc + ".vacuum.name")) {
 						unloc += ".vacuum";
 					} else {
-						modeLocalized = "tile.thermaldynamics.duct.vacuum.name";
+						modeLocalized = "baseTile.thermaldynamics.duct.vacuum.name";
 					}
 				}
 			}
@@ -121,7 +121,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type] + StringHelper.LIGHT_GRAY + " RF/t.");
 				} else {
 					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + " RF/t.");
-					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySupercond.info"));
+					list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.energySupercond.info"));
 				}
 				list.add(StringHelper.getNoticeText("info.thermaldynamics.transferConnection"));
 				break;
@@ -132,26 +132,26 @@ public class ItemBlockDuct extends ItemBlockCore {
 					list.add(StringHelper.getNoticeText("info.thermaldynamics.transferFluid"));
 				}
 				if (duct.type == 0) {
-					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidBasic.info"));
+					list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.fluidBasic.info"));
 				} else if (duct.type == 1) {
-					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
+					list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.fluidHardened.info"));
 				} else if (duct.type == 2) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 					// TODO: ReAdd
 					//list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + SubTileEnergyRedstone.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 				} else if (duct.type == 3) {
-					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidSuper.info"));
+					list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.fluidSuper.info"));
 				}
 				break;
 			case ITEM:
 				list.add(StringHelper.localize("info.thermaldynamics.duct.item"));
 
 				if (duct.type == 0) {
-					// list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemBasic.info"));
+					// list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.itemBasic.info"));
 				} else if (duct.type == 1) {
-					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
+					list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.itemFast.info"));
 				} else if (duct.type == 2) {
-					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
+					list.add(StringHelper.getInfoText("baseTile.thermaldynamics.duct.itemEnder.info"));
 				} else if (duct.type == 3) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 					// TODO: ReAdd

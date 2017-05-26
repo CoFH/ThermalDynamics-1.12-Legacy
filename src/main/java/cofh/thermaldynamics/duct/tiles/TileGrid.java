@@ -1,4 +1,4 @@
-package cofh.thermaldynamics.duct.nutypeducts;
+package cofh.thermaldynamics.duct.tiles;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.util.BlockUtils;
@@ -16,7 +16,10 @@ import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.block.BlockDuct;
-import cofh.thermaldynamics.duct.*;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
@@ -77,7 +80,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	static {
-		GameRegistry.registerTileEntityWithAlternatives(TileGrid.class, "thermaldynamics.Duct", "thermaldynamics.multiblock");
+		GameRegistry.registerTileEntityWithAlternatives(TileGrid.class, "thermaldynamics.duct", "thermaldynamics.multiblock");
 	}
 
 	@Nullable
@@ -102,7 +105,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public String getDataType() {
 
-		return "tile.thermaldynamics.duct";
+		return "baseTile.thermaldynamics.duct";
 	}
 
 	public abstract Iterable<DuctUnit> getDuctUnits();
@@ -561,7 +564,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				nbt.setTag(ductUnit.getToken().key, tag);
 			}
 		}
-
 		if (connectionTypes != null) {
 			byte[] connections = new byte[6];
 			for (int i = 0; i < 6; i++) {
@@ -569,7 +571,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 			nbt.setByteArray("Connections", connections);
 		}
-
 		return nbt;
 	}
 
@@ -1149,7 +1150,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		Attachment attachment = getAttachmentSelected(player);
 		if (attachment != null) {
-
 			info.add(new TextComponentTranslation("info.thermaldynamics.info.attachment"));
 			int v = info.size();
 			attachment.addInfo(info, player, debug);
@@ -1243,9 +1243,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 
-		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
+		if (facing != null && getVisualConnectionType(facing.ordinal()).renderDuct()) {
 			for (DuctUnit<?, ?, ?> ductUnit : getDuctUnits()) {
 				if (ductUnit.hasCapability(capability, facing)) {
 					return true;
@@ -1257,9 +1257,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Nonnull
 	@Override
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 
-		if (getVisualConnectionType(facing.ordinal()).renderDuct()) {
+		if (facing != null && getVisualConnectionType(facing.ordinal()).renderDuct()) {
 			for (DuctUnit<?, ?, ?> ductUnit : getDuctUnits()) {
 				if (ductUnit.hasCapability(capability, facing)) {
 					T cap = ductUnit.getCapability(capability, facing);
@@ -1277,4 +1277,5 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		public final Attachment attachments[] = new Attachment[6];
 		public final Cover[] covers = new Cover[6];
 	}
+
 }

@@ -228,9 +228,9 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 	}
 
 	@Nullable
-	public FluidStack getNodeShare(DuctUnitFluid theCond) {
+	public FluidStack getNodeShare(DuctUnitFluid duct) {
 
-		if (!theCond.canStoreFluid()) {
+		if (!duct.canStoreFluid()) {
 			return null;
 		}
 
@@ -239,20 +239,20 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 			return null;
 		}
 		FluidStack toReturn = fluid.copy();
-		toReturn.amount = getNodeAmount(theCond);
+		toReturn.amount = getNodeAmount(duct);
 		return toReturn.amount > 0 ? toReturn : null;
 	}
 
-	public int getNodeAmount(DuctUnitFluid theCond) {
+	public int getNodeAmount(DuctUnitFluid duct) {
 
-		if (theCond.canStoreFluid()) {
+		if (!duct.canStoreFluid()) {
 			return 0;
 		}
 		int size = getStorableNumberDucts();
 		if (size == 0) {
 			return 0;
 		}
-		return size == 1 ? myTank.getFluidAmount() : isFirstMultiblock(theCond) ? myTank.getFluidAmount() / size + myTank.getFluidAmount() % size : myTank.getFluidAmount() / size;
+		return size == 1 ? myTank.getFluidAmount() : isFirstMultiblock(duct) ? myTank.getFluidAmount() / size + myTank.getFluidAmount() % size : myTank.getFluidAmount() / size;
 	}
 
 	public FluidStack getFluid() {
@@ -423,4 +423,5 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 
 		return "mB";
 	}
+
 }

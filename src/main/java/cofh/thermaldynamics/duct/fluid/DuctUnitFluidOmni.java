@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.fluid;
 import cofh.core.network.PacketCoFHBase;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 
 public class DuctUnitFluidOmni extends DuctUnitFluid {
 

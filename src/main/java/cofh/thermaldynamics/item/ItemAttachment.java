@@ -10,7 +10,7 @@ import cofh.core.util.core.IInitializer;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -118,13 +118,13 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 		ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
 		Attachment attachment = getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
 
-		if (attachment == null || !attachment.canAddToTile(attachment.tile)) {
+		if (attachment == null || !attachment.canAddToTile(attachment.baseTile)) {
 			return;
 		}
 		Cuboid6 c = attachment.getCuboid();
 		c.max.subtract(c.min);
 
-		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.tile.x() + c.min.x, attachment.tile.y() + c.min.y, attachment.tile.z() + c.min.z));
+		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
 
 		attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
 

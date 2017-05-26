@@ -10,9 +10,9 @@ import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.item.RouteInfo;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.gui.client.GuiTransport;
@@ -115,10 +115,10 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	//
 	//				onNeighborBlockChange();
 	//
-	//				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
-	//				if (isConnectable(tile, i)) {
+	//				TileEntity baseTile = BlockHelper.getAdjacentTileEntity(this, i);
+	//				if (isConnectable(baseTile, i)) {
 	//					connectionTypes[i] = connectionTypes[i].next();
-	//					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
+	//					((TileDuctBase) baseTile).connectionTypes[i ^ 1] = connectionTypes[i];
 	//				} else {
 	//					if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
 	//						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;

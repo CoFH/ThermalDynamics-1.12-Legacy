@@ -289,10 +289,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (!canAlterFlag(transferType, type, flagType)) {
 			return false;
 		}
-		if (connection.tile.world().isRemote) {
+		if (connection.baseTile.world().isRemote) {
 			connection.sendFilterConfigPacketFlag(flagType, flag);
 		} else {
-			connection.tile.markChunkDirty();
+			connection.baseTile.markChunkDirty();
 		}
 		flags[flagType] = flag;
 		recalc = true;
@@ -535,10 +535,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (!levelPerms[i].appliesTo(this)) {
 			return;
 		}
-		if (connection.tile.world().isRemote && sendUpdate) {
+		if (connection.baseTile.world().isRemote && sendUpdate) {
 			connection.sendFilterConfigPacketLevel(i, level);
 		} else {
-			connection.tile.markChunkDirty();
+			connection.baseTile.markChunkDirty();
 			levelsChanged = true;
 		}
 		levels[i] = level;

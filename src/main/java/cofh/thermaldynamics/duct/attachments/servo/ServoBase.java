@@ -9,14 +9,14 @@ import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +27,8 @@ public abstract class ServoBase extends ConnectionBase {
 	public static final String[] NAMES = { "basic", "hardened", "reinforced", "signalum", "resonant" };
 	static boolean[] redstoneControl = { true, true, true, true, true };
 
+	protected TileEntity myTile;
+
 	public static void initialize() {
 
 		String category = "Attachment.Servo.";
@@ -34,6 +36,11 @@ public abstract class ServoBase extends ConnectionBase {
 		for (int i = 0; i < NAMES.length; i++) {
 			redstoneControl[i] = ThermalDynamics.CONFIG.get(category + StringHelper.titleCase(NAMES[i]), "RedstoneControl", redstoneControl[i]);
 		}
+	}
+
+	public static boolean canAlterRS(int type) {
+
+		return redstoneControl[type % redstoneControl.length];
 	}
 
 	public ServoBase(TileGrid tile, byte side) {
@@ -52,16 +59,28 @@ public abstract class ServoBase extends ConnectionBase {
 		return "item.thermaldynamics.servo." + type + ".name";
 	}
 
-	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	//	@Override
+	//	public void onNeighborChange() {
+	//
+	//		super.onNeighborChange();
+	//	}
 
-		super.writeToNBT(tag);
-		tag.setBoolean("power", isPowered);
-		if (canAlterRS()) {
-			tag.setByte("rsMode", (byte) rsMode.ordinal());
-		}
+	//	@Override
+	//	public abstract DuctToken tickUnit();
+
+	@Override
+	public boolean canAlterRS() {
+
+		return canAlterRS(type);
 	}
 
+	@Override
+	public ItemStack getPickBlock() {
+
+		return new ItemStack(TDItems.itemServo, 1, type);
+	}
+
+	/* NBT METHODS */
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 
@@ -73,6 +92,17 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 	}
 
+	@Override
+	public void writeToNBT(NBTTagCompound tag) {
+
+		super.writeToNBT(tag);
+		tag.setBoolean("power", isPowered);
+		if (canAlterRS()) {
+			tag.setByte("rsMode", (byte) rsMode.ordinal());
+		}
+	}
+
+	/* NETWORK METHODS */
 	@Override
 	public void addDescriptionToPacket(PacketCoFHBase packet) {
 
@@ -93,29 +123,7 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 	}
 
-	@Override
-	public ItemStack getPickBlock() {
-
-		return new ItemStack(TDItems.itemServo, 1, type);
-	}
-
-	@Override
-	public boolean canAlterRS() {
-
-		return canAlterRS(type);
-	}
-
-	public static boolean canAlterRS(int type) {
-
-		return redstoneControl[type % redstoneControl.length];
-	}
-
-	@Override
-	public void onNeighborChange() {
-
-		super.onNeighborChange();
-	}
-
+	/* RENDER */
 	@Override
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
@@ -123,15 +131,11 @@ public abstract class ServoBase extends ConnectionBase {
 		if (layer != BlockRenderLayer.SOLID) {
 			return false;
 		}
-
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		IconTransformation iconTrans = new IconTransformation(TDTextures.SERVO_BASE[stuffed ? 1 : 0][type]);
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, iconTrans);
 		return true;
 	}
-
-	@Override
-	public abstract DuctToken tickUnit();
 
 	/* IPortableData */
 	@Override

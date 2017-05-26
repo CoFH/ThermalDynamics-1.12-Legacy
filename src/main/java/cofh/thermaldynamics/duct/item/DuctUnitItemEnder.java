@@ -6,7 +6,7 @@ import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.EnergyGrid;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 
 public class DuctUnitItemEnder extends DuctUnitItem {
@@ -208,4 +208,5 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 			sendTravelingItemsPacket();
 		}
 	}
+
 }

@@ -2,8 +2,8 @@ package cofh.thermaldynamics.duct.fluid;
 
 import codechicken.lib.util.BlockUtils;
 import cofh.core.network.PacketCoFHBase;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

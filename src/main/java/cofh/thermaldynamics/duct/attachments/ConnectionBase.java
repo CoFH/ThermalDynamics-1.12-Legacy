@@ -11,14 +11,14 @@ import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterItems;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.gui.client.GuiDuctConnection;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
@@ -59,19 +59,18 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		filter = createFilterLogic();
 	}
 
+	public abstract void cacheTile(TileEntity tile);
+
+	public abstract void clearCache();
+
+	public abstract boolean isValidTile(TileEntity tile);
+
+	public abstract FilterLogic createFilterLogic();
+
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public boolean isNode() {
 
-		tag.setByte("type", (byte) type);
-		filter.writeToNBT(tag);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-
-		type = tag.getByte("type") % 5;
-		filter = createFilterLogic();
-		filter.readFromNBT(tag);
+		return true;
 	}
 
 	@Nonnull
@@ -82,6 +81,59 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
+	public Cuboid6 getCuboid() {
+
+		return TileGrid.subSelection[side].copy();
+	}
+
+	@Override
+	public void checkSignal() {
+
+		boolean wasPowered = isPowered;
+		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
+		if (wasPowered != isPowered) {
+			BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
+		}
+	}
+
+	@Override
+	public void onNeighborChange() {
+
+		super.onNeighborChange();
+
+		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(baseTile, side);
+
+		clearCache();
+		boolean wasValidInput = isValidInput;
+		isValidInput = isValidTile(adjacentTileEntity);
+		if (isValidInput) {
+			cacheTile(adjacentTileEntity);
+		}
+
+		boolean wasPowered = isPowered;
+		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
+		if (wasPowered != isPowered || isValidInput != wasValidInput) {
+			BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
+		}
+	}
+
+	public boolean canAlterRS() {
+
+		return false;
+	}
+
+	public boolean getPowerState() {
+
+		return baseTile.isPowered();
+	}
+
+	@Override
+	public boolean respondsToSignalum() {
+
+		return true;
+	}
+
+	@Override
 	public List<ItemStack> getDrops() {
 
 		LinkedList<ItemStack> drops = new LinkedList<>();
@@ -89,6 +141,31 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return drops;
 	}
 
+	public FilterLogic getFilter() {
+
+		if (filter == null) {
+			filter = createFilterLogic();
+		}
+		return filter;
+	}
+
+	/* NBT METHODS */
+	@Override
+	public void readFromNBT(NBTTagCompound tag) {
+
+		type = tag.getByte("type") % 5;
+		filter = createFilterLogic();
+		filter.readFromNBT(tag);
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound tag) {
+
+		tag.setByte("type", (byte) type);
+		filter.writeToNBT(tag);
+	}
+
+	/* NETWORK METHODS */
 	@Override
 	public void addDescriptionToPacket(PacketCoFHBase packet) {
 
@@ -104,69 +181,12 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public void onNeighborChange() {
+	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer player) {
 
-		super.onNeighborChange();
+		super.handleInfoPacket(payload, isServer, player);
 
-		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(tile, side);
-
-		clearCache();
-		boolean wasValidInput = isValidInput;
-		isValidInput = isValidTile(adjacentTileEntity);
-		if (isValidInput) {
-			cacheTile(adjacentTileEntity);
-		}
-
-		boolean wasPowered = isPowered;
-		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
-		if (wasPowered != isPowered || isValidInput != wasValidInput) {
-			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
-		}
-	}
-
-	@Override
-	public void checkSignal() {
-
-		boolean wasPowered = isPowered;
-		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
-		if (wasPowered != isPowered) {
-			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
-		}
-	}
-
-	@Override
-	public boolean respondsToSignallum() {
-
-		return true;
-	}
-
-	public boolean getPowerState() {
-
-		return tile.isPowered();
-	}
-
-	@Override
-	public boolean isStuffed() {
-
-		return false;
-	}
-
-	public abstract void clearCache();
-
-	public abstract void cacheTile(TileEntity tile);
-
-	public abstract boolean isValidTile(TileEntity tile);
-
-	@Override
-	public Cuboid6 getCuboid() {
-
-		return TileGrid.subSelection[side].copy();
-	}
-
-	@Override
-	public boolean isNode() {
-
-		return true;
+		byte a = payload.getByte();
+		handleInfoPacketType(a, payload, isServer, player);
 	}
 
 	public PacketTileInfo getNewPacket(byte type) {
@@ -176,73 +196,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return packet;
 	}
 
-	@Override
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
-
-		super.handleInfoPacket(payload, isServer, thePlayer);
-		byte a = payload.getByte();
-
-		handleInfoPacketType(a, payload, isServer, thePlayer);
-	}
-
-	@Override
-	public boolean setControl(ControlMode control) {
-
-		if (!canAlterRS()) {
-			return false;
-		}
-		rsMode = control;
-		if (ServerHelper.isClientWorld(tile.world())) {
-			PacketTileInfo packet = getNewPacket(NETWORK_ID.RSCONTROL);
-			packet.addByte(rsMode.ordinal());
-			PacketHandler.sendToServer(packet);
-		} else {
-			onNeighborChange();
-		}
-		return true;
-	}
-
-	@Override
-	public ControlMode getControl() {
-
-		return rsMode;
-	}
-
-	@Override
-	public void setPowered(boolean isPowered) {
-
-		this.isPowered = isPowered;
-	}
-
-	@Override
-	public boolean isPowered() {
-
-		return isPowered;
-	}
-
-	public boolean canAlterRS() {
-
-		return false;
-	}
-
-	public FilterLogic getFilter() {
-
-		if (filter == null) {
-			filter = createFilterLogic();
-		}
-		return filter;
-	}
-
-	public static class NETWORK_ID {
-
-		public final static byte GUI = 0;
-		public final static byte RSCONTROL = 1;
-		public final static byte FILTERFLAG = 2;
-		public final static byte FILTERLEVEL = 3;
-
-	}
-
-	public void handleInfoPacketType(byte a, PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleInfoPacketType(byte a, PacketCoFHBase payload, boolean isServer, EntityPlayer player) {
 
 		if (a == NETWORK_ID.RSCONTROL) {
 			if (canAlterRS()) {
@@ -277,26 +231,26 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		PacketHandler.sendToServer(packet);
 	}
 
+	/* GUI METHODS */
 	@Override
-	public void sendGuiNetworkData(Container container, List<IContainerListener> players, boolean newGuy) {
+	public Object getGuiClient(InventoryPlayer inventory) {
 
-		super.sendGuiNetworkData(container, players, newGuy);
-		int flagByte = filter.getFlagByte();
-		if (flagByte != prevFlag || newGuy) {
-			for (IContainerListener player : players) {
-				player.sendProgressBarUpdate(container, 0, flagByte);
-			}
-		}
-		prevFlag = flagByte;
+		return new GuiDuctConnection(inventory, this);
+	}
 
-		if (filter.levelsChanged || newGuy) {
-			for (int i = 0; i < FilterLogic.defaultLevels.length; i++) {
-				for (IContainerListener player : players) {
-					player.sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
-				}
-			}
-			filter.levelsChanged = false;
+	@Override
+	public Object getGuiServer(InventoryPlayer inventory) {
+
+		return new ContainerDuctConnection(inventory, this);
+	}
+
+	@Override
+	public boolean openGui(EntityPlayer player) {
+
+		if (ServerHelper.isServerWorld(baseTile.world())) {
+			player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, baseTile.getWorld(), baseTile.x(), baseTile.y(), baseTile.z());
 		}
+		return true;
 	}
 
 	@Override
@@ -311,29 +265,36 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	}
 
 	@Override
-	public Object getGuiServer(InventoryPlayer inventory) {
+	public void sendGuiNetworkData(Container container, List<IContainerListener> players, boolean newListener) {
 
-		return new ContainerDuctConnection(inventory, this);
+		super.sendGuiNetworkData(container, players, newListener);
+		int flagByte = filter.getFlagByte();
+		if (flagByte != prevFlag || newListener) {
+			for (IContainerListener player : players) {
+				player.sendProgressBarUpdate(container, 0, flagByte);
+			}
+		}
+		prevFlag = flagByte;
+
+		if (filter.levelsChanged || newListener) {
+			for (int i = 0; i < FilterLogic.defaultLevels.length; i++) {
+				for (IContainerListener player : players) {
+					player.sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
+				}
+			}
+			filter.levelsChanged = false;
+		}
 	}
 
+	/* RENDER */
 	@Override
 	@SideOnly (Side.CLIENT)
-	public Object getGuiClient(InventoryPlayer inventory) {
+	public CoverHoleRender.ITransformer[] getHollowMask() {
 
-		return new GuiDuctConnection(inventory, this);
+		return CoverHoleRender.hollowDuctTile;
 	}
 
-	@Override
-	public void stuffItem(ItemStack item) {
-
-	}
-
-	@Override
-	public boolean canStuff() {
-
-		return false;
-	}
-
+	/* IFilterAttachment */
 	@Override
 	public IFilterItems getItemFilter() {
 
@@ -346,17 +307,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return filter;
 	}
 
-	public abstract FilterLogic createFilterLogic();
-
-	@Override
-	public boolean openGui(EntityPlayer player) {
-
-		if (ServerHelper.isServerWorld(tile.world())) {
-			player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + side, tile.getWorld(), tile.x(), tile.y(), tile.z());
-		}
-		return true;
-	}
-
+	/* IPortableData */
 	@Override
 	public String getDataType() {
 
@@ -382,10 +333,68 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		filter.writeToNBT(tag);
 	}
 
+	/* IStuffable */
 	@Override
-	@SideOnly (Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask() {
+	public void stuffItem(ItemStack item) {
 
-		return CoverHoleRender.hollowDuctTile;
 	}
+
+	@Override
+	public boolean canStuff() {
+
+		return false;
+	}
+
+	@Override
+	public boolean isStuffed() {
+
+		return false;
+	}
+
+	/* IRedstoneControl */
+	@Override
+	public void setPowered(boolean isPowered) {
+
+		this.isPowered = isPowered;
+	}
+
+	@Override
+	public boolean isPowered() {
+
+		return isPowered;
+	}
+
+	@Override
+	public boolean setControl(ControlMode control) {
+
+		if (!canAlterRS()) {
+			return false;
+		}
+		rsMode = control;
+		if (ServerHelper.isClientWorld(baseTile.world())) {
+			PacketTileInfo packet = getNewPacket(NETWORK_ID.RSCONTROL);
+			packet.addByte(rsMode.ordinal());
+			PacketHandler.sendToServer(packet);
+		} else {
+			onNeighborChange();
+		}
+		return true;
+	}
+
+	@Override
+	public ControlMode getControl() {
+
+		return rsMode;
+	}
+
+	/* NETWORK ID CLASS */
+	public static class NETWORK_ID {
+
+		public final static byte GUI = 0;
+		public final static byte RSCONTROL = 1;
+		public final static byte FILTERFLAG = 2;
+		public final static byte FILTERLEVEL = 3;
+
+	}
+
 }

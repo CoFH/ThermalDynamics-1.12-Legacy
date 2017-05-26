@@ -9,7 +9,7 @@ import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -95,10 +95,10 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	@Override
 	public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
 
-		// TileGrid tile = (TileGrid) world.getTileEntity(pos);
+		// TileGrid baseTile = (TileGrid) world.getTileEntity(pos);
 		//
 		// TODO
-		//		if (tile instanceof TileDuct) {
+		//		if (baseTile instanceof TileDuct) {
 		//
 		//		}
 		return blockHardness;
@@ -107,10 +107,10 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	@Override
 	public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion) {
 
-		// TileGrid tile = (TileGrid) world.getTileEntity(pos);
+		// TileGrid baseTile = (TileGrid) world.getTileEntity(pos);
 		//
 		// TODO
-		//		if (tile instanceof TileDuct) {
+		//		if (baseTile instanceof TileDuct) {
 		//
 		//		}
 		return blockResistance / 5.0F;

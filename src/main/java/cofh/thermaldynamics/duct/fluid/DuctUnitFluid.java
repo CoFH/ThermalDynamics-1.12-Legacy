@@ -7,17 +7,17 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
 import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -367,13 +367,13 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 				FluidStack info = grid != null ? grid.myTank.getInfo().fluid : null;
 				int capacity = grid != null ? grid.myTank.getInfo().capacity : 0;
-				return new IFluidTankProperties[] { new FluidTankProperties(info, capacity, isOpen(from), isOpen(from)) };
+				return new IFluidTankProperties[] { new FluidTankProperties(info, capacity, isInput(from.ordinal()), isOutput(from.ordinal())) };
 			}
 
 			@Override
 			public int fill(FluidStack resource, boolean doFill) {
 
-				if (isOpen(from) && matchesFilter(from, resource)) {
+				if (isInput(from.ordinal()) && matchesFilter(from, resource)) {
 					return grid.myTank.fill(resource, doFill);
 				}
 				return 0;
@@ -383,7 +383,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			@Override
 			public FluidStack drain(FluidStack resource, boolean doDrain) {
 
-				if (isOpen(from)) {
+				if (isOutput(from.ordinal())) {
 					return grid.myTank.drain(resource, doDrain);
 				}
 				return null;
@@ -393,7 +393,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			@Override
 			public FluidStack drain(int maxDrain, boolean doDrain) {
 
-				if (isOpen(from)) {
+				if (isOutput(from.ordinal())) {
 					return grid.myTank.drain(maxDrain, doDrain);
 				}
 				return null;
@@ -499,6 +499,15 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
+
+		if (tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side])) {
+			return true;
+		}
+		return super.isInputTile(tile, side);
 	}
 
 	public int[] getRenderFluidConnections() {

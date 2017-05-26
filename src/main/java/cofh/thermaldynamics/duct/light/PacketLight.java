@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.IDuctHolder;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;

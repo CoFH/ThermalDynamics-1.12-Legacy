@@ -8,8 +8,9 @@ import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.entity.SoundWoosh;
 import cofh.thermaldynamics.duct.tiles.TileDuctOmni;
-import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
+import cofh.thermaldynamics.duct.tiles.TileFluidDuct.Basic;
 import cofh.thermaldynamics.duct.tiles.TileItemDuct;
+import cofh.thermaldynamics.duct.tiles.TileItemDuct.Energy;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.*;
@@ -53,14 +54,14 @@ public class ProxyClient extends Proxy {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Basic.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Fast.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Flux.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(Energy.Transparent.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Warp.Transparent.class, RenderDuctItemsEnder.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.instance);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Fragile.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Fragile.Super.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Fragile.Hardened.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Fragile.Flux.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(Basic.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(Basic.Super.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(Basic.Hardened.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(cofh.thermaldynamics.duct.tiles.TileFluidDuct.Energy.class, RenderDuctFluids.instance);
 	}
 
 	@Override

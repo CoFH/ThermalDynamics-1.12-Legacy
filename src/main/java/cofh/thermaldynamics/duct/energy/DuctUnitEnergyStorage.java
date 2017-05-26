@@ -2,8 +2,8 @@ package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 
 public class DuctUnitEnergyStorage extends DuctUnitEnergy {
 

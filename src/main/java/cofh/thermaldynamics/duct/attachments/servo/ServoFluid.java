@@ -4,8 +4,8 @@ import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.nutypeducts.DuctToken;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,9 +14,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ServoFluid extends ServoBase {
 
-	public DuctUnitFluid fluidDuct;
-
 	public static float[] throttle = { 0.5F, 0.75F, 1F, 1.5F, 2F };
+
+	public DuctUnitFluid fluidDuct;
 
 	@Override
 	public int getId() {
@@ -42,18 +42,16 @@ public class ServoFluid extends ServoBase {
 		return DuctToken.FLUID;
 	}
 
-	private TileEntity theTile;
-
 	@Override
 	public void clearCache() {
 
-		theTile = null;
+		myTile = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		theTile = tile;
+		myTile = tile;
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public class ServoFluid extends ServoBase {
 	}
 
 	@Override
-	public boolean canAddToTile(TileGrid tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tile) {
 
 		return fluidDuct != null;
 	}
@@ -76,17 +74,19 @@ public class ServoFluid extends ServoBase {
 		if (pass != 1 || fluidDuct.getGrid() == null || !isPowered || !isValidInput) {
 			return;
 		}
-
 		int maxInput = (int) Math.ceil(fluidDuct.getGrid().myTank.fluidThroughput * throttle[type]);
 		IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[side]);
 
 		if (ductHandler == null) {
 			return;
 		}
+		IFluidHandler tileHandler = getMyTile();
 
-		maxInput = ductHandler.fill(getTheTile().drain(maxInput, false), false);
-		FluidStack returned = getTheTile().drain(maxInput, true);
-		ductHandler.fill(returned, true);
+		if (tileHandler == null) {
+			return;
+		}
+		maxInput = ductHandler.fill(tileHandler.drain(maxInput, false), false);
+		ductHandler.fill(tileHandler.drain(maxInput, true), true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {
@@ -100,11 +100,12 @@ public class ServoFluid extends ServoBase {
 		return new FilterLogic(type, Duct.Type.FLUID, this);
 	}
 
-	public IFluidHandler getTheTile() {
+	public IFluidHandler getMyTile() {
 
-		if (tile == null) {
+		if (myTile == null) {
 			return null;
 		}
-		return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+		return myTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
+
 }

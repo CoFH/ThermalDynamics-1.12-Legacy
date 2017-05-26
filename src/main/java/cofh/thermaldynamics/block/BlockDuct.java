@@ -21,8 +21,6 @@ import cofh.thermaldynamics.duct.energy.EnergyGrid;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
-import cofh.thermaldynamics.duct.nutypeducts.DuctUnit;
-import cofh.thermaldynamics.duct.nutypeducts.TileGrid;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -60,7 +58,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,7 +92,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void getSubBlocks(@Nonnull Item item, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
 
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(i + offset)) {
@@ -125,7 +122,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	/* ITileEntityProvider */
 	@Override
-	public TileEntity createNewTileEntity(@Nonnull World world, int metadata) {
+	public TileEntity createNewTileEntity(World world, int metadata) {
 
 		Duct duct = TDDucts.getType(metadata + offset);
 
@@ -134,7 +131,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	/* BLOCK METHODS */
 	@Override
-	public void addCollisionBoxToList(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
 
 		if (entity instanceof EntityTransport) {
 			return;
@@ -241,7 +238,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState base_state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 
 		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
 		return (theTile != null && (theTile.getCover(side.ordinal()) != null || theTile.getAttachment(side.ordinal()) != null && theTile.getAttachment(side.ordinal()).makesSideSolid())) || super.isSideSolid(base_state, world, pos, side);
@@ -273,7 +270,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	//	@Override
-	//	public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer, ItemStack stack) {
+	//	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, ItemStack stack) {
 	//
 	//		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, stack);
 	//	}
@@ -284,23 +281,28 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (target.subHit >= 14 && target.subHit < 20) {
 			TileGrid tileEntity = (TileGrid) world.getTileEntity(pos);
 			Attachment attachment = tileEntity.getAttachment(target.subHit - 14);
-			ItemStack pickBlock = attachment.getPickBlock();
-			if (pickBlock != null) {
-				return pickBlock;
+			if (attachment != null) {
+				ItemStack pickBlock = attachment.getPickBlock();
+				if (pickBlock != null) {
+					return pickBlock;
+				}
 			}
 		}
 		if (target.subHit >= 20 && target.subHit < 26) {
 			TileGrid tileEntity = (TileGrid) world.getTileEntity(pos);
-			ItemStack pickBlock = tileEntity.getCover(target.subHit - 20).getPickBlock();
-			if (pickBlock != null) {
-				return pickBlock;
+			Cover cover = tileEntity.getCover(target.subHit - 20);
+			if (cover != null) {
+				ItemStack pickBlock = cover.getPickBlock();
+				if (pickBlock != null) {
+					return pickBlock;
+				}
 			}
 		}
 		return super.getPickBlock(state, target, world, pos, player);
 	}
 
 	@Override
-	public RayTraceResult collisionRayTrace(IBlockState blockState, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
 
 		BlockPos ignore_pos = IGNORE_RAY_TRACE.get();
 		if (ignore_pos != null && ignore_pos.equals(pos)) {
@@ -331,7 +333,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public boolean canRenderInLayer(IBlockState state, @Nonnull BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 
 		return true;
 	}
@@ -461,39 +463,43 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		PacketHandler.instance.registerPacket(PacketFluid.class);
 
-		GameRegistry.registerTileEntity(TileItemDuct.Basic.class, "thermaldynamics.itemduct.transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Opaque.class, "thermaldynamics.itemduct.opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.Fast.class, "thermaldynamics.itemduct.fast.transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.FastOpaque.class, "thermaldynamics.itemduct.fast.opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.Flux.Transparent.class, "thermaldynamics.itemduct.flux.transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Flux.Opaque.class, "thermaldynamics.itemduct.flux.opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.Warp.Transparent.class, "thermaldynamics.itemduct.warp.transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Warp.Opaque.class, "thermaldynamics.itemduct.warp.opaque");
-		GameRegistry.registerTileEntity(TileDuctOmni.Transparent.class, "thermaldynamics.itemduct.ender.transparent");
-		GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics.itemduct.ender.opaque");
+		/* ENERGY */
+		GameRegistry.registerTileEntity(TileEnergyDuct.Basic.class, "thermaldynamics:duct_flux_basic");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Hardened.class, "thermaldynamics:duct_flux_hardened");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Reinforced.class, "thermaldynamics:duct_flux_reinforced");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Signalum.class, "thermaldynamics:duct_flux_signalum");
+		GameRegistry.registerTileEntity(TileEnergyDuct.Resonant.class, "thermaldynamics:duct_flux_resonant");
+		GameRegistry.registerTileEntity(TileEnergyDuctSuper.class, "thermaldynamics:duct_flux_super");
 
-		GameRegistry.registerTileEntity(TileEnergyDuct.Basic.class, "thermaldynamics.fluxduct.basic");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Hardened.class, "thermaldynamics.fluxduct.hardened");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Reinforced.class, "thermaldynamics.fluxduct.reinforced");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Resonant.class, "thermaldynamics.fluxduct.resonant");
-		GameRegistry.registerTileEntity(TileEnergySuperDuct.class, "thermaldynamics.fluxduct.super");
+		/* FLUID */
+		GameRegistry.registerTileEntity(TileFluidDuct.Basic.Transparent.class, "thermaldynamics:fluidduct.fragile.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Basic.Opaque.class, "thermaldynamics:fluidduct.fragile.opaque");
+		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Transparent.class, "thermaldynamics:fluidduct.hardened.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Opaque.class, "thermaldynamics:fluidduct.hardened.opaque");
+		GameRegistry.registerTileEntity(TileFluidDuct.Energy.Transparent.class, "thermaldynamics:fluidduct.flux.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Energy.Opaque.class, "thermaldynamics:fluidduct.flux.opaque");
+		GameRegistry.registerTileEntity(TileFluidDuct.Super.Transparent.class, "thermaldynamics:fluidduct.super.transparent");
+		GameRegistry.registerTileEntity(TileFluidDuct.Super.Opaque.class, "thermaldynamics:fluidduct.super.opaque");
 
-		GameRegistry.registerTileEntity(TileFluidDuct.Fragile.Transparent.class, "thermaldynamics.fluidduct.fragile.transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Fragile.Opaque.class, "thermaldynamics.fluidduct.fragile.opaque");
-		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Transparent.class, "thermaldynamics.fluidduct.hardened.transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Opaque.class, "thermaldynamics.fluidduct.hardened.opaque");
-		GameRegistry.registerTileEntity(TileFluidDuct.Flux.Transparent.class, "thermaldynamics.fluidduct.flux.transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Flux.Opaque.class, "thermaldynamics.fluidduct.flux.opaque");
-		GameRegistry.registerTileEntity(TileFluidDuct.Super.Transparent.class, "thermaldynamics.fluidduct.super.transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Super.Opaque.class, "thermaldynamics.fluidduct.super.opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Basic.Transparent.class, "thermaldynamics:duct_item_transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Basic.Opaque.class, "thermaldynamics:duct_item_opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Fast.Transparent.class, "thermaldynamics:duct_item_fast.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Fast.Opaque.class, "thermaldynamics:duct_item_fast.opaque");
+		GameRegistry.registerTileEntity(TileItemDuct.Energy.Transparent.class, "thermaldynamics:duct_item_flux.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Energy.Opaque.class, "thermaldynamics:duct_item_flux.opaque");
 
-		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics.structure");
+		GameRegistry.registerTileEntity(TileItemDuct.Warp.Transparent.class, "thermaldynamics:duct_item_warp.transparent");
+		GameRegistry.registerTileEntity(TileItemDuct.Warp.Opaque.class, "thermaldynamics:duct_item_warp.opaque");
+		GameRegistry.registerTileEntity(TileDuctOmni.Transparent.class, "thermaldynamics:duct_item_ender.transparent");
+		GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics:duct_item_ender.opaque");
 
-		GameRegistry.registerTileEntity(TileLuxDuct.class, "thermaldynamics.luxduct");
+		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics:structure");
 
-		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics.viaduct");
-		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics.viaduct.longrange");
-		GameRegistry.registerTileEntity(TileTransportDuct.Linking.class, "thermaldynamics.viaduct.linking");
+		GameRegistry.registerTileEntity(TileLuxDuct.class, "thermaldynamics:luxduct");
+
+		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics:viaduct");
+		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics:viaduct.longrange");
+		GameRegistry.registerTileEntity(TileTransportDuct.Linking.class, "thermaldynamics:viaduct.linking");
 
 		EntityRegistry.registerModEntity(EntityTransport.class, "Transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
 		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
@@ -545,7 +551,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			this.renderDuct = renderDuct;
 		}
 
-		public static ConnectionType getPriority(@Nonnull ConnectionType a, @Nonnull ConnectionType b) {
+		public static ConnectionType getPriority(ConnectionType a, ConnectionType b) {
 
 			if (a.ordinal() < b.ordinal()) {
 				return b;
@@ -565,8 +571,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		// @formatter:off
 		ENERGY(0, "energy"),
 		FLUID(1, "fluid"),
-		ITEM(2, "item"),
-		TRANSPORT(3, "transport");
+		FLUID_TRANS(2, "fluid_trans"),
+		ITEM(3, "item"),
+		ITEM_TRANS(4, "item_trans"),
+		TRANSPORT(5, "transport");
 		// @formatter:on
 
 		private static final Type[] METADATA_LOOKUP = new Type[values().length];
@@ -585,7 +593,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			return this.metadata;
 		}
 
-		@Nonnull
 		@Override
 		public String getName() {
 
