@@ -578,15 +578,15 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	//	@Override
-	//	public void cacheImportant(TileEntity baseTile, int side) {
+	//	public void cacheImportant(TileEntity tile, int side) {
 	//
 	//		Validate.notNull(cache);
 	//
-	//		if (baseTile instanceof IDeepStorageUnit) {
-	//			cache.cache3[side] = (IDeepStorageUnit) baseTile;
+	//		if (tile instanceof IDeepStorageUnit) {
+	//			cache.cache3[side] = (IDeepStorageUnit) tile;
 	//		}
 	//		EnumFacing oppositeSide = EnumFacing.VALUES[side ^ 1];
-	//		IItemHandler capability = baseTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
+	//		IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, oppositeSide);
 	//		cache.handlerCache[side] = capability;
 	//
 	//		if (capability != null) {
@@ -595,7 +595,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	//					continue;
 	//				}
 	//				int bitMask = getSideEquivalencyMask(side, facing.ordinal());
-	//				if (baseTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && baseTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) == capability) {
+	//				if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) == capability) {
 	//					cache.handlerCacheEquivalencyBitSet |= bitMask;
 	//				} else {
 	//					cache.handlerCacheEquivalencyBitSet &= ~bitMask;

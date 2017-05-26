@@ -115,10 +115,10 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	//
 	//				onNeighborBlockChange();
 	//
-	//				TileEntity baseTile = BlockHelper.getAdjacentTileEntity(this, i);
-	//				if (isConnectable(baseTile, i)) {
+	//				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
+	//				if (isConnectable(tile, i)) {
 	//					connectionTypes[i] = connectionTypes[i].next();
-	//					((TileDuctBase) baseTile).connectionTypes[i ^ 1] = connectionTypes[i];
+	//					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
 	//				} else {
 	//					if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
 	//						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;

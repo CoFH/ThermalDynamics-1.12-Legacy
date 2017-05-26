@@ -105,7 +105,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public String getDataType() {
 
-		return "baseTile.thermaldynamics.duct";
+		return "tile.thermaldynamics.duct";
 	}
 
 	public abstract Iterable<DuctUnit> getDuctUnits();
