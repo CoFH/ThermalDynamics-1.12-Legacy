@@ -272,7 +272,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		if (parent.getAttachment(side) instanceof ServoItem) {
 			return null;
 		}
-		if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.values()[side ^ 1])) {
+		if (InventoryHelper.hasItemHandlerCap(tile, EnumFacing.values()[side ^ 1])) {
 			return new Cache(tile, parent.getAttachment(side));
 		}
 		return null;
@@ -1018,8 +1018,8 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 		public IItemHandler getItemHandler(EnumFacing face) {
 
-			if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)) {
-				IItemHandler capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+			if (InventoryHelper.hasItemHandlerCap(tile, face)) {
+				IItemHandler capability = InventoryHelper.getItemHandlerCap(tile, face);
 				if (capability != null) {
 					return capability;
 				}
@@ -1030,7 +1030,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		public boolean areEquivalentHandlers(@Nonnull IItemHandler itemHandler, int side) {
 
 			EnumFacing facing = EnumFacing.values()[side];
-			return tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) && itemHandler.equals(tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing));
+			return InventoryHelper.hasItemHandlerCap(tile, facing) && itemHandler.equals(InventoryHelper.getItemHandlerCap(tile, facing));
 		}
 	}
 
