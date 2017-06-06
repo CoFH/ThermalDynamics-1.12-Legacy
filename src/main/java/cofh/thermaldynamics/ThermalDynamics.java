@@ -83,6 +83,8 @@ public class ThermalDynamics {
 		TDBlocks.initialize();
 		TDItems.initialize();
 
+		TDCrafting.loadRecipes();
+
 		/* Register Handlers */
 		registerHandlers();
 
@@ -94,8 +96,6 @@ public class ThermalDynamics {
 
 		TDBlocks.postInit();
 		TDItems.postInit();
-
-		TDCrafting.loadRecipes();
 
 		proxy.postInit(event);
 	}

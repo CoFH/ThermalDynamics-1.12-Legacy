@@ -27,6 +27,7 @@ import java.util.Collections;
 import static cofh.api.util.ThermalExpansionHelper.addPulverizerRecipe;
 import static cofh.lib.util.helpers.ItemHelper.*;
 
+//TODO, 1.11, Move StructuralDuct, Servo's and Filters back to IronNuggets.
 public class TDCrafting {
 
 	public static boolean enableCoverRecipes = true;
@@ -111,7 +112,7 @@ public class TDCrafting {
 		addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
 
 		/* STRUCTURE */
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead"));
+		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetTin", 'I', "ingotLead"));
 
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead"));
 
@@ -135,8 +136,8 @@ public class TDCrafting {
 		int hardGlassLevel = useHardenedGlass ? 2 : 5; // level to start using hardened glass
 
 		for (int i = 0; i < materials.length; i++) {
-			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
-			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
+			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetTin"));
+			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetTin"));
 			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ENDER_EYE, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetGold"));
 
 			if (i > 0) {
