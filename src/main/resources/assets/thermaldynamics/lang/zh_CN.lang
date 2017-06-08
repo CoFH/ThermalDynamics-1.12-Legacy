@@ -155,7 +155,7 @@ tile.thermaldynamics.duct.itemFlux.name=波动物品管道
 tile.thermaldynamics.duct.itemEnder.name=折越物品管道
 
 tile.thermaldynamics.duct.structure.name=结构管道
-tile.thermaldynamics.duct.structureGlow.name=照明管道
+tile.thermaldynamics.duct.structureLight.name=照明管道
 
 tile.thermaldynamics.duct.energySupercond.info=不缓存能量。
 

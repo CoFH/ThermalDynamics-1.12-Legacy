@@ -13,6 +13,8 @@ import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
 
 public class TileItemDuct extends TileGridStructureBase {
 
+	public static final int NODE_TRANSFER = 4000;
+
 	public TileItemDuct() {
 		// TODO: Temporary
 	}
@@ -106,7 +108,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		public EnergyFast(Duct duct) {
 
 			super(duct);
-			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, 2000, 2000));
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, NODE_TRANSFER, NODE_TRANSFER));
 		}
 
 		public static class Transparent extends EnergyFast {

@@ -149,7 +149,7 @@ tile.thermaldynamics.duct.itemFlux.name=Energiegeladener Itemdukt
 tile.thermaldynamics.duct.itemEnder.name=Warp-Itemdukt
 
 tile.thermaldynamics.duct.structure.name=Strukturdukt
-tile.thermaldynamics.duct.structureGlow.name=Luxdukt
+tile.thermaldynamics.duct.structureLight.name=Luxdukt
 
 tile.thermaldynamics.duct.energySupercond.info=Hat keine interne Restkapazität.
 

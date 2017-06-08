@@ -46,7 +46,7 @@ public final class DirectoryEntry {
 	public String getName() {
 
 		if (Strings.isNullOrEmpty(name)) {
-			return StringHelper.localize("info.thermaldynamics.transport.unnamed");
+			return StringHelper.localize("gui.thermaldynamics.transport.unnamed");
 		} else {
 			return name;
 		}

@@ -22,7 +22,7 @@ tile.thermaldynamics.duct.itemFlux.name=Колеблющаяся предмет�
 tile.thermaldynamics.duct.itemEnder.name=Искажающаяся предметная труба
 
 tile.thermaldynamics.duct.structure.name=Структурная труба
-tile.thermaldynamics.duct.structureGlow.name=Светящаяся труба
+tile.thermaldynamics.duct.structureLight.name=Светящаяся труба
 
 tile.thermaldynamics.duct.energySupercond.info=Не имеет остаточной ёмкости.
 

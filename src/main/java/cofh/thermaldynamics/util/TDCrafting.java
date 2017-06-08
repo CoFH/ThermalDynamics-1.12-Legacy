@@ -5,7 +5,6 @@ import cofh.lib.util.helpers.ItemHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermalfoundation.init.TFFluids;
@@ -53,13 +52,13 @@ public class TDCrafting {
 		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.energyResonant.itemStack, 3), TDDucts.energySignalum.itemStack, TDDucts.energySignalum.itemStack, TDDucts.energySignalum.itemStack, "dustRedstone", "dustRedstone", "dustRedstone", "ingotEnderium"));
 
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.energyReinforcedEmpty.itemStack, 6), "IGI", 'I', "ingotElectrum", 'G', glassHardened));
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.energySignalumEmpty.itemStack, 6), "IGI", 'I', "ingotSignalum", 'G', glassHardened));
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.energyResonantEmpty.itemStack, 6), "IGI", 'I', "ingotEnderium", 'G', glassHardened));
-
+		// addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.energySignalumEmpty.itemStack, 6), "IGI", 'I', "ingotSignalum", 'G', glassHardened));
+		// addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.energyResonantEmpty.itemStack, 6), "IGI", 'I', "ingotEnderium", 'G', glassHardened));
 		addRecipe(ShapelessRecipe(TDDucts.energySignalumEmpty.itemStack, TDDucts.energyReinforcedEmpty.itemStack, "dustRedstone", "nuggetSignalum", "nuggetSignalum", "nuggetSignalum"));
 		addRecipe(ShapelessRecipe(TDDucts.energyResonantEmpty.itemStack, TDDucts.energySignalumEmpty.itemStack, "dustRedstone", "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
 
-		// addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.energyResonantEmpty.itemStack, 3), TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalumEmpty.itemStack, "dustRedstone", "dustRedstone", "dustRedstone", "ingotEnderium"));
+		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.energySignalumEmpty.itemStack, 3), TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforcedEmpty.itemStack, "dustRedstone", "dustRedstone", "dustRedstone", "ingotSignalum"));
+		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.energyResonantEmpty.itemStack, 3), TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalumEmpty.itemStack, "dustRedstone", "dustRedstone", "dustRedstone", "ingotEnderium"));
 
 		addRecipe(ShapedRecipe(TDDucts.energySuperCondEmpty.itemStack, "IGI", "GEG", "IGI", 'I', "ingotElectrum", 'G', glassHardened, 'E', TDDucts.energyResonant.itemStack));
 
@@ -88,8 +87,8 @@ public class TDCrafting {
 		addRecipe(ShapedRecipe(TDDucts.fluidSuper.itemStack, "IGI", "GEG", "IGI", 'I', "ingotBronze", 'G', glassHardened, 'E', TDDucts.fluidHardened.itemStack));
 		addRecipe(ShapedRecipe(TDDucts.fluidSuperOpaque.itemStack, "IGI", "GEG", "IGI", 'I', "ingotBronze", 'G', glassHardened, 'E', TDDucts.fluidHardenedOpaque.itemStack));
 
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidSuper.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', glassHardened, 'P', "ingotPlatinum", 'l', "nuggetLead"));
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidSuperOpaque.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', "ingotLead", 'P', "ingotPlatinum", 'l', "nuggetLead"));
+		//		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidSuper.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', glassHardened, 'P', "ingotPlatinum", 'l', "nuggetLead"));
+		//		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidSuperOpaque.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', "ingotLead", 'P', "ingotPlatinum", 'l', "nuggetLead"));
 
 		/* FLUID - TE Integration */
 		addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3));
@@ -113,18 +112,18 @@ public class TDCrafting {
 
 		/* STRUCTURE */
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetTin", 'I', "ingotLead"));
-
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead"));
 
 		/* TRANSPORT */
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportFrame.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotElectrum", 'G', glassHardened));
+		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportFrame.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotBronze", 'G', glassHardened));
+		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportLongRange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotLead", 'G', glassHardened));
+
 		addTransposerFill(800, TDDucts.transportFrame.itemStack, TDDucts.transportBasic.itemStack, new FluidStack(TFFluids.fluidAerotheum, 50), false);
-		addTransposerFill(32000, TDDucts.transportBasic.itemStack, TDDucts.transportCrossover.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
-		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportLongRange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotCopper", 'G', glassHardened));
+		addTransposerFill(8000, TDDucts.transportBasic.itemStack, TDDucts.transportLinking.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
 
 		/* COVERS */
 		if (enableCoverRecipes) {
-			addRecipe(RecipeCover.instance);
+			addRecipe(RecipeCover.INSTANCE);
 		}
 
 		/* SIGNALLER */
@@ -176,17 +175,18 @@ public class TDCrafting {
 		}
 
 		/* DENSE / VACUUM - TE Integration */
-		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque,
-				//				TODO: Readd Omni/Warp Ducts
-				//				TDDucts.itemOmni, TDDucts.itemOmniOpaque,
-				TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }) {
-			addRecipe(ShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "dustLead"));
-			addRecipe(ShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "dustSilver"));
-			addRecipe(ShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
-			addRecipe(ShapelessRecipe(duct.itemStack, duct.getVacuumItemStack()));// , "dustCharcoal"));
-		}
+		//		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque,
+		//				//				TODO: Readd Omni/Warp Ducts
+		//				//				TDDucts.itemOmni, TDDucts.itemOmniOpaque,
+		//				TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }) {
+		//			addRecipe(ShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "dustLead"));
+		//			addRecipe(ShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "dustSilver"));
+		//			addRecipe(ShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
+		//			addRecipe(ShapelessRecipe(duct.itemStack, duct.getVacuumItemStack()));// , "dustCharcoal"));
+		//		}
 	}
 
+	/* HELPERS */
 	public static void addTransposerFill(int energy, ItemStack input, ItemStack output, FluidStack fluid, boolean reversible) {
 
 		if (useTransposerRecipes && Loader.isModLoaded("thermalexpansion")) {

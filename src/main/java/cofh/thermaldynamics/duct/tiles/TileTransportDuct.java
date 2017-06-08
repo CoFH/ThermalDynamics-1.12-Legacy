@@ -70,7 +70,7 @@ public class TileTransportDuct extends TileGrid {
 
 		public Linking() {
 
-			super(TDDucts.transportCrossover);
+			super(TDDucts.transportLinking);
 		}
 
 		@Nonnull

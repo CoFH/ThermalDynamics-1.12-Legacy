@@ -24,7 +24,7 @@ tile.thermaldynamics.duct.itemFlux.name=電導アイテム管
 tile.thermaldynamics.duct.itemEnder.name=アイテムワープ管
 
 tile.thermaldynamics.duct.structure.name=構造管
-tile.thermaldynamics.duct.structureGlow.name=蛍光管
+tile.thermaldynamics.duct.structureLight.name=蛍光管
 
 tile.thermaldynamics.duct.energySupercond.info=この導管はRFを溜め込みません。
 

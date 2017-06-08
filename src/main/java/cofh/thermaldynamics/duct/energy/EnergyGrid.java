@@ -1,8 +1,6 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.api.energy.EnergyStorage;
-import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
@@ -10,8 +8,8 @@ import net.minecraft.world.World;
 
 public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
-	public static int NODE_STORAGE[] = { 1000, 800 * 5, 8000 * 5, 16000 * 5, 32000 * 5, 0 };
-	public static int NODE_TRANSFER[] = { 200, 800, 8000, 16000, 32000, 0 };
+	public static int NODE_STORAGE[] = { 1000 * 5, 4000 * 5, 9000 * 5, 16000 * 5, 25000 * 5, 0 };
+	public static int NODE_TRANSFER[] = { 1000, 4000, 9000, 16000, 25000, 0 };
 	public final EnergyStorage myStorage;
 	private final int transferLimit;
 
@@ -42,15 +40,15 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 	public static void initialize() {
 
-		String names[] = { "Basic", "Hardened", "Reinforced", "Resonant" };
-		String category;
-		String category2 = "Duct.Energy.";
-
-		for (int i = 0; i < 4; i++) {
-			category = category2 + names[i];
-			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
-			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
-		}
+		//		String names[] = { "Basic", "Hardened", "Reinforced", "Resonant" };
+		//		String category;
+		//		String category2 = "Duct.Energy.";
+		//
+		//		for (int i = 0; i < 4; i++) {
+		//			category = category2 + names[i];
+		//			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
+		//			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
+		//		}
 	}
 
 	@Override

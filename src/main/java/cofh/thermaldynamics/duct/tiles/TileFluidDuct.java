@@ -9,6 +9,8 @@ import cofh.thermaldynamics.duct.fluid.DuctUnitFluidSuper;
 
 public abstract class TileFluidDuct extends TileGridStructureBase {
 
+	public static final int NODE_TRANSFER = 4000;
+
 	public TileFluidDuct(Duct duct) {
 
 		addDuctUnits(DuctToken.FLUID, new DuctUnitFluid(this, duct));
@@ -73,7 +75,7 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		public Energy(Duct duct) {
 
 			super(duct);
-			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, 2000, 2000));
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, NODE_TRANSFER, NODE_TRANSFER * 5));
 		}
 
 		public static class Transparent extends Energy {

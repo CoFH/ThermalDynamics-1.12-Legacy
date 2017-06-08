@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class RecipeCover implements IRecipe {
 
-	public static final RecipeCover instance = new RecipeCover();
+	public static final RecipeCover INSTANCE = new RecipeCover();
 
 	@Override
 	public boolean matches(InventoryCrafting craft, World world) {
