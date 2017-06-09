@@ -33,8 +33,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
 	static RenderEntityItem travelingItemRender;
 	static EntityItem travelingEntityItem = new EntityItem(null);
-	// static float travelingItemSpin = 0.25F;
-	static float travelingItemSpin = 0F;
+	static float travelingItemSpin = 0.25F;
 
 	public static final RenderDuctItems instance = new RenderDuctItems();
 
@@ -61,7 +60,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 		MinecraftForge.EVENT_BUS.register(instance);
 	}
 
-	// public static float spinStep = 0.026175f;
+	public static float spinStep = 0.026175f;
 
 	@SubscribeEvent
 	public void clientTick(TickEvent.ClientTickEvent event) {
@@ -69,8 +68,8 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 		if (Minecraft.getMinecraft().isGamePaused()) {
 			return;
 		}
-		// travelingItemSpin += spinStep;
-		// travelingItemSpin %= 180;
+		travelingItemSpin += spinStep;
+		travelingItemSpin %= 180;
 	}
 
 	@Override
@@ -168,7 +167,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 					}
 					GlStateManager.scale(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
-					travelingEntityItem.hoverStart = travelingItemSpin;// + frame * spinStep;
+					travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
 					travelingEntityItem.setEntityItemStack(ItemHandlerHelper.copyStackWithSize(renderItem.stack, 1));
 					travelingItemRender.doRender(travelingEntityItem, 0, -0.3F, 0, 0, 0);
 				}

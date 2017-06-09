@@ -83,7 +83,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		public Energy(Duct duct) {
 
 			super(duct);
-			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, 2000, 2000));
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, NODE_TRANSFER, NODE_TRANSFER));
 		}
 
 		public static class Transparent extends Energy {

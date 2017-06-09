@@ -18,7 +18,7 @@ public class TDDucts {
 	public static ArrayList<Duct> ductList = new ArrayList<>();
 	public static ArrayList<Duct> ductListSorted = null;
 
-	public static int OFFSET_ENERGY = 0;
+	public static int OFFSET_ENERGY = 0 * 16;
 	public static int OFFSET_FLUID = 1 * 16;
 	public static int OFFSET_ITEM = 2 * 16;
 	public static int OFFSET_STRUCTURE = 3 * 16;

@@ -187,7 +187,6 @@ public class TravelingItem {
 					}
 				}
 			}
-
 			if (homeTile.ticksExisted < DuctUnitItem.maxTicksExistedBeforeFindAlt) {
 				return;
 			}

@@ -56,7 +56,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	public final static byte maxTicksExistedBeforeDump = 10;
 	public static final int maxCenterLine = 10;
 	// Type Helper Arrays
-	static int[] _PIPE_LEN = { 40, 10, 60, 40 };
+	static int[] _PIPE_LEN = { 40, 10, 40, 10 };
 	static int[] _PIPE_HALF_LEN = { _PIPE_LEN[0] / 2, _PIPE_LEN[1] / 2, _PIPE_LEN[2] / 2, _PIPE_LEN[3] / 2 };
 	static float[] _PIPE_TICK_LEN = { 1F / _PIPE_LEN[0], 1F / _PIPE_LEN[1], 1F / _PIPE_LEN[2], 1F / _PIPE_LEN[3] };
 	static float[][][] _SIDE_MODS = new float[4][6][3];
