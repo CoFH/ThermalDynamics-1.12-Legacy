@@ -287,13 +287,11 @@ public class ServoItem extends ServoBase {
 		if (item == null || item.stackSize == 0) {
 			return null;
 		}
-
 		item = item.copy();
 
 		if (item.stackSize == 0) {
 			return null;
 		}
-
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
 				RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
