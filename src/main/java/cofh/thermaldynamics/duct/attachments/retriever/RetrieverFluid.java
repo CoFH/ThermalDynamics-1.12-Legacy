@@ -8,6 +8,7 @@ import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.fluid.FluidTankGrid;
 import cofh.thermaldynamics.duct.fluid.GridFluid;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
@@ -47,12 +48,14 @@ public class RetrieverFluid extends ServoFluid {
 
 		GridFluid grid = fluidDuct.getGrid();
 		if (pass != 1 || grid == null || !isPowered || !isValidInput) {
+
 			return;
 		}
-		int maxInput = (int) Math.ceil(grid.myTank.fluidThroughput * throttle[type]);
+		FluidTankGrid ductGridTank = grid.myTank;
+		int maxInput = (int) Math.ceil(ductGridTank.fluidThroughput * throttle[type]);
 
-		if (grid.myTank.getFluid() != null) {
-			if (!fluidPassesFiltering(grid.myTank.getFluid())) {
+		if (ductGridTank.getFluid() != null) {
+			if (!fluidPassesFiltering(ductGridTank.getFluid())) {
 				return;
 			}
 		}
@@ -64,18 +67,12 @@ public class RetrieverFluid extends ServoFluid {
 
 				DuctUnitFluid.Cache cache = fluidDuct.tileCache[i];
 
-				if (cache == null || (!fluidDuct.isOutput(side) && !fluidDuct.isInput(side))) {
+				if (cache == null || (!fluidDuct.isOutput(i) && !fluidDuct.isInput(i))) {
 					continue;
 				}
 
 				Attachment attachment = fluidDuct.parent.getAttachment(side);
 				if (attachment != null && attachment.getId() == this.getId()) {
-					continue;
-				}
-
-				IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[i]);
-
-				if (ductHandler == null) {
 					continue;
 				}
 
@@ -85,7 +82,7 @@ public class RetrieverFluid extends ServoFluid {
 					continue;
 				}
 
-				int input = ductHandler.fill(handler.drain(maxInput, false), false);
+				int input = ductGridTank.fill(handler.drain(maxInput, false), false);
 
 				if (input == 0) {
 					continue;
@@ -96,7 +93,7 @@ public class RetrieverFluid extends ServoFluid {
 
 					fluid = handler.drain(input, true);
 
-					maxInput -= ductHandler.fill(fluid, true);
+					maxInput -= ductGridTank.fill(fluid, true);
 
 					if (this.fluidDuct.getGrid().toDistribute > 0 && this.fluidDuct.getGrid().myTank.getFluid() != null) {
 						GridFluid otherGrid = fluidDuct.getGrid();
@@ -119,6 +116,11 @@ public class RetrieverFluid extends ServoFluid {
 	public String getName() {
 
 		return "item.thermaldynamics.retriever." + type + ".name";
+	}
+
+	@Override
+	public boolean allowDuctConnection() {
+		return true;
 	}
 
 	@Override

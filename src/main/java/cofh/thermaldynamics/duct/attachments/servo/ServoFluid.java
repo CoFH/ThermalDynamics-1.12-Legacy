@@ -4,6 +4,7 @@ import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.fluid.FluidTankGrid;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.tileentity.TileEntity;
@@ -74,7 +75,8 @@ public class ServoFluid extends ServoBase {
 		if (pass != 1 || fluidDuct.getGrid() == null || !isPowered || !isValidInput) {
 			return;
 		}
-		int maxInput = (int) Math.ceil(fluidDuct.getGrid().myTank.fluidThroughput * throttle[type]);
+		FluidTankGrid myTank = fluidDuct.getGrid().myTank;
+		int maxInput = (int) Math.ceil(myTank.fluidThroughput * throttle[type]);
 		IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[side]);
 
 		if (ductHandler == null) {
@@ -85,8 +87,8 @@ public class ServoFluid extends ServoBase {
 		if (tileHandler == null) {
 			return;
 		}
-		maxInput = ductHandler.fill(tileHandler.drain(maxInput, false), false);
-		ductHandler.fill(tileHandler.drain(maxInput, true), true);
+		maxInput = myTank.fill(tileHandler.drain(maxInput, false), false);
+		myTank.fill(tileHandler.drain(maxInput, true), true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {
