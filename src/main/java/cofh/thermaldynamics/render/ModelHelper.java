@@ -23,9 +23,9 @@ public class ModelHelper {
 		final static int[][] orthogs = { { 2, 3, 4, 5 }, { 2, 3, 4, 5 }, { 0, 1, 4, 5 }, { 0, 1, 4, 5 }, { 0, 1, 2, 3 }, { 0, 1, 2, 3 }, };
 
 		Cuboid6 center;
-		Cuboid6[] pipeWCenter = new Cuboid6[6];
-		Cuboid6[] pipe = new Cuboid6[6];
-		Cuboid6[] pipeFullLength = new Cuboid6[6];
+		Cuboid6[] ductWCenter = new Cuboid6[6];
+		Cuboid6[] duct = new Cuboid6[6];
+		Cuboid6[] ductFullLength = new Cuboid6[6];
 
 		public static Cuboid6[] rotateCuboids(Cuboid6 downCube) {
 
@@ -74,9 +74,9 @@ public class ModelHelper {
 
 			center = new Cuboid6(c1, c1, c1, c2, d3, c2);
 
-			pipe = new Cuboid6[6];
-			for (int s = 0; s < pipe.length; s++) {
-				pipe[s] = new Cuboid6(boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]);
+			duct = new Cuboid6[6];
+			for (int s = 0; s < duct.length; s++) {
+				duct[s] = new Cuboid6(boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]);
 			}
 
 		}
@@ -85,9 +85,9 @@ public class ModelHelper {
 
 			this.width = w;
 			center = new Cuboid6(-w, -w, -w, w, w, w);
-			pipe = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, -w, w));
-			pipeWCenter = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, w, w));
-			pipeFullLength = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, 0.5, w));
+			duct = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, -w, w));
+			ductWCenter = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, w, w));
+			ductFullLength = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, 0.5, w));
 			this.opaque = opaque;
 		}
 
@@ -99,15 +99,15 @@ public class ModelHelper {
 				if (!opaque && MathHelper.isBitSet(cMask, side)) {
 					for (int i : orthogs[side]) {
 						if (MathHelper.isBitSet(cMask, i)) {
-							addSideFace(verts, pipe[i], side);
+							addSideFace(verts, duct[i], side);
 						}
 					}
 				} else {
 					int singlePipeIndex = -1, doublePipeIndex = -1;
 					for (int i : orthogs[side]) {
-						if (MathHelper.isBitSet(cMask, i) && pipeWCenter[i] != null) {
+						if (MathHelper.isBitSet(cMask, i) && ductWCenter[i] != null) {
 							singlePipeIndex = i;
-							if (MathHelper.isBitSet(cMask, i ^ 1) && pipeFullLength[i] != null && pipeFullLength[i ^ 1] != null) {
+							if (MathHelper.isBitSet(cMask, i ^ 1) && ductFullLength[i] != null && ductFullLength[i ^ 1] != null) {
 								doublePipeIndex = i;
 								break;
 							}
@@ -116,17 +116,17 @@ public class ModelHelper {
 					if (doublePipeIndex != -1) {
 						for (int i : orthogs[side]) {
 							if (i == doublePipeIndex) {
-								addSideFace(verts, pipeFullLength[i], side);
+								addSideFace(verts, ductFullLength[i], side);
 							} else if (i != (doublePipeIndex ^ 1) && MathHelper.isBitSet(cMask, i)) {
-								addSideFace(verts, pipe[i], side);
+								addSideFace(verts, duct[i], side);
 							}
 						}
 					} else if (singlePipeIndex != -1) {
 						for (int i : orthogs[side]) {
 							if (i == singlePipeIndex) {
-								addSideFace(verts, pipeWCenter[i], side);
+								addSideFace(verts, ductWCenter[i], side);
 							} else if (MathHelper.isBitSet(cMask, i)) {
-								addSideFace(verts, pipe[i], side);
+								addSideFace(verts, duct[i], side);
 							}
 						}
 					} else {
@@ -136,7 +136,7 @@ public class ModelHelper {
 
 						for (int i : orthogs[side]) {
 							if (MathHelper.isBitSet(cMask, i)) {
-								addSideFace(verts, pipe[i], side);
+								addSideFace(verts, duct[i], side);
 							}
 						}
 					}

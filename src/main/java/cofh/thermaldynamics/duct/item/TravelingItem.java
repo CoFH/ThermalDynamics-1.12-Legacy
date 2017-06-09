@@ -118,8 +118,8 @@ public class TravelingItem {
 
 		if (myPath == null) {
 			bounceItem(homeTile);
-		} else if (progress >= homeTile.getPipeLength()) {
-			progress %= homeTile.getPipeLength();
+		} else if (progress >= homeTile.getDuctLength()) {
+			progress %= homeTile.getDuctLength();
 			advanceTile(homeTile);
 		} else if (progress >= homeTile.getPipeHalfLength() && progress - step < homeTile.getPipeHalfLength()) {
 			if (reRoute || homeTile.getRenderConnectionType(direction) == BlockDuct.ConnectionType.NONE) {
@@ -268,8 +268,8 @@ public class TravelingItem {
 
 		progress += step;
 
-		if (progress >= homeTile.getPipeLength()) {
-			progress %= homeTile.getPipeLength();
+		if (progress >= homeTile.getDuctLength()) {
+			progress %= homeTile.getDuctLength();
 
 			if (shouldDie) {
 				homeTile.removeItem(this, true);

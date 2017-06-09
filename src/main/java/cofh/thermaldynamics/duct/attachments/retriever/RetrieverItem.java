@@ -195,7 +195,8 @@ public class RetrieverItem extends ServoItem {
 	//	}
 
 	@Override
-	public boolean allowPipeConnection() {
+	public boolean allowDuctConnection() {
+
 		return true;
 	}
 

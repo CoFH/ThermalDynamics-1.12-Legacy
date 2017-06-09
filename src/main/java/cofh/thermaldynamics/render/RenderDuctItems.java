@@ -150,7 +150,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 				if (renderItem == null || renderItem.stack == null) {
 					continue;
 				}
-				double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
+				double v = (renderItem.progress + frame * renderItem.step) / (duct.getDuctLength());
 
 				v -= 0.5;
 

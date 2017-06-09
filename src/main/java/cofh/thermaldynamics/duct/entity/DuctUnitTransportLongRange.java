@@ -59,14 +59,13 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 		int v = t.progress;
 		v += t.step * 2;
-		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
-		if (v >= EntityTransport.PIPE_LENGTH) {
+		t.progress = (byte) (v % EntityTransport.DUCT_LENGTH);
+		if (v >= EntityTransport.DUCT_LENGTH) {
 			if (ductCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
 				if (newHome.ductCache[t.direction ^ 1] != null) {
 					t.pos = newHome.pos();
-
 					t.oldDirection = t.direction;
 
 					if (newHome instanceof DuctUnitTransportLongRange) {
@@ -86,7 +85,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 			} else {
 				t.dropPassenger();
 			}
-		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
+		} else if (t.progress >= EntityTransport.DUCT_LENGTH2 && t.progress - t.step < EntityTransport.DUCT_LENGTH2) {
 			if (ductCache[t.direction] == null) {
 				t.dropPassenger();
 			}
@@ -98,8 +97,8 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 
 		int v = t.progress;
 		v += t.step + (t.step);
-		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
-		if (v >= EntityTransport.PIPE_LENGTH) {
+		t.progress = (byte) (v % EntityTransport.DUCT_LENGTH);
+		if (v >= EntityTransport.DUCT_LENGTH) {
 			if (!t.trySimpleAdvance()) {
 				return true;
 			}

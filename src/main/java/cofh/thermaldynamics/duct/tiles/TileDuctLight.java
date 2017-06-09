@@ -16,5 +16,5 @@ public class TileDuctLight extends TileGridSingle {
 
 		return new DuctUnitLight(this, ductType);
 	}
-	
+
 }

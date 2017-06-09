@@ -238,7 +238,6 @@ public class TDDucts {
 		itemEnergyFast = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemEnergyFast", Type.ITEM, (duct, worldObj) -> new TileDuctItem.EnergyFast.Transparent(), "tin_signalum", "tin", GLOWSTONE_STILL, 80, null, null, 0);
 		itemEnergyFastOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemEnergyFast", Type.ITEM, (duct, worldObj) -> new TileDuctItem.EnergyFast.Opaque(), "tin_alt_signalum", "tin", null, 0, null, null, 0);
 
-
 		//		TODO: Readd Omni/Warp Ducts
 		//		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Warp.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
 		//		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Warp.Opaque(), "enderium", "enderium", null, 48, null, null, 0);

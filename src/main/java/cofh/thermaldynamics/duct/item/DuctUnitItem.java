@@ -56,15 +56,15 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	public final static byte maxTicksExistedBeforeDump = 10;
 	public static final int maxCenterLine = 10;
 	// Type Helper Arrays
-	static int[] _PIPE_LEN = { 40, 10, 40, 10 };
-	static int[] _PIPE_HALF_LEN = { _PIPE_LEN[0] / 2, _PIPE_LEN[1] / 2, _PIPE_LEN[2] / 2, _PIPE_LEN[3] / 2 };
-	static float[] _PIPE_TICK_LEN = { 1F / _PIPE_LEN[0], 1F / _PIPE_LEN[1], 1F / _PIPE_LEN[2], 1F / _PIPE_LEN[3] };
+	static int[] _DUCT_LEN = { 40, 10, 40, 10 };
+	static int[] _DUCT_HALF_LEN = { _DUCT_LEN[0] / 2, _DUCT_LEN[1] / 2, _DUCT_LEN[2] / 2, _DUCT_LEN[3] / 2 };
+	static float[] _DUCT_TICK_LEN = { 1F / _DUCT_LEN[0], 1F / _DUCT_LEN[1], 1F / _DUCT_LEN[2], 1F / _DUCT_LEN[3] };
 	static float[][][] _SIDE_MODS = new float[4][6][3];
 	static int INSERT_SIZE = 8;
 
 	static {
 		for (int i = 0; i < 4; i++) {
-			float j = _PIPE_TICK_LEN[i];
+			float j = _DUCT_TICK_LEN[i];
 			_SIDE_MODS[i][0] = new float[] { 0, -j, 0 };
 			_SIDE_MODS[i][1] = new float[] { 0, j, 0 };
 			_SIDE_MODS[i][2] = new float[] { 0, 0, -j };
@@ -236,7 +236,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
 
 		Attachment attachment = parent.getAttachment(side);
-		if (attachment != null && !attachment.allowPipeConnection()) {
+		if (attachment != null && !attachment.allowDuctConnection()) {
 			return null;
 		}
 		if (InventoryHelper.hasItemHandlerCap(tile, EnumFacing.values()[side ^ 1])) {
@@ -379,14 +379,14 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		pulseLineDo(63);
 	}
 
-	public int getPipeLength() {
+	public int getDuctLength() {
 
-		return _PIPE_LEN[getDuctType().type];
+		return _DUCT_LEN[getDuctType().type];
 	}
 
 	public int getPipeHalfLength() {
 
-		return _PIPE_HALF_LEN[getDuctType().type];
+		return _DUCT_HALF_LEN[getDuctType().type];
 	}
 
 	public void stuffItem(TravelingItem travelingItem) {

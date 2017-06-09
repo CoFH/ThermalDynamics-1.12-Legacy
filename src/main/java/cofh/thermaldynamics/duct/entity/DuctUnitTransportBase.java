@@ -44,10 +44,10 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 		t.progress += t.step;
 		if (t.myPath == null) {
 			t.bouncePassenger(this);
-		} else if (t.progress >= EntityTransport.PIPE_LENGTH) {
-			t.progress %= EntityTransport.PIPE_LENGTH;
+		} else if (t.progress >= EntityTransport.DUCT_LENGTH) {
+			t.progress %= EntityTransport.DUCT_LENGTH;
 			advanceToNextTile(t);
-		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
+		} else if (t.progress >= EntityTransport.DUCT_LENGTH2 && t.progress - t.step < EntityTransport.DUCT_LENGTH2) {
 			if (t.reRoute || getRenderConnectionType(t.direction) == BlockDuct.ConnectionType.NONE) {
 				t.bouncePassenger(this);
 			}
@@ -66,7 +66,7 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	public boolean advanceEntityClient(EntityTransport t) {
 
 		t.progress += t.step;
-		if (t.progress >= EntityTransport.PIPE_LENGTH) {
+		if (t.progress >= EntityTransport.DUCT_LENGTH) {
 			if (!t.trySimpleAdvance()) {
 				return true;
 			}

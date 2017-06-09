@@ -99,7 +99,7 @@ public abstract class Attachment {
 		return canAddToTile(baseTile) && baseTile.addAttachment(this);
 	}
 
-	public boolean allowPipeConnection() {
+	public boolean allowDuctConnection() {
 
 		return false;
 	}

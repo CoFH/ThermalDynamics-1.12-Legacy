@@ -263,9 +263,9 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Override
 	public void advanceEntity(EntityTransport t) {
 
-		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
+		if (t.progress < EntityTransport.DUCT_LENGTH2 && (t.progress + t.step) >= EntityTransport.DUCT_LENGTH2) {
 			if (ductCache[t.direction] != null && rangePos[t.direction] != null) {
-				t.progress = EntityTransport.PIPE_LENGTH2;
+				t.progress = EntityTransport.DUCT_LENGTH2;
 				t.pause = CHARGE_TIME;
 			}
 		}
@@ -275,9 +275,9 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Override
 	public boolean advanceEntityClient(EntityTransport t) {
 
-		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
+		if (t.progress < EntityTransport.DUCT_LENGTH2 && (t.progress + t.step) >= EntityTransport.DUCT_LENGTH2) {
 			if (ductCache[t.direction] != null && rangePos[t.direction] != null) {
-				t.progress = EntityTransport.PIPE_LENGTH2;
+				t.progress = EntityTransport.DUCT_LENGTH2;
 				t.pause = CHARGE_TIME;
 				return true;
 			}

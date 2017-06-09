@@ -40,8 +40,8 @@ public class EntityTransport extends Entity {
 	private static final DataParameter<Byte> STEP = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
 	private static final DataParameter<Byte> PAUSE = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
 
-	public static final int PIPE_LENGTH = 100;
-	public static final int PIPE_LENGTH2 = 50;
+	public static final int DUCT_LENGTH = 100;
+	public static final int DUCT_LENGTH2 = 50;
 
 	public byte progress;
 	public byte direction = 7;
@@ -294,7 +294,7 @@ public class EntityTransport extends Entity {
 
 		pos = p;
 		oldDirection = direction;
-		progress %= PIPE_LENGTH;
+		progress %= DUCT_LENGTH;
 		return true;
 	}
 
@@ -530,7 +530,7 @@ public class EntityTransport extends Entity {
 
 	public Vec3d getPos(byte progress, double framePos) {
 
-		double v = ((double) progress + step * framePos) / (PIPE_LENGTH) - 0.5;
+		double v = ((double) progress + step * framePos) / (DUCT_LENGTH) - 0.5;
 		int dir = v < 0 ? oldDirection : direction;
 
 		Vec3i vec = EnumFacing.VALUES[dir].getDirectionVec();

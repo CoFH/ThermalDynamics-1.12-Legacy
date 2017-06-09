@@ -70,7 +70,7 @@ public abstract class FilterBase extends ConnectionBase {
 	}
 
 	@Override
-	public boolean allowPipeConnection() {
+	public boolean allowDuctConnection() {
 
 		return true;
 	}

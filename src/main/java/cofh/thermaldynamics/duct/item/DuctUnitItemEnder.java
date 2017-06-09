@@ -27,7 +27,7 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 	}
 
 	@Override
-	public int getPipeLength() {
+	public int getDuctLength() {
 
 		return isPowered() ? 1 : 60;
 	}

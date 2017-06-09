@@ -113,7 +113,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public boolean isSideBlocked(int side) {
 
 		Attachment attachment = getAttachment(side);
-		return attachment != null && !attachment.allowPipeConnection() || (connectionTypes != null && !connectionTypes[side].allowTransfer);
+		return attachment != null && !attachment.allowDuctConnection() || (connectionTypes != null && !connectionTypes[side].allowTransfer);
 	}
 
 	@Override
@@ -307,7 +307,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (attachmentData != null) {
 			Attachment attachment = attachmentData.attachments[i];
 			if (attachment != null) {
-				return attachment.allowPipeConnection() ? NORMAL : BLOCKED;
+				return attachment.allowDuctConnection() ? NORMAL : BLOCKED;
 			}
 		}
 		ConnectionType[] connectionTypes = this.connectionTypes;
