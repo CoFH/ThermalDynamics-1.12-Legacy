@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.multiblock;
 
 import cofh.core.util.helpers.ChatHelper;
-import cofh.thermaldynamics.block.Attachment;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermaldynamics.util.WorldGridList;
@@ -14,14 +14,11 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MultiBlockGrid<T extends IMultiBlock> {
+public abstract class MultiBlockGrid<T extends IGridTile> {
 
 	public NoComodSet<T> nodeSet = new NoComodSet<>();
 	public NoComodSet<T> idleSet = new NoComodSet<>();
 	public WorldGridList worldGrid;
-	public boolean signalsUpToDate;
-
-	public RedstoneControl rs;
 
 	public MultiBlockGrid(WorldGridList worldGrid) {
 
@@ -107,10 +104,10 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 
 	public void resetMultiBlocks() {
 
-		for (IMultiBlock aBlock : nodeSet) {
+		for (IGridTile aBlock : nodeSet) {
 			aBlock.setValidForForming();
 		}
-		for (IMultiBlock aBlock : idleSet) {
+		for (IGridTile aBlock : idleSet) {
 			aBlock.setValidForForming();
 		}
 	}
@@ -120,85 +117,6 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 	 */
 	public void tickGrid() {
 
-		if (rs != null && rs.nextRedstoneLevel != -128) {
-			rs.redstoneLevel = rs.nextRedstoneLevel;
-			rs.nextRedstoneLevel = -128;
-
-			ArrayList<Attachment> signallersOut = rs.relaysOut;
-			if (signallersOut != null) {
-				for (Attachment output : signallersOut) {
-					output.checkSignal();
-				}
-			}
-		}
-
-		if (signalsUpToDate) {
-			return;
-		}
-
-		signalsUpToDate = true;
-
-		if (rs == null || rs.relaysIn == null) {
-			if (rs != null) {
-				rs.relaysOut = null;
-			}
-			for (IMultiBlock multiBlock : nodeSet) {
-				multiBlock.addRelays();
-			}
-		}
-
-		if (rs == null) {
-			return;
-		}
-
-		if (rs.relaysIn == null) {
-			if (rs.relaysOut == null) {
-				rs = null;
-				return;
-			} else {
-				rs.nextRedstoneLevel = 0;
-			}
-			return;
-		}
-
-		int powered = 0;
-		for (Relay signaller : rs.relaysIn) {
-			powered = Math.max(powered, signaller.getPowerLevel());
-			if (powered == 15) {
-				break;
-			}
-
-		}
-
-		rs.nextRedstoneLevel = (byte) powered;
-
-	}
-
-	public void addSignalInput(Relay signaller) {
-
-		if (signaller.isInput()) {
-			if (rs == null) {
-				rs = new RedstoneControl();
-			}
-
-			if (rs.relaysIn == null) {
-				rs.relaysIn = new ArrayList<>();
-			}
-
-			rs.relaysIn.add(signaller);
-		}
-	}
-
-	public void addSignalOutput(Attachment attachment) {
-
-		if (rs == null) {
-			rs = new RedstoneControl();
-		}
-
-		if (rs.relaysOut == null) {
-			rs.relaysOut = new ArrayList<>();
-		}
-		rs.relaysOut.add(attachment);
 	}
 
 	/*
@@ -258,21 +176,10 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 
 	public void onMinorGridChange() {
 
-		resetRelays();
 	}
 
 	public void onMajorGridChange() {
 
-		resetRelays();
-	}
-
-	public void resetRelays() {
-
-		if (rs != null) {
-			rs.relaysIn = null;
-			rs.relaysOut = null;
-		}
-		signalsUpToDate = false;
 	}
 
 	public int size() {
@@ -289,7 +196,7 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 		return false;
 	}
 
-	public void destroyNode(IMultiBlock node) {
+	public void destroyNode(IGridTile node) {
 
 		node.setGrid(null);
 	}
@@ -299,20 +206,13 @@ public abstract class MultiBlockGrid<T extends IMultiBlock> {
 		return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block : !idleSet.isEmpty() && idleSet.iterator().next() == block;
 	}
 
-	public abstract boolean canAddBlock(IMultiBlock aBlock);
+	public abstract boolean canAddBlock(IGridTile aBlock);
 
 	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		if (debug) {
+			addInfo(info, "Type", getClass().getSimpleName());
 			addInfo(info, "size", size());
-		}
-
-		if (rs != null) {
-			int r = rs.redstoneLevel;
-			if (rs.nextRedstoneLevel != -128) {
-				r = rs.nextRedstoneLevel;
-			}
-			addInfo(info, "redstone", r);
 		}
 	}
 

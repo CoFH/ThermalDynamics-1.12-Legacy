@@ -1,20 +1,20 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.TileEntity;
 
 public class FilterItem extends FilterBase {
 
-	public FilterItem(TileTDBase tile, byte side, int type) {
+	public FilterItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
 
-	public FilterItem(TileTDBase tile, byte side) {
+	public FilterItem(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}

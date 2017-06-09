@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.item;
 
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -38,13 +38,12 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
-	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileGrid tile) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return null;
 		}
-
 		int meta = nbt.getByte("Meta");//FIXME Use a state instead of meta and block.
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
@@ -56,7 +55,6 @@ public class ItemCover extends ItemAttachment {
 			}
 			return null;
 		}
-
 		return new Cover(tile, ((byte) (side.ordinal() ^ 1)), block.getStateFromMeta(meta));
 	}
 

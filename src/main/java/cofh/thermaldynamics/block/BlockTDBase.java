@@ -1,184 +1,66 @@
 package cofh.thermaldynamics.block;
 
-import codechicken.lib.block.property.PropertyInteger;
-import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.raytracer.RayTracer;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.BlockCoreTile;
+import cofh.core.block.TileCore;
+import cofh.core.util.CoreUtils;
+import cofh.lib.util.RayTracer;
 import cofh.lib.util.helpers.ServerHelper;
-import cofh.lib.util.helpers.StringHelper;
 import cofh.lib.util.helpers.WrenchHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileTDBase.NeighborTypes;
-import cofh.thermaldynamics.duct.entity.EntityTransport;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.attachments.cover.Cover;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 public abstract class BlockTDBase extends BlockCoreTile {
-
-	public static PropertyInteger META = new PropertyInteger("meta", 15);
 
 	protected BlockTDBase(Material material) {
 
 		super(material);
-		setSoundType(SoundType.METAL);
+		setSoundType(SoundType.STONE);
 		setCreativeTab(ThermalDynamics.tabCommon);
 	}
 
-	@Override
-	public int getMetaFromState(IBlockState state) {
-
-		return state.getValue(META);
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-
-		return getDefaultState().withProperty(META, meta);
-	}
-
-	@Override
-	protected BlockStateContainer createBlockState() {
-
-		return new BlockStateContainer(this, META);
-	}
-
-	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
-
-		return null;
-	}
-
 	/* BLOCK METHODS */
-	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
-		return (theTile != null && (theTile.covers[side.ordinal()] != null || theTile.attachments[side.ordinal()] != null && theTile.attachments[side.ordinal()].makesSideSolid())) || super.isSideSolid(base_state, world, pos, side);
-	}
+	//	@Override
+	//	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack) {
+	//
+	//	}
 
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
 
-		return false;
-	}
-
-	@Override
-	public boolean isOpaqueCube(IBlockState state) {
-
-		return false;
-	}
-
-	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-
-		return false;
-	}
-
-	public float getSize(IBlockState state) {
-
-		return 0.3F;
-	}
-
-	@Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
-
-		if (entity instanceof EntityTransport) {
-			return;
-		}
-
-		float min = getSize(state);
-		float max = 1 - min;
-
-		AxisAlignedBB bb = new AxisAlignedBB(min, min, min, max, max, max);
-		addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
-
-		if (theTile != null) {
-			for (byte i = 0; i < 6; i++) {
-				if (theTile.attachments[i] != null) {
-					theTile.attachments[i].addCollisionBoxesToList(entityBox, collidingBoxes, entity);
-				}
-				if (theTile.covers[i] != null) {
-					theTile.covers[i].addCollisionBoxesToList(entityBox, collidingBoxes, entity);
-				}
-			}
-
-			if (theTile.neighborTypes[0] != NeighborTypes.NONE) {
-				bb = new AxisAlignedBB(min, 0.0F, min, max, max, max);
-				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-			}
-			if (theTile.neighborTypes[1] != NeighborTypes.NONE) {
-				bb = new AxisAlignedBB(min, min, min, max, 1.0F, max);
-				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-			}
-			if (theTile.neighborTypes[2] != NeighborTypes.NONE) {
-				bb = new AxisAlignedBB(min, min, 0.0F, max, max, max);
-				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-			}
-			if (theTile.neighborTypes[3] != NeighborTypes.NONE) {
-				bb = new AxisAlignedBB(min, min, min, max, max, 1.0F);
-				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-			}
-			if (theTile.neighborTypes[4] != NeighborTypes.NONE) {
-				bb = new AxisAlignedBB(0.0F, min, min, max, max, max);
-				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-			}
-			if (theTile.neighborTypes[5] != NeighborTypes.NONE) {
-				bb = new AxisAlignedBB(min, min, min, 1.0F, max, max);
-				addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-			}
-		}
-	}
-
-	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-
-		float min = getSize(state);
-		float max = 1 - min;
-		return new AxisAlignedBB(min, min, min, max, max, max);
-	}
-
-	@Override
-	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
-
-		TileTDBase theTile = (TileTDBase) world.getTileEntity(pos);
-		if (theTile == null) {
-			return null;
-		}
-		List<IndexedCuboid6> cuboids = new LinkedList<>();
-		theTile.addTraceableCuboids(cuboids);
-		return RayTracer.rayTraceCuboidsClosest(start, end, cuboids, pos);
+		return true;
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 
 		RayTraceResult traceResult = RayTracer.retraceBlock(world, player, pos);
+
 		if (traceResult == null || traceResult.getBlockPos() != pos) {
 			return false;
 		}
@@ -194,11 +76,10 @@ public abstract class BlockTDBase extends BlockCoreTile {
 				}
 				return true;
 			}
-			return false;
 		}
-		TileTDBase tile = (TileTDBase) world.getTileEntity(pos);
+		TileGrid tile = (TileGrid) world.getTileEntity(pos);
 
-		if (tile == null) {
+		if (tile == null || tile.isInvalid()) {
 			return false;
 		}
 		if (WrenchHelper.isHoldingUsableWrench(player, traceResult)) {
@@ -208,27 +89,127 @@ public abstract class BlockTDBase extends BlockCoreTile {
 			WrenchHelper.usedWrench(player, traceResult);
 			return true;
 		}
-
 		return tile.openGui(player);
 	}
 
-	/* IBlockInfo */
 	@Override
-	public void getBlockInfo(List<ITextComponent> info, IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player, boolean debug) {
+	public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
+
+		// TileGrid tile = (TileGrid) world.getTileEntity(pos);
+		//
+		// TODO
+		//		if (tile instanceof TileDuct) {
+		//
+		//		}
+		return blockHardness;
+	}
+
+	@Override
+	public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion) {
+
+		// TileGrid tile = (TileGrid) world.getTileEntity(pos);
+		//
+		// TODO
+		//		if (tile instanceof TileDuct) {
+		//
+		//		}
+		return blockResistance / 5.0F;
+	}
+
+	/* RENDERING METHODS */
+	// TODO
+	//	@Override
+	//	@SideOnly (Side.CLIENT)
+	//	public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
+	//
+	//		if (this instanceof IWorldBlockTextureProvider) {
+	//			CustomParticleHandler.addDestroyEffects(world, pos, manager, (IWorldBlockTextureProvider) this);
+	//			return true;
+	//		}
+	//		return false;
+	//	}
+	//
+	//	@Override
+	//	@SideOnly (Side.CLIENT) // Because vanilla removed state and side based particle textures in 1.8..
+	//	public boolean addHitEffects(IBlockState state, World world, RayTraceResult trace, ParticleManager manager) {
+	//
+	//		if (this instanceof IWorldBlockTextureProvider) {
+	//			CustomParticleHandler.addHitEffects(state, world, trace, manager, ((IWorldBlockTextureProvider) this));
+	//			return true;
+	//		}
+	//		return false;
+	//	}
+
+	/* HELPERS */
+	// TODO
+	//	@Override
+	//	public NBTTagCompound getItemStackTag(IBlockAccess world, BlockPos pos) {
+	//
+	//	}
+
+	@Override
+	public ArrayList<ItemStack> dropDelegate(NBTTagCompound nbt, IBlockAccess world, BlockPos pos, int fortune) {
+
+		return dismantleDelegate(nbt, (World) world, pos, null, false, true);
+	}
+
+	@Override
+	public ArrayList<ItemStack> dismantleDelegate(NBTTagCompound nbt, World world, BlockPos pos, EntityPlayer player, boolean returnDrops, boolean simulate) {
 
 		TileEntity tile = world.getTileEntity(pos);
+		IBlockState state = world.getBlockState(pos);
+		int meta = getMetaFromState(state);
 
-		if (tile instanceof ITileInfo) {
-			((ITileInfo) tile).getTileInfo(info, side, player, debug);
-		} else {
-			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler eHandler = (IEnergyHandler) tile;
-				if (eHandler.getMaxEnergyStored(side) <= 0) {
-					return;
+		ItemStack dropBlock = tile instanceof TileGrid ? ((TileGrid) tile).getDrop() : new ItemStack(this, 1, meta);
+
+		if (nbt != null) {
+			dropBlock.setTagCompound(nbt);
+		}
+		ArrayList<ItemStack> ret = new ArrayList<>();
+		ret.add(dropBlock);
+
+		if (tile instanceof TileGrid) {
+			TileGrid ductBase = (TileGrid) tile;
+			TileGrid.AttachmentData attachmentData = ductBase.attachmentData;
+			if (attachmentData != null) {
+				for (Attachment attachment : attachmentData.attachments) {
+					if (attachment != null) {
+						ret.addAll(attachment.getDrops());
+					}
 				}
-				info.add(new TextComponentString(StringHelper.localize("info.cofh.energy") + ": " + eHandler.getEnergyStored(side) + "/" + eHandler.getMaxEnergyStored(side) + " RF."));
+				for (Cover cover : attachmentData.covers) {
+					if (cover != null) {
+						ret.addAll(cover.getDrops());
+					}
+				}
+			}
+			ductBase.dropAdditional(ret);
+		}
+		if (nbt != null) {
+			dropBlock.setTagCompound(nbt);
+		}
+		if (!simulate) {
+			if (tile instanceof TileCore) {
+				((TileCore) tile).blockDismantled();
+			}
+			world.setBlockToAir(pos);
+
+			if (!returnDrops) {
+				for (ItemStack stack : ret) {
+					float f = 0.3F;
+					double x2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+					double y2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+					double z2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
+					EntityItem dropEntity = new EntityItem(world, pos.getX() + x2, pos.getY() + y2, pos.getZ() + z2, stack);
+					dropEntity.setPickupDelay(10);
+					world.spawnEntityInWorld(dropEntity);
+				}
+				if (player != null) {
+					CoreUtils.dismantleLog(player.getName(), this, meta, pos);
+				}
 			}
 		}
+		return ret;
 	}
 
 }

@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.init;
 
 import cofh.core.util.core.IInitializer;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 
 import java.util.ArrayList;
@@ -47,4 +47,5 @@ public class TDBlocks {
 
 	/* REFERENCES */
 	public static BlockDuct[] blockDuct;
+
 }

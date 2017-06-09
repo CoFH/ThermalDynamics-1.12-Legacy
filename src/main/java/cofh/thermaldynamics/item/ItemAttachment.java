@@ -9,8 +9,8 @@ import cofh.core.render.hitbox.RenderHitbox;
 import cofh.core.util.core.IInitializer;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,7 +58,7 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 		Attachment attachment = null;
 
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile instanceof TileTDBase) {
+		if (tile instanceof TileGrid) {
 			int s = -1;
 			RayTraceResult movingObjectPosition = RayTracer.retraceBlock(world, player, pos);
 			if (movingObjectPosition != null) {
@@ -73,19 +73,19 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 					s = ((subHit - 14) % 6);
 				}
 				if (s != -1) {
-					attachment = getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileTDBase) tile);
+					attachment = getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileGrid) tile);
 				}
 			}
 		} else {
 			tile = BlockHelper.getAdjacentTileEntity(world, pos, side);
-			if (tile instanceof TileTDBase) {
-				attachment = getAttachment(side, stack, (TileTDBase) tile);
+			if (tile instanceof TileGrid) {
+				attachment = getAttachment(side, stack, (TileGrid) tile);
 			}
 		}
 		return attachment;
 	}
 
-	public abstract Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile);
+	public abstract Attachment getAttachment(EnumFacing side, ItemStack stack, TileGrid tile);
 
 	@Override
 	public boolean initialize() {
@@ -118,13 +118,13 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 		ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
 		Attachment attachment = getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
 
-		if (attachment == null || !attachment.canAddToTile(attachment.tile)) {
+		if (attachment == null || !attachment.canAddToTile(attachment.baseTile)) {
 			return;
 		}
 		Cuboid6 c = attachment.getCuboid();
 		c.max.subtract(c.min);
 
-		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.tile.x() + c.min.x, attachment.tile.y() + c.min.y, attachment.tile.z() + c.min.z));
+		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
 
 		attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
 

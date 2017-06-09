@@ -6,9 +6,10 @@ import codechicken.lib.render.RenderUtils;
 import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
+import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.render.shader.ShaderStarfield;
 import net.minecraft.client.Minecraft;
@@ -20,7 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuctItemsEnder extends RenderDuctItems {
 
-	public static final TileEntitySpecialRenderer<TileItemDuct> instance = new RenderDuctItemsEnder();
+	public static final TileEntitySpecialRenderer<TileGrid> instance = new RenderDuctItemsEnder();
 
 	// TEMA: this is the shader callback where the uniforms are set for this particular shader.
 	// it's called each frame when the shader is bound. Probably the most expensive part of the whole thing.
@@ -44,11 +45,11 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	};
 
 	@Override
-	public void renderTileEntityAt(TileItemDuct tile, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
 
-		TileItemDuctEnder duct = (TileItemDuctEnder) tile;
+		DuctUnitItemEnder duct = (DuctUnitItemEnder) tile.getDuct(DuctToken.ITEMS);
 
-		if (duct.powered) {
+		if (duct != null && duct.powered) {
 			CCRenderState ccrs = CCRenderState.instance();
 			ccrs.reset();
 			ccrs.preRenderWorld(tile.getWorld(), tile.getPos());
@@ -57,13 +58,13 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 			GlStateManager.color(1, 1, 1, 1);
 
-			int[] connections = RenderDuct.instance.getDuctConnections(duct);
+			int[] connections = RenderDuct.instance.getDuctConnections(tile);
 
 			drawEnderStarfield(ccrs, x, y, z, connections, frame, duct.centerLine, duct.centerLineSub);
 
 			ccrs.reset();
 		} else {
-			super.renderTileEntityAt(duct, x, y, z, frame, destroyStage);
+			super.renderTileEntityAt(tile, x, y, z, frame, destroyStage);
 		}
 	}
 
@@ -82,7 +83,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
 					models[s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
 				}
 			}
@@ -92,7 +93,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		} else {
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
 					ShaderStarfield.alpha = getAlphaLevel(alphaSub[s], frame) / 255F;
 					ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 					ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);

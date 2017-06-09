@@ -1,7 +1,9 @@
 package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
+import cofh.thermaldynamics.multiblock.IGridTile;
 import com.google.common.collect.Iterables;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,16 +25,16 @@ public class PacketLight extends PacketCoFHBase {
 		super();
 	}
 
-	public PacketLight(boolean lit, LightGrid grid) {
+	public PacketLight(boolean lit, GridLight grid) {
 
 		addBool(lit);
 
 		addVarInt(grid.idleSet.size() + grid.nodeSet.size());
 
-		for (IMultiBlock iMultiBlock : Iterables.concat(grid.nodeSet, grid.idleSet)) {
-			addVarInt(iMultiBlock.x());
-			addVarInt(iMultiBlock.y());
-			addVarInt(iMultiBlock.z());
+		for (IGridTile iGridTile : Iterables.concat(grid.nodeSet, grid.idleSet)) {
+			addVarInt(iGridTile.x());
+			addVarInt(iGridTile.y());
+			addVarInt(iGridTile.z());
 		}
 	}
 
@@ -53,10 +55,13 @@ public class PacketLight extends PacketCoFHBase {
 			}
 
 			TileEntity tile = world.getTileEntity(pos);
-			if (tile instanceof TileLightDuct) {
-				TileLightDuct lamp = (TileLightDuct) tile;
-				lamp.lit = lit;
-				lamp.checkLight();
+			if (tile instanceof IDuctHolder) {
+				DuctUnitLight lamp = ((IDuctHolder) tile).getDuct(DuctToken.LIGHT);
+
+				if (lamp != null) {
+					lamp.lit = lit;
+					lamp.checkLight();
+				}
 			}
 		}
 	}

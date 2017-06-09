@@ -6,13 +6,11 @@ import cofh.thermaldynamics.duct.IDuctFactory;
 import cofh.thermaldynamics.render.TextureOverlay;
 import cofh.thermaldynamics.render.TextureTransparent;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class DuctLight extends Duct {
 
 	static {
 		PacketHandler.instance.registerPacket(PacketLight.class);
-		GameRegistry.registerTileEntity(TileLightDuct.class, "thermaldynamics.LightDuct");
 	}
 
 	public DuctLight(int id, int type, String name, Type ductType, IDuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency) {

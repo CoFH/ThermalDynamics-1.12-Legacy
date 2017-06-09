@@ -6,9 +6,10 @@ import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
 import cofh.core.network.PacketCoFHBase;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,13 +46,13 @@ public class Cover extends Attachment {
 
 	public IBlockState state;
 
-	public Cover(TileTDBase tile, byte side, IBlockState state) {
+	public Cover(TileGrid tile, byte side, IBlockState state) {
 
 		super(tile, side);
 		this.state = state;
 	}
 
-	public Cover(TileTDBase tile, byte side) {
+	public Cover(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
@@ -76,7 +78,7 @@ public class Cover extends Attachment {
 	@Override
 	public boolean onWrenched() {
 
-		tile.removeFacade(this);
+		baseTile.removeCover(side);
 
 		for (ItemStack stack : getDrops()) {
 			dropItemStack(stack);
@@ -84,10 +86,11 @@ public class Cover extends Attachment {
 		return true;
 	}
 
+	@Nonnull
 	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+	public BlockDuct.ConnectionType getNeighborType() {
 
-		return TileTDBase.NeighborTypes.NONE;
+		return BlockDuct.ConnectionType.NONE;
 	}
 
 	@Override
@@ -104,16 +107,16 @@ public class Cover extends Attachment {
 			return false;
 		}
 
-		Attachment attachment = tile.attachments[side];
+		Attachment attachment = baseTile.getAttachment(side);
 		CoverHoleRender.ITransformer[] hollowMask = null;
 		if (attachment != null) {
 			hollowMask = attachment.getHollowMask();
 		}
 		if (hollowMask == null) {
-			hollowMask = tile.getHollowMask(side);
+			hollowMask = baseTile.getHollowMask(side);
 		}
 
-		return CoverRenderer.renderBlockCover(ccrs, world, tile.getPos(), side, state, getCuboid(), hollowMask);
+		return CoverRenderer.renderBlockCover(ccrs, world, baseTile.getPos(), side, state, getCuboid(), hollowMask);
 	}
 
 	@Override
@@ -139,7 +142,7 @@ public class Cover extends Attachment {
 	@Override
 	public boolean addToTile() {
 
-		return tile.addFacade(this);
+		return baseTile.addCover(this);
 	}
 
 	@Override
@@ -167,9 +170,9 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public boolean canAddToTile(TileTDBase tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tile) {
 
-		return tileMultiBlock.covers[side] == null;
+		return tile.getCover(side) == null;
 	}
 
 	@SuppressWarnings ("deprecation")
@@ -211,15 +214,15 @@ public class Cover extends Attachment {
 		{
 
 			GlStateManager.translate(-d0, -d1, -d2);
-			GlStateManager.translate(tile.x() + 0.5, tile.y() + 0.5, tile.z() + 0.5);
+			GlStateManager.translate(baseTile.x() + 0.5, baseTile.y() + 0.5, baseTile.z() + 0.5);
 			GlStateManager.scale(1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET, 1 + RenderHelper.RENDER_OFFSET);
-			GlStateManager.translate(-tile.x() - 0.5, -tile.y() - 0.5, -tile.z() - 0.5);
+			GlStateManager.translate(-baseTile.x() - 0.5, -baseTile.y() - 0.5, -baseTile.z() - 0.5);
 
 			CCRenderState ccrs = CCRenderState.instance();
 			ccrs.reset();
 			ccrs.startDrawing(7, DefaultVertexFormats.BLOCK);
 			ccrs.alphaOverride = 80;
-			CoverRenderer.renderBlockCover(ccrs, tile.world(), tile.getPos(), side, state, getCuboid(), null);
+			CoverRenderer.renderBlockCover(ccrs, baseTile.world(), baseTile.getPos(), side, state, getCuboid(), null);
 			ccrs.draw();
 		}
 		GlStateManager.popMatrix();

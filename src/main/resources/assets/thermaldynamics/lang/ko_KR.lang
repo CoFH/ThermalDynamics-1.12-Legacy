@@ -22,7 +22,7 @@ tile.thermaldynamics.duct.itemFlux.name=전도-아이템덕트
 tile.thermaldynamics.duct.itemEnder.name=워프 아이템덕트
 
 tile.thermaldynamics.duct.structure.name=구조용 덕트
-tile.thermaldynamics.duct.structureGlow.name=조명 덕트
+tile.thermaldynamics.duct.structureLight.name=조명 덕트
 
 tile.thermaldynamics.duct.energySupercond.info=여유 운송량이 없습니다.
 

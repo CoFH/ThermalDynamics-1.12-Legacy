@@ -2,14 +2,13 @@ package cofh.thermaldynamics.item;
 
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterFluid;
 import cofh.thermaldynamics.duct.attachments.filter.FilterItem;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -55,13 +54,14 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileTDBase tile) {
+	public Attachment getAttachment(EnumFacing side, ItemStack stack, TileGrid tile) {
 
 		int type = stack.getItemDamage() % 5;
-		if (tile instanceof TileFluidDuct) {
+
+		if (tile.getDuct(DuctToken.FLUID) != null) {
 			return new FilterFluid(tile, (byte) (side.ordinal() ^ 1), type);
 		}
-		if (tile instanceof TileItemDuct) {
+		if (tile.getDuct(DuctToken.ITEMS) != null) {
 			return new FilterItem(tile, (byte) (side.ordinal() ^ 1), type);
 		}
 		return null;

@@ -6,7 +6,7 @@ import cofh.core.util.item.ISpecialFilterItem;
 import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import gnu.trove.list.array.TIntArrayList;
@@ -289,10 +289,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (!canAlterFlag(transferType, type, flagType)) {
 			return false;
 		}
-		if (connection.tile.world().isRemote) {
+		if (connection.baseTile.world().isRemote) {
 			connection.sendFilterConfigPacketFlag(flagType, flag);
 		} else {
-			connection.tile.markChunkDirty();
+			connection.baseTile.markChunkDirty();
 		}
 		flags[flagType] = flag;
 		recalc = true;
@@ -535,10 +535,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (!levelPerms[i].appliesTo(this)) {
 			return;
 		}
-		if (connection.tile.world().isRemote && sendUpdate) {
+		if (connection.baseTile.world().isRemote && sendUpdate) {
 			connection.sendFilterConfigPacketLevel(i, level);
 		} else {
-			connection.tile.markChunkDirty();
+			connection.baseTile.markChunkDirty();
 			levelsChanged = true;
 		}
 		levels[i] = level;

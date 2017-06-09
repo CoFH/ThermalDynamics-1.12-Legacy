@@ -4,9 +4,8 @@ import cofh.CoFHCore;
 import cofh.core.util.CoreUtils;
 import cofh.lib.util.TimeTracker;
 import cofh.lib.util.helpers.MathHelper;
+import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.DuctItem;
-import cofh.thermaldynamics.duct.ItemBlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -60,10 +59,10 @@ public class CreativeTabTD extends CreativeTabs {
 		for (Duct d : TDDucts.getSortedDucts()) {
 			list.add(d.itemStack.copy());
 
-			if (d instanceof DuctItem) {
-				list.add(((DuctItem) d).getDenseItemStack());
-				list.add(((DuctItem) d).getVacuumItemStack());
-			}
+			//			if (d instanceof DuctItem) {
+			//				list.add(((DuctItem) d).getDenseItemStack());
+			//				list.add(((DuctItem) d).getVacuumItemStack());
+			//			}
 		}
 		for (ItemStack item : itemStacks) {
 			if (!(item.getItem() instanceof ItemBlockDuct)) {

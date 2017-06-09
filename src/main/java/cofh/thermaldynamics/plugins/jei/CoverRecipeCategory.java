@@ -15,9 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by covers1624 on 26/02/2017.
- */
 public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper> {
 
 	private static final int craftOutputSlot = 0;

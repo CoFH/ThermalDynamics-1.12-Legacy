@@ -1,18 +1,19 @@
 package cofh.thermaldynamics.multiblock;
 
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
 import net.minecraft.util.EnumFacing;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MultiBlockFormer {
+public class MultiBlockFormer<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> {
 
-	Queue<IMultiBlock> blocksToCheck = new LinkedList<>();
-	MultiBlockGrid theGrid;
+	Queue<T> blocksToCheck = new LinkedList<>();
+	G theGrid;
 
-	public void formGrid(IMultiBlock theMultiBlock) {
+	public void formGrid(T theMultiBlock) {
 
-		theGrid = theMultiBlock.getNewGrid();
+		theGrid = theMultiBlock.createGrid();
 		theMultiBlock.setGrid(theGrid);
 		theGrid.addBlock(theMultiBlock);
 
@@ -21,24 +22,22 @@ public class MultiBlockFormer {
 		while (!blocksToCheck.isEmpty()) {
 			checkMultiBlock(blocksToCheck.remove());
 		}
-
-		theMultiBlock.getGrid().resetMultiBlocks();
+		theGrid.resetMultiBlocks();
 	}
 
-	private void checkMultiBlock(IMultiBlock currentMultiBlock) {
+	private void checkMultiBlock(T currentMultiBlock) {
 
 		if (!currentMultiBlock.isValidForForming()) {
 			return;
 		}
-
 		currentMultiBlock.onNeighborBlockChange();
 		currentMultiBlock.setInvalidForForming();
 
-		IMultiBlock aBlock;
+		T aBlock;
 		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (currentMultiBlock.isSideConnected(i)) {
 				aBlock = currentMultiBlock.getConnectedSide(i);
-				if (aBlock != null && aBlock.isValidForForming()) {
+				if (aBlock != null && aBlock.isValidForForming() && aBlock.getConnectedSide(i ^ 1) == currentMultiBlock) {
 					if (aBlock.getGrid() == null && theGrid.canAddBlock(aBlock)) {
 						aBlock.setGrid(theGrid);
 						theGrid.addBlock(aBlock);
@@ -53,11 +52,12 @@ public class MultiBlockFormer {
 							}
 						}
 					} else {
-						currentMultiBlock.setNotConnected(i);
-						aBlock.setNotConnected((byte) (i ^ 1));
+						currentMultiBlock.onConnectionRejected(i);
+						aBlock.onConnectionRejected(i ^ 1);
 					}
 				}
 			}
 		}
 	}
+
 }

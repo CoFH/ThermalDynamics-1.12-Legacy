@@ -52,8 +52,6 @@ public class TDTextures {
 
 		SIDE_DUCTS =            register(BLOCKS_ + "duct/side_ducts");
 
-
-
 		SERVO_BASE = new TextureAtlasSprite[][] {
 				new TextureAtlasSprite[] {
 						SERVO_BASE_0_0,
@@ -95,8 +93,6 @@ public class TDTextures {
 				FILTER_BASE_3,
 				FILTER_BASE_4,
 		};
-
-
 		//@formatter:on
 	}
 
@@ -106,7 +102,7 @@ public class TDTextures {
 		return map.registerSprite(new ResourceLocation(sprite));
 	}
 
-	//Assign the TextureMap to a file to make things even more readable!.
+	//Assign the TextureMap to a file to make things even more readable!
 	private static TextureMap map;
 
 	// Bouncer for registering ColorBlind textures.

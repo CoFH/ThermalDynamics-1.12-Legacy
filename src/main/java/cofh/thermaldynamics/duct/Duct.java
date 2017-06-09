@@ -12,9 +12,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class Duct implements IIconRegister {
+import javax.annotation.Nonnull;
 
-	public static final String REDSTONE_BLOCK = "minecraft:blocks/redstone_block";
+public class Duct implements IIconRegister, Comparable<Duct> {
+
+	//	public static final String REDSTONE_BLOCK = "minecraft:blocks/redstone_block";
+	public static final String REDSTONE_BLOCK = "thermaldynamics:blocks/duct/base/redstone_background";
+
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public enum Type {
@@ -114,9 +118,9 @@ public class Duct implements IIconRegister {
 	}
 
 	/* Comparator */
-	public int compareTo(Duct other) {
+	public int compareTo(@Nonnull Duct other) {
 
-		return this.id > other.id ? 1 : this.id < other.id ? -1 : 0;
+		return Integer.compare(this.id, other.id);
 	}
 
 	public TextureAtlasSprite getBaseTexture(ItemStack itemStack) {

@@ -6,7 +6,7 @@ import cofh.core.network.PacketTileInfo;
 import cofh.lib.gui.element.ElementButtonManaged;
 import cofh.lib.gui.element.listbox.SliderVertical;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransport;
 import cofh.thermaldynamics.gui.element.ElementDirectoryButton;
 import net.minecraft.util.ResourceLocation;
@@ -34,7 +34,7 @@ public class GuiTransport extends GuiCore {
 		this.ySize = 204;
 		this.drawInventory = false;
 		this.drawTitle = true;
-		this.name = "info.thermaldynamics.transport.name";
+		this.name = "gui.thermaldynamics.transport.name";
 	}
 
 	public final static int NUM_ENTRIES = 7;
@@ -50,7 +50,7 @@ public class GuiTransport extends GuiCore {
 
 	final static int SLIDER_WIDTH = 6;
 
-	public GuiTransport(TileTransportDuct transportDuct) {
+	public GuiTransport(DuctUnitTransport transportDuct) {
 
 		this(new ContainerTransport(transportDuct));
 	}
@@ -75,16 +75,15 @@ public class GuiTransport extends GuiCore {
 
 		Mouse.setCursorPosition((directoryButtons[0].getPosX() + (directoryButtons[0].getWidth() >> 1) + guiLeft) * this.mc.displayWidth / this.width, (this.height - (1 + directoryButtons[0].getPosY() + (directoryButtons[0].getHeight() >> 1) + guiTop + 1)) * this.mc.displayHeight / this.height);
 
-		final String configText = StringHelper.localize("info.thermaldynamics.transport.config");
+		final String configText = StringHelper.localize("gui.thermaldynamics.transport.config");
 		int stringWidth = getFontRenderer().getStringWidth(configText);
 		buttonConfig = new ElementButtonManaged(this, xSize - 12 - stringWidth, 16, stringWidth + 8, 16, configText) {
 
 			@Override
 			public void onClick() {
 
-				PacketTileInfo myPayload = PacketTileInfo.newPacket(container.transportDuct);
-				myPayload.addByte(0);
-				myPayload.addByte(TileTransportDuct.NETWORK_CONFIG);
+				PacketTileInfo myPayload = container.transportDuct.newPacketTileInfo();
+				myPayload.addByte(DuctUnitTransport.NETWORK_CONFIG);
 				PacketHandler.sendToServer(myPayload);
 			}
 		};
@@ -111,9 +110,9 @@ public class GuiTransport extends GuiCore {
 
 		ArrayList<DirectoryEntry> directory = container.directory;
 		if (directory == null) {
-			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.waiting"), getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.waiting")), ySize / 2, 0x404040);
+			fontRendererObj.drawString(StringHelper.localize("gui.thermaldynamics.transport.waiting"), getCenteredOffset(StringHelper.localize("gui.thermaldynamics.transport.waiting")), ySize / 2, 0x404040);
 		} else if (directory.isEmpty()) {
-			fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.transport.nodest"), getCenteredOffset(StringHelper.localize("info.thermaldynamics.transport.nodest")), ySize / 2, 0x404040);
+			fontRendererObj.drawString(StringHelper.localize("gui.thermaldynamics.transport.noDest"), getCenteredOffset(StringHelper.localize("gui.thermaldynamics.transport.noDest")), ySize / 2, 0x404040);
 		}
 	}
 

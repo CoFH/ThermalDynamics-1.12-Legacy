@@ -2,7 +2,8 @@ package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -52,7 +53,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 		int d = transport.direction;
 		int od = transport.oldDirection;
-		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.PIPE_LENGTH);
+		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.DUCT_LENGTH);
 		float yaw = 0, pitch;
 
 		switch (d) {
@@ -144,9 +145,13 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 		} else if (stepTime < 0.5F) {
 			if (transport.pos != null) {
 				TileEntity tile = transport.worldObj.getTileEntity(transport.pos.offset(EnumFacing.VALUES[d].getOpposite()));
-				if (tile instanceof TileTransportDuctBase) {
-					if (((TileTransportDuctBase) tile).neighborTypes[d ^ 1] == TileTDBase.NeighborTypes.NONE) {
-						GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
+
+				if (tile instanceof IDuctHolder) {
+					DuctUnitTransportBase base = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT);
+					if (base != null) {
+						if (base.getRenderConnectionType(d ^ 1).renderDuct()) {
+							GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);
+						}
 					}
 				} else {
 					GlStateManager.translate(0, -0.3F * (1 - stepTime * 2), 0);

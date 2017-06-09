@@ -1,18 +1,20 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
-import codechicken.lib.util.BlockUtils;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.item.ItemGrid;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
+import cofh.thermaldynamics.duct.item.GridItem;
+import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
-import cofh.thermaldynamics.multiblock.listtypes.ListWrapper;
+import cofh.thermaldynamics.util.ListWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,20 +34,26 @@ public class ServoItem extends ServoBase {
 	public static int[] maxSize = { 4, 16, 64, 64, 64 };
 	public static boolean[] multiStack = { false, false, false, true, true };
 
+	public static int[] tickDelays = { 60, 40, 20, 10, 10 };
+	public static byte[] speedBoost = { 1, 1, 1, 2, 3 };
+
+	public RouteCache<DuctUnitItem, GridItem> cache = null;
+	public ListWrapper<Route<DuctUnitItem, GridItem>> routeList = new ListWrapper<>();
+
 	public LinkedList<ItemStack> stuffedItems = new LinkedList<>();
 
-	public TileItemDuct itemDuct;
+	public DuctUnitItem itemDuct;
 
-	public ServoItem(TileTDBase tile, byte side, int type) {
+	public ServoItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
-		itemDuct = ((TileItemDuct) tile);
+		itemDuct = tile.getDuct(DuctToken.ITEMS);
 	}
 
-	public ServoItem(TileTDBase tile, byte side) {
+	public ServoItem(TileGrid tile, byte side) {
 
 		super(tile, side);
-		itemDuct = ((TileItemDuct) tile);
+		itemDuct = tile.getDuct(DuctToken.ITEMS);
 	}
 
 	@Override
@@ -53,21 +62,7 @@ public class ServoItem extends ServoBase {
 		return AttachmentRegistry.SERVO_ITEM;
 	}
 
-	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-
-		super.writeToNBT(tag);
-		if (isStuffed()) {
-			NBTTagList list = new NBTTagList();
-			for (ItemStack item : stuffedItems) {
-				NBTTagCompound newTag = new NBTTagCompound();
-				ItemHelper.writeItemStackToNBT(item, newTag);
-				list.appendTag(newTag);
-			}
-			tag.setTag("StuffedInv", list);
-		}
-	}
-
+	/* NBT METHODS */
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 
@@ -83,6 +78,21 @@ public class ServoItem extends ServoBase {
 			}
 		}
 		stuffed = isStuffed();
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound tag) {
+
+		super.writeToNBT(tag);
+		if (isStuffed()) {
+			NBTTagList list = new NBTTagList();
+			for (ItemStack item : stuffedItems) {
+				NBTTagCompound newTag = new NBTTagCompound();
+				ItemHelper.writeItemStackToNBT(item, newTag);
+				list.appendTag(newTag);
+			}
+			tag.setTag("StuffedInv", list);
+		}
 	}
 
 	@Override
@@ -108,9 +118,6 @@ public class ServoItem extends ServoBase {
 		onNeighborChange();
 	}
 
-	public RouteCache cache = null;
-	public ListWrapper<Route> routeList = new ListWrapper<>();
-
 	@Override
 	public List<ItemStack> getDrops() {
 
@@ -132,9 +139,6 @@ public class ServoItem extends ServoBase {
 
 		return drops;
 	}
-
-	public static int[] tickDelays = { 60, 40, 20, 10, 10 };
-	public static byte[] speedBoost = { 1, 1, 1, 2, 3 };
 
 	public int tickDelay() {
 
@@ -163,7 +167,7 @@ public class ServoItem extends ServoBase {
 
 		if (pass == 0) {
 			if (isPowered && (isValidInput || isStuffed()) && itemDuct.world().getTotalWorldTime() % tickDelay() == 0) {
-				ItemGrid.toTick.add(this);
+				GridItem.toTick.add(this);
 			}
 			return;
 		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) {
@@ -191,7 +195,7 @@ public class ServoItem extends ServoBase {
 
 	public boolean verifyCache() {
 
-		RouteCache cache1 = itemDuct.getCache(false);
+		RouteCache<DuctUnitItem, GridItem> cache1 = itemDuct.getCache(false);
 		if (!cache1.isFinishedGenerating()) {
 			return false;
 		}
@@ -205,14 +209,14 @@ public class ServoItem extends ServoBase {
 
 	public void handleItemSending() {
 
-		if (cachedInv != null) {
-			for (int slot = 0; slot < cachedInv.getSlots(); slot++) {
-				ItemStack itemStack = cachedInv.getStackInSlot(slot);
+		if (getCachedInv() != null) {
+			for (int slot = 0; slot < getCachedInv().getSlots(); slot++) {
+				ItemStack itemStack = getCachedInv().getStackInSlot(slot);
 				if (itemStack == null) {
 					continue;
 				}
 
-				itemStack = limitOutput(itemStack.copy(), cachedInv, slot, side);
+				itemStack = limitOutput(itemStack.copy(), getCachedInv(), slot, side);
 
 				if (itemStack == null || itemStack.stackSize == 0) {
 					continue;
@@ -228,17 +232,17 @@ public class ServoItem extends ServoBase {
 
 				int totalSendSize = travelingItem.stack.stackSize;
 
-				travelingItem.stack = cachedInv.extractItem(slot, travelingItem.stack.stackSize, false);
+				travelingItem.stack = getCachedInv().extractItem(slot, travelingItem.stack.stackSize, false);
 
 				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
 					continue;
 				}
 				if (multiStack[type]) {
 					if (travelingItem.stack.stackSize < totalSendSize) {
-						for (slot++; slot < cachedInv.getSlots() && travelingItem.stack.stackSize < totalSendSize; slot++) {
-							itemStack = cachedInv.getStackInSlot(slot);
+						for (slot++; slot < getCachedInv().getSlots() && travelingItem.stack.stackSize < totalSendSize; slot++) {
+							itemStack = getCachedInv().getStackInSlot(slot);
 							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-								itemStack = cachedInv.extractItem(slot, totalSendSize - travelingItem.stack.stackSize, false);
+								itemStack = getCachedInv().extractItem(slot, totalSendSize - travelingItem.stack.stackSize, false);
 								if (itemStack != null) {
 									travelingItem.stack.stackSize += itemStack.stackSize;
 								}
@@ -278,21 +282,19 @@ public class ServoItem extends ServoBase {
 		return speedBoost[type];
 	}
 
-	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route> routes, TileItemDuct duct, int side, int maxRange, byte speed) {
+	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route<DuctUnitItem, GridItem>> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
 
 		if (item == null || item.stackSize == 0) {
 			return null;
 		}
-
 		item = item.copy();
 
 		if (item.stackSize == 0) {
 			return null;
 		}
-
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
-				TileItemDuct.RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
+				RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
 				if (routeInfo.canRoute) {
 					int stackSize = item.stackSize - routeInfo.stackSize;
 					if (stackSize <= 0) {
@@ -324,9 +326,15 @@ public class ServoItem extends ServoBase {
 
 		if (stuffed != !stuffedItems.isEmpty()) {
 			stuffed = isStuffed();
-			BlockUtils.fireBlockUpdate(tile.getWorld(), tile.getPos());
+			BlockHelper.callBlockUpdate(myTile.getWorld(), myTile.getPos());
 		}
 		super.onNeighborChange();
+	}
+
+	@Override
+	public DuctToken tickUnit() {
+
+		return DuctToken.ITEMS;
 	}
 
 	@Override
@@ -344,18 +352,16 @@ public class ServoItem extends ServoBase {
 	@Override
 	public void clearCache() {
 
-		cachedInv = null;
+		this.myTile = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		cachedInv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+		this.myTile = tile;
 	}
 
-	public IItemHandler cachedInv;
-
-	public ItemStack insertItem(ItemStack item) {
+	public ItemStack insertItem(ItemStack item, boolean simulate) {
 
 		if (!filter.matchesFilter(item)) {
 			return item;
@@ -366,9 +372,11 @@ public class ServoItem extends ServoBase {
 		if (routeForItem == null) {
 			return item;
 		}
-		item.stackSize -= routeForItem.stack.stackSize;
-		itemDuct.insertNewItem(routeForItem);
-		return item.stackSize > 0 ? item : null;
+
+		if (!simulate) {
+			itemDuct.insertNewItem(routeForItem);
+		}
+		return ItemHandlerHelper.copyStackWithSize(item, item.stackSize - routeForItem.stack.stackSize);
 	}
 
 	public TravelingItem getRouteForItem(ItemStack item) {
@@ -389,6 +397,14 @@ public class ServoItem extends ServoBase {
 	public FilterLogic createFilterLogic() {
 
 		return new FilterLogic(type, Duct.Type.ITEM, this);
+	}
+
+	public IItemHandler getCachedInv() {
+
+		if (myTile == null) {
+			return null;
+		}
+		return myTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 }

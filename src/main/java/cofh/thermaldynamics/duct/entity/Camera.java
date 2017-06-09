@@ -17,7 +17,7 @@ public class Camera extends EntityLivingBase {
 		super(null);
 		this.width = 0;
 		this.height = 0;
-		invulnerable = true;
+		this.setEntityInvulnerable(true);
 	}
 
 	@Override

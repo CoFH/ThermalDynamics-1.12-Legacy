@@ -4,8 +4,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -19,12 +19,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class FilterBase extends ConnectionBase {
 
-	public FilterBase(TileTDBase tile, byte side) {
+	public FilterBase(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public FilterBase(TileTDBase tile, byte side, int type) {
+	public FilterBase(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 
@@ -36,11 +36,11 @@ public abstract class FilterBase extends ConnectionBase {
 		return "item.thermaldynamics.filter." + type + ".name";
 	}
 
-	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
-
-		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
-	}
+	//	@Override
+	//	public BlockDuct.ConnectionType getNeighborType() {
+	//
+	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
+	//	}
 
 	@Override
 	public ItemStack getPickBlock() {
@@ -56,7 +56,7 @@ public abstract class FilterBase extends ConnectionBase {
 			return false;
 		}
 
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(ccRenderState, trans, new IconTransformation(TDTextures.FILTER_BASE[type]));
 		return true;
 	}
@@ -69,4 +69,9 @@ public abstract class FilterBase extends ConnectionBase {
 		tag.setString("DisplayType", "item.thermaldynamics.filter.0.name");
 	}
 
+	@Override
+	public boolean allowDuctConnection() {
+
+		return true;
+	}
 }

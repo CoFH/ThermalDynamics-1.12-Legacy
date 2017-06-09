@@ -5,9 +5,11 @@ import codechicken.lib.render.RenderUtils;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.duct.BlockDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import com.google.common.collect.Iterators;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,11 +22,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Iterator;
 
-public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
+public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
 	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
 
@@ -34,7 +37,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 
 	public static final RenderDuctItems instance = new RenderDuctItems();
 
-	static final float ITEM_RENDER_SCALE = 0.6F;
+	static final float ITEM_RENDER_SCALE = 0.8F;
 
 	static {
 		Minecraft minecraft = Minecraft.getMinecraft();
@@ -62,15 +65,25 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 	@SubscribeEvent
 	public void clientTick(TickEvent.ClientTickEvent event) {
 
+		if (Minecraft.getMinecraft().isGamePaused()) {
+			return;
+		}
 		travelingItemSpin += spinStep;
 		travelingItemSpin %= 180;
 	}
 
-	public void renderTileEntityAt(TileItemDuct duct, double x, double y, double z, float frame, int destroyStage) {
+	@Override
+	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
+
+		DuctUnitItem duct = tile.getDuct(DuctToken.ITEMS);
+
+		if (duct == null) {
+			return;
+		}
 
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
-			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, duct.getWorld(), x, y, z, frame);
+			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, tile.getWorld(), x, y, z, frame);
 		}
 
 		if (duct.centerLine > 0) {
@@ -88,14 +101,14 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 			GlStateManager.enableCull();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 			RenderHelper.bindTexture(RenderHelper.MC_BLOCK_SHEET);
-			ccrs.preRenderWorld(duct.getWorld(), duct.getPos());
+			ccrs.preRenderWorld(tile.getWorld(), tile.getPos());
 			ccrs.colour = -1;
 			ccrs.brightness = 15728880;
 
-			int[] connections = RenderDuct.instance.getDuctConnections(duct);
+			int[] connections = RenderDuct.instance.getDuctConnections(tile);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
+				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
 					ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], frame);
 					RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 				} else {
@@ -118,16 +131,14 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 
 	public static int getAlphaLevel(int centerLine, float frame) {
 
-		return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (TileItemDuct.maxCenterLine));
+		return (int) Math.min(80, 0.7 * ((centerLine - frame) * 255.0) / (DuctUnitItem.maxCenterLine));
 	}
 
-	public void renderTravelingItems(Iterator<TravelingItem> items, TileItemDuct duct, World world, double x, double y, double z, float frame) {
+	public void renderTravelingItems(Iterator<TravelingItem> items, DuctUnitItem duct, World world, double x, double y, double z, float frame) {
 
 		if (!items.hasNext()) {
 			return;
 		}
-
-		travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
 
 		TravelingItem renderItem;
 
@@ -139,8 +150,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 				if (renderItem == null || renderItem.stack == null) {
 					continue;
 				}
-
-				double v = (renderItem.progress + frame * renderItem.step) / (duct.getPipeLength());
+				double v = (renderItem.progress + frame * renderItem.step) / (duct.getDuctLength());
 
 				v -= 0.5;
 
@@ -155,10 +165,10 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 					} else {
 						translateItem(renderItem.direction, v);
 					}
-
 					GlStateManager.scale(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
-					travelingEntityItem.setEntityItemStack(renderItem.stack);
+					travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
+					travelingEntityItem.setEntityItemStack(ItemHandlerHelper.copyStackWithSize(renderItem.stack, 1));
 					travelingItemRender.doRender(travelingEntityItem, 0, -0.3F, 0, 0, 0);
 				}
 				GlStateManager.popMatrix();
@@ -172,4 +182,5 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileItemDuct> {
 		EnumFacing face = EnumFacing.VALUES[direction];
 		GlStateManager.translate(face.getFrontOffsetX() * v, face.getFrontOffsetY() * v, face.getFrontOffsetZ() * v);
 	}
+
 }

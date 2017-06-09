@@ -3,9 +3,6 @@ package cofh.thermaldynamics.plugins.jei;
 import mezz.jei.api.recipe.IRecipeHandler;
 import mezz.jei.api.recipe.IRecipeWrapper;
 
-/**
- * Created by covers1624 on 26/02/2017.
- */
 public class CoverRecipeHandler implements IRecipeHandler<CoverRecipeWrapper> {
 
 	@Override

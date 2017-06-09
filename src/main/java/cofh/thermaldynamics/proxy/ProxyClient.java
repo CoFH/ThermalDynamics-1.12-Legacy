@@ -7,15 +7,13 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.entity.SoundWoosh;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
-import cofh.thermaldynamics.duct.item.TileItemDuctEnder;
+import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
+import cofh.thermaldynamics.duct.tiles.TileDuctItem;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
 import cofh.thermaldynamics.render.RenderDuctItems;
-import cofh.thermaldynamics.render.RenderDuctItemsEnder;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cofh.thermaldynamics.util.TickHandlerClient;
 import net.minecraft.util.EnumBlockRenderType;
@@ -28,8 +26,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +33,6 @@ import java.util.List;
 public class ProxyClient extends Proxy {
 
 	public static EnumBlockRenderType renderType;
-	public static List<IModelRegister> modelRegisters = new ArrayList<>();
 
 	/* INIT */
 	@Override
@@ -57,26 +52,27 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void initialize(FMLInitializationEvent event) {
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuctEnder.class, RenderDuctItemsEnder.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Basic.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Fast.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Energy.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.EnergyFast.Transparent.class, RenderDuctItems.instance);
+		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Warp.Transparent.class, RenderDuctItemsEnder.instance);
+		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.instance);
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Basic.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Super.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Hardened.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Energy.Transparent.class, RenderDuctFluids.instance);
 	}
 
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 
-		ProxyClient.renderType = BlockRenderingRegistry.createRenderType("TD");
+		ProxyClient.renderType = BlockRenderingRegistry.createRenderType("thermaldynamics");
 		BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.instance);
 	}
 
-	@Override
-	public void addIModelRegister(IModelRegister register) {
-
-		modelRegisters.add(register);
-	}
-
-	@Override
-	@SideOnly (Side.CLIENT)
+	/* EVENT HANDLERS */
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
 
@@ -90,12 +86,19 @@ public class ProxyClient extends Proxy {
 		TDDucts.structureInvis.registerIcons(event.getMap());
 	}
 
-	@Override
-	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
 
 		RenderDuct.initialize();
 	}
+
+	/* HELPERS */
+	@Override
+	public boolean addIModelRegister(IModelRegister register) {
+
+		return modelRegisters.add(register);
+	}
+
+	private static List<IModelRegister> modelRegisters = new ArrayList<>();
 
 }

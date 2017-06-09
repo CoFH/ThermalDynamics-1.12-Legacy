@@ -44,4 +44,5 @@ public class JEIPluginTD extends BlankModPlugin {
 			ingredientBlacklist.addIngredientToBlacklist(stack);
 		}
 	}
+
 }

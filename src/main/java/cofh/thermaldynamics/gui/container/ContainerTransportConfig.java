@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.slot.SlotIcon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerTransportConfig extends ContainerTDBase {
 
-	public ContainerTransportConfig(InventoryPlayer inventory, TileTransportDuct transportDuct) {
+	public ContainerTransportConfig(InventoryPlayer inventory, DuctUnitTransport transportDuct) {
 
 		addPlayerInventory(inventory);
 

@@ -1,6 +1,8 @@
 package cofh.thermaldynamics.util;
 
-import cofh.thermaldynamics.multiblock.IMultiBlock;
+import cofh.thermaldynamics.multiblock.IGridTile;
+import cofh.thermaldynamics.multiblock.IOccasionalTick;
+import cofh.thermaldynamics.multiblock.ISingleTick;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 
@@ -11,7 +13,8 @@ import java.util.LinkedHashSet;
 public class WorldGridList {
 
 	public LinkedHashSet<MultiBlockGrid> tickingGrids = new LinkedHashSet<>();
-	public LinkedHashSet<IMultiBlock> tickingBlocks = new LinkedHashSet<>();
+	public LinkedHashSet<ISingleTick> tickingBlocks = new LinkedHashSet<>();
+	public ArrayList<LinkedHashSet<IOccasionalTick>> occasionalTickingBlocks = new ArrayList<>();
 
 	public LinkedHashSet<MultiBlockGrid> gridsToRecreate = new LinkedHashSet<>();
 	public LinkedHashSet<MultiBlockGrid> newGrids = new LinkedHashSet<>();
@@ -41,12 +44,12 @@ public class WorldGridList {
 		if (!gridsToRecreate.isEmpty()) {
 			tickingGrids.removeAll(gridsToRecreate);
 			for (MultiBlockGrid<?> grid : gridsToRecreate) {
-				for (IMultiBlock multiBlock : grid.idleSet) {
+				for (IGridTile multiBlock : grid.idleSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);
 				}
 
-				for (IMultiBlock multiBlock : grid.nodeSet) {
+				for (IGridTile multiBlock : grid.nodeSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);
 				}
@@ -74,13 +77,36 @@ public class WorldGridList {
 			}
 		}
 		if (!tickingBlocks.isEmpty()) {
-			Iterator<IMultiBlock> iter = tickingBlocks.iterator();
+			Iterator<ISingleTick> iter = tickingBlocks.iterator();
 			while (iter.hasNext()) {
-				IMultiBlock block = iter.next();
+				ISingleTick block = iter.next();
 				if (block.existsYet()) {
-					block.tickMultiBlock();
+					block.singleTick();
+					iter.remove();
+				} else if (block.isOutdated()) {
 					iter.remove();
 				}
+			}
+		}
+
+		int lastNonEmptyList = -1;
+		for (int i = 0; i < occasionalTickingBlocks.size(); i++) {
+			LinkedHashSet<IOccasionalTick> list = occasionalTickingBlocks.get(i);
+			for (Iterator<IOccasionalTick> iterator = list.iterator(); iterator.hasNext(); ) {
+				IOccasionalTick iOccasionalTick = iterator.next();
+				if (!iOccasionalTick.occasionalTick(i)) {
+					iterator.remove();
+				}
+			}
+			if (!list.isEmpty()) {
+				lastNonEmptyList = i;
+			}
+		}
+		if (lastNonEmptyList == -1) {
+			occasionalTickingBlocks.clear();
+		} else if ((lastNonEmptyList + 1) < occasionalTickingBlocks.size()) {
+			for (int i = occasionalTickingBlocks.size() - 1; i >= lastNonEmptyList + 1; i--) {
+				occasionalTickingBlocks.remove(i);
 			}
 		}
 	}

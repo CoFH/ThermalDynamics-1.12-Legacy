@@ -4,10 +4,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.fluid.FluidTankGrid;
+import cofh.thermaldynamics.duct.fluid.GridFluid;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -18,19 +21,18 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Iterator;
 
 public class RetrieverFluid extends ServoFluid {
 
-	public RetrieverFluid(TileTDBase tile, byte side) {
+	public RetrieverFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public RetrieverFluid(TileTDBase tile, byte side, int type) {
+	public RetrieverFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
@@ -44,48 +46,60 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public void tick(int pass) {
 
-		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput || !tile.cachesExist()) {
+		GridFluid grid = fluidDuct.getGrid();
+		if (pass != 1 || grid == null || !isPowered || !isValidInput) {
+
 			return;
 		}
-		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
+		FluidTankGrid ductGridTank = grid.myTank;
+		int maxInput = (int) Math.ceil(ductGridTank.fluidThroughput * throttle[type]);
 
-		if (fluidDuct.fluidGrid.myTank.getFluid() != null) {
-			if (!fluidPassesFiltering(fluidDuct.fluidGrid.myTank.getFluid())) {
+		if (ductGridTank.getFluid() != null) {
+			if (!fluidPassesFiltering(ductGridTank.getFluid())) {
 				return;
 			}
 		}
-		for (Iterator<?> iterator = fluidDuct.fluidGrid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
-			TileFluidDuct fluidDuct = (TileFluidDuct) iterator.next();
+		for (Iterator<?> iterator = grid.nodeSet.iterator(); iterator.hasNext() && maxInput > 0; ) {
+			DuctUnitFluid fluidDuct = (DuctUnitFluid) iterator.next();
 
-			if (!fluidDuct.cachesExist()) {
-				continue;
-			}
 			for (int k = 0; k < 6 && maxInput > 0; k++) {
 				int i = (k + fluidDuct.internalSideCounter) % 6;
-				if (fluidDuct.cache[i] == null || (fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && fluidDuct.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT)) {
+
+				DuctUnitFluid.Cache cache = fluidDuct.tileCache[i];
+
+				if (cache == null || (!fluidDuct.isOutput(i) && !fluidDuct.isInput(i))) {
 					continue;
 				}
-				if (fluidDuct.attachments[i] != null) {
-					if (fluidDuct.attachments[i].getId() == this.getId()) {
-						continue;
-					}
+
+				Attachment attachment = fluidDuct.parent.getAttachment(side);
+				if (attachment != null && attachment.getId() == this.getId()) {
+					continue;
 				}
-				IFluidHandler ductHandler = fluidDuct.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[i]);
-				int input = ductHandler.fill(fluidDuct.cache[i].drain(maxInput, false), false);
+
+				IFluidHandler handler = cache.getHandler(side ^ 1);
+
+				if (handler == null) {
+					continue;
+				}
+
+				int input = ductGridTank.fill(handler.drain(maxInput, false), false);
 
 				if (input == 0) {
 					continue;
 				}
-				FluidStack fluid = fluidDuct.cache[i].drain(input, false);
+				FluidStack fluid = handler.drain(input, false);
 
-				if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid) && fluidDuct.cache[i].getTankProperties()[0].canDrainFluidType(fluid)) {
+				if (fluid != null && fluid.amount > 0 && fluidPassesFiltering(fluid) && handler.getTankProperties()[0].canDrainFluidType(fluid)) {
 
-					fluid = fluidDuct.cache[i].drain(input, true);
+					fluid = handler.drain(input, true);
 
-					maxInput -= ductHandler.fill(fluid, true);
+					maxInput -= ductGridTank.fill(fluid, true);
 
-					if (this.fluidDuct.fluidGrid.toDistribute > 0 && this.fluidDuct.fluidGrid.myTank.getFluid() != null) {
-						this.fluidDuct.transfer(side, Math.min(this.fluidDuct.fluidGrid.myTank.getFluid().amount, this.fluidDuct.fluidGrid.toDistribute), false, this.fluidDuct.fluidGrid.myTank.getFluid(), true);
+					if (this.fluidDuct.getGrid().toDistribute > 0 && this.fluidDuct.getGrid().myTank.getFluid() != null) {
+						GridFluid otherGrid = fluidDuct.getGrid();
+						if (otherGrid != null) {
+							this.fluidDuct.transfer(side, Math.min(otherGrid.myTank.getFluid().amount, otherGrid.toDistribute), false, otherGrid.myTank.getFluid(), true);
+						}
 					}
 				}
 			}
@@ -105,21 +119,20 @@ public class RetrieverFluid extends ServoFluid {
 	}
 
 	@Override
+	public boolean allowDuctConnection() {
+		return true;
+	}
+
+	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
 		if (layer != BlockRenderLayer.SOLID) {
 			return false;
 		}
 
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(TDTextures.RETRIEVER_BASE[stuffed ? 1 : 0][type]));
 		return true;
-	}
-
-	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
-
-		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
 	}
 
 	/* IPortableData */

@@ -21,7 +21,7 @@ tile.thermaldynamics.duct.itemFlux.name=Kolísající předmětová roura
 tile.thermaldynamics.duct.itemEnder.name=Endeří předmětová roura
 
 tile.thermaldynamics.duct.structure.name=Strukturální roura
-tile.thermaldynamics.duct.structureGlow.name=Světelná roura
+tile.thermaldynamics.duct.structureLight.name=Světelná roura
 
 tile.thermaldynamics.duct.energySupercond.info=Nemá žádnou zbytkovou prostornost.
 

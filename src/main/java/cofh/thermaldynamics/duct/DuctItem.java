@@ -12,6 +12,7 @@ public class DuctItem extends Duct {
 
 	public static final byte PATHWEIGHT_DENSE = 1;
 	public static final byte PATHWEIGHT_VACUUM = 2;
+
 	public TextureAtlasSprite iconBaseTextureVacuum;
 	public TextureAtlasSprite iconBaseTextureDense;
 

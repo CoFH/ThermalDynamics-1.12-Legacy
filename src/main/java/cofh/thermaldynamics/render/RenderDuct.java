@@ -14,12 +14,12 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.RenderHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.block.TileTDBase;
-import cofh.thermaldynamics.duct.BlockDuct;
+import cofh.thermaldynamics.block.BlockDuct;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermalfoundation.init.TFFluids;
@@ -57,33 +57,27 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 	public static final RenderDuct instance = new RenderDuct();
 
-	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionTypes.DUCT.ordinal(), BlockDuct.ConnectionTypes.DUCT.ordinal(), 0, 0, 0, 0 };
+	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionType.DUCT.ordinal(), BlockDuct.ConnectionType.DUCT.ordinal(), 0, 0, 0, 0 };
 	//	static int[] connections = new int[6];
-
-	static TextureAtlasSprite textureCenterLine;
-
-	static CCModel[][] modelFluid = new CCModel[6][7];
 	public static CCModel[][] modelConnection = new CCModel[3][6];
+	public static CCModel[] modelOpaqueTubes;
+	public static CCModel[] modelTransTubes;
+	static TextureAtlasSprite textureCenterLine;
+	static CCModel[][] modelFluid = new CCModel[6][7];
 	static CCModel modelCenter;
-
 	static CCModel[] modelLine = new CCModel[6];
 	static CCModel modelLineCenter;
-
 	static CCModel[] modelFrameConnection = new CCModel[64];
 	static CCModel[] modelFrame = new CCModel[64];
-
 	static CCModel[] modelTransportConnection = new CCModel[64];
 	static CCModel[] modelTransport = new CCModel[64];
+	private static CCModel[] modelFluidTubes;
+	private static CCModel[] modelLargeTubes;
 
 	static {
 		generateModels();
 		generateFluidModels();
 	}
-
-	public static CCModel[] modelOpaqueTubes;
-	public static CCModel[] modelTransTubes;
-	private static CCModel[] modelFluidTubes;
-	private static CCModel[] modelLargeTubes;
 
 	public static void initialize() {
 
@@ -168,23 +162,27 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		int c = 0;
 		Duct ductType = TDDucts.ductList.get(renderType);
 		for (int s = 0; s < 6; s++) {
-			if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct()) {
+			if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct()) {
 				IconTransformation icon;
 
-				if (BlockDuct.ConnectionTypes.values()[connection[s]] == BlockDuct.ConnectionTypes.STRUCTURE) {
+				if (connection[s] == BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
 					icon = RenderUtils.getIconTransformation(TDDucts.structure.iconBaseTexture);
 					modelConnection[0][s].render(ccrs, 8, 24, trans, icon);
 					modelConnection[0][s].render(ccrs, 32, 48, trans, icon);
 					if (ductType.iconConnectionTexture != null) {
 						modelConnection[1][s].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconConnectionTexture));
 					}
+				} else if (connection[s] == BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
+					icon = RenderUtils.getIconTransformation(TDDucts.structure.iconBaseTexture);
+					modelConnection[0][s].render(ccrs, 8, 24, trans, icon);
+					modelConnection[0][s].render(ccrs, 32, 48, trans, icon);
 				} else {
 					c = c | (1 << s);
 					if (invRender && iconBaseTexture != null) {
 						icon = RenderUtils.getIconTransformation(TDDucts.structureInvis.iconBaseTexture);
 						modelConnection[0][s].render(ccrs, 4, 8, trans, icon);
 					}
-					if (connection[s] == BlockDuct.ConnectionTypes.TILECONNECTION.ordinal() && ductType.iconConnectionTexture != null) {
+					if (connection[s] == BlockDuct.ConnectionType.TILE_CONNECTION.ordinal() && ductType.iconConnectionTexture != null) {
 						modelConnection[1][s].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconConnectionTexture));
 					}
 				}
@@ -205,9 +203,9 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		} else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
-					if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
+					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
 						modelFrameConnection[64 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
 						modelFrame[70 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 					}
@@ -217,13 +215,21 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 				modelFrameConnection[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 			}
 		} else if (ductType.frameType == 3 && ductType.iconFrameTexture != null) {
+			c = 0;
+			if (!invRender) {
+				for (int s = 0; s < 6; s++) {
+					if (BlockDuct.ConnectionType.values()[connection[s]] == BlockDuct.ConnectionType.CLEAN_DUCT) {
+						c = c | (1 << s);
+					}
+				}
+			}
 			modelLargeTubes[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 		} else if (ductType.frameType == 4 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
-					if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
+					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
 						modelTransportConnection[64 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
 					}
 				}
@@ -240,10 +246,10 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCModel[] models = pass == 0 ? ModelHelper.SideTubeGen.standardTubes : ModelHelper.SideTubeGen.standardTubesInner;
 		int c = 0;
 		for (int i = 0; i < 6; i++) {
-			if (BlockDuct.ConnectionTypes.values()[connections[i]].renderDuct() && connections[i] != BlockDuct.ConnectionTypes.CLEANDUCT.ordinal()) {
+			if (BlockDuct.ConnectionType.values()[connections[i]].renderDuct() && connections[i] != BlockDuct.ConnectionType.CLEAN_DUCT.ordinal()) {
 				c = c | (1 << i);
 
-				if (connections[i] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
+				if (connections[i] != BlockDuct.ConnectionType.DUCT.ordinal()) {
 					models[64 + i].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(icon));
 				}
 			}
@@ -268,7 +274,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			int c = 0;
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 				}
 			}
@@ -284,10 +290,10 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		if (ductType.frameType == 2 && ductType.iconFrameFluidTexture != null) {
 			int c = 0;
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 
-					if (invRender || connection[s] != BlockDuct.ConnectionTypes.DUCT.ordinal()) {
+					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
 						modelFrame[70 + s].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
 					}
 				}
@@ -302,7 +308,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		if (ductType.frameType == 4 && ductType.iconFrameFluidTexture != null) {
 			int c = 0;
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 				}
 			}
@@ -321,7 +327,6 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		if (stack == null || stack.amount <= 0 || level <= 0) {
 			return;
 		}
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		Fluid fluid = stack.getFluid();
@@ -338,7 +343,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			CCModel[] models = modelFluid[level - 1];
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					models[s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(fluidTex));
 				}
 			}
@@ -347,7 +352,7 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 			int c = 0;
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionTypes.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionTypes.STRUCTURE.ordinal()) {
+				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 				}
 			}
@@ -356,11 +361,11 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		ccrs.draw();
 	}
 
-	public int[] getDuctConnections(TileTDBase tile) {
+	public int[] getDuctConnections(TileGrid tile) {
 
 		int[] connections = new int[6];
 		for (int i = 0; i < 6; i++) {
-			connections[i] = tile.getRenderConnectionType(i).ordinal();
+			connections[i] = tile.getVisualConnectionType(i).ordinal();
 		}
 		return connections;
 	}
@@ -379,24 +384,26 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.bind(buffer);
 		TileEntity tile = world.getTileEntity(pos);
-		if (!(tile instanceof TileTDBase)) {
+		if (!(tile instanceof TileGrid)) {
 			return false;
 		}
-		TileTDBase theTile = (TileTDBase) tile;
+		TileGrid theTile = (TileGrid) tile;
 
 		ccrs.preRenderWorld(world, pos);
 		int[] connections = getDuctConnections(theTile);
 
 		boolean flag = false;
 		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
-		for (Attachment attachment : theTile.attachments) {
-			if (attachment != null) {
-				flag = attachment.render(world, layer, ccrs) || flag;
+		if (theTile.attachmentData != null) {
+			for (Attachment attachment : theTile.attachmentData.attachments) {
+				if (attachment != null) {
+					flag = attachment.render(world, layer, ccrs) || flag;
+				}
 			}
-		}
-		for (Cover cover : theTile.covers) {
-			if (cover != null) {
-				flag = cover.render(world, layer, ccrs) || flag;
+			for (Cover cover : theTile.attachmentData.covers) {
+				if (cover != null) {
+					flag = cover.render(world, layer, ccrs) || flag;
+				}
 			}
 		}
 		int renderType = TDDucts.getDuct(((BlockDuct) state.getBlock()).offset + state.getBlock().getMetaFromState(state)).id;

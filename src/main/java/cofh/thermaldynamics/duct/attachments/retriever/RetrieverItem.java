@@ -5,11 +5,12 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.Attachment;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
-import cofh.thermaldynamics.duct.item.TileItemDuct;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.multiblock.Route;
@@ -29,12 +30,12 @@ public class RetrieverItem extends ServoItem {
 
 	boolean baseTileHasOtherOutputs = false;
 
-	public RetrieverItem(TileTDBase tile, byte side) {
+	public RetrieverItem(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public RetrieverItem(TileTDBase tile, byte side, int type) {
+	public RetrieverItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
@@ -65,46 +66,53 @@ public class RetrieverItem extends ServoItem {
 			return false;
 		}
 
-		Translation trans = Vector3.fromTileCenter(tile).translation();
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
 		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, new IconTransformation(TDTextures.RETRIEVER_BASE[stuffed ? 1 : 0][type]));
 		return true;
 	}
 
 	@Override
-	public void postNeighbourChange() {
+	public void postNeighborChange() {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((tile.neighborTypes[i] == TileTDBase.NeighborTypes.OUTPUT || tile.neighborTypes[i] == TileTDBase.NeighborTypes.INPUT) && (tile.attachments[i] == null || tile.attachments[i].getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (baseTile.getAttachment(side) == null || baseTile.getAttachment(side).getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
 		}
-		super.postNeighbourChange();
+		super.postNeighborChange();
 
 	}
 
 	@Override
 	public void handleItemSending() {
 
-		IItemHandler simulatedInv = cachedInv;
+		IItemHandler simulatedInv = getCachedInv();
 
 		for (Route route : routeList) {
-			TileItemDuct endPoint = (TileItemDuct) route.endPoint;
+			DuctUnitItem endPoint = (DuctUnitItem) route.endPoint;
 
 			for (int k = 0; k < 6; k++) {
 				int i = (endPoint.internalSideCounter + k) % 6;
 
-				if (endPoint.attachments[i] != null && endPoint.attachments[i].getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+				Attachment attachment = endPoint.parent.getAttachment(i);
+				if (attachment != null && attachment.getId() == AttachmentRegistry.RETRIEVER_ITEM) {
 					continue;
 				}
 
-				if (endPoint.cache == null || endPoint.cache.handlerCache[i] == null || (endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.OUTPUT && endPoint.neighborTypes[i] != TileTDBase.NeighborTypes.INPUT) || !endPoint.connectionTypes[i].allowTransfer) {
+				DuctUnitItem.Cache cache = endPoint.tileCache[i];
+
+				if (cache == null || (!endPoint.isInput(i) && !endPoint.isOutput(i)) || !endPoint.parent.getConnectionType(i).allowTransfer) {
 					continue;
 				}
 
 				{
-					IItemHandler inv = endPoint.cache.handlerCache[i];
+					IItemHandler inv = cache.getItemHandler(i ^ 1);
+					if (inv == null) {
+						continue;
+					}
+
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
 						ItemStack item = inv.getStackInSlot(slot);
 						if (item == null) {
@@ -116,11 +124,11 @@ public class RetrieverItem extends ServoItem {
 							continue;
 						}
 
-						if (!filter.matchesFilter(item) || !endPoint.cache.filterCache[i].matchesFilter(item)) {
+						if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
 							continue;
 						}
 
-						ItemStack remainder = TileItemDuct.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
+						ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
 						if (remainder != null) {
 							item.stackSize -= remainder.stackSize;
@@ -180,10 +188,16 @@ public class RetrieverItem extends ServoItem {
 		super.handleStuffedItems();
 	}
 
-	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
+	//	@Override
+	//	public BlockDuct.ConnectionType getNeighborType() {
+	//
+	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
+	//	}
 
-		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
+	@Override
+	public boolean allowDuctConnection() {
+
+		return true;
 	}
 
 	/* IPortableData */

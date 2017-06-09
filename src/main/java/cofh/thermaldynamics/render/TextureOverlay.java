@@ -44,7 +44,7 @@ public class TextureOverlay {
 		TextureDataHolder image, newimage;
 		image = TextureUtils.loadTexture(toLoc(PATH_BASE, base));
 
-		StringBuilder builder = new StringBuilder("thermaldynamics:Duct_").append(base);
+		StringBuilder builder = new StringBuilder("thermaldynamics:duct_").append(base);
 
 		for (String texture : textures) {
 			if (texture == null) {
@@ -97,7 +97,7 @@ public class TextureOverlay {
 		TextureDataHolder image;
 		image = TextureUtils.loadTexture(toLoc(PATH_CONNECTION, connection));
 
-		String name = "thermaldynamics:Conn_" + connection;
+		String name = "thermaldynamics:conn_" + connection;
 
 		TextureAtlasSprite entry = map.getTextureExtry(name);
 		if (entry != null) {
@@ -114,7 +114,7 @@ public class TextureOverlay {
 		TextureDataHolder image;
 		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_trans"));
 
-		String name = "thermaldynamics:Frame_" + frame;
+		String name = "thermaldynamics:frame_" + frame;
 
 		TextureAtlasSprite entry = map.getTextureExtry(name);
 		if (entry != null) {
@@ -131,7 +131,7 @@ public class TextureOverlay {
 		TextureDataHolder image;
 		image = TextureUtils.loadTexture(toLoc(PATH_FRAME, frame + "_band"));
 
-		String name = "thermaldynamics:Band_" + frame;
+		String name = "thermaldynamics:band_" + frame;
 
 		TextureAtlasSprite entry = register.getTextureExtry(name);
 		if (entry != null) {

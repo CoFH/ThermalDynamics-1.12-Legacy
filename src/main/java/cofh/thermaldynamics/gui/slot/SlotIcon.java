@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.slot;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -10,9 +10,9 @@ public class SlotIcon extends SlotFalseCopy {
 
 	private static final IInventory INV = new InventoryBasic("[FALSE]", false, 0);
 
-	private final TileTransportDuct duct;
+	private final DuctUnitTransport duct;
 
-	public SlotIcon(int x, int y, TileTransportDuct duct) {
+	public SlotIcon(int x, int y, DuctUnitTransport duct) {
 
 		super(INV, 0, x, y);
 		this.duct = duct;

@@ -3,7 +3,9 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.CoFHCore;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.helpers.SoundHelper;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
@@ -38,8 +40,8 @@ public class EntityTransport extends Entity {
 	private static final DataParameter<Byte> STEP = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
 	private static final DataParameter<Byte> PAUSE = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
 
-	public static final int PIPE_LENGTH = 100;
-	public static final int PIPE_LENGTH2 = 50;
+	public static final int DUCT_LENGTH = 100;
+	public static final int DUCT_LENGTH2 = 50;
 
 	public byte progress;
 	public byte direction = 7;
@@ -94,12 +96,12 @@ public class EntityTransport extends Entity {
 		this.isImmuneToFire = true;
 	}
 
-	public EntityTransport(TileTransportDuctBase origin, Route route, byte startDirection, byte step) {
+	public EntityTransport(DuctUnitTransportBase origin, Route route, byte startDirection, byte step) {
 
 		this(origin.world());
 
 		this.step = step;
-		pos = new BlockPos(origin.getPos());
+		pos = new BlockPos(origin.pos());
 		myPath = route;
 
 		progress = 0;
@@ -198,7 +200,9 @@ public class EntityTransport extends Entity {
 
 		TileEntity tile = worldObj.getTileEntity(pos);
 
-		if (tile == null || !(tile instanceof TileTransportDuctBase)) {
+		DuctUnitTransportBase homeTile;
+
+		if (tile == null || !(tile instanceof IDuctHolder) || (homeTile = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT)) == null) {
 			if (worldObj.isRemote) {
 				pos = null;
 			} else {
@@ -206,8 +210,6 @@ public class EntityTransport extends Entity {
 			}
 			return;
 		}
-
-		TileTransportDuctBase homeTile = ((TileTransportDuctBase) tile);
 
 		if (pause > 0) {
 			pause--;
@@ -220,7 +222,7 @@ public class EntityTransport extends Entity {
 					if (pause == 0) {
 						CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
 					} else {
-						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (TileTransportDuctCrossover.CHARGE_TIME - pause) + " / " + TileTransportDuctCrossover.CHARGE_TIME), -515781222);
+						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (DuctUnitTransportLinking.CHARGE_TIME - pause) + " / " + DuctUnitTransportLinking.CHARGE_TIME), -515781222);
 					}
 				}
 
@@ -279,19 +281,20 @@ public class EntityTransport extends Entity {
 		BlockPos p = pos.offset(EnumFacing.VALUES[direction]);
 
 		TileEntity tileEntity = worldObj.getTileEntity(p);
-		if (!(tileEntity instanceof TileTransportDuctBase)) {
+		DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.TRANSPORT);
+		if (transportBase == null) {
 			pos = null;
 			return false;
 		}
-		TileTDBase.NeighborTypes[] neighbours = ((TileTransportDuctBase) tileEntity).neighborTypes;
-		if (neighbours[direction ^ 1] != TileTDBase.NeighborTypes.MULTIBLOCK) {
+
+		if (transportBase.ductCache[direction ^ 1] == null) {
 			pos = null;
 			return false;
 		}
 
 		pos = p;
 		oldDirection = direction;
-		progress %= PIPE_LENGTH;
+		progress %= DUCT_LENGTH;
 		return true;
 	}
 
@@ -401,12 +404,12 @@ public class EntityTransport extends Entity {
 		return false;
 	}
 
-	public void advanceTile(TileTransportDuctBaseRoute homeTile) {
+	public void advanceTile(DuctUnitTransportBase homeTile) {
 
-		if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.MULTIBLOCK && homeTile.connectionTypes[direction] == TileTDBase.ConnectionTypes.NORMAL) {
-			TileTransportDuctBase newHome = (TileTransportDuctBase) homeTile.getPhysicalConnectedSide(direction);
-			if (newHome != null && newHome.neighborTypes[direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
-				pos = new BlockPos(newHome.getPos());
+		if (homeTile.ductCache[direction] != null) {
+			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);
+			if (newHome != null && newHome.ductCache[direction ^ 1] != null) {
+				pos = new BlockPos(newHome.pos());
 
 				if (myPath.hasNextDirection()) {
 					oldDirection = direction;
@@ -417,16 +420,16 @@ public class EntityTransport extends Entity {
 			} else {
 				reRoute = true;
 			}
-		} else if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
+		} else if (homeTile.parent.getConnectionType(direction) == ConnectionType.FORCED) {
 			dropPassenger();
 		} else {
 			bouncePassenger(homeTile);
 		}
 	}
 
-	public void bouncePassenger(TileTransportDuctBaseRoute homeTile) {
+	public void bouncePassenger(DuctUnitTransportBase homeTile) {
 
-		if (homeTile.internalGrid == null) {
+		if (homeTile.getGrid() == null) {
 			return;
 		}
 
@@ -527,7 +530,7 @@ public class EntityTransport extends Entity {
 
 	public Vec3d getPos(byte progress, double framePos) {
 
-		double v = (progress + step * framePos) / (PIPE_LENGTH) - 0.5;
+		double v = ((double) progress + step * framePos) / (DUCT_LENGTH) - 0.5;
 		int dir = v < 0 ? oldDirection : direction;
 
 		Vec3i vec = EnumFacing.VALUES[dir].getDirectionVec();
@@ -582,7 +585,7 @@ public class EntityTransport extends Entity {
 		return p_70112_1_ < 4096;
 	}
 
-	public void teleport(TileTransportDuctBaseRoute dest) {
+	public void teleport(DuctUnitTransport dest) {
 
 		if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
 			return;
@@ -613,7 +616,7 @@ public class EntityTransport extends Entity {
 			destinationWorld.resetUpdateEntityTick();
 		}
 
-		pos = new BlockPos(dest.getPos());
+		pos = new BlockPos(dest.pos());
 
 		if (myPath.hasNextDirection()) {
 			oldDirection = direction;

@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.container;
 
+import cofh.thermaldynamics.duct.GridStructural;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
-import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.inventory.IContainerListener;
 
 public class ContainerRelay extends ContainerAttachmentBase {
@@ -26,7 +26,7 @@ public class ContainerRelay extends ContainerAttachmentBase {
 
 		relayPower = relay.getPowerLevel();
 
-		MultiBlockGrid grid = relay.tile.myGrid;
+		GridStructural grid = relay.structureUnit.getGrid();
 		if (grid != null && grid.rs != null) {
 			if (grid.rs.nextRedstoneLevel == -128) {
 				gridPower = grid.rs.redstoneLevel;
