@@ -3,18 +3,18 @@ package cofh.thermaldynamics.render;
 import codechicken.lib.render.CCRenderState;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
-import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
+import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 
-public class RenderDuctFluids extends TileEntitySpecialRenderer<TileFluidDuct> {
+public class RenderDuctFluids extends TileEntitySpecialRenderer<TileDuctFluid> {
 
 	public static final RenderDuctFluids instance = new RenderDuctFluids();
 
 	@Override
-	public void renderTileEntityAt(TileFluidDuct duct, double x, double y, double z, float frame, int destroyStage) {
+	public void renderTileEntityAt(TileDuctFluid duct, double x, double y, double z, float frame, int destroyStage) {
 
 		DuctUnitFluid fluid = Validate.notNull(duct.getDuct(DuctToken.FLUID));
 

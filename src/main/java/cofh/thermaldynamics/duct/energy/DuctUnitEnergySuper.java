@@ -11,9 +11,9 @@ public class DuctUnitEnergySuper extends DuctUnitEnergy {
 	}
 
 	@Override
-	public EnergyGridSuper createGrid() {
+	public GridEnergySuper createGrid() {
 
-		return new EnergyGridSuper(parent.world(), getTransferLimit(), getCapacity());
+		return new GridEnergySuper(parent.world(), getTransferLimit(), getCapacity());
 	}
 
 }

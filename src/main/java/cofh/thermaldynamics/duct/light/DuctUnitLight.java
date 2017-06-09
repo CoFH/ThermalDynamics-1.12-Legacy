@@ -18,18 +18,18 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
+public class DuctUnitLight extends DuctUnit<DuctUnitLight, GridLight, Void> {
 
 	private static final Void[] voids = new Void[6];
 
 	@Override
-	protected Void[] createTileCaches() {
+	protected Void[] createTileCache() {
 
 		return voids;
 	}
 
 	@Override
-	protected DuctUnitLight[] createPipeCache() {
+	protected DuctUnitLight[] createDuctCache() {
 
 		return new DuctUnitLight[6];
 	}
@@ -48,19 +48,19 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 
 	@Nonnull
 	@Override
-	public DuctToken<DuctUnitLight, LightGrid, Void> getToken() {
+	public DuctToken<DuctUnitLight, GridLight, Void> getToken() {
 
 		return DuctToken.LIGHT;
 	}
 
 	@Override
-	public LightGrid createGrid() {
+	public GridLight createGrid() {
 
-		return new LightGrid(world());
+		return new GridLight(world());
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitLight, LightGrid, Void> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitLight, GridLight, Void> adjDuct, byte side, byte oppositeSide) {
 
 		return true;
 	}
@@ -112,10 +112,10 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 	public void onNeighborBlockChange() {
 
 		super.onNeighborBlockChange();
+
 		if (ServerHelper.isClientWorld(world())) {
 			return;
 		}
-
 		lit = false;
 		EnumFacing[] valid_directions = EnumFacing.VALUES;
 		for (int i = 0; !lit && i < valid_directions.length; i++) {
@@ -127,7 +127,6 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, LightGrid, Void> {
 			EnumFacing dir = valid_directions[i];
 			lit = world().isSidePowered(pos().offset(dir), dir);
 		}
-
 		if (grid != null && grid.lit != lit) {
 			grid.upToDate = false;
 		}

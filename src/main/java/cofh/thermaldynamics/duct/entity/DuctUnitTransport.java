@@ -54,7 +54,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		super.handleTileSideUpdate(tile, holder, side, type, oppositeSide);
 
 		if (type == ConnectionType.FORCED) {
-			pipeCache[side] = null;
+			ductCache[side] = null;
 			nodeMask |= (1 << side);
 		}
 	}
@@ -62,7 +62,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	@Override
 	public boolean onWrench(EntityPlayer player, int side, RayTraceResult rayTrace) {
 
-		if (pipeCache[side] == null) {
+		if (ductCache[side] == null) {
 			if (parent.getConnectionType(side) == ConnectionType.FORCED) {
 				parent.setConnectionType(side, ConnectionType.NORMAL);
 			} else {
@@ -74,9 +74,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 					}
 				}
 			}
-
 			onNeighborBlockChange();
-
 			return true;
 		} else {
 			return false;
@@ -96,7 +94,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		if (parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
 			return BlockDuct.ConnectionType.TILE_CONNECTION;
 		}
-
 		return super.getRenderConnectionType(side);
 	}
 
@@ -165,25 +162,21 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		if (super.openGui(player) || ServerHelper.isClientWorld(world())) {
 			return true;
 		}
-
 		if (grid == null) {
 			return false;
 		}
-
 		onNeighborBlockChange();
 
 		for (int i = 0; i < 6; i++) {
 			if (parent.getConnectionType(i) == ConnectionType.FORCED) {
-				if (pipeCache[i] != null) {
+				if (ductCache[i] != null) {
 					continue;
 				}
-
 				PacketHandler.sendTo(parent.getTilePacket(), player);
 				player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ID, world(), pos().getX(), pos().getY(), pos().getZ());
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -197,7 +190,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		if (data != BLANK_NAME) {
 			data.write(nbt, this);
 		}
-
 		return nbt;
 	}
 
@@ -231,7 +223,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		} else {
 			data = BLANK_NAME;
 		}
-
 	}
 
 	public final static int NETWORK_REQUEST = 0;
@@ -258,7 +249,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			if (!(openContainer instanceof ContainerTransport)) {
 				return;
 			}
-
 			ContainerTransport transport = (ContainerTransport) openContainer;
 
 			transport.setEntry(new DirectoryEntry(payload));
@@ -269,7 +259,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			for (int i = 0; i < size; i++) {
 				entries.add(new DirectoryEntry(payload));
 			}
-
 			transport.setDirectory(entries);
 		} else if (type == NETWORK_CONFIG && isServer) {
 			PacketHandler.sendTo(parent.getTilePacket(), thePlayer);
@@ -322,23 +311,21 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		PacketTileInfo myPayload = newPacketTileInfo();
 		myPayload.addByte(NETWORK_LIST);
 
-		LinkedList<Route<DuctUnitTransportBase, TransportGrid>> outputRoutes = getCache().outputRoutes;
+		LinkedList<Route<DuctUnitTransportBase, GridTransport>> outputRoutes = getCache().outputRoutes;
 
 		ArrayList<DuctUnitTransport> ducts = new ArrayList<>(outputRoutes.size());
 
-		for (Route<DuctUnitTransportBase, TransportGrid> outputRoute : outputRoutes) {
+		for (Route<DuctUnitTransportBase, GridTransport> outputRoute : outputRoutes) {
 			if (outputRoute.endPoint.isOutput() && outputRoute.endPoint != this && outputRoute.endPoint instanceof DuctUnitTransport) {
 				ducts.add((DuctUnitTransport) outputRoute.endPoint);
 			}
 		}
-
 		DirectoryEntry.addDirectoryEntry(myPayload, this);
 
 		myPayload.addShort(ducts.size());
 		for (DuctUnitTransport endPoint : ducts) {
 			DirectoryEntry.addDirectoryEntry(myPayload, endPoint);
 		}
-
 		return myPayload;
 	}
 
@@ -357,11 +344,9 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 				if (player.openContainer instanceof ContainerTransport) {
 					player.closeScreen();
 				}
-
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -396,7 +381,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		if (ServerHelper.isClientWorld(world())) {
 			return true;
 		}
-
 		PacketHandler.sendTo(parent.getTilePacket(), player);
 		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, world(), pos.getX(), pos.getY(), pos.getZ());
 		return true;
@@ -415,13 +399,13 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	}
 
 	@Override
-	public TransportGrid createGrid() {
+	public GridTransport createGrid() {
 
-		return new TransportGrid(world());
+		return new GridTransport(world());
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, GridTransport, TransportDestination> adjDuct, byte side, byte oppositeSide) {
 
 		return adjDuct.cast().isRoutable();
 	}
@@ -433,12 +417,12 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		return null;
 	}
 
-	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache() {
+	public RouteCache<DuctUnitTransportBase, GridTransport> getCache() {
 
 		return getCache(true);
 	}
 
-	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache(boolean urgent) {
+	public RouteCache<DuctUnitTransportBase, GridTransport> getCache(boolean urgent) {
 
 		assert grid != null;
 		return urgent ? grid.getRoutesFromOutput(this) : grid.getRoutesFromOutputNonUrgent(this);
@@ -450,7 +434,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		if (entity == null || entity.isDead) {
 			return null;
 		}
-
 		for (Route outputRoute : getCache().outputRoutes) {
 			if (outputRoute.endPoint == this || !outputRoute.endPoint.isOutput()) {
 				continue;
@@ -508,7 +491,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 				return i;
 			}
 		}
-
 		return 0;
 	}
 
@@ -543,7 +525,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			if (!nbt.hasKey("DestinationName") && !nbt.hasKey("DestinationIcon")) {
 				return BLANK_NAME;
 			}
-
 			OutputData outputData = new OutputData();
 			outputData.name = nbt.getString("DestinationName");
 			outputData.item = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("DestinationIcon"));

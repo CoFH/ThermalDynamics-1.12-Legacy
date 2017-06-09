@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> implements IGridTileRoute<DuctUnitTransportBase, TransportGrid> {
+public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBase, GridTransport, DuctUnitTransportBase.TransportDestination> implements IGridTileRoute<DuctUnitTransportBase, GridTransport> {
 
 	public DuctUnitTransportBase(TileGrid parent, Duct duct) {
 
@@ -24,7 +24,7 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 
 	@Nonnull
 	@Override
-	public DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> getToken() {
+	public DuctToken<DuctUnitTransportBase, GridTransport, DuctUnitTransportBase.TransportDestination> getToken() {
 
 		return DuctToken.TRANSPORT;
 	}
@@ -107,7 +107,7 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	@Override
 	public DuctUnitTransportBase getCachedTile(byte side) {
 
-		return pipeCache[side];
+		return ductCache[side];
 	}
 
 	@Override
@@ -149,13 +149,13 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	}
 
 	@Override
-	protected TransportDestination[] createTileCaches() {
+	protected TransportDestination[] createTileCache() {
 
 		return new TransportDestination[6];
 	}
 
 	@Override
-	protected DuctUnitTransportBase[] createPipeCache() {
+	protected DuctUnitTransportBase[] createDuctCache() {
 
 		return new DuctUnitTransportBase[6];
 	}

@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.attachments;
 
-import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IPortableData;
 import cofh.core.network.PacketCoFHBase;
@@ -92,7 +91,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered) {
-			BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
+			BlockHelper.callBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 		}
 	}
 
@@ -113,7 +112,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered || isValidInput != wasValidInput) {
-			BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
+			BlockHelper.callBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 		}
 	}
 

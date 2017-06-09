@@ -22,13 +22,13 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 	}
 
 	@Override
-	public FluidGridSuper createGrid() {
+	public GridFluidSuper createGrid() {
 
-		return new FluidGridSuper(world());
+		return new GridFluidSuper(world());
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, GridFluid, Cache> adjDuct, byte side, byte oppositeSide) {
 
 		Duct ductType = adjDuct.getDuctType();
 		return (ductType == TDDucts.fluidSuper || ductType == TDDucts.fluidSuperOpaque) && super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
@@ -37,11 +37,11 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 	@Override
 	public IFluidHandler getFluidCapability(EnumFacing from) {
 
-		FluidGridSuper fluidGridSuper = (FluidGridSuper) this.grid;
-		if (fluidGridSuper == null) {
+		GridFluidSuper gridFluidSuper = (GridFluidSuper) this.grid;
+
+		if (gridFluidSuper == null) {
 			return EmptyFluidHandler.INSTANCE;
 		}
-
 		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new IFluidHandler() {
 
 			@Override
@@ -56,7 +56,7 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			public int fill(FluidStack resource, boolean doFill) {
 
 				if (resource != null && isOpen(from) && matchesFilter(from, resource)) {
-					return fluidGridSuper.sendFluid(resource, !doFill);
+					return gridFluidSuper.sendFluid(resource, !doFill);
 				}
 				return 0;
 			}
@@ -96,4 +96,5 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 	//			return CoverHoleRender.hollowDuctLarge;
 	//		}
 	//	}
+
 }

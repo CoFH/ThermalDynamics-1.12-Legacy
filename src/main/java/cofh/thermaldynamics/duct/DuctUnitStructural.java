@@ -32,13 +32,13 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 	}
 
 	@Override
-	protected Void[] createTileCaches() {
+	protected Void[] createTileCache() {
 
 		return VOIDS;
 	}
 
 	@Override
-	protected DuctUnitStructural[] createPipeCache() {
+	protected DuctUnitStructural[] createDuctCache() {
 
 		return new DuctUnitStructural[6];
 	}

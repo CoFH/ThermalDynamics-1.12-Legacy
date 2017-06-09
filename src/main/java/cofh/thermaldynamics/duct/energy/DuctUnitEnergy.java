@@ -13,7 +13,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> implements cofh.api.energy.IEnergyStorage {
+public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> implements cofh.api.energy.IEnergyStorage {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;
@@ -28,40 +28,40 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		this.capacity = capacity;
 	}
 
-	public DuctUnitEnergy(TileEnergyDuct tileEnergyDuct, Duct duct) {
+	public DuctUnitEnergy(TileDuctEnergy parent, Duct duct) {
 
-		super(tileEnergyDuct, duct);
-		transferLimit = EnergyGrid.NODE_TRANSFER[duct.type];
-		capacity = EnergyGrid.NODE_STORAGE[duct.type];
+		super(parent, duct);
+		transferLimit = GridEnergy.NODE_TRANSFER[duct.type];
+		capacity = GridEnergy.NODE_STORAGE[duct.type];
 	}
 
 	@Override
-	protected IEnergyReceiver[] createTileCaches() {
+	protected IEnergyReceiver[] createTileCache() {
 
 		return new IEnergyReceiver[6];
 	}
 
 	@Override
-	protected DuctUnitEnergy[] createPipeCache() {
+	protected DuctUnitEnergy[] createDuctCache() {
 
 		return new DuctUnitEnergy[6];
 	}
 
 	@Nonnull
 	@Override
-	public DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> getToken() {
+	public DuctToken<DuctUnitEnergy, GridEnergy, IEnergyReceiver> getToken() {
 
 		return DuctToken.ENERGY;
 	}
 
 	@Override
-	public EnergyGrid createGrid() {
+	public GridEnergy createGrid() {
 
-		return new EnergyGrid(world(), getTransferLimit(), getCapacity());
+		return new GridEnergy(world(), getTransferLimit(), getCapacity());
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 
 		return getTransferLimit() == adjDuct.cast().getTransferLimit();
 	}
@@ -121,7 +121,6 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 				};
 			}
 		}
-
 		return null;
 	}
 
@@ -166,8 +165,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 
 		for (byte i = this.internalSideCounter; i < 6 && usedEnergy < energy; i++) {
 
-			if (tileCaches[i] != null) {
-				IEnergyReceiver receiver = tileCaches[i];
+			if (tileCache[i] != null) {
+				IEnergyReceiver receiver = tileCache[i];
 				if (receiver.canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
 					usedEnergy += sendEnergy(receiver, energy - usedEnergy, i, simulate);
 				}
@@ -177,10 +176,9 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 				}
 			}
 		}
-
 		for (byte i = 0; i < this.internalSideCounter && usedEnergy < energy; i++) {
-			if (tileCaches[i] != null) {
-				IEnergyReceiver receiver = tileCaches[i];
+			if (tileCache[i] != null) {
+				IEnergyReceiver receiver = tileCache[i];
 				if (receiver.canConnectEnergy(EnumFacing.VALUES[i ^ 1])) {
 					usedEnergy += sendEnergy(receiver, energy - usedEnergy, i, simulate);
 				}
@@ -234,19 +232,12 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		return nbt;
 	}
 
-	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+	public boolean canExtract() {
 
-		if (grid == null) {
-			return 0;
-		}
-		return grid.receiveEnergy(maxReceive, simulate);
+		return true;
 	}
 
-	public boolean canConnectEnergy(EnumFacing facing) {
-
-		return tileCaches[facing.ordinal()] != null;
-	}
-
+	/* IEnergyStorage */
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
 
@@ -257,11 +248,6 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 	public int extractEnergy(int maxExtract, boolean simulate) {
 
 		return (canExtract() && grid != null) ? grid.myStorage.extractEnergy(maxExtract, simulate) : 0;
-	}
-
-	public boolean canExtract() {
-
-		return true;
 	}
 
 	public int getEnergyStored() {
@@ -275,6 +261,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergy
 		return grid != null ? grid.myStorage.getMaxEnergyStored() : 0;
 	}
 
+	/* CAPABILITIES */
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 

@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import codechicken.lib.raytracer.RayTracer;
-import codechicken.lib.util.BlockUtils;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.BlockDuct;
@@ -13,7 +13,8 @@ import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterAttachment;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterFluid;
-import cofh.thermaldynamics.duct.fluid.FluidGrid.FluidRenderType;
+import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
+import cofh.thermaldynamics.duct.fluid.GridFluid.FluidRenderType;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.DuctUnit;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
@@ -31,11 +32,12 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFluid.Cache> {
+public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFluid.Cache> {
 
 	// the logic for this field is required to ensure lighting is propagated the full distance for all nearby ducts
 	// the lighting code is incapable of handling when a bunch of adjacent blocks all update state simultaneously
@@ -53,13 +55,13 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	}
 
 	@Override
-	protected Cache[] createTileCaches() {
+	protected Cache[] createTileCache() {
 
 		return new Cache[6];
 	}
 
 	@Override
-	protected DuctUnitFluid[] createPipeCache() {
+	protected DuctUnitFluid[] createDuctCache() {
 
 		return new DuctUnitFluid[6];
 	}
@@ -136,7 +138,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			return 0;
 		}
 
-		DuctUnitFluid.Cache cache = tileCaches[bSide];
+		DuctUnitFluid.Cache cache = tileCache[bSide];
 
 		if (cache == null) {
 			return 0;
@@ -253,25 +255,25 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 
 		if (b == TileFluidPackets.UPDATE_RENDER) {
 			myRenderFluid = payload.getFluidStack();
-			BlockUtils.fireBlockUpdate(world(), pos());
+			BlockHelper.callBlockUpdate(world(), pos());
 		}
 	}
 
 	@Nonnull
 	@Override
-	public DuctToken<DuctUnitFluid, FluidGrid, Cache> getToken() {
+	public DuctToken<DuctUnitFluid, GridFluid, Cache> getToken() {
 
 		return DuctToken.FLUID;
 	}
 
 	@Override
-	public FluidGrid createGrid() {
+	public GridFluid createGrid() {
 
-		return new FluidGrid(world());
+		return new GridFluid(world());
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, FluidGrid, Cache> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitFluid, GridFluid, Cache> adjDuct, byte side, byte oppositeSide) {
 
 		DuctUnitFluid ductUnitFluid = adjDuct.cast();
 		FluidStack myFluid = getConnectionFluid();
@@ -358,52 +360,9 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 		}
 	}
 
-	public IFluidHandler getFluidCapability(final EnumFacing from) {
-
-		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new IFluidHandler() {
-
-			@Override
-			public IFluidTankProperties[] getTankProperties() {
-
-				FluidStack info = grid != null ? grid.myTank.getInfo().fluid : null;
-				int capacity = grid != null ? grid.myTank.getInfo().capacity : 0;
-				return new IFluidTankProperties[] { new FluidTankProperties(info, capacity, isInput(from.ordinal()), isOutput(from.ordinal())) };
-			}
-
-			@Override
-			public int fill(FluidStack resource, boolean doFill) {
-
-				if (isInput(from.ordinal()) && matchesFilter(from, resource)) {
-					return grid.myTank.fill(resource, doFill);
-				}
-				return 0;
-			}
-
-			@Nullable
-			@Override
-			public FluidStack drain(FluidStack resource, boolean doDrain) {
-
-				if (isOutput(from.ordinal())) {
-					return grid.myTank.drain(resource, doDrain);
-				}
-				return null;
-			}
-
-			@Nullable
-			@Override
-			public FluidStack drain(int maxDrain, boolean doDrain) {
-
-				if (isOutput(from.ordinal())) {
-					return grid.myTank.drain(maxDrain, doDrain);
-				}
-				return null;
-			}
-		});
-	}
-
 	public boolean matchesFilter(EnumFacing from, FluidStack resource) {
 
-		Cache cache = tileCaches[from.ordinal()];
+		Cache cache = tileCache[from.ordinal()];
 		return from == null || cache == null || cache.filter.allowFluid(resource);
 	}
 
@@ -445,24 +404,11 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-
-		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
-	}
-
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-
-		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this.getFluidCapability(facing));
-	}
-
-	@Override
 	public void onPlaced(EntityLivingBase living, ItemStack stack) {
 
 		if (ServerHelper.isClientWorld(world())) {
 			return;
 		}
-
 		EnumFacing placingSide = null;
 		FluidStack fluidStack = null;
 
@@ -504,10 +450,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 	@Override
 	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
 
-		if (tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side])) {
-			return true;
-		}
-		return super.isInputTile(tile, side);
+		return !(tile instanceof IDuctHolder) && parent.getAttachment(side) instanceof ServoFluid;
 	}
 
 	public int[] getRenderFluidConnections() {
@@ -517,6 +460,65 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			connections[i] = parent.getVisualConnectionType(i).ordinal();
 		}
 		return connections;
+	}
+
+	/* CAPABILITIES */
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+
+		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+
+		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this.getFluidCapability(facing));
+	}
+
+	public IFluidHandler getFluidCapability(final EnumFacing from) {
+
+		if (this.grid == null) {
+			return EmptyFluidHandler.INSTANCE;
+		}
+		return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new IFluidHandler() {
+
+			@Override
+			public IFluidTankProperties[] getTankProperties() {
+
+				FluidStack info = grid != null ? grid.myTank.getInfo().fluid : null;
+				int capacity = grid != null ? grid.myTank.getInfo().capacity : 0;
+				return new IFluidTankProperties[] { new FluidTankProperties(info, capacity, isOpen(from), isOpen(from)) };
+			}
+
+			@Override
+			public int fill(FluidStack resource, boolean doFill) {
+
+				if (resource != null && isOpen(from) && matchesFilter(from, resource)) {
+					return grid.myTank.fill(resource, doFill);
+				}
+				return 0;
+			}
+
+			@Nullable
+			@Override
+			public FluidStack drain(FluidStack resource, boolean doDrain) {
+
+				if (isOpen(from)) {
+					return grid.myTank.drain(resource, doDrain);
+				}
+				return null;
+			}
+
+			@Nullable
+			@Override
+			public FluidStack drain(int maxDrain, boolean doDrain) {
+
+				if (isOpen(from)) {
+					return grid.myTank.drain(maxDrain, doDrain);
+				}
+				return null;
+			}
+		});
 	}
 
 	public static class Cache {
@@ -537,7 +539,6 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, FluidGrid, DuctUnitFl
 			}
 			return null;
 		}
-
 	}
 
 	public class TileFluidPackets {

@@ -130,7 +130,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, GridTransport, TransportDestination> adjDuct, byte side, byte oppositeSide) {
 
 		return true;
 	}
@@ -234,14 +234,14 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			t.advanceTile(this);
 			;
 		} else {
-			if (this.pipeCache[t.direction] != null) {
+			if (this.ductCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = (DuctUnitTransportBase) this.getPhysicalConnectedSide(t.direction);
 				if (!(newHome instanceof DuctUnitTransportLongRange)) {
 					t.bouncePassenger(this);
 					return;
 				}
 
-				if (((DuctUnitTransportLongRange) newHome).pipeCache[(t.direction ^ 1)] != null) {
+				if (((DuctUnitTransportLongRange) newHome).ductCache[(t.direction ^ 1)] != null) {
 					t.pos = new BlockPos(newHome.pos());
 
 					t.oldDirection = t.direction;
@@ -252,7 +252,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				} else {
 					t.reRoute = true;
 				}
-			} else if (this.tileCaches[t.direction] != null) {
+			} else if (this.tileCache[t.direction] != null) {
 				t.dropPassenger();
 			} else {
 				t.bouncePassenger(this);
@@ -264,7 +264,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public void advanceEntity(EntityTransport t) {
 
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
-			if (pipeCache[t.direction] != null && rangePos[t.direction] != null) {
+			if (ductCache[t.direction] != null && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
 				t.pause = CHARGE_TIME;
 			}
@@ -276,7 +276,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public boolean advanceEntityClient(EntityTransport t) {
 
 		if (t.progress < EntityTransport.PIPE_LENGTH2 && (t.progress + t.step) >= EntityTransport.PIPE_LENGTH2) {
-			if (pipeCache[t.direction] != null && rangePos[t.direction] != null) {
+			if (ductCache[t.direction] != null && rangePos[t.direction] != null) {
 				t.progress = EntityTransport.PIPE_LENGTH2;
 				t.pause = CHARGE_TIME;
 				return true;
@@ -344,9 +344,9 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public TransportGrid createGrid() {
+	public GridTransport createGrid() {
 
-		return new TransportGrid(world());
+		return new GridTransport(world());
 	}
 
 	@Nullable
@@ -359,18 +359,18 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	@Override
 	public DuctUnitTransportBase getCachedTile(byte side) {
 
-		if (pipeCache[side] != null && pipeCache[side].isLongRange()) {
+		if (ductCache[side] != null && ductCache[side].isLongRange()) {
 			return null;
 		}
 		return super.getCachedTile(side);
 	}
 
-	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache() {
+	public RouteCache<DuctUnitTransportBase, GridTransport> getCache() {
 
 		return getCache(true);
 	}
 
-	public RouteCache<DuctUnitTransportBase, TransportGrid> getCache(boolean urgent) {
+	public RouteCache<DuctUnitTransportBase, GridTransport> getCache(boolean urgent) {
 
 		assert grid != null;
 		return urgent ? grid.getRoutesFromOutput(this) : grid.getRoutesFromOutputNonUrgent(this);

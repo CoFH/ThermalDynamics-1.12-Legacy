@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.relay;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
@@ -11,6 +10,7 @@ import cofh.api.core.IPortableData;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockDuct;
@@ -414,9 +414,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 			}
 
 		}
-
-		BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
-
+		BlockHelper.callBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 	}
 
 	@Override
@@ -431,7 +429,6 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -451,9 +448,8 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		if (grid != null) {
 			grid.resetRelays();
 		}
-
 		onNeighborChange();
-		BlockUtils.fireBlockUpdate(baseTile.getWorld(), baseTile.getPos());
+		BlockHelper.callBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 	}
 
 	@Override
@@ -461,4 +457,5 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		writeToNBT(tag);
 	}
+
 }

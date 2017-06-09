@@ -5,7 +5,7 @@ import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 
@@ -41,7 +41,7 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 	@Override
 	public boolean acceptingItems() {
 
-		EnergyGrid grid = enderEnergy.getGrid();
+		GridEnergy grid = enderEnergy.getGrid();
 		return grid != null && grid.isPowered();
 	}
 

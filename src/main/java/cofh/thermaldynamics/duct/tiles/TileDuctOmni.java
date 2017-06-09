@@ -5,7 +5,7 @@ import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidOmni;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 
@@ -18,7 +18,7 @@ public class TileDuctOmni extends TileGridStructureBase implements IEnergyReceiv
 		super();
 		DuctUnitEnergy energy = new DuctUnitEnergy(this, ductType, 1000, 1000) {
 			@Override
-			public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+			public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 
 				return super.canConnectToOtherDuct(adjDuct, side, oppositeSide) && (adjDuct.getDuctType() == TDDucts.itemOmni || adjDuct.getDuctType() == TDDucts.itemOmniOpaque);
 			}

@@ -5,14 +5,14 @@ import cofh.thermaldynamics.multiblock.MultiBlockGridWithRoutes;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class TransportGrid extends MultiBlockGridWithRoutes<DuctUnitTransportBase, TransportGrid> {
+public class GridTransport extends MultiBlockGridWithRoutes<DuctUnitTransportBase, GridTransport> {
 
-	public TransportGrid(World world) {
+	public GridTransport(World world) {
 
 		super(world);
 	}
 
-	public TransportGrid() {
+	public GridTransport() {
 
 		this(DimensionManager.getWorld(0));
 	}

@@ -6,14 +6,13 @@ import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
-import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
-import cofh.thermaldynamics.duct.tiles.TileItemDuct;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
+import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
+import cofh.thermaldynamics.duct.tiles.TileDuctItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 			String unloc = getUnlocalizedNameInefficiently(item);
 
 			if (type.opaque) {
-				if (I18n.canTranslate(unloc + ".opaque.name")) {
+				if (StringHelper.canLocalize(unloc + ".opaque.name")) {
 					unloc += ".opaque";
 				} else {
 					opaqueLocalized = "tile.thermaldynamics.duct.opaque.name";
@@ -52,13 +51,13 @@ public class ItemBlockDuct extends ItemBlockCore {
 			/* Dense / Vacuum */
 			if (type instanceof DuctItem && item.getTagCompound() != null) {
 				if (item.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_DENSE) {
-					if (I18n.canTranslate(unloc + ".dense.name")) {
+					if (StringHelper.canLocalize(unloc + ".dense.name")) {
 						unloc += ".dense";
 					} else {
 						modeLocalized = "tile.thermaldynamics.duct.dense.name";
 					}
 				} else if (item.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT) == DuctItem.PATHWEIGHT_VACUUM) {
-					if (I18n.canTranslate(unloc + ".vacuum.name")) {
+					if (StringHelper.canLocalize(unloc + ".vacuum.name")) {
 						unloc += ".vacuum";
 					} else {
 						modeLocalized = "tile.thermaldynamics.duct.vacuum.name";
@@ -68,10 +67,10 @@ public class ItemBlockDuct extends ItemBlockCore {
 			String ret = StringHelper.localize(unloc + ".name");
 
 			if (opaqueLocalized != null) {
-				ret = I18n.translateToLocalFormatted(opaqueLocalized, ret);
+				ret = StringHelper.localizeFormat(opaqueLocalized, ret);
 			}
 			if (modeLocalized != null) {
-				ret = I18n.translateToLocalFormatted(modeLocalized, ret);
+				ret = StringHelper.localizeFormat(modeLocalized, ret);
 			}
 			return ret;
 		} else {
@@ -120,7 +119,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 				list.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 
 				if (duct != TDDucts.energySuperCond) {
-					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + EnergyGrid.NODE_TRANSFER[duct.type] + StringHelper.LIGHT_GRAY + " RF/t.");
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + GridEnergy.NODE_TRANSFER[duct.type] + StringHelper.LIGHT_GRAY + " RF/t.");
 				} else {
 					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + " RF/t.");
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySuper.info"));
@@ -136,7 +135,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
 				} else if (duct.type == 2) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.fluidEnergy"));
-					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileFluidDuct.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctFluid.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
 				} else if (duct.type == 3) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
@@ -156,7 +155,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.itemEnergy"));
 				} else if (duct.type == 3) {
 					list.add(StringHelper.localize("info.thermaldynamics.duct.itemEnergy"));
-					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileItemDuct.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					list.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctItem.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 					list.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
 				}
 				if (stack.hasTagCompound()) {

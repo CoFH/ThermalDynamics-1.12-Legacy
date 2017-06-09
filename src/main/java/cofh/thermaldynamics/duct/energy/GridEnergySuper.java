@@ -3,14 +3,14 @@ package cofh.thermaldynamics.duct.energy;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 
-public class EnergyGridSuper extends EnergyGrid {
+public class GridEnergySuper extends GridEnergy {
 
 	int nodeTracker;
 	boolean isSendingEnergy;
 
 	DuctUnitEnergy[] nodeList = null;
 
-	public EnergyGridSuper(World world, int transferLimit, int capacity) {
+	public GridEnergySuper(World world, int transferLimit, int capacity) {
 
 		super(world, transferLimit, capacity);
 		myStorage.setMaxExtract(myStorage.getMaxEnergyStored());
@@ -81,7 +81,7 @@ public class EnergyGridSuper extends EnergyGrid {
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return grid instanceof EnergyGridSuper;
+		return grid instanceof GridEnergySuper;
 	}
 
 	@Override

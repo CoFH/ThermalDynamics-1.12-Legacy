@@ -17,7 +17,7 @@ import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
@@ -459,45 +459,44 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (offset != 0) {
 			return true;
 		}
-		EnergyGrid.initialize();
+		GridEnergy.initialize();
 
 		PacketHandler.instance.registerPacket(PacketFluid.class);
 
 		/* ENERGY */
-		GameRegistry.registerTileEntity(TileEnergyDuct.Basic.class, "thermaldynamics:duct_energy_basic");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Hardened.class, "thermaldynamics:duct_energy_hardened");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Reinforced.class, "thermaldynamics:duct_energy_reinforced");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Signalum.class, "thermaldynamics:duct_energy_signalum");
-		GameRegistry.registerTileEntity(TileEnergyDuct.Resonant.class, "thermaldynamics:duct_energy_resonant");
+		GameRegistry.registerTileEntity(TileDuctEnergy.Basic.class, "thermaldynamics:duct_energy_basic");
+		GameRegistry.registerTileEntity(TileDuctEnergy.Hardened.class, "thermaldynamics:duct_energy_hardened");
+		GameRegistry.registerTileEntity(TileDuctEnergy.Reinforced.class, "thermaldynamics:duct_energy_reinforced");
+		GameRegistry.registerTileEntity(TileDuctEnergy.Signalum.class, "thermaldynamics:duct_energy_signalum");
+		GameRegistry.registerTileEntity(TileDuctEnergy.Resonant.class, "thermaldynamics:duct_energy_resonant");
 		GameRegistry.registerTileEntity(TileEnergyDuctSuper.class, "thermaldynamics:duct_energy_super");
 
 		/* FLUID */
-		GameRegistry.registerTileEntity(TileFluidDuct.Basic.Transparent.class, "thermaldynamics:duct_fluid_fragile_transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Basic.Opaque.class, "thermaldynamics:duct_fluid_fragile_opaque");
-		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Transparent.class, "thermaldynamics:duct_fluid_hardened_transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Hardened.Opaque.class, "thermaldynamics:duct_fluid_hardened_opaque");
-		GameRegistry.registerTileEntity(TileFluidDuct.Energy.Transparent.class, "thermaldynamics:duct_fluid_energy_transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Energy.Opaque.class, "thermaldynamics:duct_fluid_energy_opaque");
-		GameRegistry.registerTileEntity(TileFluidDuct.Super.Transparent.class, "thermaldynamics:duct_fluid_super_transparent");
-		GameRegistry.registerTileEntity(TileFluidDuct.Super.Opaque.class, "thermaldynamics:duct_fluid_super_opaque");
+		GameRegistry.registerTileEntity(TileDuctFluid.Basic.Transparent.class, "thermaldynamics:duct_fluid_fragile_transparent");
+		GameRegistry.registerTileEntity(TileDuctFluid.Basic.Opaque.class, "thermaldynamics:duct_fluid_fragile_opaque");
+		GameRegistry.registerTileEntity(TileDuctFluid.Hardened.Transparent.class, "thermaldynamics:duct_fluid_hardened_transparent");
+		GameRegistry.registerTileEntity(TileDuctFluid.Hardened.Opaque.class, "thermaldynamics:duct_fluid_hardened_opaque");
+		GameRegistry.registerTileEntity(TileDuctFluid.Energy.Transparent.class, "thermaldynamics:duct_fluid_energy_transparent");
+		GameRegistry.registerTileEntity(TileDuctFluid.Energy.Opaque.class, "thermaldynamics:duct_fluid_energy_opaque");
+		GameRegistry.registerTileEntity(TileDuctFluid.Super.Transparent.class, "thermaldynamics:duct_fluid_super_transparent");
+		GameRegistry.registerTileEntity(TileDuctFluid.Super.Opaque.class, "thermaldynamics:duct_fluid_super_opaque");
 
-		GameRegistry.registerTileEntity(TileItemDuct.Basic.Transparent.class, "thermaldynamics:duct_item_transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Basic.Opaque.class, "thermaldynamics:duct_item_opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.Fast.Transparent.class, "thermaldynamics:duct_item_fast_transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Fast.Opaque.class, "thermaldynamics:duct_item_fast_opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.Energy.Transparent.class, "thermaldynamics:duct_item_energy_transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.Energy.Opaque.class, "thermaldynamics:duct_item_energy_opaque");
-		GameRegistry.registerTileEntity(TileItemDuct.EnergyFast.Transparent.class, "thermaldynamics:duct_item_energy_fast_transparent");
-		GameRegistry.registerTileEntity(TileItemDuct.EnergyFast.Opaque.class, "thermaldynamics:duct_item_energy_fast_opaque");
+		GameRegistry.registerTileEntity(TileDuctItem.Basic.Transparent.class, "thermaldynamics:duct_item_transparent");
+		GameRegistry.registerTileEntity(TileDuctItem.Basic.Opaque.class, "thermaldynamics:duct_item_opaque");
+		GameRegistry.registerTileEntity(TileDuctItem.Fast.Transparent.class, "thermaldynamics:duct_item_fast_transparent");
+		GameRegistry.registerTileEntity(TileDuctItem.Fast.Opaque.class, "thermaldynamics:duct_item_fast_opaque");
+		GameRegistry.registerTileEntity(TileDuctItem.Energy.Transparent.class, "thermaldynamics:duct_item_energy_transparent");
+		GameRegistry.registerTileEntity(TileDuctItem.Energy.Opaque.class, "thermaldynamics:duct_item_energy_opaque");
+		GameRegistry.registerTileEntity(TileDuctItem.EnergyFast.Transparent.class, "thermaldynamics:duct_item_energy_fast_transparent");
+		GameRegistry.registerTileEntity(TileDuctItem.EnergyFast.Opaque.class, "thermaldynamics:duct_item_energy_fast_opaque");
 
-		//		GameRegistry.registerTileEntity(TileItemDuct.Warp.Transparent.class, "thermaldynamics:duct_item_warp.transparent");
-		//		GameRegistry.registerTileEntity(TileItemDuct.Warp.Opaque.class, "thermaldynamics:duct_item_warp.opaque");
+		//		GameRegistry.registerTileEntity(TileDuctItem.Warp.Transparent.class, "thermaldynamics:duct_item_warp.transparent");
+		//		GameRegistry.registerTileEntity(TileDuctItem.Warp.Opaque.class, "thermaldynamics:duct_item_warp.opaque");
 		//		GameRegistry.registerTileEntity(TileDuctOmni.Transparent.class, "thermaldynamics:duct_item_ender.transparent");
-		//		GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics:duct_item_ender.opaque");
+		//	    GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics:duct_item_ender.opaque");
 
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics:duct_structure");
-
-		GameRegistry.registerTileEntity(TileLuxDuct.class, "thermaldynamics:duct_structure_light");
+		//      GameRegistry.registerTileEntity(TileDuctLight.class, "thermaldynamics:duct_structure_light");
 
 		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics:duct_transport_basic");
 		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics:duct_transport_long_range");

@@ -7,9 +7,8 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.entity.SoundWoosh;
-import cofh.thermaldynamics.duct.tiles.TileFluidDuct;
-import cofh.thermaldynamics.duct.tiles.TileItemDuct;
-import cofh.thermaldynamics.duct.tiles.TileItemDuct.Energy;
+import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
+import cofh.thermaldynamics.duct.tiles.TileDuctItem;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
@@ -53,17 +52,17 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void initialize(FMLInitializationEvent event) {
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Basic.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Fast.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Energy.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.EnergyFast.Transparent.class, RenderDuctItems.instance);
-		//		ClientRegistry.bindTileEntitySpecialRenderer(TileItemDuct.Warp.Transparent.class, RenderDuctItemsEnder.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Basic.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Fast.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Energy.Transparent.class, RenderDuctItems.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.EnergyFast.Transparent.class, RenderDuctItems.instance);
+		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Warp.Transparent.class, RenderDuctItemsEnder.instance);
 		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.instance);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Basic.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Super.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Hardened.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFluidDuct.Energy.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Basic.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Super.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Hardened.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Energy.Transparent.class, RenderDuctFluids.instance);
 	}
 
 	@Override

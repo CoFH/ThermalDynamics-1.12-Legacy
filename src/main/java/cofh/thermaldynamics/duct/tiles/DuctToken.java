@@ -4,15 +4,15 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.DuctUnitStructural;
 import cofh.thermaldynamics.duct.GridStructural;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.entity.DuctUnitTransportBase;
-import cofh.thermaldynamics.duct.entity.TransportGrid;
+import cofh.thermaldynamics.duct.entity.GridTransport;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.fluid.FluidGrid;
+import cofh.thermaldynamics.duct.fluid.GridFluid;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.ItemGrid;
+import cofh.thermaldynamics.duct.item.GridItem;
 import cofh.thermaldynamics.duct.light.DuctUnitLight;
-import cofh.thermaldynamics.duct.light.LightGrid;
+import cofh.thermaldynamics.duct.light.GridLight;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 
 import javax.annotation.Nonnull;
@@ -23,23 +23,23 @@ public class DuctToken<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>,
 	public static final DuctToken<DuctUnitStructural, GridStructural, Void> STRUCTURAL = new DuctToken<>("Structural");
 
 	// Energy grid, for any energy transfer
-	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
+	public static final DuctToken<DuctUnitEnergy, GridEnergy, IEnergyReceiver> ENERGY = new DuctToken<>("Energy");
 
-	//	public static final DuctToken<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
+	//	public static final DuctToken<DuctUnitEnergy, GridEnergy, IEnergyReceiver> ENERGY_STORAGE = new DuctToken<>("Energy_Storage");
 
 	// Storage energy grid, for storing internal energy
 
 	// 'Super' energy duct, for large amounts of energy
 
 	// Item grid
-	public static final DuctToken<DuctUnitItem, ItemGrid, DuctUnitItem.Cache> ITEMS = new DuctToken<>("Item");
+	public static final DuctToken<DuctUnitItem, GridItem, DuctUnitItem.Cache> ITEMS = new DuctToken<>("Item");
 
 	// Fluid grid
-	public static final DuctToken<DuctUnitFluid, FluidGrid, DuctUnitFluid.Cache> FLUID = new DuctToken<>("Fluid");
+	public static final DuctToken<DuctUnitFluid, GridFluid, DuctUnitFluid.Cache> FLUID = new DuctToken<>("Fluid");
 
-	public static final DuctToken<DuctUnitTransportBase, TransportGrid, DuctUnitTransportBase.TransportDestination> TRANSPORT = new DuctToken<>("Transport");
+	public static final DuctToken<DuctUnitTransportBase, GridTransport, DuctUnitTransportBase.TransportDestination> TRANSPORT = new DuctToken<>("Transport");
 
-	public static final DuctToken<DuctUnitLight, LightGrid, Void> LIGHT = new DuctToken<>("Light");
+	public static final DuctToken<DuctUnitLight, GridLight, Void> LIGHT = new DuctToken<>("Light");
 
 	public final static DuctToken[] TOKENS = new DuctToken[] { STRUCTURAL, ENERGY, ITEMS, FLUID, TRANSPORT, LIGHT };
 

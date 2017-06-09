@@ -6,14 +6,22 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidSuper;
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluidTemperate;
 
-public abstract class TileFluidDuct extends TileGridStructureBase {
+public abstract class TileDuctFluid extends TileGridStructureBase {
 
 	public static final int NODE_TRANSFER = 4000;
 
-	public TileFluidDuct(Duct duct) {
+	public TileDuctFluid(Duct duct) {
 
-		addDuctUnits(DuctToken.FLUID, new DuctUnitFluid(this, duct));
+		this(duct, true);
+	}
+
+	public TileDuctFluid(Duct duct, boolean addDefault) {
+
+		if (addDefault) {
+			addDuctUnits(DuctToken.FLUID, new DuctUnitFluid(this, duct));
+		}
 	}
 
 	@Override
@@ -22,11 +30,12 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		return DuctToken.FLUID;
 	}
 
-	public static class Basic extends TileFluidDuct {
+	public static class Basic extends TileDuctFluid {
 
 		public Basic(Duct duct) {
 
-			super(duct);
+			super(duct, false);
+			addDuctUnits(DuctToken.FLUID, new DuctUnitFluidTemperate(this, duct));
 		}
 
 		public static class Transparent extends Basic {
@@ -46,7 +55,7 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Hardened extends TileFluidDuct {
+	public static class Hardened extends TileDuctFluid {
 
 		public Hardened(Duct duct) {
 
@@ -70,7 +79,7 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Energy extends TileFluidDuct implements IEnergyReceiver {
+	public static class Energy extends TileDuctFluid implements IEnergyReceiver {
 
 		public Energy(Duct duct) {
 
@@ -95,11 +104,11 @@ public abstract class TileFluidDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Super extends TileFluidDuct {
+	public static class Super extends TileDuctFluid {
 
 		public Super(Duct duct) {
 
-			super(duct);
+			super(duct, false);
 			addDuctUnits(DuctToken.FLUID, new DuctUnitFluidSuper(this, duct));
 		}
 

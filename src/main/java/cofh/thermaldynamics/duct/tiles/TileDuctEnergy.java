@@ -6,9 +6,9 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 
-public abstract class TileEnergyDuct extends TileGridStructureBase implements IEnergyReceiver, IEnergyProvider {
+public class TileDuctEnergy extends TileGridStructureBase implements IEnergyReceiver, IEnergyProvider {
 
-	public TileEnergyDuct(Duct duct) {
+	public TileDuctEnergy(Duct duct) {
 
 		addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct));
 	}
@@ -19,7 +19,7 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 		return DuctToken.ENERGY;
 	}
 
-	public static class Basic extends TileEnergyDuct {
+	public static class Basic extends TileDuctEnergy {
 
 		public Basic() {
 
@@ -27,7 +27,7 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 		}
 	}
 
-	public static class Reinforced extends TileEnergyDuct {
+	public static class Reinforced extends TileDuctEnergy {
 
 		public Reinforced() {
 
@@ -35,7 +35,7 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 		}
 	}
 
-	public static class Hardened extends TileEnergyDuct {
+	public static class Hardened extends TileDuctEnergy {
 
 		public Hardened() {
 
@@ -43,7 +43,7 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 		}
 	}
 
-	public static class Signalum extends TileEnergyDuct {
+	public static class Signalum extends TileDuctEnergy {
 
 		public Signalum() {
 
@@ -51,7 +51,7 @@ public abstract class TileEnergyDuct extends TileGridStructureBase implements IE
 		}
 	}
 
-	public static class Resonant extends TileEnergyDuct {
+	public static class Resonant extends TileDuctEnergy {
 
 		public Resonant() {
 

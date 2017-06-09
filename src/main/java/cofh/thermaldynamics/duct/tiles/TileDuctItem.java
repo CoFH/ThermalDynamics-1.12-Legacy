@@ -7,19 +7,19 @@ import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergyStorage;
-import cofh.thermaldynamics.duct.energy.EnergyGrid;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
 
-public class TileItemDuct extends TileGridStructureBase {
+public class TileDuctItem extends TileGridStructureBase {
 
 	public static final int NODE_TRANSFER = 4000;
 
-	public TileItemDuct() {
+	public TileDuctItem() {
 		// TODO: Temporary
 	}
 
-	public TileItemDuct(Duct duct) {
+	public TileDuctItem(Duct duct) {
 
 		addDuctUnits(DuctToken.ITEMS, new DuctUnitItem(this, duct));
 	}
@@ -30,7 +30,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		return DuctToken.ITEMS;
 	}
 
-	public static class Basic extends TileItemDuct {
+	public static class Basic extends TileDuctItem {
 
 		public Basic(Duct duct) {
 
@@ -54,7 +54,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Fast extends TileItemDuct {
+	public static class Fast extends TileDuctItem {
 
 		public Fast(Duct duct) {
 
@@ -78,7 +78,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Energy extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
+	public static class Energy extends TileDuctItem implements IEnergyReceiver, IEnergyProvider {
 
 		public Energy(Duct duct) {
 
@@ -103,7 +103,7 @@ public class TileItemDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class EnergyFast extends TileItemDuct implements IEnergyReceiver, IEnergyProvider {
+	public static class EnergyFast extends TileDuctItem implements IEnergyReceiver, IEnergyProvider {
 
 		public EnergyFast(Duct duct) {
 
@@ -128,13 +128,13 @@ public class TileItemDuct extends TileGridStructureBase {
 		}
 	}
 
-	public static class Warp extends TileItemDuct implements IEnergyReceiver {
+	public static class Warp extends TileDuctItem implements IEnergyReceiver {
 
 		public Warp(DuctItem duct) {
 
 			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, duct, 400, 1000) {
 				@Override
-				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 
 					return super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
 				}

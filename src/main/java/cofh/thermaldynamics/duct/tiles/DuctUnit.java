@@ -35,9 +35,9 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public final TileGrid parent;
 	@SuppressWarnings ("unchecked")
-	public final C[] tileCaches = createTileCaches();
+	public final C[] tileCache = createTileCache();
 	@SuppressWarnings ("unchecked")
-	public final T[] pipeCache = createPipeCache();
+	public final T[] ductCache = createDuctCache();
 	final Duct duct;
 	@Nullable
 	protected G grid;
@@ -63,9 +63,9 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return builder.toString();
 	}
 
-	protected abstract C[] createTileCaches();
+	protected abstract C[] createTileCache();
 
-	protected abstract T[] createPipeCache();
+	protected abstract T[] createDuctCache();
 
 	@Override
 	public String toString() {
@@ -74,7 +74,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 				//				+ duct.unlocalizedName + ","
 				+ getClass().getSimpleName() + ","
 				//				+ getToken() + ",t="
-				+ getSideArrayNonNull(tileCaches) + ",p=" + getSideArrayNonNull(pipeCache) + "}";
+				+ getSideArrayNonNull(tileCache) + ",p=" + getSideArrayNonNull(ductCache) + "}";
 	}
 
 	@Nonnull
@@ -111,7 +111,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public T getConnectedSide(int side) {
 
-		return pipeCache[side];
+		return ductCache[side];
 	}
 
 	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull cofh.thermaldynamics.duct.ConnectionType type) {
@@ -137,7 +137,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		if (holder != null && !holder.isSideBlocked(oppositeSide)) {
 			DuctUnit<T, G, C> adjDuct = holder.getDuct(getToken());
 			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side, oppositeSide) && adjDuct.canConnectToOtherDuct(this, oppositeSide, side)) {
-				pipeCache[side] = adjDuct.cast();
+				ductCache[side] = adjDuct.cast();
 				return;
 			}
 		}
@@ -149,20 +149,20 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	protected void setSideToNone(byte side) {
 
-		pipeCache[side] = null;
+		ductCache[side] = null;
 		clearCache(side);
 	}
 
 	public boolean loadSignificantCache(TileEntity tile, byte side) {
 
 		if (tile == null) {
-			tileCaches[side] = null;
+			tileCache[side] = null;
 			return false;
 		}
 
 		C c = cacheTile(tile, side);
 		if (c != null) {
-			tileCaches[side] = c;
+			tileCache[side] = c;
 			if (isNode(c)) {
 				nodeMask |= (1 << side);
 			}
@@ -174,7 +174,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 				nodeMask |= (1 << side);
 			}
 
-			tileCaches[side] = null;
+			tileCache[side] = null;
 			return false;
 		}
 	}
@@ -199,7 +199,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public void clearCache(byte side) {
 
-		tileCaches[side] = null;
+		tileCache[side] = null;
 	}
 
 	@OverridingMethodsMustInvokeSuper
@@ -280,7 +280,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	@Override
 	public boolean isSideConnected(byte side) {
 
-		return pipeCache[side] != null;
+		return ductCache[side] != null;
 	}
 
 	@Override
@@ -319,12 +319,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public byte tickInternalSideCounter(int start) {
 
 		for (byte a = (byte) start; a < 6; a++) {
-			if (tileCaches[a] != null) {
+			if (tileCache[a] != null) {
 				return a;
 			}
 		}
 		for (byte a = 0; a < start; a++) {
-			if (tileCaches[a] != null) {
+			if (tileCache[a] != null) {
 				return a;
 			}
 		}
@@ -333,7 +333,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public void onConnectionRejected(int i) {
 
-		pipeCache[i] = null;
+		ductCache[i] = null;
 		parent.callBlockUpdate();
 	}
 
@@ -371,10 +371,10 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	@Nonnull
 	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
 
-		if (tileCaches[side] != null) {
-			return getConnectionTypeTile(tileCaches[side], side);
-		} else if (pipeCache[side] != null) {
-			return getConnectionTypeDuct(pipeCache[side], side);
+		if (tileCache[side] != null) {
+			return getConnectionTypeTile(tileCache[side], side);
+		} else if (ductCache[side] != null) {
+			return getConnectionTypeDuct(ductCache[side], side);
 		} else if (isInput(side)) {
 			return getInputConnection(side);
 		}
@@ -453,17 +453,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public boolean isOutput(int side) {
 
-		return tileCaches[side] != null;
-	}
-
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-
-		return false;
-	}
-
-	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
-
-		return null;
+		return tileCache[side] != null;
 	}
 
 	public boolean onWrench(EntityPlayer player, int side, RayTraceResult rayTrace) {
@@ -505,6 +495,17 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public Collection<BlockPos> getAdditionalImportantPositions() {
 
 		return ImmutableList.of();
+	}
+
+	/* CAPABILITIES */
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+
+		return false;
+	}
+
+	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
+
+		return null;
 	}
 
 }

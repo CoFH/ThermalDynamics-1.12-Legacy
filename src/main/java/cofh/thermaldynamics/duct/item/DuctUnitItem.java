@@ -49,7 +49,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.Cache> implements IGridTileRoute<DuctUnitItem, ItemGrid> {
+public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.Cache> implements IGridTileRoute<DuctUnitItem, GridItem> {
 
 	public final static byte maxTicksExistedBeforeFindAlt = 2;
 	public final static byte maxTicksExistedBeforeStuff = 6;
@@ -157,13 +157,13 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	}
 
 	@Override
-	protected Cache[] createTileCaches() {
+	protected Cache[] createTileCache() {
 
 		return new Cache[6];
 	}
 
 	@Override
-	protected DuctUnitItem[] createPipeCache() {
+	protected DuctUnitItem[] createDuctCache() {
 
 		return new DuctUnitItem[6];
 	}
@@ -171,7 +171,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Override
 	public boolean isOutput(int side) {
 
-		Cache cache = tileCaches[side];
+		Cache cache = tileCache[side];
 		return cache != null;
 	}
 
@@ -214,19 +214,19 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	@Nonnull
 	@Override
-	public DuctToken<DuctUnitItem, ItemGrid, Cache> getToken() {
+	public DuctToken<DuctUnitItem, GridItem, Cache> getToken() {
 
 		return DuctToken.ITEMS;
 	}
 
 	@Override
-	public ItemGrid createGrid() {
+	public GridItem createGrid() {
 
-		return new ItemGrid(parent.getWorld());
+		return new GridItem(parent.getWorld());
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitItem, ItemGrid, Cache> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitItem, GridItem, Cache> adjDuct, byte side, byte oppositeSide) {
 
 		return true;
 	}
@@ -301,7 +301,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Override
 	public boolean canStuffItem() {
 
-		for (Cache tileCach : tileCaches) {
+		for (Cache tileCach : tileCache) {
 			if (tileCach != null && tileCach.stuffableAttachment != null) {
 				return true;
 			}
@@ -324,7 +324,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 	@Override
 	public DuctUnitItem getCachedTile(byte side) {
 
-		return pipeCache[side];
+		return ductCache[side];
 	}
 
 	@Override
@@ -333,12 +333,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		return pass == 0 && (!myItems.isEmpty() || !itemsToAdd.isEmpty() || centerLine > 0);
 	}
 
-	public RouteCache<DuctUnitItem, ItemGrid> getCache() {
+	public RouteCache<DuctUnitItem, GridItem> getCache() {
 
 		return getCache(true);
 	}
 
-	public RouteCache<DuctUnitItem, ItemGrid> getCache(boolean urgent) {
+	public RouteCache<DuctUnitItem, GridItem> getCache(boolean urgent) {
 
 		if (grid == null) {
 			throw new IllegalStateException();
@@ -448,7 +448,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		if (grid == null) {
 			return item;
 		}
-		RouteCache<DuctUnitItem, ItemGrid> routeCache = getCache(false);
+		RouteCache<DuctUnitItem, GridItem> routeCache = getCache(false);
 		TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.stackSize)), routeCache.outputRoutes, this, side, ServoItem.range[0], (byte) 1);
 		if (routeForItem == null) {
 			return item;
@@ -685,7 +685,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		ItemStack curItem;
 
 		for (byte i = internalSideCounter; i < EnumFacing.VALUES.length; i++) {
-			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCaches[i] != null) {
+			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 
@@ -700,7 +700,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			}
 		}
 		for (byte i = 0; i < internalSideCounter; i++) {
-			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCaches[i] != null) {
+			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
 				curItem = anItem.copy();
 				curItem.stackSize = Math.min(getMoveStackSize(i), curItem.stackSize);
 				if (curItem.stackSize > 0) {
@@ -721,7 +721,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		if (grid == null) {
 			return 0;
 		}
-		Cache cache = tileCaches[side];
+		Cache cache = tileCache[side];
 		if (cache == null) {
 			return 0;
 		}
@@ -745,7 +745,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			return null;
 		}
 
-		Cache cache = tileCaches[side];
+		Cache cache = tileCache[side];
 
 		if (grid == null || cache == null) {
 			return insertingItem;
@@ -878,7 +878,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	private boolean itemPassesFiltering(byte i, ItemStack anItem) {
 
-		Cache cache = tileCaches[i];
+		Cache cache = tileCache[i];
 		return cache == null || cache.filter == null || cache.filter.matchesFilter(anItem);
 	}
 
@@ -889,7 +889,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	public int insertIntoInventory(ItemStack stack, int direction) {
 
-		Cache cache = tileCaches[direction];
+		Cache cache = tileCache[direction];
 		if (cache == null) {
 			return stack.stackSize;
 		}
@@ -908,7 +908,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 
 	public int insertIntoInventory_do(ItemStack stack, int direction) {
 
-		Cache cache = tileCaches[direction];
+		Cache cache = tileCache[direction];
 		IItemHandler itemHandler = cache.getItemHandler(direction ^ 1);
 		if (itemHandler == null) {
 			return stack.stackSize;
@@ -919,6 +919,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 		return stack == null ? 0 : stack.stackSize;
 	}
 
+	/* CAPABILITIES */
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 
@@ -1016,12 +1017,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, ItemGrid, DuctUnitItem.
 			EnumFacing facing = EnumFacing.values()[side];
 			return InventoryHelper.hasItemHandlerCap(tile, facing) && itemHandler.equals(InventoryHelper.getItemHandlerCap(tile, facing));
 		}
-	}
-
-	@Override
-	public boolean openGui(EntityPlayer player) {
-
-		return super.openGui(player);
 	}
 
 	public class TileInfoPackets {

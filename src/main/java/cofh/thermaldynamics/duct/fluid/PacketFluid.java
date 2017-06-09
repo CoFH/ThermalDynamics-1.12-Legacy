@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import codechicken.lib.util.BlockUtils;
 import cofh.core.network.PacketCoFHBase;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import com.google.common.collect.Iterables;
@@ -26,7 +26,7 @@ public class PacketFluid extends PacketCoFHBase {
 		super();
 	}
 
-	public PacketFluid(FluidGrid grid, int size) {
+	public PacketFluid(GridFluid grid, int size) {
 
 		addFluidStack(grid.getRenderFluid());
 		addVarInt(size);
@@ -64,7 +64,7 @@ public class PacketFluid extends PacketCoFHBase {
 				if (duct != null) {
 					duct.myRenderFluid = fluid;
 					duct.updateLighting();
-					BlockUtils.fireBlockUpdate(world, new BlockPos(x, y, z));
+					BlockHelper.callBlockUpdate(world, new BlockPos(x, y, z));
 				}
 			}
 		}

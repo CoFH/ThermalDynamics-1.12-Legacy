@@ -1,12 +1,12 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
-import codechicken.lib.util.BlockUtils;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.ItemGrid;
+import cofh.thermaldynamics.duct.item.GridItem;
 import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
@@ -37,8 +37,8 @@ public class ServoItem extends ServoBase {
 	public static int[] tickDelays = { 60, 40, 20, 10, 10 };
 	public static byte[] speedBoost = { 1, 1, 1, 2, 3 };
 
-	public RouteCache<DuctUnitItem, ItemGrid> cache = null;
-	public ListWrapper<Route<DuctUnitItem, ItemGrid>> routeList = new ListWrapper<>();
+	public RouteCache<DuctUnitItem, GridItem> cache = null;
+	public ListWrapper<Route<DuctUnitItem, GridItem>> routeList = new ListWrapper<>();
 
 	public LinkedList<ItemStack> stuffedItems = new LinkedList<>();
 
@@ -167,7 +167,7 @@ public class ServoItem extends ServoBase {
 
 		if (pass == 0) {
 			if (isPowered && (isValidInput || isStuffed()) && itemDuct.world().getTotalWorldTime() % tickDelay() == 0) {
-				ItemGrid.toTick.add(this);
+				GridItem.toTick.add(this);
 			}
 			return;
 		} else if (!isPowered || itemDuct.world().getTotalWorldTime() % tickDelay() != 0) {
@@ -195,7 +195,7 @@ public class ServoItem extends ServoBase {
 
 	public boolean verifyCache() {
 
-		RouteCache<DuctUnitItem, ItemGrid> cache1 = itemDuct.getCache(false);
+		RouteCache<DuctUnitItem, GridItem> cache1 = itemDuct.getCache(false);
 		if (!cache1.isFinishedGenerating()) {
 			return false;
 		}
@@ -282,7 +282,7 @@ public class ServoItem extends ServoBase {
 		return speedBoost[type];
 	}
 
-	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route<DuctUnitItem, ItemGrid>> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
+	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route<DuctUnitItem, GridItem>> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
 
 		if (item == null || item.stackSize == 0) {
 			return null;
@@ -326,7 +326,7 @@ public class ServoItem extends ServoBase {
 
 		if (stuffed != !stuffedItems.isEmpty()) {
 			stuffed = isStuffed();
-			BlockUtils.fireBlockUpdate(myTile.getWorld(), myTile.getPos());
+			BlockHelper.callBlockUpdate(myTile.getWorld(), myTile.getPos());
 		}
 		super.onNeighborChange();
 	}

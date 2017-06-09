@@ -21,7 +21,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public TransportGrid createGrid() {
+	public GridTransport createGrid() {
 
 		return null;
 	}
@@ -44,7 +44,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 			if (k == (i ^ 1)) {
 				continue;
 			}
-			if (pipeCache[i] != null) {
+			if (ductCache[i] != null) {
 				if (dir != -1) {
 					return -1;
 				}
@@ -61,10 +61,10 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		v += t.step * 2;
 		t.progress = (byte) (v % EntityTransport.PIPE_LENGTH);
 		if (v >= EntityTransport.PIPE_LENGTH) {
-			if (pipeCache[t.direction] != null) {
+			if (ductCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
-				if (newHome.pipeCache[t.direction ^ 1] != null) {
+				if (newHome.ductCache[t.direction ^ 1] != null) {
 					t.pos = newHome.pos();
 
 					t.oldDirection = t.direction;
@@ -87,7 +87,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 				t.dropPassenger();
 			}
 		} else if (t.progress >= EntityTransport.PIPE_LENGTH2 && t.progress - t.step < EntityTransport.PIPE_LENGTH2) {
-			if (pipeCache[t.direction] == null) {
+			if (ductCache[t.direction] == null) {
 				t.dropPassenger();
 			}
 		}
@@ -120,7 +120,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, TransportGrid, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, GridTransport, TransportDestination> adjDuct, byte side, byte oppositeSide) {
 
 		return adjDuct.cast().isLongRange() || adjDuct.cast().isCrossover();
 	}
@@ -149,7 +149,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	public boolean hasTooManyConnections() {
 
 		int i = 0;
-		for (DuctUnitTransportBase ductUnitTransportBase : pipeCache) {
+		for (DuctUnitTransportBase ductUnitTransportBase : ductCache) {
 			if (ductUnitTransportBase != null) {
 				i++;
 				if (i > 2) {

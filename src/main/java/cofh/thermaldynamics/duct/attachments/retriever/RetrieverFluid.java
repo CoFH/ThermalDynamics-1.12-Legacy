@@ -8,7 +8,7 @@ import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
-import cofh.thermaldynamics.duct.fluid.FluidGrid;
+import cofh.thermaldynamics.duct.fluid.GridFluid;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
@@ -45,7 +45,7 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public void tick(int pass) {
 
-		FluidGrid grid = fluidDuct.getGrid();
+		GridFluid grid = fluidDuct.getGrid();
 		if (pass != 1 || grid == null || !isPowered || !isValidInput) {
 			return;
 		}
@@ -62,7 +62,7 @@ public class RetrieverFluid extends ServoFluid {
 			for (int k = 0; k < 6 && maxInput > 0; k++) {
 				int i = (k + fluidDuct.internalSideCounter) % 6;
 
-				DuctUnitFluid.Cache cache = fluidDuct.tileCaches[i];
+				DuctUnitFluid.Cache cache = fluidDuct.tileCache[i];
 
 				if (cache == null || (!fluidDuct.isOutput(side) && !fluidDuct.isInput(side))) {
 					continue;
@@ -99,7 +99,7 @@ public class RetrieverFluid extends ServoFluid {
 					maxInput -= ductHandler.fill(fluid, true);
 
 					if (this.fluidDuct.getGrid().toDistribute > 0 && this.fluidDuct.getGrid().myTank.getFluid() != null) {
-						FluidGrid otherGrid = fluidDuct.getGrid();
+						GridFluid otherGrid = fluidDuct.getGrid();
 						if (otherGrid != null) {
 							this.fluidDuct.transfer(side, Math.min(otherGrid.myTank.getFluid().amount, otherGrid.toDistribute), false, otherGrid.myTank.getFluid(), true);
 						}

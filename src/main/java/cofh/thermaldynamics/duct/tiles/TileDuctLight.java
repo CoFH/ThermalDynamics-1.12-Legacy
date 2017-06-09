@@ -4,9 +4,9 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.light.DuctUnitLight;
 
-public class TileLuxDuct extends TileGridSingle {
+public class TileDuctLight extends TileGridSingle {
 
-	public TileLuxDuct() {
+	public TileDuctLight() {
 
 		super(DuctToken.LIGHT, TDDucts.lightDuct);
 	}
@@ -16,4 +16,5 @@ public class TileLuxDuct extends TileGridSingle {
 
 		return new DuctUnitLight(this, ductType);
 	}
+	
 }

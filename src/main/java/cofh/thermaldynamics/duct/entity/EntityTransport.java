@@ -287,7 +287,7 @@ public class EntityTransport extends Entity {
 			return false;
 		}
 
-		if (transportBase.pipeCache[direction ^ 1] == null) {
+		if (transportBase.ductCache[direction ^ 1] == null) {
 			pos = null;
 			return false;
 		}
@@ -406,9 +406,9 @@ public class EntityTransport extends Entity {
 
 	public void advanceTile(DuctUnitTransportBase homeTile) {
 
-		if (homeTile.pipeCache[direction] != null) {
+		if (homeTile.ductCache[direction] != null) {
 			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);
-			if (newHome != null && newHome.pipeCache[direction ^ 1] != null) {
+			if (newHome != null && newHome.ductCache[direction ^ 1] != null) {
 				pos = new BlockPos(newHome.pos());
 
 				if (myPath.hasNextDirection()) {

@@ -16,17 +16,17 @@ import net.minecraft.world.WorldServer;
 
 import java.util.HashSet;
 
-public class LightGrid extends MultiBlockGrid<DuctUnitLight> {
+public class GridLight extends MultiBlockGrid<DuctUnitLight> {
 
 	public HashSet<ChunkCoord> chunks;
 	public boolean upToDate = false;
 
-	public LightGrid(WorldGridList worldGrid) {
+	public GridLight(WorldGridList worldGrid) {
 
 		super(worldGrid);
 	}
 
-	public LightGrid(World worldObj) {
+	public GridLight(World worldObj) {
 
 		super(worldObj);
 	}

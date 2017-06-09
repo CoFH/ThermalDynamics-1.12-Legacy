@@ -6,7 +6,7 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
 import net.minecraft.world.World;
 
-public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
+public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 	public static int NODE_STORAGE[] = { 1000 * 5, 4000 * 5, 9000 * 5, 16000 * 5, 25000 * 5, 0 };
 	public static int NODE_TRANSFER[] = { 1000, 4000, 9000, 16000, 25000, 0 };
@@ -17,12 +17,12 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 	private int currentEnergy = 0;
 	private int extraEnergy = 0;
 
-	public EnergyGrid(World world, int transferLimit, int capacity) {
+	public GridEnergy(World world, int transferLimit, int capacity) {
 
 		super(world);
 		this.transferLimit = transferLimit;
 		this.capacity = capacity;
-		myStorage = new EnergyStorage(EnergyGrid.this.capacity, EnergyGrid.this.transferLimit) {
+		myStorage = new EnergyStorage(GridEnergy.this.capacity, GridEnergy.this.transferLimit) {
 
 			@Override
 			public int receiveEnergy(int maxReceive, boolean simulate) {
@@ -40,14 +40,14 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 	public static void initialize() {
 
-		//		String names[] = { "Basic", "Hardened", "Reinforced", "Resonant" };
+		//		String names[] = { "Basic", "Hardened", "Reinforced", "Signalum", "Resonant" };
 		//		String category;
 		//		String category2 = "Duct.Energy.";
 		//
-		//		for (int i = 0; i < 4; i++) {
+		//		for (int i = 0; i < 5; i++) {
 		//			category = category2 + names[i];
 		//			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
-		//			NODE_STORAGE[i] = NODE_TRANSFER[i] * 6;
+		//			NODE_STORAGE[i] = NODE_TRANSFER[i] * 5;
 		//		}
 	}
 
@@ -101,7 +101,7 @@ public class EnergyGrid extends MultiBlockGridTracking<DuctUnitEnergy> {
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return super.canGridsMerge(grid) && ((EnergyGrid) grid).transferLimit == this.transferLimit;
+		return super.canGridsMerge(grid) && ((GridEnergy) grid).transferLimit == this.transferLimit;
 	}
 
 	@Override

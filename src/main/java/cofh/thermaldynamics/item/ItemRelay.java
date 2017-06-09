@@ -6,7 +6,9 @@ import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.ModelLoader;
@@ -20,6 +22,11 @@ public class ItemRelay extends ItemAttachment {
 
 		super();
 		this.setUnlocalizedName("thermaldynamics.relay");
+	}
+
+	@Override
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
+
 	}
 
 	@Override

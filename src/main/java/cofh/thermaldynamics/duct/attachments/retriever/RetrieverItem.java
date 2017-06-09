@@ -101,7 +101,7 @@ public class RetrieverItem extends ServoItem {
 					continue;
 				}
 
-				DuctUnitItem.Cache cache = endPoint.tileCaches[i];
+				DuctUnitItem.Cache cache = endPoint.tileCache[i];
 
 				if (cache == null || (!endPoint.isInput(side) && !endPoint.isOutput(side)) || !endPoint.parent.getConnectionType(i).allowTransfer) {
 					continue;

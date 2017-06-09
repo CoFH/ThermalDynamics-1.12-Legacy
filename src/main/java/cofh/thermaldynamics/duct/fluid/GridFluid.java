@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 
-public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
+public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 
 	public final FluidTankGrid myTank = new FluidTankGrid(1000, this);
 	public int toDistribute = 0;
@@ -34,7 +34,7 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 	int renderFluidLevel = 0;
 	FluidStack myRenderFluid = null;
 
-	public FluidGrid(World world) {
+	public GridFluid(World world) {
 
 		super(world);
 
@@ -101,8 +101,8 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 	private int reworkNumberStorableDucts() {
 
 		int numBalancable = 0;
-		for (DuctUnitFluid iFluidDuct : Iterables.concat(nodeSet, idleSet)) {
-			if (iFluidDuct.canStoreFluid()) {
+		for (DuctUnitFluid duct : Iterables.concat(nodeSet, idleSet)) {
+			if (duct.canStoreFluid()) {
 				numBalancable++;
 			}
 		}
@@ -112,7 +112,7 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 
 	public float getThroughPutModifier() {
 
-		return 1F;
+		return 1.0F;
 	}
 
 	public int getMaxFluidPerDuct() {
@@ -192,16 +192,16 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 
 		super.mergeGrids(theGrid);
 
-		FluidGrid fluidGrid = (FluidGrid) theGrid;
-		doesPassiveTicking = doesPassiveTicking || fluidGrid.doesPassiveTicking;
-		myTank.fill(fluidGrid.getFluid(), true);
+		GridFluid gridFluid = (GridFluid) theGrid;
+		doesPassiveTicking = doesPassiveTicking || gridFluid.doesPassiveTicking;
+		myTank.fill(gridFluid.getFluid(), true);
 		recentRenderUpdate = true;
 	}
 
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return super.canGridsMerge(grid) && FluidHelper.isFluidEqualOrNull(((FluidGrid) grid).getFluid(), getFluid());
+		return super.canGridsMerge(grid) && FluidHelper.isFluidEqualOrNull(((GridFluid) grid).getFluid(), getFluid());
 	}
 
 	public int getFluidThroughput() {
@@ -233,7 +233,6 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 		if (!duct.canStoreFluid()) {
 			return null;
 		}
-
 		FluidStack fluid = myTank.getFluid();
 		if (fluid == null) {
 			return null;
@@ -409,7 +408,7 @@ public class FluidGrid extends MultiBlockGridTracking<DuctUnitFluid> {
 		super.addInfo(info, player, debug);
 		FluidStack fluid = getFluid();
 		if (fluid != null) {
-			if ((this instanceof FluidGridSuper)) {
+			if ((this instanceof GridFluidSuper)) {
 				addInfo(info, "fluidThroughput", new TextComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
 			} else {
 				addInfo(info, "fluidThroughput", myTank.fluidThroughput);

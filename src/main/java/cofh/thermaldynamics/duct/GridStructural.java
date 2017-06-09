@@ -98,11 +98,9 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 			if (rs == null) {
 				rs = new RedstoneControl();
 			}
-
 			if (rs.relaysIn == null) {
 				rs.relaysIn = new ArrayList<>();
 			}
-
 			rs.relaysIn.add(signaller);
 		}
 	}
@@ -112,7 +110,6 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 		if (rs == null) {
 			rs = new RedstoneControl();
 		}
-
 		if (rs.relaysOut == null) {
 			rs.relaysOut = new ArrayList<>();
 		}

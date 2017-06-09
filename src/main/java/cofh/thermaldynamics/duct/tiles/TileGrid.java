@@ -1,7 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.util.BlockUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IPortableData;
 import cofh.api.tileentity.ITileInfo;
@@ -61,7 +60,7 @@ import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
 
-	public final static boolean isDebug = true;
+	public final static boolean isDebug = false;
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -209,20 +208,17 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (ServerHelper.isClientWorld(worldObj)) {
 			return;
 		}
-
 		int renderHash = getRenderHash();
 		int tileHash = getTileHash();
 
-		byte side = (byte) getNeighbourDirection(getPos(), pos).ordinal();
+		byte side = (byte) getNeighborDirection(getPos(), pos).ordinal();
 
 		if (attachmentData != null) {
-
 			Attachment attachment = attachmentData.attachments[side];
 			if (attachment != null) {
 				attachment.onNeighborChange();
 			}
 		}
-
 		TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, side);
 		IDuctHolder holder = adjacentTileEntity instanceof IDuctHolder ? (IDuctHolder) adjacentTileEntity : null;
 
@@ -239,7 +235,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 	}
 
-	public EnumFacing getNeighbourDirection(BlockPos pos, BlockPos neighbour) {
+	public EnumFacing getNeighborDirection(BlockPos pos, BlockPos neighbour) {
 
 		int dx = pos.getX() - neighbour.getX();
 		if (dx == 0) {
@@ -314,7 +310,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				return attachment.allowPipeConnection() ? NORMAL : BLOCKED;
 			}
 		}
-
 		ConnectionType[] connectionTypes = this.connectionTypes;
 		if (connectionTypes == null) {
 			return NORMAL;
@@ -435,7 +430,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		onAttachmentsChanged();
 
-		BlockUtils.fireBlockUpdate(getWorld(), getPos());
+		callBlockUpdate();
 		return true;
 	}
 
@@ -802,17 +797,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		Attachment attachment = getAttachment(side);
 		if (attachment != null) {
-
 			return attachment.getNeighborType();
 		} else {
-
 			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.NONE;
 
 			for (DuctUnit ductUnit : getDuctUnits()) {
 				BlockDuct.ConnectionType ductType = ductUnit.getRenderConnectionType(side);
 				connectionType = BlockDuct.ConnectionType.getPriority(connectionType, ductType);
 			}
-
 			return connectionType;
 		}
 	}
@@ -946,7 +938,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (rayTrace == null) {
 				return false;
 			}
-
 			int subHit = rayTrace.subHit;
 			if (subHit >= 0 && subHit <= 13) {
 				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
@@ -962,19 +953,16 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 								ductUnit2.grid.destroyAndRecreate();
 							}
 						}
-
-						BlockUtils.fireBlockUpdate(world(), getPos());
+						callBlockUpdate();
 						return true;
 					}
 				}
-
 				setConnectionType((byte) i, getConnectionType(i).next());
 
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 				if (tile instanceof TileGrid) {
 					((TileGrid) tile).setConnectionType((byte) (i ^ 1), getConnectionType(i));
 				}
-
 				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
 
 				for (DuctUnit ductUnit : getDuctUnits()) {
@@ -982,8 +970,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 						ductUnit.grid.destroyAndRecreate();
 					}
 				}
-
-				BlockUtils.fireBlockUpdate(world(), getPos());
+				callBlockUpdate();
 				return true;
 			}
 			if (subHit > 13 && subHit < 20) {
@@ -1084,82 +1071,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	@Override
-	public void getTileInfo(List<ITextComponent> info, EnumFacing side, EntityPlayer player, boolean debug) {
-
-		for (DuctUnit ductUnit : getDuctUnits()) {
-			if (isDebug) {
-				info.add(new TextComponentString(ductUnit.toString()));
-			}
-			MultiBlockGrid grid = ductUnit.getGrid();
-			if (grid != null) {
-				info.add(new TextComponentTranslation("info.thermaldynamics.info.duct"));
-				grid.addInfo(info, player, debug || isDebug);
-			} else if (isDebug) {
-				info.add(new TextComponentString("No Grid"));
-			}
-
-			if (isDebug) {
-				StringBuilder builder;
-				if (connectionTypes != null) {
-					builder = new StringBuilder("  Con={");
-					for (int i = 0; i < 6; i++) {
-						builder.append(getConnectionType(i).name().substring(0, 1));
-					}
-					info.add(new TextComponentString(builder.toString()));
-				}
-
-				builder = new StringBuilder("  Vis={");
-				for (int i = 0; i < 6; i++) {
-					builder.append(getVisualConnectionType(i).name().substring(0, 1));
-				}
-				info.add(new TextComponentString(builder.toString()));
-
-				builder = new StringBuilder("  Tiles={");
-				for (int i = 0; i < 6; i++) {
-					if (ductUnit.tileCaches[i] != null) {
-						builder.append(i).append("=").append(ductUnit.tileCaches[i]).append(",");
-					}
-				}
-				builder.append("}");
-
-				info.add(new TextComponentString(builder.toString()));
-
-				builder = new StringBuilder("  Pipes={");
-				for (int i = 0; i < 6; i++) {
-					if (ductUnit.pipeCache[i] != null) {
-						builder.append(i).append("=").append(ductUnit.pipeCache[i]).append(",");
-					}
-				}
-				builder.append("}");
-				info.add(new TextComponentString(builder.toString()));
-
-				builder = new StringBuilder("  Attach={");
-				if (attachmentData != null) {
-					for (int i = 0; i < 6; i++) {
-						Attachment attachment = attachmentData.attachments[i];
-						if (attachment != null) {
-							builder.append(i).append("=").append(attachment.getId()).append(",");
-						}
-					}
-				}
-				info.add(new TextComponentString(builder.append("}").toString()));
-
-				info.add(new TextComponentString(builder.append("}").toString()));
-			}
-		}
-
-		Attachment attachment = getAttachmentSelected(player);
-		if (attachment != null) {
-			info.add(new TextComponentTranslation("info.thermaldynamics.info.attachment"));
-			int v = info.size();
-			attachment.addInfo(info, player, debug);
-			if (info.size() == v) {
-				info.remove(v - 1);
-			}
-		}
-	}
-
-	@Override
 	public Object getGuiClient(InventoryPlayer inventory) {
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
@@ -1217,6 +1128,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return getDuctType().unlocalizedName;
 	}
 
+	/* IEnergyHandler */
 	public int getEnergyStored(EnumFacing from) {
 
 		return Validate.notNull(getDuct(DuctToken.ENERGY)).getEnergyStored();
@@ -1227,21 +1139,101 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return Validate.notNull(getDuct(DuctToken.ENERGY)).getMaxEnergyStored();
 	}
 
-	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-
-		return Validate.notNull(getDuct(DuctToken.ENERGY)).receiveEnergy(maxReceive, simulate);
-	}
-
-	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-
-		return Validate.notNull(getDuct(DuctToken.ENERGY)).extractEnergy(maxExtract, simulate);
-	}
-
 	public boolean canConnectEnergy(EnumFacing from) {
 
 		return getVisualConnectionType(from.ordinal()).renderDuct();
 	}
 
+	/* IEnergyReceiver */
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+
+		return Validate.notNull(getDuct(DuctToken.ENERGY)).receiveEnergy(maxReceive, simulate);
+	}
+
+	/* IEnergyProvider */
+	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+
+		return Validate.notNull(getDuct(DuctToken.ENERGY)).extractEnergy(maxExtract, simulate);
+	}
+
+	/* ITileInfo */
+	@Override
+	public void getTileInfo(List<ITextComponent> info, EnumFacing side, EntityPlayer player, boolean debug) {
+
+		for (DuctUnit ductUnit : getDuctUnits()) {
+			if (isDebug) {
+				info.add(new TextComponentString(ductUnit.toString()));
+			}
+			MultiBlockGrid grid = ductUnit.getGrid();
+			if (grid != null) {
+				info.add(new TextComponentTranslation("info.thermaldynamics.info.duct"));
+				grid.addInfo(info, player, debug || isDebug);
+			} else if (isDebug) {
+				info.add(new TextComponentString("No Grid"));
+			}
+
+			if (isDebug) {
+				StringBuilder builder;
+				if (connectionTypes != null) {
+					builder = new StringBuilder("  Con={");
+					for (int i = 0; i < 6; i++) {
+						builder.append(getConnectionType(i).name().substring(0, 1));
+					}
+					info.add(new TextComponentString(builder.toString()));
+				}
+
+				builder = new StringBuilder("  Vis={");
+				for (int i = 0; i < 6; i++) {
+					builder.append(getVisualConnectionType(i).name().substring(0, 1));
+				}
+				info.add(new TextComponentString(builder.toString()));
+
+				builder = new StringBuilder("  Tiles={");
+				for (int i = 0; i < 6; i++) {
+					if (ductUnit.tileCache[i] != null) {
+						builder.append(i).append("=").append(ductUnit.tileCache[i]).append(",");
+					}
+				}
+				builder.append("}");
+
+				info.add(new TextComponentString(builder.toString()));
+
+				builder = new StringBuilder("  Ducts={");
+				for (int i = 0; i < 6; i++) {
+					if (ductUnit.ductCache[i] != null) {
+						builder.append(i).append("=").append(ductUnit.ductCache[i]).append(",");
+					}
+				}
+				builder.append("}");
+				info.add(new TextComponentString(builder.toString()));
+
+				builder = new StringBuilder("  Attach={");
+				if (attachmentData != null) {
+					for (int i = 0; i < 6; i++) {
+						Attachment attachment = attachmentData.attachments[i];
+						if (attachment != null) {
+							builder.append(i).append("=").append(attachment.getId()).append(",");
+						}
+					}
+				}
+				info.add(new TextComponentString(builder.append("}").toString()));
+
+				info.add(new TextComponentString(builder.append("}").toString()));
+			}
+		}
+
+		Attachment attachment = getAttachmentSelected(player);
+		if (attachment != null) {
+			info.add(new TextComponentTranslation("info.thermaldynamics.info.attachment"));
+			int v = info.size();
+			attachment.addInfo(info, player, debug);
+			if (info.size() == v) {
+				info.remove(v - 1);
+			}
+		}
+	}
+
+	/* CAPABILITIES */
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 
@@ -1272,6 +1264,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return super.getCapability(capability, facing);
 	}
 
+	/* ATTACHMENTS */
 	public static class AttachmentData {
 
 		public final Attachment attachments[] = new Attachment[6];

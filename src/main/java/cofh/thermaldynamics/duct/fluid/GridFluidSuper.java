@@ -6,9 +6,9 @@ import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidGridSuper extends FluidGrid {
+public class GridFluidSuper extends GridFluid {
 
-	public FluidGridSuper(World world) {
+	public GridFluidSuper(World world) {
 
 		super(world);
 	}
@@ -88,7 +88,7 @@ public class FluidGridSuper extends FluidGrid {
 	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
-		return grid instanceof FluidGridSuper;
+		return grid instanceof GridFluidSuper;
 	}
 
 	@Override

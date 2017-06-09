@@ -25,7 +25,7 @@ public class PacketLight extends PacketCoFHBase {
 		super();
 	}
 
-	public PacketLight(boolean lit, LightGrid grid) {
+	public PacketLight(boolean lit, GridLight grid) {
 
 		addBool(lit);
 

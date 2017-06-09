@@ -1,13 +1,13 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.util.BlockUtils;
 import codechicken.lib.util.ItemUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
+import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.Block;
@@ -26,15 +26,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class DuctUnitFluidFragile extends DuctUnitFluid {
+public class DuctUnitFluidTemperate extends DuctUnitFluid {
 
 	public static final int ROOM_TEMPERATURE = FluidRegistry.WATER.getTemperature();
-	public static final int FREEZING_TEMPERATURE = 274;
+	public static final int FREEZING_TEMPERATURE = 250;
 	public static final int MELTING_TEMPERATURE = 800;
 
 	public float internalTemperature = ROOM_TEMPERATURE;
 
-	public DuctUnitFluidFragile(TileGrid parent, Duct duct) {
+	public DuctUnitFluidTemperate(TileGrid parent, Duct duct) {
 
 		super(parent, duct);
 	}
@@ -71,7 +71,6 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 		if (grid == null) {
 			return;
 		}
-
 		int temp = getTemperature(grid.getRenderFluid());
 		if (temp != prevTemperature) {
 			temp = prevTemperature;
@@ -94,9 +93,9 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 	}
 
 	@Override
-	public FluidGrid createGrid() {
+	public GridFluid createGrid() {
 
-		FluidGrid grid = new FluidGrid(world());
+		GridFluid grid = new GridFluid(world());
 		grid.doesPassiveTicking = true;
 		return grid;
 	}
@@ -115,7 +114,6 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 			Cuboid6 box = cuboids.get(rand.nextInt(cuboids.size()));
 			Vector3 vec = (box.max.subtract(box.min)).multiply(rand.nextDouble(), rand.nextDouble(), rand.nextDouble()).add(box.min);
 			world().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, vec.x, vec.y, vec.z, 0, 0, 0);
-
 		}
 		super.randomDisplayTick();
 	}
@@ -160,7 +158,6 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 				return f.getTemperature(fluid);
 			}
 		}
-
 		return ROOM_TEMPERATURE;
 	}
 
@@ -171,7 +168,6 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 		for (ItemStack stack : drops) {
 			ItemUtils.dropItem(world(), pos(), stack, 0.3);
 		}
-
 		world().setBlockToAir(pos());
 		world().createExplosion(null, pos().getX() + 0.5, pos().getY() + 0.5, pos().getZ() + 0.5, 0.5F, false);
 
@@ -186,7 +182,6 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 			} else if ("lava".equals(fluid.getName())) {
 				block = Blocks.FLOWING_LAVA;
 			}
-
 			if (!"water".equals(fluid.getName()) || !world().getBiome(pos()).getBiomeName().toLowerCase(Locale.US).equals("hell")) {
 				if (block == Blocks.FLOWING_WATER || block == Blocks.FLOWING_LAVA) {
 					IBlockState levelState = block.getDefaultState().withProperty(BlockLiquid.LEVEL, fullBucket ? 0 : (world().rand.nextInt(6) + 1));
@@ -201,9 +196,8 @@ public class DuctUnitFluidFragile extends DuctUnitFluid {
 					world().setBlockState(pos(), levelState, 3);
 					world().scheduleBlockUpdate(pos(), block, world().rand.nextInt(30) + 10, 0);
 				}
-				BlockUtils.fireBlockUpdate(world(), pos());
+				BlockHelper.callBlockUpdate(world(), pos());
 			}
-
 		}
 	}
 

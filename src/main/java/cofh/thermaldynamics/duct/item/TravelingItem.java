@@ -40,7 +40,7 @@ public class TravelingItem {
 	public boolean shouldDie = false;
 	public int step = 1;
 
-	public TravelingItem(ItemStack theItem, IGridTile<DuctUnitItem, ItemGrid> start, Route itemPath, byte oldDirection, byte speed) {
+	public TravelingItem(ItemStack theItem, IGridTile<DuctUnitItem, GridItem> start, Route itemPath, byte oldDirection, byte speed) {
 
 		this(theItem, start.x(), start.y(), start.z(), itemPath, oldDirection, speed);
 	}
@@ -132,7 +132,7 @@ public class TravelingItem {
 
 		DuctUnitItem newHome = homeTile.getConnectedSide(direction);
 		if (newHome != null) {
-			if (newHome.pipeCache[direction ^ 1] != null) {
+			if (newHome.ductCache[direction ^ 1] != null) {
 				homeTile.removeItem(this, false);
 				newHome.transferItem(this);
 				if (myPath.hasNextDirection()) {

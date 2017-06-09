@@ -20,8 +20,8 @@ public class DuctUnitFluidOmni extends DuctUnitFluid {
 		super.writeToTilePacket(payload);
 
 		byte fluidMask = 0;
-		for (int i = 0; i < pipeCache.length; i++) {
-			if (pipeCache[i] != null) {
+		for (int i = 0; i < ductCache.length; i++) {
+			if (ductCache[i] != null) {
 				fluidMask |= (1 << i);
 			}
 		}

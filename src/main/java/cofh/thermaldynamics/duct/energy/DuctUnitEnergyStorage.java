@@ -13,7 +13,7 @@ public class DuctUnitEnergyStorage extends DuctUnitEnergy {
 	}
 
 	@Override
-	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, EnergyGrid, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 
 		return super.canConnectToOtherDuct(adjDuct, side, oppositeSide) && adjDuct.cast() instanceof DuctUnitEnergyStorage;
 	}

@@ -9,14 +9,14 @@ public class FluidTankGrid extends FluidTankCore {
 
 	public int fluidThroughput = 120;
 	public int fluidPerDuct = 3000;
-	public FluidGrid myMaster;
+	public GridFluid myMaster;
 	static TObjectIntHashMap<String> fluidFlowrate = new TObjectIntHashMap<>();
 
 	static {
 		fluidFlowrate.put("steam", 600);
 	}
 
-	public FluidTankGrid(int capacity, FluidGrid theGrid) {
+	public FluidTankGrid(int capacity, GridFluid theGrid) {
 
 		super(capacity);
 		myMaster = theGrid;
