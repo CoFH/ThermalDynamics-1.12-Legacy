@@ -194,6 +194,11 @@ public class RetrieverItem extends ServoItem {
 	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
 	//	}
 
+	@Override
+	public boolean allowPipeConnection() {
+		return true;
+	}
+
 	/* IPortableData */
 	@Override
 	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {

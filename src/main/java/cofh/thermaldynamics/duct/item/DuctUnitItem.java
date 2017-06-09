@@ -235,11 +235,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	@Override
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
 
-		if (parent.getAttachment(side) instanceof ServoItem) {
+		Attachment attachment = parent.getAttachment(side);
+		if (attachment != null && !attachment.allowPipeConnection()) {
 			return null;
 		}
 		if (InventoryHelper.hasItemHandlerCap(tile, EnumFacing.values()[side ^ 1])) {
-			return new Cache(tile, parent.getAttachment(side));
+			return new Cache(tile, attachment);
 		}
 		return null;
 	}
