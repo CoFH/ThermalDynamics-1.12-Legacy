@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.core.util.CoreUtils;
 import cofh.core.util.item.ISpecialFilterFluid;
 import cofh.core.util.item.ISpecialFilterItem;
 import cofh.core.util.oredict.OreDictionaryArbiter;
@@ -106,7 +105,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				} else {
 					modNames = null;
 				}
-
 				customFilterItems = null;
 
 			} else if (isFluid()) {
@@ -124,12 +122,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							if (customFilterItems == null) {
 								customFilterItems = new LinkedList<>();
 							}
-
 							customFilterItems.add(new CustomFilterItem(item));
 						}
-
 						if (!flags[flagIgnoreMod]) {
-							modNames.add(CoreUtils.getModName(item.getItem()));
+							modNames.add(item.getItem().getRegistryName().getResourceDomain());
 						}
 						if (!flags[flagIgnoreOreDictionary]) {
 							ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
@@ -148,13 +144,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 						if (flags[flagIgnoreNBT]) {
 							d.setTagCompound(null);
 						}
-
 						for (ItemStack i : quickItems) {
 							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
 								continue itemLoop;
 							}
 						}
-
 						quickItems.add(d);
 
 					} else if (isFluid()) {
@@ -165,7 +159,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 							customFilterFluids.add(new CustomFilterFluid(item));
 						}
-
 						FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
 						if (fluidStack != null) {
 							fluidStack = fluidStack.copy();
@@ -180,7 +173,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 					}
 				}
 			}
-
 		}
 
 	}
@@ -211,13 +203,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				}
 			}
 		}
-
 		if (!flags[flagIgnoreMod]) {
 			if (modNames.contains(item.getItem().getRegistryName().getResourceDomain())) {
 				return returnValue;
 			}
 		}
-
 		if (!flags[flagIgnoreOreDictionary] && !oreIds.isEmpty()) {
 			ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
 			if (allOreIDs != null) {
@@ -233,11 +223,9 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			if (filter.getItem() != item.getItem()) {
 				continue;
 			}
-
 			if (!flags[flagIgnoreMetadata] && filter.getItemDamage() != item.getItemDamage()) {
 				continue;
 			}
-
 			if (!flags[flagIgnoreNBT] && !ItemHelper.doNBTsMatch(item.getTagCompound(), filter.getTagCompound())) {
 				continue;
 			}
@@ -382,7 +370,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (recalc) {
 			calcItems();
 		}
-
 		if (customFilterFluids != null) {
 			for (CustomFilterFluid customFilterFluids : this.customFilterFluids) {
 				if (customFilterFluids.filter.matchesFluid(customFilterFluids.filterStack, fluid)) {
@@ -390,7 +377,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				}
 			}
 		}
-
 		if (fluid.tag == null || flags[flagIgnoreNBT]) {
 			return !flags[flagBlackList] == fluidsSimple.contains(fluid.getFluid());
 		} else {
@@ -464,7 +450,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			}
 		}
 		validLevels = vLevels.toArray();
-
 		vLevels.clear();
 
 		for (int i = 0; i < numFlags(); i++) {
