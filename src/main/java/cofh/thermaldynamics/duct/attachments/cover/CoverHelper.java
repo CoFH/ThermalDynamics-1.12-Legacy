@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class CoverHelper {
@@ -29,7 +30,7 @@ public class CoverHelper {
 	public static boolean isValid(Block block, int meta) {
 
 		try {
-			if (block == null) {
+			if (block == null || block instanceof IShearable) {
 				return false;
 			}
 			IBlockState state = block.getStateFromMeta(meta);

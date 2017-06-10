@@ -98,6 +98,18 @@ public class TDCrafting {
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened));
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasicOpaque.itemStack, 6), "IGI", 'I', "ingotTin", 'G', "ingotLead"));
 
+		addRecipe(ShapelessRecipe(TDDucts.itemEnergy.itemStack, TDDucts.itemBasic.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum"));
+		addRecipe(ShapelessRecipe(TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum"));
+
+		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergy.itemStack, 3), TDDucts.itemBasic.itemStack, TDDucts.fluidHardened.itemStack, TDDucts.fluidHardened.itemStack, "ingotSignalum", "ingotElectrum"));
+		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyOpaque.itemStack, 3), TDDucts.itemBasicOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, "ingotSignalum", "ingotElectrum"));
+
+		addRecipe(ShapelessRecipe(TDDucts.itemEnergyFast.itemStack, TDDucts.itemFast.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum"));
+		addRecipe(ShapelessRecipe(TDDucts.itemEnergyFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum"));
+
+		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergy.itemStack, 3), TDDucts.itemBasic.itemStack, TDDucts.fluidHardened.itemStack, TDDucts.fluidHardened.itemStack, "ingotSignalum", "ingotElectrum"));
+		addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyOpaque.itemStack, 3), TDDucts.itemBasicOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, "ingotSignalum", "ingotElectrum"));
+
 		//		TODO: Readd Omni/Warp Ducts
 		//		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 2), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
 		//		GameRegistry.addRecipe(ShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 2), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
@@ -107,8 +119,8 @@ public class TDCrafting {
 		/* ITEMS - TE Integration */
 		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemFast.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
 		addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
-		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemEnergy.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
-		addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
+		addTransposerFill(800, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergyFast.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
+		addTransposerFill(800, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyFastOpaque.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
 
 		/* STRUCTURE */
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetTin", 'I', "ingotLead"));
@@ -120,7 +132,7 @@ public class TDCrafting {
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportFrame.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotBronze", 'G', glassHardened));
 		addRecipe(ShapedRecipe(ItemHelper.cloneStack(TDDucts.transportLongRange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotLead", 'G', glassHardened));
 
-		addTransposerFill(800, TDDucts.transportFrame.itemStack, TDDucts.transportBasic.itemStack, new FluidStack(TFFluids.fluidAerotheum, 50), false);
+		addTransposerFill(800, TDDucts.transportFrame.itemStack, TDDucts.transportBasic.itemStack, new FluidStack(TFFluids.fluidAerotheum, 100), false);
 		addTransposerFill(8000, TDDucts.transportBasic.itemStack, TDDucts.transportLinking.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
 
 		/* COVERS */

@@ -44,7 +44,7 @@ public class ItemCover extends ItemAttachment {
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return null;
 		}
-		int meta = nbt.getByte("Meta");//FIXME Use a state instead of meta and block.
+		int meta = nbt.getByte("Meta"); //FIXME Use a state instead of meta and block.
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
 		if (block == Blocks.AIR || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {
@@ -103,7 +103,6 @@ public class ItemCover extends ItemAttachment {
 			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
 				continue;
 			}
-
 			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
 		}
 	}
