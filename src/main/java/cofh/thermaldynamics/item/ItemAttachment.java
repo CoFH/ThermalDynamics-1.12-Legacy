@@ -49,8 +49,7 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 			}
 			return EnumActionResult.SUCCESS;
 		}
-
-		return super.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ);
+		return EnumActionResult.PASS;
 	}
 
 	public Attachment getAttachment(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
@@ -125,7 +124,6 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 		c.max.subtract(c.min);
 
 		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
-
 		attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
 
 		event.setCanceled(true);

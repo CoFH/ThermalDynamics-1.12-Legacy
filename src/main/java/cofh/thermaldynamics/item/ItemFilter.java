@@ -127,6 +127,13 @@ public class ItemFilter extends ItemAttachment {
 		resonantFilter = new ItemStack(this, 1, 4);
 
 		ThermalDynamics.proxy.addIModelRegister(this);
+
+		return true;
+	}
+
+	@Override
+	public boolean initialize() {
+
 		return true;
 	}
 

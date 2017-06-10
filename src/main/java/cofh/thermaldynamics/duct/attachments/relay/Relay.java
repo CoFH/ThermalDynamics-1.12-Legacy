@@ -336,7 +336,6 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		if (ServerHelper.isClientWorld(baseTile.world())) {
 			return true;
 		}
-
 		PacketHandler.sendTo(getPacket(), player);
 		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_ATTACHMENT_ID + this.side, baseTile.getWorld(), baseTile.getPos().getX(), baseTile.getPos().getY(), baseTile.getPos().getZ());
 		return true;

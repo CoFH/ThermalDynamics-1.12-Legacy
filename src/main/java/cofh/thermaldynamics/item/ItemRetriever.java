@@ -147,6 +147,13 @@ public class ItemRetriever extends ItemAttachment {
 		resonantRetriever = new ItemStack(this, 1, 4);
 
 		ThermalDynamics.proxy.addIModelRegister(this);
+
+		return true;
+	}
+
+	@Override
+	public boolean initialize() {
+
 		return true;
 	}
 

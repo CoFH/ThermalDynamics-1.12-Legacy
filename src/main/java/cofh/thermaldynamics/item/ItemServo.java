@@ -147,6 +147,13 @@ public class ItemServo extends ItemAttachment {
 		ServoBase.initialize();
 
 		ThermalDynamics.proxy.addIModelRegister(this);
+
+		return true;
+	}
+
+	@Override
+	public boolean initialize() {
+
 		return true;
 	}
 

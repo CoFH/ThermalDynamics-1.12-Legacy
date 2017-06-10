@@ -48,7 +48,15 @@ public class ItemRelay extends ItemAttachment {
 	public boolean preInit() {
 
 		GameRegistry.register(this.setRegistryName("relay"));
+
 		ThermalDynamics.proxy.addIModelRegister(this);
+
+		return true;
+	}
+
+	@Override
+	public boolean initialize() {
+
 		return true;
 	}
 

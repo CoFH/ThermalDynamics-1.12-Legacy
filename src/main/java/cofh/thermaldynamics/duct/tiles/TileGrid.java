@@ -83,7 +83,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	@Nullable
-	private LinkedList<WeakReference<Chunk>> neighbourChunks;
+	private LinkedList<WeakReference<Chunk>> neighborChunks;
 	@Nullable
 	public AttachmentData attachmentData;
 	@Nullable
@@ -159,11 +159,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (ServerHelper.isClientWorld(worldObj)) {
 			return;
 		}
-
 		if (isInvalid()) {
 			return;
 		}
-
 		TileEntity[] tiles = new TileEntity[6];
 		IDuctHolder[] holders = new IDuctHolder[6];
 		for (int i = 0; i < 6; i++) {
@@ -177,7 +175,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				}
 			}
 		}
-
 		int renderHash = getRenderHash();
 		int tileHash = getTileHash();
 
@@ -188,15 +185,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				}
 			}
 		}
-
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.updateAllSides(tiles, holders);
 		}
-
 		if (renderHash != getRenderHash()) {
 			callBlockUpdate();
 		}
-
 		if (tileHash != getTileHash()) {
 			rebuildChunkCache();
 		}
@@ -225,23 +219,21 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.updateSide(adjacentTileEntity, holder, side);
 		}
-
 		if (renderHash != getRenderHash()) {
 			callBlockUpdate();
 		}
-
 		if (tileHash != getTileHash()) {
 			rebuildChunkCache();
 		}
 	}
 
-	public EnumFacing getNeighborDirection(BlockPos pos, BlockPos neighbour) {
+	public EnumFacing getNeighborDirection(BlockPos pos, BlockPos neighbor) {
 
-		int dx = pos.getX() - neighbour.getX();
+		int dx = pos.getX() - neighbor.getX();
 		if (dx == 0) {
-			int dz = pos.getZ() - neighbour.getZ();
+			int dz = pos.getZ() - neighbor.getZ();
 			if (dz == 0) {
-				int dy = pos.getY() - neighbour.getY();
+				int dy = pos.getY() - neighbor.getY();
 				if (dy == 1) {
 					return EnumFacing.UP;
 				} else if (dy == -1) {
@@ -257,7 +249,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		} else if (dx == -1) {
 			return EnumFacing.WEST;
 		}
-		throw new IllegalStateException("Positions " + pos + " and " + neighbour + " are not adjacent");
+		throw new IllegalStateException("Positions " + pos + " and " + neighbor + " are not adjacent");
 	}
 
 	private int getTileHash() {
@@ -319,14 +311,14 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public boolean checkForChunkUnload() {
 
-		LinkedList<WeakReference<Chunk>> neighbourChunks = this.neighbourChunks;
-		if (neighbourChunks == null || neighbourChunks.isEmpty()) {
+		LinkedList<WeakReference<Chunk>> neighborChunks = this.neighborChunks;
+		if (neighborChunks == null || neighborChunks.isEmpty()) {
 			return false;
 		}
-		for (WeakReference<Chunk> neighbourChunk : neighbourChunks) {
-			Object chunk = neighbourChunk.get();
+		for (WeakReference<Chunk> neighborChunk : neighborChunks) {
+			Object chunk = neighborChunk.get();
 			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
-				neighbourChunks.clear();
+				neighborChunks.clear();
 				onNeighborBlockChange();
 				return true;
 			}
@@ -338,10 +330,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		BlockPos pos = getPos();
 
-		if (neighbourChunks != null && !neighbourChunks.isEmpty()) {
-			neighbourChunks.clear();
+		if (neighborChunks != null && !neighborChunks.isEmpty()) {
+			neighborChunks.clear();
 		}
-
 		Chunk base = worldObj.getChunkFromBlockCoords(pos);
 
 		for (byte i = 0; i < 6; i++) {
@@ -360,10 +351,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			EnumFacing facing = EnumFacing.VALUES[i];
 			Chunk chunk = worldObj.getChunkFromBlockCoords(pos.offset(facing));
 			if (chunk != base) {
-				if (neighbourChunks == null) {
-					neighbourChunks = new LinkedList<>();
+				if (neighborChunks == null) {
+					neighborChunks = new LinkedList<>();
 				}
-				neighbourChunks.add(new WeakReference<>(chunk));
+				neighborChunks.add(new WeakReference<>(chunk));
 			}
 		}
 
@@ -375,18 +366,17 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			for (BlockPos p2 : additionalImportantPositions) {
 				Chunk otherChunk = worldObj.getChunkFromBlockCoords(p2);
 				if (otherChunk != base) {
-					if (neighbourChunks == null) {
-						neighbourChunks = new LinkedList<>();
-					} else if (neighbourChunks.stream().anyMatch(chunkWeakReference -> chunkWeakReference.get() == otherChunk)) {
+					if (neighborChunks == null) {
+						neighborChunks = new LinkedList<>();
+					} else if (neighborChunks.stream().anyMatch(chunkWeakReference -> chunkWeakReference.get() == otherChunk)) {
 						continue;
 					}
-					neighbourChunks.add(new WeakReference<>(otherChunk));
+					neighborChunks.add(new WeakReference<>(otherChunk));
 				}
 			}
 		}
-
-		if (neighbourChunks != null && neighbourChunks.isEmpty()) {
-			neighbourChunks = null;
+		if (neighborChunks != null && neighborChunks.isEmpty()) {
+			neighborChunks = null;
 		}
 	}
 
@@ -395,27 +385,22 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (!attachment.canAddToTile(this)) {
 			return false;
 		}
-
 		if (attachmentData != null && attachmentData.attachments[attachment.side] != null) {
 			return false;
 		}
-
 		if (ServerHelper.isClientWorld(worldObj)) {
 			return true;
 		}
-
 		if (attachmentData == null) {
 			attachmentData = new AttachmentData();
 		}
-
 		attachmentData.attachments[attachment.side] = attachment;
 
 		callNeighborStateChange();
 		onNeighborBlockChange();
-		callBlockUpdate();
 		onAttachmentsChanged();
-
-		return false;
+		callBlockUpdate();
+		return true;
 	}
 
 	public boolean removeAttachment(Attachment attachment) {
@@ -425,11 +410,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 		attachmentData.attachments[attachment.side] = null;
 
-		worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
+		callNeighborStateChange();
 		onNeighborBlockChange();
-
 		onAttachmentsChanged();
-
 		callBlockUpdate();
 		return true;
 	}
