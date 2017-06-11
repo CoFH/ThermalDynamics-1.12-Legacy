@@ -161,6 +161,7 @@ tile.thermaldynamics.duct.opaque.name=%s (Opaque)
 tile.thermaldynamics.duct.structure.info=Provides Structure.
 tile.thermaldynamics.duct.structure.opaque.name=Structuralduct
 tile.thermaldynamics.duct.structureLight.name=Luxduct
+
 tile.thermaldynamics.duct.transportBasic.name=Viaduct
 tile.thermaldynamics.duct.transportFrame.name=Viaduct (Untreated)
 tile.thermaldynamics.duct.transportLinking.name=Long Range Linking Viaduct

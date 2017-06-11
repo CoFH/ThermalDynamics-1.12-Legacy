@@ -159,11 +159,12 @@ tile.thermaldynamics.duct.itemFast.name=动能物品管道
 tile.thermaldynamics.duct.opaque.name=不透明%s
 
 tile.thermaldynamics.duct.structure.info=用于建筑结构
-tile.thermaldynamics.duct.structure.name=结构管道
-tile.thermaldynamics.duct.structureGlow.name=照明管道
-tile.thermaldynamics.duct.transport.name=旅行管道
-tile.thermaldynamics.duct.transportAcceleration.name=远程连接旅行管道
-tile.thermaldynamics.duct.transportCrafting.name=旅行管道（未处理）
+tile.thermaldynamics.duct.structure.opaque.name=结构管道
+tile.thermaldynamics.duct.structureLight.name=照明管道
+
+tile.thermaldynamics.duct.transportBasic.name=旅行管道
+tile.thermaldynamics.duct.transportFrame.name=旅行管道（未处理）
+tile.thermaldynamics.duct.transportLinking.name=远程连接旅行管道
 tile.thermaldynamics.duct.transportLongRange.name=远程旅行管道
 
 tile.thermaldynamics.duct.vacuum.name=真空%s
