@@ -1124,7 +1124,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public boolean canConnectEnergy(EnumFacing from) {
 
-		return getVisualConnectionType(from.ordinal()).renderDuct();
+		return from != null && getVisualConnectionType(from.ordinal()).renderDuct();
 	}
 
 	/* IEnergyReceiver */

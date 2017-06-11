@@ -500,4 +500,5 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 
 		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
 	}
+
 }
