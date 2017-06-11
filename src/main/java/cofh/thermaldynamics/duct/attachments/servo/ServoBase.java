@@ -1,42 +1,54 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
-import cofh.api.tileentity.IRedstoneControl;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.network.PacketCoFHBase;
-import cofh.core.render.RenderUtils;
+import cofh.core.util.tileentity.IRedstoneControl;
 import cofh.lib.util.helpers.StringHelper;
-import cofh.repack.codechicken.lib.vec.Translation;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileTDBase;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
+import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class ServoBase extends ConnectionBase {
 
 	public static final String[] NAMES = { "basic", "hardened", "reinforced", "signalum", "resonant" };
 	static boolean[] redstoneControl = { true, true, true, true, true };
 
+	protected TileEntity myTile;
+
 	public static void initialize() {
 
 		String category = "Attachment.Servo.";
 
 		for (int i = 0; i < NAMES.length; i++) {
-			redstoneControl[i] = ThermalDynamics.config.get(category + StringHelper.titleCase(NAMES[i]), "RedstoneControl", redstoneControl[i]);
+			redstoneControl[i] = ThermalDynamics.CONFIG.get(category + StringHelper.titleCase(NAMES[i]), "RedstoneControl", redstoneControl[i]);
 		}
 	}
 
-	public ServoBase(TileTDBase tile, byte side) {
+	public static boolean canAlterRS(int type) {
+
+		return redstoneControl[type % redstoneControl.length];
+	}
+
+	public ServoBase(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public ServoBase(TileTDBase tile, byte side, int type) {
+	public ServoBase(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
@@ -45,6 +57,39 @@ public abstract class ServoBase extends ConnectionBase {
 	public String getName() {
 
 		return "item.thermaldynamics.servo." + type + ".name";
+	}
+
+	//	@Override
+	//	public void onNeighborChange() {
+	//
+	//		super.onNeighborChange();
+	//	}
+
+	//	@Override
+	//	public abstract DuctToken tickUnit();
+
+	@Override
+	public boolean canAlterRS() {
+
+		return canAlterRS(type);
+	}
+
+	@Override
+	public ItemStack getPickBlock() {
+
+		return new ItemStack(TDItems.itemServo, 1, type);
+	}
+
+	/* NBT METHODS */
+	@Override
+	public void readFromNBT(NBTTagCompound tag) {
+
+		super.readFromNBT(tag);
+		isPowered = tag.getBoolean("power");
+
+		if (canAlterRS()) {
+			rsMode = IRedstoneControl.ControlMode.values()[tag.getByte("rsMode")];
+		}
 	}
 
 	@Override
@@ -57,17 +102,7 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 	}
 
-	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-
-		super.readFromNBT(tag);
-		isPowered = tag.getBoolean("power");
-
-		if (canAlterRS()) {
-			rsMode = IRedstoneControl.ControlMode.values()[tag.getByte("rsMode")];
-		}
-	}
-
+	/* NETWORK METHODS */
 	@Override
 	public void addDescriptionToPacket(PacketCoFHBase packet) {
 
@@ -88,45 +123,17 @@ public abstract class ServoBase extends ConnectionBase {
 		}
 	}
 
+	/* RENDER */
 	@Override
-	public ItemStack getPickBlock() {
+	@SideOnly (Side.CLIENT)
+	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		return new ItemStack(ThermalDynamics.itemServo, 1, type);
-	}
-
-	@Override
-	public boolean canAlterRS() {
-
-		return canAlterRS(type);
-	}
-
-	public static boolean canAlterRS(int type) {
-
-		return redstoneControl[type % redstoneControl.length];
-	}
-
-	@Override
-	public void onNeighborChange() {
-
-		super.onNeighborChange();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean render(int pass, RenderBlocks renderBlocks) {
-
-		if (pass == 1) {
+		if (layer != BlockRenderLayer.SOLID) {
 			return false;
 		}
-		Translation trans = RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
-		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(trans,
-				RenderUtils.getIconTransformation(RenderDuct.servoTexture[type * 2 + (stuffed ? 1 : 0)]));
-		return true;
-	}
-
-	@Override
-	public boolean doesTick() {
-
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
+		IconTransformation iconTrans = new IconTransformation(TDTextures.SERVO_BASE[stuffed ? 1 : 0][type]);
+		RenderDuct.modelConnection[isPowered ? 1 : 2][side].render(ccRenderState, trans, iconTrans);
 		return true;
 	}
 

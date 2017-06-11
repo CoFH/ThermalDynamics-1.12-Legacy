@@ -1,23 +1,22 @@
 package cofh.thermaldynamics.gui.client;
 
-import cofh.core.gui.GuiBaseAdv;
+import cofh.core.gui.GuiCore;
 import cofh.lib.gui.element.ElementTextField;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransportConfig;
-
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiTransportConfig extends GuiBaseAdv {
+public class GuiTransportConfig extends GuiCore {
 
-	static final String TEX_PATH = "thermaldynamics:textures/gui/TransportConfig.png";
+	static final String TEX_PATH = "thermaldynamics:textures/gui/transport_config.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 	private final InventoryPlayer inventory;
-	private final TileTransportDuct transportDuct;
+	private final DuctUnitTransport transportDuct;
 
-	public GuiTransportConfig(InventoryPlayer inventory, TileTransportDuct transportDuct) {
+	public GuiTransportConfig(InventoryPlayer inventory, DuctUnitTransport transportDuct) {
 
-		super(new ContainerTransportConfig(inventory, transportDuct), new ResourceLocation(TEX_PATH));
+		super(new ContainerTransportConfig(inventory, transportDuct), TEXTURE);
 		this.inventory = inventory;
 		this.transportDuct = transportDuct;
 

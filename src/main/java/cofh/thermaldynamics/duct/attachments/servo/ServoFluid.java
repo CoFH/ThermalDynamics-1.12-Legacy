@@ -1,21 +1,23 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
-import cofh.thermaldynamics.duct.fluid.TileFluidDuct;
-
+import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
+import cofh.thermaldynamics.duct.fluid.FluidTankGrid;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class ServoFluid extends ServoBase {
 
-	public TileFluidDuct fluidDuct;
-
 	public static float[] throttle = { 0.5F, 0.75F, 1F, 1.5F, 2F };
+
+	public DuctUnitFluid fluidDuct;
 
 	@Override
 	public int getId() {
@@ -23,42 +25,46 @@ public class ServoFluid extends ServoBase {
 		return AttachmentRegistry.SERVO_FLUID;
 	}
 
-	public ServoFluid(TileTDBase tile, byte side) {
+	public ServoFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
-		fluidDuct = (TileFluidDuct) tile;
+		fluidDuct = tile.getDuct(DuctToken.FLUID);
 	}
 
-	public ServoFluid(TileTDBase tile, byte side, int type) {
+	public ServoFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
-		fluidDuct = (TileFluidDuct) tile;
+		fluidDuct = tile.getDuct(DuctToken.FLUID);
 	}
 
-	public IFluidHandler theTile;
+	@Override
+	public DuctToken tickUnit() {
+
+		return DuctToken.FLUID;
+	}
 
 	@Override
 	public void clearCache() {
 
-		theTile = null;
+		myTile = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		theTile = (IFluidHandler) tile;
+		myTile = tile;
 	}
 
 	@Override
 	public boolean isValidTile(TileEntity tile) {
 
-		return tile instanceof IFluidHandler;
+		return tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
-	public boolean canAddToTile(TileTDBase tileMultiBlock) {
+	public boolean canAddToTile(TileGrid tile) {
 
-		return tileMultiBlock instanceof TileFluidDuct;
+		return fluidDuct != null;
 	}
 
 	@Override
@@ -66,16 +72,23 @@ public class ServoFluid extends ServoBase {
 
 		super.tick(pass);
 
-		if (pass != 1 || fluidDuct.fluidGrid == null || !isPowered || !isValidInput) {
+		if (pass != 1 || fluidDuct.getGrid() == null || !isPowered || !isValidInput) {
 			return;
 		}
+		FluidTankGrid myTank = fluidDuct.getGrid().myTank;
+		int maxInput = (int) Math.ceil(myTank.fluidThroughput * throttle[type]);
+		IFluidHandler ductHandler = fluidDuct.getFluidCapability(EnumFacing.VALUES[side]);
 
-		int maxInput = (int) Math.ceil(fluidDuct.fluidGrid.myTank.fluidThroughput * throttle[type]);
+		if (ductHandler == null) {
+			return;
+		}
+		IFluidHandler tileHandler = getMyTile();
 
-		maxInput = fluidDuct.fill(ForgeDirection.VALID_DIRECTIONS[side], theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, false), false);
-
-		FluidStack returned = theTile.drain(ForgeDirection.VALID_DIRECTIONS[side ^ 1], maxInput, true);
-		fluidDuct.fill(ForgeDirection.getOrientation(side), returned, true);
+		if (tileHandler == null) {
+			return;
+		}
+		maxInput = myTank.fill(tileHandler.drain(maxInput, false), false);
+		myTank.fill(tileHandler.drain(maxInput, true), true);
 	}
 
 	public boolean fluidPassesFiltering(FluidStack theFluid) {
@@ -87,6 +100,14 @@ public class ServoFluid extends ServoBase {
 	public FilterLogic createFilterLogic() {
 
 		return new FilterLogic(type, Duct.Type.FLUID, this);
+	}
+
+	public IFluidHandler getMyTile() {
+
+		if (myTile == null) {
+			return null;
+		}
+		return myTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 }

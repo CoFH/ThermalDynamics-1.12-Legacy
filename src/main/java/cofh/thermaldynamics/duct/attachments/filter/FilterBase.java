@@ -1,27 +1,30 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.core.render.RenderUtils;
-import cofh.repack.codechicken.lib.vec.Translation;
-import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.block.TileTDBase;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
+import cofh.thermaldynamics.init.TDItems;
+import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class FilterBase extends ConnectionBase {
 
-	public FilterBase(TileTDBase tile, byte side) {
+	public FilterBase(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
 
-	public FilterBase(TileTDBase tile, byte side, int type) {
+	public FilterBase(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 
@@ -33,27 +36,28 @@ public abstract class FilterBase extends ConnectionBase {
 		return "item.thermaldynamics.filter." + type + ".name";
 	}
 
-	@Override
-	public TileTDBase.NeighborTypes getNeighborType() {
-
-		return isValidInput ? TileTDBase.NeighborTypes.OUTPUT : TileTDBase.NeighborTypes.DUCT_ATTACHMENT;
-	}
+	//	@Override
+	//	public BlockDuct.ConnectionType getNeighborType() {
+	//
+	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
+	//	}
 
 	@Override
 	public ItemStack getPickBlock() {
 
-		return new ItemStack(ThermalDynamics.itemFilter, 1, type);
+		return new ItemStack(TDItems.itemFilter, 1, type);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean render(int pass, RenderBlocks renderBlocks) {
+	@SideOnly (Side.CLIENT)
+	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (pass == 1) {
+		if (layer != BlockRenderLayer.SOLID) {
 			return false;
 		}
-		Translation trans = RenderUtils.getRenderVector(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5).translation();
-		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(trans, RenderUtils.getIconTransformation(RenderDuct.filterTexture[type]));
+
+		Translation trans = Vector3.fromTileCenter(baseTile).translation();
+		RenderDuct.modelConnection[stuffed ? 2 : 1][side].render(ccRenderState, trans, new IconTransformation(TDTextures.FILTER_BASE[type]));
 		return true;
 	}
 
@@ -65,4 +69,9 @@ public abstract class FilterBase extends ConnectionBase {
 		tag.setString("DisplayType", "item.thermaldynamics.filter.0.name");
 	}
 
+	@Override
+	public boolean allowDuctConnection() {
+
+		return true;
+	}
 }

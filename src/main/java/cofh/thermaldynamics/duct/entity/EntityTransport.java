@@ -3,38 +3,45 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.CoFHCore;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.lib.util.helpers.SoundHelper;
-import cofh.lib.util.position.BlockPosition;
-import cofh.repack.codechicken.lib.vec.Vector3;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.ConnectionType;
+import cofh.thermaldynamics.duct.tiles.DuctToken;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.multiblock.Route;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Facing;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityTransport extends Entity {
 
-	public static final byte DATAWATCHER_DIRECTIONS = 16;
-	public static final byte DATAWATCHER_PROGRESS = 17;
-	public static final byte DATAWATCHER_POSX = 18;
-	public static final byte DATAWATCHER_POSY = 19;
-	public static final byte DATAWATCHER_POSZ = 20;
-	public static final byte DATAWATCHER_STEP = 21;
-	public static final byte DATAWATCHER_PAUSE = 22;
+	private static final DataParameter<Byte> DIRECTIONS = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
+	private static final DataParameter<Byte> PROGRESS = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
+	private static final DataParameter<Integer> POSX = EntityDataManager.createKey(EntityTransport.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> POSY = EntityDataManager.createKey(EntityTransport.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> POSZ = EntityDataManager.createKey(EntityTransport.class, DataSerializers.VARINT);
+	private static final DataParameter<Byte> STEP = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
+	private static final DataParameter<Byte> PAUSE = EntityDataManager.createKey(EntityTransport.class, DataSerializers.BYTE);
 
-	public static final int PIPE_LENGTH = 100;
-	public static final int PIPE_LENGTH2 = 50;
+	public static final int DUCT_LENGTH = 100;
+	public static final int DUCT_LENGTH2 = 50;
 
 	public byte progress;
 	public byte direction = 7;
@@ -45,20 +52,19 @@ public class EntityTransport extends Entity {
 
 	public float originalWidth = 0;
 	public float originalHeight = 0;
-	public float originalYOffset = 0;
+	public double originalYOffset = 0;
 	public float originalEyeHeight = 0;
 	public Entity rider = null;
 
 	Route myPath;
-	BlockPosition pos;
+	BlockPos pos;
 
 	boolean initSound;
 	public static final float DEFAULT_WIDTH = 0.05F;
 	public static final float DEFAULT_HEIGHT = 0.05F;
-	public static final float DEFAULT_YOFFSET = 0;
 
 	@Override
-	public boolean isEntityInvulnerable() {
+	public boolean isEntityInvulnerable(DamageSource source) {
 
 		return true;
 	}
@@ -72,7 +78,7 @@ public class EntityTransport extends Entity {
 	@Override
 	public double getMountedYOffset() {
 
-		Entity riddenByEntity = this.riddenByEntity;
+		Entity riddenByEntity = this.rider;
 		if (riddenByEntity == null) {
 			return super.getMountedYOffset();
 		} else {
@@ -84,18 +90,18 @@ public class EntityTransport extends Entity {
 
 		super(p_i1582_1_);
 		step = 0;
-		this.height = 0.1F;
-		this.width = 0.1F;
+		this.height = 0F;
+		this.width = 0F;
 		this.noClip = true;
 		this.isImmuneToFire = true;
 	}
 
-	public EntityTransport(TileTransportDuctBase origin, Route route, byte startDirection, byte step) {
+	public EntityTransport(DuctUnitTransportBase origin, Route route, byte startDirection, byte step) {
 
 		this(origin.world());
 
 		this.step = step;
-		pos = new BlockPosition(origin);
+		pos = new BlockPos(origin.pos());
 		myPath = route;
 
 		progress = 0;
@@ -113,9 +119,18 @@ public class EntityTransport extends Entity {
 
 	public void start(Entity passenger) {
 
+		passenger.startRiding(this);
 		loadRider(passenger);
 		worldObj.spawnEntityInWorld(this);
-		passenger.mountEntity(this);
+	}
+
+	@Override
+	protected void addPassenger(Entity passenger) {
+
+		super.addPassenger(passenger);
+		if (rider == null && passenger instanceof EntityPlayer) {
+			loadRider(passenger);
+		}
 	}
 
 	public void loadRider(Entity passenger) {
@@ -123,7 +138,7 @@ public class EntityTransport extends Entity {
 		this.rider = passenger;
 		this.originalWidth = passenger.width;
 		this.originalHeight = passenger.height;
-		this.originalYOffset = passenger.yOffset;
+		this.originalYOffset = passenger.getYOffset();
 		if (rider instanceof EntityPlayer) {
 			originalEyeHeight = ((EntityPlayer) rider).eyeHeight;
 		}
@@ -145,22 +160,23 @@ public class EntityTransport extends Entity {
 	public void onUpdate() {
 
 		if (!worldObj.isRemote || rider != null) {
-			if (riddenByEntity == null || riddenByEntity.isDead) {
+
+			if (!isBeingRidden() || getPassengers().get(0).isDead) {
 				setDead();
 				return;
 			}
-		} else if (riddenByEntity == null) {
+		} else if (!isBeingRidden()) {
 			return;
 		}
 
 		if (rider == null) {
-			if (!(riddenByEntity instanceof EntityLivingBase)) {
-				riddenByEntity.mountEntity(null);
+			if (!(getPassengers().get(0) instanceof EntityLivingBase)) {
+				getPassengers().get(0).dismountRidingEntity();
 				setDead();
 				return;
 			}
 
-			loadRider(riddenByEntity);
+			loadRider(getPassengers().get(0));
 		} else {
 			updateRider(rider);
 		}
@@ -172,9 +188,9 @@ public class EntityTransport extends Entity {
 				initSound = true;
 				SoundHelper.playSound(getSound());
 			}
-			if (this.dataWatcher.hasChanges()) {
-				this.dataWatcher.func_111144_e();
-				loadWatcherData();
+			if (this.dataManager.isDirty()) {
+				this.dataManager.setClean();
+				loadDataParameters();
 			}
 		}
 
@@ -182,9 +198,11 @@ public class EntityTransport extends Entity {
 			return;
 		}
 
-		TileEntity tile = worldObj.getTileEntity(pos.x, pos.y, pos.z);
+		TileEntity tile = worldObj.getTileEntity(pos);
 
-		if (tile == null || !(tile instanceof TileTransportDuctBase)) {
+		DuctUnitTransportBase homeTile;
+
+		if (tile == null || !(tile instanceof IDuctHolder) || (homeTile = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT)) == null) {
 			if (worldObj.isRemote) {
 				pos = null;
 			} else {
@@ -193,27 +211,23 @@ public class EntityTransport extends Entity {
 			return;
 		}
 
-		TileTransportDuctBase homeTile = ((TileTransportDuctBase) tile);
-
 		if (pause > 0) {
 			pause--;
 			if (!worldObj.isRemote) {
-				updateWatcherData();
+				updateDataParameters();
 			} else {
 				setPosition(0);
 
-				if (riddenByEntity == CoFHCore.proxy.getClientPlayer()) {
+				if (!getPassengers().isEmpty() && getPassengers().get(0) == CoFHCore.proxy.getClientPlayer()) {
 					if (pause == 0) {
 						CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
 					} else {
-						CoFHCore.proxy.addIndexedChatMessage(new ChatComponentText("Charging - " + (TileTransportDuctCrossover.CHARGE_TIME - pause) + " / "
-								+ TileTransportDuctCrossover.CHARGE_TIME), -515781222);
+						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (DuctUnitTransportLinking.CHARGE_TIME - pause) + " / " + DuctUnitTransportLinking.CHARGE_TIME), -515781222);
 					}
 				}
 
 				for (int i = 0; i < 10; i++) {
-					worldObj.spawnParticle("portal", pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, MathHelper.RANDOM.nextGaussian() * 0.5,
-							MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
+					worldObj.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
 				}
 			}
 
@@ -222,9 +236,9 @@ public class EntityTransport extends Entity {
 
 		if (!worldObj.isRemote) {
 			homeTile.advanceEntity(this);
-			updateWatcherData();
+			updateDataParameters();
 		} else {
-			if (wasPause && riddenByEntity == CoFHCore.proxy.getClientPlayer()) {
+			if (wasPause && !getPassengers().isEmpty() && getPassengers().get(0) == CoFHCore.proxy.getClientPlayer()) {
 				CoFHCore.proxy.addIndexedChatMessage(null, -515781222);
 			}
 			homeTile.advanceEntityClient(this);
@@ -232,8 +246,8 @@ public class EntityTransport extends Entity {
 
 		setPosition(0);
 
-		if (riddenByEntity != null && !riddenByEntity.isDead) {
-			updateRiderPosition();
+		if (isBeingRidden() && !getPassengers().get(0).isDead) {
+			updatePassenger(getPassengers().get(0));
 		}
 	}
 
@@ -241,9 +255,8 @@ public class EntityTransport extends Entity {
 
 		rider.width = DEFAULT_WIDTH;
 		rider.height = DEFAULT_HEIGHT;
-		rider.yOffset = DEFAULT_YOFFSET;
 		if (rider instanceof EntityPlayer) {
-			((EntityPlayer) rider).eyeHeight = 0;
+			((EntityPlayer) rider).eyeHeight = 0.35F;
 		}
 		rider.setPosition(rider.posX, rider.posY, rider.posZ);
 	}
@@ -254,7 +267,6 @@ public class EntityTransport extends Entity {
 		if (rider != null && !rider.isDead) {
 			rider.height = originalHeight;
 			rider.width = originalWidth;
-			rider.yOffset = originalYOffset;
 			if (rider instanceof EntityPlayer) {
 				((EntityPlayer) rider).eyeHeight = originalEyeHeight;
 			}
@@ -266,26 +278,27 @@ public class EntityTransport extends Entity {
 
 	public boolean trySimpleAdvance() {
 
-		BlockPosition p = pos.copy().step(direction);
+		BlockPos p = pos.offset(EnumFacing.VALUES[direction]);
 
-		TileEntity tileEntity = worldObj.getTileEntity(p.x, p.y, p.z);
-		if (!(tileEntity instanceof TileTransportDuctBase)) {
+		TileEntity tileEntity = worldObj.getTileEntity(p);
+		DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.TRANSPORT);
+		if (transportBase == null) {
 			pos = null;
 			return false;
 		}
-		TileTDBase.NeighborTypes[] neighbours = ((TileTransportDuctBase) tileEntity).neighborTypes;
-		if (neighbours[direction ^ 1] != TileTDBase.NeighborTypes.MULTIBLOCK) {
+
+		if (transportBase.ductCache[direction ^ 1] == null) {
 			pos = null;
 			return false;
 		}
 
 		pos = p;
 		oldDirection = direction;
-		progress %= PIPE_LENGTH;
+		progress %= DUCT_LENGTH;
 		return true;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public ISound getSound() {
 
 		return new SoundWoosh(this);
@@ -293,8 +306,6 @@ public class EntityTransport extends Entity {
 
 	@Override
 	public void onEntityUpdate() {
-
-		// super.onEntityUpdate();
 
 	}
 
@@ -305,8 +316,8 @@ public class EntityTransport extends Entity {
 		}
 
 		if (pause > 0) {
-			Vector3 newPos = getPos(frame);
-			setPosition(newPos.x, newPos.y, newPos.z);
+			Vec3d newPos = getPos(frame);
+			setPosition(newPos.xCoord, newPos.yCoord, newPos.zCoord);
 			lastTickPosX = prevPosX = posX;
 			lastTickPosY = prevPosY = posY;
 			lastTickPosZ = prevPosZ = posZ;
@@ -314,34 +325,37 @@ public class EntityTransport extends Entity {
 			return;
 		}
 
-		Vector3 oldPos = getPos(frame - 1);
-		lastTickPosX = prevPosX = oldPos.x;
-		lastTickPosY = prevPosY = oldPos.y;
-		lastTickPosZ = prevPosZ = oldPos.z;
+		Vec3d oldPos = getPos(frame - 1);
+		lastTickPosX = prevPosX = oldPos.xCoord;
+		lastTickPosY = prevPosY = oldPos.yCoord;
+		lastTickPosZ = prevPosZ = oldPos.zCoord;
 
-		Vector3 newPos = getPos(frame);
-		setPosition(newPos.x, newPos.y, newPos.z);
+		Vec3d newPos = getPos(frame);
+		setPosition(newPos.xCoord, newPos.yCoord, newPos.zCoord);
 
-		motionX = newPos.x - oldPos.x;
-		motionY = newPos.y - oldPos.y;
-		motionZ = newPos.z - oldPos.z;
+		motionX = newPos.xCoord - oldPos.xCoord;
+		motionY = newPos.yCoord - oldPos.yCoord;
+		motionZ = newPos.zCoord - oldPos.zCoord;
 
-		updateRiderPosition();
+		if (!getPassengers().isEmpty()) {
+			updatePassenger(getPassengers().get(0));
+		}
 	}
 
 	public void dropPassenger() {
 
 		if (!worldObj.isRemote) {
-			rider.mountEntity(null);
+			rider.dismountRidingEntity();
 
 			if (direction >= 0 && direction < 6) {
 
-				double x = pos.x + Facing.offsetsXForSide[direction] + 0.5;
-				double y = pos.y + Facing.offsetsYForSide[direction];
-				double z = pos.z + Facing.offsetsZForSide[direction] + 0.5;
+				Vec3i vec = EnumFacing.VALUES[direction].getDirectionVec();
+				double x = pos.getX() + vec.getX() + 0.5;
+				double y = pos.getY() + vec.getY();
+				double z = pos.getZ() + vec.getZ() + 0.5;
 
 				if (direction == 0) {
-					y = Math.floor(pos.y - originalHeight);
+					y = Math.floor(pos.getY() - originalHeight);
 				}
 
 				rider.setPosition(x, y, z);
@@ -349,35 +363,35 @@ public class EntityTransport extends Entity {
 				if (rider instanceof EntityPlayerMP) {
 					float yaw, pitch;
 					switch (direction) {
-					case 0:
-						yaw = rider.rotationYaw;
-						pitch = 0;
-						break;
-					case 1:
-						yaw = rider.rotationYaw;
-						pitch = 0;
-						break;
-					case 2:
-						yaw = 180;
-						pitch = 0;
-						break;
-					case 3:
-						yaw = 0;
-						pitch = 0;
-						break;
-					case 4:
-						yaw = 90;
-						pitch = 0;
-						break;
-					case 5:
-						yaw = 270;
-						pitch = 0;
-						break;
-					default:
-						return;
+						case 0:
+							yaw = rider.rotationYaw;
+							pitch = 0;
+							break;
+						case 1:
+							yaw = rider.rotationYaw;
+							pitch = 0;
+							break;
+						case 2:
+							yaw = 180;
+							pitch = 0;
+							break;
+						case 3:
+							yaw = 0;
+							pitch = 0;
+							break;
+						case 4:
+							yaw = 90;
+							pitch = 0;
+							break;
+						case 5:
+							yaw = 270;
+							pitch = 0;
+							break;
+						default:
+							return;
 					}
 
-					((EntityPlayerMP) rider).playerNetServerHandler.setPlayerLocation(x, y, z, yaw, pitch);
+					((EntityPlayerMP) rider).connection.setPlayerLocation(x, y, z, yaw, pitch);
 				}
 			}
 			setDead();
@@ -390,13 +404,12 @@ public class EntityTransport extends Entity {
 		return false;
 	}
 
-	public void advanceTile(TileTransportDuctBaseRoute homeTile) {
+	public void advanceTile(DuctUnitTransportBase homeTile) {
 
-		if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.MULTIBLOCK
-				&& homeTile.connectionTypes[direction] == TileTDBase.ConnectionTypes.NORMAL) {
-			TileTransportDuctBase newHome = (TileTransportDuctBase) homeTile.getPhysicalConnectedSide(direction);
-			if (newHome != null && newHome.neighborTypes[direction ^ 1] == TileTDBase.NeighborTypes.MULTIBLOCK) {
-				pos = new BlockPosition(newHome);
+		if (homeTile.ductCache[direction] != null) {
+			DuctUnitTransportBase newHome = (DuctUnitTransportBase) homeTile.getPhysicalConnectedSide(direction);
+			if (newHome != null && newHome.ductCache[direction ^ 1] != null) {
+				pos = new BlockPos(newHome.pos());
 
 				if (myPath.hasNextDirection()) {
 					oldDirection = direction;
@@ -407,16 +420,16 @@ public class EntityTransport extends Entity {
 			} else {
 				reRoute = true;
 			}
-		} else if (homeTile.neighborTypes[direction] == TileTDBase.NeighborTypes.OUTPUT && homeTile.connectionTypes[direction].allowTransfer) {
+		} else if (homeTile.parent.getConnectionType(direction) == ConnectionType.FORCED) {
 			dropPassenger();
 		} else {
 			bouncePassenger(homeTile);
 		}
 	}
 
-	public void bouncePassenger(TileTransportDuctBaseRoute homeTile) {
+	public void bouncePassenger(DuctUnitTransportBase homeTile) {
 
-		if (homeTile.internalGrid == null) {
+		if (homeTile.getGrid() == null) {
 			return;
 		}
 
@@ -434,38 +447,36 @@ public class EntityTransport extends Entity {
 	@Override
 	protected void entityInit() {
 
-		this.dataWatcher.addObject(DATAWATCHER_DIRECTIONS, (byte) 0);
-		this.dataWatcher.addObject(DATAWATCHER_PROGRESS, (byte) 0);
-		this.dataWatcher.addObject(DATAWATCHER_POSX, 0);
-		this.dataWatcher.addObject(DATAWATCHER_POSY, 0);
-		this.dataWatcher.addObject(DATAWATCHER_POSZ, 0);
-		this.dataWatcher.addObject(DATAWATCHER_STEP, (byte) 1);
-		this.dataWatcher.addObject(DATAWATCHER_PAUSE, (byte) 0);
+		this.dataManager.register(DIRECTIONS, (byte) 0);
+		this.dataManager.register(PROGRESS, (byte) 0);
+		this.dataManager.register(POSX, 0);
+		this.dataManager.register(POSY, 0);
+		this.dataManager.register(POSZ, 0);
+		this.dataManager.register(STEP, (byte) 1);
+		this.dataManager.register(PAUSE, (byte) 0);
 	}
 
-	public void updateWatcherData() {
+	public void updateDataParameters() {
 
 		byte p_75692_2_ = (byte) (direction | (oldDirection << 3));
-		this.dataWatcher.updateObject(DATAWATCHER_DIRECTIONS, p_75692_2_);
-		this.dataWatcher.updateObject(DATAWATCHER_PROGRESS, progress);
-		this.dataWatcher.updateObject(DATAWATCHER_POSX, pos.x);
-		this.dataWatcher.updateObject(DATAWATCHER_POSY, pos.y);
-		this.dataWatcher.updateObject(DATAWATCHER_POSZ, pos.z);
-		this.dataWatcher.updateObject(DATAWATCHER_STEP, step);
-		this.dataWatcher.updateObject(DATAWATCHER_PAUSE, pause);
-
+		this.dataManager.set(DIRECTIONS, p_75692_2_);
+		this.dataManager.set(PROGRESS, progress);
+		this.dataManager.set(POSX, pos.getX());
+		this.dataManager.set(POSY, pos.getY());
+		this.dataManager.set(POSZ, pos.getZ());
+		this.dataManager.set(STEP, step);
+		this.dataManager.set(PAUSE, pause);
 	}
 
-	public void loadWatcherData() {
+	public void loadDataParameters() {
 
-		byte b = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_DIRECTIONS);
+		byte b = this.dataManager.get(DIRECTIONS);
 		direction = (byte) (b & 7);
 		oldDirection = (byte) (b >> 3);
-		progress = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_PROGRESS);
-		pos = new BlockPosition(this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSX), this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSY),
-				this.dataWatcher.getWatchableObjectInt(DATAWATCHER_POSZ));
-		step = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_STEP);
-		pause = this.dataWatcher.getWatchableObjectByte(DATAWATCHER_PAUSE);
+		progress = this.dataManager.get(PROGRESS);
+		pos = new BlockPos(this.dataManager.get(POSX), this.dataManager.get(POSY), this.dataManager.get(POSZ));
+		step = this.dataManager.get(STEP);
+		pause = this.dataManager.get(PAUSE);
 	}
 
 	@Override
@@ -475,7 +486,7 @@ public class EntityTransport extends Entity {
 			myPath = new Route(tag.getByteArray("route"));
 		}
 
-		pos = new BlockPosition(tag.getInteger("posx"), tag.getInteger("posy"), tag.getInteger("posz"));
+		pos = new BlockPos(tag.getInteger("posx"), tag.getInteger("posy"), tag.getInteger("posz"));
 
 		progress = tag.getByte("progress");
 		direction = tag.getByte("direction");
@@ -496,9 +507,9 @@ public class EntityTransport extends Entity {
 			tag.setByteArray("route", myPath.toByteArray());
 		}
 
-		tag.setInteger("posx", pos.x);
-		tag.setInteger("posy", pos.y);
-		tag.setInteger("posz", pos.z);
+		tag.setInteger("posx", pos.getX());
+		tag.setInteger("posy", pos.getY());
+		tag.setInteger("posz", pos.getZ());
 
 		tag.setByte("progress", progress);
 		tag.setByte("direction", direction);
@@ -508,25 +519,23 @@ public class EntityTransport extends Entity {
 
 		tag.setFloat("originalWidth", originalWidth);
 		tag.setFloat("originalHeight", originalHeight);
-		tag.setFloat("originalYOffset", originalYOffset);
+		//		tag.setFloat("originalYOffset", originalYOffset);
 		tag.setFloat("originalEyeHeight", originalEyeHeight);
 	}
 
-	public Vector3 getPos(double framePos) {
+	public Vec3d getPos(double framePos) {
 
 		return getPos(progress, framePos);
 	}
 
-	public Vector3 getPos(byte progress, double framePos) {
+	public Vec3d getPos(byte progress, double framePos) {
 
-		double v = (progress + step * framePos) / (PIPE_LENGTH) - 0.5;
+		double v = ((double) progress + step * framePos) / (DUCT_LENGTH) - 0.5;
 		int dir = v < 0 ? oldDirection : direction;
 
-		Vector3 vec = Vector3.center.copy();
-		vec.add(v * Facing.offsetsXForSide[dir], v * Facing.offsetsYForSide[dir], v * Facing.offsetsZForSide[dir]);
-		vec.add(pos.x, pos.y, pos.z);
+		Vec3i vec = EnumFacing.VALUES[dir].getDirectionVec();
 
-		return vec;
+		return new Vec3d(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5D, 0.5D, 0.5D).addVector(vec.getX() * v, vec.getY() * v, vec.getZ() * v);
 	}
 
 	@Override
@@ -542,7 +551,7 @@ public class EntityTransport extends Entity {
 	}
 
 	@Override
-	public boolean handleLavaMovement() {
+	public boolean isInLava() {
 
 		return false;
 	}
@@ -576,22 +585,22 @@ public class EntityTransport extends Entity {
 		return p_70112_1_ < 4096;
 	}
 
-	public void teleport(TileTransportDuctBaseRoute dest) {
+	public void teleport(DuctUnitTransport dest) {
 
 		if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
 			return;
 		}
 
 		int curDim = this.dimension;
-		int destDim = dest.world().provider.dimensionId;
+		int destDim = dest.world().provider.getDimension();
 
 		if (destDim != curDim) {
-			MinecraftServer minecraftserver = MinecraftServer.getServer();
+			MinecraftServer minecraftserver = this.worldObj.getMinecraftServer();
 
 			WorldServer currentWorld = minecraftserver.worldServerForDimension(curDim);
 			WorldServer destinationWorld = minecraftserver.worldServerForDimension(destDim);
 
-			rider.mountEntity(null);
+			rider.dismountRidingEntity();
 
 			transferNormalEntity(curDim, destDim, currentWorld, destinationWorld, this);
 
@@ -601,13 +610,13 @@ public class EntityTransport extends Entity {
 				transferNormalEntity(curDim, destDim, currentWorld, destinationWorld, rider);
 			}
 
-			rider.mountEntity(this);
+			rider.dismountRidingEntity();
 
 			currentWorld.resetUpdateEntityTick();
 			destinationWorld.resetUpdateEntityTick();
 		}
 
-		pos = new BlockPosition(dest);
+		pos = new BlockPos(dest.pos());
 
 		if (myPath.hasNextDirection()) {
 			oldDirection = direction;
@@ -619,15 +628,19 @@ public class EntityTransport extends Entity {
 
 	public void transferPlayer(int destDim, Entity entity) {
 
-		entity.travelToDimension(destDim);
+		entity.changeDimension(destDim);
 	}
 
 	public void transferNormalEntity(int curDim, int destDim, WorldServer currentWorld, WorldServer destinationWorld, Entity entity) {
 
-		entity.worldObj.removeEntity(entity);
-		MinecraftServer.getServer().getConfigurationManager().transferEntityToWorld(entity, curDim, currentWorld, destinationWorld);
-		destinationWorld.spawnEntityInWorld(entity);
-		entity.dimension = destDim;
+		entity.changeDimension(destDim);
+/*
+    TODO verify that this works for normal entity
+        entity.worldObj.removeEntity(entity);
+        this.worldObj.getMinecraftServer().getConfigurationManager().transferEntityToWorld(entity, curDim, currentWorld, destinationWorld);
+        destinationWorld.spawnEntityInWorld(entity);
+        entity.dimension = destDim;
+*/
 	}
 
 }

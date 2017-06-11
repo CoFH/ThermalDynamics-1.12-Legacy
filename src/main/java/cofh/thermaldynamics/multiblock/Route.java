@@ -1,33 +1,32 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.repack.codechicken.lib.vec.BlockCoord;
-
 import gnu.trove.iterator.TByteIterator;
 import gnu.trove.list.linked.TByteLinkedList;
+import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class Route implements Comparable<Route> {
+public class Route<T extends IGridTileRoute<T, G>, G extends MultiBlockGrid<T>> implements Comparable<Route> {
 
 	public TByteLinkedList pathDirections = new TByteLinkedList();
 
-	public IMultiBlockRoute endPoint;
+	public T endPoint;
 	public int pathWeight = 0;
 	public boolean routeFinished = false;
-	public BlockCoord dest;
+	public BlockPos dest;
 	public static final byte[] tmpBuffer = new byte[256];
 
-	public Route(IMultiBlockRoute myParent) {
+	public Route(T myParent) {
 
 		endPoint = myParent;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Route(Route prevRoute, IMultiBlockRoute newPlace, byte direction, boolean isFinished) {
+	public Route(Route<T, G> prevRoute, T newPlace, byte direction, boolean isFinished) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight + newPlace.getWeight();
@@ -38,8 +37,7 @@ public class Route implements Comparable<Route> {
 	}
 
 	// Used to set as a node
-	@SuppressWarnings("unchecked")
-	public Route(Route prevRoute, boolean endPath) {
+	public Route(Route<T, G> prevRoute, boolean endPath) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight;
@@ -48,8 +46,7 @@ public class Route implements Comparable<Route> {
 		routeFinished = true;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Route(Route prevRoute) {
+	public Route(Route<T, G> prevRoute) {
 
 		pathDirections = new TByteLinkedList(prevRoute.pathDirections);
 		pathWeight = prevRoute.pathWeight;
@@ -59,7 +56,7 @@ public class Route implements Comparable<Route> {
 	}
 
 	@Override
-	public int compareTo(Route otherRoute) {
+	public int compareTo(@Nonnull Route otherRoute) {
 
 		if (this.pathWeight < otherRoute.pathWeight) {
 			return -1;
@@ -81,7 +78,7 @@ public class Route implements Comparable<Route> {
 
 	public Route copy() {
 
-		return new Route(this);
+		return new Route<>(this);
 	}
 
 	public byte getNextDirection() {

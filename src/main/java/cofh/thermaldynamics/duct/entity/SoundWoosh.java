@@ -2,17 +2,21 @@ package cofh.thermaldynamics.duct.entity;
 
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 
 public class SoundWoosh extends MovingSound {
 
 	private final EntityTransport transport;
 
+	public static final SoundEvent WOOSH = new SoundEvent(new ResourceLocation("thermaldynamics", "ductsTransportWoosh")).setRegistryName("thermaldynamics:ducts_transport_woosh");
+
 	protected SoundWoosh(EntityTransport transport) {
 
-		super(new ResourceLocation("thermaldynamics", "ductsTransportWoosh"));
+		super(WOOSH, SoundCategory.NEUTRAL);
 		this.transport = transport;
 		this.repeat = true;
-		this.field_147665_h = 0;
+		this.repeatDelay = 0;
 		this.volume = 0.0001F;
 	}
 

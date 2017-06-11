@@ -1,17 +1,13 @@
 package cofh.thermaldynamics.render;
 
-import cofh.lib.render.RenderHelper;
+import codechicken.lib.lighting.LightModel;
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCModel;
+import codechicken.lib.vec.*;
+import codechicken.lib.vec.uv.UV;
 import cofh.lib.util.helpers.MathHelper;
-import cofh.repack.codechicken.lib.lighting.LightModel;
-import cofh.repack.codechicken.lib.render.BlockRenderer;
-import cofh.repack.codechicken.lib.render.CCModel;
-import cofh.repack.codechicken.lib.render.Vertex5;
-import cofh.repack.codechicken.lib.render.uv.UV;
-import cofh.repack.codechicken.lib.vec.Cuboid6;
-import cofh.repack.codechicken.lib.vec.Rotation;
-import cofh.repack.codechicken.lib.vec.Transformation;
-import cofh.repack.codechicken.lib.vec.Vector3;
-import cofh.thermaldynamics.core.TDProps;
+import cofh.lib.util.helpers.RenderHelper;
+import cofh.thermaldynamics.init.TDProps;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -27,9 +23,9 @@ public class ModelHelper {
 		final static int[][] orthogs = { { 2, 3, 4, 5 }, { 2, 3, 4, 5 }, { 0, 1, 4, 5 }, { 0, 1, 4, 5 }, { 0, 1, 2, 3 }, { 0, 1, 2, 3 }, };
 
 		Cuboid6 center;
-		Cuboid6[] pipeWCenter = new Cuboid6[6];
-		Cuboid6[] pipe = new Cuboid6[6];
-		Cuboid6[] pipeFullLength = new Cuboid6[6];
+		Cuboid6[] ductWCenter = new Cuboid6[6];
+		Cuboid6[] duct = new Cuboid6[6];
+		Cuboid6[] ductFullLength = new Cuboid6[6];
 
 		public static Cuboid6[] rotateCuboids(Cuboid6 downCube) {
 
@@ -74,14 +70,13 @@ public class ModelHelper {
 			double d3 = 0.32 + 0.06 * i;
 			double c1 = 0.32;
 			double c2 = 0.68;
-			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 },
-					{ 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 } };
+			double[][] boxes = new double[][] { { d1, 0, d1, d2, c1, d2 }, { d1, d3, d1, d2, 1, d2 }, { c1, c1, 0, c2, d3, c1 }, { c1, c1, c2, c2, d3, 1 }, { 0, c1, c1, c1, d3, c2 }, { c2, c1, c1, 1, d3, c2 } };
 
 			center = new Cuboid6(c1, c1, c1, c2, d3, c2);
 
-			pipe = new Cuboid6[6];
-			for (int s = 0; s < pipe.length; s++) {
-				pipe[s] = new Cuboid6(boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]);
+			duct = new Cuboid6[6];
+			for (int s = 0; s < duct.length; s++) {
+				duct[s] = new Cuboid6(boxes[s][0], boxes[s][1], boxes[s][2], boxes[s][3], boxes[s][4], boxes[s][5]);
 			}
 
 		}
@@ -90,29 +85,29 @@ public class ModelHelper {
 
 			this.width = w;
 			center = new Cuboid6(-w, -w, -w, w, w, w);
-			pipe = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, -w, w));
-			pipeWCenter = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, w, w));
-			pipeFullLength = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, 0.5, w));
+			duct = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, -w, w));
+			ductWCenter = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, w, w));
+			ductFullLength = rotateCuboids(new Cuboid6(-w, -0.5, -w, w, 0.5, w));
 			this.opaque = opaque;
 		}
 
 		public LinkedList<Vertex5> createModel(int cMask) {
 
-			LinkedList<Vertex5> verts = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> verts = new LinkedList<>();
 
 			for (int side = 0; side < 6; side++) {
 				if (!opaque && MathHelper.isBitSet(cMask, side)) {
 					for (int i : orthogs[side]) {
 						if (MathHelper.isBitSet(cMask, i)) {
-							addSideFace(verts, pipe[i], side);
+							addSideFace(verts, duct[i], side);
 						}
 					}
 				} else {
 					int singlePipeIndex = -1, doublePipeIndex = -1;
 					for (int i : orthogs[side]) {
-						if (MathHelper.isBitSet(cMask, i) && pipeWCenter[i] != null) {
+						if (MathHelper.isBitSet(cMask, i) && ductWCenter[i] != null) {
 							singlePipeIndex = i;
-							if (MathHelper.isBitSet(cMask, i ^ 1) && pipeFullLength[i] != null && pipeFullLength[i ^ 1] != null) {
+							if (MathHelper.isBitSet(cMask, i ^ 1) && ductFullLength[i] != null && ductFullLength[i ^ 1] != null) {
 								doublePipeIndex = i;
 								break;
 							}
@@ -121,17 +116,17 @@ public class ModelHelper {
 					if (doublePipeIndex != -1) {
 						for (int i : orthogs[side]) {
 							if (i == doublePipeIndex) {
-								addSideFace(verts, pipeFullLength[i], side);
+								addSideFace(verts, ductFullLength[i], side);
 							} else if (i != (doublePipeIndex ^ 1) && MathHelper.isBitSet(cMask, i)) {
-								addSideFace(verts, pipe[i], side);
+								addSideFace(verts, duct[i], side);
 							}
 						}
 					} else if (singlePipeIndex != -1) {
 						for (int i : orthogs[side]) {
 							if (i == singlePipeIndex) {
-								addSideFace(verts, pipeWCenter[i], side);
+								addSideFace(verts, ductWCenter[i], side);
 							} else if (MathHelper.isBitSet(cMask, i)) {
-								addSideFace(verts, pipe[i], side);
+								addSideFace(verts, duct[i], side);
 							}
 						}
 					} else {
@@ -141,7 +136,7 @@ public class ModelHelper {
 
 						for (int i : orthogs[side]) {
 							if (MathHelper.isBitSet(cMask, i)) {
-								addSideFace(verts, pipe[i], side);
+								addSideFace(verts, duct[i], side);
 							}
 						}
 					}
@@ -200,8 +195,7 @@ public class ModelHelper {
 		return newModel.computeNormals();
 	}
 
-	static Vector3[] axes = { new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), new Vector3(-1, 0, 0),
-			new Vector3(1, 0, 0), };
+	static Vector3[] axes = { new Vector3(0, -1, 0), new Vector3(0, 1, 0), new Vector3(0, 0, -1), new Vector3(0, 0, 1), new Vector3(-1, 0, 0), new Vector3(1, 0, 0), };
 
 	static int[] sideMasks = { 3, 3, 12, 12, 48, 48 };
 
@@ -227,7 +221,7 @@ public class ModelHelper {
 
 	public static LinkedList<Vertex5> apply(LinkedList<Vertex5> vecs, Transformation transformation) {
 
-		LinkedList<Vertex5> t = new LinkedList<Vertex5>();
+		LinkedList<Vertex5> t = new LinkedList<>();
 		for (Vertex5 v : vecs) {
 			t.add(v.copy().apply(transformation));
 		}
@@ -237,21 +231,16 @@ public class ModelHelper {
 	// very slow method that combines squares
 	public static LinkedList<Vertex5> simplifyModel(LinkedList<Vertex5> in) {
 
-		LinkedList<Face> faces = new LinkedList<Face>();
+		LinkedList<Face> faces = new LinkedList<>();
 		Iterator<Vertex5> iter = in.iterator();
 		while (iter.hasNext()) {
 			Face f = Face.loadFromIterator(iter);
 
-			for (Iterator<Face> iterator = faces.iterator(); iterator.hasNext();) {
-				Face g = iterator.next();
-				if (f.attemptToCombine(g)) {
-					iterator.remove();
-				}
-			}
+			faces.removeIf(f::attemptToCombine);
 			faces.add(f);
 		}
 
-		LinkedList<Vertex5> out = new LinkedList<Vertex5>();
+		LinkedList<Vertex5> out = new LinkedList<>();
 		for (Face f : faces) {
 			Collections.addAll(out, f.verts);
 		}
@@ -503,10 +492,10 @@ public class ModelHelper {
 
 		public LinkedList<Vertex5> generateIntersections(int connections) {
 
-			LinkedList<Vertex5> v = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> v = new LinkedList<>();
 
-			LinkedList<Vertex5> center = addSideFace(new LinkedList<Vertex5>(), new Cuboid6(-innerSize, -size, -innerSize, innerSize, size, innerSize), 0);
-			LinkedList<Vertex5> arm = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> center = addSideFace(new LinkedList<>(), new Cuboid6(-innerSize, -size, -innerSize, innerSize, size, innerSize), 0);
+			LinkedList<Vertex5> arm = new LinkedList<>();
 
 			for (int k = 0; k < 8; k++) {
 				if (frameOnly && (k % 2 == 0)) {
@@ -644,8 +633,7 @@ public class ModelHelper {
 		}
 	}
 
-	static int[][] orthogonals = { { 6, 6, 4, 5, 2, 3 }, { 6, 6, 4, 5, 2, 3 }, { 4, 5, 6, 6, 0, 1 }, { 5, 4, 6, 6, 1, 0 }, { 2, 3, 0, 1, 6, 6 },
-			{ 3, 2, 1, 0, 6, 6 }, };
+	static int[][] orthogonals = { { 6, 6, 4, 5, 2, 3 }, { 6, 6, 4, 5, 2, 3 }, { 4, 5, 6, 6, 0, 1 }, { 5, 4, 6, 6, 1, 0 }, { 2, 3, 0, 1, 6, 6 }, { 3, 2, 1, 0, 6, 6 }, };
 
 	static int[][] edgePairs = { { 0, 2 }, { 0, 3 }, { 0, 4 }, { 0, 5 }, { 1, 2 }, { 1, 3 }, { 1, 4 }, { 1, 5 }, { 2, 4 }, { 2, 5 }, { 3, 4 }, { 3, 5 }, };
 
@@ -712,7 +700,7 @@ public class ModelHelper {
 
 		private LinkedList<Vertex5> generateConnections(int i) {
 
-			LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> vecs = new LinkedList<>();
 			Cuboid6 cube;
 			Vector3 a = axes[i];
 			Vector3 b = axes[orthogAxes[i][0]];
@@ -720,8 +708,7 @@ public class ModelHelper {
 
 			for (int x = -1; x <= 1; x += 2) {
 				for (int y = -1; y <= 1; y += 2) {
-					cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)),
-							a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
+					cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)), a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
 					addSideFaces(vecs, cube, (1 << i) ^ (63));
 				}
 			}
@@ -732,8 +719,7 @@ public class ModelHelper {
 					int orthog = orthogonals[i][j];
 					c = axes[orthog];
 
-					cube = newCube(a.copy().multiply(h / 2 - (s2 - s)).add(b.copy().multiply(s)).add(c.copy().multiply(s)),
-							a.copy().multiply(h / 2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
+					cube = newCube(a.copy().multiply(h / 2 - (s2 - s)).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(h / 2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
 
 					addSideFaces(vecs, cube, (1 << orthog) | (1 << (orthog ^ 1)));
 				}
@@ -743,7 +729,7 @@ public class ModelHelper {
 
 		private LinkedList<Vertex5> generateIntersections(int connections) {
 
-			LinkedList<Vertex5> vecs = new LinkedList<Vertex5>();
+			LinkedList<Vertex5> vecs = new LinkedList<>();
 			Vector3 a, b, c;
 			Cuboid6 cube;
 
@@ -757,8 +743,7 @@ public class ModelHelper {
 
 					for (int x = -1; x <= 1; x += 2) {
 						for (int y = -1; y <= 1; y += 2) {
-							cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)),
-									a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
+							cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)), a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
 							addSideFaces(vecs, cube, (1 << i) | (1 << (i ^ 1)));
 						}
 					}
@@ -771,8 +756,7 @@ public class ModelHelper {
 					b = axes[pair[1]];
 					int orthog = orthogonals[pair[0]][pair[1]];
 					c = axes[orthog];
-					cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(s2).add(b.copy().multiply(s2))
-							.add(c.copy().multiply(-s)));
+					cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(-s)));
 
 					addSideFaces(vecs, cube, (1 << orthog) | (1 << (orthog ^ 1)));
 				}
@@ -782,8 +766,7 @@ public class ModelHelper {
 				a = axes[cr[0]];
 				b = axes[cr[1]];
 				c = axes[cr[2]];
-				cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)),
-						a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(s2)));
+				cube = newCube(a.copy().multiply(s).add(b.copy().multiply(s)).add(c.copy().multiply(s)), a.copy().multiply(s2).add(b.copy().multiply(s2)).add(c.copy().multiply(s2)));
 
 				int m = ((1 << cr[0]) & connections) | ((1 << cr[1]) & connections) | ((1 << cr[2]) & connections);
 

@@ -1,9 +1,8 @@
 package cofh.thermaldynamics.gui.container;
 
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.duct.entity.TileTransportDuct;
+import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.slot.SlotIcon;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -11,13 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerTransportConfig extends ContainerTDBase {
 
-	private final InventoryPlayer inventory;
-	private final TileTransportDuct transportDuct;
-
-	public ContainerTransportConfig(InventoryPlayer inventory, TileTransportDuct transportDuct) {
-
-		this.inventory = inventory;
-		this.transportDuct = transportDuct;
+	public ContainerTransportConfig(InventoryPlayer inventory, DuctUnitTransport transportDuct) {
 
 		addPlayerInventory(inventory);
 
@@ -46,7 +39,7 @@ public class ContainerTransportConfig extends ContainerTDBase {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
 
-		Slot slot = (Slot) inventorySlots.get(slotIndex);
+		Slot slot = inventorySlots.get(slotIndex);
 
 		int invPlayer = 27;
 		int invFull = invPlayer + 9;
@@ -59,7 +52,7 @@ public class ContainerTransportConfig extends ContainerTDBase {
 			} else if (slotIndex < invFull) {
 				Slot k = null;
 				for (int i = invFull; i < invTile; i++) {
-					Slot slot1 = (Slot) inventorySlots.get(i);
+					Slot slot1 = inventorySlots.get(i);
 					if (!slot1.getHasStack()) {
 						if (k == null) {
 							k = slot1;

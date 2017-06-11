@@ -1,91 +1,65 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import cofh.thermaldynamics.ThermalDynamics;
-
-import java.util.HashMap;
-
+import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.common.IShearable;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class CoverHelper {
 
-	public static HashMap<Fluid, Block> fluidToBlockMap;
-
-	public static void initFluids() {
-
-		fluidToBlockMap = new HashMap<Fluid, Block>();
-
-		fluidToBlockMap.put(FluidRegistry.WATER, Blocks.water);
-		fluidToBlockMap.put(FluidRegistry.LAVA, Blocks.lava);
-		for (Object obj : Block.blockRegistry) {
-			if (obj instanceof IFluidBlock) {
-				Fluid fluid = ((IFluidBlock) obj).getFluid();
-				if (fluid != null) {
-					fluidToBlockMap.put(fluid, (Block) obj);
-				}
-			}
-		}
-	}
-
-	public static Block getFluidBlock(FluidStack fluidStack) {
-
-		if (fluidStack == null) {
-			return null;
-		}
-		if (fluidToBlockMap == null) {
-			initFluids();
-		}
-		return fluidToBlockMap.get(fluidStack.getFluid());
-	}
-
 	public static boolean isValid(ItemStack stack) {
 
-		if (stack.getItem() instanceof ItemBlock) {
-			if (isValid(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()))) {
-				return true;
+		try {
+			if (stack.getItem() instanceof ItemBlock) {
+				if (isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+					return true;
+				}
 			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack)) != null;
+		return false;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static boolean isValid(Block block, int meta) {
 
-		// noinspection deprecation
-		if (block == null) {
+		try {
+			if (block == null || block instanceof IShearable) {
+				return false;
+			}
+			IBlockState state = block.getStateFromMeta(meta);
+			return !(block.hasTileEntity(state) || block.hasTileEntity()) && state.isFullCube();
+		} catch (Exception e) {
 			return false;
 		}
-		return !(block.hasTileEntity(meta) || block.hasTileEntity());
-
 	}
 
 	public static ItemStack getCoverStack(ItemStack stack) {
 
 		if (stack.getItem() instanceof ItemBlock) {
-			return getCoverStack(((ItemBlock) stack.getItem()).field_150939_a, stack.getItem().getMetadata(stack.getItemDamage()));
-		}
-		Block fluidBlock = getFluidBlock(FluidContainerRegistry.getFluidForFilledItem(stack));
-		if (fluidBlock != null) {
-			return getCoverStack(fluidBlock, 0);
+			return getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()));
 		}
 		return null;
+	}
+
+	public static ItemStack getCoverStack(IBlockState state) {
+
+		return getCoverStack(state.getBlock(), state.getBlock().getMetaFromState(state));
 	}
 
 	public static ItemStack getCoverStack(Block block, int meta) {
 
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("Block", Block.blockRegistry.getNameForObject(block));
+		tag.setString("Block", ForgeRegistries.BLOCKS.getKey(block).toString());
 		tag.setByte("Meta", ((byte) meta));
 
-		ItemStack itemStack = new ItemStack(ThermalDynamics.itemCover, 1);
+		ItemStack itemStack = new ItemStack(TDItems.itemCover, 1);
 		itemStack.setTagCompound(tag);
 		return itemStack;
 	}
@@ -100,7 +74,7 @@ public class CoverHelper {
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
-		if (block == Blocks.air || meta < 0 || meta >= 16 || !isValid(block, meta)) {
+		if (block == Blocks.AIR || meta < 0 || meta >= 16 || !isValid(block, meta)) {
 			if (removeInvalidData) {
 				nbt.removeTag("Meta");
 				nbt.removeTag("Block");

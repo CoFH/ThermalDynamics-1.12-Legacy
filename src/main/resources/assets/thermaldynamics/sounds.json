@@ -3,7 +3,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "woosh",
+                "name": "thermaldynamics:woosh",
                 "stream": false
             }
         ]

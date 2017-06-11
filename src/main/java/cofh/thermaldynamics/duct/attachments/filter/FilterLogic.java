@@ -1,29 +1,26 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
-
-import cofh.api.item.ISpecialFilterFluid;
-import cofh.api.item.ISpecialFilterItem;
-import cofh.core.util.CoreUtils;
+import cofh.core.util.item.ISpecialFilterFluid;
+import cofh.core.util.item.ISpecialFilterItem;
 import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.lib.util.helpers.ItemHelper;
-import cofh.thermaldynamics.block.AttachmentRegistry;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
-
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.hash.TIntHashSet;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+
+import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
 
 public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
@@ -66,10 +63,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		items = new ItemStack[maxFilterItems[type]];
 
 		if (transferType == Duct.Type.ITEM) {
-			quickItems = new LinkedList<ItemStack>();
+			quickItems = new LinkedList<>();
 		} else if (transferType == Duct.Type.FLUID) {
-			fluidsSimple = new HashSet<Fluid>();
-			fluidsNBT = new HashSet<FluidStack>();
+			fluidsSimple = new HashSet<>();
+			fluidsNBT = new HashSet<>();
 		}
 		this.connection = connection;
 
@@ -101,14 +98,13 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 				if (!flags[flagIgnoreMod]) {
 					if (modNames == null) {
-						modNames = new HashSet<String>();
+						modNames = new HashSet<>();
 					} else {
 						modNames.clear();
 					}
 				} else {
 					modNames = null;
 				}
-
 				customFilterItems = null;
 
 			} else if (isFluid()) {
@@ -118,26 +114,25 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				customFilterFluids = null;
 			}
 
-			itemLoop: for (ItemStack item : items) {
+			itemLoop:
+			for (ItemStack item : items) {
 				if (item != null) {
 					if (isItem()) {
 						if (item.getItem() instanceof ISpecialFilterItem) {
 							if (customFilterItems == null) {
-								customFilterItems = new LinkedList<CustomFilterItem>();
+								customFilterItems = new LinkedList<>();
 							}
-
 							customFilterItems.add(new CustomFilterItem(item));
 						}
-
 						if (!flags[flagIgnoreMod]) {
-							modNames.add(CoreUtils.getModName(item.getItem()));
+							modNames.add(item.getItem().getRegistryName().getResourceDomain());
 						}
 						if (!flags[flagIgnoreOreDictionary]) {
 							ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
 							if (allOreIDs != null) {
 								for (Integer integer : allOreIDs) {
 									if (!oreIds.contains(integer)) {
-										oreIds.add(integer.intValue());
+										oreIds.add(integer);
 									}
 								}
 							}
@@ -149,24 +144,21 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 						if (flags[flagIgnoreNBT]) {
 							d.setTagCompound(null);
 						}
-
 						for (ItemStack i : quickItems) {
 							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
 								continue itemLoop;
 							}
 						}
-
 						quickItems.add(d);
 
 					} else if (isFluid()) {
 						if (item.getItem() instanceof ISpecialFilterFluid) {
 							if (customFilterFluids == null) {
-								customFilterFluids = new LinkedList<CustomFilterFluid>();
+								customFilterFluids = new LinkedList<>();
 							}
 
 							customFilterFluids.add(new CustomFilterFluid(item));
 						}
-
 						FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
 						if (fluidStack != null) {
 							fluidStack = fluidStack.copy();
@@ -181,7 +173,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 					}
 				}
 			}
-
 		}
 
 	}
@@ -212,13 +203,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				}
 			}
 		}
-
 		if (!flags[flagIgnoreMod]) {
-			if (modNames.contains(CoreUtils.getModName(item.getItem()))) {
+			if (modNames.contains(item.getItem().getRegistryName().getResourceDomain())) {
 				return returnValue;
 			}
 		}
-
 		if (!flags[flagIgnoreOreDictionary] && !oreIds.isEmpty()) {
 			ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
 			if (allOreIDs != null) {
@@ -234,12 +223,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			if (filter.getItem() != item.getItem()) {
 				continue;
 			}
-
 			if (!flags[flagIgnoreMetadata] && filter.getItemDamage() != item.getItemDamage()) {
 				continue;
 			}
-
-			if (!flags[flagIgnoreNBT] && !ItemHelper.doNBTsMatch(item.stackTagCompound, filter.stackTagCompound)) {
+			if (!flags[flagIgnoreNBT] && !ItemHelper.doNBTsMatch(item.getTagCompound(), filter.getTagCompound())) {
 				continue;
 			}
 
@@ -290,10 +277,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (!canAlterFlag(transferType, type, flagType)) {
 			return false;
 		}
-		if (connection.tile.world().isRemote) {
+		if (connection.baseTile.world().isRemote) {
 			connection.sendFilterConfigPacketFlag(flagType, flag);
 		} else {
-			connection.tile.markDirty();
+			connection.baseTile.markChunkDirty();
 		}
 		flags[flagType] = flag;
 		recalc = true;
@@ -325,8 +312,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 	public static boolean canAlterFlag(Duct.Type transferType, int type, int flagType) {
 
-		return (transferType == Duct.Type.ITEM && options[type] >= flagType)
-				|| (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
+		return (transferType == Duct.Type.ITEM && options[type] >= flagType) || (transferType == Duct.Type.FLUID && (flagType == flagBlackList || flagType == flagIgnoreNBT));
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
@@ -384,7 +370,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (recalc) {
 			calcItems();
 		}
-
 		if (customFilterFluids != null) {
 			for (CustomFilterFluid customFilterFluids : this.customFilterFluids) {
 				if (customFilterFluids.filter.matchesFluid(customFilterFluids.filterStack, fluid)) {
@@ -392,7 +377,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				}
 			}
 		}
-
 		if (fluid.tag == null || flags[flagIgnoreNBT]) {
 			return !flags[flagBlackList] == fluidsSimple.contains(fluid.getFluid());
 		} else {
@@ -424,12 +408,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		}
 	}
 
-	public int getNumLevels() {
-
-		return validLevels.length;
-	}
-
-	public static enum Perm {
+	public enum Perm {
 		FILTER(true, false, Duct.Type.ITEM), SERVO(false, true, Duct.Type.ITEM), ALL(true, true, Duct.Type.ITEM);
 
 		public final boolean filter;
@@ -445,20 +424,14 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 		public boolean appliesTo(FilterLogic base) {
 
-			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter)
-					&& (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter)
-					&& (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo)
-					&& (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo)
-					&& (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo)
-					&& (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
+			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter) && (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter) && (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
 		}
 	}
 
 	public static final Perm[] levelPerms = { Perm.SERVO, Perm.SERVO, Perm.FILTER, Perm.ALL };
 	public static final int[][] minLevels = { { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, { 1, 0, 0, 0 }, };
 
-	public static final int[][] maxLevels = { { maxSize[0], 0, 1, 0 }, { maxSize[1], 0, 1, 0 }, { maxSize[2], 3, 1, 64 }, { maxSize[3], 3, 1, 128 },
-			{ maxSize[4], 3, 1, 320 } };
+	public static final int[][] maxLevels = { { maxSize[0], 0, 1, 0 }, { maxSize[1], 0, 1, 0 }, { maxSize[2], 3, 1, 64 }, { maxSize[3], 3, 1, 128 }, { maxSize[4], 3, 1, 320 } };
 
 	public static final int[] defaultLevels = { 64, 0, 1, 0 };
 	public int[] validLevels;
@@ -477,7 +450,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			}
 		}
 		validLevels = vLevels.toArray();
-
 		vLevels.clear();
 
 		for (int i = 0; i < numFlags(); i++) {
@@ -548,10 +520,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		if (!levelPerms[i].appliesTo(this)) {
 			return;
 		}
-		if (connection.tile.world().isRemote && sendUpdate) {
+		if (connection.baseTile.world().isRemote && sendUpdate) {
 			connection.sendFilterConfigPacketLevel(i, level);
 		} else {
-			connection.tile.markDirty();
+			connection.baseTile.markChunkDirty();
 			levelsChanged = true;
 		}
 		levels[i] = level;

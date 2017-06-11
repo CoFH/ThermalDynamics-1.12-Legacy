@@ -12,8 +12,7 @@ public class ElementDirectoryButton extends ElementButton {
 	final GuiTransport gui;
 	DirectoryEntry entry;
 
-	public ElementDirectoryButton(int index, GuiTransport gui, int posX, int posY, int sizeX, int sizeY, int sheetX, int sheetY, int hoverX, int hoverY,
-			String texture) {
+	public ElementDirectoryButton(int index, GuiTransport gui, int posX, int posY, int sizeX, int sizeY, int sheetX, int sheetY, int hoverX, int hoverY, String texture) {
 
 		super(gui, posX, posY, sizeX, sizeY, sheetX, sheetY, hoverX, hoverY, texture);
 		this.index = index;
@@ -22,9 +21,7 @@ public class ElementDirectoryButton extends ElementButton {
 
 	public ElementDirectoryButton(int i, GuiTransport gui, int x0, int y0) {
 
-		this(i, gui, x0, y0 + i * (GuiTransport.BUTTON_HEIGHT + GuiTransport.BUTTON_OFFSET), GuiTransport.BUTTON_WIDTH, GuiTransport.BUTTON_HEIGHT,
-				GuiTransport.GUI_BUTTON_X0_BASE, GuiTransport.GUI_BUTTON_Y0_BASE, GuiTransport.GUI_BUTTON_X0_HOVER, GuiTransport.GUI_BUTTON_Y0_HOVER,
-				GuiTransport.TEX_PATH);
+		this(i, gui, x0, y0 + i * (GuiTransport.BUTTON_HEIGHT + GuiTransport.BUTTON_OFFSET), GuiTransport.BUTTON_WIDTH, GuiTransport.BUTTON_HEIGHT, GuiTransport.GUI_BUTTON_X0_BASE, GuiTransport.GUI_BUTTON_Y0_BASE, GuiTransport.GUI_BUTTON_X0_HOVER, GuiTransport.GUI_BUTTON_Y0_HOVER, GuiTransport.TEX_PATH);
 	}
 
 	public void setEntry(DirectoryEntry entry) {

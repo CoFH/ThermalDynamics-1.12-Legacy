@@ -1,18 +1,19 @@
 package cofh.thermaldynamics.multiblock;
 
+import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import net.minecraft.util.EnumFacing;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
-import net.minecraftforge.common.util.ForgeDirection;
+public class MultiBlockFormer<T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> {
 
-public class MultiBlockFormer {
+	Queue<T> blocksToCheck = new LinkedList<>();
+	G theGrid;
 
-	Queue<IMultiBlock> blocksToCheck = new LinkedList<IMultiBlock>();
-	MultiBlockGrid theGrid;
+	public void formGrid(T theMultiBlock) {
 
-	public void formGrid(IMultiBlock theMultiBlock) {
-
-		theGrid = theMultiBlock.getNewGrid();
+		theGrid = theMultiBlock.createGrid();
 		theMultiBlock.setGrid(theGrid);
 		theGrid.addBlock(theMultiBlock);
 
@@ -21,26 +22,22 @@ public class MultiBlockFormer {
 		while (!blocksToCheck.isEmpty()) {
 			checkMultiBlock(blocksToCheck.remove());
 		}
-
-		// doStep(theMultiBlock.getGrid(), theMultiBlock);
-
-		theMultiBlock.getGrid().resetMultiBlocks();
+		theGrid.resetMultiBlocks();
 	}
 
-	private void checkMultiBlock(IMultiBlock currentMultiBlock) {
+	private void checkMultiBlock(T currentMultiBlock) {
 
 		if (!currentMultiBlock.isValidForForming()) {
 			return;
 		}
-
 		currentMultiBlock.onNeighborBlockChange();
 		currentMultiBlock.setInvalidForForming();
 
-		IMultiBlock aBlock;
-		for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		T aBlock;
+		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (currentMultiBlock.isSideConnected(i)) {
 				aBlock = currentMultiBlock.getConnectedSide(i);
-				if (aBlock != null && aBlock.isValidForForming()) {
+				if (aBlock != null && aBlock.isValidForForming() && aBlock.getConnectedSide(i ^ 1) == currentMultiBlock) {
 					if (aBlock.getGrid() == null && theGrid.canAddBlock(aBlock)) {
 						aBlock.setGrid(theGrid);
 						theGrid.addBlock(aBlock);
@@ -55,37 +52,12 @@ public class MultiBlockFormer {
 							}
 						}
 					} else {
-						currentMultiBlock.setNotConnected(i);
-						aBlock.setNotConnected((byte) (i ^ 1));
+						currentMultiBlock.onConnectionRejected(i);
+						aBlock.onConnectionRejected(i ^ 1);
 					}
 				}
 			}
 		}
 	}
 
-	// public void doStep(MultiBlockGrid theGrid, IMultiBlock currentMultiBlock) {
-	//
-	// IMultiBlock aBlock;
-	// for (byte i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-	// if (currentMultiBlock.isSideConnected(i)) {
-	// aBlock = currentMultiBlock.getConnectedSide(i);
-	// if (aBlock != null && aBlock.isValidForForming()) {
-	// if (aBlock.getGrid() != null) {
-	// if (theGrid.canGridsMerge(aBlock.getGrid())) {
-	// if (theGrid != aBlock.getGrid()) {
-	// theGrid.mergeGrids(aBlock.getGrid());
-	// }
-	// } else {
-	// currentMultiBlock.setNotConnected(i);
-	// }
-	// } else {
-	// aBlock.setInvalidForForming();
-	// aBlock.setGrid(theGrid);
-	// theGrid.addIdle(aBlock);
-	// doStep(theGrid, aBlock);
-	// }
-	// }
-	// }
-	// }
-	// }
 }

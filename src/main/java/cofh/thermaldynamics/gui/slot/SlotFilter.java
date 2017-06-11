@@ -2,7 +2,6 @@ package cofh.thermaldynamics.gui.slot;
 
 import cofh.lib.gui.slot.SlotFalseCopy;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterConfig;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -11,11 +10,11 @@ public class SlotFilter extends SlotFalseCopy {
 
 	IFilterConfig filter;
 
-	public final static IInventory dummy = new InventoryBasic("Dummy", true, 0);
+	private static final IInventory INV = new InventoryBasic("[FALSE]", false, 0);
 
 	public SlotFilter(IFilterConfig tile, int slotIndex, int x, int y) {
 
-		super(dummy, slotIndex, x, y);
+		super(INV, slotIndex, x, y);
 		filter = tile;
 	}
 
@@ -62,7 +61,7 @@ public class SlotFilter extends SlotFalseCopy {
 	}
 
 	@Override
-	public boolean isSlotInInventory(IInventory inventory, int slot) {
+	public boolean isHere(IInventory inv, int slotIn) {
 
 		return false;
 	}

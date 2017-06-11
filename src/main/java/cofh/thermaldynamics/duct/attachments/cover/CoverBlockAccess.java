@@ -1,62 +1,62 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
-
-import cofh.api.block.IBlockAppearance;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import cofh.core.render.IBlockAppearance;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Facing;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.world.WorldType;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
+import static net.minecraft.util.EnumFacing.*;
 
 public class CoverBlockAccess implements IBlockAccess {
 
 	IBlockAccess world;
 
-	public static CoverBlockAccess instance = new CoverBlockAccess();
+	public static ThreadLocal<CoverBlockAccess> instances = ThreadLocal.withInitial(CoverBlockAccess::new);
 
-	public static CoverBlockAccess getInstance(IBlockAccess world, int blockX, int blockY, int blockZ, int side, Block block, int meta) {
+	public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
 
+		CoverBlockAccess instance = instances.get();
 		instance.world = world;
-		instance.blockX = blockX;
-		instance.blockY = blockY;
-		instance.blockZ = blockZ;
+		instance.pos = pos;
 		instance.side = side;
-		instance.block = block;
-		instance.meta = meta;
+		instance.state = state;
 		return instance;
 	}
 
-	public int blockX, blockY, blockZ;
-	public int side;
+	public BlockPos pos;
+	public EnumFacing side;
 
-	public Block block;
-	public int meta;
+	IBlockState state;
 
 	public enum Result {
 		ORIGINAL, AIR, BASE, BEDROCK, COVER
 	}
 
-	public Result getAction(int x, int y, int z) {
+	public Result getAction(BlockPos pos) {
 
-		if (x == blockX && y == blockY && z == blockZ) {
+		if (this.pos == pos) {
 			return BASE;
 		}
 
-		if (x == blockX + Facing.offsetsXForSide[side] && y == blockY + Facing.offsetsYForSide[side] && z == blockZ + Facing.offsetsZForSide[side]) {
+		if (pos == this.pos.offset(side)) {
 			return ORIGINAL;
 		}
 
-		if (((side == 0 && y > blockY) || (side == 1 && y < blockY) || (side == 2 && z > blockZ) || (side == 3 && z < blockZ) || (side == 4 && x > blockX) || (side == 5 && x < blockX))) {
+		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
 			return AIR;
 		}
 
-		Block worldBlock = world.getBlock(x, y, z);
+		IBlockState worldState = world.getBlockState(pos);
+		Block worldBlock = worldState.getBlock();
 
 		if (worldBlock instanceof IBlockAppearance) {
 			IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
@@ -64,15 +64,14 @@ public class CoverBlockAccess implements IBlockAccess {
 				return COVER;
 			}
 
-			if (blockAppearance.getVisualBlock(world, x, y, z, ForgeDirection.getOrientation(side)) == block
-					&& blockAppearance.getVisualMeta(world, x, y, z, ForgeDirection.getOrientation(side)) == meta) {
-				return block.isNormalCube() ? BEDROCK : AIR;
+			if (blockAppearance.getVisualState(world, pos, side).equals(state)) {
+				return state.isNormalCube() ? BEDROCK : AIR;
 			} else {
 				return COVER;
 			}
 		} else {
-			if (worldBlock == block && world.getBlockMetadata(x, y, z) == meta) {
-				return block.isNormalCube() ? BEDROCK : AIR;
+			if (worldState.equals(state)) {
+				return state.isNormalCube() ? BEDROCK : AIR;
 			} else {
 				return ORIGINAL;
 			}
@@ -80,78 +79,61 @@ public class CoverBlockAccess implements IBlockAccess {
 	}
 
 	@Override
-	public Block getBlock(int x, int y, int z) {
+	public IBlockState getBlockState(BlockPos pos) {
 
-		Result action = getAction(x, y, z);
-		return action == ORIGINAL ? world.getBlock(x, y, z) : action == AIR ? Blocks.air : action == BEDROCK ? Blocks.bedrock
-				: action == COVER ? ((IBlockAppearance) world.getBlock(x, y, z)).getVisualBlock(world, x, y, z, ForgeDirection.getOrientation(side)) : block;
+		Result action = getAction(pos);
+		return action == ORIGINAL ? world.getBlockState(pos) : action == AIR ? Blocks.AIR.getDefaultState() : action == BEDROCK ? Blocks.BEDROCK.getDefaultState() : action == COVER ? ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side) : state;
 	}
 
 	@Override
-	public TileEntity getTileEntity(int x, int y, int z) {
+	public TileEntity getTileEntity(BlockPos pos) {
 
-		return getAction(x, y, z) == ORIGINAL ? world.getTileEntity(x, y, z) : null;
+		return getAction(pos) == ORIGINAL ? world.getTileEntity(pos) : null;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int t) {
+	@SideOnly (Side.CLIENT)
+	public int getCombinedLight(BlockPos pos, int t) {
 
-		if (((side == 0 && y > blockY) || (side == 1 && y < blockY) || (side == 2 && z > blockZ) || (side == 3 && z < blockZ) || (side == 4 && x > blockX) || (side == 5 && x < blockX))) {
-			return world.getLightBrightnessForSkyBlocks(blockX, blockY, blockZ, t);
+		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
+			return world.getCombinedLight(this.pos, t);
 		}
-		return world.getLightBrightnessForSkyBlocks(x, y, z, t);
+		return world.getCombinedLight(pos, t);
 	}
 
 	@Override
-	public int getBlockMetadata(int x, int y, int z) {
+	public int getStrongPower(BlockPos pos, EnumFacing side) {
 
-		Result action = getAction(x, y, z);
-		return action == ORIGINAL ? world.getBlockMetadata(x, y, z) : action == AIR || action == BEDROCK ? 0 : action == COVER ? ((IBlockAppearance) world
-				.getBlock(x, y, z)).getVisualMeta(world, x, y, z, ForgeDirection.getOrientation(side)) : meta;
+		return world.getStrongPower(pos, side);
 	}
 
 	@Override
-	public int isBlockProvidingPowerTo(int x, int y, int z, int s) {
+	public WorldType getWorldType() {
 
-		return world.isBlockProvidingPowerTo(x, y, z, s);
+		return world.getWorldType();
 	}
 
 	@Override
-	public boolean isAirBlock(int x, int y, int z) {
+	public boolean isAirBlock(BlockPos pos) {
 
-		Result action = getAction(x, y, z);
-		return action == AIR || (action == ORIGINAL && world.isAirBlock(x, y, z)) || (action == COVER && getBlock(x, y, z).isAir(this, x, y, z));
+		Result action = getAction(pos);
+		return action == AIR || (action == ORIGINAL && world.isAirBlock(pos)) || (action == COVER && getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos));
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public BiomeGenBase getBiomeGenForCoords(int x, int z) {
+	@SideOnly (Side.CLIENT)
+	public Biome getBiome(BlockPos pos) {
 
-		return world.getBiomeGenForCoords(x, z);
+		return world.getBiome(pos);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public int getHeight() {
+	public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
 
-		return world.getHeight();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean extendedLevelsInChunkCache() {
-
-		return world.extendedLevelsInChunkCache();
-	}
-
-	@Override
-	public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
-
-		if (x < -30000000 || z < -30000000 || x >= 30000000 || z >= 30000000) {
+		if (pos.getX() < -30000000 || pos.getZ() < -30000000 || pos.getX() >= 30000000 || pos.getZ() >= 30000000) {
 			return _default;
 		} else {
-			return getBlock(x, y, z).isSideSolid(this, x, y, z, side);
+			return getBlockState(pos).isSideSolid(this, pos, side);
 		}
 	}
 }

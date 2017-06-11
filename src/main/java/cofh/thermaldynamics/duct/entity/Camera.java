@@ -1,20 +1,23 @@
 package cofh.thermaldynamics.duct.entity;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHandSide;
+
+import javax.annotation.Nullable;
 
 public class Camera extends EntityLivingBase {
-
-	public static final ItemStack[] emptyItemStacks = new ItemStack[5];
 
 	public Camera() {
 
 		super(null);
 		this.width = 0;
 		this.height = 0;
-		invulnerable = true;
+		this.setEntityInvulnerable(true);
 	}
 
 	@Override
@@ -23,27 +26,42 @@ public class Camera extends EntityLivingBase {
 		return false;
 	}
 
+	@Nullable
 	@Override
-	public ItemStack getHeldItem() {
+	public ItemStack getHeldItemMainhand() {
+
+		return null;
+	}
+
+	@Nullable
+	@Override
+	public ItemStack getHeldItemOffhand() {
 
 		return null;
 	}
 
 	@Override
-	public ItemStack getEquipmentInSlot(int p_71124_1_) {
+	public EnumHandSide getPrimaryHand() {
+
+		return EnumHandSide.RIGHT;
+	}
+
+	@Nullable
+	@Override
+	public ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn) {
 
 		return null;
 	}
 
 	@Override
-	public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
+	public void setItemStackToSlot(EntityEquipmentSlot slotIn, @Nullable ItemStack stack) {
 
 	}
 
 	@Override
-	public ItemStack[] getLastActiveItems() {
+	public Iterable<ItemStack> getArmorInventoryList() {
 
-		return emptyItemStacks;
+		return ImmutableList.of();
 	}
 
 	public void copyFromEntityTransport(EntityTransport other, EntityPlayer player) {
@@ -56,7 +74,7 @@ public class Camera extends EntityLivingBase {
 			worldObj = Minecraft.getMinecraft().theWorld;
 		}
 
-		double dx = 0, dy = player.yOffset - 1.62F, dz = 0;
+		double dx = 0, dy = player.getYOffset() + 0.35D, dz = 0;
 
 		posX = other.posX + dx;
 		posY = other.posY + dy;

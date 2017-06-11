@@ -1,27 +1,19 @@
 package cofh.thermaldynamics.duct.item;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class SimulatedInv implements IInventory {
+public class SimulatedInv implements IItemHandler {
 
-	public static SimulatedInv INSTANCE = new SimulatedInv();
-	public static SimulatedInvSided INSTANCE_SIDED = new SimulatedInvSided();
 	public static final int REBUILD_THRESHOLD = 128;
-
-	public static SimulatedInv wrapInv(IInventory inventory) {
-
-		INSTANCE.setTarget(inventory);
-		return INSTANCE;
-	}
-
-	public static SimulatedInvSided wrapInvSided(ISidedInventory inventory) {
-
-		INSTANCE_SIDED.setTargetSided(inventory);
-		return INSTANCE_SIDED;
-	}
+	public static SimulatedInv INSTANCE = new SimulatedInv();
+	IItemHandler originalLogic;
+	IItemHandler slotHandler;
+	ItemStack[] items;
+	int size;
 
 	public SimulatedInv() {
 
@@ -29,37 +21,46 @@ public class SimulatedInv implements IInventory {
 
 	public SimulatedInv(IInventory target) {
 
-		setTarget(target);
+		setTarget(new InvWrapper(target));
+	}
+
+	public static SimulatedInv wrapHandler(IItemHandler handler) {
+
+		return INSTANCE.setTarget(handler);
+	}
+
+	public static SimulatedInv wrapInv(IInventory inventory) {
+
+		return INSTANCE.setTarget(new InvWrapper(inventory));
 	}
 
 	public void clear() {
 
-		this.target = null;
+		this.originalLogic = null;
 	}
 
-	public void setTarget(IInventory target) {
+	public SimulatedInv setTarget(IItemHandler target) {
 
-		this.target = target;
-		size = target.getSizeInventory();
+		originalLogic = target;
+
+		size = target.getSlots();
 
 		if (items == null || items.length < size || (size < REBUILD_THRESHOLD && items.length >= REBUILD_THRESHOLD)) {
-			items = new ItemStack[target.getSizeInventory()];
+			items = new ItemStack[target.getSlots()];
+			this.slotHandler = new ItemStackHandler(items);
 		}
 		ItemStack stackInSlot;
 		for (int i = 0; i < size; i++) {
 			stackInSlot = target.getStackInSlot(i);
 			items[i] = stackInSlot != null ? stackInSlot.copy() : null;
 		}
+		return this;
 	}
 
-	IInventory target;
-	ItemStack[] items;
-	int size;
-
 	@Override
-	public int getSizeInventory() {
+	public int getSlots() {
 
-		return items.length;
+		return size;
 	}
 
 	@Override
@@ -69,112 +70,52 @@ public class SimulatedInv implements IInventory {
 	}
 
 	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
+	public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 
-		return null;
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-
-		return items[i];
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack stack) {
-
-		items[i] = stack;
-	}
-
-	@Override
-	public String getInventoryName() {
-
-		return "[Simulated]";
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-
-		return false;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-
-		return target.getInventoryStackLimit();
-	}
-
-	@Override
-	public void markDirty() {
-
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-
-		return false;
-	}
-
-	@Override
-	public void openInventory() {
-
-	}
-
-	@Override
-	public void closeInventory() {
-
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-
-		return slot < target.getSizeInventory() && target.isItemValidForSlot(slot, stack);
-	}
-
-	public static class SimulatedInvSided extends SimulatedInv implements ISidedInventory {
-
-		ISidedInventory sided;
-
-		public SimulatedInvSided(ISidedInventory target) {
-
-			super(target);
-			this.sided = target;
+		if (stack == null || stack.stackSize == 0) {
+			return null;
 		}
 
-		public SimulatedInvSided() {
+		int originalStackSize = stack.stackSize;
+		ItemStack copy = stack.copy();
+		int maxStackSize = copy.getMaxStackSize();
+		copy.stackSize = maxStackSize;
+		ItemStack insertItem = originalLogic.insertItem(slot, copy, true);
 
+		// rejected
+		if (insertItem == copy) {
+			return stack;
 		}
 
-		@Override
-		public int[] getAccessibleSlotsFromSide(int side) {
+		int insertable = maxStackSize - (insertItem != null ? insertItem.stackSize : 0);
 
-			return sided.getAccessibleSlotsFromSide(side);
+		if (insertable == 0) {
+			return stack; // rejected
 		}
 
-		@Override
-		public boolean canInsertItem(int slot, ItemStack item, int side) {
-
-			return slot < target.getSizeInventory() && sided.canInsertItem(slot, item, side);
+		if (insertable >= originalStackSize) // whole stack would have been accepted
+		{
+			return slotHandler.insertItem(slot, stack, simulate);
 		}
 
-		@Override
-		public boolean canExtractItem(int slot, ItemStack item, int side) {
+		// only partial stack would have been accepted
+		copy.stackSize = insertable;
 
-			return slot < target.getSizeInventory() && sided.canExtractItem(slot, item, side);
+		int remainderStackSize = originalStackSize - insertable;
+
+		ItemStack simInsertStack = slotHandler.insertItem(slot, copy, simulate);
+
+		if (simInsertStack == null || simInsertStack.stackSize == 0) {
+			copy.stackSize = remainderStackSize;
+		} else {
+			copy.stackSize = remainderStackSize + simInsertStack.stackSize;
 		}
-
-		public void setTargetSided(ISidedInventory target) {
-
-			setTarget(target);
-			sided = target;
-		}
-
-		@Override
-		public void clear() {
-
-			super.clear();
-			sided = null;
-		}
+		return copy;
 	}
 
+	@Override
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+
+		throw new UnsupportedOperationException();
+	}
 }

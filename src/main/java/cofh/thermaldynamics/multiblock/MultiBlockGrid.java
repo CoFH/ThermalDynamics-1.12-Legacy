@@ -1,29 +1,24 @@
 package cofh.thermaldynamics.multiblock;
 
-import cofh.core.chat.ChatHelper;
-import cofh.thermaldynamics.block.Attachment;
-import cofh.thermaldynamics.core.TickHandler;
-import cofh.thermaldynamics.core.WorldGridList;
-import cofh.thermaldynamics.debughelper.NoComodSet;
+import cofh.core.util.helpers.ChatHelper;
+import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
+import cofh.thermaldynamics.util.TickHandler;
+import cofh.thermaldynamics.util.WorldGridList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+public abstract class MultiBlockGrid<T extends IGridTile> {
 
-public abstract class MultiBlockGrid {
-
-	public NoComodSet<IMultiBlock> nodeSet = new NoComodSet<IMultiBlock>();
-	public NoComodSet<IMultiBlock> idleSet = new NoComodSet<IMultiBlock>();
+	public NoComodSet<T> nodeSet = new NoComodSet<>();
+	public NoComodSet<T> idleSet = new NoComodSet<>();
 	public WorldGridList worldGrid;
-	public boolean signalsUpToDate;
-
-	public RedstoneControl rs;
 
 	public MultiBlockGrid(WorldGridList worldGrid) {
 
@@ -36,7 +31,7 @@ public abstract class MultiBlockGrid {
 		this(TickHandler.getTickHandler(worldObj));
 	}
 
-	public void addIdle(IMultiBlock aMultiBlock) {
+	public void addIdle(T aMultiBlock) {
 
 		idleSet.add(aMultiBlock);
 
@@ -45,7 +40,7 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		} else {
 			boolean flag = false;
-			for (byte s = 0; s < ForgeDirection.VALID_DIRECTIONS.length; s++) {
+			for (byte s = 0; s < EnumFacing.VALUES.length; s++) {
 				if (aMultiBlock.isSideConnected(s)) {
 					if (flag) {
 						onMajorGridChange();
@@ -56,11 +51,10 @@ public abstract class MultiBlockGrid {
 				}
 			}
 		}
-
 		balanceGrid();
 	}
 
-	public void addNode(IMultiBlock aMultiBlock) {
+	public void addNode(T aMultiBlock) {
 
 		nodeSet.add(aMultiBlock);
 		if (idleSet.contains(aMultiBlock)) {
@@ -71,10 +65,10 @@ public abstract class MultiBlockGrid {
 		balanceGrid();
 	}
 
-	public void mergeGrids(MultiBlockGrid theGrid) {
+	public void mergeGrids(MultiBlockGrid<T> otherGrid) {
 
-		if (!theGrid.nodeSet.isEmpty()) {
-			for (IMultiBlock aBlock : theGrid.nodeSet) {
+		if (!otherGrid.nodeSet.isEmpty()) {
+			for (T aBlock : otherGrid.nodeSet) {
 				aBlock.setGrid(this);
 				addBlock(aBlock);
 			}
@@ -82,8 +76,8 @@ public abstract class MultiBlockGrid {
 			onMajorGridChange();
 		}
 
-		if (!theGrid.idleSet.isEmpty()) {
-			for (IMultiBlock aBlock : theGrid.idleSet) {
+		if (!otherGrid.idleSet.isEmpty()) {
+			for (T aBlock : otherGrid.idleSet) {
 				aBlock.setGrid(this);
 				addBlock(aBlock);
 			}
@@ -92,7 +86,7 @@ public abstract class MultiBlockGrid {
 		}
 
 		onMinorGridChange();
-		theGrid.destroy();
+		otherGrid.destroy();
 	}
 
 	public void destroy() {
@@ -110,10 +104,10 @@ public abstract class MultiBlockGrid {
 
 	public void resetMultiBlocks() {
 
-		for (IMultiBlock aBlock : nodeSet) {
+		for (IGridTile aBlock : nodeSet) {
 			aBlock.setValidForForming();
 		}
-		for (IMultiBlock aBlock : idleSet) {
+		for (IGridTile aBlock : idleSet) {
 			aBlock.setValidForForming();
 		}
 	}
@@ -123,85 +117,6 @@ public abstract class MultiBlockGrid {
 	 */
 	public void tickGrid() {
 
-		if (rs != null && rs.nextRedstoneLevel != -128) {
-			rs.redstoneLevel = rs.nextRedstoneLevel;
-			rs.nextRedstoneLevel = -128;
-
-			ArrayList<Attachment> signallersOut = rs.relaysOut;
-			if (signallersOut != null) {
-				for (Attachment output : signallersOut) {
-					output.checkSignal();
-				}
-			}
-		}
-
-		if (signalsUpToDate) {
-			return;
-		}
-
-		signalsUpToDate = true;
-
-		if (rs == null || rs.relaysIn == null) {
-			if (rs != null) {
-				rs.relaysOut = null;
-			}
-			for (IMultiBlock multiBlock : nodeSet) {
-				multiBlock.addRelays();
-			}
-		}
-
-		if (rs == null) {
-			return;
-		}
-
-		if (rs.relaysIn == null) {
-			if (rs.relaysOut == null) {
-				rs = null;
-				return;
-			} else {
-				rs.nextRedstoneLevel = 0;
-			}
-			return;
-		}
-
-		int powered = 0;
-		for (Relay signaller : rs.relaysIn) {
-			powered = Math.max(powered, signaller.getPowerLevel());
-			if (powered == 15) {
-				break;
-			}
-
-		}
-
-		rs.nextRedstoneLevel = (byte) powered;
-
-	}
-
-	public void addSignalInput(Relay signaller) {
-
-		if (signaller.isInput()) {
-			if (rs == null) {
-				rs = new RedstoneControl();
-			}
-
-			if (rs.relaysIn == null) {
-				rs.relaysIn = new ArrayList<Relay>();
-			}
-
-			rs.relaysIn.add(signaller);
-		}
-	}
-
-	public void addSignalOutput(Attachment attachment) {
-
-		if (rs == null) {
-			rs = new RedstoneControl();
-		}
-
-		if (rs.relaysOut == null) {
-			rs.relaysOut = new ArrayList<Attachment>();
-		}
-		rs.relaysOut.add(attachment);
 	}
 
 	/*
@@ -211,7 +126,7 @@ public abstract class MultiBlockGrid {
 
 	}
 
-	public void addBlock(IMultiBlock aBlock) {
+	public void addBlock(T aBlock) {
 
 		if (aBlock.isNode()) {
 			addNode(aBlock);
@@ -225,7 +140,7 @@ public abstract class MultiBlockGrid {
 		worldGrid.gridsToRecreate.add(this);
 	}
 
-	public void removeBlock(IMultiBlock oldBlock) {
+	public void removeBlock(T oldBlock) {
 
 		destroyNode(oldBlock);
 
@@ -261,21 +176,10 @@ public abstract class MultiBlockGrid {
 
 	public void onMinorGridChange() {
 
-		resetRelays();
 	}
 
 	public void onMajorGridChange() {
 
-		resetRelays();
-	}
-
-	public void resetRelays() {
-
-		if (rs != null) {
-			rs.relaysIn = null;
-			rs.relaysOut = null;
-		}
-		signalsUpToDate = false;
 	}
 
 	public int size() {
@@ -292,36 +196,29 @@ public abstract class MultiBlockGrid {
 		return false;
 	}
 
-	public void destroyNode(IMultiBlock node) {
+	public void destroyNode(IGridTile node) {
 
 		node.setGrid(null);
 	}
 
-	public boolean isFirstMultiblock(IMultiBlock block) {
+	public boolean isFirstMultiblock(T block) {
 
 		return !nodeSet.isEmpty() ? nodeSet.iterator().next() == block : !idleSet.isEmpty() && idleSet.iterator().next() == block;
 	}
 
-	public abstract boolean canAddBlock(IMultiBlock aBlock);
+	public abstract boolean canAddBlock(IGridTile aBlock);
 
-	public void addInfo(List<IChatComponent> info, EntityPlayer player, boolean debug) {
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		if (debug) {
+			addInfo(info, "Type", getClass().getSimpleName());
 			addInfo(info, "size", size());
-		}
-
-		if (rs != null) {
-			int r = rs.redstoneLevel;
-			if (rs.nextRedstoneLevel != -128) {
-				r = rs.nextRedstoneLevel;
-			}
-			addInfo(info, "redstone", r);
 		}
 	}
 
-	protected final void addInfo(List<IChatComponent> info, String type, Object value) {
+	protected final void addInfo(List<ITextComponent> info, String type, Object value) {
 
-		info.add(new ChatComponentTranslation("info.thermaldynamics.info." + type).appendText(": ").appendSibling(ChatHelper.getChatComponent(value)));
+		info.add(new TextComponentTranslation("info.thermaldynamics.info." + type).appendText(": ").appendSibling(ChatHelper.getChatComponent(value)));
 	}
 
 	public static class RedstoneControl {

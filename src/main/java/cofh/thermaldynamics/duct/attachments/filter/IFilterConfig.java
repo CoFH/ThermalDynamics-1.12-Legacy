@@ -4,20 +4,20 @@ import net.minecraft.item.ItemStack;
 
 public interface IFilterConfig {
 
-	public ItemStack[] getFilterStacks();
+	ItemStack[] getFilterStacks();
 
-	public void onChange();
+	void onChange();
 
-	public int filterStackGridWidth();
+	int filterStackGridWidth();
 
-	public boolean getFlag(int flagType);
+	boolean getFlag(int flagType);
 
-	public boolean setFlag(int flagType, boolean flag);
+	boolean setFlag(int flagType, boolean flag);
 
-	public boolean canAlterFlag(int flagType);
+	boolean canAlterFlag(int flagType);
 
-	public String flagType(int flagType);
+	String flagType(int flagType);
 
-	public int numFlags();
+	int numFlags();
 
 }

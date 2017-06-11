@@ -1,10 +1,9 @@
 package cofh.thermaldynamics.gui.container;
 
-import cofh.thermaldynamics.block.Attachment;
-
+import cofh.thermaldynamics.duct.Attachment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 
 public class ContainerAttachmentBase extends ContainerTDBase {
 
@@ -41,14 +40,14 @@ public class ContainerAttachmentBase extends ContainerTDBase {
 		if (baseTile == null) {
 			return;
 		}
-		baseTile.sendGuiNetworkData(this, crafters, false);
+		baseTile.sendGuiNetworkData(this, listeners, false);
 	}
 
 	@Override
-	public void addCraftingToCrafters(ICrafting crafter) {
+	public void addListener(IContainerListener listener) {
 
-		super.addCraftingToCrafters(crafter);
-		baseTile.sendGuiNetworkData(this, crafters, true);
+		super.addListener(listener);
+		baseTile.sendGuiNetworkData(this, listeners, true);
 	}
 
 	@Override

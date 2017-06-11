@@ -1,20 +1,21 @@
 package cofh.thermaldynamics.duct.attachments.filter;
 
-import cofh.thermaldynamics.block.AttachmentRegistry;
-import cofh.thermaldynamics.block.TileTDBase;
+import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
-
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class FilterFluid extends FilterBase {
 
-	public FilterFluid(TileTDBase tile, byte side, int type) {
+	public FilterFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
 	}
 
-	public FilterFluid(TileTDBase tile, byte side) {
+	public FilterFluid(TileGrid tile, byte side) {
 
 		super(tile, side);
 	}
@@ -30,13 +31,13 @@ public class FilterFluid extends FilterBase {
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		tank = (IFluidHandler) tile;
+		tank = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
 	public boolean isValidTile(TileEntity tile) {
 
-		return tile instanceof IFluidHandler;
+		return tile != null && tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override

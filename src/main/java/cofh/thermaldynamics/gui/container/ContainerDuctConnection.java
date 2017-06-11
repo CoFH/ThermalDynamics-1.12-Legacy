@@ -5,19 +5,18 @@ import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.slot.SlotFilter;
 import cofh.thermaldynamics.gui.slot.SlotFilterFluid;
-
-import java.util.LinkedList;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import java.util.LinkedList;
+
 public class ContainerDuctConnection extends ContainerAttachmentBase {
 
 	private final ConnectionBase tile;
 	public final FilterLogic filter;
-	public LinkedList<SlotFilter> filterSlots = new LinkedList<SlotFilter>();
+	public LinkedList<SlotFilter> filterSlots = new LinkedList<>();
 	public final int gridWidth;
 	public final int gridHeight;
 	public final int gridX0;
@@ -39,15 +38,15 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 		gridX0 = 89 - gridWidth * 9;
 
 		switch (gridHeight) {
-		case 1:
-			gridY0 = 38;
-			break;
-		case 2:
-			gridY0 = 29;
-			break;
-		default:
-			gridY0 = 20;
-			break;
+			case 1:
+				gridY0 = 38;
+				break;
+			case 2:
+				gridY0 = 29;
+				break;
+			default:
+				gridY0 = 20;
+				break;
 		}
 		for (int i = 0; i < gridHeight; i++) {
 			for (int j = 0; j < gridWidth; j++) {
@@ -63,7 +62,7 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
 
-		Slot slot = (Slot) inventorySlots.get(slotIndex);
+		Slot slot = inventorySlots.get(slotIndex);
 
 		int invPlayer = 27;
 		int invFull = invPlayer + 9;
@@ -76,7 +75,7 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 			} else if (slotIndex < invFull) {
 				Slot k = null;
 				for (int i = invFull; i < invTile; i++) {
-					Slot slot1 = (Slot) inventorySlots.get(i);
+					Slot slot1 = inventorySlots.get(i);
 					if (!slot1.getHasStack()) {
 						if (k == null) {
 							k = slot1;

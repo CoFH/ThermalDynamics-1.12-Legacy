@@ -1,24 +1,22 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.core.util.fluid.FluidTankAdv;
+import cofh.core.fluid.FluidTankCore;
 import cofh.lib.util.helpers.MathHelper;
-
 import gnu.trove.map.hash.TObjectIntHashMap;
-
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidTankGrid extends FluidTankAdv {
+public class FluidTankGrid extends FluidTankCore {
 
 	public int fluidThroughput = 120;
 	public int fluidPerDuct = 3000;
-	public FluidGrid myMaster;
-	static TObjectIntHashMap<String> fluidFlowrate = new TObjectIntHashMap<String>();
+	public GridFluid myMaster;
+	static TObjectIntHashMap<String> fluidFlowrate = new TObjectIntHashMap<>();
 
 	static {
 		fluidFlowrate.put("steam", 600);
 	}
 
-	public FluidTankGrid(int capacity, FluidGrid theGrid) {
+	public FluidTankGrid(int capacity, GridFluid theGrid) {
 
 		super(capacity);
 		myMaster = theGrid;
@@ -54,7 +52,7 @@ public class FluidTankGrid extends FluidTankAdv {
 
 	public void setFluidData(FluidStack fluid) {
 
-		int viscosity = 0;
+		int viscosity;
 
 		if (fluid != null) {
 			viscosity = Math.max(fluid.getFluid().getViscosity(), 100);

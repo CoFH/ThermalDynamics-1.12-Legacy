@@ -1,36 +1,43 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.render.ShaderHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.WeakHashMap;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.client.renderer.entity.RenderEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
 public class RenderTransport extends RenderEntity {
 
-	RenderPlayerRiding renderPlayer = new RenderPlayerRiding();
+	RenderPlayerRiding renderPlayer;
 
-	WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<EntityPlayer, EntityOtherPlayerMP>();
+	WeakHashMap<EntityPlayer, EntityOtherPlayerMP> dolls = new WeakHashMap<>();
+
+	public RenderTransport(RenderManager renderManager) {
+
+		super(renderManager);
+		renderPlayer = new RenderPlayerRiding(renderManager);
+	}
 
 	@Override
 	public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
 
-		if (entity.riddenByEntity == null) {
+		if (!entity.isBeingRidden()) {
 			return;
 		}
 
 		EntityPlayer player = null;
 
-		if (entity.riddenByEntity instanceof EntityPlayer) {
-			player = (EntityPlayer) entity.riddenByEntity;
+		if (entity.getPassengers().get(0) instanceof EntityPlayer) {
+			player = (EntityPlayer) entity.getPassengers().get(0);
 		}
 
 		if (player == Minecraft.getMinecraft().thePlayer) {
@@ -47,7 +54,7 @@ public class RenderTransport extends RenderEntity {
 
 		transport.setPosition(ShaderHelper.midGameTick);
 
-		transport.updateRiderPosition();
+		transport.updatePassenger(player);
 
 		EntityOtherPlayerMP doll = dolls.get(player);
 		if (doll == null) {
@@ -55,24 +62,25 @@ public class RenderTransport extends RenderEntity {
 			dolls.put(player, doll);
 		}
 
-		List<?> allWatched = player.getDataWatcher().getAllWatched();
+		List<EntityDataManager.DataEntry<?>> allWatched = player.getDataManager().getAll();
 		if (allWatched != null) {
-			doll.getDataWatcher().updateWatchedObjectsFromList(allWatched);
+			doll.getDataManager().setEntryValues(allWatched);
 		}
 
-		for (int i = 1; i < 5; i++) {
-			doll.setCurrentItemOrArmor(i, player.getEquipmentInSlot(i));
+		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+			doll.setItemStackToSlot(slot, player.getItemStackFromSlot(slot));
 		}
-
-		renderPlayer.setRenderManager(renderManager);
 
 		transport.setPosition(0);
 
 		GL11.glPushMatrix();
 		RenderPlayerRiding.transport = transport;
 
-		double dy = player.yOffset - 1.62F;
-		renderPlayer.doRender(doll, p_76986_2_, p_76986_4_ + dy, p_76986_6_, p_76986_8_, p_76986_9_);
+		//TODO verify that this yOffset is ok
+		double dx = 0;
+		double dy = player.getYOffset() + 0.35D;
+		double dz = 0;
+		renderPlayer.doRender(doll, p_76986_2_ + dx, p_76986_4_ + dy, p_76986_6_ + dz, p_76986_8_, p_76986_9_);
 		RenderPlayerRiding.transport = null;
 		GL11.glPopMatrix();
 	}
@@ -91,7 +99,7 @@ public class RenderTransport extends RenderEntity {
 
 		doll.worldObj = Minecraft.getMinecraft().theWorld;
 
-		double dx = 0, dy = -(player.posY - (player.boundingBox.maxY + player.boundingBox.minY)), dz = 0;
+		double dx = 0, dy = -(player.posY - (player.getEntityBoundingBox().maxY + player.getEntityBoundingBox().minY)), dz = 0;
 
 		doll.posX = other.posX + dx;
 		doll.posY = other.posY + dy;

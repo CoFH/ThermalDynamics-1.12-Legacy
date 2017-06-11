@@ -1,9 +1,8 @@
 package cofh.thermaldynamics.gui.slot;
 
-import cofh.api.item.ISpecialFilterFluid;
+import cofh.core.util.item.ISpecialFilterFluid;
 import cofh.lib.util.helpers.FluidHelper;
 import cofh.thermaldynamics.duct.attachments.filter.IFilterConfig;
-
 import net.minecraft.item.ItemStack;
 
 public class SlotFilterFluid extends SlotFilter {
