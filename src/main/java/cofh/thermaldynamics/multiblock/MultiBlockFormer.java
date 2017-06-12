@@ -37,7 +37,9 @@ public class MultiBlockFormer<T extends DuctUnit<T, G, C>, G extends MultiBlockG
 		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
 			if (currentMultiBlock.isSideConnected(i)) {
 				aBlock = currentMultiBlock.getConnectedSide(i);
-				if (aBlock != null && aBlock.isValidForForming() && aBlock.getConnectedSide(i ^ 1) == currentMultiBlock) {
+				if(aBlock == null) continue;
+				aBlock.onNeighborBlockChange();
+				if (aBlock.isValidForForming() && aBlock.getConnectedSide(i ^ 1) == currentMultiBlock) {
 					if (aBlock.getGrid() == null && theGrid.canAddBlock(aBlock)) {
 						aBlock.setGrid(theGrid);
 						theGrid.addBlock(aBlock);
