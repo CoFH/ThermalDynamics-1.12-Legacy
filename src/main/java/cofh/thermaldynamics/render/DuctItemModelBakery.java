@@ -1,7 +1,5 @@
 package cofh.thermaldynamics.render;
 
-import codechicken.lib.model.PerspectiveAwareModelProperties;
-import codechicken.lib.model.blockbakery.IItemBakery;
 import codechicken.lib.model.blockbakery.ISimpleBlockBakery;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.buffer.BakingVertexBuffer;
@@ -28,11 +26,13 @@ public class DuctItemModelBakery implements ISimpleBlockBakery {
 
 	@Override
 	public IExtendedBlockState handleState(IExtendedBlockState state, TileEntity tileEntity) {
+
 		return state;
 	}
 
 	@Override
 	public List<BakedQuad> bakeItemQuads(EnumFacing face, ItemStack stack) {
+
 		List<BakedQuad> quads = new LinkedList<>();
 		if (face == null) {
 			CCRenderState ccrs = CCRenderState.instance();
@@ -57,6 +57,7 @@ public class DuctItemModelBakery implements ISimpleBlockBakery {
 
 	@Override
 	public List<BakedQuad> bakeQuads(EnumFacing face, IExtendedBlockState state) {
+
 		return new ArrayList<>();
 	}
 }

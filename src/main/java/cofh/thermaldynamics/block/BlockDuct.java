@@ -3,7 +3,8 @@ package cofh.thermaldynamics.block;
 import codechicken.lib.block.property.PropertyInteger;
 import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
-import codechicken.lib.model.blockbakery.*;
+import codechicken.lib.model.blockbakery.IBakeryBlock;
+import codechicken.lib.model.blockbakery.ICustomBlockBakery;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import cofh.api.block.IBlockConfigGui;
@@ -26,7 +27,6 @@ import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.BakedDuctItemModel;
 import cofh.thermaldynamics.render.DuctItemModelBakery;
-import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -445,6 +445,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	@SideOnly (Side.CLIENT)
 	public ICustomBlockBakery getCustomBakery() {
+
 		return DuctItemModelBakery.INSTANCE;
 	}
 

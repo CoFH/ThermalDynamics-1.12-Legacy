@@ -5,9 +5,7 @@ import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.block.ICCBlockRenderer;
-import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Scale;
 import codechicken.lib.vec.Translation;
@@ -23,35 +21,19 @@ import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermalfoundation.init.TFFluids;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RenderDuct implements ICCBlockRenderer {
 

@@ -406,6 +406,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 
 	@Override
 	public boolean canConnectToOtherDuct(DuctUnit<DuctUnitTransportBase, GridTransport, TransportDestination> adjDuct, byte side, byte oppositeSide) {
+
 		return parent.getConnectionType(side) != ConnectionType.FORCED && adjDuct.cast().isRoutable();
 	}
 
