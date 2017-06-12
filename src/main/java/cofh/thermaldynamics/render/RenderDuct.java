@@ -53,7 +53,7 @@ import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspectiveAwareModel {
+public class RenderDuct implements ICCBlockRenderer {
 
 	public static final RenderDuct instance = new RenderDuct();
 
@@ -427,78 +427,4 @@ public class RenderDuct implements ICCBlockRenderer, IItemRenderer, IPerspective
 	public void registerTextures(TextureMap map) {
 
 	}
-
-	@Override
-	public void renderItem(ItemStack item) {
-
-		Block blockFromItem = Block.getBlockFromItem(item.getItem());
-
-		Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + item.getItemDamage());
-		int metadata = duct.id;
-
-		GlStateManager.pushMatrix();
-
-		RenderHelper.setBlockTextureSheet();
-		CCRenderState ccrs = CCRenderState.instance();
-		ccrs.reset();
-
-		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		renderBase(ccrs, true, metadata, INV_CONNECTIONS, 0, 0, 0, duct.getBaseTexture(item));
-		ccrs.draw();
-
-		ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-		renderWorldExtra(ccrs, true, metadata, INV_CONNECTIONS, 0, 0 - RenderHelper.RENDER_OFFSET, 0);
-		ccrs.draw();
-
-		GlStateManager.popMatrix();
-	}
-
-	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-
-		return new ArrayList<>();
-	}
-
-	@Override
-	public boolean isAmbientOcclusion() {
-
-		return false;
-	}
-
-	@Override
-	public boolean isGui3d() {
-
-		return false;
-	}
-
-	@Override
-	public boolean isBuiltInRenderer() {
-
-		return true;
-	}
-
-	@Override
-	public TextureAtlasSprite getParticleTexture() {
-
-		return null;
-	}
-
-	@Override
-	public ItemCameraTransforms getItemCameraTransforms() {
-
-		return ItemCameraTransforms.DEFAULT;
-	}
-
-	@Override
-	public ItemOverrideList getOverrides() {
-
-		return ItemOverrideList.NONE;
-	}
-
-	@Override
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-
-		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
-	}
-
 }

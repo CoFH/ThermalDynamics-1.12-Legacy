@@ -3,6 +3,7 @@ package cofh.thermaldynamics.block;
 import codechicken.lib.block.property.PropertyInteger;
 import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
+import codechicken.lib.model.blockbakery.*;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import cofh.api.block.IBlockConfigGui;
@@ -23,6 +24,8 @@ import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
+import cofh.thermaldynamics.render.BakedDuctItemModel;
+import cofh.thermaldynamics.render.DuctItemModelBakery;
 import cofh.thermaldynamics.render.RenderDuct;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -63,7 +66,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister {
+public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryBlock {
 
 	public static final PropertyEnum<BlockDuct.Type> VARIANT = PropertyEnum.create("type", Type.class);
 
@@ -424,15 +427,25 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return false;
 	}
 
-	/* IModelRegister */
+	/* Rendering Init */
 	@Override
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
 
+		//Mask Model errors for blocks.
 		ModelLoader.setCustomStateMapper(this, new StateMap.Builder().ignore(META).build());
 		ModelResourceLocation normalLocation = new ModelResourceLocation(getRegistryName(), "normal");
 		ModelRegistryHelper.register(normalLocation, new DummyBakedModel());
-		ModelRegistryHelper.registerItemRenderer(Item.getItemFromBlock(this), RenderDuct.instance);
+		//Actual model related stuffs.
+		ModelResourceLocation invLocation = new ModelResourceLocation(getRegistryName(), "inventory");
+		ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), stack -> invLocation);
+		ModelRegistryHelper.register(invLocation, BakedDuctItemModel.INSTANCE);
+	}
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public ICustomBlockBakery getCustomBakery() {
+		return DuctItemModelBakery.INSTANCE;
 	}
 
 	/* IInitializer */
