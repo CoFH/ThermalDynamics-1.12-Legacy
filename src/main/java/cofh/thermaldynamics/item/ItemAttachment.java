@@ -39,13 +39,14 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
+		ItemStack stack = player.getHeldItem(hand);
 		Attachment attachment = getAttachment(stack, player, world, pos, facing);
 
 		if (attachment != null && attachment.addToTile()) {
 			if (!player.capabilities.isCreativeMode) {
-				stack.stackSize--;
+				stack.shrink(1);
 			}
 			return EnumActionResult.SUCCESS;
 		}
@@ -113,7 +114,7 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 		if (target.typeOfHit != Type.BLOCK || !ItemUtils.isPlayerHoldingSomething(event.getPlayer()) || ItemUtils.getHeldStack(event.getPlayer()).getItem() != this) {
 			return;
 		}
-		RayTracer.retraceBlock(event.getPlayer().worldObj, event.getPlayer(), target.getBlockPos());
+		RayTracer.retraceBlock(event.getPlayer().world, event.getPlayer(), target.getBlockPos());
 		ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
 		Attachment attachment = getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
 

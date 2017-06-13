@@ -21,14 +21,14 @@ public class SlotIcon extends SlotFalseCopy {
 	@Override
 	public ItemStack getStack() {
 
-		return ItemStack.copyItemStack(duct.data.item);
+		return duct.data.item.copy();
 	}
 
 	@Override
 	public void putStack(ItemStack stack) {
 
-		if (stack != null) {
-			stack.stackSize = 1;
+		if (!stack.isEmpty()) {
+			stack.setCount(1);
 		}
 		duct.setIcon(stack);
 	}
@@ -47,7 +47,7 @@ public class SlotIcon extends SlotFalseCopy {
 	@Override
 	public ItemStack decrStackSize(int amount) {
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override

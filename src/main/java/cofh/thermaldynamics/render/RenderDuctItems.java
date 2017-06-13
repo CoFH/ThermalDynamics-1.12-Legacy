@@ -147,7 +147,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 			for (int i = 0; items.hasNext() && i < ITEMS_TO_RENDER_PER_DUCT; i++) {
 				renderItem = items.next();
-				if (renderItem == null || renderItem.stack == null) {
+				if (renderItem == null || renderItem.stack.isEmpty()) {
 					continue;
 				}
 				double v = (renderItem.progress + frame * renderItem.step) / (duct.getDuctLength());

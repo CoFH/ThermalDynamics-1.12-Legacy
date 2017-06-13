@@ -20,6 +20,7 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -43,7 +44,7 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
 
 		for (int i = 0; i < 5; i++) {
 			list.add(new ItemStack(item, 1, i));

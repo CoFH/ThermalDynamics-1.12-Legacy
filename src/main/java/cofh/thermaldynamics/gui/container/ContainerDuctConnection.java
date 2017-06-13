@@ -71,7 +71,7 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 		if (slot != null && slot.getHasStack()) {
 			ItemStack stack = slot.getStack();
 			if (slotIndex < 0) {
-				return null;
+				return ItemStack.EMPTY;
 			} else if (slotIndex < invFull) {
 				Slot k = null;
 				for (int i = invFull; i < invTile; i++) {
@@ -82,7 +82,7 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 						}
 					} else {
 						if (ItemHelper.itemsEqualWithMetadata(slot1.getStack(), stack)) {
-							return null;
+							return ItemStack.EMPTY;
 						}
 					}
 				}
@@ -90,14 +90,14 @@ public class ContainerDuctConnection extends ContainerAttachmentBase {
 					k.putStack(stack.copy());
 				}
 
-				return null;
+				return ItemStack.EMPTY;
 			} else {
-				slot.putStack(null);
+				slot.putStack(ItemStack.EMPTY);
 				slot.onSlotChanged();
 
 			}
 		}
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 }

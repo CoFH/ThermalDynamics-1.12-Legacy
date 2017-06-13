@@ -78,9 +78,9 @@ public class TravelingItem {
 
 	public TravelingItem(NBTTagCompound theNBT) {
 
-		stack = ItemStack.loadItemStackFromNBT(theNBT.getCompoundTag("stack"));
+		stack = new ItemStack(theNBT.getCompoundTag("stack"));
 		if (stack.getItem() == null) {
-			stack = null;
+			stack = ItemStack.EMPTY;
 		}
 
 		progress = theNBT.getByte("progress");
@@ -143,9 +143,9 @@ public class TravelingItem {
 				}
 			}
 		} else if (homeTile.isOutput(direction) && homeTile.parent.getConnectionType(direction).allowTransfer) {
-			stack.stackSize = homeTile.insertIntoInventory(stack.copy(), direction);
+			stack.setCount(homeTile.insertIntoInventory(stack.copy(), direction));
 
-			if (stack.stackSize > 0) {
+			if (stack.getCount() > 0) {
 				bounceItem(homeTile);
 				return;
 			}
@@ -350,7 +350,7 @@ public class TravelingItem {
 
 	public StackMap.ItemEntry getStackEntry() {
 
-		if (stack == null) {
+		if (stack.isEmpty()) {
 			return null;
 		}
 		if (stackItemEntry == null || stackItemEntry.side != getLastSide()) {

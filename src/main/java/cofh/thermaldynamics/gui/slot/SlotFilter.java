@@ -21,7 +21,7 @@ public class SlotFilter extends SlotFalseCopy {
 	@Override
 	public boolean isItemValid(ItemStack stack) {
 
-		return stack != null;
+		return !stack.isEmpty();
 	}
 
 	@Override
@@ -34,8 +34,8 @@ public class SlotFilter extends SlotFalseCopy {
 	public void putStack(ItemStack stack) {
 
 		synchronized (filter.getFilterStacks()) {
-			if (stack != null) {
-				stack.stackSize = 1;
+			if (!stack.isEmpty()) {
+				stack.setCount(1);
 			}
 			filter.getFilterStacks()[getSlotIndex()] = stack;
 			onSlotChanged();
@@ -57,7 +57,7 @@ public class SlotFilter extends SlotFalseCopy {
 	@Override
 	public ItemStack decrStackSize(int amount) {
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override

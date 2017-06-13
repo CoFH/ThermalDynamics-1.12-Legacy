@@ -17,7 +17,6 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 
 	@Nullable
 	private final DuctUnit mainDuct;
-	;
 
 	public DuctUnitStructural(TileGrid parent, @Nonnull DuctUnit mainDuct) {
 

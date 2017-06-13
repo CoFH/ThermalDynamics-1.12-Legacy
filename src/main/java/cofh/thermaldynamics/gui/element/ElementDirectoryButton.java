@@ -62,7 +62,7 @@ public class ElementDirectoryButton extends ElementButton {
 
 		getFontRenderer().drawStringWithShadow(text, posX + sizeY + 4, posY + (sizeY - 8) / 2, getTextColor(mouseX, mouseY));
 
-		if (entry.icon != null) {
+		if (!entry.icon.isEmpty()) {
 			gui.drawItemStack(entry.icon, posX + 3, posY + 3, false, null);
 		}
 	}

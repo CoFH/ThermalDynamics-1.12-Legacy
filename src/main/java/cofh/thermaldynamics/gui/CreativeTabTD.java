@@ -10,6 +10,7 @@ import cofh.thermaldynamics.duct.TDDucts;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,9 +38,9 @@ public class CreativeTabTD extends CreativeTabs {
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public Item getTabIconItem() {
+	public ItemStack getTabIconItem() {
 
-		return getIconItemStack().getItem();
+		return getIconItemStack();
 	}
 
 	@Override
@@ -51,10 +52,10 @@ public class CreativeTabTD extends CreativeTabs {
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void displayAllRelevantItems(List<ItemStack> list) {
+	public void displayAllRelevantItems(NonNullList<ItemStack> list) {
 
 		LinkedList<ItemStack> itemStacks = new LinkedList<>();
-		super.displayAllRelevantItems(itemStacks);
+		super.displayAllRelevantItems(new NonNullList<>(itemStacks, ItemStack.EMPTY));
 
 		for (Duct d : TDDucts.getSortedDucts()) {
 			list.add(d.itemStack.copy());

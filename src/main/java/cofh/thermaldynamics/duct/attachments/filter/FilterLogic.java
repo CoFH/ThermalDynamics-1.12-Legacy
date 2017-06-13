@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -61,6 +62,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 		this.transferType = transferType;
 
 		items = new ItemStack[maxFilterItems[type]];
+		Arrays.fill(items, ItemStack.EMPTY);
 
 		if (transferType == Duct.Type.ITEM) {
 			quickItems = new LinkedList<>();
@@ -116,7 +118,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 			itemLoop:
 			for (ItemStack item : items) {
-				if (item != null) {
+				if (!item.isEmpty()) {
 					if (isItem()) {
 						if (item.getItem() instanceof ISpecialFilterItem) {
 							if (customFilterItems == null) {
@@ -323,7 +325,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			int slot = nbt.getInteger("Slot");
 
 			if (slot >= 0 && slot < items.length) {
-				items[slot] = ItemStack.loadItemStackFromNBT(nbt);
+				items[slot] = new ItemStack(nbt);
 			}
 		}
 		recalc = true;
@@ -344,7 +346,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 		NBTTagList list = new NBTTagList();
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null) {
+			if (!items[i].isEmpty()) {
 				NBTTagCompound nbt = new NBTTagCompound();
 				nbt.setInteger("Slot", i);
 				items[i].writeToNBT(nbt);

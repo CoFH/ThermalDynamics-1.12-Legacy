@@ -78,7 +78,7 @@ public class GridItem extends MultiBlockGridWithRoutes<DuctUnitItem, GridItem> {
 		}
 		BlockPos dest = item.getDest();
 		StackMap list = travelingItems.computeIfAbsent(dest, k -> new StackMap());
-		list.addItemEntry(item.getStackEntry(), item.stack.stackSize);
+		list.addItemEntry(item.getStackEntry(), item.stack.getCount());
 	}
 
 	@Override

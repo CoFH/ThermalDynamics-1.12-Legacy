@@ -122,9 +122,9 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 					return;
 				}
 			} else if (duct.isOutput(travelingItem.direction)) {
-				travelingItem.stack.stackSize = duct.insertIntoInventory(travelingItem.stack, travelingItem.direction);
+				travelingItem.stack.setCount(duct.insertIntoInventory(travelingItem.stack, travelingItem.direction));
 
-				if (travelingItem.stack.stackSize > 0) {
+				if (travelingItem.stack.getCount() > 0) {
 					travelingItem.reRoute = true;
 					transferItem(travelingItem, duct, newInsert);
 				} else if (!newInsert) {

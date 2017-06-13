@@ -2,9 +2,9 @@ package cofh.thermaldynamics.duct.attachments.cover;
 
 import codechicken.lib.colour.Colour;
 import codechicken.lib.colour.ColourARGB;
-import codechicken.lib.model.bakery.CCQuad;
-import codechicken.lib.render.CCRSConsumer;
+import codechicken.lib.render.CCQuad;
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.consumer.CCRSConsumer;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.lib.util.helpers.MathHelper;

@@ -57,14 +57,14 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 
 		RayTraceResult traceResult = RayTracer.retraceBlock(world, player, pos);
 
 		if (traceResult == null || traceResult.getBlockPos() != pos) {
 			return false;
 		}
-		PlayerInteractEvent event = new PlayerInteractEvent.RightClickBlock(player, hand, heldItem, pos, side, traceResult.hitVec);
+		PlayerInteractEvent event = new PlayerInteractEvent.RightClickBlock(player, hand, pos, side, traceResult.hitVec);
 		if (MinecraftForge.EVENT_BUS.post(event) || event.getResult() == Result.DENY) {
 			return false;
 		}
@@ -202,7 +202,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 					double z2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5D;
 					EntityItem dropEntity = new EntityItem(world, pos.getX() + x2, pos.getY() + y2, pos.getZ() + z2, stack);
 					dropEntity.setPickupDelay(10);
-					world.spawnEntityInWorld(dropEntity);
+					world.spawnEntity(dropEntity);
 				}
 				if (player != null) {
 					CoreUtils.dismantleLog(player.getName(), this, meta, pos);

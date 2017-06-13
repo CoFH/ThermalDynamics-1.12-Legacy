@@ -29,10 +29,10 @@ public abstract class ContainerTDBase extends Container {
 		Slot slot = slotId < 0 ? null : this.inventorySlots.get(slotId);
 		if (slot instanceof SlotFalseCopy) {
 			if (mouseButton == 2) {
-				slot.putStack(null);
+				slot.putStack(ItemStack.EMPTY);
 				slot.onSlotChanged();
 			} else {
-				slot.putStack(player.inventory.getItemStack() == null ? null : player.inventory.getItemStack().copy());
+				slot.putStack(player.inventory.getItemStack().isEmpty() ? ItemStack.EMPTY : player.inventory.getItemStack().copy());
 			}
 			return player.inventory.getItemStack();
 		}
@@ -49,22 +49,22 @@ public abstract class ContainerTDBase extends Container {
 		ItemStack stackInSlot;
 
 		if (stack.isStackable()) {
-			while (stack.stackSize > 0 && (!ascending && k < slotMax || ascending && k >= slotMin)) {
+			while (stack.getCount() > 0 && (!ascending && k < slotMax || ascending && k >= slotMin)) {
 				slot = this.inventorySlots.get(k);
 				stackInSlot = slot.getStack();
 
 				if (slot.isItemValid(stack) && ItemHelper.itemsEqualWithMetadata(stack, stackInSlot, true)) {
-					int l = stackInSlot.stackSize + stack.stackSize;
+					int l = stackInSlot.getCount() + stack.getCount();
 					int slotLimit = Math.min(stack.getMaxStackSize(), slot.getSlotStackLimit());
 
 					if (l <= slotLimit) {
-						stack.stackSize = 0;
-						stackInSlot.stackSize = l;
+						stack.setCount(0);
+						stackInSlot.setCount(l);
 						slot.onSlotChanged();
 						slotFound = true;
-					} else if (stackInSlot.stackSize < slotLimit) {
-						stack.stackSize -= slotLimit - stackInSlot.stackSize;
-						stackInSlot.stackSize = slotLimit;
+					} else if (stackInSlot.getCount() < slotLimit) {
+						stack.setCount(slotLimit - stackInSlot.getCount());
+						stackInSlot.setCount(slotLimit);
 						slot.onSlotChanged();
 						slotFound = true;
 					}
@@ -72,19 +72,19 @@ public abstract class ContainerTDBase extends Container {
 				k += ascending ? -1 : 1;
 			}
 		}
-		if (stack.stackSize > 0) {
+		if (stack.getCount() > 0) {
 			k = ascending ? slotMax - 1 : slotMin;
 
 			while (!ascending && k < slotMax || ascending && k >= slotMin) {
 				slot = this.inventorySlots.get(k);
 				stackInSlot = slot.getStack();
 
-				if (slot.isItemValid(stack) && stackInSlot == null) {
-					slot.putStack(ItemHelper.cloneStack(stack, Math.min(stack.stackSize, slot.getSlotStackLimit())));
+				if (slot.isItemValid(stack) && stackInSlot.isEmpty()) {
+					slot.putStack(ItemHelper.cloneStack(stack, Math.min(stack.getCount(), slot.getSlotStackLimit())));
 					slot.onSlotChanged();
 
-					if (slot.getStack() != null) {
-						stack.stackSize -= slot.getStack().stackSize;
+					if (!slot.getStack().isEmpty()) {
+						stack.setCount(slot.getStack().getCount());
 						slotFound = true;
 					}
 					break;
@@ -98,7 +98,7 @@ public abstract class ContainerTDBase extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
 
-		ItemStack stack = null;
+		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(slotIndex);
 
 		int invPlayer = 27;
@@ -111,22 +111,22 @@ public abstract class ContainerTDBase extends Container {
 
 			if (slotIndex < 0) {
 				if (!this.mergeItemStack(stackInSlot, 0, invFull, true)) {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			} else if (slotIndex < invFull) {
 				if (!this.mergeItemStack(stackInSlot, invFull, invTile, false)) {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			} else if (!this.mergeItemStack(stackInSlot, 0, invFull, true)) {
-				return null;
+				return ItemStack.EMPTY;
 			}
-			if (stackInSlot.stackSize <= 0) {
-				slot.putStack(null);
+			if (stackInSlot.getCount() <= 0) {
+				slot.putStack(ItemStack.EMPTY);
 			} else {
 				slot.onSlotChanged();
 			}
-			if (stackInSlot.stackSize == stack.stackSize) {
-				return null;
+			if (stackInSlot.getCount() == stack.getCount()) {
+				return ItemStack.EMPTY;
 			}
 		}
 		return stack;

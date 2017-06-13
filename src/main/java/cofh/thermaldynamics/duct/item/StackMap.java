@@ -13,7 +13,7 @@ public class StackMap extends TObjectIntHashMap<StackMap.ItemEntry> {
 
 	public boolean addItemstack(ItemStack itemStack, int side) {
 
-		adjustOrPutValue(new ItemEntry(itemStack, side), itemStack.stackSize, itemStack.stackSize);
+		adjustOrPutValue(new ItemEntry(itemStack, side), itemStack.getCount(), itemStack.getCount());
 		return true;
 	}
 

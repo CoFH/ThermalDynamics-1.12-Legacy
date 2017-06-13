@@ -44,7 +44,7 @@ public class PacketLight extends PacketCoFHBase {
 		boolean lit = getBool();
 
 		int n = getVarInt();
-		World world = player.worldObj;
+		World world = player.world;
 		for (int i = 0; i < n; i++) {
 			int x = getVarInt();
 			int y = getVarInt();

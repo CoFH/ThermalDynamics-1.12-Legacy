@@ -45,7 +45,7 @@ public class CoverHelper {
 		if (stack.getItem() instanceof ItemBlock) {
 			return getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()));
 		}
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	public static ItemStack getCoverStack(IBlockState state) {
@@ -69,7 +69,7 @@ public class CoverHelper {
 		NBTTagCompound nbt = stack.getTagCompound();
 
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
@@ -82,7 +82,7 @@ public class CoverHelper {
 					stack.setTagCompound(null);
 				}
 			}
-			return null;
+			return ItemStack.EMPTY;
 		}
 		return new ItemStack(block, 1, meta);
 	}

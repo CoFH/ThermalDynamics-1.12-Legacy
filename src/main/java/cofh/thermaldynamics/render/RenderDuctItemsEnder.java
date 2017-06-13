@@ -38,9 +38,9 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			Minecraft mc = Minecraft.getMinecraft();
 			float fov = mc.gameSettings.fovSetting * 2f;
 
-			ARBShaderObjects.glUniform1fARB(ARBShaderObjects.glGetUniformLocationARB(shader, "xpos"), mc.thePlayer.rotationYaw / fov);
+			ARBShaderObjects.glUniform1fARB(ARBShaderObjects.glGetUniformLocationARB(shader, "xpos"), mc.player.rotationYaw / fov);
 
-			ARBShaderObjects.glUniform1fARB(ARBShaderObjects.glGetUniformLocationARB(shader, "zpos"), -mc.thePlayer.rotationPitch / fov);
+			ARBShaderObjects.glUniform1fARB(ARBShaderObjects.glGetUniformLocationARB(shader, "zpos"), -mc.player.rotationPitch / fov);
 		}
 	};
 

@@ -250,14 +250,14 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 			if (isOutput()) {
 				BlockPos offsetPos = baseTile.getPos().offset(EnumFacing.VALUES[side]);
-				baseTile.world().notifyBlockOfStateChange(offsetPos, baseTile.getBlockType());
+				baseTile.world().neighborChanged(offsetPos, baseTile.getBlockType(), baseTile.getPos());
 
 				for (int i = 0; i < 6; i++) {
 					if (side == (i ^ 1)) {
 						continue;
 					}
 					offsetPos = baseTile.getPos().offset(EnumFacing.VALUES[side]);
-					baseTile.world().notifyBlockOfStateChange(offsetPos, baseTile.getBlockType());
+					baseTile.world().neighborChanged(offsetPos, baseTile.getBlockType(), baseTile.getPos());
 				}
 
 			}
@@ -405,7 +405,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 		invert = payload.getByte();
 
 		if (isServer) {
-			baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType());
+			baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType(), false);
 			onNeighborChange();
 			GridStructural grid = structureUnit.getGrid();
 			if (type != prevType && grid != null) {
@@ -441,7 +441,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 
 		readFromNBT(tag);
 
-		baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType());
+		baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType(), false);
 		onNeighborChange();
 		GridStructural grid = structureUnit.getGrid();
 		if (grid != null) {

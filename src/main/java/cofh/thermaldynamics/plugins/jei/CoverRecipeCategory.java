@@ -70,6 +70,11 @@ public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper>
 	}
 
 	@Override
+	public String getModName() {
+		return "ThermalDynamics";
+	}
+
+	@Override
 	public IDrawable getBackground() {
 
 		return background;
@@ -88,6 +93,6 @@ public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper>
 			}
 		}
 		craftingGridHelper.setInputStacks(guiItemStacks, ingredients.getInputs(ItemStack.class));
-		craftingGridHelper.setOutput(guiItemStacks, ingredients.getOutputs(ItemStack.class));
+		guiItemStacks.set(craftOutputSlot, ingredients.getOutputs(ItemStack.class).get(0));
 	}
 }

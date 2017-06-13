@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.render;
 
-import codechicken.lib.model.blockbakery.ISimpleBlockBakery;
+import codechicken.lib.model.bakery.generation.IItemBakery;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.buffer.BakingVertexBuffer;
 import cofh.lib.util.helpers.RenderHelper;
@@ -11,24 +11,15 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DuctItemModelBakery implements ISimpleBlockBakery {
+public class DuctItemModelBakery implements IItemBakery {
 
 	public static final DuctItemModelBakery INSTANCE = new DuctItemModelBakery();
-
-	@Override
-	public IExtendedBlockState handleState(IExtendedBlockState state, TileEntity tileEntity) {
-
-		return state;
-	}
 
 	@Override
 	public List<BakedQuad> bakeItemQuads(EnumFacing face, ItemStack stack) {
@@ -53,11 +44,5 @@ public class DuctItemModelBakery implements ISimpleBlockBakery {
 			quads.addAll(buffer.bake());
 		}
 		return quads;
-	}
-
-	@Override
-	public List<BakedQuad> bakeQuads(EnumFacing face, IExtendedBlockState state) {
-
-		return new ArrayList<>();
 	}
 }

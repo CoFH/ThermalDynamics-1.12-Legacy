@@ -47,7 +47,7 @@ public class PacketFluid extends PacketCoFHBase {
 		FluidStack fluid = getFluidStack();
 
 		int n = getVarInt();
-		World world = player.worldObj;
+		World world = player.world;
 		for (int i = 0; i < n; i++) {
 			int x = getVarInt();
 			int y = getVarInt();

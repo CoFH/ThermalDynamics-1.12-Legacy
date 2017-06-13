@@ -151,7 +151,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				continue;
 			}
 
-			player.addChatComponentMessage(new TextComponentString("Searching on side - " + EnumFacing.VALUES[i].toString()));
+			player.sendMessage(new TextComponentString("Searching on side - " + EnumFacing.VALUES[i].toString()));
 
 			DuctUnitTransportLongRange travel = (DuctUnitTransportLongRange) duct;
 
@@ -188,7 +188,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				dist++;
 			}
 			if (finalDest != null) {
-				player.addChatComponentMessage(new TextComponentString("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
+				player.sendMessage(new TextComponentString("Linked to -  (" + finalDest.x() + ", " + finalDest.y() + ", " + finalDest.z() + ")"));
 				finalDest.rangePos[d ^ 1] = new SidedBlockPos(pos(), EnumFacing.VALUES[i].getOpposite());
 				rangePos[i] = new SidedBlockPos(finalDest.pos(), EnumFacing.VALUES[d]);
 
@@ -202,7 +202,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 				finalDest.parent.callBlockUpdate();
 			} else {
-				player.addChatComponentMessage(new TextComponentString("Failed after " + dist + " blocks - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
+				player.sendMessage(new TextComponentString("Failed after " + dist + " blocks - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
 			}
 		}
 

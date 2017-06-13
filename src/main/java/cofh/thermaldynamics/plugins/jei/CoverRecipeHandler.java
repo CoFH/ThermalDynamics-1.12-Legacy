@@ -12,15 +12,9 @@ public class CoverRecipeHandler implements IRecipeHandler<CoverRecipeWrapper> {
 	}
 
 	@Override
-	public String getRecipeCategoryUid() {
-
-		return RecipeUidsTD.COVER;
-	}
-
-	@Override
 	public String getRecipeCategoryUid(CoverRecipeWrapper recipe) {
 
-		return getRecipeCategoryUid();
+		return RecipeUidsTD.COVER;
 	}
 
 	@Override

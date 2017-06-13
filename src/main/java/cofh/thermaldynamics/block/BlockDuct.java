@@ -3,8 +3,8 @@ package cofh.thermaldynamics.block;
 import codechicken.lib.block.property.PropertyInteger;
 import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
-import codechicken.lib.model.blockbakery.IBakeryBlock;
-import codechicken.lib.model.blockbakery.ICustomBlockBakery;
+import codechicken.lib.model.bakery.IBakeryProvider;
+import codechicken.lib.model.bakery.generation.IBakery;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import cofh.api.block.IBlockConfigGui;
@@ -40,10 +40,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -66,7 +63,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryBlock {
+public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider {
 
 	public static final PropertyEnum<BlockDuct.Type> VARIANT = PropertyEnum.create("type", Type.class);
 
@@ -95,7 +92,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
 
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(i + offset)) {
@@ -134,7 +131,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	/* BLOCK METHODS */
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean b) {
 
 		if (entity instanceof EntityTransport) {
 			return;
@@ -316,7 +313,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (tile != null) {
 			List<IndexedCuboid6> cuboids = new LinkedList<>();
 			tile.addTraceableCuboids(cuboids);
-			return RayTracer.rayTraceCuboidsClosest(start, end, cuboids, pos);
+			return RayTracer.rayTraceCuboidsClosest(start, end, pos, cuboids);
 		}
 		return null;
 	}
@@ -362,10 +359,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		RayTraceResult target = event.getTarget();
 		EntityPlayer player = event.getPlayer();
-		if (target.typeOfHit == RayTraceResult.Type.BLOCK && player.worldObj.getBlockState(event.getTarget().getBlockPos()).getBlock().getUnlocalizedName().equals(getUnlocalizedName())) {
-			RayTracer.retraceBlock(player.worldObj, player, target.getBlockPos());
+		if (target.typeOfHit == RayTraceResult.Type.BLOCK && player.world.getBlockState(event.getTarget().getBlockPos()).getBlock().getUnlocalizedName().equals(getUnlocalizedName())) {
+			RayTracer.retraceBlock(player.world, player, target.getBlockPos());
 
-			ICustomHitBox tile = ((ICustomHitBox) player.worldObj.getTileEntity(target.getBlockPos()));
+			ICustomHitBox tile = ((ICustomHitBox) player.world.getTileEntity(target.getBlockPos()));
 			if (tile != null && tile.shouldRenderCustomHitBox(target.subHit, player)) {
 				event.setCanceled(true);
 				RenderHitbox.drawSelectionBox(player, target, event.getPartialTicks(), tile.getCustomHitBox(target.subHit, player));
@@ -444,7 +441,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public ICustomBlockBakery getCustomBakery() {
+	public IBakery getBakery() {
 
 		return DuctItemModelBakery.INSTANCE;
 	}
@@ -516,7 +513,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics:duct_transport_long_range");
 		GameRegistry.registerTileEntity(TileTransportDuct.Linking.class, "thermaldynamics:duct_transport_linking");
 
-		EntityRegistry.registerModEntity(EntityTransport.class, "transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
+		EntityRegistry.registerModEntity(new ResourceLocation("thermaldynamics:transport"), EntityTransport.class, "transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
 		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
 		FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
 

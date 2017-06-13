@@ -521,7 +521,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			}
 			OutputData outputData = new OutputData();
 			outputData.name = nbt.getString("DestinationName");
-			outputData.item = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("DestinationIcon"));
+			outputData.item = new ItemStack(nbt.getCompoundTag("DestinationIcon"));
 			return outputData;
 		}
 
@@ -540,7 +540,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		public void loadConfigData(PacketCoFHBase payload) {
 
 			String prevName = name;
-			ItemStack prevItem = ItemStack.copyItemStack(item);
+			ItemStack prevItem = item.copy();
 			try {
 				name = payload.getString();
 				item = payload.getItemStack();

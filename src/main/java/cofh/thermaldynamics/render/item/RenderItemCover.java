@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.IPerspectiveAwareModel.MapWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -29,12 +30,12 @@ import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
+public class RenderItemCover implements IItemRenderer {
 
 	public static IItemRenderer instance = new RenderItemCover();
 
 	@Override
-	public void renderItem(ItemStack stack) {
+	public void renderItem(ItemStack stack, TransformType transformType) {
 
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
@@ -62,15 +63,8 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 	}
 
 	@Override
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-
-		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
-	}
-
-	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-
-		return new ArrayList<>();
+	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemStack stack, TransformType cameraTransformType) {
+		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK, cameraTransformType);
 	}
 
 	@Override
@@ -83,29 +77,5 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 	public boolean isGui3d() {
 
 		return false;
-	}
-
-	@Override
-	public boolean isBuiltInRenderer() {
-
-		return true;
-	}
-
-	@Override
-	public TextureAtlasSprite getParticleTexture() {
-
-		return null;
-	}
-
-	@Override
-	public ItemCameraTransforms getItemCameraTransforms() {
-
-		return ItemCameraTransforms.DEFAULT;
-	}
-
-	@Override
-	public ItemOverrideList getOverrides() {
-
-		return ItemOverrideList.NONE;
 	}
 }

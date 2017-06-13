@@ -115,12 +115,12 @@ public class RetrieverItem extends ServoItem {
 
 					for (int slot = 0; slot < inv.getSlots(); slot++) {
 						ItemStack item = inv.getStackInSlot(slot);
-						if (item == null) {
+						if (item.isEmpty()) {
 							continue;
 						}
 
-						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.stackSize), simulatedInv, slot, side);
-						if (item == null || item.stackSize == 0) {
+						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()), simulatedInv, slot, side);
+						if (item.isEmpty() || item.getCount() == 0) {
 							continue;
 						}
 
@@ -130,10 +130,10 @@ public class RetrieverItem extends ServoItem {
 
 						ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
-						if (remainder != null) {
-							item.stackSize -= remainder.stackSize;
+						if (!remainder.isEmpty()) {
+							item.shrink(remainder.getCount());
 						}
-						if (item.stackSize <= 0) {
+						if (item.getCount() <= 0) {
 							continue;
 						}
 
@@ -142,9 +142,9 @@ public class RetrieverItem extends ServoItem {
 							continue;
 						}
 
-						int maxStackSize = item.stackSize;
+						int maxStackSize = item.getCount();
 						item = inv.extractItem(slot, maxStackSize, false);
-						if (item == null || item.stackSize == 0) {
+						if (item.isEmpty() || item.getCount() == 0) {
 							continue;
 						}
 
@@ -152,12 +152,12 @@ public class RetrieverItem extends ServoItem {
 						route1 = route1.copy();
 						route1.pathDirections.add(side);
 
-						if (multiStack[type] && item.stackSize < maxStackSize) {
-							for (; item.stackSize < maxStackSize && slot < inv.getSlots(); slot++) {
+						if (multiStack[type] && item.getCount() < maxStackSize) {
+							for (; item.getCount() < maxStackSize && slot < inv.getSlots(); slot++) {
 								if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
-									ItemStack extract = inv.extractItem(slot, maxStackSize - item.stackSize, false);
-									if (extract != null) {
-										item.stackSize += extract.stackSize;
+									ItemStack extract = inv.extractItem(slot, maxStackSize - item.getCount(), false);
+									if (!extract.isEmpty()) {
+										item.grow(extract.getCount());
 									}
 								}
 							}
@@ -180,8 +180,8 @@ public class RetrieverItem extends ServoItem {
 				continue;
 			}
 
-			stuffedItem.stackSize = itemDuct.insertIntoInventory(stuffedItem, side);
-			if (stuffedItem.stackSize <= 0) {
+			stuffedItem.setCount(itemDuct.insertIntoInventory(stuffedItem, side));
+			if (stuffedItem.getCount() <= 0) {
 				iterator.remove();
 			}
 		}

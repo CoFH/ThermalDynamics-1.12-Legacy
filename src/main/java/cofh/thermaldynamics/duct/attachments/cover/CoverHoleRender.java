@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
-import codechicken.lib.model.bakery.CCQuad;
+import codechicken.lib.render.CCQuad;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.Vertex5;
 import cofh.lib.util.helpers.MathHelper;

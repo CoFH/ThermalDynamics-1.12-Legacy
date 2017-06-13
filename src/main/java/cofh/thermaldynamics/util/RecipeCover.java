@@ -7,6 +7,7 @@ import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
@@ -24,7 +25,7 @@ public class RecipeCover implements IRecipe {
 
 		for (int i = 0; i < craft.getSizeInventory(); i++) {
 			ItemStack stack = craft.getStackInSlot(i);
-			if (stack == null) {
+			if (stack.isEmpty()) {
 				continue;
 			}
 			if (ItemHelper.itemsEqualForCrafting(stack, TDDucts.structure.itemStack)) {
@@ -52,7 +53,7 @@ public class RecipeCover implements IRecipe {
 
 		for (int i = 0; i < craft.getSizeInventory(); i++) {
 			ItemStack stack = craft.getStackInSlot(i);
-			if (stack == null) {
+			if (stack.isEmpty()) {
 				continue;
 			}
 			if (!ItemHelper.itemsEqualForCrafting(stack, TDDucts.structure.itemStack)) {
@@ -60,7 +61,7 @@ public class RecipeCover implements IRecipe {
 				return ItemHelper.cloneStack(CoverHelper.getCoverStack(stack), 6);
 			}
 		}
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -76,7 +77,7 @@ public class RecipeCover implements IRecipe {
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(@Nonnull InventoryCrafting inv) {
+	public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
 
 		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
 	}

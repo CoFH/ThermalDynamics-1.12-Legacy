@@ -125,7 +125,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public void onChunkUnload() {
 
-		if (ServerHelper.isServerWorld(worldObj)) {
+		if (ServerHelper.isServerWorld(world)) {
 			for (DuctUnit unit : getDuctUnits()) {
 				unit.onChunkUnload();
 			}
@@ -136,7 +136,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public void invalidate() {
 
-		if (ServerHelper.isServerWorld(worldObj)) {
+		if (ServerHelper.isServerWorld(world)) {
 			for (DuctUnit unit : getDuctUnits()) {
 				unit.invalidate();
 			}
@@ -162,7 +162,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public void onNeighborBlockChange() {
 
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world)) {
 			return;
 		}
 		if (isInvalid()) {
@@ -206,7 +206,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public void onNeighborTileChange(BlockPos pos) {
 
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world)) {
 			return;
 		}
 		int renderHash = getRenderHash();
@@ -346,7 +346,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (neighborChunks != null && !neighborChunks.isEmpty()) {
 			neighborChunks.clear();
 		}
-		Chunk base = worldObj.getChunkFromBlockCoords(pos);
+		Chunk base = world.getChunkFromBlockCoords(pos);
 
 		for (byte i = 0; i < 6; i++) {
 			boolean important = false;
@@ -361,7 +361,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				continue;
 			}
 			EnumFacing facing = EnumFacing.VALUES[i];
-			Chunk chunk = worldObj.getChunkFromBlockCoords(pos.offset(facing));
+			Chunk chunk = world.getChunkFromBlockCoords(pos.offset(facing));
 			if (chunk != base) {
 				if (neighborChunks == null) {
 					neighborChunks = new LinkedList<>();
@@ -375,7 +375,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				continue;
 			}
 			for (BlockPos p2 : additionalImportantPositions) {
-				Chunk otherChunk = worldObj.getChunkFromBlockCoords(p2);
+				Chunk otherChunk = world.getChunkFromBlockCoords(p2);
 				if (otherChunk != base) {
 					if (neighborChunks == null) {
 						neighborChunks = new LinkedList<>();
@@ -396,7 +396,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (attachmentData != null && attachmentData.attachments[attachment.side] != null) {
 			return false;
 		}
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world)) {
 			return true;
 		}
 		if (attachmentData == null) {
@@ -467,7 +467,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (attachmentData == null) {
 			return null;
 		}
-		RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, getPos());
+		RayTraceResult rayTrace = RayTracer.retraceBlock(world, player, getPos());
 		if (rayTrace == null) {
 			return null;
 		}
@@ -765,7 +765,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Nonnull
 	public BlockDuct.ConnectionType getVisualConnectionType(int side) {
 
-		if (ServerHelper.isClientWorld(worldObj)) {
+		if (ServerHelper.isClientWorld(world)) {
 			if (clientConnections == null) {
 				return BlockDuct.ConnectionType.NONE;
 			}
@@ -826,7 +826,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public boolean isPowered() {
 
-		return worldObj.isBlockPowered(pos);
+		return world.isBlockPowered(pos);
 	}
 
 	@Override
@@ -845,6 +845,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				return attachment.openGui(player);
 			}
 		}
+
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			if (ductUnit.openGui(player)) {
 				return true;
@@ -877,26 +878,29 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 					cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy()));
 				}
 			}
-			Cover cover = getCover(i);
 
+			Cover cover = getCover(i);
 			if (cover != null) {
 				cuboids.add(new IndexedCuboid6(i + 20, cover.getCuboid()));
 			}
-			// Add TILE sides
-			switch (renderConnectionType) {
-				case TILE_CONNECTION:
-					cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
-					break;
-				case DUCT:
-				case CLEAN_DUCT:
-					cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
-					break;
-				case STRUCTURE_CONNECTION:
-				case STRUCTURE_CLEAN:
-					cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
-					break;
-			}
 
+			{
+				// Add TILE sides
+				switch (renderConnectionType) {
+					case TILE_CONNECTION:
+						cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
+						break;
+					case DUCT:
+					case CLEAN_DUCT:
+						cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
+						break;
+					case STRUCTURE_CONNECTION:
+					case STRUCTURE_CLEAN:
+						cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
+						break;
+				}
+
+			}
 		}
 		cuboids.add(new IndexedCuboid6(13, centerSelection.copy()));
 	}
@@ -904,7 +908,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Override
 	public boolean onWrench(EntityPlayer player, EnumFacing side) {
 
-		RayTraceResult rayTrace = RayTracer.retraceBlock(worldObj, player, getPos());
+		RayTraceResult rayTrace = RayTracer.retraceBlock(world, player, getPos());
 		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
 			if (rayTrace == null) {
 				return false;
@@ -917,7 +921,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 				for (DuctUnit ductUnit : getDuctUnits()) {
 					if (ductUnit.onWrench(player, i, rayTrace)) {
-						worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
+						world.notifyNeighborsOfStateChange(getPos(), getBlockType(), false);
 
 						for (DuctUnit ductUnit2 : getDuctUnits()) {
 							if (ductUnit2.grid != null) {
@@ -929,12 +933,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 					}
 				}
 				setConnectionType((byte) i, getConnectionType(i).next());
-				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 
+				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
 				if (tile instanceof TileGrid) {
 					((TileGrid) tile).setConnectionType((byte) (i ^ 1), getConnectionType(i));
 				}
-				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
+				world.notifyNeighborsOfStateChange(getPos(), getBlockType(), false);
 
 				for (DuctUnit ductUnit : getDuctUnits()) {
 					if (ductUnit.grid != null) {
@@ -947,6 +951,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (subHit > 13 && subHit < 20) {
 				return getAttachment(subHit - 14).onWrenched();
 			}
+
 			if (subHit >= 20 && subHit < 26) {
 				return getCover(subHit - 20).onWrenched();
 			}
@@ -1002,7 +1007,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.onPlaced(living, stack);
 		}
-		if (ServerHelper.isServerWorld(worldObj)) {
+
+		if (ServerHelper.isServerWorld(world)) {
 			for (DuctUnit ductUnit : getDuctUnits()) {
 				TickHandler.addMultiBlockToCalculate(ductUnit);
 			}
@@ -1023,6 +1029,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			stack = ductUnit.addNBTToItemStackDrop(stack);
 		}
+
 		return stack;
 	}
 
@@ -1133,13 +1140,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				info.add(new TextComponentString(ductUnit.toString()));
 			}
 			MultiBlockGrid grid = ductUnit.getGrid();
-
 			if (grid != null) {
 				info.add(new TextComponentTranslation("info.thermaldynamics.info.duct"));
 				grid.addInfo(info, player, debug || isDebug);
 			} else if (isDebug) {
 				info.add(new TextComponentString("No Grid"));
 			}
+
 			if (isDebug) {
 				StringBuilder builder;
 				if (connectionTypes != null) {
@@ -1150,29 +1157,28 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 					info.add(new TextComponentString(builder.toString()));
 				}
 				builder = new StringBuilder("  Vis={");
-
 				for (int i = 0; i < 6; i++) {
 					builder.append(getVisualConnectionType(i).name().substring(0, 1));
 				}
 				info.add(new TextComponentString(builder.append("}").toString()));
-				builder = new StringBuilder("  Tiles={");
 
+				builder = new StringBuilder("  Tiles={");
 				for (int i = 0; i < 6; i++) {
 					if (ductUnit.tileCache[i] != null) {
 						builder.append(i).append("=").append(ductUnit.tileCache[i]).append(",");
 					}
 				}
 				info.add(new TextComponentString(builder.append("}").toString()));
-				builder = new StringBuilder("  Ducts={");
 
+				builder = new StringBuilder("  Ducts={");
 				for (int i = 0; i < 6; i++) {
 					if (ductUnit.ductCache[i] != null) {
 						builder.append(i).append("=").append(ductUnit.ductCache[i]).append(",");
 					}
 				}
 				info.add(new TextComponentString(builder.append("}").toString()));
-				builder = new StringBuilder("  Attach={");
 
+				builder = new StringBuilder("  Attach={");
 				if (attachmentData != null) {
 					for (int i = 0; i < 6; i++) {
 						Attachment attachment = attachmentData.attachments[i];
@@ -1190,7 +1196,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			info.add(new TextComponentTranslation("info.thermaldynamics.info.attachment"));
 			int v = info.size();
 			attachment.addInfo(info, player, debug);
-
 			if (info.size() == v) {
 				info.remove(v - 1);
 			}

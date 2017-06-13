@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.render;
 
 import codechicken.lib.model.PerspectiveAwareModelProperties;
-import codechicken.lib.model.blockbakery.BlockBakery;
-import codechicken.lib.model.blockbakery.IItemStackKeyGenerator;
+import codechicken.lib.model.bakery.ModelBakery;
+import codechicken.lib.model.bakery.key.IItemStackKeyGenerator;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
 import com.google.common.cache.Cache;
@@ -92,11 +92,11 @@ public class BakedDuctItemModel implements IBakedModel {
 		@Override
 		public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
 
-			IItemStackKeyGenerator keyGen = BlockBakery.getKeyGenerator(stack.getItem());
+			IItemStackKeyGenerator keyGen = ModelBakery.getKeyGenerator(stack.getItem());
 			String key = keyGen.generateKey(stack);
 			IBakedModel wrappedModel = modelCache.getIfPresent(key);
 			if (wrappedModel == null) {
-				IBakedModel bakeryModel = BlockBakery.generateItemModel(stack);
+				IBakedModel bakeryModel = ModelBakery.generateItemModel(stack);
 				PerspectiveAwareModelProperties properties = new PerspectiveAwareModelProperties(TransformUtils.DEFAULT_BLOCK, true, false);
 				wrappedModel = new WrappedBakedModel(bakeryModel, properties);
 				modelCache.put(key, wrappedModel);

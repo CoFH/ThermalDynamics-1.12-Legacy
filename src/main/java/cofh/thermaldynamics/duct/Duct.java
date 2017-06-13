@@ -25,7 +25,7 @@ public class Duct implements IIconRegister, Comparable<Duct> {
 		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, CRAFTING
 	}
 
-	public ItemStack itemStack = null;
+	public ItemStack itemStack = ItemStack.EMPTY;
 
 	public TextureAtlasSprite iconBaseTexture;
 	public TextureAtlasSprite iconConnectionTexture;

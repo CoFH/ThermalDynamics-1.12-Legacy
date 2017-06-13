@@ -212,7 +212,7 @@ public class ModelHelper {
 
 		face.loadCuboidFace(bounds.copy().add(Vector3.center), side);
 		for (Vertex5 v : face.getVertices()) {
-			vecs.add(new Vertex5(v.vec.copy().sub(Vector3.center), v.uv.copy()));
+			vecs.add(new Vertex5(v.vec.copy().subtract(Vector3.center), v.uv.copy()));
 		}
 		return vecs;
 	}

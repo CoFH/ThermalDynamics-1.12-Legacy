@@ -13,6 +13,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -32,7 +33,7 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
 
 		list.addAll(getCoverList());
 	}
@@ -63,7 +64,7 @@ public class ItemCover extends ItemAttachment {
 
 		ItemStack b = CoverHelper.getCoverItemStack(item, true);
 		String name = "";
-		if (b != null) {
+		if (!b.isEmpty()) {
 			String unloc = getUnlocalizedNameInefficiently(item) + ".", unloc2 = b.getItem().getUnlocalizedNameInefficiently(b);
 			if (I18n.canTranslate(unloc + unloc2 + ".name")) {
 				return I18n.translateToLocal(unloc + unloc2 + ".name");
@@ -93,7 +94,7 @@ public class ItemCover extends ItemAttachment {
 		data.sort(Comparator.comparingInt(Item.REGISTRY::getIDForObject));
 		for (Item anItem : data) {
 			if (anItem instanceof ItemBlock) {
-				anItem.getSubItems(anItem, null, stacks);
+				anItem.getSubItems(anItem, null, new NonNullList<>(stacks, ItemStack.EMPTY));
 			}
 		}
 		for (ItemStack stack : stacks) {

@@ -15,7 +15,7 @@ public class SlotFilterFluid extends SlotFilter {
 	@Override
 	public void putStack(ItemStack stack) {
 
-		if (stack == null || isItemValid(stack)) {
+		if (stack.isEmpty() || isItemValid(stack)) {
 			super.putStack(stack);
 		}
 	}
@@ -23,7 +23,7 @@ public class SlotFilterFluid extends SlotFilter {
 	@Override
 	public boolean isItemValid(ItemStack stack) {
 
-		return stack != null && (FluidHelper.getFluidForFilledItem(stack) != null || stack.getItem() instanceof ISpecialFilterFluid);
+		return !stack.isEmpty() && (FluidHelper.getFluidForFilledItem(stack) != null || stack.getItem() instanceof ISpecialFilterFluid);
 	}
 
 }
