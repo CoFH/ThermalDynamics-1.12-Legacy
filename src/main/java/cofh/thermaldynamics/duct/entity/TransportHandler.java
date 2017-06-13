@@ -73,14 +73,12 @@ public class TransportHandler {
 		if (event.phase == Phase.END) {
 			return;
 		}
-
 		Minecraft mc = Minecraft.getMinecraft();
 
 		EntityPlayerSP thePlayer = mc.thePlayer;
 		if (thePlayer == null) {
 			return;
 		}
-
 		Entity ridingEntity = thePlayer.getRidingEntity();
 		if (ridingEntity != null && ridingEntity.getClass() == EntityTransport.class) {
 			EntityTransport transport = (EntityTransport) ridingEntity;
@@ -115,7 +113,6 @@ public class TransportHandler {
 				default:
 					return;
 			}
-
 			thePlayer.rotationPitch += Math.sin((rotationPitch - thePlayer.rotationPitch) / 180 * Math.PI) * 30;
 			if (rotationPitch == 0) {
 				thePlayer.rotationYaw += Math.sin((rotationYaw - thePlayer.rotationYaw) / 180 * Math.PI) * 30;

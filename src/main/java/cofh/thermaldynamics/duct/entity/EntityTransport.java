@@ -86,9 +86,10 @@ public class EntityTransport extends Entity {
 		}
 	}
 
-	public EntityTransport(World p_i1582_1_) {
+	public EntityTransport(World world) {
 
-		super(p_i1582_1_);
+		super(world);
+
 		step = 0;
 		this.height = 0F;
 		this.width = 0F;
@@ -128,6 +129,7 @@ public class EntityTransport extends Entity {
 	protected void addPassenger(Entity passenger) {
 
 		super.addPassenger(passenger);
+
 		if (rider == null && passenger instanceof EntityPlayer) {
 			loadRider(passenger);
 		}
@@ -139,6 +141,7 @@ public class EntityTransport extends Entity {
 		this.originalWidth = passenger.width;
 		this.originalHeight = passenger.height;
 		this.originalYOffset = passenger.getYOffset();
+
 		if (rider instanceof EntityPlayer) {
 			originalEyeHeight = ((EntityPlayer) rider).eyeHeight;
 		}
@@ -151,7 +154,7 @@ public class EntityTransport extends Entity {
 	}
 
 	@Override
-	public boolean isInvisibleToPlayer(EntityPlayer p_98034_1_) {
+	public boolean isInvisibleToPlayer(EntityPlayer player) {
 
 		return true;
 	}
@@ -168,7 +171,6 @@ public class EntityTransport extends Entity {
 		} else if (!isBeingRidden()) {
 			return;
 		}
-
 		if (rider == null) {
 			if (!(getPassengers().get(0) instanceof EntityLivingBase)) {
 				getPassengers().get(0).dismountRidingEntity();
@@ -180,7 +182,6 @@ public class EntityTransport extends Entity {
 		} else {
 			updateRider(rider);
 		}
-
 		boolean wasPause = pause > 0;
 
 		if (worldObj.isRemote) {
@@ -193,11 +194,9 @@ public class EntityTransport extends Entity {
 				loadDataParameters();
 			}
 		}
-
 		if (direction == 7 || pos == null) {
 			return;
 		}
-
 		TileEntity tile = worldObj.getTileEntity(pos);
 
 		DuctUnitTransportBase homeTile;
@@ -210,7 +209,6 @@ public class EntityTransport extends Entity {
 			}
 			return;
 		}
-
 		if (pause > 0) {
 			pause--;
 			if (!worldObj.isRemote) {
@@ -230,10 +228,8 @@ public class EntityTransport extends Entity {
 					worldObj.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
 				}
 			}
-
 			return;
 		}
-
 		if (!worldObj.isRemote) {
 			homeTile.advanceEntity(this);
 			updateDataParameters();
@@ -255,6 +251,7 @@ public class EntityTransport extends Entity {
 
 		rider.width = DEFAULT_WIDTH;
 		rider.height = DEFAULT_HEIGHT;
+
 		if (rider instanceof EntityPlayer) {
 			((EntityPlayer) rider).eyeHeight = 0.35F;
 		}
@@ -267,10 +264,10 @@ public class EntityTransport extends Entity {
 		if (rider != null && !rider.isDead) {
 			rider.height = originalHeight;
 			rider.width = originalWidth;
+
 			if (rider instanceof EntityPlayer) {
 				((EntityPlayer) rider).eyeHeight = originalEyeHeight;
 			}
-
 			rider.setPosition(rider.posX, rider.posY, rider.posZ);
 		}
 		super.setDead();
@@ -282,16 +279,15 @@ public class EntityTransport extends Entity {
 
 		TileEntity tileEntity = worldObj.getTileEntity(p);
 		DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.TRANSPORT);
+
 		if (transportBase == null) {
 			pos = null;
 			return false;
 		}
-
 		if (transportBase.ductCache[direction ^ 1] == null) {
 			pos = null;
 			return false;
 		}
-
 		pos = p;
 		oldDirection = direction;
 		progress %= DUCT_LENGTH;
@@ -314,7 +310,6 @@ public class EntityTransport extends Entity {
 		if (pos == null) {
 			return;
 		}
-
 		if (pause > 0) {
 			Vec3d newPos = getPos(frame);
 			setPosition(newPos.xCoord, newPos.yCoord, newPos.zCoord);
@@ -324,7 +319,6 @@ public class EntityTransport extends Entity {
 			motionX = motionY = motionZ = 0;
 			return;
 		}
-
 		Vec3d oldPos = getPos(frame - 1);
 		lastTickPosX = prevPosX = oldPos.xCoord;
 		lastTickPosY = prevPosY = oldPos.yCoord;
@@ -357,7 +351,6 @@ public class EntityTransport extends Entity {
 				if (direction == 0) {
 					y = Math.floor(pos.getY() - originalHeight);
 				}
-
 				rider.setPosition(x, y, z);
 
 				if (rider instanceof EntityPlayerMP) {
@@ -390,7 +383,6 @@ public class EntityTransport extends Entity {
 						default:
 							return;
 					}
-
 					((EntityPlayerMP) rider).connection.setPlayerLocation(x, y, z, yaw, pitch);
 				}
 			}
@@ -432,7 +424,6 @@ public class EntityTransport extends Entity {
 		if (homeTile.getGrid() == null) {
 			return;
 		}
-
 		myPath = homeTile.getRoute(this, direction, step);
 
 		if (myPath == null) {
@@ -485,7 +476,6 @@ public class EntityTransport extends Entity {
 		if (tag.hasKey("route", 7)) {
 			myPath = new Route(tag.getByteArray("route"));
 		}
-
 		pos = new BlockPos(tag.getInteger("posx"), tag.getInteger("posy"), tag.getInteger("posz"));
 
 		progress = tag.getByte("progress");
@@ -506,7 +496,6 @@ public class EntityTransport extends Entity {
 		if (myPath != null) {
 			tag.setByteArray("route", myPath.toByteArray());
 		}
-
 		tag.setInteger("posx", pos.getX());
 		tag.setInteger("posy", pos.getY());
 		tag.setInteger("posz", pos.getZ());
@@ -580,9 +569,9 @@ public class EntityTransport extends Entity {
 	}
 
 	@Override
-	public boolean isInRangeToRenderDist(double p_70112_1_) {
+	public boolean isInRangeToRenderDist(double distance) {
 
-		return p_70112_1_ < 4096;
+		return distance < 4096;
 	}
 
 	public void teleport(DuctUnitTransport dest) {
@@ -590,7 +579,6 @@ public class EntityTransport extends Entity {
 		if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
 			return;
 		}
-
 		int curDim = this.dimension;
 		int destDim = dest.world().provider.getDimension();
 
@@ -615,7 +603,6 @@ public class EntityTransport extends Entity {
 			currentWorld.resetUpdateEntityTick();
 			destinationWorld.resetUpdateEntityTick();
 		}
-
 		pos = new BlockPos(dest.pos());
 
 		if (myPath.hasNextDirection()) {

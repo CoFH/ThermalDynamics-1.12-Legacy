@@ -13,6 +13,7 @@ public class SoundWoosh extends MovingSound {
 	protected SoundWoosh(EntityTransport transport) {
 
 		super(TDSounds.DUCT_TRANSPORT_WOOSH, SoundCategory.NEUTRAL);
+
 		this.transport = transport;
 		this.repeat = true;
 		this.repeatDelay = 0;

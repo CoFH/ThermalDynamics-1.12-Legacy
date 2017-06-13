@@ -39,21 +39,17 @@ public class RenderTransport extends RenderEntity {
 		if (entity.getPassengers().get(0) instanceof EntityPlayer) {
 			player = (EntityPlayer) entity.getPassengers().get(0);
 		}
-
 		if (player == Minecraft.getMinecraft().thePlayer) {
 			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
 				return;
 			}
 		}
-
 		if (player == null) {
 			return;
 		}
-
 		EntityTransport transport = (EntityTransport) entity;
 
 		transport.setPosition(ShaderHelper.midGameTick);
-
 		transport.updatePassenger(player);
 
 		EntityOtherPlayerMP doll = dolls.get(player);
@@ -61,16 +57,13 @@ public class RenderTransport extends RenderEntity {
 			doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
 			dolls.put(player, doll);
 		}
-
 		List<EntityDataManager.DataEntry<?>> allWatched = player.getDataManager().getAll();
 		if (allWatched != null) {
 			doll.getDataManager().setEntryValues(allWatched);
 		}
-
 		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
 			doll.setItemStackToSlot(slot, player.getItemStackFromSlot(slot));
 		}
-
 		transport.setPosition(0);
 
 		GL11.glPushMatrix();
@@ -96,7 +89,6 @@ public class RenderTransport extends RenderEntity {
 		if (other.pos != null) {
 			other.setPosition(0);
 		}
-
 		doll.worldObj = Minecraft.getMinecraft().theWorld;
 
 		double dx = 0, dy = -(player.posY - (player.getEntityBoundingBox().maxY + player.getEntityBoundingBox().minY)), dz = 0;

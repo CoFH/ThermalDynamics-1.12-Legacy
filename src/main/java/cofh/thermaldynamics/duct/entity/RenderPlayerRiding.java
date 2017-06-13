@@ -33,7 +33,6 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			}
 			layersToRemove.add(layer);
 		}
-
 		for (LayerRenderer<?> layer : layersToRemove) {
 			removeLayer(layer);
 		}
@@ -45,7 +44,6 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 		if (transport == null) {
 			return;
 		}
-
 		entityLiving.prevRotationYawHead = 0F;
 		entityLiving.rotationYawHead = 0F;
 		entityLiving.prevRotationPitch = -90F;
@@ -82,7 +80,6 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			default:
 				return;
 		}
-
 		double scale = 0.85;
 		GlStateManager.scale(scale, scale, scale);
 
@@ -114,30 +111,25 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 				default:
 					return;
 			}
-
 			if (d < 2) {
 				yaw = prevYaw;
 			} else if (od < 2) {
 				prevYaw = yaw;
 			}
-
 			float v = MathHelper.clamp((stepTime - 0.25F) / (1.0F - 0.25F), 0, 1);
 
 			if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw - 360)) {
 				yaw += 360;
 			}
-
 			if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw + 360)) {
 				yaw -= 360;
 			}
-
 			yaw = yaw * v + prevYaw * (1 - v);
 			pitch = pitch * v + prevPitch * (1 - v);
 		}
 
 		GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
-
 		GlStateManager.translate(0, -1F, 0);
 
 		if (od != d) {
@@ -158,7 +150,6 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -166,4 +157,5 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 		return transport != null && (transport.getPassengers().isEmpty() || transport.getPassengers().get(0) != Minecraft.getMinecraft().thePlayer);
 	}
+
 }

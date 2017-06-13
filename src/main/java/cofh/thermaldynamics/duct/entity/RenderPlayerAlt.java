@@ -30,7 +30,6 @@ public class RenderPlayerAlt extends RenderPlayer {
 			if (entity.isSneaking() && !(entity instanceof EntityPlayerSP)) {
 				d0 = y - 0.125D;
 			}
-
 			this.setModelVisibilities(entity);
 			GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
 			super.doRender(entity, x, d0, z, entityYaw, partialTicks);
@@ -73,7 +72,6 @@ public class RenderPlayerAlt extends RenderPlayer {
 					}
 				}
 			}
-
 			if (itemstack1 != null) {
 				modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
 
@@ -89,7 +87,6 @@ public class RenderPlayerAlt extends RenderPlayer {
 					}
 				}
 			}
-
 			if (clientPlayer.getPrimaryHand() == EnumHandSide.RIGHT) {
 				modelplayer.rightArmPose = modelbiped$armpose;
 				modelplayer.leftArmPose = modelbiped$armpose1;
