@@ -55,7 +55,6 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute<T, G>, G
 			}
 			routeCacheMap.clear();
 		}
-
 		if (!calculatingRoutes.isEmpty()) {
 			calculatingRoutes.clear();
 		}
@@ -68,10 +67,8 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute<T, G>, G
 		if (cache != null) {
 			return cache;
 		}
-
-		cache = new RouteCache<T, G>(start);
+		cache = new RouteCache<>(start);
 		calculatingRoutes.add(cache);
-
 		routeCacheMap.put(start, cache);
 		return cache;
 	}
@@ -80,14 +77,13 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute<T, G>, G
 
 		RouteCache<T, G> cache = routeCacheMap.get(start);
 		if (cache == null) {
-			cache = new RouteCache<T, G>(start, maxRange);
+			cache = new RouteCache<>(start, maxRange);
 			cache.generateCache();
 			routeCacheMap.put(start, cache);
 		} else if (cache.maxPathLength < maxRange) {
 			cache.maxPathLength = maxRange;
 			cache.generateCache();
 		}
-
 		return cache;
 	}
 
@@ -95,14 +91,13 @@ public abstract class MultiBlockGridWithRoutes<T extends IGridTileRoute<T, G>, G
 
 		RouteCache<T, G> cache = routeCacheMap.get(start);
 		if (cache == null) {
-			cache = new RouteCache<T, G>(start);
+			cache = new RouteCache<>(start);
 			cache.generateCache();
 			routeCacheMap.put(start, cache);
 		} else if (!cache.isFinishedGenerating() || cache.maxPathLength < Integer.MAX_VALUE) {
 			cache.maxPathLength = Integer.MAX_VALUE;
 			cache.generateCache();
 		}
-
 		return cache;
 	}
 

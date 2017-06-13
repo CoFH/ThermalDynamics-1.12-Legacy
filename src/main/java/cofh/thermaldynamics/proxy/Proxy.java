@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.proxy;
 
 import cofh.core.render.IModelRegister;
+import cofh.thermaldynamics.init.TDSounds;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -14,6 +15,7 @@ public class Proxy {
 
 	public void initialize(FMLInitializationEvent event) {
 
+		TDSounds.initialize();
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {

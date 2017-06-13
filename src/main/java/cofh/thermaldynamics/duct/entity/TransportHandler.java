@@ -129,10 +129,10 @@ public class TransportHandler {
 
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP thePlayer = mc.thePlayer;
+
 		if (thePlayer == null) {
 			return;
 		}
-
 		Entity ridingEntity = thePlayer.getRidingEntity();
 		if (ridingEntity == null) {
 			if (mc.getRenderViewEntity() != null && (mc.getRenderViewEntity() == camera)) {
@@ -145,9 +145,9 @@ public class TransportHandler {
 			if (camera == null) {
 				camera = new Camera();
 			}
-
 			camera.copyFromEntityTransport(transport, thePlayer);
 			mc.setRenderViewEntity(camera);
 		}
 	}
+
 }

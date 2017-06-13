@@ -69,11 +69,9 @@ public class Camera extends EntityLivingBase {
 		if (other.pos != null) {
 			other.setPosition(0);
 		}
-
 		if (worldObj == null) {
 			worldObj = Minecraft.getMinecraft().theWorld;
 		}
-
 		double dx = 0, dy = player.getYOffset() + 0.35D, dz = 0;
 
 		posX = other.posX + dx;
@@ -100,4 +98,5 @@ public class Camera extends EntityLivingBase {
 
 		return 0;
 	}
+
 }

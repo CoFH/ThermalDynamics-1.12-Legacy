@@ -911,7 +911,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		if (itemHandler == null) {
 			return stack.stackSize;
 		}
-
 		signalRepoll();
 		stack = insertItemStackIntoInventory(itemHandler, stack, direction ^ 1, cache.filter.getMaxStock());
 		return stack == null ? 0 : stack.stackSize;

@@ -195,11 +195,13 @@ public class ServoItem extends ServoBase {
 
 	public boolean verifyCache() {
 
+		if (itemDuct.getGrid() == null) {
+			return false;
+		}
 		RouteCache<DuctUnitItem, GridItem> cache1 = itemDuct.getCache(false);
 		if (!cache1.isFinishedGenerating()) {
 			return false;
 		}
-
 		if (cache1 != cache || routeList.type != getSortType()) {
 			cache = cache1;
 			routeList.setList(cache.outputRoutes, getSortType());
@@ -366,13 +368,11 @@ public class ServoItem extends ServoBase {
 		if (!filter.matchesFilter(item)) {
 			return item;
 		}
-
 		ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
 		TravelingItem routeForItem = getRouteForItem(sending);
 		if (routeForItem == null) {
 			return item;
 		}
-
 		if (!simulate) {
 			itemDuct.insertNewItem(routeForItem);
 		}

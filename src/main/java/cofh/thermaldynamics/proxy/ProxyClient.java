@@ -6,7 +6,6 @@ import cofh.core.render.IModelRegister;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
-import cofh.thermaldynamics.duct.entity.SoundWoosh;
 import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
 import cofh.thermaldynamics.duct.tiles.TileDuctItem;
 import cofh.thermaldynamics.init.TDItems;
@@ -25,7 +24,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +36,13 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 
+		super.preInit(event);
+
 		MinecraftForge.EVENT_BUS.register(TickHandlerClient.INSTANCE);
 
 		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.instance);
-
 		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, RenderTransport::new);
-		GameRegistry.register(SoundWoosh.WOOSH);
+
 		for (IModelRegister register : modelRegisters) {
 			register.registerModels();
 		}
@@ -51,6 +50,8 @@ public class ProxyClient extends Proxy {
 
 	@Override
 	public void initialize(FMLInitializationEvent event) {
+
+		super.initialize(event);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Basic.Transparent.class, RenderDuctItems.instance);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Fast.Transparent.class, RenderDuctItems.instance);
@@ -67,6 +68,8 @@ public class ProxyClient extends Proxy {
 
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
+
+		super.postInit(event);
 
 		ProxyClient.renderType = BlockRenderingRegistry.createRenderType("thermaldynamics");
 		BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.instance);
