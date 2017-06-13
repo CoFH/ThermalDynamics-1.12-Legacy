@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.tiles;
 
-import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
@@ -78,7 +77,7 @@ public class TileDuctItem extends TileGridStructureBase {
 		}
 	}
 
-	public static class Energy extends TileDuctItem implements IEnergyReceiver, IEnergyProvider {
+	public static class Energy extends TileDuctItem implements IEnergyReceiver {
 
 		public Energy(Duct duct) {
 
@@ -103,7 +102,7 @@ public class TileDuctItem extends TileGridStructureBase {
 		}
 	}
 
-	public static class EnergyFast extends TileDuctItem implements IEnergyReceiver, IEnergyProvider {
+	public static class EnergyFast extends TileDuctItem implements IEnergyReceiver {
 
 		public EnergyFast(Duct duct) {
 

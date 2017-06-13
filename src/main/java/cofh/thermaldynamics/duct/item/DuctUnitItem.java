@@ -51,10 +51,10 @@ import java.util.List;
 
 public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.Cache> implements IGridTileRoute<DuctUnitItem, GridItem> {
 
-	public final static byte maxTicksExistedBeforeFindAlt = 2;
-	public final static byte maxTicksExistedBeforeStuff = 6;
-	public final static byte maxTicksExistedBeforeDump = 10;
-	public static final int maxCenterLine = 10;
+	public final static byte MAX_TICKS_EXISTED_BEFORE_FIND_ALT = 2;
+	public final static byte MAX_TICKS_EXISTED_BEFORE_STUFF = 6;
+	public final static byte MAX_TICKS_EXISTED_BEFORE_DUMP = 10;
+	public static final int MAX_CENTER_LINE = 10;
 	// Type Helper Arrays
 	static int[] _DUCT_LEN = { 40, 10, 40, 10 };
 	static int[] _DUCT_HALF_LEN = { _DUCT_LEN[0] / 2, _DUCT_LEN[1] / 2, _DUCT_LEN[2] / 2, _DUCT_LEN[3] / 2 };
@@ -261,7 +261,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		}
 
 		if (pass == 0) {
-			if (ticksExisted < maxTicksExistedBeforeDump) {
+			if (ticksExisted < MAX_TICKS_EXISTED_BEFORE_DUMP) {
 				ticksExisted++;
 			}
 			tickItems();
@@ -542,10 +542,10 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 			int c = payload.getByte();
 			for (int i = 0; i < 6; i++) {
 				if ((c & (1 << i)) != 0) {
-					centerLineSub[i] = maxCenterLine;
+					centerLineSub[i] = MAX_CENTER_LINE;
 				}
 			}
-			centerLine = maxCenterLine;
+			centerLine = MAX_CENTER_LINE;
 			if (!TickHandlerClient.tickBlocks.contains(this) && !TickHandlerClient.tickBlocksToAdd.contains(this)) {
 				TickHandlerClient.tickBlocksToAdd.add(this);
 			}
@@ -624,7 +624,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		//				pathWeightType = b;
 		//			}
 		//		}
-		ticksExisted = maxTicksExistedBeforeDump;
+		ticksExisted = MAX_TICKS_EXISTED_BEFORE_DUMP;
 	}
 
 	@Override
@@ -658,7 +658,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 				}
 			}
 		}
-
 		if (itemsToAdd.size() > 0) {
 			myItems.addAll(itemsToAdd);
 			itemsToAdd.clear();
@@ -694,7 +693,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 					stackSizeLeft = simTransferI(i, curItem.copy());
 					stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
 					if (stackSizeLeft < anItem.stackSize) {
-						tickInternalSideCounter(i + 1);
+						internalSideCounter = tickInternalSideCounter(i + 1);
 						return new RouteInfo(stackSizeLeft, i);
 					}
 				}
@@ -708,7 +707,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 					stackSizeLeft = simTransferI(i, curItem.copy());
 					stackSizeLeft = (anItem.stackSize - curItem.stackSize) + stackSizeLeft;
 					if (stackSizeLeft < anItem.stackSize) {
-						tickInternalSideCounter(i + 1);
+						internalSideCounter = tickInternalSideCounter(i + 1);
 						return new RouteInfo(stackSizeLeft, i);
 					}
 				}
@@ -745,7 +744,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		if (insertingItem == null) {
 			return null;
 		}
-
 		Cache cache = tileCache[side];
 
 		if (grid == null || cache == null) {
@@ -819,7 +817,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 					return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
 				}
 			}
-
 			SimulatedInv simulatedInv = SimulatedInv.wrapHandler(itemHandler);
 
 			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {

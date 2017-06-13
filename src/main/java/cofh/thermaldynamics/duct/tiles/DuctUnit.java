@@ -141,7 +141,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 				return;
 			}
 		}
-
 		loadSignificantCache(tile, side);
 	}
 
@@ -173,7 +172,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 				inputMask |= (1 << side);
 				nodeMask |= (1 << side);
 			}
-
 			tileCache[side] = null;
 			return false;
 		}
@@ -356,9 +354,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		if (parent.isInvalid()) {
 			return;
 		}
-
 		onNeighborBlockChange();
-
 		formGrid();
 	}
 

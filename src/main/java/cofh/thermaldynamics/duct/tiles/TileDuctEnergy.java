@@ -1,12 +1,11 @@
 package cofh.thermaldynamics.duct.tiles;
 
-import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 
-public class TileDuctEnergy extends TileGridStructureBase implements IEnergyReceiver, IEnergyProvider {
+public class TileDuctEnergy extends TileGridStructureBase implements IEnergyReceiver {
 
 	public TileDuctEnergy(Duct duct) {
 

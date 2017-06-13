@@ -171,7 +171,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 					usedEnergy += sendEnergy(receiver, energy - usedEnergy, i, simulate);
 				}
 				if (!simulate && usedEnergy >= energy) {
-					this.tickInternalSideCounter(i + 1);
+					internalSideCounter = tickInternalSideCounter(i + 1);
 					break;
 				}
 			}
@@ -183,7 +183,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 					usedEnergy += sendEnergy(receiver, energy - usedEnergy, i, simulate);
 				}
 				if (!simulate && usedEnergy >= energy) {
-					this.tickInternalSideCounter(i + 1);
+					internalSideCounter = tickInternalSideCounter(i + 1);
 					break;
 				}
 			}

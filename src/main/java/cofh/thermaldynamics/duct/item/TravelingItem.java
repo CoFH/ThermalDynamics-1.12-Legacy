@@ -187,7 +187,7 @@ public class TravelingItem {
 					}
 				}
 			}
-			if (homeTile.ticksExisted < DuctUnitItem.maxTicksExistedBeforeFindAlt) {
+			if (homeTile.ticksExisted < DuctUnitItem.MAX_TICKS_EXISTED_BEFORE_FIND_ALT) {
 				return;
 			}
 		}
@@ -212,7 +212,7 @@ public class TravelingItem {
 			}
 		}
 
-		if (homeTile.ticksExisted <= DuctUnitItem.maxTicksExistedBeforeStuff) {
+		if (homeTile.ticksExisted <= DuctUnitItem.MAX_TICKS_EXISTED_BEFORE_STUFF) {
 			return;
 		}
 
@@ -238,7 +238,7 @@ public class TravelingItem {
 				oldDirection = (byte) (direction ^ 1);
 				direction = myPath.getNextDirection();
 				homeTile.hasChanged = true;
-			} else if (homeTile.ticksExisted == DuctUnitItem.maxTicksExistedBeforeDump) {
+			} else if (homeTile.ticksExisted == DuctUnitItem.MAX_TICKS_EXISTED_BEFORE_DUMP) {
 				CoreUtils.dropItemStackIntoWorld(stack, homeTile.world(), new Vec3d(homeTile.pos()));
 				homeTile.removeItem(this, true);
 			}
