@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.core.render.ShaderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.entity.RenderEntity;
@@ -28,12 +27,11 @@ public class RenderTransport extends RenderEntity {
 	}
 
 	@Override
-	public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
+	public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
 
 		if (!entity.isBeingRidden()) {
 			return;
 		}
-
 		EntityPlayer player = null;
 
 		if (entity.getPassengers().get(0) instanceof EntityPlayer) {
@@ -49,7 +47,7 @@ public class RenderTransport extends RenderEntity {
 		}
 		EntityTransport transport = (EntityTransport) entity;
 
-		transport.setPosition(ShaderHelper.midGameTick);
+		transport.setPosition(partialTicks);
 		transport.updatePassenger(player);
 
 		EntityOtherPlayerMP doll = dolls.get(player);
@@ -73,13 +71,13 @@ public class RenderTransport extends RenderEntity {
 		double dx = 0;
 		double dy = player.getYOffset() + 0.35D;
 		double dz = 0;
-		renderPlayer.doRender(doll, p_76986_2_ + dx, p_76986_4_ + dy, p_76986_6_ + dz, p_76986_8_, p_76986_9_);
+		renderPlayer.doRender(doll, x + dx, y + dy, z + dz, entityYaw, partialTicks);
 		RenderPlayerRiding.transport = null;
 		GL11.glPopMatrix();
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(Entity p_110775_1_) {
+	protected ResourceLocation getEntityTexture(Entity entity) {
 
 		return null;
 	}

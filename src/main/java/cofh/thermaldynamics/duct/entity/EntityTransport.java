@@ -43,7 +43,7 @@ public class EntityTransport extends Entity {
 	public static final int DUCT_LENGTH = 100;
 	public static final int DUCT_LENGTH2 = 50;
 
-	public byte progress;
+	public byte progress = 0;
 	public byte direction = 7;
 	public byte oldDirection;
 	public byte step = 1;
@@ -60,8 +60,8 @@ public class EntityTransport extends Entity {
 	BlockPos pos;
 
 	boolean initSound;
-	public static final float DEFAULT_WIDTH = 0.05F;
-	public static final float DEFAULT_HEIGHT = 0.05F;
+	public static final float DEFAULT_WIDTH = 0.25F;
+	public static final float DEFAULT_HEIGHT = 0.25F;
 
 	@Override
 	public boolean isEntityInvulnerable(DamageSource source) {
@@ -105,7 +105,6 @@ public class EntityTransport extends Entity {
 		pos = new BlockPos(origin.pos());
 		myPath = route;
 
-		progress = 0;
 		this.direction = route.getNextDirection();
 		this.oldDirection = startDirection;
 
@@ -163,7 +162,6 @@ public class EntityTransport extends Entity {
 	public void onUpdate() {
 
 		if (!worldObj.isRemote || rider != null) {
-
 			if (!isBeingRidden() || getPassengers().get(0).isDead) {
 				setDead();
 				return;
@@ -177,7 +175,6 @@ public class EntityTransport extends Entity {
 				setDead();
 				return;
 			}
-
 			loadRider(getPassengers().get(0));
 		} else {
 			updateRider(rider);
@@ -223,7 +220,6 @@ public class EntityTransport extends Entity {
 						CoFHCore.proxy.addIndexedChatMessage(new TextComponentString("Charging - " + (DuctUnitTransportLinking.CHARGE_TIME - pause) + " / " + DuctUnitTransportLinking.CHARGE_TIME), -515781222);
 					}
 				}
-
 				for (int i = 0; i < 10; i++) {
 					worldObj.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
 				}
@@ -239,7 +235,6 @@ public class EntityTransport extends Entity {
 			}
 			homeTile.advanceEntityClient(this);
 		}
-
 		setPosition(0);
 
 		if (isBeingRidden() && !getPassengers().get(0).isDead) {
@@ -342,7 +337,6 @@ public class EntityTransport extends Entity {
 			rider.dismountRidingEntity();
 
 			if (direction >= 0 && direction < 6) {
-
 				Vec3i vec = EnumFacing.VALUES[direction].getDirectionVec();
 				double x = pos.getX() + vec.getX() + 0.5;
 				double y = pos.getY() + vec.getY();
@@ -449,8 +443,8 @@ public class EntityTransport extends Entity {
 
 	public void updateDataParameters() {
 
-		byte p_75692_2_ = (byte) (direction | (oldDirection << 3));
-		this.dataManager.set(DIRECTIONS, p_75692_2_);
+		byte dir = (byte) (direction | (oldDirection << 3));
+		this.dataManager.set(DIRECTIONS, dir);
 		this.dataManager.set(PROGRESS, progress);
 		this.dataManager.set(POSX, pos.getX());
 		this.dataManager.set(POSY, pos.getY());
@@ -514,17 +508,12 @@ public class EntityTransport extends Entity {
 
 	public Vec3d getPos(double framePos) {
 
-		return getPos(progress, framePos);
-	}
+		// TODO: This is a stopgap to prevent camera jerk. It does lock players into the center of the duct, however.
+		//		double v = ((double) progress + step * framePos) / (DUCT_LENGTH) - 0.5;
+		//		int dir = v < 0 ? oldDirection : direction;
+		//		Vec3i vec = EnumFacing.VALUES[dir].getDirectionVec();
 
-	public Vec3d getPos(byte progress, double framePos) {
-
-		double v = ((double) progress + step * framePos) / (DUCT_LENGTH) - 0.5;
-		int dir = v < 0 ? oldDirection : direction;
-
-		Vec3i vec = EnumFacing.VALUES[dir].getDirectionVec();
-
-		return new Vec3d(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5D, 0.5D, 0.5D).addVector(vec.getX() * v, vec.getY() * v, vec.getZ() * v);
+		return new Vec3d(0.5D + pos.getX(), 0.5D + pos.getY(), 0.5D + pos.getZ()); //.addVector(vec.getX() * v, vec.getY() * v, vec.getZ() * v);
 	}
 
 	@Override
@@ -546,13 +535,13 @@ public class EntityTransport extends Entity {
 	}
 
 	@Override
-	public void moveEntity(double p_70091_1_, double p_70091_3_, double p_70091_5_) {
+	public void moveEntity(double x, double y, double z) {
 
 		setPosition(0);
 	}
 
 	@Override
-	public void addVelocity(double p_70024_1_, double p_70024_3_, double p_70024_5_) {
+	public void addVelocity(double x, double y, double z) {
 
 	}
 

@@ -1,6 +1,5 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
@@ -51,7 +50,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 		int d = transport.direction;
 		int od = transport.oldDirection;
-		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.DUCT_LENGTH);
+		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * partialTicks) / (EntityTransport.DUCT_LENGTH);
 		float yaw = 0, pitch;
 
 		switch (d) {

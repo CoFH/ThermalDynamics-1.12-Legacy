@@ -159,4 +159,5 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 
 		return new DuctUnitTransportBase[6];
 	}
+
 }

@@ -232,7 +232,6 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 		if (rangePos[t.direction] == null) {
 			t.advanceTile(this);
-			;
 		} else {
 			if (this.ductCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = (DuctUnitTransportBase) this.getPhysicalConnectedSide(t.direction);
@@ -240,10 +239,8 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 					t.bouncePassenger(this);
 					return;
 				}
-
 				if (((DuctUnitTransportLongRange) newHome).ductCache[(t.direction ^ 1)] != null) {
 					t.pos = new BlockPos(newHome.pos());
-
 					t.oldDirection = t.direction;
 					t.direction = ((DuctUnitTransportLongRange) newHome).nextDirection(t.direction);
 					if (t.direction == -1) {

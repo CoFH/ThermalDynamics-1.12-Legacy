@@ -32,10 +32,9 @@ public class TransportHandler {
 			if (entity instanceof EntityPlayer) {
 				return;
 			}
-
 			float f = ShaderHelper.midGameTick;
 			EntityTransport transport = (EntityTransport) ridingEntity;
-			transport.setPosition(0);
+			transport.setPosition(f);
 			ridingEntity.updatePassenger(entity);
 			float rotation = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * f;
 
@@ -51,7 +50,6 @@ public class TransportHandler {
 			} else {
 				GlStateManager.translate(0, -1 / 2, 0);
 			}
-
 			try {
 				entity.dismountRidingEntity();
 				event.getRenderer().doRender(entity, 0, 0, 0, rotation, f);
@@ -59,7 +57,6 @@ public class TransportHandler {
 				entity.startRiding(transport);
 			}
 			GlStateManager.popMatrix();
-
 		}
 	}
 

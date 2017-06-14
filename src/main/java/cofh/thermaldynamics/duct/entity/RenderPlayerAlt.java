@@ -96,4 +96,5 @@ public class RenderPlayerAlt extends RenderPlayer {
 			}
 		}
 	}
+
 }
