@@ -35,12 +35,12 @@ public class ThermalDynamics {
 	public static final String MOD_ID = "thermaldynamics";
 	public static final String MOD_NAME = "Thermal Dynamics";
 
-	public static final String VERSION = "2.0.4";
-	public static final String VERSION_MAX = "2.1.0";
+	public static final String VERSION = "2.2.0";
+	public static final String VERSION_MAX = "2.3.0";
 	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + VERSION_MAX + ");";
 	public static final String UPDATE_URL = "https://raw.github.com/cofh/version/master/" + MOD_ID + "_update.json";
 
-	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP + CodeChickenLib.MOD_VERSION_DEP + "after:thermalexpansion;";
+	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP + CodeChickenLib.MOD_VERSION_DEP;
 	public static final String MOD_GUI_FACTORY = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
 
 	@Instance (MOD_ID)

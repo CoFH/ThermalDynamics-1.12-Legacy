@@ -85,7 +85,10 @@ public class ItemCover extends ItemAttachment {
 
 		coverList = new ArrayList<>();
 
-		ArrayList<ItemStack> stacks = new ArrayList<>();
+		// TODO: Revisit this.
+
+		NonNullList<ItemStack> stacks = NonNullList.create();
+		//ArrayList<ItemStack> stacks = new ArrayList<>();
 
 		ArrayList<Item> data = new ArrayList<>();
 		for (Item item : ForgeRegistries.ITEMS) {
@@ -94,7 +97,7 @@ public class ItemCover extends ItemAttachment {
 		data.sort(Comparator.comparingInt(Item.REGISTRY::getIDForObject));
 		for (Item anItem : data) {
 			if (anItem instanceof ItemBlock) {
-				anItem.getSubItems(anItem, null, new NonNullList<>(stacks, ItemStack.EMPTY));
+				anItem.getSubItems(anItem, null, stacks);
 			}
 		}
 		for (ItemStack stack : stacks) {

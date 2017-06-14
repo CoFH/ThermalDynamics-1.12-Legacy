@@ -150,8 +150,8 @@ public class TDCrafting {
 		int hardGlassLevel = useHardenedGlass ? 2 : 5; // level to start using hardened glass
 
 		for (int i = 0; i < materials.length; i++) {
-			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetTin"));
-			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetTin"));
+			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
+			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron"));
 			addRecipe(ShapedRecipe(new ItemStack(TDItems.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ENDER_EYE, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetGold"));
 
 			if (i > 0) {
