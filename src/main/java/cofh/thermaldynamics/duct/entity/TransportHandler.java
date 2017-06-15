@@ -19,6 +19,9 @@ public class TransportHandler {
 
 	public static final TransportHandler INSTANCE = new TransportHandler();
 
+	@SideOnly (Side.CLIENT)
+	Camera camera;
+
 	@SuppressWarnings ("unchecked")
 	@SubscribeEvent (priority = EventPriority.HIGHEST)
 	@SideOnly (Side.CLIENT)
@@ -60,9 +63,6 @@ public class TransportHandler {
 		}
 	}
 
-	@SideOnly (Side.CLIENT)
-	Camera camera;
-
 	@SubscribeEvent
 	@SideOnly (Side.CLIENT)
 	public void controlPlayer(TickEvent.ClientTickEvent event) {
@@ -72,7 +72,7 @@ public class TransportHandler {
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 
-		EntityPlayerSP thePlayer = mc.thePlayer;
+		EntityPlayerSP thePlayer = mc.player;
 		if (thePlayer == null) {
 			return;
 		}
@@ -122,7 +122,7 @@ public class TransportHandler {
 	public void controlCamera(TickEvent.RenderTickEvent event) {
 
 		Minecraft mc = Minecraft.getMinecraft();
-		EntityPlayerSP thePlayer = mc.thePlayer;
+		EntityPlayerSP thePlayer = mc.player;
 
 		if (thePlayer == null) {
 			return;
@@ -131,7 +131,7 @@ public class TransportHandler {
 		if (ridingEntity == null) {
 			if (mc.getRenderViewEntity() != null && (mc.getRenderViewEntity() == camera)) {
 				mc.setRenderViewEntity(thePlayer);
-				camera.worldObj = null;
+				camera.world = null;
 			}
 		} else if (ridingEntity.getClass() == EntityTransport.class) {
 			EntityTransport transport = (EntityTransport) ridingEntity;

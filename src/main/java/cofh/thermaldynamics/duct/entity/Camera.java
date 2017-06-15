@@ -8,8 +8,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 
-import javax.annotation.Nullable;
-
 public class Camera extends EntityLivingBase {
 
 	public Camera() {
@@ -26,18 +24,16 @@ public class Camera extends EntityLivingBase {
 		return false;
 	}
 
-	@Nullable
 	@Override
 	public ItemStack getHeldItemMainhand() {
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
-	@Nullable
 	@Override
 	public ItemStack getHeldItemOffhand() {
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -46,15 +42,14 @@ public class Camera extends EntityLivingBase {
 		return EnumHandSide.RIGHT;
 	}
 
-	@Nullable
 	@Override
 	public ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn) {
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public void setItemStackToSlot(EntityEquipmentSlot slotIn, @Nullable ItemStack stack) {
+	public void setItemStackToSlot(EntityEquipmentSlot slotIn, ItemStack stack) {
 
 	}
 
@@ -69,8 +64,8 @@ public class Camera extends EntityLivingBase {
 		if (other.pos != null) {
 			other.setPosition(0);
 		}
-		if (worldObj == null) {
-			worldObj = Minecraft.getMinecraft().theWorld;
+		if (world == null) {
+			world = Minecraft.getMinecraft().world;
 		}
 		double dx = 0, dy = player.getYOffset() + 0.35D, dz = 0;
 

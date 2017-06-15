@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.entity;
 
+import cofh.core.render.ShaderHelper;
 import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
@@ -21,6 +22,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 	static EntityTransport transport;
 
+	@SuppressWarnings ("SuspiciousMethodCalls")
 	public RenderPlayerRiding(RenderManager renderManager) {
 
 		super(renderManager);
@@ -32,13 +34,11 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			}
 			layersToRemove.add(layer);
 		}
-		for (LayerRenderer<?> layer : layersToRemove) {
-			removeLayer(layer);
-		}
+		layerRenderers.removeAll(layersToRemove);
 	}
 
 	@Override
-	protected void rotateCorpse(AbstractClientPlayer entityLiving, float p_77043_2_, float p_77043_3_, float partialTicks) {
+	protected void applyRotations(AbstractClientPlayer entityLiving, float p_77043_2_, float p_77043_3_, float partialTicks) {
 
 		if (transport == null) {
 			return;
@@ -50,7 +50,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 
 		int d = transport.direction;
 		int od = transport.oldDirection;
-		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * partialTicks) / (EntityTransport.DUCT_LENGTH);
+		float stepTime = (transport.progress + (transport.pause > 0 ? 0 : transport.step) * ShaderHelper.midGameTick) / (EntityTransport.DUCT_LENGTH);
 		float yaw = 0, pitch;
 
 		switch (d) {
@@ -79,6 +79,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			default:
 				return;
 		}
+
 		double scale = 0.85;
 		GlStateManager.scale(scale, scale, scale);
 
@@ -110,6 +111,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 				default:
 					return;
 			}
+
 			if (d < 2) {
 				yaw = prevYaw;
 			} else if (od < 2) {
@@ -123,10 +125,10 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			if (Math.abs(prevYaw - yaw) > Math.abs(prevYaw - yaw + 360)) {
 				yaw -= 360;
 			}
+
 			yaw = yaw * v + prevYaw * (1 - v);
 			pitch = pitch * v + prevPitch * (1 - v);
 		}
-
 		GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
 		GlStateManager.translate(0, -1F, 0);
@@ -135,7 +137,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 			GlStateManager.translate(0, -0.3F, 0);
 		} else if (stepTime < 0.5F) {
 			if (transport.pos != null) {
-				TileEntity tile = transport.worldObj.getTileEntity(transport.pos.offset(EnumFacing.VALUES[d].getOpposite()));
+				TileEntity tile = transport.world.getTileEntity(transport.pos.offset(EnumFacing.VALUES[d].getOpposite()));
 
 				if (tile instanceof IDuctHolder) {
 					DuctUnitTransportBase base = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT);
@@ -154,7 +156,7 @@ public class RenderPlayerRiding extends RenderPlayerAlt {
 	@Override
 	protected boolean canRenderName(AbstractClientPlayer entity) {
 
-		return transport != null && (transport.getPassengers().isEmpty() || transport.getPassengers().get(0) != Minecraft.getMinecraft().thePlayer);
+		return transport != null && (transport.getPassengers().isEmpty() || transport.getPassengers().get(0) != Minecraft.getMinecraft().player);
 	}
 
 }

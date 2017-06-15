@@ -37,7 +37,7 @@ public class RenderTransport extends RenderEntity {
 		if (entity.getPassengers().get(0) instanceof EntityPlayer) {
 			player = (EntityPlayer) entity.getPassengers().get(0);
 		}
-		if (player == Minecraft.getMinecraft().thePlayer) {
+		if (player == Minecraft.getMinecraft().player) {
 			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
 				return;
 			}
@@ -52,7 +52,7 @@ public class RenderTransport extends RenderEntity {
 
 		EntityOtherPlayerMP doll = dolls.get(player);
 		if (doll == null) {
-			doll = new EntityOtherPlayerMP(player.worldObj, player.getGameProfile());
+			doll = new EntityOtherPlayerMP(player.world, player.getGameProfile());
 			dolls.put(player, doll);
 		}
 		List<EntityDataManager.DataEntry<?>> allWatched = player.getDataManager().getAll();
@@ -87,7 +87,7 @@ public class RenderTransport extends RenderEntity {
 		if (other.pos != null) {
 			other.setPosition(0);
 		}
-		doll.worldObj = Minecraft.getMinecraft().theWorld;
+		doll.world = Minecraft.getMinecraft().world;
 
 		double dx = 0, dy = -(player.posY - (player.getEntityBoundingBox().maxY + player.getEntityBoundingBox().minY)), dz = 0;
 

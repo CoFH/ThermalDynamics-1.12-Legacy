@@ -10,6 +10,7 @@ import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -121,7 +122,7 @@ public class EntityTransport extends Entity {
 
 		passenger.startRiding(this);
 		loadRider(passenger);
-		worldObj.spawnEntityInWorld(this);
+		world.spawnEntity(this);
 	}
 
 	@Override
@@ -161,7 +162,7 @@ public class EntityTransport extends Entity {
 	@Override
 	public void onUpdate() {
 
-		if (!worldObj.isRemote || rider != null) {
+		if (!world.isRemote || rider != null) {
 			if (!isBeingRidden() || getPassengers().get(0).isDead) {
 				setDead();
 				return;
@@ -181,7 +182,7 @@ public class EntityTransport extends Entity {
 		}
 		boolean wasPause = pause > 0;
 
-		if (worldObj.isRemote) {
+		if (world.isRemote) {
 			if (!initSound) {
 				initSound = true;
 				SoundHelper.playSound(getSound());
@@ -194,12 +195,12 @@ public class EntityTransport extends Entity {
 		if (direction == 7 || pos == null) {
 			return;
 		}
-		TileEntity tile = worldObj.getTileEntity(pos);
+		TileEntity tile = world.getTileEntity(pos);
 
 		DuctUnitTransportBase homeTile;
 
 		if (tile == null || !(tile instanceof IDuctHolder) || (homeTile = ((IDuctHolder) tile).getDuct(DuctToken.TRANSPORT)) == null) {
-			if (worldObj.isRemote) {
+			if (world.isRemote) {
 				pos = null;
 			} else {
 				dropPassenger();
@@ -208,7 +209,7 @@ public class EntityTransport extends Entity {
 		}
 		if (pause > 0) {
 			pause--;
-			if (!worldObj.isRemote) {
+			if (!world.isRemote) {
 				updateDataParameters();
 			} else {
 				setPosition(0);
@@ -221,12 +222,12 @@ public class EntityTransport extends Entity {
 					}
 				}
 				for (int i = 0; i < 10; i++) {
-					worldObj.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
+					world.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5, MathHelper.RANDOM.nextGaussian() * 0.5);
 				}
 			}
 			return;
 		}
-		if (!worldObj.isRemote) {
+		if (!world.isRemote) {
 			homeTile.advanceEntity(this);
 			updateDataParameters();
 		} else {
@@ -272,7 +273,7 @@ public class EntityTransport extends Entity {
 
 		BlockPos p = pos.offset(EnumFacing.VALUES[direction]);
 
-		TileEntity tileEntity = worldObj.getTileEntity(p);
+		TileEntity tileEntity = world.getTileEntity(p);
 		DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.TRANSPORT);
 
 		if (transportBase == null) {
@@ -333,7 +334,7 @@ public class EntityTransport extends Entity {
 
 	public void dropPassenger() {
 
-		if (!worldObj.isRemote) {
+		if (!world.isRemote) {
 			rider.dismountRidingEntity();
 
 			if (direction >= 0 && direction < 6) {
@@ -535,7 +536,7 @@ public class EntityTransport extends Entity {
 	}
 
 	@Override
-	public void moveEntity(double x, double y, double z) {
+	public void move(MoverType type, double x, double y, double z) {
 
 		setPosition(0);
 	}
@@ -565,14 +566,14 @@ public class EntityTransport extends Entity {
 
 	public void teleport(DuctUnitTransport dest) {
 
-		if (this.worldObj.isRemote || this.isDead || rider == null || rider.isDead) {
+		if (this.world.isRemote || this.isDead || rider == null || rider.isDead) {
 			return;
 		}
 		int curDim = this.dimension;
 		int destDim = dest.world().provider.getDimension();
 
 		if (destDim != curDim) {
-			MinecraftServer minecraftserver = this.worldObj.getMinecraftServer();
+			MinecraftServer minecraftserver = this.world.getMinecraftServer();
 
 			WorldServer currentWorld = minecraftserver.worldServerForDimension(curDim);
 			WorldServer destinationWorld = minecraftserver.worldServerForDimension(destDim);
@@ -612,8 +613,8 @@ public class EntityTransport extends Entity {
 		entity.changeDimension(destDim);
 /*
     TODO verify that this works for normal entity
-        entity.worldObj.removeEntity(entity);
-        this.worldObj.getMinecraftServer().getConfigurationManager().transferEntityToWorld(entity, curDim, currentWorld, destinationWorld);
+        entity.world.removeEntity(entity);
+        this.world.getMinecraftServer().getConfigurationManager().transferEntityToWorld(entity, curDim, currentWorld, destinationWorld);
         destinationWorld.spawnEntityInWorld(entity);
         entity.dimension = destDim;
 */
