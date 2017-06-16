@@ -3,6 +3,7 @@ package cofh.thermaldynamics.duct.energy;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.*;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,6 +61,31 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	public GridEnergy createGrid() {
 
 		return new GridEnergy(world(), getTransferLimit(), getCapacity());
+	}
+
+	@Override
+	protected void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide) {
+
+		nodeMask &= ~(1 << side);
+		inputMask &= ~(1 << side);
+
+		setSideToNone(side);
+
+		if (tile == null || !type.allowEnergy) {
+			if (isInputTile(tile, side)) {
+				inputMask |= (1 << side);
+				nodeMask |= (1 << side);
+			}
+			return;
+		}
+		if (holder != null && !holder.isSideBlocked(oppositeSide)) {
+			DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct = holder.getDuct(getToken());
+			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side, oppositeSide) && adjDuct.canConnectToOtherDuct(this, oppositeSide, side)) {
+				ductCache[side] = adjDuct.cast();
+				return;
+			}
+		}
+		loadSignificantCache(tile, side);
 	}
 
 	@Override

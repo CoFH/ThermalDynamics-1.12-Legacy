@@ -118,12 +118,6 @@ public class RetrieverFluid extends ServoFluid {
 	}
 
 	@Override
-	public boolean allowDuctConnection() {
-
-		return true;
-	}
-
-	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
 		if (layer != BlockRenderLayer.SOLID) {

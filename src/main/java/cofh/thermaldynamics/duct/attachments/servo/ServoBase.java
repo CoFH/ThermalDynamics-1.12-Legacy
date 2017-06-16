@@ -59,14 +59,11 @@ public abstract class ServoBase extends ConnectionBase {
 		return "item.thermaldynamics.servo." + type + ".name";
 	}
 
-	//	@Override
-	//	public void onNeighborChange() {
-	//
-	//		super.onNeighborChange();
-	//	}
+	@Override
+	public boolean allowDuctConnection() {
 
-	//	@Override
-	//	public abstract DuctToken tickUnit();
+		return false;
+	}
 
 	@Override
 	public boolean canAlterRS() {

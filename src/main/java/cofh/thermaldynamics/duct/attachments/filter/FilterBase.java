@@ -36,12 +36,6 @@ public abstract class FilterBase extends ConnectionBase {
 		return "item.thermaldynamics.filter." + type + ".name";
 	}
 
-	//	@Override
-	//	public BlockDuct.ConnectionType getNeighborType() {
-	//
-	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
-	//	}
-
 	@Override
 	public ItemStack getPickBlock() {
 
@@ -67,12 +61,6 @@ public abstract class FilterBase extends ConnectionBase {
 
 		super.writePortableData(player, tag);
 		tag.setString("DisplayType", "item.thermaldynamics.filter.0.name");
-	}
-
-	@Override
-	public boolean allowDuctConnection() {
-
-		return true;
 	}
 
 }

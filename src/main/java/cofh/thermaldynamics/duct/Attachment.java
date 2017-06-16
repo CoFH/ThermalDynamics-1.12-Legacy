@@ -101,7 +101,12 @@ public abstract class Attachment {
 
 	public boolean allowDuctConnection() {
 
-		return false;
+		return true;
+	}
+
+	public boolean allowEnergyConnection() {
+
+		return true;
 	}
 
 	public boolean canAddToTile(TileGrid tile) {

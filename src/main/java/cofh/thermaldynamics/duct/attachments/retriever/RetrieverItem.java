@@ -188,18 +188,6 @@ public class RetrieverItem extends ServoItem {
 		super.handleStuffedItems();
 	}
 
-	//	@Override
-	//	public BlockDuct.ConnectionType getNeighborType() {
-	//
-	//		return isValidInput ? NeighborType.OUTPUT : NeighborType.DUCT_ATTACHMENT;
-	//	}
-
-	@Override
-	public boolean allowDuctConnection() {
-
-		return true;
-	}
-
 	/* IPortableData */
 	@Override
 	public void writePortableData(EntityPlayer player, NBTTagCompound tag) {

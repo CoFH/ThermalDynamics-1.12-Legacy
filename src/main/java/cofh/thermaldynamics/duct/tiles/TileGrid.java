@@ -56,6 +56,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
+import static cofh.thermaldynamics.duct.ConnectionType.ENERGY;
 import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
@@ -308,7 +309,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (attachmentData != null) {
 			Attachment attachment = attachmentData.attachments[i];
 			if (attachment != null) {
-				return attachment.allowDuctConnection() ? NORMAL : BLOCKED;
+				return attachment.allowDuctConnection() ? NORMAL : attachment.allowEnergyConnection() ? ENERGY : BLOCKED;
 			}
 		}
 		ConnectionType[] connectionTypes = this.connectionTypes;
