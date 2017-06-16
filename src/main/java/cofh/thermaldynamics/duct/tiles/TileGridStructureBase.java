@@ -41,6 +41,7 @@ public abstract class TileGridStructureBase extends TileGrid {
 	public <T extends DuctUnit<T, G, C>, G extends MultiBlockGrid<T>, C> T getDuct(DuctToken<T, G, C> token) {
 
 		DuctUnit ductUnit = ducts.get(token);
+
 		if (ductUnit == null && token == DuctToken.STRUCTURAL) {
 			ImmutableSortedMap.Builder<DuctToken, DuctUnit> builder = ImmutableSortedMap.naturalOrder();
 			builder.putAll(ducts);

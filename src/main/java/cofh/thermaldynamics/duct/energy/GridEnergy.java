@@ -73,6 +73,7 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 	public void tickGrid() {
 
 		super.tickGrid();
+
 		if (!nodeSet.isEmpty() && myStorage.getEnergyStored() > 0) {
 			currentEnergy = myStorage.getEnergyStored() / nodeSet.size();
 			extraEnergy = myStorage.getEnergyStored() % nodeSet.size();
@@ -92,6 +93,7 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 	public void useEnergy(int energyUsed) {
 
 		myStorage.extractEnergy(energyUsed, false);
+
 		if (energyUsed > currentEnergy) {
 			extraEnergy -= (energyUsed - currentEnergy);
 			extraEnergy = Math.max(0, extraEnergy);

@@ -43,9 +43,9 @@ public class GridEnergySuper extends GridEnergy {
 		if (list == null || list.length == 0) {
 			return 0;
 		}
-
 		int startAmount = energy;
 		isSendingEnergy = true;
+
 		for (int i = nodeTracker; i < list.length && energy > 0; i++) {
 			energy -= trackInOut(list[i].transmitEnergy(energy, simulate), simulate);
 			if (energy == 0) {

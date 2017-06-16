@@ -34,6 +34,8 @@ public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiB
 
 	public abstract int getLevel();
 
+	protected abstract String getUnit();
+
 	public int trackIn(int a, boolean simulate) {
 
 		if (!simulate && tracker != null) {
@@ -82,7 +84,6 @@ public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiB
 			getTracker();
 			return;
 		}
-
 		tracker.life = 0;
 
 		addInfo(info, "tracker.avg", format(tracker.avgStuff()) + getUnit());
@@ -100,5 +101,4 @@ public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiB
 		return String.format("%.2f", v);
 	}
 
-	protected abstract String getUnit();
 }

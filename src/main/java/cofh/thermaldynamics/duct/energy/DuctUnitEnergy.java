@@ -1,5 +1,7 @@
 package cofh.thermaldynamics.duct.energy;
 
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.*;
@@ -38,7 +40,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	@Override
 	protected IEnergyReceiver[] createTileCache() {
 
-		return new IEnergyReceiver[6];
+		return new Cache[6];
 	}
 
 	@Override
@@ -68,57 +70,105 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 
 	@Override
 	@Nullable
-	public IEnergyReceiver cacheTile(@Nonnull TileEntity tile, byte side) {
+	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
 
 		EnumFacing facing = EnumFacing.values()[side ^ 1];
+
 		if (tile instanceof IEnergyReceiver) {
-			IEnergyReceiver energyReceiver = (IEnergyReceiver) tile;
-			if (energyReceiver.canConnectEnergy(facing)) {
-				return energyReceiver;
-			} else if (tile instanceof IDuctHolder) {
-				return energyReceiver;
+			IEnergyReceiver receiver = (IEnergyReceiver) tile;
+			if (receiver.canConnectEnergy(facing) || tile instanceof IDuctHolder) {
+				return new Cache(receiver);
 			}
-		}
-		if (tile.hasCapability(CapabilityEnergy.ENERGY, facing)) {
+		} else if (tile instanceof IEnergyProvider) {
+			IEnergyProvider provider = (IEnergyProvider) tile;
+			if (provider.canConnectEnergy(facing) || tile instanceof IDuctHolder) {
+				return new Cache(provider);
+			}
+		} else if (tile.hasCapability(CapabilityEnergy.ENERGY, facing)) {
+
 			IEnergyStorage capability = tile.getCapability(CapabilityEnergy.ENERGY, facing);
-			if (capability != null && capability.canReceive()) {
-				return new IEnergyReceiver() {
 
-					public IEnergyStorage getStorage(EnumFacing facing1) {
+			if (capability != null) {
+				if (capability.canReceive()) {
+					IEnergyReceiver capReceiver = new IEnergyReceiver() {
 
-						if (tile.hasCapability(CapabilityEnergy.ENERGY, facing1)) {
-							return tile.getCapability(CapabilityEnergy.ENERGY, facing1);
+						public IEnergyStorage getStorage(EnumFacing facing1) {
+
+							if (tile.hasCapability(CapabilityEnergy.ENERGY, facing1)) {
+								return tile.getCapability(CapabilityEnergy.ENERGY, facing1);
+							}
+							return null;
 						}
-						return null;
-					}
 
-					@Override
-					public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+						@Override
+						public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 
-						IEnergyStorage storage = getStorage(from);
-						return storage == null ? 0 : storage.receiveEnergy(maxReceive, simulate);
-					}
+							IEnergyStorage storage = getStorage(from);
+							return storage == null ? 0 : storage.receiveEnergy(maxReceive, simulate);
+						}
 
-					@Override
-					public int getEnergyStored(EnumFacing from) {
+						@Override
+						public int getEnergyStored(EnumFacing from) {
 
-						IEnergyStorage storage = getStorage(from);
-						return storage == null ? 0 : storage.getEnergyStored();
-					}
+							IEnergyStorage storage = getStorage(from);
+							return storage == null ? 0 : storage.getEnergyStored();
+						}
 
-					@Override
-					public int getMaxEnergyStored(EnumFacing from) {
+						@Override
+						public int getMaxEnergyStored(EnumFacing from) {
 
-						IEnergyStorage storage = getStorage(from);
-						return storage == null ? 0 : storage.getMaxEnergyStored();
-					}
+							IEnergyStorage storage = getStorage(from);
+							return storage == null ? 0 : storage.getMaxEnergyStored();
+						}
 
-					@Override
-					public boolean canConnectEnergy(EnumFacing from) {
+						@Override
+						public boolean canConnectEnergy(EnumFacing from) {
 
-						return true;
-					}
-				};
+							return true;
+						}
+					};
+					return new Cache(capReceiver);
+
+				} else if (capability.canExtract()) {
+					IEnergyProvider capProvider = new IEnergyProvider() {
+
+						public IEnergyStorage getStorage(EnumFacing facing1) {
+
+							if (tile.hasCapability(CapabilityEnergy.ENERGY, facing1)) {
+								return tile.getCapability(CapabilityEnergy.ENERGY, facing1);
+							}
+							return null;
+						}
+
+						@Override
+						public int extractEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+
+							IEnergyStorage storage = getStorage(from);
+							return storage == null ? 0 : storage.extractEnergy(maxReceive, simulate);
+						}
+
+						@Override
+						public int getEnergyStored(EnumFacing from) {
+
+							IEnergyStorage storage = getStorage(from);
+							return storage == null ? 0 : storage.getEnergyStored();
+						}
+
+						@Override
+						public int getMaxEnergyStored(EnumFacing from) {
+
+							IEnergyStorage storage = getStorage(from);
+							return storage == null ? 0 : storage.getMaxEnergyStored();
+						}
+
+						@Override
+						public boolean canConnectEnergy(EnumFacing from) {
+
+							return true;
+						}
+					};
+					return new Cache(capProvider);
+				}
 			}
 		}
 		return null;
@@ -142,7 +192,6 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	public boolean sendEnergy() {
 
 		int power = this.grid.getSendableEnergy();
-
 		int usedPower = transmitEnergy(power, false);
 
 		this.grid.useEnergy(usedPower);
@@ -234,7 +283,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 
 	public boolean canExtract() {
 
-		return true;
+		return false;
+		// return true;
 	}
 
 	/* IEnergyStorage */
@@ -247,7 +297,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate) {
 
-		return (canExtract() && grid != null) ? grid.myStorage.extractEnergy(maxExtract, simulate) : 0;
+		return 0;
+		// return (canExtract() && grid != null) ? grid.myStorage.extractEnergy(maxExtract, simulate) : 0;
 	}
 
 	public int getEnergyStored() {
@@ -282,7 +333,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 			@Override
 			public int extractEnergy(int maxExtract, boolean simulate) {
 
-				return DuctUnitEnergy.this.extractEnergy(maxExtract, simulate);
+				return 0;
+				// return DuctUnitEnergy.this.extractEnergy(maxExtract, simulate);
 			}
 
 			@Override
@@ -300,7 +352,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 			@Override
 			public boolean canExtract() {
 
-				return DuctUnitEnergy.this.canExtract();
+				return false;
+				// return DuctUnitEnergy.this.canExtract();
 			}
 
 			@Override
@@ -309,6 +362,66 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 				return true;
 			}
 		});
+	}
+
+	/* CACHE CLASS */
+	public static class Cache implements IEnergyReceiver, IEnergyProvider {
+
+		public IEnergyHandler handler;
+		public IEnergyReceiver receiver;
+		public IEnergyProvider provider;
+
+		public Cache(IEnergyReceiver receiver) {
+
+			this.handler = receiver;
+			this.receiver = receiver;
+
+			if (receiver instanceof IEnergyProvider) {
+				this.provider = (IEnergyProvider) receiver;
+			}
+		}
+
+		public Cache(IEnergyProvider provider) {
+
+			this.handler = provider;
+			this.provider = provider;
+
+			if (provider instanceof IEnergyReceiver) {
+				this.receiver = (IEnergyReceiver) provider;
+			}
+		}
+
+		@Override
+		public boolean canConnectEnergy(EnumFacing from) {
+
+			return handler.canConnectEnergy(from);
+		}
+
+		@Override
+		public int getEnergyStored(EnumFacing from) {
+
+			return handler.getEnergyStored(from);
+		}
+
+		@Override
+		public int getMaxEnergyStored(EnumFacing from) {
+
+			return handler.getMaxEnergyStored(from);
+		}
+
+		/* IEnergyReceiver */
+		@Override
+		public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+
+			return receiver == null ? 0 : receiver.receiveEnergy(from, maxReceive, simulate);
+		}
+
+		/* IEnergyProvider */
+		@Override
+		public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+
+			return provider == null ? 0 : provider.extractEnergy(from, maxExtract, simulate);
+		}
 	}
 
 }

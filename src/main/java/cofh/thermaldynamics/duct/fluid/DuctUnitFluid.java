@@ -521,6 +521,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 		});
 	}
 
+	/* CACHE CLASS */
 	public static class Cache {
 
 		public TileEntity tile;

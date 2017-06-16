@@ -68,6 +68,7 @@ public class ServoItem extends ServoBase {
 
 		super.readFromNBT(tag);
 		stuffedItems.clear();
+
 		if (tag.hasKey("StuffedInv", 9)) {
 			NBTTagList tlist = tag.getTagList("StuffedInv", 10);
 			for (int j = 0; j < tlist.tagCount(); j++) {
@@ -84,6 +85,7 @@ public class ServoItem extends ServoBase {
 	public void writeToNBT(NBTTagCompound tag) {
 
 		super.writeToNBT(tag);
+
 		if (isStuffed()) {
 			NBTTagList list = new NBTTagList();
 			for (ItemStack item : stuffedItems) {
@@ -107,6 +109,7 @@ public class ServoItem extends ServoBase {
 		for (ItemStack stuffed : stuffedItems) {
 			if (ItemHelper.itemsEqualWithMetadata(item, stuffed, true)) {
 				stuffed.stackSize += item.stackSize;
+
 				if (stuffed.stackSize < 0) {
 					stuffed.stackSize = Integer.MAX_VALUE;
 				}
@@ -126,6 +129,7 @@ public class ServoItem extends ServoBase {
 		if (isStuffed()) {
 			for (ItemStack stuffedItem : stuffedItems) {
 				ItemStack stack = stuffedItem.copy();
+
 				while (stack.stackSize > 0 && drops.size() <= TDProps.MAX_STUFFED_ITEMSTACKS_DROP) {
 					if (stack.stackSize <= stuffedItem.getMaxStackSize()) {
 						drops.add(ItemHelper.cloneStack(stack));
@@ -199,6 +203,7 @@ public class ServoItem extends ServoBase {
 			return false;
 		}
 		RouteCache<DuctUnitItem, GridItem> cache1 = itemDuct.getCache(false);
+
 		if (!cache1.isFinishedGenerating()) {
 			return false;
 		}
@@ -217,7 +222,6 @@ public class ServoItem extends ServoBase {
 				if (itemStack == null) {
 					continue;
 				}
-
 				itemStack = limitOutput(itemStack.copy(), getCachedInv(), slot, side);
 
 				if (itemStack == null || itemStack.stackSize == 0) {
@@ -231,9 +235,7 @@ public class ServoItem extends ServoBase {
 				if (travelingItem == null) {
 					continue;
 				}
-
 				int totalSendSize = travelingItem.stack.stackSize;
-
 				travelingItem.stack = getCachedInv().extractItem(slot, travelingItem.stack.stackSize, false);
 
 				if (travelingItem.stack == null || travelingItem.stack.stackSize <= 0) {
@@ -270,10 +272,10 @@ public class ServoItem extends ServoBase {
 				continue;
 			}
 			stuffedItem.stackSize -= travelingItem.stack.stackSize;
+
 			if (stuffedItem.stackSize <= 0) {
 				iterator.remove();
 			}
-
 			itemDuct.insertNewItem(travelingItem);
 			return;
 		}
@@ -297,6 +299,7 @@ public class ServoItem extends ServoBase {
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
 				RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
+
 				if (routeInfo.canRoute) {
 					int stackSize = item.stackSize - routeInfo.stackSize;
 					if (stackSize <= 0) {
@@ -370,6 +373,7 @@ public class ServoItem extends ServoBase {
 		}
 		ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
 		TravelingItem routeForItem = getRouteForItem(sending);
+
 		if (routeForItem == null) {
 			return item;
 		}

@@ -962,6 +962,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		});
 	}
 
+	/* CACHE CLASS */
 	public static class Cache {
 
 		@Nonnull

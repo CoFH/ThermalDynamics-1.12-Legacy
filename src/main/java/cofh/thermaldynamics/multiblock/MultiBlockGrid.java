@@ -60,7 +60,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 		if (idleSet.contains(aMultiBlock)) {
 			idleSet.remove(aMultiBlock);
 		}
-
 		onMajorGridChange();
 		balanceGrid();
 	}
@@ -72,7 +71,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 				aBlock.setGrid(this);
 				addBlock(aBlock);
 			}
-
 			onMajorGridChange();
 		}
 
@@ -81,10 +79,8 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 				aBlock.setGrid(this);
 				addBlock(aBlock);
 			}
-
 			onMajorGridChange();
 		}
-
 		onMinorGridChange();
 		otherGrid.destroy();
 	}
@@ -93,7 +89,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 
 		nodeSet.clear();
 		idleSet.clear();
-
 		worldGrid.oldGrids.add(this);
 	}
 
@@ -150,27 +145,23 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 		} else {
 			idleSet.remove(oldBlock);
 		}
-
 		if (nodeSet.isEmpty() && idleSet.isEmpty()) {
 			worldGrid.oldGrids.add(this);
 			return;
 		}
-
 		byte s = 0;
+
 		for (byte i = 0; i < 6; i++) {
 			if (oldBlock.isSideConnected(i)) {
 				s++;
 			}
 		}
-
 		if (s <= 1) {
 			balanceGrid();
 			onMinorGridChange();
 			return;
 		}
-
 		onMajorGridChange();
-
 		worldGrid.gridsToRecreate.add(this);
 	}
 
