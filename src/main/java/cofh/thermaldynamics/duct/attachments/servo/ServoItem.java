@@ -72,7 +72,7 @@ public class ServoItem extends ServoBase {
 			NBTTagList tlist = tag.getTagList("StuffedInv", 10);
 			for (int j = 0; j < tlist.tagCount(); j++) {
 				ItemStack item = ItemHelper.readItemStackFromNBT(tlist.getCompoundTagAt(j));
-				if (!item.isEmpty() && item.getItem() != null) {
+				if (!item.isEmpty()) {
 					stuffedItems.add(item);
 				}
 			}

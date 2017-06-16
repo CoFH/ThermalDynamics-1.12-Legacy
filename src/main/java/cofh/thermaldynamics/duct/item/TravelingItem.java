@@ -79,9 +79,6 @@ public class TravelingItem {
 	public TravelingItem(NBTTagCompound theNBT) {
 
 		stack = new ItemStack(theNBT.getCompoundTag("stack"));
-		if (stack.getItem() == null) {
-			stack = ItemStack.EMPTY;
-		}
 
 		progress = theNBT.getByte("progress");
 		direction = theNBT.getByte("direction");
