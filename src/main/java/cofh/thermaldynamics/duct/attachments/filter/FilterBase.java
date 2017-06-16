@@ -74,4 +74,5 @@ public abstract class FilterBase extends ConnectionBase {
 
 		return true;
 	}
+
 }

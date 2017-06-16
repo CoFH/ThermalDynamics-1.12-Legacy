@@ -169,6 +169,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 		TileEntity[] tiles = new TileEntity[6];
 		IDuctHolder[] holders = new IDuctHolder[6];
+
 		for (int i = 0; i < 6; i++) {
 			TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(this, i);
 			tiles[i] = adjacentTileEntity;
@@ -235,6 +236,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public EnumFacing getNeighborDirection(BlockPos pos, BlockPos neighbor) {
 
 		int dx = pos.getX() - neighbor.getX();
+
 		if (dx == 0) {
 			int dz = pos.getZ() - neighbor.getZ();
 			if (dz == 0) {
@@ -260,6 +262,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	private int getTileHash() {
 
 		int hash = 0;
+
 		for (int i = 0; i < 6; i++) {
 			for (DuctUnit unit : getDuctUnits()) {
 				hash = hash * 31 + ((unit.isInput(i) || unit.isOutput(i)) ? 1 : 0);
@@ -271,6 +274,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	private int getRenderHash() {
 
 		int prev = 0;
+
 		for (int i = 0; i < 6; i++) {
 			BlockDuct.ConnectionType type = getVisualConnectionType(i);
 			prev = prev * 31 + type.ordinal();
@@ -308,6 +312,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 		ConnectionType[] connectionTypes = this.connectionTypes;
+
 		if (connectionTypes == null) {
 			return NORMAL;
 		}
@@ -317,11 +322,13 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public boolean checkForChunkUnload() {
 
 		LinkedList<WeakReference<Chunk>> neighborChunks = this.neighborChunks;
+
 		if (neighborChunks == null || neighborChunks.isEmpty()) {
 			return false;
 		}
 		for (WeakReference<Chunk> neighborChunk : neighborChunks) {
 			Object chunk = neighborChunk.get();
+
 			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
 				neighborChunks.clear();
 				onNeighborBlockChange();
@@ -342,6 +349,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 		for (byte i = 0; i < 6; i++) {
 			boolean important = false;
+
 			for (DuctUnit ductUnit : getDuctUnits()) {
 				if (ductUnit.shouldTrackChunk(i)) {
 					important = true;
@@ -384,9 +392,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public boolean addAttachment(Attachment attachment) {
 
-		if (!attachment.canAddToTile(this)) {
-			return false;
-		}
 		if (attachmentData != null && attachmentData.attachments[attachment.side] != null) {
 			return false;
 		}

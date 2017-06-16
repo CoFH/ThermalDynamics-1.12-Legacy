@@ -3,7 +3,6 @@ package cofh.thermaldynamics.duct.entity;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.DuctUnit;
-import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
@@ -175,15 +174,4 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		return super.getConnectionTypeDuct(duct, side);
 	}
 
-	@Override
-	public void updateSide(TileEntity tile, IDuctHolder holder, byte side) {
-
-		super.updateSide(tile, holder, side);
-	}
-
-	@Override
-	public void updateAllSides(TileEntity[] tiles, IDuctHolder[] holders) {
-
-		super.updateAllSides(tiles, holders);
-	}
 }

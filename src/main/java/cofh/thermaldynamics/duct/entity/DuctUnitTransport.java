@@ -81,12 +81,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		}
 	}
 
-	@Override
-	public boolean isBlockedSide(int side) {
-
-		return super.isBlockedSide(side) || parent.getConnectionType(side) == cofh.thermaldynamics.duct.ConnectionType.FORCED;
-	}
-
 	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getRenderConnectionType(int side) {

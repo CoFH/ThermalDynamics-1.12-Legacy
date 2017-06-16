@@ -175,14 +175,6 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	}
 
 	@Override
-	public void tileUnloading() {
-
-		if (isNode() && grid != null) {
-			grid.myStorage.extractEnergy(lastStoredValue, false);
-		}
-	}
-
-	@Override
 	public boolean tickPass(int pass) {
 
 		return super.tickPass(pass) && sendEnergy();

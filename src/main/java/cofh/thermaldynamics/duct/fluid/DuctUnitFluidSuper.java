@@ -65,9 +65,9 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			@Override
 			public FluidStack drain(FluidStack resource, boolean doDrain) {
 
-				if (isOpen(from)) {
-					return grid.myTank.drain(resource, doDrain);
-				}
+				//				if (isOpen(from)) {
+				//					return grid.myTank.drain(resource, doDrain);
+				//				}
 				return null;
 			}
 

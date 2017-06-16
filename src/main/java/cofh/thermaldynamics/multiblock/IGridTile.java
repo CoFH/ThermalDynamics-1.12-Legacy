@@ -22,8 +22,6 @@ public interface IGridTile<T extends IGridTile<T, G>, G extends MultiBlockGrid<T
 
 	IGridTile<T, G> getConnectedSide(int side);
 
-	boolean isBlockedSide(int side);
-
 	boolean isSideConnected(byte side);
 
 	// Used to do multiblock steps passed off by the grid. IE: Distribute liquids.

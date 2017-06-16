@@ -70,11 +70,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	@Override
 	public String toString() {
 
-		return "Duct{"
-				//				+ duct.unlocalizedName + ","
-				+ getClass().getSimpleName() + ","
-				//				+ getToken() + ",t="
-				+ getSideArrayNonNull(tileCache) + ",p=" + getSideArrayNonNull(ductCache) + "}";
+		return "Duct{" + getClass().getSimpleName() + "," + getSideArrayNonNull(tileCache) + ",d=" + getSideArrayNonNull(ductCache) + "}";
 	}
 
 	@Nonnull
@@ -114,7 +110,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return ductCache[side];
 	}
 
-	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull cofh.thermaldynamics.duct.ConnectionType type) {
+	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type) {
 
 		handleTileSideUpdate(tile, holder, side, type, (byte) (side ^ 1));
 	}
@@ -133,7 +129,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 			}
 			return;
 		}
-
 		if (holder != null && !holder.isSideBlocked(oppositeSide)) {
 			DuctUnit<T, G, C> adjDuct = holder.getDuct(getToken());
 			if (adjDuct != null && canConnectToOtherDuct(adjDuct, side, oppositeSide) && adjDuct.canConnectToOtherDuct(this, oppositeSide, side)) {
@@ -165,7 +160,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 			if (isNode(c)) {
 				nodeMask |= (1 << side);
 			}
-
 			return true;
 		} else {
 			if (isInputTile(tile, side)) {
@@ -252,12 +246,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	@Override
-	public boolean isBlockedSide(int side) {
-
-		return parent.isSideBlocked(side);
-	}
-
-	@Override
 	public World world() {
 
 		return parent.getWorld();
@@ -285,10 +273,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	public void onNeighborBlockChange() {
 
 		parent.onNeighborBlockChange();
-	}
-
-	public void tileUnloading() {
-
 	}
 
 	@OverridingMethodsMustInvokeSuper
@@ -354,7 +338,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		if (parent.isInvalid()) {
 			return;
 		}
-		onNeighborBlockChange();
 		formGrid();
 	}
 

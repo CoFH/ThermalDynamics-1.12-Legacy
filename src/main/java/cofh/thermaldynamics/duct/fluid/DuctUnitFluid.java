@@ -307,14 +307,6 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 		return null;
 	}
 
-	@Override
-	public void tileUnloading() {
-
-		if (mySavedFluid != null && grid != null) {
-			grid.myTank.drain(mySavedFluid.amount, true);
-		}
-	}
-
 	public int getRenderFluidLevel() {
 
 		if (myRenderFluid != null) {
@@ -409,19 +401,18 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 		if (ServerHelper.isClientWorld(world())) {
 			return;
 		}
-		EnumFacing placingSide = null;
 		FluidStack fluidStack = null;
 
 		if (living instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) living;
 			RayTraceResult retrace;
+
 			try {
 				BlockDuct.IGNORE_RAY_TRACE.set(pos());
 				retrace = RayTracer.retrace(player, false);
 			} finally {
 				BlockDuct.IGNORE_RAY_TRACE.set(null);
 			}
-
 			if (retrace != null && retrace.sideHit != null) {
 				EnumFacing sideHit = retrace.sideHit.getOpposite();
 				DuctUnitFluid fluids = IDuctHolder.getTokenFromTile(world().getTileEntity(pos().offset(sideHit)), DuctToken.FLUID);
@@ -430,12 +421,13 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 				}
 			}
 		}
-
 		for (EnumFacing facing : EnumFacing.values()) {
 			TileEntity tileEntity = world().getTileEntity(pos().offset(facing));
 			DuctUnitFluid fluids = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.FLUID);
+
 			if (fluids != null) {
 				FluidStack connectionFluid = fluids.getConnectionFluid();
+
 				if (fluidStack == null) {
 					fluidStack = connectionFluid;
 				} else if (connectionFluid != null && !fluidStack.isFluidEqual(connectionFluid)) {
