@@ -502,14 +502,14 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	public static class OutputData {
 
 		public String name = "";
-		public ItemStack item = null;
+		public ItemStack item = ItemStack.EMPTY;
 
 		public void write(NBTTagCompound nbt, DuctUnitTransport transportDuct) {
 
 			if (!"".equals(name)) {
 				nbt.setString("DestinationName", name);
 			}
-			if (item != null) {
+			if (!item.isEmpty()) {
 				nbt.setTag("DestinationIcon", item.writeToNBT(new NBTTagCompound()));
 			}
 		}
