@@ -9,6 +9,7 @@ import mezz.jei.api.IModRegistry;
 import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IIngredientBlacklist;
+import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,9 +18,16 @@ import net.minecraft.item.ItemStack;
 public class JEIPluginTD extends BlankModPlugin {
 
 	@Override
+	public void registerCategories(IRecipeCategoryRegistration registry) {
+
+		CoverRecipeCategory.register(registry);
+	}
+
+	@Override
 	public void register(IModRegistry registry) {
 
 		CoverRecipeCategory.initialize(registry);
+
 		if (!TDProps.showCoversInJEI) {
 			blacklistCovers(registry.getJeiHelpers().getIngredientBlacklist());
 		}

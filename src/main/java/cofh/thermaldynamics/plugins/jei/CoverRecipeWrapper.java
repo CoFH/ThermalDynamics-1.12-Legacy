@@ -25,4 +25,5 @@ public class CoverRecipeWrapper extends BlankRecipeWrapper {
 		ingredients.setInputs(ItemStack.class, ImmutableList.of(coverBlock, TDDucts.structure.itemStack));
 		ingredients.setOutputs(ItemStack.class, ImmutableList.of(coverStack));
 	}
+
 }

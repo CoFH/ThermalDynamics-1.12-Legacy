@@ -24,14 +24,18 @@ public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper>
 	public static final int width = 116;
 	public static final int height = 54;
 
-	public static void initialize(IModRegistry registry) {
+	public static void register(IRecipeCategoryRegistration registry) {
 
 		IJeiHelpers jeiHelpers = registry.getJeiHelpers();
 		IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 
-		((IRecipeCategoryRegistration) registry).addRecipeCategories(new CoverRecipeCategory(guiHelper));
-		registry.addRecipes(getRecipes(), RecipeUidsTD.COVER);
-		registry.addRecipeCatalyst(new ItemStack(Blocks.CRAFTING_TABLE), RecipeUidsTD.COVER);
+		registry.addRecipeCategories(new CoverRecipeCategory(guiHelper));
+	}
+
+	public static void initialize(IModRegistry registry) {
+
+		registry.addRecipes(getRecipes(), RecipeUidsTD.COVERS);
+		registry.addRecipeCatalyst(new ItemStack(Blocks.CRAFTING_TABLE), RecipeUidsTD.COVERS);
 	}
 
 	public static List<CoverRecipeWrapper> getRecipes() {
@@ -60,7 +64,7 @@ public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper>
 	@Override
 	public String getUid() {
 
-		return RecipeUidsTD.COVER;
+		return RecipeUidsTD.COVERS;
 	}
 
 	@Override
