@@ -8,6 +8,7 @@ import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeCategory;
+import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -28,10 +29,9 @@ public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper>
 		IJeiHelpers jeiHelpers = registry.getJeiHelpers();
 		IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 
-		registry.addRecipeCategories(new CoverRecipeCategory(guiHelper));
-		registry.addRecipeHandlers(new CoverRecipeHandler());
-		registry.addRecipes(getRecipes());
-		registry.addRecipeCategoryCraftingItem(new ItemStack(Blocks.CRAFTING_TABLE), RecipeUidsTD.COVER);
+		((IRecipeCategoryRegistration) registry).addRecipeCategories(new CoverRecipeCategory(guiHelper));
+		registry.addRecipes(getRecipes(), RecipeUidsTD.COVER);
+		registry.addRecipeCatalyst(new ItemStack(Blocks.CRAFTING_TABLE), RecipeUidsTD.COVER);
 	}
 
 	public static List<CoverRecipeWrapper> getRecipes() {
