@@ -342,12 +342,6 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 	}
 
 	@Nonnull
-	protected BlockDuct.ConnectionType getConnectionTypeTile(C cacheValue, int side) {
-
-		return BlockDuct.ConnectionType.TILE_CONNECTION;
-	}
-
-	@Nonnull
 	public BlockDuct.ConnectionType getRenderConnectionType(int side) {
 
 		if (tileCache[side] != null) {
@@ -362,6 +356,12 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	@Nonnull
 	public BlockDuct.ConnectionType getInputConnection(int side) {
+
+		return BlockDuct.ConnectionType.TILE_CONNECTION;
+	}
+
+	@Nonnull
+	protected BlockDuct.ConnectionType getConnectionTypeTile(C cacheValue, int side) {
 
 		return BlockDuct.ConnectionType.TILE_CONNECTION;
 	}

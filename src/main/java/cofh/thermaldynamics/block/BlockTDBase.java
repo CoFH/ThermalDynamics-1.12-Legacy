@@ -45,11 +45,6 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	}
 
 	/* BLOCK METHODS */
-	//	@Override
-	//	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase living, ItemStack stack) {
-	//
-	//	}
-
 	@Override
 	public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
 

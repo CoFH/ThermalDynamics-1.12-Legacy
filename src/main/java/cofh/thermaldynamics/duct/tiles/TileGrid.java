@@ -199,6 +199,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			callBlockUpdate();
 		}
 		if (tileHash != getTileHash()) {
+			callNeighborStateChange();
 			rebuildChunkCache();
 		}
 	}
@@ -920,6 +921,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				onNeighborBlockChange();
 
 				for (DuctUnit ductUnit : getDuctUnits()) {
+					// This only happens with TRANSPORT ducts.
 					if (ductUnit.onWrench(player, i, rayTrace)) {
 						world.notifyNeighborsOfStateChange(getPos(), getBlockType(), false);
 
@@ -933,18 +935,17 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 					}
 				}
 				setConnectionType((byte) i, getConnectionType(i).next());
-
 				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
+
 				if (tile instanceof TileGrid) {
 					((TileGrid) tile).setConnectionType((byte) (i ^ 1), getConnectionType(i));
 				}
-				world.notifyNeighborsOfStateChange(getPos(), getBlockType(), false);
-
 				for (DuctUnit ductUnit : getDuctUnits()) {
 					if (ductUnit.grid != null) {
 						ductUnit.grid.destroyAndRecreate();
 					}
 				}
+				world.notifyNeighborsOfStateChange(getPos(), getBlockType(), false);
 				callBlockUpdate();
 				return true;
 			}
