@@ -155,7 +155,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 					};
 					return new Cache(capReceiver);
 
-				} else if (capability.canExtract()) {
+				} else {
 					IEnergyProvider capProvider = new IEnergyProvider() {
 
 						public IEnergyStorage getStorage(EnumFacing facing1) {

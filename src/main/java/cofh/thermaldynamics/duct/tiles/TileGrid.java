@@ -55,9 +55,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
-import static cofh.thermaldynamics.duct.ConnectionType.ENERGY;
-import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
+import static cofh.thermaldynamics.duct.ConnectionType.*;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
 
@@ -199,6 +197,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			callBlockUpdate();
 		}
 		if (tileHash != getTileHash()) {
+			callNeighborStateChange();
 			rebuildChunkCache();
 		}
 	}
@@ -910,15 +909,15 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				return false;
 			}
 			int subHit = rayTrace.subHit;
+
 			if (subHit >= 0 && subHit <= 13) {
 				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
 
 				onNeighborBlockChange();
 
 				for (DuctUnit ductUnit : getDuctUnits()) {
+					// This only happens with TRANSPORT ducts.
 					if (ductUnit.onWrench(player, i, rayTrace)) {
-						worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
-
 						for (DuctUnit ductUnit2 : getDuctUnits()) {
 							if (ductUnit2.grid != null) {
 								ductUnit2.grid.destroyAndRecreate();
@@ -934,13 +933,12 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (tile instanceof TileGrid) {
 					((TileGrid) tile).setConnectionType((byte) (i ^ 1), getConnectionType(i));
 				}
-				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
-
 				for (DuctUnit ductUnit : getDuctUnits()) {
 					if (ductUnit.grid != null) {
 						ductUnit.grid.destroyAndRecreate();
 					}
 				}
+				worldObj.notifyNeighborsOfStateChange(getPos(), getBlockType());
 				callBlockUpdate();
 				return true;
 			}
