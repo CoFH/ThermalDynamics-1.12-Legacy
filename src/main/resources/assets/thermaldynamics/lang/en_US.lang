@@ -61,6 +61,8 @@ info.thermaldynamics.info.tracker.activate=Starting tracking
 info.thermaldynamics.info.tracker.avg=5 Sec. Avg. Level
 info.thermaldynamics.info.tracker.avgInOut=5 Sec. Avg. In/Out
 info.thermaldynamics.info.tracker.cur=Current Level
+info.thermaldynamics.info.invalid=Invalid
+info.thermaldynamics.info.cover.invalid=Add to crafting grid to receive a stone cover.
 
 info.thermaldynamics.relay.gridRS=Duct Power
 info.thermaldynamics.relay.invert.0=Scaled

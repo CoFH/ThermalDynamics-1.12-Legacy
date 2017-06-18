@@ -7,6 +7,7 @@ import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -14,9 +15,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -70,8 +74,20 @@ public class ItemCover extends ItemAttachment {
 				return I18n.translateToLocal(unloc + unloc2 + ".name");
 			}
 			name = b.getDisplayName();
+		} else {
+			name = I18n.translateToLocal("info.thermaldynamics.info.invalid");
 		}
 		return I18n.translateToLocalFormatted(getUnlocalizedNameInefficiently(item) + ".name", name);
+	}
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+
+		ItemStack b = CoverHelper.getCoverItemStack(stack, false);
+		if (b.isEmpty()) {
+			tooltip.add(TextFormatting.RED + I18n.translateToLocal("info.thermaldynamics.info.cover.invalid"));
+		}
 	}
 
 	@Override

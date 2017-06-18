@@ -7,6 +7,9 @@ import codechicken.lib.model.bakery.IBakeryProvider;
 import codechicken.lib.model.bakery.generation.IBakery;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.render.particle.CustomParticleHandler;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.vec.Cuboid6;
 import cofh.api.block.IBlockConfigGui;
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
@@ -31,8 +34,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -59,9 +64,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider {
 
@@ -350,6 +353,80 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 
 		return ProxyClient.renderType;
+	}
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
+
+		TileEntity tileEntity = world.getTileEntity(pos);
+		if (tileEntity instanceof TileGrid) {
+			IBlockState state = world.getBlockState(pos);
+			TileGrid gridTile = ((TileGrid) tileEntity);
+			Duct duct = gridTile.getDuctType();
+
+			float min = getSize(state);
+			float max = 1 - min;
+
+			Cuboid6 bb = new Cuboid6(min, min, min, max, max, max).add(pos);
+
+			CustomParticleHandler.addBlockDestroyEffects(world, bb, getAllParticleIcons(duct), manager);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	@SideOnly (Side.CLIENT)
+	public boolean addHitEffects(IBlockState state, World world, RayTraceResult target, ParticleManager manager) {
+
+		if (target != null && target.typeOfHit == RayTraceResult.Type.BLOCK) {
+			TileEntity tileEntity = world.getTileEntity(target.getBlockPos());
+			if (tileEntity instanceof TileGrid) {
+				TileGrid gridTile = ((TileGrid) tileEntity);
+				Duct duct = gridTile.getDuctType();
+
+				float min = getSize(state);
+				float max = 1 - min;
+
+				Cuboid6 bb = new Cuboid6(min, min, min, max, max, max).add(target.getBlockPos());
+
+				TextureAtlasSprite[] possiblities = getAllParticleIcons(duct);
+
+				CustomParticleHandler.addBlockHitEffects(world, bb, target.sideHit, possiblities[world.rand.nextInt(possiblities.length)], manager);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@SideOnly (Side.CLIENT)
+	public static TextureAtlasSprite[] getAllParticleIcons(Duct duct) {
+
+		Set<TextureAtlasSprite> sprites = new HashSet<>();
+		if (duct.iconBaseTexture != null) {
+			sprites.add(duct.iconBaseTexture);
+		}
+		if (duct.iconConnectionTexture != null) {
+			sprites.add(duct.iconConnectionTexture);
+		}
+		if (duct.iconFluidTexture != null) {
+			sprites.add(duct.iconFluidTexture);
+		}
+		if (duct.iconFrameTexture != null) {
+			sprites.add(duct.iconFrameTexture);
+		}
+		if (duct.iconFrameBandTexture != null) {
+			sprites.add(duct.iconFrameBandTexture);
+		}
+		if (duct.iconFrameFluidTexture != null) {
+			sprites.add(duct.iconFrameFluidTexture);
+		}
+
+		if (sprites.isEmpty()) {
+			sprites.add(TextureUtils.getMissingSprite());
+		}
+		return sprites.toArray(new TextureAtlasSprite[0]);
 	}
 
 	/* EVENT HANDLERS */
