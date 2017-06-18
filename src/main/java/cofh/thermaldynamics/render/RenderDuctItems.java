@@ -37,7 +37,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
 	public static final RenderDuctItems instance = new RenderDuctItems();
 
-	static final float ITEM_RENDER_SCALE = 0.8F;
+	static final float ITEM_RENDER_SCALE = 0.7F;
 
 	static {
 		Minecraft minecraft = Minecraft.getMinecraft();

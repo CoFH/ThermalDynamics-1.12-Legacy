@@ -59,6 +59,12 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
+	public boolean allowDuctConnection() {
+
+		return true;
+	}
+
+	@Override
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
