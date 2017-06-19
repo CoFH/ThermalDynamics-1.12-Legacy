@@ -36,9 +36,11 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 	@Override
 	public void renderItem(ItemStack stack) {
 
+		boolean invalid = false;
+
 		NBTTagCompound nbt = stack.getTagCompound();
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
-			return;
+			invalid = true;
 		}
 		int meta = nbt.getByte("Meta");
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
@@ -49,8 +51,12 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 			if (nbt.hasNoTags()) {
 				stack.setTagCompound(null);
 			}
+			invalid = true;
 		}
-
+		if (invalid) {
+			block = Blocks.BARRIER;
+			meta = 0;
+		}
 		EnumFacing side = EnumFacing.NORTH;
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.reset();
@@ -61,18 +67,7 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 	}
 
-	@Override
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-
-		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
-	}
-
-	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-
-		return new ArrayList<>();
-	}
-
+	/* IBakedModel */
 	@Override
 	public boolean isAmbientOcclusion() {
 
@@ -108,4 +103,18 @@ public class RenderItemCover implements IItemRenderer, IPerspectiveAwareModel {
 
 		return ItemOverrideList.NONE;
 	}
+
+	/* IPerspectiveAwareModel */
+	@Override
+	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+
+		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK.getTransforms(), cameraTransformType);
+	}
+
+	@Override
+	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+
+		return new ArrayList<>();
+	}
+
 }

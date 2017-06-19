@@ -153,11 +153,11 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	@Override
 	public boolean openGui(EntityPlayer player) {
 
-		if (super.openGui(player) || ServerHelper.isClientWorld(world())) {
-			return true;
-		}
 		if (grid == null) {
 			return false;
+		}
+		if (super.openGui(player) || ServerHelper.isClientWorld(world())) {
+			return true;
 		}
 		onNeighborBlockChange();
 

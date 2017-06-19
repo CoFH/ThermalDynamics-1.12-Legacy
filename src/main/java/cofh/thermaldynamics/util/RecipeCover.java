@@ -4,6 +4,7 @@ import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.init.TDItems;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -34,6 +35,10 @@ public class RecipeCover implements IRecipe {
 					a = true;
 				}
 			} else {
+				// Invalid cover -> Stone cover.
+				if (stack.getItem() == TDItems.itemCover && CoverHelper.getCoverItemStack(stack, false) == null) {
+					return true;
+				}
 				if (!CoverHelper.isValid(stack)) {
 					return false;
 				}
@@ -54,6 +59,10 @@ public class RecipeCover implements IRecipe {
 			ItemStack stack = craft.getStackInSlot(i);
 			if (stack == null) {
 				continue;
+			}
+			// Invalid cover -> Stone cover.
+			if (stack.getItem() == TDItems.itemCover && CoverHelper.getCoverItemStack(stack, false) == null) {
+				return ItemHelper.cloneStack(CoverHelper.getCoverStack(Blocks.STONE, 0));
 			}
 			if (!ItemHelper.itemsEqualForCrafting(stack, TDDucts.structure.itemStack)) {
 

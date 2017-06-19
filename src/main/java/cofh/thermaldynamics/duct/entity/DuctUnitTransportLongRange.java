@@ -6,8 +6,8 @@ import cofh.thermaldynamics.duct.tiles.DuctUnit;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +28,13 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	@Override
 	public void formGrid() {
 
+		onNeighborBlockChange();
+
+		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
+			if (ductCache[i] instanceof DuctUnitTransportLongRange) {
+				ductCache[i].onNeighborBlockChange();
+			}
+		}
 	}
 
 	@Override
@@ -128,19 +135,6 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	public TransportDestination cacheTile(@Nonnull TileEntity tile, byte side) {
 
 		return null;
-	}
-
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-
-		super.writeToNBT(nbt);
-		return nbt;
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-
-		super.readFromNBT(nbt);
 	}
 
 	@Override

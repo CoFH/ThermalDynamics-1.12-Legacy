@@ -116,7 +116,6 @@ public class ServoItem extends ServoBase {
 				return;
 			}
 		}
-
 		stuffedItems.add(item.copy());
 		onNeighborChange();
 	}
