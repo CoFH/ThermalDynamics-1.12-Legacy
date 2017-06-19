@@ -122,6 +122,7 @@ public class SimulatedInv implements IItemHandler {
 
 	@Override
 	public int getSlotLimit(int slot) {
+
 		return originalLogic.getSlotLimit(slot);
 	}
 }

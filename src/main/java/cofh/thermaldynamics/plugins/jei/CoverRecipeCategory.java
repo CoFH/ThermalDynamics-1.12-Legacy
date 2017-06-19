@@ -75,6 +75,7 @@ public class CoverRecipeCategory extends BlankRecipeCategory<CoverRecipeWrapper>
 
 	@Override
 	public String getModName() {
+
 		return "ThermalDynamics";
 	}
 

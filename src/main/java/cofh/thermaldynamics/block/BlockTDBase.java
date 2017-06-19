@@ -32,7 +32,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public abstract class BlockTDBase extends BlockCoreTile {

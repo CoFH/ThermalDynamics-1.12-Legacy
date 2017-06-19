@@ -105,10 +105,10 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		clearCache();
 		boolean wasValidInput = isValidInput;
 		isValidInput = isValidTile(adjacentTileEntity);
+
 		if (isValidInput) {
 			cacheTile(adjacentTileEntity);
 		}
-
 		boolean wasPowered = isPowered;
 		isPowered = rsMode.isDisabled() || rsMode.getState() == getPowerState();
 		if (wasPowered != isPowered || isValidInput != wasValidInput) {

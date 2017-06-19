@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.item;
 
+import cofh.lib.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
@@ -15,8 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -67,17 +66,18 @@ public class ItemCover extends ItemAttachment {
 	public String getItemStackDisplayName(ItemStack item) {
 
 		ItemStack b = CoverHelper.getCoverItemStack(item, true);
-		String name = "";
+		String name;
+
 		if (!b.isEmpty()) {
 			String unloc = getUnlocalizedNameInefficiently(item) + ".", unloc2 = b.getItem().getUnlocalizedNameInefficiently(b);
-			if (I18n.canTranslate(unloc + unloc2 + ".name")) {
-				return I18n.translateToLocal(unloc + unloc2 + ".name");
+			if (StringHelper.canLocalize(unloc + unloc2 + ".name")) {
+				return StringHelper.localize(unloc + unloc2 + ".name");
 			}
 			name = b.getDisplayName();
 		} else {
-			name = I18n.translateToLocal("info.thermaldynamics.info.invalid");
+			name = StringHelper.localize("info.thermaldynamics.info.invalid");
 		}
-		return I18n.translateToLocalFormatted(getUnlocalizedNameInefficiently(item) + ".name", name);
+		return StringHelper.localizeFormat(getUnlocalizedNameInefficiently(item) + ".name", name);
 	}
 
 	@Override
@@ -85,8 +85,9 @@ public class ItemCover extends ItemAttachment {
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 
 		ItemStack b = CoverHelper.getCoverItemStack(stack, false);
+
 		if (b.isEmpty()) {
-			tooltip.add(TextFormatting.RED + I18n.translateToLocal("info.thermaldynamics.info.cover.invalid"));
+			tooltip.add(StringHelper.getNoticeText("info.thermaldynamics.info.invalidCover"));
 		}
 	}
 

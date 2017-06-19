@@ -68,6 +68,7 @@ public class ServoItem extends ServoBase {
 
 		super.readFromNBT(tag);
 		stuffedItems.clear();
+
 		if (tag.hasKey("StuffedInv", 9)) {
 			NBTTagList tlist = tag.getTagList("StuffedInv", 10);
 			for (int j = 0; j < tlist.tagCount(); j++) {
@@ -84,6 +85,7 @@ public class ServoItem extends ServoBase {
 	public void writeToNBT(NBTTagCompound tag) {
 
 		super.writeToNBT(tag);
+
 		if (isStuffed()) {
 			NBTTagList list = new NBTTagList();
 			for (ItemStack item : stuffedItems) {
@@ -107,13 +109,13 @@ public class ServoItem extends ServoBase {
 		for (ItemStack stuffed : stuffedItems) {
 			if (ItemHelper.itemsEqualWithMetadata(item, stuffed, true)) {
 				stuffed.grow(item.getCount());
+
 				if (stuffed.getCount() < 0) {
 					stuffed.setCount(Integer.MAX_VALUE);
 				}
 				return;
 			}
 		}
-
 		stuffedItems.add(item.copy());
 		onNeighborChange();
 	}
@@ -214,10 +216,10 @@ public class ServoItem extends ServoBase {
 		if (getCachedInv() != null) {
 			for (int slot = 0; slot < getCachedInv().getSlots(); slot++) {
 				ItemStack itemStack = getCachedInv().getStackInSlot(slot);
+
 				if (itemStack.isEmpty()) {
 					continue;
 				}
-
 				itemStack = limitOutput(itemStack.copy(), getCachedInv(), slot, side);
 
 				if (itemStack.isEmpty() || itemStack.getCount() == 0) {
@@ -231,9 +233,7 @@ public class ServoItem extends ServoBase {
 				if (travelingItem == null) {
 					continue;
 				}
-
 				int totalSendSize = travelingItem.stack.getCount();
-
 				travelingItem.stack = getCachedInv().extractItem(slot, travelingItem.stack.getCount(), false);
 
 				if (travelingItem.stack.isEmpty() || travelingItem.stack.getCount() <= 0) {
@@ -270,10 +270,10 @@ public class ServoItem extends ServoBase {
 				continue;
 			}
 			stuffedItem.shrink(travelingItem.stack.getCount());
+
 			if (stuffedItem.getCount() <= 0) {
 				iterator.remove();
 			}
-
 			itemDuct.insertNewItem(travelingItem);
 			return;
 		}
@@ -297,8 +297,10 @@ public class ServoItem extends ServoBase {
 		for (Route outputRoute : routes) {
 			if (outputRoute.pathDirections.size() <= maxRange) {
 				RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
+
 				if (routeInfo.canRoute) {
 					int stackSize = item.getCount() - routeInfo.stackSize;
+
 					if (stackSize <= 0) {
 						continue;
 					}
@@ -370,6 +372,7 @@ public class ServoItem extends ServoBase {
 		}
 		ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
 		TravelingItem routeForItem = getRouteForItem(sending);
+
 		if (routeForItem == null) {
 			return item;
 		}

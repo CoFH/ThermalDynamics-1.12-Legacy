@@ -55,9 +55,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static cofh.thermaldynamics.duct.ConnectionType.BLOCKED;
-import static cofh.thermaldynamics.duct.ConnectionType.ENERGY;
-import static cofh.thermaldynamics.duct.ConnectionType.NORMAL;
+import static cofh.thermaldynamics.duct.ConnectionType.*;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
 
@@ -837,7 +835,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (movingObjectPosition == null) {
 			return false;
 		}
-
 		int subHit = movingObjectPosition.subHit;
 
 		if (subHit > 13 && subHit < 20) {
@@ -846,13 +843,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				return attachment.openGui(player);
 			}
 		}
-
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			if (ductUnit.openGui(player)) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -884,23 +879,19 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (cover != null) {
 				cuboids.add(new IndexedCuboid6(i + 20, cover.getCuboid()));
 			}
-
-			{
-				// Add TILE sides
-				switch (renderConnectionType) {
-					case TILE_CONNECTION:
-						cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
-						break;
-					case DUCT:
-					case CLEAN_DUCT:
-						cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
-						break;
-					case STRUCTURE_CONNECTION:
-					case STRUCTURE_CLEAN:
-						cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
-						break;
-				}
-
+			// Add TILE sides
+			switch (renderConnectionType) {
+				case TILE_CONNECTION:
+					cuboids.add(new IndexedCuboid6(i, subSelection[i].copy()));
+					break;
+				case DUCT:
+				case CLEAN_DUCT:
+					cuboids.add(new IndexedCuboid6(i + 6, subSelection[i + 6].copy()));
+					break;
+				case STRUCTURE_CONNECTION:
+				case STRUCTURE_CLEAN:
+					cuboids.add(new IndexedCuboid6(i, subSelection[i + 6].copy()));
+					break;
 			}
 		}
 		cuboids.add(new IndexedCuboid6(13, centerSelection.copy()));
@@ -910,14 +901,15 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public boolean onWrench(EntityPlayer player, EnumFacing side) {
 
 		RayTraceResult rayTrace = RayTracer.retraceBlock(world, player, getPos());
+
 		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
 			if (rayTrace == null) {
 				return false;
 			}
 			int subHit = rayTrace.subHit;
+
 			if (subHit >= 0 && subHit <= 13) {
 				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
-
 				onNeighborBlockChange();
 
 				for (DuctUnit ductUnit : getDuctUnits()) {
@@ -952,7 +944,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (subHit > 13 && subHit < 20) {
 				return getAttachment(subHit - 14).onWrenched();
 			}
-
 			if (subHit >= 20 && subHit < 26) {
 				return getCover(subHit - 20).onWrenched();
 			}
@@ -964,6 +955,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		byte b = payload.getByte();
+
 		if (b == 0) {
 			byte t = payload.getByte();
 			DuctToken token = DuctToken.TOKENS[t];

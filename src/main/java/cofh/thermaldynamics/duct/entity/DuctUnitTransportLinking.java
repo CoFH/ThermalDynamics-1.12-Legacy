@@ -43,11 +43,13 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public void handleTileSideUpdate(@Nullable TileEntity tile, @Nullable IDuctHolder holder, byte side, @Nonnull ConnectionType type, byte oppositeSide) {
 
 		SidedBlockPos sidedBlockPos = rangePos[side];
+
 		if (sidedBlockPos != null) {
 			if (tile != null) {
 				if (world().isBlockLoaded(sidedBlockPos.pos)) {
 					TileEntity distantTile = world().getTileEntity(sidedBlockPos.pos);
 					DuctUnitTransportBase transportBase = IDuctHolder.getTokenFromTile(distantTile, DuctToken.TRANSPORT);
+
 					if (transportBase != null && transportBase.isCrossover()) {
 						super.handleTileSideUpdate(distantTile, (IDuctHolder) distantTile, side, type, (byte) sidedBlockPos.side.ordinal());
 						return;
@@ -57,53 +59,9 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			} else {
 				rangePos[side] = null;
 			}
-
 		}
-
 		super.handleTileSideUpdate(tile, holder, side, type, oppositeSide);
 	}
-
-	//	@Override
-	//	public void handleTileSideUpdate(int i) {
-	//
-	//		super.handleTileSideUpdate(i);
-	//
-	//		if (rangePos[i] == null || rangePos[i].orientation == null) {
-	//			rangePos[i] = null;
-	//			return;
-	//		}
-	//
-	//		if (neighborTypes[i] != NeighborType.OUTPUT) {
-	//			if (i < 2 || worldObj.isBlockLoaded(pos.offset(EnumFacing.VALUES[i]))) {
-	//				rangePos[i] = null;
-	//			}
-	//			return;
-	//		}
-	//
-	//		if (rangePos[i] == clientValue) {
-	//			return;
-	//		}
-	//
-	//		int j = rangePos[i].orientation.ordinal();
-	//		TileEntity theTile;
-	//
-	//		BlockPos position = new BlockPos(rangePos[i].x, rangePos[i].y, rangePos[i].z);
-	//		if (worldObj.isBlockLoaded(position)) {
-	//			theTile = worldObj.getTileEntity(position);
-	//
-	//			if (theTile instanceof DuctUnitTransportCrossover && !isBlockedSide(i) && !((TileDuctBase) theTile).isBlockedSide(j ^ 1)) {
-	//				neighborMultiBlocks[i] = (IGridTile) theTile;
-	//				neighborTypes[i] = NeighborType.MULTIBLOCK;
-	//			} else {
-	//				rangePos[i] = null;
-	//				super.handleTileSideUpdate(i);
-	//			}
-	//		} else {
-	//			neighborMultiBlocks[i] = null;
-	//			neighborTypes[i] = NeighborType.OUTPUT;
-	//		}
-	//
-	//	}
 
 	@Override
 	public boolean isOutput() {
@@ -141,24 +99,21 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 		if (ServerHelper.isClientWorld(world())) {
 			return true;
 		}
-
 		for (byte i = 0; i < 6; i++) {
 			rangePos[i] = null;
 
 			TileEntity adjTileEntitySafe = BlockHelper.getAdjacentTileEntity(parent, i);
 			DuctUnitTransportBase duct = IDuctHolder.getTokenFromTile(adjTileEntitySafe, DuctToken.TRANSPORT);
+
 			if (duct == null || !duct.isLongRange()) {
 				continue;
 			}
-
 			player.sendMessage(new TextComponentString("Searching on side - " + EnumFacing.VALUES[i].toString()));
 
 			DuctUnitTransportLongRange travel = (DuctUnitTransportLongRange) duct;
-
 			DuctUnitTransportLinking finalDest = null;
 
 			int dist = 0;
-
 			byte d = travel.nextDirection(i);
 
 			BlockPos pos = travel.pos();
@@ -181,9 +136,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				} else {
 					break;
 				}
-
 				travel.onNeighborBlockChange();
-
 				d = travel.nextDirection(d);
 				dist++;
 			}
@@ -195,17 +148,14 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				if (grid != null) {
 					grid.destroyAndRecreate();
 				}
-
 				if (finalDest.grid != null && finalDest.grid != grid) {
 					finalDest.grid.destroyAndRecreate();
 				}
-
 				finalDest.parent.callBlockUpdate();
 			} else {
 				player.sendMessage(new TextComponentString("Failed after " + dist + " blocks - (" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + ")"));
 			}
 		}
-
 		parent.callBlockUpdate();
 		return true;
 	}
@@ -216,12 +166,14 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 		if (rangePos[direction] != null) {
 			TileEntity adjacentTileEntity = BlockHelper.getAdjacentTileEntity(parent, direction);
 			DuctUnitTransportBase ductUnitTransportBase = IDuctHolder.getTokenFromTile(adjacentTileEntity, DuctToken.TRANSPORT);
+
 			if (ductUnitTransportBase instanceof DuctUnitTransportLongRange) {
 				return ductUnitTransportBase;
 			}
 			return null;
 		}
 		IGridTile physicalConnectedSide = super.getPhysicalConnectedSide(direction);
+
 		if (physicalConnectedSide instanceof DuctUnitTransportLongRange) {
 			return null;
 		}
@@ -286,6 +238,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public void readFromNBT(NBTTagCompound nbt) {
 
 		super.readFromNBT(nbt);
+
 		for (byte i = 0; i < 6; i++) {
 			if (nbt.hasKey("crossover" + i, 10)) {
 				NBTTagCompound tag = nbt.getCompoundTag("crossover" + i);
@@ -298,6 +251,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
+
 		for (int i = 0; i < 6; i++) {
 			if (rangePos[i] != null) {
 				NBTTagCompound tag = new NBTTagCompound();
@@ -319,7 +273,6 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				rangeMask = rangeMask | (1 << i);
 			}
 		}
-
 		packet.addInt(rangeMask);
 	}
 
@@ -327,6 +280,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		int rangeMask = payload.getInt();
+
 		for (int i = 0; i < rangePos.length; i++) {
 			if ((rangeMask & (1 << i)) != 0) {
 				rangePos[i] = clientValue;
@@ -405,22 +359,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 				return i;
 			}
 		}
-
 		return 0;
-	}
-
-	@Override
-	public boolean acceptingStuff() {
-
-		return false;
-	}
-
-	@Override
-	public ConnectionType getConnectionType(byte side) {
-
-		if (rangePos[side] == null) {
-		}
-		return super.getConnectionType(side);
 	}
 
 	@Nonnull
@@ -471,4 +410,5 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 			tag.setInteger("s", side.ordinal());
 		}
 	}
+
 }

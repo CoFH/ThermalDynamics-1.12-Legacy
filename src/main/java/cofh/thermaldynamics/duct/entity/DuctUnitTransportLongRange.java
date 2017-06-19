@@ -8,6 +8,7 @@ import cofh.thermaldynamics.multiblock.Route;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +29,13 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 	@Override
 	public void formGrid() {
 
+		onNeighborBlockChange();
+
+		for (byte i = 0; i < EnumFacing.VALUES.length; i++) {
+			if (ductCache[i] instanceof DuctUnitTransportLongRange) {
+				ductCache[i].onNeighborBlockChange();
+			}
+		}
 	}
 
 	@Override
@@ -59,10 +67,12 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		int v = t.progress;
 		v += t.step * 2;
 		t.progress = (byte) (v % EntityTransport.DUCT_LENGTH);
+
 		if (v >= EntityTransport.DUCT_LENGTH) {
 			if (ductCache[t.direction] != null) {
 				DuctUnitTransportBase newHome = getConnectedSide(t.direction);
 				newHome.onNeighborBlockChange();
+
 				if (newHome.ductCache[t.direction ^ 1] != null) {
 					t.pos = newHome.pos();
 					t.oldDirection = t.direction;
@@ -70,6 +80,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 					if (newHome instanceof DuctUnitTransportLongRange) {
 						DuctUnitTransportLongRange lr = (DuctUnitTransportLongRange) newHome;
 						t.direction = lr.nextDirection(t.direction);
+
 						if (t.direction == -1) {
 							t.dropPassenger();
 						}
@@ -97,6 +108,7 @@ public class DuctUnitTransportLongRange extends DuctUnitTransportBase {
 		int v = t.progress;
 		v += t.step + (t.step);
 		t.progress = (byte) (v % EntityTransport.DUCT_LENGTH);
+
 		if (v >= EntityTransport.DUCT_LENGTH) {
 			if (!t.trySimpleAdvance()) {
 				return true;

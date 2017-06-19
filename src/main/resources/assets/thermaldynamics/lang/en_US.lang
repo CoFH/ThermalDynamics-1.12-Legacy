@@ -54,6 +54,8 @@ info.thermaldynamics.info.duct=-Duct Info-
 info.thermaldynamics.info.energy=RF
 info.thermaldynamics.info.fluid=Fluid
 info.thermaldynamics.info.fluidThroughput=Max Fluid Throughput
+info.thermaldynamics.info.invalid=Invalid
+info.thermaldynamics.info.invalidCover=Place in a crafting grid to convert to a Stone Cover.
 info.thermaldynamics.info.items=Items
 info.thermaldynamics.info.redstone=Redstone
 info.thermaldynamics.info.size=Size
@@ -61,8 +63,6 @@ info.thermaldynamics.info.tracker.activate=Starting tracking
 info.thermaldynamics.info.tracker.avg=5 Sec. Avg. Level
 info.thermaldynamics.info.tracker.avgInOut=5 Sec. Avg. In/Out
 info.thermaldynamics.info.tracker.cur=Current Level
-info.thermaldynamics.info.invalid=Invalid
-info.thermaldynamics.info.cover.invalid=Add to crafting grid to receive a stone cover.
 
 info.thermaldynamics.relay.gridRS=Duct Power
 info.thermaldynamics.relay.invert.0=Scaled

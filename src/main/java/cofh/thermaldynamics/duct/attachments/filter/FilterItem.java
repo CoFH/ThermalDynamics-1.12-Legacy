@@ -3,9 +3,10 @@ package cofh.thermaldynamics.duct.attachments.filter;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class FilterItem extends FilterBase {
 
@@ -19,29 +20,24 @@ public class FilterItem extends FilterBase {
 		super(tile, side);
 	}
 
-	IInventory inventory;
-	ISidedInventory sidedInventory;
+	IItemHandler inventory;
 
 	@Override
 	public void clearCache() {
 
 		inventory = null;
-		sidedInventory = null;
 	}
 
 	@Override
 	public void cacheTile(TileEntity tile) {
 
-		inventory = (IInventory) tile;
-		if (tile instanceof ISidedInventory) {
-			sidedInventory = (ISidedInventory) tile;
-		}
+		inventory = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override
 	public boolean isValidTile(TileEntity tile) {
 
-		return tile instanceof IInventory;
+		return tile != null && tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
 	}
 
 	@Override

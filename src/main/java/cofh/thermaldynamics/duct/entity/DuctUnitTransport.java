@@ -91,73 +91,14 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		return super.getRenderConnectionType(side);
 	}
 
-	//	@Override
-	//	public boolean onWrench(EntityPlayer player, EnumFacing side) {
-	//
-	//		RayTraceResult rayTrace = RayTracer.retraceBlock(world(), player, pos());
-	//		if (WrenchHelper.isHoldingUsableWrench(player, rayTrace)) {
-	//			if (rayTrace == null) {
-	//				return false;
-	//			}
-	//
-	//			int subHit = rayTrace.subHit;
-	//			if (subHit >= 0 && subHit <= 13) {
-	//				int i = subHit == 13 ? side.ordinal() : subHit < 6 ? subHit : subHit - 6;
-	//
-	//				onNeighborBlockChange();
-	//
-	//				TileEntity tile = BlockHelper.getAdjacentTileEntity(this, i);
-	//				if (isConnectable(tile, i)) {
-	//					connectionTypes[i] = connectionTypes[i].next();
-	//					((TileDuctBase) tile).connectionTypes[i ^ 1] = connectionTypes[i];
-	//				} else {
-	//					if (connectionTypes[i] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-	//						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
-	//					} else {
-	//						connectionTypes[i] = cofh.thermaldynamics.duct.ConnectionType.FORCED;
-	//						for (int j = 0; j < 6; j++) {
-	//							if (i != j && connectionTypes[j] == cofh.thermaldynamics.duct.ConnectionType.FORCED) {
-	//								connectionTypes[j] = cofh.thermaldynamics.duct.ConnectionType.NORMAL;
-	//							}
-	//						}
-	//					}
-	//				}
-	//
-	//				onNeighborBlockChange();
-	//
-	//				worldObj.notifyNeighborsOfStateChange(pos, getBlockType());
-	//
-	//				if (myGrid != null) {
-	//					myGrid.destroyAndRecreate();
-	//				}
-	//
-	//				for (SubTileGridTile subTile : subTiles) {
-	//					subTile.destroyAndRecreate();
-	//				}
-	//
-	//				IBlockState state = worldObj.getBlockState(pos);
-	//				worldObj.notifyBlockUpdate(pos, state, state, 1);
-	//				return true;
-	//			}
-	//			if (subHit > 13 && subHit < 20) {
-	//				return attachments[subHit - 14].onWrenched();
-	//			}
-	//
-	//			if (subHit >= 20 && subHit < 26) {
-	//				return covers[subHit - 20].onWrenched();
-	//			}
-	//		}
-	//		return false;
-	//	}
-	//
 	@Override
 	public boolean openGui(EntityPlayer player) {
 
-		if (super.openGui(player) || ServerHelper.isClientWorld(world())) {
-			return true;
-		}
 		if (grid == null) {
 			return false;
+		}
+		if (ServerHelper.isClientWorld(world())) {
+			return true;
 		}
 		onNeighborBlockChange();
 
@@ -181,6 +122,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 
 		super.writeToNBT(nbt);
+
 		if (data != BLANK_NAME) {
 			data.write(nbt, this);
 		}
@@ -209,6 +151,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		super.handleTilePacket(payload);
+
 		if (payload.getBool()) {
 			if (data == BLANK_NAME) {
 				data = new OutputData();
@@ -228,6 +171,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		byte type = payload.getByte();
+
 		if (type == NETWORK_REQUEST && isServer) {
 			sendPlayerToDest(thePlayer, payload.getInt(), payload.getInt(), payload.getInt());
 		} else if (type == NETWORK_SETOUTPUTDATA && isServer) {
@@ -240,16 +184,16 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			}
 		} else if (type == NETWORK_LIST && !isServer) {
 			Container openContainer = thePlayer.openContainer;
+
 			if (!(openContainer instanceof ContainerTransport)) {
 				return;
 			}
 			ContainerTransport transport = (ContainerTransport) openContainer;
-
 			transport.setEntry(new DirectoryEntry(payload));
-
 			ArrayList<DirectoryEntry> entries = new ArrayList<>();
 
 			int size = payload.getShort();
+
 			for (int i = 0; i < size; i++) {
 				entries.add(new DirectoryEntry(payload));
 			}
@@ -306,7 +250,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 		myPayload.addByte(NETWORK_LIST);
 
 		LinkedList<Route<DuctUnitTransportBase, GridTransport>> outputRoutes = getCache().outputRoutes;
-
 		ArrayList<DuctUnitTransport> ducts = new ArrayList<>(outputRoutes.size());
 
 		for (Route<DuctUnitTransportBase, GridTransport> outputRoute : outputRoutes) {
@@ -315,8 +258,8 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			}
 		}
 		DirectoryEntry.addDirectoryEntry(myPayload, this);
-
 		myPayload.addShort(ducts.size());
+
 		for (DuctUnitTransport endPoint : ducts) {
 			DirectoryEntry.addDirectoryEntry(myPayload, endPoint);
 		}
@@ -556,13 +499,5 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			payload.addItemStack(item);
 		}
 	}
-
-	//	@Override
-	//	@SideOnly (Side.CLIENT)
-	//	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-	//
-	//		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
-	//		return connectionType == BlockDuct.ConnectionType.NONE ? null : CoverHoleRender.hollowDuctTransport;
-	//	}
 
 }

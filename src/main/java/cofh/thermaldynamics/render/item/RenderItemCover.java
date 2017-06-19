@@ -53,7 +53,6 @@ public class RenderItemCover implements IItemRenderer {
 			block = Blocks.BARRIER;
 			meta = 0;
 		}
-
 		EnumFacing side = EnumFacing.NORTH;
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.reset();
@@ -66,6 +65,7 @@ public class RenderItemCover implements IItemRenderer {
 
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemStack stack, TransformType cameraTransformType) {
+
 		return MapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK, cameraTransformType);
 	}
 
@@ -80,4 +80,5 @@ public class RenderItemCover implements IItemRenderer {
 
 		return false;
 	}
+
 }

@@ -272,12 +272,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return new AxisAlignedBB(min, min, min, max, max, max);
 	}
 
-	//	@Override
-	//	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, ItemStack stack) {
-	//
-	//		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, stack);
-	//	}
-
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
 
@@ -436,10 +430,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 		RayTraceResult target = event.getTarget();
 		EntityPlayer player = event.getPlayer();
+
 		if (target.typeOfHit == RayTraceResult.Type.BLOCK && player.world.getBlockState(event.getTarget().getBlockPos()).getBlock().getUnlocalizedName().equals(getUnlocalizedName())) {
 			RayTracer.retraceBlock(player.world, player, target.getBlockPos());
-
 			ICustomHitBox tile = ((ICustomHitBox) player.world.getTileEntity(target.getBlockPos()));
+
 			if (tile != null && tile.shouldRenderCustomHitBox(target.subHit, player)) {
 				event.setCanceled(true);
 				RenderHitbox.drawSelectionBox(player, target, event.getPartialTicks(), tile.getCustomHitBox(target.subHit, player));
@@ -452,6 +447,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	public IBlockState getVisualState(IBlockAccess world, BlockPos pos, EnumFacing side) {
 
 		TileEntity tileEntity = world.getTileEntity(pos);
+
 		if (tileEntity instanceof TileGrid) {
 			Cover cover = ((TileGrid) tileEntity).getCover(side.ordinal());
 			if (cover != null) {
@@ -477,6 +473,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			return ((IBlockConfigGui) tile).openConfigGui(world, pos, side, player);
 		} else if (tile != null) {
 			int subHit = side.ordinal();
+
 			if (world instanceof World) {
 				RayTraceResult rayTrace = RayTracer.retraceBlock((World) world, player, pos);
 				if (rayTrace == null) {
@@ -488,6 +485,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			}
 			if (subHit > 13 && subHit < 20) {
 				Attachment attachment = tile.getAttachment(subHit - 14);
+
 				if (attachment instanceof IBlockConfigGui) {
 					return ((IBlockConfigGui) attachment).openConfigGui(world, pos, side, player);
 				}
