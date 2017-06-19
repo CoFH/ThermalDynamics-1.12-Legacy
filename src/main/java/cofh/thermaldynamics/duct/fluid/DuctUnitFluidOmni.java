@@ -4,6 +4,8 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class DuctUnitFluidOmni extends DuctUnitFluid {
 
@@ -29,6 +31,7 @@ public class DuctUnitFluidOmni extends DuctUnitFluid {
 	}
 
 	@Override
+	@SideOnly (Side.CLIENT)
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		super.handleTilePacket(payload);

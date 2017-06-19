@@ -8,6 +8,8 @@ import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDProps;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class DuctUnitItemEnder extends DuctUnitItem {
 
@@ -190,6 +192,7 @@ public class DuctUnitItemEnder extends DuctUnitItem {
 	}
 
 	@Override
+	@SideOnly (Side.CLIENT)
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		powered = payload.getBool();

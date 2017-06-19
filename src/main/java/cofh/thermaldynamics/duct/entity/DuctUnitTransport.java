@@ -206,6 +206,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	}
 
 	@Override
+	@SideOnly (Side.CLIENT)
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		super.handleTilePacket(payload);

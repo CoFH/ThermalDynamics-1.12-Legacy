@@ -36,6 +36,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -609,6 +611,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	}
 
 	@Override
+	@SideOnly (Side.CLIENT)
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		pathWeightType = payload.getByte();
