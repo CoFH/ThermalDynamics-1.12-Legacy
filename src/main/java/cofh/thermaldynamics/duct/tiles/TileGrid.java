@@ -671,11 +671,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	@Override
-	public void handleTilePacket(PacketCoFHBase payload, boolean isServer) {
+	@SideOnly(Side.CLIENT)
+	public void handleTilePacket(PacketCoFHBase payload) {
 
-		if (isServer) {
-			return;
-		}
 		if (clientConnections == null) {
 			clientConnections = new BlockDuct.ConnectionType[6];
 		}

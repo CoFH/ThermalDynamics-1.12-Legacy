@@ -33,6 +33,8 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -332,6 +334,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 	}
 
 	@Override
+	@SideOnly (Side.CLIENT)
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		myRenderFluid = payload.getFluidStack();
