@@ -13,7 +13,7 @@
 		"parent": "",
 		"screenshots": [],
 		"dependencies": [
-			"Forge,cofhcore,thermalfoundation"
+			"forge,cofhcore,thermalfoundation"
 		]
 	}
 ]
