@@ -68,8 +68,6 @@ import java.util.*;
 
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider {
 
-	public static final PropertyEnum<BlockDuct.Type> VARIANT = PropertyEnum.create("type", Type.class);
-
 	public static final PropertyInteger META = new PropertyInteger("meta", 15);
 	public static final ThreadLocal<BlockPos> IGNORE_RAY_TRACE = new ThreadLocal<>();
 	public int offset;
@@ -545,8 +543,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (offset != 0) {
 			return true;
 		}
-		GridEnergy.initialize();
-
 		PacketHandler.instance.registerPacket(PacketFluid.class);
 
 		/* ENERGY */
@@ -651,62 +647,5 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			return this.renderDuct;
 		}
 	}
-
-	/* TYPE */
-	public enum Type implements IStringSerializable {
-
-		// @formatter:off
-		ENERGY(0, "energy"),
-		FLUID(1, "fluid"),
-		FLUID_TRANS(2, "fluid_trans"),
-		ITEM(3, "item"),
-		ITEM_TRANS(4, "item_trans"),
-		TRANSPORT(5, "transport");
-		// @formatter:on
-
-		private static final Type[] METADATA_LOOKUP = new Type[values().length];
-
-		private final int metadata;
-		private final String name;
-
-		Type(int metadata, String name) {
-
-			this.metadata = metadata;
-			this.name = name;
-		}
-
-		public int getMetadata() {
-
-			return this.metadata;
-		}
-
-		@Override
-		public String getName() {
-
-			return this.name;
-		}
-
-		public static Type byMetadata(int metadata) {
-
-			if (metadata < 0 || metadata >= METADATA_LOOKUP.length) {
-				metadata = 0;
-			}
-			return METADATA_LOOKUP[metadata];
-		}
-
-		static {
-			for (Type type : values()) {
-				METADATA_LOOKUP[type.getMetadata()] = type;
-			}
-		}
-	}
-
-	/* REFERENCES */
-	public static ItemStack ductEnergy;
-	public static ItemStack ductFluid;
-	public static ItemStack ductItem;
-	public static ItemStack ductTransport;
-
-	public static ItemBlockDuct itemBlock;
 
 }

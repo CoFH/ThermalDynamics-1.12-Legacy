@@ -407,6 +407,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		onNeighborBlockChange();
 		onAttachmentsChanged();
 		callBlockUpdate();
+
 		return true;
 	}
 
@@ -421,27 +422,24 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		onNeighborBlockChange();
 		onAttachmentsChanged();
 		callBlockUpdate();
+
 		return true;
 	}
 
 	public boolean addCover(Cover cover) {
 
-		if (cover == null) {
+		if (attachmentData != null && attachmentData.covers[cover.side] != null) {
 			return false;
 		}
-
-		byte side = cover.side;
+		if (ServerHelper.isClientWorld(world)) {
+			return true;
+		}
 		if (attachmentData == null) {
 			attachmentData = new AttachmentData();
-		} else if (attachmentData.covers[side] != null) {
-			return false;
 		}
-		attachmentData.covers[side] = cover;
+		attachmentData.covers[cover.side] = cover;
 
-		callNeighborStateChange();
-		onNeighborBlockChange();
 		callBlockUpdate();
-		onAttachmentsChanged();
 
 		return true;
 	}
@@ -453,10 +451,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 		attachmentData.covers[side] = null;
 
-		callNeighborStateChange();
-		onNeighborBlockChange();
 		callBlockUpdate();
-		onAttachmentsChanged();
 
 		return true;
 	}
@@ -872,7 +867,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 					cuboids.add(new IndexedCuboid6(i + 14, subSelection[i + 6].copy()));
 				}
 			}
-
 			Cover cover = getCover(i);
 			if (cover != null) {
 				cuboids.add(new IndexedCuboid6(i + 20, cover.getCuboid()));
@@ -998,7 +992,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			ductUnit.onPlaced(living, stack);
 		}
-
 		if (ServerHelper.isServerWorld(world)) {
 			for (DuctUnit ductUnit : getDuctUnits()) {
 				TickHandler.addMultiBlockToCalculate(ductUnit);

@@ -26,6 +26,27 @@ public class GridItem extends MultiBlockGridWithRoutes<DuctUnitItem, GridItem> {
 	public boolean repoll = false;
 
 	@Override
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
+
+		super.addInfo(info, player, debug);
+		addInfo(info, "items", travelingItemsCount);
+	}
+
+	@Override
+	public void onMajorGridChange() {
+
+		super.onMajorGridChange();
+		shouldRepoll = true;
+	}
+
+	@Override
+	public void onMinorGridChange() {
+
+		super.onMinorGridChange();
+		shouldRepoll = true;
+	}
+
+	@Override
 	public void tickGrid() {
 
 		super.tickGrid();
@@ -69,6 +90,7 @@ public class GridItem extends MultiBlockGridWithRoutes<DuctUnitItem, GridItem> {
 		return aBlock instanceof DuctUnitItem;
 	}
 
+	/* HELPERS */
 	public void poll(TravelingItem item) {
 
 		travelingItemsCount++;
@@ -81,24 +103,5 @@ public class GridItem extends MultiBlockGridWithRoutes<DuctUnitItem, GridItem> {
 		list.addItemEntry(item.getStackEntry(), item.stack.getCount());
 	}
 
-	@Override
-	public void onMinorGridChange() {
-
-		super.onMinorGridChange();
-		shouldRepoll = true;
-	}
-
-	@Override
-	public void onMajorGridChange() {
-
-		super.onMajorGridChange();
-		shouldRepoll = true;
-	}
-
-	@Override
-	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
-
-		super.addInfo(info, player, debug);
-		addInfo(info, "items", travelingItemsCount);
-	}
 }
+

@@ -146,18 +146,6 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public boolean allowDuctConnection() {
-
-		return false;
-	}
-
-	@Override
-	public boolean allowEnergyConnection() {
-
-		return false;
-	}
-
-	@Override
 	public void addDescriptionToPacket(PacketCoFHBase packet) {
 
 		packet.addShort(Block.getIdFromBlock(state.getBlock()));

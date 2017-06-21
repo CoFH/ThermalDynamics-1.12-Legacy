@@ -20,6 +20,7 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 	public GridEnergy(World world, int transferLimit, int capacity) {
 
 		super(world);
+
 		this.transferLimit = transferLimit;
 		this.capacity = capacity;
 		myStorage = new EnergyStorage(GridEnergy.this.capacity, GridEnergy.this.transferLimit) {
@@ -38,17 +39,14 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 		};
 	}
 
-	public static void initialize() {
+	@Override
+	public void addNode(DuctUnitEnergy aMultiBlock) {
 
-		//		String names[] = { "Basic", "Hardened", "Reinforced", "Signalum", "Resonant" };
-		//		String category;
-		//		String category2 = "Duct.Energy.";
-		//
-		//		for (int i = 0; i < 5; i++) {
-		//			category = category2 + names[i];
-		//			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
-		//			NODE_STORAGE[i] = NODE_TRANSFER[i] * 5;
-		//		}
+		super.addNode(aMultiBlock);
+
+		if (aMultiBlock.getEnergyForGrid() > 0) {
+			myStorage.modifyEnergyStored(aMultiBlock.getEnergyForGrid());
+		}
 	}
 
 	@Override
@@ -58,15 +56,21 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 	}
 
 	@Override
-	public boolean canAddBlock(IGridTile aBlock) {
+	public void destroyNode(IGridTile node) {
 
-		return aBlock instanceof DuctUnitEnergy && ((DuctUnitEnergy) aBlock).getTransferLimit() == transferLimit;
+		if (node.isNode()) {
+			((DuctUnitEnergy) node).setEnergyForGrid(getNodeShare((DuctUnitEnergy) node));
+		}
+		super.destroyNode(node);
 	}
 
 	@Override
-	public int getLevel() {
+	public void removeBlock(DuctUnitEnergy oldBlock) {
 
-		return myStorage.getEnergyStored();
+		if (oldBlock.isNode()) {
+			oldBlock.setEnergyForGrid(getNodeShare(oldBlock));
+		}
+		super.removeBlock(oldBlock);
 	}
 
 	@Override
@@ -85,11 +89,31 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 		}
 	}
 
-	public int getSendableEnergy() {
+	@Override
+	public boolean canAddBlock(IGridTile aBlock) {
 
-		return Math.min(myStorage.getMaxExtract(), currentEnergy == 0 ? extraEnergy : currentEnergy);
+		return aBlock instanceof DuctUnitEnergy && ((DuctUnitEnergy) aBlock).getTransferLimit() == transferLimit;
 	}
 
+	@Override
+	public boolean canGridsMerge(MultiBlockGrid grid) {
+
+		return super.canGridsMerge(grid) && ((GridEnergy) grid).transferLimit == this.transferLimit;
+	}
+
+	@Override
+	protected int getLevel() {
+
+		return myStorage.getEnergyStored();
+	}
+
+	@Override
+	protected String getUnit() {
+
+		return "RF";
+	}
+
+	/* HELPERS */
 	public void useEnergy(int energyUsed) {
 
 		myStorage.extractEnergy(energyUsed, false);
@@ -100,51 +124,24 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 		}
 	}
 
-	@Override
-	public boolean canGridsMerge(MultiBlockGrid grid) {
+	public boolean isPowered() {
 
-		return super.canGridsMerge(grid) && ((GridEnergy) grid).transferLimit == this.transferLimit;
+		return myStorage.getEnergyStored() > 0;
 	}
 
-	@Override
-	public void addNode(DuctUnitEnergy aMultiBlock) {
-
-		super.addNode(aMultiBlock);
-
-		if (aMultiBlock.getEnergyForGrid() > 0) {
-			myStorage.modifyEnergyStored(aMultiBlock.getEnergyForGrid());
-		}
-	}
-
-	@Override
-	public void removeBlock(DuctUnitEnergy oldBlock) {
-
-		if (oldBlock.isNode()) {
-			oldBlock.setEnergyForGrid(getNodeShare(oldBlock));
-		}
-		super.removeBlock(oldBlock);
-	}
-
-	//TODO:Rework
 	public int getNodeShare(DuctUnitEnergy ductEnergy) {
 
 		return nodeSet.size() == 1 ? myStorage.getEnergyStored() : isFirstMultiblock(ductEnergy) ? myStorage.getEnergyStored() / nodeSet.size() + myStorage.getEnergyStored() % nodeSet.size() : myStorage.getEnergyStored() / nodeSet.size();
 	}
 
-	@Override
-	protected String getUnit() {
+	public int getSendableEnergy() {
 
-		return "RF";
+		return Math.min(myStorage.getMaxExtract(), currentEnergy == 0 ? extraEnergy : currentEnergy);
 	}
 
 	public int receiveEnergy(int maxReceive, boolean simulate) {
 
 		return myStorage.receiveEnergy(maxReceive, simulate);
-	}
-
-	public boolean isPowered() {
-
-		return myStorage.getEnergyStored() > 0;
 	}
 
 }

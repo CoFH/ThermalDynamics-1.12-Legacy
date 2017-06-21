@@ -11,6 +11,8 @@ import java.util.List;
 
 public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiBlockGrid<T> {
 
+	private Tracker tracker;
+
 	public MultiBlockGridTracking(WorldGridList worldGrid) {
 
 		super(worldGrid);
@@ -21,7 +23,35 @@ public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiB
 		super(worldObj);
 	}
 
-	private Tracker tracker;
+	@Override
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
+
+		super.addInfo(info, player, debug);
+		addInfo(info, "tracker.cur", format(getLevel()));
+
+		if (tracker == null) {
+			info.add(new TextComponentTranslation("info.thermaldynamics.info.tracker.activate"));
+			getTracker();
+			return;
+		}
+		tracker.life = 0;
+
+		addInfo(info, "tracker.avg", format(tracker.avgStuff()) + getUnit());
+		addInfo(info, "tracker.avgInOut", String.format("+%s%s/-%s%s", format(tracker.avgStuffIn()), getUnit(), format(tracker.avgStuffOut()), getUnit()));
+	}
+
+	@Override
+	public void tickGrid() {
+
+		super.tickGrid();
+
+		if (tracker != null) {
+			tracker.newTick(getLevel());
+			if (tracker.life > Tracker.LIFESPAN) {
+				tracker = null;
+			}
+		}
+	}
 
 	public Tracker getTracker() {
 
@@ -32,7 +62,7 @@ public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiB
 		return tracker;
 	}
 
-	public abstract int getLevel();
+	protected abstract int getLevel();
 
 	protected abstract String getUnit();
 
@@ -61,36 +91,7 @@ public abstract class MultiBlockGridTracking<T extends IGridTile> extends MultiB
 		return a;
 	}
 
-	@Override
-	public void tickGrid() {
-
-		super.tickGrid();
-		if (tracker != null) {
-			tracker.newTick(getLevel());
-			if (tracker.life > Tracker.LIFESPAN) {
-				tracker = null;
-			}
-		}
-	}
-
-	@Override
-	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
-
-		super.addInfo(info, player, debug);
-		addInfo(info, "tracker.cur", format(getLevel()));
-
-		if (tracker == null) {
-			info.add(new TextComponentTranslation("info.thermaldynamics.info.tracker.activate"));
-			getTracker();
-			return;
-		}
-		tracker.life = 0;
-
-		addInfo(info, "tracker.avg", format(tracker.avgStuff()) + getUnit());
-		addInfo(info, "tracker.avgInOut", String.format("+%s%s/-%s%s", format(tracker.avgStuffIn()), getUnit(), format(tracker.avgStuffOut()), getUnit()));
-	}
-
-	private String format(double v) {
+	protected String format(double v) {
 
 		if (v == 0) {
 			return "0";

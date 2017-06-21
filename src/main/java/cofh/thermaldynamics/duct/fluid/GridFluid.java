@@ -27,6 +27,9 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 	public final FluidTankGrid myTank = new FluidTankGrid(1000, this);
 	public int toDistribute = 0;
 
+	public boolean doesPassiveTicking = false;
+	int numStorable = -1;
+
 	/* Render Stuff */
 	public HashSet<ChunkCoord> chunks;
 	TimeTracker myTracker = new TimeTracker();
@@ -37,28 +40,6 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 	public GridFluid(World world) {
 
 		super(world);
-
-	}
-
-	@Override
-	public void onMajorGridChange() {
-
-		super.onMajorGridChange();
-		numStorable = -1;
-		chunks = null;
-	}
-
-	@Override
-	public void onMinorGridChange() {
-
-		super.onMinorGridChange();
-		numStorable = -1;
-	}
-
-	@Override
-	public int getLevel() {
-
-		return myTank.getFluidAmount();
 	}
 
 	@Override
@@ -80,44 +61,25 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 		}
 	}
 
-	int numStorable = -1;
+	@Override
+	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
+
+		super.addInfo(info, player, debug);
+		FluidStack fluid = getFluid();
+		if (fluid != null) {
+			if ((this instanceof GridFluidSuper)) {
+				addInfo(info, "fluidThroughput", new TextComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
+			} else {
+				addInfo(info, "fluidThroughput", myTank.fluidThroughput);
+			}
+		}
+	}
 
 	@Override
 	public void balanceGrid() {
 
 		reworkNumberStorableDucts();
 		myTank.setCapacity(size() * myTank.fluidPerDuct);
-	}
-
-	protected int getStorableNumberDucts() {
-
-		int numBalancable = this.numStorable;
-		if (numBalancable == -1) {
-			numBalancable = reworkNumberStorableDucts();
-		}
-		return numBalancable;
-	}
-
-	private int reworkNumberStorableDucts() {
-
-		int numBalancable = 0;
-		for (DuctUnitFluid duct : Iterables.concat(nodeSet, idleSet)) {
-			if (duct.canStoreFluid()) {
-				numBalancable++;
-			}
-		}
-		this.numStorable = numBalancable;
-		return numBalancable;
-	}
-
-	public float getThroughPutModifier() {
-
-		return 1.0F;
-	}
-
-	public int getMaxFluidPerDuct() {
-
-		return 3000;
 	}
 
 	@Override
@@ -127,64 +89,6 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 			((DuctUnitFluid) node).setFluidForGrid(getNodeShare((DuctUnitFluid) node));
 		}
 		super.destroyNode(node);
-	}
-
-	@Override
-	public boolean canAddBlock(IGridTile aBlock) {
-
-		return aBlock instanceof DuctUnitFluid && FluidHelper.isFluidEqualOrNull(((DuctUnitFluid) aBlock).getConnectionFluid(), myTank.getFluid());
-	}
-
-	public boolean doesPassiveTicking = false;
-
-	@Override
-	public void tickGrid() {
-
-		super.tickGrid();
-
-		if (worldGrid.worldObj.getTotalWorldTime() % TDProps.FLUID_UPDATE_DELAY == 0) {
-			updateAllRenders();
-		}
-		if (myTank.getFluid() != null && nodeSet.size() > 0) {
-			toDistribute = Math.min(myTank.getFluidAmount() / size(), getFluidThroughput());
-
-			if (toDistribute <= 0) {
-				toDistribute = Math.min(myTank.getFluidAmount() % size(), getFluidThroughput());
-			}
-
-			if (toDistribute > 0) {
-				for (DuctUnitFluid m : nodeSet) {
-					if (!m.tickPass(0) || m.getGrid() == null) {
-						break;
-					}
-				}
-			}
-		}
-		if (!nodeSet.isEmpty()) {
-			for (DuctUnitFluid m : nodeSet) {
-				if (!m.tickPass(1) || m.getGrid() == null) {
-					break;
-				}
-			}
-		}
-
-		if (doesPassiveTicking) {
-			if (!nodeSet.isEmpty()) {
-				for (DuctUnitFluid m : nodeSet) {
-					if (!m.tickPass(2) || m.getGrid() == null) {
-						break;
-					}
-				}
-			}
-
-			if (!idleSet.isEmpty()) {
-				for (DuctUnitFluid m : idleSet) {
-					if (!m.tickPass(2) || m.getGrid() == null) {
-						break;
-					}
-				}
-			}
-		}
 	}
 
 	@Override
@@ -199,83 +103,51 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 	}
 
 	@Override
+	public void onMajorGridChange() {
+
+		super.onMajorGridChange();
+		numStorable = -1;
+		chunks = null;
+	}
+
+	@Override
+	public void onMinorGridChange() {
+
+		super.onMinorGridChange();
+		numStorable = -1;
+	}
+
+	@Override
+	public boolean canAddBlock(IGridTile aBlock) {
+
+		return aBlock instanceof DuctUnitFluid && FluidHelper.isFluidEqualOrNull(((DuctUnitFluid) aBlock).getConnectionFluid(), myTank.getFluid());
+	}
+
+	@Override
 	public boolean canGridsMerge(MultiBlockGrid grid) {
 
 		return super.canGridsMerge(grid) && FluidHelper.isFluidEqualOrNull(((GridFluid) grid).getFluid(), getFluid());
 	}
 
-	public int getFluidThroughput() {
+	@Override
+	protected int getLevel() {
 
-		if (myTank.getFluid() == null) {
-			return 100;
-		}
-		int capacity = myTank.getCapacity();
-		// if over 3/4 full, full throughput
-		if (myTank.getFluid().amount >= capacity * 3 / 4) {
-			return myTank.fluidThroughput;
-		}
-		// if under 1/4 full, half throughput
-		if (myTank.getFluid().amount <= capacity / 4) {
-			return myTank.fluidThroughput >> 1;
-		}
-		// otherwise scale between half and full
-		return (myTank.fluidThroughput >> 1) + (myTank.fluidThroughput >> 1) * (myTank.getFluid().amount - (capacity >> 2)) / (capacity >> 1);
+		return myTank.getFluidAmount();
 	}
 
-	public void fluidChanged() {
+	@Override
+	protected String getUnit() {
 
-		balanceGrid();
+		return "mB";
 	}
 
-	@Nullable
-	public FluidStack getNodeShare(DuctUnitFluid duct) {
-
-		if (!duct.canStoreFluid()) {
-			return null;
-		}
-		FluidStack fluid = myTank.getFluid();
-		if (fluid == null) {
-			return null;
-		}
-		FluidStack toReturn = fluid.copy();
-		toReturn.amount = getNodeAmount(duct);
-		return toReturn.amount > 0 ? toReturn : null;
-	}
-
-	public int getNodeAmount(DuctUnitFluid duct) {
-
-		if (!duct.canStoreFluid()) {
-			return 0;
-		}
-		int size = getStorableNumberDucts();
-		if (size == 0) {
-			return 0;
-		}
-		return size == 1 ? myTank.getFluidAmount() : isFirstMultiblock(duct) ? myTank.getFluidAmount() / size + myTank.getFluidAmount() % size : myTank.getFluidAmount() / size;
-	}
-
-	public FluidStack getFluid() {
-
-		return myTank.getFluid();
-	}
-
-	public boolean hasValidFluid() {
-
-		return myTank.getFluid() != null;
-	}
-
-	/* Renders */
+	/* RENDERS */
 	public void buildMap() {
 
 		chunks = new HashSet<>();
 		for (DuctUnitFluid iMultiBlock : Iterables.concat(nodeSet, idleSet)) {
 			buildMapEntry(iMultiBlock);
 		}
-	}
-
-	private void buildMapEntry(DuctUnitFluid iMultiBlock) {
-
-		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
 
 	public void updateAllRenders() {
@@ -364,6 +236,11 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 		return false;
 	}
 
+	public int getRenderLevel() {
+
+		return renderFluidLevel;
+	}
+
 	public FluidStack getRenderFluid() {
 
 		return myRenderFluid;
@@ -385,9 +262,9 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 		return myRenderFluid;
 	}
 
-	public int getRenderLevel() {
+	protected void buildMapEntry(DuctUnitFluid iMultiBlock) {
 
-		return renderFluidLevel;
+		chunks.add(new ChunkCoord(iMultiBlock.x() >> 4, iMultiBlock.z() >> 4));
 	}
 
 	/* FLUID RENDER TYPE */
@@ -402,25 +279,96 @@ public class GridFluid extends MultiBlockGridTracking<DuctUnitFluid> {
 		public static final byte FULL = 6;
 	}
 
-	@Override
-	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
+	/* HELPERS */
+	public void fluidChanged() {
 
-		super.addInfo(info, player, debug);
-		FluidStack fluid = getFluid();
-		if (fluid != null) {
-			if ((this instanceof GridFluidSuper)) {
-				addInfo(info, "fluidThroughput", new TextComponentTranslation("info.thermaldynamics.filter.zeroRetainSize"));
-			} else {
-				addInfo(info, "fluidThroughput", myTank.fluidThroughput);
-			}
-		}
-
+		balanceGrid();
 	}
 
-	@Override
-	protected String getUnit() {
+	public boolean hasValidFluid() {
 
-		return "mB";
+		return myTank.getFluid() != null;
+	}
+
+	public int getFluidThroughput() {
+
+		if (myTank.getFluid() == null) {
+			return 100;
+		}
+		int capacity = myTank.getCapacity();
+		// if over 3/4 full, full throughput
+		if (myTank.getFluid().amount >= capacity * 3 / 4) {
+			return myTank.fluidThroughput;
+		}
+		// if under 1/4 full, half throughput
+		if (myTank.getFluid().amount <= capacity / 4) {
+			return myTank.fluidThroughput >> 1;
+		}
+		// otherwise scale between half and full
+		return (myTank.fluidThroughput >> 1) + (myTank.fluidThroughput >> 1) * (myTank.getFluid().amount - (capacity >> 2)) / (capacity >> 1);
+	}
+
+	public int getMaxFluidPerDuct() {
+
+		return 3000;
+	}
+
+	public int getNodeAmount(DuctUnitFluid duct) {
+
+		if (!duct.canStoreFluid()) {
+			return 0;
+		}
+		int size = getStorableNumberDucts();
+		if (size == 0) {
+			return 0;
+		}
+		return size == 1 ? myTank.getFluidAmount() : isFirstMultiblock(duct) ? myTank.getFluidAmount() / size + myTank.getFluidAmount() % size : myTank.getFluidAmount() / size;
+	}
+
+	public float getThroughPutModifier() {
+
+		return 1.0F;
+	}
+
+	public FluidStack getFluid() {
+
+		return myTank.getFluid();
+	}
+
+	@Nullable
+	public FluidStack getNodeShare(DuctUnitFluid duct) {
+
+		if (!duct.canStoreFluid()) {
+			return null;
+		}
+		FluidStack fluid = myTank.getFluid();
+		if (fluid == null) {
+			return null;
+		}
+		FluidStack toReturn = fluid.copy();
+		toReturn.amount = getNodeAmount(duct);
+		return toReturn.amount > 0 ? toReturn : null;
+	}
+
+	protected int getStorableNumberDucts() {
+
+		int numBalancable = this.numStorable;
+		if (numBalancable == -1) {
+			numBalancable = reworkNumberStorableDucts();
+		}
+		return numBalancable;
+	}
+
+	protected int reworkNumberStorableDucts() {
+
+		int numBalancable = 0;
+		for (DuctUnitFluid duct : Iterables.concat(nodeSet, idleSet)) {
+			if (duct.canStoreFluid()) {
+				numBalancable++;
+			}
+		}
+		this.numStorable = numBalancable;
+		return numBalancable;
 	}
 
 }

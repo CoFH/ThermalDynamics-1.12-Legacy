@@ -31,6 +31,15 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 		this(TickHandler.getTickHandler(worldObj));
 	}
 
+	public void addBlock(T aBlock) {
+
+		if (aBlock.isNode()) {
+			addNode(aBlock);
+		} else {
+			addIdle(aBlock);
+		}
+	}
+
 	public void addIdle(T aMultiBlock) {
 
 		idleSet.add(aMultiBlock);
@@ -64,6 +73,23 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 		balanceGrid();
 	}
 
+	public void destroy() {
+
+		nodeSet.clear();
+		idleSet.clear();
+		worldGrid.oldGrids.add(this);
+	}
+
+	public void destroyAndRecreate() {
+
+		worldGrid.gridsToRecreate.add(this);
+	}
+
+	public void destroyNode(IGridTile node) {
+
+		node.setGrid(null);
+	}
+
 	public void mergeGrids(MultiBlockGrid<T> otherGrid) {
 
 		if (!otherGrid.nodeSet.isEmpty()) {
@@ -83,13 +109,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 		}
 		onMinorGridChange();
 		otherGrid.destroy();
-	}
-
-	public void destroy() {
-
-		nodeSet.clear();
-		idleSet.clear();
-		worldGrid.oldGrids.add(this);
 	}
 
 	public boolean canGridsMerge(MultiBlockGrid grid) {
@@ -119,20 +138,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 	 */
 	public void balanceGrid() {
 
-	}
-
-	public void addBlock(T aBlock) {
-
-		if (aBlock.isNode()) {
-			addNode(aBlock);
-		} else {
-			addIdle(aBlock);
-		}
-	}
-
-	public void destroyAndRecreate() {
-
-		worldGrid.gridsToRecreate.add(this);
 	}
 
 	public void removeBlock(T oldBlock) {
@@ -165,11 +170,11 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 		worldGrid.gridsToRecreate.add(this);
 	}
 
-	public void onMinorGridChange() {
+	public void onMajorGridChange() {
 
 	}
 
-	public void onMajorGridChange() {
+	public void onMinorGridChange() {
 
 	}
 
@@ -185,11 +190,6 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 	public boolean isTickProcessing() {
 
 		return false;
-	}
-
-	public void destroyNode(IGridTile node) {
-
-		node.setGrid(null);
 	}
 
 	public boolean isFirstMultiblock(T block) {

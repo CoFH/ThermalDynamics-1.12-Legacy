@@ -43,12 +43,12 @@ public class WorldGridList {
 
 		if (!gridsToRecreate.isEmpty()) {
 			tickingGrids.removeAll(gridsToRecreate);
+
 			for (MultiBlockGrid<?> grid : gridsToRecreate) {
 				for (IGridTile multiBlock : grid.idleSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);
 				}
-
 				for (IGridTile multiBlock : grid.nodeSet) {
 					tickingBlocks.add(multiBlock);
 					grid.destroyNode(multiBlock);
