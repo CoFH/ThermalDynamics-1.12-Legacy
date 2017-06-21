@@ -426,22 +426,18 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	public boolean addCover(Cover cover) {
 
-		if (cover == null) {
+		if (attachmentData != null && attachmentData.covers[cover.side] != null) {
 			return false;
 		}
-
-		byte side = cover.side;
+		if (ServerHelper.isClientWorld(worldObj)) {
+			return true;
+		}
 		if (attachmentData == null) {
 			attachmentData = new AttachmentData();
-		} else if (attachmentData.covers[side] != null) {
-			return false;
 		}
-		attachmentData.covers[side] = cover;
+		attachmentData.covers[cover.side] = cover;
 
-		callNeighborStateChange();
-		onNeighborBlockChange();
 		callBlockUpdate();
-		onAttachmentsChanged();
 
 		return true;
 	}
@@ -453,10 +449,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		}
 		attachmentData.covers[side] = null;
 
-		callNeighborStateChange();
-		onNeighborBlockChange();
 		callBlockUpdate();
-		onAttachmentsChanged();
 
 		return true;
 	}

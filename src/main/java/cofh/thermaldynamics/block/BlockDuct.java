@@ -547,8 +547,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		if (offset != 0) {
 			return true;
 		}
-		GridEnergy.initialize();
-
 		PacketHandler.instance.registerPacket(PacketFluid.class);
 
 		/* ENERGY */

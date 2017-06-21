@@ -38,19 +38,6 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 		};
 	}
 
-	public static void initialize() {
-
-		//		String names[] = { "Basic", "Hardened", "Reinforced", "Signalum", "Resonant" };
-		//		String category;
-		//		String category2 = "Duct.Energy.";
-		//
-		//		for (int i = 0; i < 5; i++) {
-		//			category = category2 + names[i];
-		//			NODE_TRANSFER[i] = MathHelper.clamp(ThermalDynamics.CONFIG.get(category, "Transfer", NODE_TRANSFER[i]), NODE_TRANSFER[i] / 10, NODE_TRANSFER[i] * 10);
-		//			NODE_STORAGE[i] = NODE_TRANSFER[i] * 5;
-		//		}
-	}
-
 	@Override
 	public void balanceGrid() {
 
@@ -83,6 +70,15 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void destroyNode(IGridTile node) {
+
+		if (node.isNode()) {
+			((DuctUnitEnergy) node).setEnergyForGrid(getNodeShare((DuctUnitEnergy) node));
+		}
+		super.destroyNode(node);
 	}
 
 	public int getSendableEnergy() {
