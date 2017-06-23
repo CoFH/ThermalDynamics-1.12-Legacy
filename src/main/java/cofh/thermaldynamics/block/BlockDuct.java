@@ -22,7 +22,6 @@ import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
-import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
