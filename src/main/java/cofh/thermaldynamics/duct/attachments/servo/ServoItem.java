@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
 import cofh.lib.util.helpers.BlockHelper;
+import cofh.lib.util.helpers.InventoryHelper;
 import cofh.lib.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
@@ -23,6 +24,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -215,7 +217,7 @@ public class ServoItem extends ServoBase {
 
 	public void handleItemSending() {
 
-		if (getCachedInv() != null) {
+		if (getCachedInv() != EmptyHandler.INSTANCE) {
 			for (int slot = 0; slot < getCachedInv().getSlots(); slot++) {
 				ItemStack itemStack = getCachedInv().getStackInSlot(slot);
 				if (itemStack == null) {
@@ -405,9 +407,9 @@ public class ServoItem extends ServoBase {
 	public IItemHandler getCachedInv() {
 
 		if (myTile == null) {
-			return null;
+			return EmptyHandler.INSTANCE;
 		}
-		return myTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1]);
+		return InventoryHelper.getItemHandlerCap(myTile, EnumFacing.VALUES[side ^ 1]);
 	}
 
 }
