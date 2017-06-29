@@ -82,7 +82,7 @@ public class ServoFluid extends ServoBase {
 		if (ductHandler == null) {
 			return;
 		}
-		IFluidHandler tileHandler = getMyTile();
+		IFluidHandler tileHandler = getFluidHandler();
 
 		if (tileHandler == null) {
 			return;
@@ -102,7 +102,7 @@ public class ServoFluid extends ServoBase {
 		return new FilterLogic(type, Duct.Type.FLUID, this);
 	}
 
-	public IFluidHandler getMyTile() {
+	public IFluidHandler getFluidHandler() {
 
 		if (myTile == null) {
 			return null;

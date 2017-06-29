@@ -330,9 +330,9 @@ public class ServoItem extends ServoBase {
 	@Override
 	public void onNeighborChange() {
 
-		if (stuffed != !stuffedItems.isEmpty()) {
+		if (stuffed != isStuffed()) {
 			stuffed = isStuffed();
-			BlockHelper.callBlockUpdate(myTile.getWorld(), myTile.getPos());
+			BlockHelper.callBlockUpdate(baseTile.getWorld(), baseTile.getPos());
 		}
 		super.onNeighborChange();
 	}
