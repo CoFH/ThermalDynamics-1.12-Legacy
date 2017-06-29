@@ -8,19 +8,14 @@ import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IPerspectiveAwareModel.MapWrapper;
 import net.minecraftforge.common.model.IModelState;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
-
-import javax.vecmath.Matrix4f;
 
 public class RenderItemCover implements IItemRenderer {
 
@@ -65,9 +60,10 @@ public class RenderItemCover implements IItemRenderer {
 	}
 
 	@Override
-    public IModelState getTransforms() {
-	    return TransformUtils.DEFAULT_BLOCK;
-    }
+	public IModelState getTransforms() {
+
+		return TransformUtils.DEFAULT_BLOCK;
+	}
 
 	@Override
 	public boolean isAmbientOcclusion() {
