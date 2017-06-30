@@ -11,10 +11,11 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 
-public class RecipeCover implements IRecipe {
+public class RecipeCover extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
 	public static final RecipeCover INSTANCE = new RecipeCover();
 
@@ -73,7 +74,12 @@ public class RecipeCover implements IRecipe {
 		return ItemStack.EMPTY;
 	}
 
-	// TODO: FIXME.
+    @Override
+    public boolean canFit(int width, int height) {
+        return false;
+    }
+
+    // TODO: FIXME.
 	//	@Override
 	//	public int getRecipeSize() {
 	//

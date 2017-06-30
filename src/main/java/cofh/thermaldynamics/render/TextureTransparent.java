@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.function.Function;
 
 public class TextureTransparent extends TextureAtlasSprite {
 
@@ -66,7 +67,7 @@ public class TextureTransparent extends TextureAtlasSprite {
 	}
 
 	@Override
-	public boolean load(IResourceManager p_110571_1_, ResourceLocation location) {
+	public boolean load(IResourceManager p_110571_1_, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
 
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		try {

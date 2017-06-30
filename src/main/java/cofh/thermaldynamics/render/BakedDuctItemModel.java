@@ -19,7 +19,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -105,7 +105,7 @@ public class BakedDuctItemModel implements IBakedModel {
 		}
 	}
 
-	private static class WrappedBakedModel implements IPerspectiveAwareModel {
+	private static class WrappedBakedModel implements IBakedModel {
 
 		private IBakedModel wrappedModel;
 		public PerspectiveAwareModelProperties perspectiveProperties;
@@ -147,12 +147,6 @@ public class BakedDuctItemModel implements IBakedModel {
 		}
 
 		@Override
-		public ItemCameraTransforms getItemCameraTransforms() {
-
-			return ItemCameraTransforms.DEFAULT;
-		}
-
-		@Override
 		public ItemOverrideList getOverrides() {
 
 			return ItemOverrideList.NONE;
@@ -161,7 +155,7 @@ public class BakedDuctItemModel implements IBakedModel {
 		@Override
 		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 
-			return MapWrapper.handlePerspective(this, perspectiveProperties.getModelState(), cameraTransformType);
+			return PerspectiveMapWrapper.handlePerspective(this, perspectiveProperties.getModelState(), cameraTransformType);
 		}
 	}
 
