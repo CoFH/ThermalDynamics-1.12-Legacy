@@ -73,6 +73,9 @@ public class ThermalDynamics {
 		TDBlocks.preInit();
 		TDItems.preInit();
 
+		/* Register Handlers */
+		registerHandlers();
+
 		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, Category.SHAPELESS, "after:forge:shapelessore");
 
 		proxy.preInit(event);
@@ -85,9 +88,6 @@ public class ThermalDynamics {
 		TDItems.initialize();
 
 		TDCrafting.loadRecipes();
-
-		/* Register Handlers */
-		registerHandlers();
 
 		proxy.initialize(event);
 	}

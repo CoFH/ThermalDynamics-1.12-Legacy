@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -19,6 +21,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ItemCover extends ItemAttachment {
@@ -100,30 +103,27 @@ public class ItemCover extends ItemAttachment {
 
 		coverList = new ArrayList<>();
 
-		// TODO: FIXME.
+		NonNullList<ItemStack> stacks = NonNullList.create();
 
-		//		NonNullList<ItemStack> stacks = NonNullList.create();
-		//		//ArrayList<ItemStack> stacks = new ArrayList<>();
-		//
-		//		ArrayList<Item> data = new ArrayList<>();
-		//		for (Item item : ForgeRegistries.ITEMS) {
-		//			data.add(item);
-		//		}
-		//		data.sort(Comparator.comparingInt(Item.REGISTRY::getIDForObject));
-		//		for (Item anItem : data) {
-		//			if (anItem instanceof ItemBlock) {
-		//				anItem.getSubItems(anItem, null, stacks);
-		//			}
-		//		}
-		//		for (ItemStack stack : stacks) {
-		//			if (!(stack.getItem() instanceof ItemBlock)) {
-		//				continue;
-		//			}
-		//			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-		//				continue;
-		//			}
-		//			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
-		//		}
+		ArrayList<Item> data = new ArrayList<>();
+		for (Item item : ForgeRegistries.ITEMS) {
+			data.add(item);
+		}
+		data.sort(Comparator.comparingInt(Item.REGISTRY::getIDForObject));
+		for (Item anItem : data) {
+			if (anItem instanceof ItemBlock) {
+				anItem.getSubItems(CreativeTabs.SEARCH, stacks);
+			}
+		}
+		for (ItemStack stack : stacks) {
+			if (!(stack.getItem() instanceof ItemBlock)) {
+				continue;
+			}
+			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
+				continue;
+			}
+			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
+		}
 	}
 
 	public static List<ItemStack> getCoverList() {
