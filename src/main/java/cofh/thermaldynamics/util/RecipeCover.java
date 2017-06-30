@@ -73,11 +73,12 @@ public class RecipeCover implements IRecipe {
 		return ItemStack.EMPTY;
 	}
 
-	@Override
-	public int getRecipeSize() {
-
-		return 2;
-	}
+	// TODO: FIXME.
+	//	@Override
+	//	public int getRecipeSize() {
+	//
+	//		return 2;
+	//	}
 
 	@Override
 	public ItemStack getRecipeOutput() {
