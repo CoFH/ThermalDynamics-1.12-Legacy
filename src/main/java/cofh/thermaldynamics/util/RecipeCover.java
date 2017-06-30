@@ -74,12 +74,13 @@ public class RecipeCover extends IForgeRegistryEntry.Impl<IRecipe> implements IR
 		return ItemStack.EMPTY;
 	}
 
-    @Override
-    public boolean canFit(int width, int height) {
-        return false;
-    }
+	@Override
+	public boolean canFit(int width, int height) {
 
-    // TODO: FIXME.
+		return false;
+	}
+
+	// TODO: FIXME.
 	//	@Override
 	//	public int getRecipeSize() {
 	//

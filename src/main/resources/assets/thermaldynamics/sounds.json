@@ -1,11 +1,11 @@
 {
-    "duct_transport_woosh": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "thermaldynamics:woosh",
-                "stream": false
-            }
-        ]
-    }
+	"duct_transport_woosh": {
+		"category": "neutral",
+		"sounds": [
+			{
+				"name": "thermaldynamics:woosh",
+				"stream": false
+			}
+		]
+	}
 }
