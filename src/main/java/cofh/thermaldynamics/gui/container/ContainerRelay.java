@@ -43,10 +43,10 @@ public class ContainerRelay extends ContainerAttachmentBase {
 
 		for (IContainerListener listener : this.listeners) {
 			if (gridPower != prevGrid) {
-				listener.sendProgressBarUpdate(this, 0, gridPower);
+				listener.sendWindowProperty(this, 0, gridPower);
 			}
 			if (relayPower != prevRelay) {
-				listener.sendProgressBarUpdate(this, 1, relayPower);
+				listener.sendWindowProperty(this, 1, relayPower);
 			}
 		}
 	}

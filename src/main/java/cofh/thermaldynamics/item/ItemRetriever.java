@@ -14,16 +14,17 @@ import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemRetriever extends ItemAttachment {
@@ -44,10 +45,12 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		for (int i = 0; i < 5; i++) {
-			list.add(new ItemStack(item, 1, i));
+		if (isInCreativeTab(tab)) {
+			for (int i = 0; i < 5; i++) {
+				items.add(new ItemStack(this, 1, i));
+			}
 		}
 	}
 
@@ -71,42 +74,42 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean extraInfo) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 
-		super.addInformation(stack, player, list, extraInfo);
+		super.addInformation(stack, worldIn, tooltip, flagIn);
 
 		int type = stack.getItemDamage() % 5;
 
 		if (!StringHelper.isShiftKeyDown()) {
-			list.add(StringHelper.getInfoText("item.thermaldynamics.retriever.info"));
+			tooltip.add(StringHelper.getInfoText("item.thermaldynamics.retriever.info"));
 
 			if (StringHelper.displayShiftForDetail) {
-				list.add(StringHelper.shiftForDetails());
+				tooltip.add(StringHelper.shiftForDetails());
 			}
 			return;
 		}
 		if (ServoBase.canAlterRS(type)) {
-			list.add(StringHelper.localize("info.thermaldynamics.servo.redstoneInt"));
+			tooltip.add(StringHelper.localize("info.thermaldynamics.servo.redstoneInt"));
 		} else {
-			list.add(StringHelper.localize("info.thermaldynamics.servo.redstoneExt"));
+			tooltip.add(StringHelper.localize("info.thermaldynamics.servo.redstoneExt"));
 		}
-		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
+		tooltip.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
 
-		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.extractRate") + ": " + StringHelper.WHITE + ((ServoItem.tickDelays[type] % 20) == 0 ? Integer.toString(ServoItem.tickDelays[type] / 20) : Float.toString(ServoItem.tickDelays[type] / 20F)) + "s" + StringHelper.END);
-		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.maxStackSize") + ": " + StringHelper.WHITE + ServoItem.maxSize[type] + StringHelper.END);
-		addFiltering(list, type, Duct.Type.ITEM);
+		tooltip.add("  " + StringHelper.localize("info.thermaldynamics.servo.extractRate") + ": " + StringHelper.WHITE + ((ServoItem.tickDelays[type] % 20) == 0 ? Integer.toString(ServoItem.tickDelays[type] / 20) : Float.toString(ServoItem.tickDelays[type] / 20F)) + "s" + StringHelper.END);
+		tooltip.add("  " + StringHelper.localize("info.thermaldynamics.servo.maxStackSize") + ": " + StringHelper.WHITE + ServoItem.maxSize[type] + StringHelper.END);
+		addFiltering(tooltip, type, Duct.Type.ITEM);
 
 		if (ServoItem.multiStack[type]) {
-			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotMulti"));
+			tooltip.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotMulti"));
 		} else {
-			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotSingle"));
+			tooltip.add("  " + StringHelper.localize("info.thermaldynamics.servo.slotSingle"));
 		}
 		if (ServoItem.speedBoost[type] != 1) {
-			list.add("  " + StringHelper.localize("info.thermaldynamics.servo.speedBoost") + ": " + StringHelper.WHITE + ServoItem.speedBoost[type] + "x " + StringHelper.END);
+			tooltip.add("  " + StringHelper.localize("info.thermaldynamics.servo.speedBoost") + ": " + StringHelper.WHITE + ServoItem.speedBoost[type] + "x " + StringHelper.END);
 		}
-		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
-		list.add("  " + StringHelper.localize("info.thermaldynamics.servo.extractRate") + ": " + StringHelper.WHITE + Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%" + StringHelper.END);
-		addFiltering(list, type, Duct.Type.FLUID);
+		tooltip.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
+		tooltip.add("  " + StringHelper.localize("info.thermaldynamics.servo.extractRate") + ": " + StringHelper.WHITE + Integer.toString((int) (ServoFluid.throttle[type] * 100)) + "%" + StringHelper.END);
+		addFiltering(tooltip, type, Duct.Type.FLUID);
 	}
 
 	public static void addFiltering(List<String> list, int type, Duct.Type duct) {
@@ -126,7 +129,7 @@ public class ItemRetriever extends ItemAttachment {
 			}
 		}
 		flag = false;
-		for (String s : Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(b.toString(), 140)) {
+		for (String s : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
 			if (flag) {
 				s = "  " + StringHelper.WHITE + s;
 			}
@@ -139,7 +142,7 @@ public class ItemRetriever extends ItemAttachment {
 	@Override
 	public boolean preInit() {
 
-		GameRegistry.register(this.setRegistryName("retriever"));
+		ForgeRegistries.ITEMS.register(setRegistryName("retriever"));
 
 		basicRetriever = new ItemStack(this, 1, 0);
 		hardenedRetriever = new ItemStack(this, 1, 1);

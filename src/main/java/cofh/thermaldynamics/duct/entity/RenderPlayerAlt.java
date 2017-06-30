@@ -42,13 +42,13 @@ public class RenderPlayerAlt extends RenderPlayer {
 		ModelPlayer modelplayer = this.getMainModel();
 
 		if (clientPlayer.isSpectator()) {
-			modelplayer.setInvisible(false);
+			modelplayer.setVisible(false);
 			modelplayer.bipedHead.showModel = true;
 			modelplayer.bipedHeadwear.showModel = true;
 		} else {
 			ItemStack itemstack = clientPlayer.getHeldItemMainhand();
 			ItemStack itemstack1 = clientPlayer.getHeldItemOffhand();
-			modelplayer.setInvisible(true);
+			modelplayer.setVisible(true);
 			modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
 			modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
 			modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);

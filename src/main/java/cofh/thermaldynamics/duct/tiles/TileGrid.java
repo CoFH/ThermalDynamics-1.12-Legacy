@@ -78,7 +78,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	static {
-		GameRegistry.registerTileEntityWithAlternatives(TileGrid.class, "thermaldynamics.duct", "thermaldynamics.multiblock");
+		GameRegistry.registerTileEntity(TileGrid.class, "thermaldynamics.duct");
 	}
 
 	@Nullable
@@ -329,7 +329,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (WeakReference<Chunk> neighborChunk : neighborChunks) {
 			Object chunk = neighborChunk.get();
 
-			if (chunk != null && !((Chunk) chunk).isChunkLoaded) {
+			if (chunk != null && !((Chunk) chunk).loaded) {
 				neighborChunks.clear();
 				onNeighborBlockChange();
 				return true;

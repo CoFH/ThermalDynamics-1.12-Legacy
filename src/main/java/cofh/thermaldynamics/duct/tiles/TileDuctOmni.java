@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
-import cofh.api.energy.IEnergyReceiver;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;

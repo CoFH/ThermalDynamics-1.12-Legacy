@@ -25,6 +25,7 @@ public class GuiRelay extends GuiCore {
 	public GuiRelay(Relay relay) {
 
 		super(new ContainerRelay(relay), TEXTURE);
+
 		this.relay = relay;
 		this.drawInventory = false;
 		this.name = "item.thermaldynamics.relay.name";
@@ -40,7 +41,6 @@ public class GuiRelay extends GuiCore {
 		if (!"".equals(myInfo)) {
 			addTab(new TabInfo(this, myInfo));
 		}
-
 		buttonType = new ElementButton(this, 8, 16, "ButtonType", 0, 204, 0, 224, 20, 20, TEX_PATH);
 		addElement(buttonType);
 
@@ -94,6 +94,7 @@ public class GuiRelay extends GuiCore {
 	public void handleElementButtonClick(String buttonName, int mouseButton) {
 
 		super.handleElementButtonClick(buttonName, mouseButton);
+
 		int v = mouseButton == 0 ? 1 : -1;
 		if ("ButtonInvert".equals(buttonName)) {
 			relay.invert = (byte) ((relay.invert + 4 + v) % 4);
@@ -102,7 +103,6 @@ public class GuiRelay extends GuiCore {
 			relay.type = (byte) ((relay.type + 3 + v) % 3);
 			relay.sendUpdatePacket();
 		}
-
 		update();
 	}
 
@@ -120,9 +120,8 @@ public class GuiRelay extends GuiCore {
 			gY = 45;
 			rY = 58;
 		}
-
-		fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.relay.relayRS") + ": " + container.relayPower, 8, rY, 0x404040);
-		fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.relay.gridRS") + ": " + container.gridPower, 8, gY, 0x404040);
-
+		fontRenderer.drawString(StringHelper.localize("info.thermaldynamics.relay.relayRS") + ": " + container.relayPower, 8, rY, 0x404040);
+		fontRenderer.drawString(StringHelper.localize("info.thermaldynamics.relay.gridRS") + ": " + container.gridPower, 8, gY, 0x404040);
 	}
+
 }

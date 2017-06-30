@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
-import cofh.api.energy.IEnergyReceiver;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
@@ -132,6 +132,7 @@ public class TileDuctItem extends TileGridStructureBase {
 		public Warp(DuctItem duct) {
 
 			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, duct, 400, 1000) {
+
 				@Override
 				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
 

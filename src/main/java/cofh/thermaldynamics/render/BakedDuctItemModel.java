@@ -164,4 +164,5 @@ public class BakedDuctItemModel implements IBakedModel {
 			return MapWrapper.handlePerspective(this, perspectiveProperties.getModelState(), cameraTransformType);
 		}
 	}
+
 }

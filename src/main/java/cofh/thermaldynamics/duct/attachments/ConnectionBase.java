@@ -270,7 +270,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		int flagByte = filter.getFlagByte();
 		if (flagByte != prevFlag || newListener) {
 			for (IContainerListener player : players) {
-				player.sendProgressBarUpdate(container, 0, flagByte);
+				player.sendWindowProperty(container, 0, flagByte);
 			}
 		}
 		prevFlag = flagByte;
@@ -278,7 +278,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		if (filter.levelsChanged || newListener) {
 			for (int i = 0; i < FilterLogic.defaultLevels.length; i++) {
 				for (IContainerListener player : players) {
-					player.sendProgressBarUpdate(container, 1 + i, filter.getLevel(i));
+					player.sendWindowProperty(container, 1 + i, filter.getLevel(i));
 				}
 			}
 			filter.levelsChanged = false;

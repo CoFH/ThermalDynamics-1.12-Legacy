@@ -22,7 +22,7 @@ import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermalfoundation.init.TFFluids;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -353,12 +353,12 @@ public class RenderDuct implements ICCBlockRenderer {
 	}
 
 	@Override
-	public void handleRenderBlockDamage(IBlockAccess world, BlockPos pos, IBlockState state, TextureAtlasSprite sprite, VertexBuffer buffer) {
+	public void handleRenderBlockDamage(IBlockAccess world, BlockPos pos, IBlockState state, TextureAtlasSprite sprite, BufferBuilder buffer) {
 
 	}
 
 	@Override
-	public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, VertexBuffer buffer) {
+	public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer) {
 
 		int x = pos.getX();
 		int y = pos.getY();
@@ -409,4 +409,5 @@ public class RenderDuct implements ICCBlockRenderer {
 	public void registerTextures(TextureMap map) {
 
 	}
+
 }

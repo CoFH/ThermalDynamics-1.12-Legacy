@@ -11,16 +11,17 @@ import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemFilter extends ItemAttachment {
@@ -41,10 +42,12 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 
-		for (int i = 0; i < 5; i++) {
-			list.add(new ItemStack(item, 1, i));
+		if (isInCreativeTab(tab)) {
+			for (int i = 0; i < 5; i++) {
+				items.add(new ItemStack(this, 1, i));
+			}
 		}
 	}
 
@@ -69,24 +72,24 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean extraInfo) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 
-		super.addInformation(stack, player, list, extraInfo);
+		super.addInformation(stack, worldIn, tooltip, flagIn);
 
 		int type = stack.getItemDamage() % 5;
 
 		if (!StringHelper.isShiftKeyDown()) {
-			list.add(StringHelper.getInfoText("item.thermaldynamics.filter.info"));
+			tooltip.add(StringHelper.getInfoText("item.thermaldynamics.filter.info"));
 
 			if (StringHelper.displayShiftForDetail) {
-				list.add(StringHelper.shiftForDetails());
+				tooltip.add(StringHelper.shiftForDetails());
 			}
 			return;
 		}
-		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
-		addFiltering(list, type, Duct.Type.ITEM);
-		list.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
-		addFiltering(list, type, Duct.Type.FLUID);
+		tooltip.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.items") + StringHelper.END);
+		addFiltering(tooltip, type, Duct.Type.ITEM);
+		tooltip.add(StringHelper.YELLOW + StringHelper.localize("info.cofh.fluids") + StringHelper.END);
+		addFiltering(tooltip, type, Duct.Type.FLUID);
 	}
 
 	public static void addFiltering(List<String> list, int type, Duct.Type duct) {
@@ -106,7 +109,7 @@ public class ItemFilter extends ItemAttachment {
 			}
 		}
 		flag = false;
-		for (String s : Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(b.toString(), 140)) {
+		for (String s : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(b.toString(), 140)) {
 			if (flag) {
 				s = "  " + StringHelper.WHITE + s;
 			}
@@ -119,7 +122,7 @@ public class ItemFilter extends ItemAttachment {
 	@Override
 	public boolean preInit() {
 
-		GameRegistry.register(this.setRegistryName("filter"));
+		ForgeRegistries.ITEMS.register(setRegistryName("filter"));
 
 		basicFilter = new ItemStack(this, 1, 0);
 		hardenedFilter = new ItemStack(this, 1, 1);

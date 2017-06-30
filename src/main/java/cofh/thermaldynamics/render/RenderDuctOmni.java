@@ -10,12 +10,15 @@ public class RenderDuctOmni extends RenderDuctItems {
 	public static final TileEntitySpecialRenderer<TileGrid> instance = new RenderDuctOmni();
 
 	@Override
-	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
+	public void render(TileGrid tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
-		super.renderTileEntityAt(tile, x, y, z, frame, destroyStage);
+		super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
+
 		DuctUnitFluid ductUnitFluid = tile.getDuct(DuctToken.FLUID);
+
 		if (ductUnitFluid != null) {
 			RenderDuctFluids.instance.renderFluids(ductUnitFluid, x, y, z);
 		}
 	}
+
 }

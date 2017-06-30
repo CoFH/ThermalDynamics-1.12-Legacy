@@ -259,14 +259,14 @@ public class GuiDuctConnection extends GuiCore {
 			int qty = conBase.filter.getLevel(FilterLogic.levelRetainSize);
 			if (qty == 0) {
 				xQty -= 9;
-				fontRendererObj.drawString(StringHelper.localize("info.thermaldynamics.filter.zeroRetainSize"), xQty, 18, 0x404040);
+				fontRenderer.drawString(StringHelper.localize("info.thermaldynamics.filter.zeroRetainSize"), xQty, 18, 0x404040);
 			} else {
 				if (qty < 10) {
 					xQty += 6;
 				} else if (qty >= 100) {
 					xQty -= 3;
 				}
-				fontRendererObj.drawString("" + qty, xQty, 18, 0x404040);
+				fontRenderer.drawString("" + qty, xQty, 18, 0x404040);
 			}
 		}
 
@@ -276,7 +276,7 @@ public class GuiDuctConnection extends GuiCore {
 			if (qty < 10) {
 				xQty += 6;
 			}
-			fontRendererObj.drawString("" + qty, xQty, 46, 0x404040);
+			fontRenderer.drawString("" + qty, xQty, 46, 0x404040);
 		}
 
 		super.drawGuiContainerForegroundLayer(x, y);

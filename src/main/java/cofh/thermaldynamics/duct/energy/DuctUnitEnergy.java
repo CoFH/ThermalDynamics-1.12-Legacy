@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.energy;
 
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
+import cofh.redstoneflux.api.IEnergyHandler;
+import cofh.redstoneflux.api.IEnergyProvider;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.*;
@@ -16,7 +16,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> implements cofh.api.energy.IEnergyStorage {
+public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> implements cofh.redstoneflux.api.IEnergyStorage {
 
 	public int energyForGrid = 0;
 	public int lastStoredValue = 0;

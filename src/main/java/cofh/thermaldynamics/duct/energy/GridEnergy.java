@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.energy;
 
-import cofh.api.energy.EnergyStorage;
+import cofh.redstoneflux.impl.EnergyStorage;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;

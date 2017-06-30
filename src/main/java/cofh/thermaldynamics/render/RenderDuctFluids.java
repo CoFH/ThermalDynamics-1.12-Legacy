@@ -14,12 +14,10 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer<TileDuctFluid> {
 	public static final RenderDuctFluids instance = new RenderDuctFluids();
 
 	@Override
-	public void renderTileEntityAt(TileDuctFluid duct, double x, double y, double z, float frame, int destroyStage) {
+	public void render(TileDuctFluid tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
-		DuctUnitFluid fluid = Validate.notNull(duct.getDuct(DuctToken.FLUID));
-
+		DuctUnitFluid fluid = Validate.notNull(tile.getDuct(DuctToken.FLUID));
 		renderFluids(fluid, x, y, z);
-
 	}
 
 	public void renderFluids(DuctUnitFluid fluid, double x, double y, double z) {

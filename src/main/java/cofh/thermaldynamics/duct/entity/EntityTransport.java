@@ -308,7 +308,7 @@ public class EntityTransport extends Entity {
 		}
 		if (pause > 0) {
 			Vec3d newPos = getPos(frame);
-			setPosition(newPos.xCoord, newPos.yCoord, newPos.zCoord);
+			setPosition(newPos.x, newPos.y, newPos.z);
 			lastTickPosX = prevPosX = posX;
 			lastTickPosY = prevPosY = posY;
 			lastTickPosZ = prevPosZ = posZ;
@@ -316,16 +316,16 @@ public class EntityTransport extends Entity {
 			return;
 		}
 		Vec3d oldPos = getPos(frame - 1);
-		lastTickPosX = prevPosX = oldPos.xCoord;
-		lastTickPosY = prevPosY = oldPos.yCoord;
-		lastTickPosZ = prevPosZ = oldPos.zCoord;
+		lastTickPosX = prevPosX = oldPos.x;
+		lastTickPosY = prevPosY = oldPos.y;
+		lastTickPosZ = prevPosZ = oldPos.z;
 
 		Vec3d newPos = getPos(frame);
-		setPosition(newPos.xCoord, newPos.yCoord, newPos.zCoord);
+		setPosition(newPos.x, newPos.y, newPos.z);
 
-		motionX = newPos.xCoord - oldPos.xCoord;
-		motionY = newPos.yCoord - oldPos.yCoord;
-		motionZ = newPos.zCoord - oldPos.zCoord;
+		motionX = newPos.x - oldPos.x;
+		motionY = newPos.y - oldPos.y;
+		motionZ = newPos.z - oldPos.z;
 
 		if (!getPassengers().isEmpty()) {
 			updatePassenger(getPassengers().get(0));
@@ -575,8 +575,8 @@ public class EntityTransport extends Entity {
 		if (destDim != curDim) {
 			MinecraftServer minecraftserver = this.world.getMinecraftServer();
 
-			WorldServer currentWorld = minecraftserver.worldServerForDimension(curDim);
-			WorldServer destinationWorld = minecraftserver.worldServerForDimension(destDim);
+			WorldServer currentWorld = minecraftserver.getWorld(curDim);
+			WorldServer destinationWorld = minecraftserver.getWorld(destDim);
 
 			rider.dismountRidingEntity();
 

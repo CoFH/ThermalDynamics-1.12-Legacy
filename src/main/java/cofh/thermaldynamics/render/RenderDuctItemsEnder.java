@@ -45,7 +45,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	};
 
 	@Override
-	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
+	public void render(TileGrid tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
 		DuctUnitItemEnder duct = (DuctUnitItemEnder) tile.getDuct(DuctToken.ITEMS);
 
@@ -60,11 +60,11 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 
 			int[] connections = RenderDuct.instance.getDuctConnections(tile);
 
-			drawEnderStarfield(ccrs, x, y, z, connections, frame, duct.centerLine, duct.centerLineSub);
+			drawEnderStarfield(ccrs, x, y, z, connections, partialTicks, duct.centerLine, duct.centerLineSub);
 
 			ccrs.reset();
 		} else {
-			super.renderTileEntityAt(tile, x, y, z, frame, destroyStage);
+			super.render(tile, x, y, z, partialTicks, destroyStage, alpha);
 		}
 	}
 

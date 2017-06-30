@@ -3,7 +3,7 @@ package cofh.thermaldynamics.init;
 import cofh.thermaldynamics.ThermalDynamics;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class TDSounds {
 
@@ -20,7 +20,7 @@ public class TDSounds {
 
 		SoundEvent sound = new SoundEvent(new ResourceLocation(ThermalDynamics.MOD_ID + ":" + id));
 		sound.setRegistryName(id);
-		GameRegistry.register(sound);
+		ForgeRegistries.SOUND_EVENTS.register(sound);
 		return sound;
 	}
 

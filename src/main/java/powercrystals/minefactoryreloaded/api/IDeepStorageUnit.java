@@ -6,7 +6,7 @@ public interface IDeepStorageUnit {
 
 	/**
 	 * @return A populated ItemStack with stackSize for the full amount of materials in the DSU. May have a stackSize > getMaxStackSize(). May have a stackSize
-	 *         of 0 (indicating locked contents).
+	 * of 0 (indicating locked contents).
 	 */
 	ItemStack getStoredItemType();
 

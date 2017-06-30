@@ -57,6 +57,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -90,12 +91,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	@Override
-	@SideOnly (Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
 
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(i + offset)) {
-				list.add(TDDucts.getDuct(i + offset).itemStack.copy());
+				items.add(TDDucts.getDuct(i + offset).itemStack.copy());
 			}
 		}
 	}
@@ -521,8 +521,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@Override
 	public boolean preInit() {
 
-		GameRegistry.register(this.setRegistryName("ThermalDynamics_" + offset));
-		GameRegistry.register(new ItemBlockDuct(this).setRegistryName("ThermalDynamics_" + offset));
+		ForgeRegistries.BLOCKS.register(this.setRegistryName("duct_" + offset));
+		ForgeRegistries.ITEMS.register(new ItemBlockDuct(this).setRegistryName("duct_" + offset));
 		ThermalDynamics.proxy.addIModelRegister(this);
 
 		for (int i = 0; i < 16; i++) {

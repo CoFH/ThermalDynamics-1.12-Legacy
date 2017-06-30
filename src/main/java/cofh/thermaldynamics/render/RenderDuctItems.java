@@ -73,17 +73,16 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileGrid tile, double x, double y, double z, float frame, int destroyStage) {
+	public void render(TileGrid tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
 		DuctUnitItem duct = tile.getDuct(DuctToken.ITEMS);
 
 		if (duct == null) {
 			return;
 		}
-
 		CCRenderState ccrs = CCRenderState.instance();
 		if (!(duct.myItems.isEmpty() && duct.itemsToAdd.isEmpty())) {
-			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, tile.getWorld(), x, y, z, frame);
+			renderTravelingItems(Iterators.concat(duct.itemsToAdd.iterator(), duct.myItems.iterator()), duct, tile.getWorld(), x, y, z, partialTicks);
 		}
 
 		if (duct.centerLine > 0) {
@@ -109,10 +108,10 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
-					ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], frame);
+					ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], partialTicks);
 					RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 				} else {
-					ccrs.alphaOverride = getAlphaLevel(duct.centerLine, frame);
+					ccrs.alphaOverride = getAlphaLevel(duct.centerLine, partialTicks);
 					RenderDuct.modelLineCenter.render(ccrs, s * 4, s * 4 + 4, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 				}
 			}
@@ -168,7 +167,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 					GlStateManager.scale(ITEM_RENDER_SCALE, ITEM_RENDER_SCALE, ITEM_RENDER_SCALE);
 
 					travelingEntityItem.hoverStart = travelingItemSpin + frame * spinStep;
-					travelingEntityItem.setEntityItemStack(ItemHandlerHelper.copyStackWithSize(renderItem.stack, 1));
+					travelingEntityItem.setItem(ItemHandlerHelper.copyStackWithSize(renderItem.stack, 1));
 					travelingItemRender.doRender(travelingEntityItem, 0, -0.3F, 0, 0, 0);
 				}
 				GlStateManager.popMatrix();
