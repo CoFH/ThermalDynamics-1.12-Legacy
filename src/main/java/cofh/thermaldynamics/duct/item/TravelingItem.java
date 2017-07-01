@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.item;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.util.CoreUtils;
-import cofh.lib.util.helpers.BlockHelper;
+import cofh.core.util.helpers.BlockHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;

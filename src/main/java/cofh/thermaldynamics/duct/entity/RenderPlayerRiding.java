@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.render.ShaderHelper;
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import net.minecraft.client.Minecraft;

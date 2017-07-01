@@ -1,11 +1,11 @@
 package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiCore;
-import cofh.core.gui.element.TabInfo;
-import cofh.lib.gui.element.ElementButton;
-import cofh.lib.gui.element.ElementSlider;
-import cofh.lib.gui.element.listbox.SliderHorizontal;
-import cofh.lib.util.helpers.StringHelper;
+import cofh.core.gui.element.tab.TabInfo;
+import cofh.core.gui.element.ElementButton;
+import cofh.core.gui.element.ElementSlider;
+import cofh.core.gui.element.listbox.SliderHorizontal;
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;
 import net.minecraft.util.ResourceLocation;

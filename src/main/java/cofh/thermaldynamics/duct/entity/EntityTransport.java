@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.CoFHCore;
-import cofh.lib.util.helpers.MathHelper;
-import cofh.lib.util.helpers.SoundHelper;
+import cofh.core.util.helpers.MathHelper;
+import cofh.core.util.helpers.SoundHelper;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;

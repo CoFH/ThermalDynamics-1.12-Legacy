@@ -1,13 +1,9 @@
 package cofh.thermaldynamics.item;
 
 import codechicken.lib.raytracer.RayTracer;
-import codechicken.lib.util.ItemUtils;
-import codechicken.lib.vec.Cuboid6;
 import cofh.core.render.IModelRegister;
-import cofh.core.render.hitbox.CustomHitBox;
-import cofh.core.render.hitbox.RenderHitbox;
 import cofh.core.util.core.IInitializer;
-import cofh.lib.util.helpers.BlockHelper;
+import cofh.core.util.helpers.BlockHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
@@ -20,12 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

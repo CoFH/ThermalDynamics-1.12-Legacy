@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.gui.container;
 
-import cofh.lib.util.helpers.ItemHelper;
+import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.slot.SlotIcon;
 import net.minecraft.entity.player.EntityPlayer;

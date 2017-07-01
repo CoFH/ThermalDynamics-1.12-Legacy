@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.init;
 
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.gui.CreativeTabTD;
 import cofh.thermaldynamics.gui.CreativeTabTDCovers;

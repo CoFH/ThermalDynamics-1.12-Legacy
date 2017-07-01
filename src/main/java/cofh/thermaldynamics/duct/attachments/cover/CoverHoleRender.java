@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.attachments.cover;
 import codechicken.lib.render.CCQuad;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.Vertex5;
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.init.TDProps;
 
 import java.util.ArrayList;

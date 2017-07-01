@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiCore;
-import cofh.core.gui.element.TabInfo;
-import cofh.core.gui.element.TabRedstoneControl;
-import cofh.lib.gui.element.ElementButton;
-import cofh.lib.util.helpers.StringHelper;
+import cofh.core.gui.element.tab.TabInfo;
+import cofh.core.gui.element.tab.TabRedstoneControl;
+import cofh.core.gui.element.ElementButton;
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;

@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiCore;
-import cofh.lib.gui.element.ElementTextField;
+import cofh.core.gui.element.ElementTextField;
 import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransportConfig;
 import net.minecraft.entity.player.InventoryPlayer;

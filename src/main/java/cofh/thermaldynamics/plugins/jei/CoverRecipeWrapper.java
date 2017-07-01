@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.plugins.jei;
 
-import cofh.lib.util.helpers.ItemHelper;
+import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import com.google.common.collect.ImmutableList;

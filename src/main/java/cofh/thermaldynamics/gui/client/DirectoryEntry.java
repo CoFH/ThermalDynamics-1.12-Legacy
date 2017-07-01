@@ -2,7 +2,7 @@ package cofh.thermaldynamics.gui.client;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
-import cofh.lib.util.helpers.StringHelper;
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import com.google.common.base.Strings;
 import net.minecraft.item.ItemStack;

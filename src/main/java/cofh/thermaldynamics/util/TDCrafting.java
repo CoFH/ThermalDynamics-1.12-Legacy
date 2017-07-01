@@ -2,8 +2,8 @@ package cofh.thermaldynamics.util;
 
 import cofh.api.util.ThermalExpansionHelper;
 import cofh.core.util.crafting.FluidIngredient;
-import cofh.lib.util.helpers.ItemHelper;
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.helpers.ItemHelper;
+import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.registries.GameData;
 
 import static cofh.api.util.ThermalExpansionHelper.addPulverizerRecipe;
-import static cofh.lib.util.helpers.RecipeHelper.*;
+import static cofh.core.util.helpers.RecipeHelper.*;
 
 public class TDCrafting {
 

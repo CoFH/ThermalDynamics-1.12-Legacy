@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.lib.util.helpers.ServerHelper;
+import cofh.core.util.helpers.ServerHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.DuctToken;

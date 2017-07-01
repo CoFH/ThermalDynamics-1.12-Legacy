@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.util;
 
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.helpers.MathHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;

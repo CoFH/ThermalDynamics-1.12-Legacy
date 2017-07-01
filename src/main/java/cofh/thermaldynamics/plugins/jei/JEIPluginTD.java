@@ -4,10 +4,7 @@ import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.item.ItemCover;
-import mezz.jei.api.BlankModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.ISubtypeRegistry;
-import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientBlacklist;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.init.Blocks;
@@ -15,7 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 @JEIPlugin
-public class JEIPluginTD extends BlankModPlugin {
+public class JEIPluginTD implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
@@ -42,6 +39,7 @@ public class JEIPluginTD extends BlankModPlugin {
 		}));
 	}
 
+	/* HELPERS */
 	private static void blacklistCovers(IIngredientBlacklist ingredientBlacklist) {
 
 		for (ItemStack stack : ItemCover.getCoverList()) {

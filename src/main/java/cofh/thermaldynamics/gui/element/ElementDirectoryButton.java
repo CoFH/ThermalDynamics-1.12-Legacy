@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.gui.element;
 
-import cofh.lib.gui.element.ElementButton;
+import cofh.core.gui.element.ElementButton;
 import cofh.thermaldynamics.gui.client.DirectoryEntry;
 import cofh.thermaldynamics.gui.client.GuiTransport;
 

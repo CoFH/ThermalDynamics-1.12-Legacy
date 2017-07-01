@@ -5,7 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
-import cofh.lib.util.helpers.RenderHelper;
+import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
 import cofh.thermaldynamics.duct.tiles.DuctToken;

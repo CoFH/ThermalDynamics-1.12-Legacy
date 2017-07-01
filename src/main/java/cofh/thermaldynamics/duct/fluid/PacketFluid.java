@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.lib.util.helpers.BlockHelper;
+import cofh.core.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import com.google.common.collect.Iterables;

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.plugins.jei;
 
-import cofh.lib.util.helpers.StringHelper;
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.item.ItemCover;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.util;
 
-import cofh.lib.util.helpers.ServerHelper;
+import cofh.core.util.helpers.ServerHelper;
 import cofh.thermaldynamics.multiblock.ISingleTick;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;

@@ -2,7 +2,7 @@ package cofh.thermaldynamics.duct.light;
 
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
-import cofh.lib.util.ChunkCoord;
+import cofh.core.util.ChunkCoord;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.WorldGridList;

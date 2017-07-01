@@ -2,10 +2,10 @@ package cofh.thermaldynamics.duct.fluid;
 
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
-import cofh.lib.util.ChunkCoord;
-import cofh.lib.util.TimeTracker;
-import cofh.lib.util.helpers.FluidHelper;
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.ChunkCoord;
+import cofh.core.util.TimeTracker;
+import cofh.core.util.helpers.FluidHelper;
+import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;

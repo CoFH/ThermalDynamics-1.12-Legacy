@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import cofh.core.fluid.FluidTankCore;
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.helpers.MathHelper;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraftforge.fluids.FluidStack;
 

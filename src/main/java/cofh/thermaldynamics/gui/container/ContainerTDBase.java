@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.gui.container;
 
-import cofh.lib.gui.slot.SlotFalseCopy;
-import cofh.lib.util.helpers.ItemHelper;
+import cofh.core.gui.slot.SlotFalseCopy;
+import cofh.core.util.helpers.ItemHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;

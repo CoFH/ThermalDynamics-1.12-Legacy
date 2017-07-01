@@ -2,8 +2,8 @@ package cofh.thermaldynamics.gui;
 
 import cofh.CoFHCore;
 import cofh.core.util.CoreUtils;
-import cofh.lib.util.TimeTracker;
-import cofh.lib.util.helpers.MathHelper;
+import cofh.core.util.TimeTracker;
+import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;

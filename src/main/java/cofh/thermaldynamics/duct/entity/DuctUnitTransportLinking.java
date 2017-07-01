@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.core.network.PacketCoFHBase;
-import cofh.lib.util.helpers.BlockHelper;
-import cofh.lib.util.helpers.ServerHelper;
+import cofh.core.util.helpers.BlockHelper;
+import cofh.core.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;

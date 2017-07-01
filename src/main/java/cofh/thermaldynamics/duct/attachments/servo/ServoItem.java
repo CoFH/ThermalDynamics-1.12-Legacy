@@ -1,8 +1,8 @@
 package cofh.thermaldynamics.duct.attachments.servo;
 
-import cofh.lib.util.helpers.BlockHelper;
-import cofh.lib.util.helpers.InventoryHelper;
-import cofh.lib.util.helpers.ItemHelper;
+import cofh.core.util.helpers.BlockHelper;
+import cofh.core.util.helpers.InventoryHelper;
+import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
