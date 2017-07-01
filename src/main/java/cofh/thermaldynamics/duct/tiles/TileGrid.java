@@ -78,7 +78,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	static {
-		GameRegistry.registerTileEntity(TileGrid.class, "thermaldynamics.duct");
+		GameRegistry.registerTileEntity(TileGrid.class, "thermaldynamics:duct");
 	}
 
 	@Nullable

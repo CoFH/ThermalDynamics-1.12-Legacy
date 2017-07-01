@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.util;
 
 import cofh.api.util.ThermalExpansionHelper;
-import cofh.core.util.crafting.FluidIngredient;
+import cofh.core.util.crafting.FluidIngredientFactory.FluidIngredient;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;

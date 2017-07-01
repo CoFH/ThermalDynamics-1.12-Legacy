@@ -33,7 +33,7 @@ import java.util.List;
 public class ServoItem extends ServoBase {
 
 	public static int[] range = { Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE };
-	public static int[] maxSize = { 4, 16, 64, 64, 64 };
+	public static int[] maxSize = { 8, 16, 32, 64, 64 };
 	public static boolean[] multiStack = { false, false, false, true, true };
 
 	public static int[] tickDelays = { 60, 40, 20, 10, 10 };
