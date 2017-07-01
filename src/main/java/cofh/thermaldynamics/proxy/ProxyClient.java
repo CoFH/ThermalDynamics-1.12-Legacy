@@ -24,6 +24,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +78,7 @@ public class ProxyClient extends Proxy {
 	}
 
 	/* EVENT HANDLERS */
+	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {
 
@@ -89,11 +92,36 @@ public class ProxyClient extends Proxy {
 		TDDucts.structureInvis.registerIcons(event.getMap());
 	}
 
+	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void initializeIcons(TextureStitchEvent.Post event) {
 
 		RenderDuct.initialize();
 	}
+
+	//	@SideOnly (Side.CLIENT)
+	//	@SubscribeEvent (priority = EventPriority.HIGHEST)
+	//	public void onBlockHighlight(DrawBlockHighlightEvent event) {
+	//
+	//		RayTraceResult target = event.getTarget();
+	//		if (target.typeOfHit != Type.BLOCK || !ItemUtils.isPlayerHoldingSomething(event.getPlayer()) || ItemUtils.getHeldStack(event.getPlayer()).getItem() != this) {
+	//			return;
+	//		}
+	//		RayTracer.retraceBlock(event.getPlayer().world, event.getPlayer(), target.getBlockPos());
+	//		ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
+	//		Attachment attachment = getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
+	//
+	//		if (attachment == null || !attachment.canAddToTile(attachment.baseTile)) {
+	//			return;
+	//		}
+	//		Cuboid6 c = attachment.getCuboid();
+	//		c.max.subtract(c.min);
+	//
+	//		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
+	//		attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
+	//
+	//		event.setCanceled(true);
+	//	}
 
 	/* HELPERS */
 	@Override

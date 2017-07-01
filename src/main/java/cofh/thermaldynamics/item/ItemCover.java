@@ -49,7 +49,7 @@ public class ItemCover extends ItemAttachment {
 		if (nbt == null || !nbt.hasKey("Meta", 1) || !nbt.hasKey("Block", 8)) {
 			return null;
 		}
-		int meta = nbt.getByte("Meta"); //FIXME Use a state instead of meta and block.
+		int meta = nbt.getByte("Meta"); //TODO: Use a state instead of meta and block.
 		Block block = Block.getBlockFromName(nbt.getString("Block"));
 
 		if (block == Blocks.AIR || meta < 0 || meta >= 16 || !CoverHelper.isValid(block, meta)) {

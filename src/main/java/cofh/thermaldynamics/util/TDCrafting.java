@@ -1,24 +1,25 @@
 package cofh.thermaldynamics.util;
 
 import cofh.api.util.ThermalExpansionHelper;
+import cofh.core.util.crafting.FluidIngredient;
 import cofh.lib.util.helpers.ItemHelper;
+import cofh.lib.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.init.TDItems;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.item.ItemMaterial;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.registries.GameData;
 
 import static cofh.api.util.ThermalExpansionHelper.addPulverizerRecipe;
-import static cofh.lib.util.helpers.RecipeHelper.addShapedRecipe;
-import static cofh.lib.util.helpers.RecipeHelper.addShapelessRecipe;
+import static cofh.lib.util.helpers.RecipeHelper.*;
 
-//TODO, 1.11, Move StructuralDuct, Servo's and Filters back to IronNuggets.
 public class TDCrafting {
 
 	public static boolean enableCoverRecipes = true;
@@ -28,7 +29,6 @@ public class TDCrafting {
 	public static void loadRecipes() {
 
 		enableCoverRecipes = ThermalDynamics.CONFIG.get("Attachment.Cover", "Recipe", true);
-		useHardenedGlass = ThermalDynamics.CONFIG.get("Duct.Recipes", "UseHardenedGlass", true);
 		useTransposerRecipes = ThermalDynamics.CONFIG.get("Duct.Recipes", "UseFluidTransposer", true);
 		String glassHardened = useHardenedGlass ? "blockGlassHardened" : "blockGlass";
 
@@ -79,9 +79,6 @@ public class TDCrafting {
 		addShapedRecipe(TDDucts.fluidSuper.itemStack, "IGI", "GEG", "IGI", 'I', "ingotBronze", 'G', glassHardened, 'E', TDDucts.fluidHardened.itemStack);
 		addShapedRecipe(TDDucts.fluidSuperOpaque.itemStack, "IGI", "GEG", "IGI", 'I', "ingotBronze", 'G', glassHardened, 'E', TDDucts.fluidHardenedOpaque.itemStack);
 
-		//		addShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidSuper.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', glassHardened, 'P', "ingotPlatinum", 'l', "nuggetLead");
-		//		addShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidSuperOpaque.itemStack, 6), "PlP", "IGI", "PlP", 'I', "ingotLumium", 'G', "ingotLead", 'P', "ingotPlatinum", 'l', "nuggetLead");
-
 		/* FLUID - TE Integration */
 		addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3));
 		addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3), ItemHelper.cloneStack(ItemMaterial.nuggetLead));
@@ -115,7 +112,7 @@ public class TDCrafting {
 		addTransposerFill(800, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyFastOpaque.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
 
 		/* STRUCTURE */
-		addShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetTin", 'I', "ingotLead");
+		addShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead");
 
 		// TODO: Readd.
 		// addShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead");
@@ -129,39 +126,13 @@ public class TDCrafting {
 
 		/* COVERS */
 		if (enableCoverRecipes) {
-			// TODO: FIXME.
-			// addRecipe(RecipeCover.INSTANCE);
+			RecipeCover.INSTANCE.setRegistryName("thermaldynamics:cover");
+			GameData.register_impl(RecipeCover.INSTANCE);
 		}
 
 		/* SIGNALLER */
-		// TODO: FIXME.
+		// TODO: Readd.
 		// addShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum"));
-
-		/* ATTACHMENTS */
-		String[] materials = { "Iron", "Invar", "Electrum", "Signalum", "Enderium" };
-
-		int hardGlassLevel = useHardenedGlass ? 2 : 5; // level to start using hardened glass
-
-		for (int i = 0; i < materials.length; i++) {
-			addShapedRecipe(new ItemStack(TDItems.itemServo, 2, i), "iGi", "IRI", 'R', "dustRedstone", 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron");
-			addShapedRecipe(new ItemStack(TDItems.itemFilter, 2, i), "iGi", "IRI", 'R', Items.PAPER, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetIron");
-			addShapedRecipe(new ItemStack(TDItems.itemRetriever, 2, i), "iGi", "IRI", 'R', Items.ENDER_EYE, 'G', i < hardGlassLevel ? "blockGlass" : "blockGlassHardened", 'I', "ingot" + materials[i], 'i', "nuggetGold");
-
-			// TODO: FIXME.
-
-			//			if (i > 0) {
-			//				for (Item item : new Item[] { TDItems.itemFilter, TDItems.itemServo, TDItems.itemRetriever }) {
-			//					if (i < hardGlassLevel) {
-			//						addRecipe(addInputMetaRange(new ShapelessOreRecipe(new ItemStack(item, 1, i), "ingot" + materials[i]), new ItemStack(item, 1), 0, i - 1));
-			//					} else {
-			//						if (i > hardGlassLevel) {
-			//							addRecipe(addInputMetaRange(new ShapelessOreRecipe(new ItemStack(item, 1, i), "ingot" + materials[i]), new ItemStack(item, 1), hardGlassLevel, i - 1));
-			//						}
-			//						addRecipe(addInputMetaRange(addInputMetaRange(new ShapelessOreRecipe(new ItemStack(item, 2, i), "blockGlassHardened", "ingot" + materials[i], "ingot" + materials[i]), new ItemStack(item, 1), 0, hardGlassLevel - 1), new ItemStack(item, 1), 0, hardGlassLevel - 1));
-			//					}
-			//				}
-			//			}
-		}
 
 		/* CONVERSIONS */
 		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque },
@@ -199,61 +170,18 @@ public class TDCrafting {
 	/* HELPERS */
 	public static void addTransposerFill(int energy, ItemStack input, ItemStack output, FluidStack fluid, boolean reversible) {
 
-		ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
+		if (Loader.isModLoaded("thermalexpansion")) {
+			int numDucts = MathHelper.clamp(Fluid.BUCKET_VOLUME / fluid.amount, 1, 8);
+			NonNullList<Object> ingredients = NonNullList.create();
 
-		// TODO: FIXME.
-		//		if (useTransposerRecipes && Loader.isModLoaded("thermalexpansion")) {
-		//			ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
-		//		} else {
-		//			int i = MathHelper.clamp(Fluid.BUCKET_VOLUME / fluid.amount, 1, 8);
-		//			ItemStack fluidBucket = getFluidBucket(fluid);
-		//			if (fluidBucket != null) {
-		//				ShapelessOreRecipe recipe = new ShapelessOreRecipe(ItemHelper.cloneStack(output, i), fluidBucket);
-		//
-		//				for (int j = 0; j < i; j++) {
-		//					recipe.getInput().add(input.copy());
-		//				}
-		//				addRecipe(recipe);
-		//			}
-		//		}
+			for (int i = 0; i < numDucts; i++) {
+				ingredients.add(ItemHelper.cloneStack(input, 1));
+			}
+			ingredients.add(new FluidIngredient(fluid.getFluid().getName()));
+			addShapelessFluidRecipe(ItemHelper.cloneStack(output, numDucts), ingredients.toArray());
+		} else {
+			ThermalExpansionHelper.addTransposerFill(energy, input, output, fluid, reversible);
+		}
 	}
-
-	public static ItemStack getFluidBucket(FluidStack fluidStack) {
-
-		return UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluidStack.getFluid());
-	}
-
-	// TODO: FIXME.
-	//	public static ShapelessOreRecipe addInputMetaRange(ShapelessOreRecipe recipe, ItemStack input, int minMeta, int maxMeta) {
-	//
-	//		ArrayList<ItemStack> itemStacks = new ArrayList<>(maxMeta - minMeta + 1);
-	//		for (int i = minMeta; i <= maxMeta; i++) {
-	//			input = input.copy();
-	//			input.setItemDamage(i);
-	//			itemStacks.add(input);
-	//		}
-	//		recipe.getInput().add(itemStacks);
-	//		return recipe;
-	//	}
-	//
-	//	public static ShapelessOreRecipe addInput(ShapelessOreRecipe recipe, Collection<ItemStack>... inputs) {
-	//
-	//		for (Collection<ItemStack> input : inputs) {
-	//			ArrayList<ItemStack> itemStacks = new ArrayList<>(input.size());
-	//			itemStacks.addAll(input);
-	//			recipe.getInput().add(itemStacks);
-	//		}
-	//		return recipe;
-	//	}
-	//
-	//	public static ShapelessOreRecipe addInput(ShapelessOreRecipe recipe, ItemStack[]... inputs) {
-	//
-	//		for (ItemStack[] input : inputs) {
-	//			ArrayList<ItemStack> itemStacks = new ArrayList<>(input.length);
-	//			Collections.addAll(itemStacks, input);
-	//			recipe.getInput().add(itemStacks);
-	//		}
-	//		return recipe;
-	//	}
 
 }

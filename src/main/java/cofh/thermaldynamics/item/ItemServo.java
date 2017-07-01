@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -25,10 +26,13 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.lib.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.lib.util.helpers.RecipeHelper.addShapelessRecipe;
+
 public class ItemServo extends ItemAttachment {
 
 	public static EnumRarity[] rarity = { EnumRarity.COMMON, EnumRarity.COMMON, EnumRarity.UNCOMMON, EnumRarity.UNCOMMON, EnumRarity.RARE };
-	public static ItemStack basicServo, hardenedServo, reinforcedServo, signalumServo, resonantServo;
+	public static ItemStack servoBasic, servoHardened, servoReinforced, servoSignalum, servoResonant;
 
 	public ItemServo() {
 
@@ -142,11 +146,11 @@ public class ItemServo extends ItemAttachment {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("servo"));
 
-		basicServo = new ItemStack(this, 1, 0);
-		hardenedServo = new ItemStack(this, 1, 1);
-		reinforcedServo = new ItemStack(this, 1, 2);
-		signalumServo = new ItemStack(this, 1, 3);
-		resonantServo = new ItemStack(this, 1, 4);
+		servoBasic = new ItemStack(this, 1, 0);
+		servoHardened = new ItemStack(this, 1, 1);
+		servoReinforced = new ItemStack(this, 1, 2);
+		servoSignalum = new ItemStack(this, 1, 3);
+		servoResonant = new ItemStack(this, 1, 4);
 
 		ServoBase.initialize();
 
@@ -157,6 +161,65 @@ public class ItemServo extends ItemAttachment {
 
 	@Override
 	public boolean initialize() {
+
+		// @formatter:off
+
+		addShapedRecipe(servoBasic,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotIron",
+				'R', "dustRedstone"
+		);
+
+		addShapedRecipe(servoHardened,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotInvar",
+				'R', "dustRedstone"
+		);
+		addShapelessRecipe(servoHardened, servoBasic, "ingotInvar");
+
+		addShapedRecipe(servoReinforced,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotElectrum",
+				'R', "dustRedstone"
+		);
+		addShapelessRecipe(servoReinforced, servoBasic, "ingotElectrum");
+		addShapelessRecipe(servoReinforced, servoHardened, "ingotElectrum");
+
+		addShapedRecipe(servoSignalum,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotSignalum",
+				'R', "dustRedstone"
+		);
+		addShapelessRecipe(servoSignalum, servoBasic, "ingotSignalum");
+		addShapelessRecipe(servoSignalum, servoHardened, "ingotSignalum");
+		addShapelessRecipe(servoSignalum, servoReinforced, "ingotSignalum");
+
+		addShapedRecipe(servoResonant,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotEnderium",
+				'R', "dustRedstone"
+		);
+		addShapelessRecipe(servoResonant, servoBasic, "ingotEnderium");
+		addShapelessRecipe(servoResonant, servoHardened, "ingotEnderium");
+		addShapelessRecipe(servoResonant, servoReinforced, "ingotEnderium");
+		addShapelessRecipe(servoResonant, servoSignalum, "ingotEnderium");
+
+		// @formatter:on
 
 		return true;
 	}

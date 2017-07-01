@@ -90,7 +90,6 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 	@Override
 	public boolean initialize() {
 
-		MinecraftForge.EVENT_BUS.register(this);
 		return true;
 	}
 
@@ -104,30 +103,6 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 	@SideOnly (Side.CLIENT)
 	public void registerModels() {
 
-	}
-
-	@SideOnly (Side.CLIENT)
-	@SubscribeEvent (priority = EventPriority.HIGHEST)
-	public void onBlockHighlight(DrawBlockHighlightEvent event) {
-
-		RayTraceResult target = event.getTarget();
-		if (target.typeOfHit != Type.BLOCK || !ItemUtils.isPlayerHoldingSomething(event.getPlayer()) || ItemUtils.getHeldStack(event.getPlayer()).getItem() != this) {
-			return;
-		}
-		RayTracer.retraceBlock(event.getPlayer().world, event.getPlayer(), target.getBlockPos());
-		ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
-		Attachment attachment = getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
-
-		if (attachment == null || !attachment.canAddToTile(attachment.baseTile)) {
-			return;
-		}
-		Cuboid6 c = attachment.getCuboid();
-		c.max.subtract(c.min);
-
-		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
-		attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
-
-		event.setCanceled(true);
 	}
 
 }

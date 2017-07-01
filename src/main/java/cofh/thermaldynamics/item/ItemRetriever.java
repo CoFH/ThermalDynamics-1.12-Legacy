@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -27,10 +28,13 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.lib.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.lib.util.helpers.RecipeHelper.addShapelessRecipe;
+
 public class ItemRetriever extends ItemAttachment {
 
 	public static EnumRarity[] rarity = { EnumRarity.COMMON, EnumRarity.COMMON, EnumRarity.UNCOMMON, EnumRarity.UNCOMMON, EnumRarity.RARE };
-	public static ItemStack basicRetriever, hardenedRetriever, reinforcedRetriever, signalumRetriever, resonantRetriever;
+	public static ItemStack retrieverBasic, retrieverHardened, retrieverReinforced, retrieverSignalum, retrieverResonant;
 
 	public ItemRetriever() {
 
@@ -144,11 +148,11 @@ public class ItemRetriever extends ItemAttachment {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("retriever"));
 
-		basicRetriever = new ItemStack(this, 1, 0);
-		hardenedRetriever = new ItemStack(this, 1, 1);
-		reinforcedRetriever = new ItemStack(this, 1, 2);
-		signalumRetriever = new ItemStack(this, 1, 3);
-		resonantRetriever = new ItemStack(this, 1, 4);
+		retrieverBasic = new ItemStack(this, 1, 0);
+		retrieverHardened = new ItemStack(this, 1, 1);
+		retrieverReinforced = new ItemStack(this, 1, 2);
+		retrieverSignalum = new ItemStack(this, 1, 3);
+		retrieverResonant = new ItemStack(this, 1, 4);
 
 		ThermalDynamics.proxy.addIModelRegister(this);
 
@@ -157,6 +161,65 @@ public class ItemRetriever extends ItemAttachment {
 
 	@Override
 	public boolean initialize() {
+
+		// @formatter:off
+
+		addShapedRecipe(retrieverBasic,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotIron",
+				'R', Items.ENDER_EYE
+		);
+
+		addShapedRecipe(retrieverHardened,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotInvar",
+				'R', Items.ENDER_EYE
+		);
+		addShapelessRecipe(retrieverHardened, retrieverBasic, "ingotInvar");
+
+		addShapedRecipe(retrieverReinforced,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotElectrum",
+				'R', Items.ENDER_EYE
+		);
+		addShapelessRecipe(retrieverReinforced, retrieverBasic, "ingotElectrum");
+		addShapelessRecipe(retrieverReinforced, retrieverHardened, "ingotElectrum");
+
+		addShapedRecipe(retrieverSignalum,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotSignalum",
+				'R', Items.ENDER_EYE
+		);
+		addShapelessRecipe(retrieverSignalum, retrieverBasic, "ingotSignalum");
+		addShapelessRecipe(retrieverSignalum, retrieverHardened, "ingotSignalum");
+		addShapelessRecipe(retrieverSignalum, retrieverReinforced, "ingotSignalum");
+
+		addShapedRecipe(retrieverResonant,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotEnderium",
+				'R', Items.ENDER_EYE
+		);
+		addShapelessRecipe(retrieverResonant, retrieverBasic, "ingotEnderium");
+		addShapelessRecipe(retrieverResonant, retrieverHardened, "ingotEnderium");
+		addShapelessRecipe(retrieverResonant, retrieverReinforced, "ingotEnderium");
+		addShapelessRecipe(retrieverResonant, retrieverSignalum, "ingotEnderium");
+
+		// @formatter:on
 
 		return true;
 	}

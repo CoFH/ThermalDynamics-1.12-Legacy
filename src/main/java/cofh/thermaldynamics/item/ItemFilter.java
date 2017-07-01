@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -24,10 +25,13 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.lib.util.helpers.RecipeHelper.addShapedRecipe;
+import static cofh.lib.util.helpers.RecipeHelper.addShapelessRecipe;
+
 public class ItemFilter extends ItemAttachment {
 
 	public static EnumRarity[] rarity = { EnumRarity.COMMON, EnumRarity.COMMON, EnumRarity.UNCOMMON, EnumRarity.UNCOMMON, EnumRarity.RARE };
-	public static ItemStack basicFilter, hardenedFilter, reinforcedFilter, signalumFilter, resonantFilter;
+	public static ItemStack filterBasic, filterHardened, filterReinforced, filterSignalum, filterResonant;
 
 	public ItemFilter() {
 
@@ -124,11 +128,11 @@ public class ItemFilter extends ItemAttachment {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("filter"));
 
-		basicFilter = new ItemStack(this, 1, 0);
-		hardenedFilter = new ItemStack(this, 1, 1);
-		reinforcedFilter = new ItemStack(this, 1, 2);
-		signalumFilter = new ItemStack(this, 1, 3);
-		resonantFilter = new ItemStack(this, 1, 4);
+		filterBasic = new ItemStack(this, 1, 0);
+		filterHardened = new ItemStack(this, 1, 1);
+		filterReinforced = new ItemStack(this, 1, 2);
+		filterSignalum = new ItemStack(this, 1, 3);
+		filterResonant = new ItemStack(this, 1, 4);
 
 		ThermalDynamics.proxy.addIModelRegister(this);
 
@@ -137,6 +141,65 @@ public class ItemFilter extends ItemAttachment {
 
 	@Override
 	public boolean initialize() {
+
+		// @formatter:off
+
+		addShapedRecipe(filterBasic,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotIron",
+				'R', Items.PAPER
+		);
+
+		addShapedRecipe(filterHardened,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotInvar",
+				'R', Items.PAPER
+		);
+		addShapelessRecipe(filterHardened, filterBasic, "ingotInvar");
+
+		addShapedRecipe(filterReinforced,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotElectrum",
+				'R', Items.PAPER
+		);
+		addShapelessRecipe(filterReinforced, filterBasic, "ingotElectrum");
+		addShapelessRecipe(filterReinforced, filterHardened, "ingotElectrum");
+
+		addShapedRecipe(filterSignalum,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotSignalum",
+				'R', Items.PAPER
+		);
+		addShapelessRecipe(filterSignalum, filterBasic, "ingotSignalum");
+		addShapelessRecipe(filterSignalum, filterHardened, "ingotSignalum");
+		addShapelessRecipe(filterSignalum, filterReinforced, "ingotSignalum");
+
+		addShapedRecipe(filterResonant,
+				"iGi",
+				"IRI",
+				'i', "nuggetIron",
+				'G', "blockGlass",
+				'I', "ingotEnderium",
+				'R', Items.PAPER
+		);
+		addShapelessRecipe(filterResonant, filterBasic, "ingotEnderium");
+		addShapelessRecipe(filterResonant, filterHardened, "ingotEnderium");
+		addShapelessRecipe(filterResonant, filterReinforced, "ingotEnderium");
+		addShapelessRecipe(filterResonant, filterSignalum, "ingotEnderium");
+
+		// @formatter:on
 
 		return true;
 	}
