@@ -71,8 +71,8 @@ public class RecipeCover extends IForgeRegistryEntry.Impl<IRecipe> implements IR
 	}
 
 	@Override
-	public boolean canFit(int width, int height)
-	{
+	public boolean canFit(int width, int height) {
+
 		return width * height >= 2;
 	}
 

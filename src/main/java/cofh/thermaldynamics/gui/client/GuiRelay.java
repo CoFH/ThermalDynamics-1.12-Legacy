@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiCore;
-import cofh.core.gui.element.tab.TabInfo;
 import cofh.core.gui.element.ElementButton;
 import cofh.core.gui.element.ElementSlider;
 import cofh.core.gui.element.listbox.SliderHorizontal;
+import cofh.core.gui.element.tab.TabInfo;
 import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.gui.container.ContainerRelay;

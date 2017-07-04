@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.gui.client;
 
 import cofh.core.gui.GuiCore;
-import cofh.core.network.PacketHandler;
-import cofh.core.network.PacketTileInfo;
 import cofh.core.gui.element.ElementButtonManaged;
 import cofh.core.gui.element.listbox.SliderVertical;
+import cofh.core.network.PacketHandler;
+import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
 import cofh.thermaldynamics.gui.container.ContainerTransport;

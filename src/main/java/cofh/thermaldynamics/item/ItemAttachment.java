@@ -1,14 +1,9 @@
 package cofh.thermaldynamics.item;
 
-import codechicken.lib.util.ItemUtils;
-import codechicken.lib.vec.Cuboid6;
 import cofh.core.render.IModelRegister;
-import cofh.core.render.hitbox.CustomHitBox;
-import cofh.core.render.hitbox.RenderHitbox;
 import cofh.core.util.RayTracer;
 import cofh.core.util.core.IInitializer;
 import cofh.core.util.helpers.BlockHelper;
-import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
@@ -21,11 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -73,13 +64,13 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 					s = ((subHit - 14) % 6);
 				}
 				if (s != -1) {
-					attachment = ((ItemAttachment)stack.getItem()).getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileGrid) tile);
+					attachment = ((ItemAttachment) stack.getItem()).getAttachment(EnumFacing.VALUES[s ^ 1], stack, (TileGrid) tile);
 				}
 			}
 		} else {
 			tile = BlockHelper.getAdjacentTileEntity(world, pos, side);
 			if (tile instanceof TileGrid) {
-				attachment = ((ItemAttachment)stack.getItem()).getAttachment(side, stack, (TileGrid) tile);
+				attachment = ((ItemAttachment) stack.getItem()).getAttachment(side, stack, (TileGrid) tile);
 			}
 		}
 		return attachment;
