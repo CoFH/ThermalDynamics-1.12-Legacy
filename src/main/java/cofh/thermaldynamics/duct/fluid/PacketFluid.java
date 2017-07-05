@@ -70,15 +70,4 @@ public class PacketFluid extends PacketCoFHBase {
 		}
 	}
 
-	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-
-		datain = new DataInputStream(stream = new ByteArrayInputStream(buffer.array()));
-		try {
-			datain.skipBytes(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 }
