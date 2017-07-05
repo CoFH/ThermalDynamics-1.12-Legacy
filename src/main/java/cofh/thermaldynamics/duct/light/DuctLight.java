@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 public class DuctLight extends Duct {
 
 	static {
-		PacketHandler.instance.registerPacket(PacketLight.class);
+		PacketHandler.INSTANCE.registerPacket(PacketLight.class);
 	}
 
 	public DuctLight(int id, int type, String name, Type ductType, IDuctFactory factory, String baseTexture, String connectionTexture, String fluidTexture, int fluidTransparency) {

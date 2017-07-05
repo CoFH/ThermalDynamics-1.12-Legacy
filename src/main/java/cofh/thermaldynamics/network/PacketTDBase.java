@@ -8,7 +8,7 @@ public class PacketTDBase extends PacketCoFHBase {
 
 	public static void initialize() {
 
-		PacketHandler.instance.registerPacket(PacketTDBase.class);
+		PacketHandler.INSTANCE.registerPacket(PacketTDBase.class);
 	}
 
 	@Override

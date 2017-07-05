@@ -21,7 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuctItemsEnder extends RenderDuctItems {
 
-	public static final TileEntitySpecialRenderer<TileGrid> instance = new RenderDuctItemsEnder();
+	public static final TileEntitySpecialRenderer<TileGrid> INSTANCE = new RenderDuctItemsEnder();
 
 	// TEMA: this is the shader callback where the uniforms are set for this particular shader.
 	// it's called each frame when the shader is bound. Probably the most expensive part of the whole thing.
@@ -58,7 +58,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 			GlStateManager.color(1, 1, 1, 1);
 
-			int[] connections = RenderDuct.instance.getDuctConnections(tile);
+			int[] connections = RenderDuct.INSTANCE.getDuctConnections(tile);
 
 			drawEnderStarfield(ccrs, x, y, z, connections, partialTicks, duct.centerLine, duct.centerLineSub);
 

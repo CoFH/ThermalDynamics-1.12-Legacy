@@ -53,7 +53,7 @@ public class ItemRelay extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean preInit() {
+	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("relay"));
 
@@ -63,7 +63,7 @@ public class ItemRelay extends ItemAttachment {
 	}
 
 	@Override
-	public boolean initialize() {
+	public boolean register() {
 
 		return true;
 	}

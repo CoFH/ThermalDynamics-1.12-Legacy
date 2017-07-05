@@ -37,8 +37,8 @@ public class DuctItemModelBakery implements IItemBakery {
 			Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + stack.getItemDamage());
 			int metadata = duct.id;
 
-			RenderDuct.instance.renderBase(ccrs, true, metadata, RenderDuct.INV_CONNECTIONS, 0, 0, 0, duct.getBaseTexture(stack));
-			RenderDuct.instance.renderWorldExtra(ccrs, true, metadata, RenderDuct.INV_CONNECTIONS, 0, 0 - RenderHelper.RENDER_OFFSET, 0);
+			RenderDuct.INSTANCE.renderBase(ccrs, true, metadata, RenderDuct.INV_CONNECTIONS, 0, 0, 0, duct.getBaseTexture(stack));
+			RenderDuct.INSTANCE.renderWorldExtra(ccrs, true, metadata, RenderDuct.INV_CONNECTIONS, 0, 0 - RenderHelper.RENDER_OFFSET, 0);
 
 			buffer.finishDrawing();
 			quads.addAll(buffer.bake());

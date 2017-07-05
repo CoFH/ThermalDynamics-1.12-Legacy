@@ -141,7 +141,7 @@ public class ItemServo extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean preInit() {
+	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("servo"));
 
@@ -159,7 +159,7 @@ public class ItemServo extends ItemAttachment {
 	}
 
 	@Override
-	public boolean initialize() {
+	public boolean register() {
 
 		// @formatter:off
 

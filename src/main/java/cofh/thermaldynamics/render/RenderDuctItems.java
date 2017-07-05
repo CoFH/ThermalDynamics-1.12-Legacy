@@ -29,15 +29,14 @@ import java.util.Iterator;
 
 public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 
-	public static final int ITEMS_TO_RENDER_PER_DUCT = 16;
+	public static final RenderDuctItems INSTANCE = new RenderDuctItems();
+
+	static final int ITEMS_TO_RENDER_PER_DUCT = 16;
+	static final float ITEM_RENDER_SCALE = 0.7F;
 
 	static RenderEntityItem travelingItemRender;
 	static EntityItem travelingEntityItem = new EntityItem(null);
 	static float travelingItemSpin = 0.25F;
-
-	public static final RenderDuctItems instance = new RenderDuctItems();
-
-	static final float ITEM_RENDER_SCALE = 0.7F;
 
 	static {
 		Minecraft minecraft = Minecraft.getMinecraft();
@@ -57,7 +56,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 		};
 		travelingEntityItem.hoverStart = 0;
 
-		MinecraftForge.EVENT_BUS.register(instance);
+		MinecraftForge.EVENT_BUS.register(INSTANCE);
 	}
 
 	public static float spinStep = 0.026175f;
@@ -104,7 +103,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 			ccrs.colour = -1;
 			ccrs.brightness = 15728880;
 
-			int[] connections = RenderDuct.instance.getDuctConnections(tile);
+			int[] connections = RenderDuct.INSTANCE.getDuctConnections(tile);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {

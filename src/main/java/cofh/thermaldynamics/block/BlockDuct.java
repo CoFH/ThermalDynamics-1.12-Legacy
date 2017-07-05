@@ -419,7 +419,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return sprites.toArray(new TextureAtlasSprite[0]);
 	}
 
-	/* EVENT HANDLERS */
+	/* EVENT HANDLING */
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent (priority = EventPriority.HIGH)
 	public void onBlockHighlight(DrawBlockHighlightEvent event) {
@@ -519,29 +519,17 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	/* IInitializer */
 	@Override
-	public boolean preInit() {
+	public boolean initialize() {
 
 		ForgeRegistries.BLOCKS.register(this.setRegistryName("duct_" + offset));
 		ForgeRegistries.ITEMS.register(new ItemBlockDuct(this).setRegistryName("duct_" + offset));
-		ThermalDynamics.proxy.addIModelRegister(this);
 
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(offset + i)) {
 				TDDucts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
 			}
 		}
-		return true;
-	}
-
-	@Override
-	public boolean initialize() {
-
 		MinecraftForge.EVENT_BUS.register(this);
-
-		if (offset != 0) {
-			return true;
-		}
-		PacketHandler.instance.registerPacket(PacketFluid.class);
 
 		/* ENERGY */
 		GameRegistry.registerTileEntity(TileDuctEnergy.Basic.class, "thermaldynamics:duct_energy_basic");
@@ -582,17 +570,24 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics:duct_transport_long_range");
 		GameRegistry.registerTileEntity(TileTransportDuct.Linking.class, "thermaldynamics:duct_transport_linking");
 
-		EntityRegistry.registerModEntity(new ResourceLocation("thermaldynamics:transport"), EntityTransport.class, "transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
-		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
-		FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
-
-		addRecipes();
+		ThermalDynamics.proxy.addIModelRegister(this);
 
 		return true;
 	}
 
 	@Override
-	public boolean postInit() {
+	public boolean register() {
+
+		if (offset != 0) {
+			return false;
+		}
+		PacketHandler.INSTANCE.registerPacket(PacketFluid.class);
+
+		EntityRegistry.registerModEntity(new ResourceLocation("thermaldynamics:transport"), EntityTransport.class, "transport", 0, ThermalDynamics.instance, CoreProps.ENTITY_TRACKING_DISTANCE, 1, true);
+		MinecraftForge.EVENT_BUS.register(TransportHandler.INSTANCE);
+		FMLCommonHandler.instance().bus().register(TransportHandler.INSTANCE);
+
+		addRecipes();
 
 		return true;
 	}

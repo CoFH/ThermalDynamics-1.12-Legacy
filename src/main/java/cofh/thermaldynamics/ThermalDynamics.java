@@ -9,8 +9,6 @@ import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.proxy.Proxy;
-import cofh.thermaldynamics.util.RecipeCover;
-import cofh.thermaldynamics.util.TDCrafting;
 import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermalfoundation.ThermalFoundation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,10 +18,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.RecipeSorter.Category;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,27 +75,17 @@ public class ThermalDynamics {
 		/* Register Handlers */
 		registerHandlers();
 
-		RecipeSorter.register("thermaldynamics:cover", RecipeCover.class, Category.SHAPELESS, "after:forge:shapelessore");
-
 		proxy.preInit(event);
 	}
 
 	@EventHandler
 	public void initialize(FMLInitializationEvent event) {
 
-		TDBlocks.initialize();
-		TDItems.initialize();
-
-		TDCrafting.loadRecipes();
-
 		proxy.initialize(event);
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-
-		TDBlocks.postInit();
-		TDItems.postInit();
 
 		proxy.postInit(event);
 	}
@@ -109,16 +98,6 @@ public class ThermalDynamics {
 		CONFIG_CLIENT.cleanUp(false, true);
 
 		LOG.info(MOD_NAME + ": Load Complete.");
-	}
-
-	@EventHandler
-	public void serverStart(FMLServerAboutToStartEvent event) {
-
-	}
-
-	@EventHandler
-	public void serverStarting(FMLServerStartingEvent event) {
-
 	}
 
 	/* HELPERS */

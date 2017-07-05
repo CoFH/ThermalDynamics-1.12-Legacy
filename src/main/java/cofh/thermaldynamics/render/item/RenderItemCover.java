@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderItemCover implements IItemRenderer {
 
-	public static IItemRenderer instance = new RenderItemCover();
+	public static final IItemRenderer INSTANCE = new RenderItemCover();
 
 	@Override
 	public void renderItem(ItemStack stack, TransformType transformType) {

@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuctFluids extends TileEntitySpecialRenderer<TileDuctFluid> {
 
-	public static final RenderDuctFluids instance = new RenderDuctFluids();
+	public static final RenderDuctFluids INSTANCE = new RenderDuctFluids();
 
 	@Override
 	public void render(TileDuctFluid tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -32,7 +32,7 @@ public class RenderDuctFluids extends TileEntitySpecialRenderer<TileDuctFluid> {
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableLighting();
 
-		RenderDuct.instance.renderFluid(ccrs, fluid.myRenderFluid, connections, fluid.getRenderFluidLevel(), x, y, z);
+		RenderDuct.INSTANCE.renderFluid(ccrs, fluid.myRenderFluid, connections, fluid.getRenderFluidLevel(), x, y, z);
 
 		GlStateManager.enableLighting();
 		GlStateManager.disableBlend();

@@ -55,7 +55,7 @@ public class ProxyClient extends Proxy {
 
 		MinecraftForge.EVENT_BUS.register(TickHandlerClient.INSTANCE);
 
-		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.instance);
+		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.INSTANCE);
 		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, RenderTransport::new);
 
 		for (IModelRegister register : modelRegisters) {
@@ -68,17 +68,17 @@ public class ProxyClient extends Proxy {
 
 		super.initialize(event);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Basic.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Fast.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Energy.Transparent.class, RenderDuctItems.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.EnergyFast.Transparent.class, RenderDuctItems.instance);
-		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Warp.Transparent.class, RenderDuctItemsEnder.instance);
-		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Basic.Transparent.class, RenderDuctItems.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Fast.Transparent.class, RenderDuctItems.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Energy.Transparent.class, RenderDuctItems.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.EnergyFast.Transparent.class, RenderDuctItems.INSTANCE);
+		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Warp.Transparent.class, RenderDuctItemsEnder.INSTANCE);
+		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.INSTANCE);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Basic.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Super.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Hardened.Transparent.class, RenderDuctFluids.instance);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Energy.Transparent.class, RenderDuctFluids.instance);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Basic.Transparent.class, RenderDuctFluids.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Super.Transparent.class, RenderDuctFluids.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Hardened.Transparent.class, RenderDuctFluids.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Energy.Transparent.class, RenderDuctFluids.INSTANCE);
 	}
 
 	@Override
@@ -87,10 +87,10 @@ public class ProxyClient extends Proxy {
 		super.postInit(event);
 
 		ProxyClient.renderType = BlockRenderingRegistry.createRenderType("thermaldynamics");
-		BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.instance);
+		BlockRenderingRegistry.registerRenderer(ProxyClient.renderType, RenderDuct.INSTANCE);
 	}
 
-	/* EVENT HANDLERS */
+	/* EVENT HANDLING */
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
 	public void registerIcons(TextureStitchEvent.Pre event) {

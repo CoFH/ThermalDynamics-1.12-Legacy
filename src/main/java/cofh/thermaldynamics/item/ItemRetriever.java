@@ -144,7 +144,7 @@ public class ItemRetriever extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean preInit() {
+	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("retriever"));
 
@@ -160,7 +160,7 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public boolean initialize() {
+	public boolean register() {
 
 		// @formatter:off
 

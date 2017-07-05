@@ -124,7 +124,7 @@ public class ItemFilter extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean preInit() {
+	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("filter"));
 
@@ -140,7 +140,7 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public boolean initialize() {
+	public boolean register() {
 
 		// @formatter:off
 

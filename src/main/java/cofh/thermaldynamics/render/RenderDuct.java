@@ -37,7 +37,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderDuct implements ICCBlockRenderer {
 
-	public static final RenderDuct instance = new RenderDuct();
+	public static final RenderDuct INSTANCE = new RenderDuct();
 
 	static final int[] INV_CONNECTIONS = { BlockDuct.ConnectionType.DUCT.ordinal(), BlockDuct.ConnectionType.DUCT.ordinal(), 0, 0, 0, 0 };
 	//	static int[] connections = new int[6];
