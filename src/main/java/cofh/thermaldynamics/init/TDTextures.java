@@ -4,7 +4,6 @@ import cofh.core.init.CoreProps;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
 
 public class TDTextures {
 
@@ -12,11 +11,12 @@ public class TDTextures {
 
 	}
 
-	public static void registerIcons(TextureStitchEvent.Pre event) {
+	public static void registerTextures(TextureMap map) {
 
-		map = event.getMap();
+		textureMap = map;
 
 		//@formatter:off
+
 		SERVO_BASE_0_0 =        register(SERVO_ + "0_0");
 		SERVO_BASE_0_1 =        register(SERVO_ + "0_1");
 		SERVO_BASE_0_2 =        register(SERVO_ + "0_2");
@@ -38,7 +38,6 @@ public class TDTextures {
 		RETRIEVER_BASE_1_2 =    register(RETRIEVER_ + "1_2");
 		RETRIEVER_BASE_1_3 =    register(RETRIEVER_ + "1_3");
 		RETRIEVER_BASE_1_4 =    register(RETRIEVER_ + "1_4");
-
 
 		FILTER_BASE_0 =         register(FILTER_ + "0");
 		FILTER_BASE_1 =         register(FILTER_ + "1");
@@ -96,16 +95,12 @@ public class TDTextures {
 		//@formatter:on
 	}
 
-	// Bouncer to make the class readable.
+	/* HELPERS */
 	private static TextureAtlasSprite register(String sprite) {
 
-		return map.registerSprite(new ResourceLocation(sprite));
+		return textureMap.registerSprite(new ResourceLocation(sprite));
 	}
 
-	//Assign the TextureMap to a file to make things even more readable!
-	private static TextureMap map;
-
-	// Bouncer for registering ColorBlind textures.
 	private static TextureAtlasSprite registerCB(String sprite) {
 
 		if (CoreProps.enableColorBlindTextures) {
@@ -114,6 +109,7 @@ public class TDTextures {
 		return register(sprite);
 	}
 
+	private static TextureMap textureMap;
 	private static String CB_POSTFIX = "_cb";
 
 	private static final String BLOCKS_ = "thermaldynamics:blocks/";

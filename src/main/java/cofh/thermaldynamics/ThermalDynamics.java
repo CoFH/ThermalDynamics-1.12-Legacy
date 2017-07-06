@@ -8,6 +8,7 @@ import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDProps;
+import cofh.thermaldynamics.init.TDSounds;
 import cofh.thermaldynamics.proxy.Proxy;
 import cofh.thermaldynamics.util.TickHandler;
 import cofh.thermalfoundation.ThermalFoundation;
@@ -69,8 +70,10 @@ public class ThermalDynamics {
 		CONFIG_CLIENT.setConfiguration(new Configuration(new File(CoreProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
 
 		TDProps.preInit();
+
 		TDBlocks.preInit();
 		TDItems.preInit();
+		TDSounds.preInit();
 
 		/* Register Handlers */
 		registerHandlers();

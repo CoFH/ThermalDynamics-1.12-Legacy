@@ -3,20 +3,32 @@ package cofh.thermaldynamics.init;
 import cofh.thermaldynamics.ThermalDynamics;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class TDSounds {
+
+	public static final TDSounds INSTANCE = new TDSounds();
 
 	private TDSounds() {
 
 	}
 
-	public static void initialize() {
+	public static void preInit() {
 
-		DUCT_TRANSPORT_WOOSH = getRegisteredSoundEvent("duct_transport_woosh");
+		MinecraftForge.EVENT_BUS.register(INSTANCE);
 	}
 
-	private static SoundEvent getRegisteredSoundEvent(String id) {
+	/* EVENT HANDLING */
+	@SubscribeEvent
+	public void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+
+		ductTransportWoosh = registerSoundEvent("duct_transport_woosh");
+	}
+
+	private static SoundEvent registerSoundEvent(String id) {
 
 		SoundEvent sound = new SoundEvent(new ResourceLocation(ThermalDynamics.MOD_ID + ":" + id));
 		sound.setRegistryName(id);
@@ -24,6 +36,6 @@ public class TDSounds {
 		return sound;
 	}
 
-	public static SoundEvent DUCT_TRANSPORT_WOOSH;
+	public static SoundEvent ductTransportWoosh;
 
 }

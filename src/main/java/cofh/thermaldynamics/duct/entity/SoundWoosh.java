@@ -8,11 +8,9 @@ public class SoundWoosh extends MovingSound {
 
 	private final EntityTransport transport;
 
-	// public static final SoundEvent WOOSH = new SoundEvent(new ResourceLocation("thermaldynamics", "duct_transport_woosh")).setRegistryName("thermaldynamics:ducts_transport_woosh");
-
 	protected SoundWoosh(EntityTransport transport) {
 
-		super(TDSounds.DUCT_TRANSPORT_WOOSH, SoundCategory.NEUTRAL);
+		super(TDSounds.ductTransportWoosh, SoundCategory.NEUTRAL);
 
 		this.transport = transport;
 		this.repeat = true;

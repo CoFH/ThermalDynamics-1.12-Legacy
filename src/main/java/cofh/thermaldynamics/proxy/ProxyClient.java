@@ -2,10 +2,10 @@ package cofh.thermaldynamics.proxy;
 
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.render.block.BlockRenderingRegistry;
-import codechicken.lib.util.ItemUtils;
 import codechicken.lib.vec.Cuboid6;
 import cofh.core.render.IModelRegister;
 import cofh.core.render.hitbox.CustomHitBox;
+import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.render.hitbox.RenderHitbox;
 import cofh.core.util.RayTracer;
 import cofh.core.util.helpers.ItemHelper;
@@ -23,7 +23,9 @@ import cofh.thermaldynamics.render.RenderDuctFluids;
 import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cofh.thermaldynamics.util.TickHandlerClient;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
@@ -93,9 +95,9 @@ public class ProxyClient extends Proxy {
 	/* EVENT HANDLING */
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
-	public void registerIcons(TextureStitchEvent.Pre event) {
+	public void handleTextureStitchEventPre(TextureStitchEvent.Pre event) {
 
-		TDTextures.registerIcons(event);
+		TDTextures.registerTextures(event.getMap());
 
 		for (int i = 0; i < TDDucts.ductList.size(); i++) {
 			if (TDDucts.isValid(i)) {
@@ -107,7 +109,7 @@ public class ProxyClient extends Proxy {
 
 	@SideOnly (Side.CLIENT)
 	@SubscribeEvent
-	public void initializeIcons(TextureStitchEvent.Post event) {
+	public void handleTextureStitchEventPost(TextureStitchEvent.Post event) {
 
 		RenderDuct.initialize();
 	}
@@ -117,23 +119,53 @@ public class ProxyClient extends Proxy {
 	public void onBlockHighlight(DrawBlockHighlightEvent event) {
 
 		RayTraceResult target = event.getTarget();
-		if (!(ItemHelper.getHeldStack(event.getPlayer()).getItem() instanceof ItemAttachment) || target.typeOfHit != Type.BLOCK) {
-			return;
+		EntityPlayer player = event.getPlayer();
+		float partialTicks = event.getPartialTicks();
+
+		if (doAttachmentHighlight(target, player, partialTicks)) {
+			event.setCanceled(true);
+		} else if (doDuctHighlight(target, player, partialTicks)) {
+			event.setCanceled(true);
 		}
-		RayTracer.retraceBlock(event.getPlayer().world, event.getPlayer(), target.getBlockPos());
-		ItemStack stack = ItemUtils.getHeldStack(event.getPlayer());
-		Attachment attachment = ItemAttachment.getAttachment(stack, event.getPlayer(), event.getPlayer().getEntityWorld(), target.getBlockPos(), target.sideHit);
+	}
+
+	private boolean doAttachmentHighlight(RayTraceResult target, EntityPlayer player, float partialTicks) {
+
+		if (!(ItemHelper.getHeldStack(player).getItem() instanceof ItemAttachment) || target.typeOfHit != Type.BLOCK) {
+			return false;
+		}
+		RayTracer.retraceBlock(player.world, player, target.getBlockPos());
+		ItemStack stack = ItemHelper.getHeldStack(player);
+		Attachment attachment = ItemAttachment.getAttachment(stack, player, player.world, target.getBlockPos(), target.sideHit);
 
 		if (attachment == null || !attachment.canAddToTile(attachment.baseTile)) {
-			return;
+			return false;
 		}
 		Cuboid6 c = attachment.getCuboid();
 		c.max.subtract(c.min);
 
-		RenderHitbox.drawSelectionBox(event.getPlayer(), target, event.getPartialTicks(), new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
-		attachment.drawSelectionExtra(event.getPlayer(), target, event.getPartialTicks());
+		RenderHitbox.drawSelectionBox(player, target, partialTicks, new CustomHitBox(c.max.y, c.max.z, c.max.x, attachment.baseTile.x() + c.min.x, attachment.baseTile.y() + c.min.y, attachment.baseTile.z() + c.min.z));
+		attachment.drawSelectionExtra(player, target, partialTicks);
+		return true;
+	}
 
-		event.setCanceled(true);
+	private boolean doDuctHighlight(RayTraceResult target, EntityPlayer player, float partialTicks) {
+
+		if (target.typeOfHit != Type.BLOCK) {
+			return false;
+		}
+		RayTracer.retraceBlock(player.world, player, target.getBlockPos());
+		TileEntity tile = player.world.getTileEntity(target.getBlockPos());
+
+		if (tile instanceof ICustomHitBox) {
+			ICustomHitBox hitbox = (ICustomHitBox) tile;
+
+			if (hitbox.shouldRenderCustomHitBox(target.subHit, player)) {
+				RenderHitbox.drawSelectionBox(player, target, partialTicks, hitbox.getCustomHitBox(target.subHit, player));
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* HELPERS */

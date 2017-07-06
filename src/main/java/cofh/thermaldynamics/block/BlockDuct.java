@@ -15,8 +15,6 @@ import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
 import cofh.core.render.IBlockAppearance;
 import cofh.core.render.IModelRegister;
-import cofh.core.render.hitbox.ICustomHitBox;
-import cofh.core.render.hitbox.RenderHitbox;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
@@ -50,12 +48,9 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -419,25 +414,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return sprites.toArray(new TextureAtlasSprite[0]);
 	}
 
-	/* EVENT HANDLING */
-	@SideOnly (Side.CLIENT)
-	@SubscribeEvent (priority = EventPriority.HIGH)
-	public void onBlockHighlight(DrawBlockHighlightEvent event) {
-
-		RayTraceResult target = event.getTarget();
-		EntityPlayer player = event.getPlayer();
-
-		if (target.typeOfHit == RayTraceResult.Type.BLOCK && player.world.getBlockState(event.getTarget().getBlockPos()).getBlock().getUnlocalizedName().equals(getUnlocalizedName())) {
-			RayTracer.retraceBlock(player.world, player, target.getBlockPos());
-			ICustomHitBox tile = ((ICustomHitBox) player.world.getTileEntity(target.getBlockPos()));
-
-			if (tile != null && tile.shouldRenderCustomHitBox(target.subHit, player)) {
-				event.setCanceled(true);
-				RenderHitbox.drawSelectionBox(player, target, event.getPartialTicks(), tile.getCustomHitBox(target.subHit, player));
-			}
-		}
-	}
-
 	/* IBlockAppearance */
 	@Override
 	public IBlockState getVisualState(IBlockAccess world, BlockPos pos, EnumFacing side) {
@@ -529,7 +505,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 				TDDucts.getType(offset + i).itemStack = new ItemStack(this, 1, i);
 			}
 		}
-		MinecraftForge.EVENT_BUS.register(this);
 
 		/* ENERGY */
 		GameRegistry.registerTileEntity(TileDuctEnergy.Basic.class, "thermaldynamics:duct_energy_basic");

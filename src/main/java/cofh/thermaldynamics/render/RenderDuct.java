@@ -5,12 +5,12 @@ import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.block.ICCBlockRenderer;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Scale;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
+import cofh.core.render.TextureHelper;
 import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Attachment;
@@ -63,7 +63,7 @@ public class RenderDuct implements ICCBlockRenderer {
 
 	public static void initialize() {
 
-		textureCenterLine = TextureUtils.getTexture(TFFluids.fluidSteam.getStill());
+		textureCenterLine = TextureHelper.getTexture(TFFluids.fluidSteam.getStill());
 	}
 
 	private static void generateFluidModels() {
