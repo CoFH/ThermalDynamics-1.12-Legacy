@@ -95,8 +95,7 @@ public class ThermalDynamics {
 
 	@EventHandler
 	public void loadComplete(FMLLoadCompleteEvent event) {
-
-		TDProps.loadComplete();
+		
 		CONFIG.cleanUp(false, true);
 		CONFIG_CLIENT.cleanUp(false, true);
 

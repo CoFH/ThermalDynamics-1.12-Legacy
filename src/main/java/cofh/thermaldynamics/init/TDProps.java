@@ -1,9 +1,20 @@
 package cofh.thermaldynamics.init;
 
+import cofh.CoFHCore;
+import cofh.core.gui.CreativeTabCore;
+import cofh.core.util.CoreUtils;
+import cofh.core.util.TimeTracker;
 import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
-import cofh.thermaldynamics.gui.CreativeTabTD;
-import cofh.thermaldynamics.gui.CreativeTabTDCovers;
+import cofh.thermaldynamics.block.ItemBlockDuct;
+import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.item.ItemCover;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TDProps {
 
@@ -15,10 +26,6 @@ public class TDProps {
 
 		configCommon();
 		configClient();
-	}
-
-	public static void loadComplete() {
-
 	}
 
 	/* HELPERS */
@@ -49,10 +56,81 @@ public class TDProps {
 		showCoversInJEI = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("CoversInJEI", category, showCoversInJEI, comment);
 
 		/* CREATIVE TABS */
-		ThermalDynamics.tabCommon = new CreativeTabTD();
+		ThermalDynamics.tabCommon = new CreativeTabCore("thermaldynamics") {
+
+			int iconIndex = 0;
+			TimeTracker iconTracker = new TimeTracker();
+
+			void updateIcon() {
+
+				World world = CoFHCore.proxy.getClientWorld();
+				if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
+					int next = MathHelper.RANDOM.nextInt(TDDucts.ductList.size() - 1);
+					iconIndex = next >= iconIndex ? next + 1 : next;
+					iconTracker.markTime(world);
+				}
+			}
+
+			@Override
+			@SideOnly (Side.CLIENT)
+			public ItemStack getIconItemStack() {
+
+				updateIcon();
+				return TDDucts.getDuct(iconIndex).itemStack;
+			}
+
+			@Override
+			@SideOnly (Side.CLIENT)
+			public void displayAllRelevantItems(NonNullList<ItemStack> list) {
+
+				NonNullList<ItemStack> stacks = NonNullList.create();
+
+				// TODO: Revisit this.
+				super.displayAllRelevantItems(stacks);
+
+				for (Duct d : TDDucts.getSortedDucts()) {
+					list.add(d.itemStack.copy());
+
+					//			if (d instanceof DuctItem) {
+					//				list.add(((DuctItem) d).getDenseItemStack());
+					//				list.add(((DuctItem) d).getVacuumItemStack());
+					//			}
+				}
+				for (ItemStack item : stacks) {
+					if (!(item.getItem() instanceof ItemBlockDuct)) {
+						list.add(item);
+					}
+				}
+			}
+
+		};
 
 		if (enableCoverCreativeTab) {
-			ThermalDynamics.tabCovers = new CreativeTabTDCovers();
+			ThermalDynamics.tabCovers = new CreativeTabCore("thermaldynamics", "Covers") {
+
+				int iconIndex = 0;
+				TimeTracker iconTracker = new TimeTracker();
+
+				void updateIcon() {
+
+					World world = CoFHCore.proxy.getClientWorld();
+					if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
+						int next = MathHelper.RANDOM.nextInt(ItemCover.getCoverList().size() - 1);
+						iconIndex = next >= iconIndex ? next + 1 : next;
+						iconTracker.markTime(world);
+					}
+				}
+
+				@Override
+				@SideOnly (Side.CLIENT)
+				public ItemStack getIconItemStack() {
+
+					updateIcon();
+					return ItemCover.getCoverList().get(iconIndex);
+				}
+
+			};
+
 		}
 	}
 
