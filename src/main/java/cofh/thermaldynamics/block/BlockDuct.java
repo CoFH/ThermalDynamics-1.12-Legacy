@@ -311,8 +311,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@SideOnly (Side.CLIENT)
 	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
 
-		super.randomDisplayTick(state, world, pos, rand);
-
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity instanceof TileGrid) {
 			((TileGrid) tileEntity).randomDisplayTick();
