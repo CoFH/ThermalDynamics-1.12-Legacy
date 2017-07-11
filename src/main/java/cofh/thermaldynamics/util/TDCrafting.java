@@ -170,7 +170,7 @@ public class TDCrafting {
 	/* HELPERS */
 	public static void addTransposerFill(int energy, ItemStack input, ItemStack output, FluidStack fluid, boolean reversible) {
 
-		if (Loader.isModLoaded("thermalexpansion")) {
+		if (!Loader.isModLoaded("thermalexpansion")) {
 			int numDucts = MathHelper.clamp(Fluid.BUCKET_VOLUME / fluid.amount, 1, 8);
 			NonNullList<Object> ingredients = NonNullList.create();
 
