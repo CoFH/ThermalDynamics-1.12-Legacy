@@ -409,7 +409,8 @@ public class ServoItem extends ServoBase {
 		if (myTile == null) {
 			return EmptyHandler.INSTANCE;
 		}
-		return InventoryHelper.getItemHandlerCap(myTile, EnumFacing.VALUES[side ^ 1]);
+		IItemHandler handler = InventoryHelper.getItemHandlerCap(myTile, EnumFacing.VALUES[side ^ 1]);
+		return handler == null ? EmptyHandler.INSTANCE : handler;
 	}
 
 }
