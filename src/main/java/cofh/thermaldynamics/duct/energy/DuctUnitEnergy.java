@@ -105,15 +105,15 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 			if (receiver.canConnectEnergy(facing) || tile instanceof IDuctHolder) {
 				return new Cache(receiver);
 			}
-		} else if (tile instanceof IEnergyProvider) {
+		}
+		if (tile instanceof IEnergyProvider) {
 			IEnergyProvider provider = (IEnergyProvider) tile;
 			if (provider.canConnectEnergy(facing) || tile instanceof IDuctHolder) {
 				return new Cache(provider);
 			}
-		} else if (tile.hasCapability(CapabilityEnergy.ENERGY, facing)) {
-
+		}
+		if (tile.hasCapability(CapabilityEnergy.ENERGY, facing)) {
 			IEnergyStorage capability = tile.getCapability(CapabilityEnergy.ENERGY, facing);
-
 			if (capability != null) {
 				if (capability.canReceive()) {
 					IEnergyReceiver capReceiver = new IEnergyReceiver() {
