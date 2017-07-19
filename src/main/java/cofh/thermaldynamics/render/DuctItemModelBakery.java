@@ -1,8 +1,10 @@
 package cofh.thermaldynamics.render;
 
+import codechicken.lib.model.bakedmodels.ModelProperties.PerspectiveProperties;
 import codechicken.lib.model.bakery.generation.IItemBakery;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.buffer.BakingVertexBuffer;
+import codechicken.lib.util.TransformUtils;
 import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
@@ -45,4 +47,9 @@ public class DuctItemModelBakery implements IItemBakery {
 		}
 		return quads;
 	}
+
+    @Override
+    public PerspectiveProperties getModelProperties(ItemStack stack) {
+        return new PerspectiveProperties(TransformUtils.DEFAULT_BLOCK, true, false);
+    }
 }

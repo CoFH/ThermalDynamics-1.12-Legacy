@@ -3,6 +3,7 @@ package cofh.thermaldynamics.block;
 import codechicken.lib.block.property.PropertyInteger;
 import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
+import codechicken.lib.model.bakery.CCBakeryModel;
 import codechicken.lib.model.bakery.IBakeryProvider;
 import codechicken.lib.model.bakery.generation.IBakery;
 import codechicken.lib.raytracer.IndexedCuboid6;
@@ -25,7 +26,6 @@ import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
-import cofh.thermaldynamics.render.BakedDuctItemModel;
 import cofh.thermaldynamics.render.DuctItemModelBakery;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -481,7 +481,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		//Actual model related stuffs.
 		ModelResourceLocation invLocation = new ModelResourceLocation(getRegistryName(), "inventory");
 		ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), stack -> invLocation);
-		ModelRegistryHelper.register(invLocation, BakedDuctItemModel.INSTANCE);
+		ModelRegistryHelper.register(invLocation, new CCBakeryModel());
 	}
 
 	@Override
