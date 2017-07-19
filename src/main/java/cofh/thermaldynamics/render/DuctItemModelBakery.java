@@ -48,8 +48,9 @@ public class DuctItemModelBakery implements IItemBakery {
 		return quads;
 	}
 
-    @Override
-    public PerspectiveProperties getModelProperties(ItemStack stack) {
-        return new PerspectiveProperties(TransformUtils.DEFAULT_BLOCK, true, false);
-    }
+	@Override
+	public PerspectiveProperties getModelProperties(ItemStack stack) {
+
+		return new PerspectiveProperties(TransformUtils.DEFAULT_BLOCK, true, false);
+	}
 }
