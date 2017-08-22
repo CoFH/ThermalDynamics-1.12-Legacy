@@ -28,6 +28,7 @@ import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.DuctItemModelBakery;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
@@ -304,6 +305,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			return RayTracer.rayTraceCuboidsClosest(start, end, pos, cuboids);
 		}
 		return null;
+	}
+
+	@Override
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
+
+		return BlockFaceShape.UNDEFINED;
 	}
 
 	/* RENDERING METHODS */
