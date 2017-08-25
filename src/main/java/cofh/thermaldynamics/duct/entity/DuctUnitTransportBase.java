@@ -111,12 +111,6 @@ public abstract class DuctUnitTransportBase extends DuctUnit<DuctUnitTransportBa
 	}
 
 	@Override
-	public RouteInfo canRouteItem(ItemStack stack) {
-
-		return RouteInfo.noRoute;
-	}
-
-	@Override
 	public byte getStuffedSide() {
 
 		return 0;

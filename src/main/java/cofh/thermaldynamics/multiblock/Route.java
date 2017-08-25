@@ -101,7 +101,7 @@ public class Route<T extends IGridTileRoute<T, G>, G extends MultiBlockGrid<T>> 
 		return pathDirections.get(1);
 	}
 
-	public int getLastSide() {
+	public byte getLastSide() {
 
 		return pathDirections.size() > 0 ? pathDirections.get(pathDirections.size() - 1) : 0;
 	}

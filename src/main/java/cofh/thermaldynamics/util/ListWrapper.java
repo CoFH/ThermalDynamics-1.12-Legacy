@@ -1,17 +1,22 @@
 package cofh.thermaldynamics.util;
 
 import cofh.core.util.helpers.MathHelper;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
+import cofh.thermaldynamics.duct.item.GridItem;
+import cofh.thermaldynamics.multiblock.Route;
+import cofh.thermaldynamics.multiblock.RouteCache;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.stream.IntStream;
 
 public class ListWrapper<T> implements Iterable<T> {
 
+	public SortType type;
 	LinkedList<T> list;
 	Object[] array;
 	int cursor;
-	public SortType type;
 
 	public void setList(LinkedList<T> list, SortType type) {
 
@@ -65,10 +70,15 @@ public class ListWrapper<T> implements Iterable<T> {
 		return list.size();
 	}
 
+	public enum SortType {
+
+		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
+	}
+
 	public class RRobinIter implements Iterator<T> {
 
-		public ListIterator<T> tListIterator;
 		final int stopCursor = cursor - 1;
+		public ListIterator<T> tListIterator;
 
 		public RRobinIter() {
 
@@ -91,7 +101,6 @@ public class ListWrapper<T> implements Iterable<T> {
 		@Override
 		public T next() {
 
-			advanceCursor();
 			return tListIterator.next();
 		}
 
@@ -116,7 +125,7 @@ public class ListWrapper<T> implements Iterable<T> {
 			return i < array.length;
 		}
 
-		@SuppressWarnings ("unchecked")
+		@SuppressWarnings("unchecked")
 		@Override
 		public T next() {
 
@@ -135,10 +144,4 @@ public class ListWrapper<T> implements Iterable<T> {
 			throw new UnsupportedOperationException();
 		}
 	}
-
-	public enum SortType {
-
-		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
-	}
-
 }

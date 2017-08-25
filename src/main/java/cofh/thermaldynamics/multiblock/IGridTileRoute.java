@@ -18,8 +18,6 @@ public interface IGridTileRoute<T extends IGridTileRoute<T, G>, G extends MultiB
 
 	T getCachedTile(byte side);
 
-	RouteInfo canRouteItem(ItemStack stack);
-
 	byte getStuffedSide();
 
 	boolean acceptingStuff();

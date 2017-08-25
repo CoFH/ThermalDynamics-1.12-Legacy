@@ -58,21 +58,21 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	public final static byte MAX_TICKS_EXISTED_BEFORE_DUMP = 10;
 	public static final int MAX_CENTER_LINE = 10;
 	// Type Helper Arrays
-	static int[] _DUCT_LEN = { 40, 10, 40, 10 };
-	static int[] _DUCT_HALF_LEN = { _DUCT_LEN[0] / 2, _DUCT_LEN[1] / 2, _DUCT_LEN[2] / 2, _DUCT_LEN[3] / 2 };
-	static float[] _DUCT_TICK_LEN = { 1F / _DUCT_LEN[0], 1F / _DUCT_LEN[1], 1F / _DUCT_LEN[2], 1F / _DUCT_LEN[3] };
+	static int[] _DUCT_LEN = {40, 10, 40, 10};
+	static int[] _DUCT_HALF_LEN = {_DUCT_LEN[0] / 2, _DUCT_LEN[1] / 2, _DUCT_LEN[2] / 2, _DUCT_LEN[3] / 2};
+	static float[] _DUCT_TICK_LEN = {1F / _DUCT_LEN[0], 1F / _DUCT_LEN[1], 1F / _DUCT_LEN[2], 1F / _DUCT_LEN[3]};
 	static float[][][] _SIDE_MODS = new float[4][6][3];
 	static int INSERT_SIZE = 8;
 
 	static {
 		for (int i = 0; i < 4; i++) {
 			float j = _DUCT_TICK_LEN[i];
-			_SIDE_MODS[i][0] = new float[] { 0, -j, 0 };
-			_SIDE_MODS[i][1] = new float[] { 0, j, 0 };
-			_SIDE_MODS[i][2] = new float[] { 0, 0, -j };
-			_SIDE_MODS[i][3] = new float[] { 0, 0, j };
-			_SIDE_MODS[i][4] = new float[] { -j, 0, 0 };
-			_SIDE_MODS[i][5] = new float[] { j, 0, 0 };
+			_SIDE_MODS[i][0] = new float[]{0, -j, 0};
+			_SIDE_MODS[i][1] = new float[]{0, j, 0};
+			_SIDE_MODS[i][2] = new float[]{0, 0, -j};
+			_SIDE_MODS[i][3] = new float[]{0, 0, j};
+			_SIDE_MODS[i][4] = new float[]{-j, 0, 0};
+			_SIDE_MODS[i][5] = new float[]{j, 0, 0};
 		}
 	}
 
@@ -304,9 +304,11 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	@Override
 	public boolean canStuffItem() {
 
-		for (Cache tileCach : tileCache) {
-			if (tileCach != null && tileCach.stuffableAttachment != null) {
-				return true;
+		TileGrid.AttachmentData attachmentData = parent.attachmentData;
+		if(attachmentData != null){
+			for (Attachment attachment : attachmentData.attachments) {
+				if(attachment instanceof IStuffable && ((IStuffable) attachment).canStuff())
+					return true;
 			}
 		}
 		return false;
@@ -452,7 +454,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 			return item;
 		}
 		RouteCache<DuctUnitItem, GridItem> routeCache = getCache(false);
-		TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.getCount())), routeCache.outputRoutes, this, side, ServoItem.range[0], (byte) 1);
+		TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.getCount())), ServoItem.getRoutesWithDestinations(routeCache.outputRoutes).iterator(), this, side, ServoItem.range[0], (byte) 1);
 		if (routeForItem == null) {
 			return item;
 		}
@@ -610,7 +612,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	}
 
 	@Override
-	@SideOnly (Side.CLIENT)
+	@SideOnly(Side.CLIENT)
 	public void handleTilePacket(PacketCoFHBase payload) {
 
 		pathWeightType = payload.getByte();
@@ -677,48 +679,29 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		}
 	}
 
-	@Override
-	public RouteInfo canRouteItem(ItemStack anItem) {
-
+	public int canRouteItem(ItemStack anItem, byte i) {
 		if (grid == null) {
-			return RouteInfo.noRoute;
+			return -1;
 		}
 		int stackSizeLeft;
 		ItemStack curItem;
 
-		for (byte i = internalSideCounter; i < EnumFacing.VALUES.length; i++) {
-			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
-				curItem = anItem.copy();
-				curItem.setCount(Math.min(getMoveStackSize(i), curItem.getCount()));
+		if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
+			curItem = anItem.copy();
+			curItem.setCount(Math.min(getMoveStackSize(i), curItem.getCount()));
 
-				if (curItem.getCount() > 0) {
-					stackSizeLeft = simTransferI(i, curItem.copy());
-					stackSizeLeft = (anItem.getCount() - curItem.getCount()) + stackSizeLeft;
+			if (curItem.getCount() > 0) {
+				stackSizeLeft = simTransferI(i, curItem.copy());
+				stackSizeLeft = (anItem.getCount() - curItem.getCount()) + stackSizeLeft;
 
-					if (stackSizeLeft < anItem.getCount()) {
-						internalSideCounter = tickInternalSideCounter(i + 1);
-						return new RouteInfo(stackSizeLeft, i);
-					}
+				if (stackSizeLeft < anItem.getCount()) {
+					internalSideCounter = tickInternalSideCounter(i + 1);
+					return stackSizeLeft;
 				}
 			}
 		}
-		for (byte i = 0; i < internalSideCounter; i++) {
-			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
-				curItem = anItem.copy();
-				curItem.setCount(Math.min(getMoveStackSize(i), curItem.getCount()));
 
-				if (curItem.getCount() > 0) {
-					stackSizeLeft = simTransferI(i, curItem.copy());
-					stackSizeLeft = (anItem.getCount() - curItem.getCount()) + stackSizeLeft;
-
-					if (stackSizeLeft < anItem.getCount()) {
-						internalSideCounter = tickInternalSideCounter(i + 1);
-						return new RouteInfo(stackSizeLeft, i);
-					}
-				}
-			}
-		}
-		return RouteInfo.noRoute;
+		return -1;
 	}
 
 	public int simTransferI(int side, ItemStack insertingItem) {
@@ -984,8 +967,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		public final IFilterItems filter;
 		@Nullable
 		public final IDeepStorageUnit dsuCache;
-		@Nullable
-		public final IStuffable stuffableAttachment;
 
 		public Cache(@Nonnull TileEntity tile, @Nullable Attachment attachment) {
 
@@ -999,11 +980,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 				dsuCache = (IDeepStorageUnit) tile;
 			} else {
 				dsuCache = null;
-			}
-			if (attachment instanceof IStuffable) {
-				this.stuffableAttachment = (IStuffable) attachment;
-			} else {
-				this.stuffableAttachment = null;
 			}
 		}
 

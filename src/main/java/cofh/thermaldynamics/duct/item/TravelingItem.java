@@ -163,24 +163,22 @@ public class TravelingItem {
 
 	public void bounceItem(DuctUnitItem homeTile) {
 
-		RouteCache<?, ?> routes = homeTile.getCache();
-
-		RouteInfo curInfo;
+		RouteCache<DuctUnitItem, GridItem> routes = homeTile.getCache();
 
 		reRoute = false;
 
 		if (hasDest) {
-			for (Route aRoute : routes.outputRoutes) {
+			for (Route<DuctUnitItem, GridItem> aRoute : routes.outputRoutes) {
 				if (aRoute.endPoint.isNode() && aRoute.endPoint.x() == destX && aRoute.endPoint.y() == destY && aRoute.endPoint.z() == destZ) {
-					curInfo = aRoute.endPoint.canRouteItem(stack);
-
-					if (curInfo.canRoute) {
-						myPath = aRoute.copy();
-						myPath.pathDirections.add(curInfo.side);
-						oldDirection = (byte) (direction ^ 1);
-						direction = myPath.getNextDirection();
-						homeTile.hasChanged = true;
-						return;
+					for (byte side = 0; side < 6; side++) {
+						if (aRoute.endPoint.canRouteItem(stack, side) != -1) {
+							myPath = aRoute.copy();
+							myPath.pathDirections.add(side);
+							oldDirection = (byte) (direction ^ 1);
+							direction = myPath.getNextDirection();
+							homeTile.hasChanged = true;
+							return;
+						}
 					}
 				}
 			}
@@ -190,20 +188,21 @@ public class TravelingItem {
 		}
 
 		if (!hasDest || (!mustGoToDest && hasDest)) {
-			for (Route aRoute : routes.outputRoutes) {
+			for (Route<DuctUnitItem, GridItem>  aRoute : routes.outputRoutes) {
 				if (aRoute.endPoint.isNode()) {
-					curInfo = aRoute.endPoint.canRouteItem(stack);
-					if (curInfo.canRoute) {
-						myPath = aRoute.copy();
-						myPath.pathDirections.add(curInfo.side);
-						oldDirection = (byte) (direction ^ 1);
-						direction = myPath.getNextDirection();
-						homeTile.hasChanged = true;
-						hasDest = true;
-						destX = myPath.endPoint.x();
-						destY = myPath.endPoint.y();
-						destZ = myPath.endPoint.z();
-						return;
+					for (byte side = 0; side < 6; side++) {
+						if (aRoute.endPoint.canRouteItem(stack, side) != -1) {
+							myPath = aRoute.copy();
+							myPath.pathDirections.add(side);
+							oldDirection = (byte) (direction ^ 1);
+							direction = myPath.getNextDirection();
+							homeTile.hasChanged = true;
+							hasDest = true;
+							destX = myPath.endPoint.x();
+							destY = myPath.endPoint.y();
+							destZ = myPath.endPoint.z();
+							return;
+						}
 					}
 				}
 			}

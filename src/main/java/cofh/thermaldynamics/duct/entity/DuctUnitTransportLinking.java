@@ -349,12 +349,6 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public RouteInfo canRouteItem(ItemStack stack) {
-
-		return RouteInfo.noRoute;
-	}
-
-	@Override
 	public byte getStuffedSide() {
 
 		for (byte i = 0; i < 6; i++) {

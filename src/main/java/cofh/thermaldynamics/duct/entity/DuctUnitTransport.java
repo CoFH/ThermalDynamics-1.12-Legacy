@@ -416,12 +416,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	}
 
 	@Override
-	public RouteInfo canRouteItem(ItemStack stack) {
-
-		return RouteInfo.noRoute;
-	}
-
-	@Override
 	public byte getStuffedSide() {
 
 		for (byte i = 0; i < 6; i++) {
