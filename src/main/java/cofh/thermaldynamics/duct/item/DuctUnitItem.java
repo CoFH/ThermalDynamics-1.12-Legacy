@@ -840,9 +840,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 					return insertingItem;
 				}
 			}
-			insertingItem = simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1, maxStock);
-			simulatedInv.clear();
-			return insertingItem;
+			return simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1, maxStock);
 		}
 	}
 
