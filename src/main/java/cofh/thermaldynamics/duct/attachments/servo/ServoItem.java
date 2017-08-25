@@ -62,16 +62,12 @@ public class ServoItem extends ServoBase {
 	}
 
 	public static Stream<Route<DuctUnitItem, GridItem>> getRoutesWithDestinations(Collection<Route<DuctUnitItem, GridItem>> outputRoutes) {
-		return outputRoutes.stream()
-				.flatMap(
-						route -> IntStream.range(0, 6).filter(
-								i -> route.endPoint.isOutput(i) && route.endPoint.getConnectionType((byte) i).allowTransfer && route.endPoint.tileCache[i] != null
-						).mapToObj(i -> {
-							Route<DuctUnitItem, GridItem> ductUnitItemGridItemRoute = new Route<>(route);
-							ductUnitItemGridItemRoute.pathDirections.add((byte) i);
-							return ductUnitItemGridItemRoute;
-						})
-				);
+
+		return outputRoutes.stream().flatMap(route -> IntStream.range(0, 6).filter(i -> route.endPoint.isOutput(i) && route.endPoint.getConnectionType((byte) i).allowTransfer && route.endPoint.tileCache[i] != null).mapToObj(i -> {
+			Route<DuctUnitItem, GridItem> ductUnitItemGridItemRoute = new Route<>(route);
+			ductUnitItemGridItemRoute.pathDirections.add((byte) i);
+			return ductUnitItemGridItemRoute;
+		}));
 	}
 
 	@Override

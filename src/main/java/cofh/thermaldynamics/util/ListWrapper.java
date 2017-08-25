@@ -1,15 +1,10 @@
 package cofh.thermaldynamics.util;
 
 import cofh.core.util.helpers.MathHelper;
-import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.GridItem;
-import cofh.thermaldynamics.multiblock.Route;
-import cofh.thermaldynamics.multiblock.RouteCache;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.util.stream.IntStream;
 
 public class ListWrapper<T> implements Iterable<T> {
 
@@ -125,7 +120,7 @@ public class ListWrapper<T> implements Iterable<T> {
 			return i < array.length;
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings ("unchecked")
 		@Override
 		public T next() {
 

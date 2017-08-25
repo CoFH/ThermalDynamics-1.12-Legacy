@@ -65,7 +65,7 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
 		if (layer != BlockRenderLayer.SOLID) {

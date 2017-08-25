@@ -188,7 +188,7 @@ public class TravelingItem {
 		}
 
 		if (!hasDest || (!mustGoToDest && hasDest)) {
-			for (Route<DuctUnitItem, GridItem>  aRoute : routes.outputRoutes) {
+			for (Route<DuctUnitItem, GridItem> aRoute : routes.outputRoutes) {
 				if (aRoute.endPoint.isNode()) {
 					for (byte side = 0; side < 6; side++) {
 						if (aRoute.endPoint.canRouteItem(stack, side) != -1) {
