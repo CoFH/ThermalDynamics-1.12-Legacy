@@ -85,7 +85,6 @@ public class ListWrapper<T> implements Iterable<T> {
 					tListIterator = list.listIterator(0);
 				}
 			}
-
 			return tListIterator.nextIndex() != stopCursor;
 		}
 
@@ -100,10 +99,6 @@ public class ListWrapper<T> implements Iterable<T> {
 		public void remove() {
 
 		}
-	}
-
-	public enum SortType {
-		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
 	}
 
 	private class ShuffleIter implements Iterator<T> {
@@ -139,6 +134,11 @@ public class ListWrapper<T> implements Iterable<T> {
 
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	public enum SortType {
+
+		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
 	}
 
 }

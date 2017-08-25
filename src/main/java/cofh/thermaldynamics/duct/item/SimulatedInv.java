@@ -1,11 +1,9 @@
 package cofh.thermaldynamics.duct.item;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class SimulatedInv implements IItemHandler {
 
@@ -20,30 +18,14 @@ public class SimulatedInv implements IItemHandler {
 
 	}
 
-	public SimulatedInv(IInventory target) {
-
-		setTarget(new InvWrapper(target));
-	}
-
 	public static SimulatedInv wrapHandler(IItemHandler handler) {
 
 		return INSTANCE.setTarget(handler);
 	}
 
-	public static SimulatedInv wrapInv(IInventory inventory) {
-
-		return INSTANCE.setTarget(new InvWrapper(inventory));
-	}
-
-	public void clear() {
-
-		this.originalLogic = null;
-	}
-
 	public SimulatedInv setTarget(IItemHandler target) {
 
 		originalLogic = target;
-
 		size = target.getSlots();
 
 		if (items == null || items.size() < size || (size < REBUILD_THRESHOLD && items.size() >= REBUILD_THRESHOLD)) {
@@ -76,7 +58,9 @@ public class SimulatedInv implements IItemHandler {
 		if (stack.isEmpty() || stack.getCount() == 0) {
 			return ItemStack.EMPTY;
 		}
-
+		if (originalLogic == null) {
+			return stack;
+		}
 		int originalStackSize = stack.getCount();
 		ItemStack copy = stack.copy();
 		int maxStackSize = copy.getMaxStackSize();
@@ -87,23 +71,18 @@ public class SimulatedInv implements IItemHandler {
 		if (insertItem == copy) {
 			return stack;
 		}
-
 		int insertable = maxStackSize - (!insertItem.isEmpty() ? insertItem.getCount() : 0);
 
 		if (insertable == 0) {
 			return stack; // rejected
 		}
-
-		if (insertable >= originalStackSize) // whole stack would have been accepted
-		{
+		if (insertable >= originalStackSize) { // whole stack would have been accepted
 			return slotHandler.insertItem(slot, stack, simulate);
 		}
 
 		// only partial stack would have been accepted
 		copy.setCount(insertable);
-
 		int remainderStackSize = originalStackSize - insertable;
-
 		ItemStack simInsertStack = slotHandler.insertItem(slot, copy, simulate);
 
 		if (simInsertStack.isEmpty() || simInsertStack.getCount() == 0) {
@@ -125,4 +104,5 @@ public class SimulatedInv implements IItemHandler {
 
 		return originalLogic.getSlotLimit(slot);
 	}
+
 }
