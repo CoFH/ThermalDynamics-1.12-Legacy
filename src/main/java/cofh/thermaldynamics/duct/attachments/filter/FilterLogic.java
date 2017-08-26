@@ -112,7 +112,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			} else if (isFluid()) {
 				fluidsSimple.clear();
 				fluidsNBT.clear();
-
 				customFilterFluids = null;
 			}
 
@@ -147,7 +146,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							d.setTagCompound(null);
 						}
 						for (ItemStack i : quickItems) {
-							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
+							if (ItemHelper.itemsIdentical(d, i)) {
 								continue itemLoop;
 							}
 						}
@@ -158,7 +157,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							if (customFilterFluids == null) {
 								customFilterFluids = new LinkedList<>();
 							}
-
 							customFilterFluids.add(new CustomFilterFluid(item));
 						}
 						FluidStack fluidStack = FluidHelper.getFluidForFilledItem(item);
@@ -176,7 +174,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				}
 			}
 		}
-
 	}
 
 	public boolean isFluid() {
@@ -220,7 +217,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 				}
 			}
 		}
-
 		for (ItemStack filter : quickItems) {
 			if (filter.getItem() != item.getItem()) {
 				continue;
@@ -329,7 +325,6 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			}
 		}
 		recalc = true;
-
 		handleFlagByte(tag.getByte("Flags"));
 
 		NBTTagCompound nbt = tag.getCompoundTag("Levels");
