@@ -145,7 +145,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							d.setTagCompound(null);
 						}
 						for (ItemStack i : quickItems) {
-							if (ItemHelper.itemsEqualWithMetadata(d, i)) {
+							if (ItemHelper.itemsIdentical(d, i)) {
 								continue itemLoop;
 							}
 						}
