@@ -927,7 +927,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 
 		Attachment attachment = parent.getAttachment(facing.ordinal());
 		if (attachment instanceof ServoItem) {
-			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(((ServoItem) attachment).getHandler());
+			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast((ServoItem) attachment);
 		}
 
 		return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new IItemHandler() {

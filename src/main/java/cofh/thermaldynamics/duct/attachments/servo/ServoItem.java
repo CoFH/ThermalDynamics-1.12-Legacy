@@ -443,7 +443,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		return ItemStack.EMPTY;
 	}
 
-	protected boolean searching = false;
+	boolean searching = false;
 
 	@Nonnull
 	@Override
@@ -466,9 +466,5 @@ public class ServoItem extends ServoBase implements IItemHandler {
 	@Override
 	public int getSlotLimit(int slot) {
 		return 64;
-	}
-
-	public IItemHandler getHandler() {
-		return this;
 	}
 }
