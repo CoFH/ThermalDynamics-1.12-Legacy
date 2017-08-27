@@ -9,7 +9,6 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.tiles.DuctUnit;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
@@ -413,12 +412,6 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	public int getMaxRange() {
 
 		return Integer.MAX_VALUE;
-	}
-
-	@Override
-	public RouteInfo canRouteItem(ItemStack stack) {
-
-		return RouteInfo.noRoute;
 	}
 
 	@Override

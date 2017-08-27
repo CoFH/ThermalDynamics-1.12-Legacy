@@ -6,7 +6,6 @@ import cofh.lib.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.DuctUnit;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
@@ -17,7 +16,6 @@ import cofh.thermaldynamics.multiblock.RouteCache;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -346,12 +344,6 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	public int getMaxRange() {
 
 		return Integer.MAX_VALUE;
-	}
-
-	@Override
-	public RouteInfo canRouteItem(ItemStack stack) {
-
-		return RouteInfo.noRoute;
 	}
 
 	@Override

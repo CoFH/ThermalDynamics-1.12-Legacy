@@ -212,22 +212,30 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 
 	public void updateSide(TileEntity tile, IDuctHolder holder, byte side) {
 
-		boolean nodeState = nodeMask == 0;
+		int nodeState = nodeMask;
 		handleTileSideUpdate(tile, holder, side, parent.getConnectionType(side));
-		if (nodeMask == 0 != nodeState && grid != null) {
-			grid.addBlock(this.cast());
+		if (grid != null && nodeMask != nodeState) {
+			if (nodeMask == 0 || nodeState == 0) { //changed from node to idle or vise versa
+				grid.addBlock(this.cast());
+			} else {
+				grid.onMinorGridChange();
+			}
 		}
 	}
 
 	public void updateAllSides(TileEntity[] tiles, IDuctHolder[] holders) {
 
-		boolean nodeState = nodeMask == 0;
+		int nodeState = nodeMask;
 		nodeMask = 0;
 		for (byte side = 0; side < 6; side++) {
 			handleTileSideUpdate(tiles[side], holders[side], side, parent.getConnectionType(side));
 		}
-		if (nodeMask == 0 != nodeState && grid != null) {
-			grid.addBlock(this.cast());
+		if (grid != null && nodeMask != nodeState) {
+			if (nodeMask == 0 || nodeState == 0) { //changed from node to idle or vise versa
+				grid.addBlock(this.cast());
+			} else {
+				grid.onMinorGridChange();
+			}
 		}
 	}
 

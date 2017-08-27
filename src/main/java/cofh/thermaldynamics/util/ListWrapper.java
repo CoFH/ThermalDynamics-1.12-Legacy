@@ -8,10 +8,10 @@ import java.util.ListIterator;
 
 public class ListWrapper<T> implements Iterable<T> {
 
+	public SortType type;
 	LinkedList<T> list;
 	Object[] array;
 	int cursor;
-	public SortType type;
 
 	public void setList(LinkedList<T> list, SortType type) {
 
@@ -65,10 +65,15 @@ public class ListWrapper<T> implements Iterable<T> {
 		return list.size();
 	}
 
+	public enum SortType {
+
+		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
+	}
+
 	public class RRobinIter implements Iterator<T> {
 
-		public ListIterator<T> tListIterator;
 		final int stopCursor = cursor - 1;
+		public ListIterator<T> tListIterator;
 
 		public RRobinIter() {
 
@@ -85,14 +90,12 @@ public class ListWrapper<T> implements Iterable<T> {
 					tListIterator = list.listIterator(0);
 				}
 			}
-
 			return tListIterator.nextIndex() != stopCursor;
 		}
 
 		@Override
 		public T next() {
 
-			advanceCursor();
 			return tListIterator.next();
 		}
 
@@ -100,10 +103,6 @@ public class ListWrapper<T> implements Iterable<T> {
 		public void remove() {
 
 		}
-	}
-
-	public enum SortType {
-		NORMAL, REVERSE, SHUFFLE, ROUNDROBIN
 	}
 
 	private class ShuffleIter implements Iterator<T> {
@@ -140,5 +139,4 @@ public class ListWrapper<T> implements Iterable<T> {
 			throw new UnsupportedOperationException();
 		}
 	}
-
 }

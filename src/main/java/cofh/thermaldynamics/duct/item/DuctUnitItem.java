@@ -304,9 +304,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	@Override
 	public boolean canStuffItem() {
 
-		for (Cache tileCach : tileCache) {
-			if (tileCach != null && tileCach.stuffableAttachment != null) {
-				return true;
+		TileGrid.AttachmentData attachmentData = parent.attachmentData;
+		if (attachmentData != null) {
+			for (Attachment attachment : attachmentData.attachments) {
+				if (attachment instanceof IStuffable && ((IStuffable) attachment).canStuff()) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -452,7 +455,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 			return item;
 		}
 		RouteCache<DuctUnitItem, GridItem> routeCache = getCache(false);
-		TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.getCount())), routeCache.outputRoutes, this, side, ServoItem.range[0], (byte) 1);
+		TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.getCount())), ServoItem.getRoutesWithDestinations(routeCache.outputRoutes).iterator(), this, side, ServoItem.range[0], (byte) 1);
 		if (routeForItem == null) {
 			return item;
 		}
@@ -677,48 +680,30 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		}
 	}
 
-	@Override
-	public RouteInfo canRouteItem(ItemStack anItem) {
+	public int canRouteItem(ItemStack anItem, byte i) {
 
 		if (grid == null) {
-			return RouteInfo.noRoute;
+			return -1;
 		}
 		int stackSizeLeft;
 		ItemStack curItem;
 
-		for (byte i = internalSideCounter; i < EnumFacing.VALUES.length; i++) {
-			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
-				curItem = anItem.copy();
-				curItem.setCount(Math.min(getMoveStackSize(i), curItem.getCount()));
+		if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
+			curItem = anItem.copy();
+			curItem.setCount(Math.min(getMoveStackSize(i), curItem.getCount()));
 
-				if (curItem.getCount() > 0) {
-					stackSizeLeft = simTransferI(i, curItem.copy());
-					stackSizeLeft = (anItem.getCount() - curItem.getCount()) + stackSizeLeft;
+			if (curItem.getCount() > 0) {
+				stackSizeLeft = simTransferI(i, curItem.copy());
+				stackSizeLeft = (anItem.getCount() - curItem.getCount()) + stackSizeLeft;
 
-					if (stackSizeLeft < anItem.getCount()) {
-						internalSideCounter = tickInternalSideCounter(i + 1);
-						return new RouteInfo(stackSizeLeft, i);
-					}
+				if (stackSizeLeft < anItem.getCount()) {
+					internalSideCounter = tickInternalSideCounter(i + 1);
+					return stackSizeLeft;
 				}
 			}
 		}
-		for (byte i = 0; i < internalSideCounter; i++) {
-			if (isOutput(i) && parent.getConnectionType(i).allowTransfer && itemPassesFiltering(i, anItem) && tileCache[i] != null) {
-				curItem = anItem.copy();
-				curItem.setCount(Math.min(getMoveStackSize(i), curItem.getCount()));
 
-				if (curItem.getCount() > 0) {
-					stackSizeLeft = simTransferI(i, curItem.copy());
-					stackSizeLeft = (anItem.getCount() - curItem.getCount()) + stackSizeLeft;
-
-					if (stackSizeLeft < anItem.getCount()) {
-						internalSideCounter = tickInternalSideCounter(i + 1);
-						return new RouteInfo(stackSizeLeft, i);
-					}
-				}
-			}
-		}
-		return RouteInfo.noRoute;
+		return -1;
 	}
 
 	public int simTransferI(int side, ItemStack insertingItem) {
@@ -984,8 +969,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		public final IFilterItems filter;
 		@Nullable
 		public final IDeepStorageUnit dsuCache;
-		@Nullable
-		public final IStuffable stuffableAttachment;
 
 		public Cache(@Nonnull TileEntity tile, @Nullable Attachment attachment) {
 
@@ -999,11 +982,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 				dsuCache = (IDeepStorageUnit) tile;
 			} else {
 				dsuCache = null;
-			}
-			if (attachment instanceof IStuffable) {
-				this.stuffableAttachment = (IStuffable) attachment;
-			} else {
-				this.stuffableAttachment = null;
 			}
 		}
 

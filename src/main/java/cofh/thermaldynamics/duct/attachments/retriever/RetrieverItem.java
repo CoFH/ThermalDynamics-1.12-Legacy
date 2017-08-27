@@ -96,84 +96,84 @@ public class RetrieverItem extends ServoItem {
 
 		IItemHandler simulatedInv = getCachedInv();
 
-		for (Route route : routeList) {
+		for (Route route : routesWithInsertSideList) {
 			DuctUnitItem endPoint = (DuctUnitItem) route.endPoint;
 
-			for (int k = 0; k < 6; k++) {
-				int i = (endPoint.internalSideCounter + k) % 6;
+			int i = route.getLastSide();
 
-				Attachment attachment = endPoint.parent.getAttachment(i);
-				if (attachment != null && attachment.getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+			Attachment attachment = endPoint.parent.getAttachment(i);
+			if (attachment != null && attachment.getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+				continue;
+			}
+
+			DuctUnitItem.Cache cache = endPoint.tileCache[i];
+
+			if (cache == null || (!endPoint.isInput(i) && !endPoint.isOutput(i)) || !endPoint.parent.getConnectionType(i).allowTransfer) {
+				continue;
+			}
+
+			{
+				IItemHandler inv = cache.getItemHandler(i ^ 1);
+				if (inv == null) {
 					continue;
 				}
 
-				DuctUnitItem.Cache cache = endPoint.tileCache[i];
-
-				if (cache == null || (!endPoint.isInput(i) && !endPoint.isOutput(i)) || !endPoint.parent.getConnectionType(i).allowTransfer) {
-					continue;
-				}
-
-				{
-					IItemHandler inv = cache.getItemHandler(i ^ 1);
-					if (inv == null) {
+				for (int slot = 0; slot < inv.getSlots(); slot++) {
+					ItemStack item = inv.getStackInSlot(slot);
+					if (item.isEmpty()) {
 						continue;
 					}
 
-					for (int slot = 0; slot < inv.getSlots(); slot++) {
-						ItemStack item = inv.getStackInSlot(slot);
-						if (item.isEmpty()) {
-							continue;
-						}
+					item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()), simulatedInv, slot, side);
+					if (item.isEmpty() || item.getCount() == 0) {
+						continue;
+					}
 
-						item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()), simulatedInv, slot, side);
-						if (item.isEmpty() || item.getCount() == 0) {
-							continue;
-						}
+					if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
+						continue;
+					}
 
-						if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
-							continue;
-						}
+					ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
 
-						ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
+					if (!remainder.isEmpty()) {
+						item.shrink(remainder.getCount());
+					}
+					if (item.getCount() <= 0) {
+						continue;
+					}
 
-						if (!remainder.isEmpty()) {
-							item.shrink(remainder.getCount());
-						}
-						if (item.getCount() <= 0) {
-							continue;
-						}
+					Route route1 = endPoint.getRoute(itemDuct);
+					if (route1 == null) {
+						continue;
+					}
 
-						Route route1 = endPoint.getRoute(itemDuct);
-						if (route1 == null) {
-							continue;
-						}
+					int maxStackSize = item.getCount();
+					item = inv.extractItem(slot, maxStackSize, false);
+					if (item.isEmpty() || item.getCount() == 0) {
+						continue;
+					}
 
-						int maxStackSize = item.getCount();
-						item = inv.extractItem(slot, maxStackSize, false);
-						if (item.isEmpty() || item.getCount() == 0) {
-							continue;
-						}
+					// No turning back now
+					route1 = route1.copy();
+					route1.pathDirections.add(side);
 
-						// No turning back now
-						route1 = route1.copy();
-						route1.pathDirections.add(side);
-
-						if (multiStack[type] && item.getCount() < maxStackSize) {
-							for (; item.getCount() < maxStackSize && slot < inv.getSlots(); slot++) {
-								if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
-									ItemStack extract = inv.extractItem(slot, maxStackSize - item.getCount(), false);
-									if (!extract.isEmpty()) {
-										item.grow(extract.getCount());
-									}
+					if (multiStack[type] && item.getCount() < maxStackSize) {
+						for (; item.getCount() < maxStackSize && slot < inv.getSlots(); slot++) {
+							if (ItemHelper.itemsEqualWithMetadata(inv.getStackInSlot(slot), item, true)) {
+								ItemStack extract = inv.extractItem(slot, maxStackSize - item.getCount(), false);
+								if (!extract.isEmpty()) {
+									item.grow(extract.getCount());
 								}
 							}
 						}
-
-						endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
-						return;
 					}
+
+					endPoint.insertNewItem(new TravelingItem(item, endPoint, route1, (byte) (i ^ 1), getSpeed()));
+					routesWithInsertSideList.advanceCursor();
+					return;
 				}
 			}
+
 		}
 	}
 

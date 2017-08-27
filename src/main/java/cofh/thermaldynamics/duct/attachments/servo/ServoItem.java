@@ -8,7 +8,6 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.GridItem;
-import cofh.thermaldynamics.duct.item.RouteInfo;
 import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
@@ -16,6 +15,7 @@ import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.Route;
 import cofh.thermaldynamics.multiblock.RouteCache;
 import cofh.thermaldynamics.util.ListWrapper;
+import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -26,21 +26,24 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class ServoItem extends ServoBase {
 
 	public static int[] range = { Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE };
-	public static int[] maxSize = { 4, 16, 64, 64, 64 };
+	public static int[] maxSize = { 8, 16, 32, 64, 64 };
 	public static boolean[] multiStack = { false, false, false, true, true };
 
 	public static int[] tickDelays = { 60, 40, 20, 10, 10 };
 	public static byte[] speedBoost = { 1, 1, 1, 2, 3 };
 
 	public RouteCache<DuctUnitItem, GridItem> cache = null;
-	public ListWrapper<Route<DuctUnitItem, GridItem>> routeList = new ListWrapper<>();
+	public ListWrapper<Route<DuctUnitItem, GridItem>> routesWithInsertSideList = new ListWrapper<>();
 
 	public LinkedList<ItemStack> stuffedItems = new LinkedList<>();
 
@@ -56,6 +59,15 @@ public class ServoItem extends ServoBase {
 
 		super(tile, side);
 		itemDuct = tile.getDuct(DuctToken.ITEMS);
+	}
+
+	public static Stream<Route<DuctUnitItem, GridItem>> getRoutesWithDestinations(Collection<Route<DuctUnitItem, GridItem>> outputRoutes) {
+
+		return outputRoutes.stream().flatMap(route -> IntStream.range(0, 6).filter(i -> route.endPoint.isOutput(i) && route.endPoint.getConnectionType((byte) i).allowTransfer && route.endPoint.tileCache[i] != null).mapToObj(i -> {
+			Route<DuctUnitItem, GridItem> ductUnitItemGridItemRoute = new Route<>(route);
+			ductUnitItemGridItemRoute.pathDirections.add((byte) i);
+			return ductUnitItemGridItemRoute;
+		}));
 	}
 
 	@Override
@@ -206,9 +218,12 @@ public class ServoItem extends ServoBase {
 		if (!cache1.isFinishedGenerating()) {
 			return false;
 		}
-		if (cache1 != cache || routeList.type != getSortType()) {
+		if (cache1 != cache || routesWithInsertSideList.type != getSortType()) {
 			cache = cache1;
-			routeList.setList(cache.outputRoutes, getSortType());
+			Stream<Route<DuctUnitItem, GridItem>> routesWithDestinations = getRoutesWithDestinations(cache.outputRoutes);
+			LinkedList<Route<DuctUnitItem, GridItem>> objects = Lists.newLinkedList();
+			routesWithDestinations.forEach(objects::add);
+			routesWithInsertSideList.setList(objects, getSortType());
 		}
 		return true;
 	}
@@ -255,6 +270,7 @@ public class ServoItem extends ServoBase {
 					}
 				}
 				itemDuct.insertNewItem(travelingItem);
+				routesWithInsertSideList.advanceCursor();
 				return;
 			}
 		}
@@ -277,6 +293,7 @@ public class ServoItem extends ServoBase {
 				iterator.remove();
 			}
 			itemDuct.insertNewItem(travelingItem);
+			routesWithInsertSideList.advanceCursor();
 			return;
 		}
 	}
@@ -286,7 +303,7 @@ public class ServoItem extends ServoBase {
 		return speedBoost[type];
 	}
 
-	public static TravelingItem findRouteForItem(ItemStack item, Iterable<Route<DuctUnitItem, GridItem>> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
+	public static TravelingItem findRouteForItem(ItemStack item, Iterator<Route<DuctUnitItem, GridItem>> routes, DuctUnitItem duct, int side, int maxRange, byte speed) {
 
 		if (item.isEmpty() || item.getCount() == 0) {
 			return null;
@@ -296,19 +313,19 @@ public class ServoItem extends ServoBase {
 		if (item.getCount() == 0) {
 			return null;
 		}
-		for (Route outputRoute : routes) {
+		while (routes.hasNext()) {
+			Route<DuctUnitItem, GridItem> outputRoute = routes.next();
 			if (outputRoute.pathDirections.size() <= maxRange) {
-				RouteInfo routeInfo = outputRoute.endPoint.canRouteItem(item);
+				int amountRemaining = outputRoute.endPoint.canRouteItem(item, outputRoute.getLastSide());
 
-				if (routeInfo.canRoute) {
-					int stackSize = item.getCount() - routeInfo.stackSize;
+				if (amountRemaining != -1) {
+					int stackSize = item.getCount() - amountRemaining;
 
 					if (stackSize <= 0) {
 						continue;
 					}
 					Route itemRoute = outputRoute.copy();
-					itemRoute.pathDirections.add(routeInfo.side);
-					item.shrink(routeInfo.stackSize);
+					item.setCount(stackSize);
 					return new TravelingItem(item, duct, itemRoute, (byte) (side ^ 1), speed);
 				}
 			}
@@ -380,6 +397,7 @@ public class ServoItem extends ServoBase {
 		}
 		if (!simulate) {
 			itemDuct.insertNewItem(routeForItem);
+			routesWithInsertSideList.advanceCursor();
 		}
 		return ItemHandlerHelper.copyStackWithSize(item, item.getCount() - routeForItem.stack.getCount());
 	}
@@ -389,7 +407,7 @@ public class ServoItem extends ServoBase {
 		if (!verifyCache()) {
 			return null;
 		}
-		return ServoItem.findRouteForItem(item, routeList, itemDuct, side, getMaxRange(), getSpeed());
+		return ServoItem.findRouteForItem(item, routesWithInsertSideList.iterator(), itemDuct, side, getMaxRange(), getSpeed());
 	}
 
 	public ListWrapper.SortType getSortType() {
