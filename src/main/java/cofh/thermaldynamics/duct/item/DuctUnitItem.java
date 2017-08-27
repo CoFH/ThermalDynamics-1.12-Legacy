@@ -63,6 +63,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	static float[] _DUCT_TICK_LEN = { 1F / _DUCT_LEN[0], 1F / _DUCT_LEN[1], 1F / _DUCT_LEN[2], 1F / _DUCT_LEN[3] };
 	static float[][][] _SIDE_MODS = new float[4][6][3];
 	static int INSERT_SIZE = 8;
+	static boolean searching = false;
 
 	static {
 		for (int i = 0; i < 4; i++) {
@@ -925,6 +926,9 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	public <CAP> CAP getCapability(Capability<CAP> capability, EnumFacing facing) {
 
 		Attachment attachment = parent.getAttachment(facing.ordinal());
+		if (attachment instanceof ServoItem) {
+			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast((ServoItem) attachment);
+		}
 
 		return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new IItemHandler() {
 
@@ -934,24 +938,27 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 				return 1;
 			}
 
+			@Nonnull
 			@Override
 			public ItemStack getStackInSlot(int slot) {
 
 				return ItemStack.EMPTY;
 			}
 
+			@Nonnull
 			@Override
-			public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+			public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 
-				if (stack.isEmpty()) {
-					return ItemStack.EMPTY;
+				if (searching || stack.isEmpty()) return stack;
+				try {
+					searching = true;
+					return DuctUnitItem.this.insertItem(facing, stack, simulate);
+				} finally {
+					searching = false;
 				}
-				if (attachment instanceof ServoItem) {
-					return ((ServoItem) attachment).insertItem(stack, simulate);
-				}
-				return DuctUnitItem.this.insertItem(facing, stack, simulate);
 			}
 
+			@Nonnull
 			@Override
 			public ItemStack extractItem(int slot, int amount, boolean simulate) {
 

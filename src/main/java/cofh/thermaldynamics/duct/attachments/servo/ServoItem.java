@@ -26,6 +26,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ServoItem extends ServoBase {
+public class ServoItem extends ServoBase implements IItemHandler {
 
 	public static int[] range = { Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE };
 	public static int[] maxSize = { 8, 16, 32, 64, 64 };
@@ -431,4 +432,39 @@ public class ServoItem extends ServoBase {
 		return handler == null ? EmptyHandler.INSTANCE : handler;
 	}
 
+	@Override
+	public int getSlots() {
+		return 1;
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		return ItemStack.EMPTY;
+	}
+
+	boolean searching = false;
+
+	@Nonnull
+	@Override
+	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+		if (searching) return stack;
+		try {
+			searching = true;
+			return insertItem(stack, simulate);
+		} finally {
+			searching = false;
+		}
+	}
+
+	@Nonnull
+	@Override
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public int getSlotLimit(int slot) {
+		return 64;
+	}
 }
