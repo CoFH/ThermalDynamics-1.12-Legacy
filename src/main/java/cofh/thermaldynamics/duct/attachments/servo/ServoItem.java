@@ -434,12 +434,14 @@ public class ServoItem extends ServoBase implements IItemHandler {
 
 	@Override
 	public int getSlots() {
+
 		return 1;
 	}
 
 	@Nonnull
 	@Override
 	public ItemStack getStackInSlot(int slot) {
+
 		return ItemStack.EMPTY;
 	}
 
@@ -448,7 +450,10 @@ public class ServoItem extends ServoBase implements IItemHandler {
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		if (searching) return stack;
+
+		if (searching) {
+			return stack;
+		}
 		try {
 			searching = true;
 			return insertItem(stack, simulate);
@@ -460,11 +465,13 @@ public class ServoItem extends ServoBase implements IItemHandler {
 	@Nonnull
 	@Override
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+
 		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public int getSlotLimit(int slot) {
+
 		return 64;
 	}
 }
