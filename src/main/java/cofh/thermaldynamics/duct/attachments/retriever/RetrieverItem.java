@@ -23,6 +23,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import java.util.Iterator;
 
@@ -202,4 +203,8 @@ public class RetrieverItem extends ServoItem {
 		tag.setString("DisplayType", "item.thermaldynamics.retriever.0.name");
 	}
 
+	@Override
+	public IItemHandler getHandler() {
+		return EmptyHandler.INSTANCE;
+	}
 }
