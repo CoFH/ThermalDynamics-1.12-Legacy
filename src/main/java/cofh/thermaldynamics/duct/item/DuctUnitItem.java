@@ -455,7 +455,13 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 			return item;
 		}
 		RouteCache<DuctUnitItem, GridItem> routeCache = getCache(false);
-		TravelingItem routeForItem = ServoItem.findRouteForItem(ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.getCount())), ServoItem.getRoutesWithDestinations(routeCache.outputRoutes).iterator(), this, side, ServoItem.range[0], (byte) 1);
+		TravelingItem routeForItem = ServoItem.findRouteForItem(
+				ItemHelper.cloneStack(item, Math.min(INSERT_SIZE, item.getCount())),
+				ServoItem.getRoutesWithDestinations(routeCache.outputRoutes).filter(t -> t.endPoint != this || t.getLastSide() != side).iterator(),
+				this,
+				side,
+				ServoItem.range[0],
+				(byte) 1);
 		if (routeForItem == null) {
 			return item;
 		}
