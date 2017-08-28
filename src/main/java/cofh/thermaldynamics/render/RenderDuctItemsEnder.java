@@ -7,7 +7,7 @@ import codechicken.lib.texture.TextureUtils;
 import cofh.core.render.ShaderHelper;
 import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
-import cofh.thermaldynamics.duct.item.DuctUnitItemEnder;
+import cofh.thermaldynamics.duct.item.DuctUnitItemWarp;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermalfoundation.init.TFFluids;
@@ -47,7 +47,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 	@Override
 	public void render(TileGrid tile, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
-		DuctUnitItemEnder duct = (DuctUnitItemEnder) tile.getDuct(DuctToken.ITEMS);
+		DuctUnitItemWarp duct = (DuctUnitItemWarp) tile.getDuct(DuctToken.ITEMS);
 
 		if (duct != null && duct.powered) {
 			CCRenderState ccrs = CCRenderState.instance();

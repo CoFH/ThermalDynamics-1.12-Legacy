@@ -22,7 +22,7 @@ public class TDBlocks {
 
 		TDDucts.addDucts();
 
-		int numBlocks = (int) Math.ceil(cofh.thermaldynamics.duct.TDDucts.ductList.size() / 16.0);
+		int numBlocks = (int) Math.ceil(cofh.thermaldynamics.duct.TDDucts.ductList.size() / 16.0F);
 		blockDuct = new BlockDuct[numBlocks];
 
 		for (int i = 0; i < numBlocks; i++) {

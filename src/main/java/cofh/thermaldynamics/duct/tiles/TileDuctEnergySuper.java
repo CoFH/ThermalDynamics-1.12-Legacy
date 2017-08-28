@@ -6,9 +6,9 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergySuper;
 
-public class TileEnergyDuctSuper extends TileGridSingle implements IEnergyProvider, IEnergyReceiver {
+public class TileDuctEnergySuper extends TileGridSingle implements IEnergyProvider, IEnergyReceiver {
 
-	public TileEnergyDuctSuper() {
+	public TileDuctEnergySuper() {
 
 		super(DuctToken.ENERGY, TDDucts.energySuperCond);
 	}

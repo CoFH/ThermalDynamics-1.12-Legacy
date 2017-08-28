@@ -71,7 +71,7 @@ public class SimulatedInv implements IItemHandler {
 		if (insertItem == copy) {
 			return stack;
 		}
-		int insertable = maxStackSize - (!insertItem.isEmpty() ? insertItem.getCount() : 0);
+		int insertable = Math.min(originalLogic.getSlotLimit(slot) - slotHandler.getStackInSlot(slot).getCount(), maxStackSize - (!insertItem.isEmpty() ? insertItem.getCount() : 0));
 
 		if (insertable == 0) {
 			return stack; // rejected
