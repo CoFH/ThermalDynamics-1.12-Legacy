@@ -87,13 +87,18 @@ public class ServoFluid extends ServoBase {
 		if (tileHandler == null) {
 			return;
 		}
-		maxInput = myTank.fill(tileHandler.drain(maxInput, false), false);
+		FluidStack drainFluid = tileHandler.drain(maxInput, false);
+
+		if (!fluidPassesFiltering(drainFluid)) {
+			return;
+		}
+		maxInput = myTank.fill(drainFluid, false);
 		myTank.fill(tileHandler.drain(maxInput, true), true);
 	}
 
-	public boolean fluidPassesFiltering(FluidStack theFluid) {
+	public boolean fluidPassesFiltering(FluidStack fluid) {
 
-		return theFluid != null && filter.allowFluid(theFluid);
+		return fluid != null && filter.allowFluid(fluid);
 	}
 
 	@Override

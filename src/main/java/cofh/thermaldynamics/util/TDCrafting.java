@@ -96,8 +96,8 @@ public class TDCrafting {
 		addShapelessRecipe(TDDucts.itemEnergyFast.itemStack, TDDucts.itemFast.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum");
 		addShapelessRecipe(TDDucts.itemEnergyFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum");
 
-		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergy.itemStack, 3), TDDucts.itemBasic.itemStack, TDDucts.fluidHardened.itemStack, TDDucts.fluidHardened.itemStack, "ingotSignalum", "ingotElectrum");
-		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyOpaque.itemStack, 3), TDDucts.itemBasicOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, "ingotSignalum", "ingotElectrum");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyFast.itemStack, 3), TDDucts.itemFast.itemStack, TDDucts.itemFast.itemStack, TDDucts.itemFast.itemStack, "ingotSignalum", "ingotElectrum");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyFastOpaque.itemStack, 3), TDDucts.itemFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, "ingotSignalum", "ingotElectrum");
 
 		//		TODO: Readd Omni/Warp Ducts
 		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 2), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
@@ -135,10 +135,7 @@ public class TDCrafting {
 		// addShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum"));
 
 		/* CONVERSIONS */
-		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque },
-				//				TODO: Readd Omni/Warp Ducts
-				//				{ TDDucts.itemOmni, TDDucts.itemOmniOpaque},
-				{ TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque } }) {
+		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque }, { TDDucts.fluidEnergy, TDDucts.fluidEnergyOpaque }, { TDDucts.fluidSuper, TDDucts.fluidSuperOpaque } }) {
 
 			final ItemStack t = duct[0].itemStack;
 			final ItemStack o = duct[1].itemStack;

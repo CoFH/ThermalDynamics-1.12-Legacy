@@ -62,7 +62,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	static int[] _DUCT_HALF_LEN = { _DUCT_LEN[0] / 2, _DUCT_LEN[1] / 2, _DUCT_LEN[2] / 2, _DUCT_LEN[3] / 2 };
 	static float[] _DUCT_TICK_LEN = { 1F / _DUCT_LEN[0], 1F / _DUCT_LEN[1], 1F / _DUCT_LEN[2], 1F / _DUCT_LEN[3] };
 	static float[][][] _SIDE_MODS = new float[4][6][3];
-	static int INSERT_SIZE = 8;
+	static int INSERT_SIZE = 16;
 	static boolean searching = false;
 
 	static {
