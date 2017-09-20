@@ -21,6 +21,7 @@ import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender.CoverTransformer;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -742,7 +743,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	@SideOnly (Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
+	public CoverTransformer getHollowMask(byte side) {
 
 		BlockDuct.ConnectionType connectionType = getVisualConnectionType(side);
 		if (connectionType == BlockDuct.ConnectionType.TILE_CONNECTION) {
@@ -951,7 +952,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		if (b == 0) {
 			byte t = payload.getByte();
 			DuctToken token = DuctToken.TOKENS[t];
-			DuctUnit duct = Validate.notNull(getDuct(token));
+			DuctUnit duct = Validate.notNull((DuctUnit) getDuct(token));
 			duct.handleInfoPacket(payload, isServer, thePlayer);
 		} else if (b >= 1 && b <= 6) {
 			Validate.notNull(getAttachment(b - 1)).handleInfoPacket(payload, isServer, thePlayer);

@@ -331,11 +331,11 @@ public class ModelHelper {
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; j < 4; j++) {
 					if (equalVert(vec(i), vec(j)) && equalVert(vec(i + 1), vec(j - 1))) {
-						Vector3 l1 = (vec(i - 1).vec.copy().subtract(vec(i).vec)).normalize();
-						Vector3 l2 = (vec(i + 2).vec.copy().subtract(vec(i + 1).vec)).normalize();
+						Vector3 l1 = vec(i - 1).vec.copy().subtract(vec(i).vec).normalize();
+						Vector3 l2 = vec(i + 2).vec.copy().subtract(vec(i + 1).vec).normalize();
 
-						Vector3 l3 = (other.vec(j).vec.copy().subtract(other.vec(j + 1).vec)).normalize();
-						Vector3 l4 = (other.vec(j - 1).vec.copy().subtract(other.vec(j - 2).vec)).normalize();
+						Vector3 l3 = other.vec(j).vec.copy().subtract(other.vec(j + 1).vec).normalize();
+						Vector3 l4 = other.vec(j - 1).vec.copy().subtract(other.vec(j - 2).vec).normalize();
 
 						if (l1.equalsT(l3) && l2.equalsT(l4)) {
 							setVec(i, other.vec(j + 1));
@@ -515,7 +515,7 @@ public class ModelHelper {
 				}
 			}
 			for (int i = 0; i < 6; i++) {
-				for (int j = (i + 1); j < 6; j++) {
+				for (int j = i + 1; j < 6; j++) {
 					if ((i ^ 1) == j) {
 						continue;
 					}
@@ -709,7 +709,7 @@ public class ModelHelper {
 			for (int x = -1; x <= 1; x += 2) {
 				for (int y = -1; y <= 1; y += 2) {
 					cube = newCube(a.copy().multiply(s2).add(b.copy().multiply(s * x)).add(c.copy().multiply(s * y)), a.copy().multiply(h / 2).add(b.copy().multiply(s2 * x)).add(c.copy().multiply(s2 * y)));
-					addSideFaces(vecs, cube, (1 << i) ^ (63));
+					addSideFaces(vecs, cube, (1 << i) ^ 63);
 				}
 			}
 			for (int j = 0; j < 6; j++) {

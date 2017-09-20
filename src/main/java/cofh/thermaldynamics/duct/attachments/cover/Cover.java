@@ -9,6 +9,7 @@ import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender.CoverTransformer;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -108,15 +109,15 @@ public class Cover extends Attachment {
 		}
 
 		Attachment attachment = baseTile.getAttachment(side);
-		CoverHoleRender.ITransformer[] hollowMask = null;
+		CoverTransformer transformer = null;
 		if (attachment != null) {
-			hollowMask = attachment.getHollowMask();
+			transformer = attachment.getHollowMask();
 		}
-		if (hollowMask == null) {
-			hollowMask = baseTile.getHollowMask(side);
+		if (transformer == null) {
+			transformer = baseTile.getHollowMask(side);
 		}
 
-		return CoverRenderer.renderBlockCover(ccrs, world, baseTile.getPos(), side, state, getCuboid(), hollowMask);
+		return CoverRenderer.renderBlockCover(ccrs, world, baseTile.getPos(), side, state, getCuboid(), transformer);
 	}
 
 	@Override

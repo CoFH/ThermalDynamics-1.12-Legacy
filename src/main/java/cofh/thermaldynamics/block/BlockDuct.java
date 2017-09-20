@@ -26,7 +26,7 @@ import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
-import cofh.thermaldynamics.render.DuctItemModelBakery;
+import cofh.thermaldynamics.render.DuctModelBakery;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -52,16 +52,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import team.chisel.ctm.api.IFacade;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-
-public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider {
+@Optional.Interface(iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
+public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider, IFacade {
 
 	public static final PropertyInteger META = new PropertyInteger("meta", 15);
 	public static final ThreadLocal<BlockPos> IGNORE_RAY_TRACE = new ThreadLocal<>();
@@ -333,13 +336,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
-
-		return BlockRenderLayer.CUTOUT;
-	}
-
-	@Override
-	@SideOnly (Side.CLIENT)
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 
 		return ProxyClient.renderType;
@@ -440,6 +436,15 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return true;
 	}
 
+	/* IFacade */
+
+	@Nonnull
+	@Override
+	@Optional.Method(modid = "ctm-api")
+	public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
+		return getVisualState(world, pos, side);
+	}
+
 	/* IBlockConfigGui */
 	@Override
 	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
@@ -495,7 +500,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	@SideOnly (Side.CLIENT)
 	public IBakery getBakery() {
 
-		return DuctItemModelBakery.INSTANCE;
+		return DuctModelBakery.INSTANCE;
 	}
 
 	/* IInitializer */

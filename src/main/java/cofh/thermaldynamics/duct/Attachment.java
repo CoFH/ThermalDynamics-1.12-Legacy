@@ -7,7 +7,7 @@ import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
 import cofh.thermaldynamics.block.BlockDuct;
-import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender.CoverTransformer;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.entity.Entity;
@@ -215,7 +215,7 @@ public abstract class Attachment {
 	public abstract boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState);
 
 	@SideOnly (Side.CLIENT)
-	public CoverHoleRender.ITransformer[] getHollowMask() {
+	public CoverTransformer getHollowMask() {
 
 		return null;
 	}
