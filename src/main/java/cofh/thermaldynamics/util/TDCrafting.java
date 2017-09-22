@@ -169,24 +169,21 @@ public class TDCrafting {
 		}
 
 		/* CONVERSIONS */
-		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque },
-				//				TODO: Readd Omni/Warp Ducts
-				//				{ TDDucts.itemOmni, TDDucts.itemOmniOpaque},
-				{ TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque } }) {
+		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque }, { TDDucts.fluidEnergy, TDDucts.fluidEnergyOpaque }, { TDDucts.fluidSuper, TDDucts.fluidSuperOpaque } }) {
 
 			final ItemStack t = duct[0].itemStack;
 			final ItemStack o = duct[1].itemStack;
 
-			addRecipe(ShapelessRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, glassHardened));
-			addRecipe(ShapelessRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead"));
+			addShapelessOreRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, glassHardened);
+			addShapelessOreRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead");
 		}
 		for (Duct[] duct : new Duct[][] { { TDDucts.fluidBasic, TDDucts.fluidBasicOpaque } }) {
 
 			final ItemStack t = duct[0].itemStack;
 			final ItemStack o = duct[1].itemStack;
 
-			addRecipe(ShapelessRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, "blockGlass"));
-			addRecipe(ShapelessRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead"));
+			addShapelessOreRecipe(ItemHelper.cloneStack(t, 6), o, o, o, o, o, o, "blockGlass");
+			addShapelessOreRecipe(ItemHelper.cloneStack(o, 6), t, t, t, t, t, t, "ingotLead");
 		}
 
 		/* DENSE / VACUUM - TE Integration */
