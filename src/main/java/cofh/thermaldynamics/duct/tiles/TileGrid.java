@@ -21,6 +21,7 @@ import cofh.thermaldynamics.duct.ConnectionType;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
+import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -59,7 +60,6 @@ import static cofh.thermaldynamics.duct.ConnectionType.*;
 
 public abstract class TileGrid extends TileCore implements IDuctHolder, IPortableData, ITileInfoPacketHandler, ITilePacketHandler, ICustomHitBox, ITileInfo {
 
-	public final static boolean isDebug = true;
 	static final int ATTACHMENT_SUB_HIT = 14;
 	static final int COVER_SUB_HIT = 20;
 	public static Cuboid6[] subSelection = new Cuboid6[12];
@@ -1120,18 +1120,18 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public void getTileInfo(List<ITextComponent> info, EnumFacing side, EntityPlayer player, boolean debug) {
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
-			if (isDebug) {
+			if (TDProps.showDebugInfo) {
 				info.add(new TextComponentString(ductUnit.toString()));
 			}
 			MultiBlockGrid grid = ductUnit.getGrid();
 			if (grid != null) {
 				info.add(new TextComponentTranslation("info.thermaldynamics.info.duct"));
-				grid.addInfo(info, player, debug || isDebug);
-			} else if (isDebug) {
+				grid.addInfo(info, player, debug || TDProps.showDebugInfo);
+			} else if (TDProps.showDebugInfo) {
 				info.add(new TextComponentString("No Grid"));
 			}
 
-			if (isDebug) {
+			if (TDProps.showDebugInfo) {
 				StringBuilder builder;
 				if (connectionTypes != null) {
 					builder = new StringBuilder("  Con={");

@@ -17,7 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.registries.GameData;
 
-import static cofh.api.util.ThermalExpansionHelper.addPulverizerRecipe;
 import static cofh.core.util.helpers.RecipeHelper.*;
 
 public class TDCrafting {
@@ -55,8 +54,8 @@ public class TDCrafting {
 		addShapedRecipe(TDDucts.energySuperCondEmpty.itemStack, "IGI", "GEG", "IGI", 'I', "ingotElectrum", 'G', glassHardened, 'E', TDDucts.energyResonant.itemStack);
 
 		/* ENERGY - TE Integration */
-		addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(ItemMaterial.nuggetLead, 3));
-		addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(ItemMaterial.nuggetInvar, 3));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(ItemMaterial.nuggetLead, 3));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(ItemMaterial.nuggetInvar, 3));
 
 		addTransposerFill(800, TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforced.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
 		addTransposerFill(800, TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalum.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
@@ -80,8 +79,8 @@ public class TDCrafting {
 		addShapedRecipe(TDDucts.fluidSuperOpaque.itemStack, "IGI", "GEG", "IGI", 'I', "ingotBronze", 'G', glassHardened, 'E', TDDucts.fluidHardenedOpaque.itemStack);
 
 		/* FLUID - TE Integration */
-		addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3));
-		addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3), ItemHelper.cloneStack(ItemMaterial.nuggetLead));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3), ItemHelper.cloneStack(ItemMaterial.nuggetLead));
 
 		/* ITEMS */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened);

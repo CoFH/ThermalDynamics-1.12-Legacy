@@ -9,6 +9,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.item.ItemCover;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -31,6 +32,14 @@ public class TDProps {
 	/* HELPERS */
 	private static void configCommon() {
 
+		String category;
+		String comment;
+
+		/* GENERAL */
+		category = "General";
+
+		comment = "If TRUE, Ducts will display debug information where applicable.";
+		showDebugInfo = ThermalDynamics.CONFIG.getConfiguration().getBoolean("ShowDebugInfo", category, showDebugInfo, comment);
 	}
 
 	private static void configClient() {
@@ -140,6 +149,8 @@ public class TDProps {
 	public static final byte FLUID_UPDATE_DELAY = 4;
 	public static final int ENDER_TRANSMIT_COST = 50;
 	public static final int MAX_STUFFED_ITEMSTACKS_DROP = 30;
+
+	public static boolean showDebugInfo = false;
 
 	/* TEXTURES */
 	public static final String PATH_GFX = "thermaldynamics:textures/";
