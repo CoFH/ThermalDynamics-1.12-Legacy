@@ -81,7 +81,7 @@ public class CoverRenderer {
 			int colour = -1;
 
 			if (quad.hasTint()) {
-				colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.tintIndex);
+				colour = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, quad.tintIndex);
 
 				if (EntityRenderer.anaglyphEnable) {
 					colour = TextureUtil.anaglyphColor(colour);
