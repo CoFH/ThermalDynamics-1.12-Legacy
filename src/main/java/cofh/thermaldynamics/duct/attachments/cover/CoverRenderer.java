@@ -5,10 +5,12 @@ import codechicken.lib.colour.ColourARGB;
 import codechicken.lib.render.CCQuad;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.consumer.CCRSConsumer;
+import codechicken.lib.util.ResourceUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import cofh.core.util.helpers.MathHelper;
 import cofh.core.util.helpers.RenderHelper;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender.CoverTransformer;
 import cofh.thermaldynamics.init.TDTextures;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -39,7 +41,7 @@ public class CoverRenderer {
 
 	final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
 
-	private final static float FACADE_RENDER_OFFSET = ((float) RenderHelper.RENDER_OFFSET) * 2;
+	private final static float FACADE_RENDER_OFFSET = (float) RenderHelper.RENDER_OFFSET * 2;
 	private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
 	private static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors()));
@@ -47,6 +49,10 @@ public class CoverRenderer {
 
 	//Stop inventory churn of models being sliced.
 	public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+
+	public static void init() {
+		ResourceUtils.registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
+	}
 
 	private static VertexLighterFlat setupLighter(CCRenderState ccrs, IBlockState state, IBlockAccess access, BlockPos pos, IBakedModel model) {
 
@@ -65,8 +71,8 @@ public class CoverRenderer {
 			lighter.setWorld(access);
 			lighter.setState(state);
 			lighter.setBlockPos(pos);
+			lighter.updateBlockInfo();
 			for (CCQuad quad : quads) {
-				lighter.updateBlockInfo();
 				quad.pipe(lighter);
 			}
 			return true;
@@ -100,8 +106,7 @@ public class CoverRenderer {
 		return retQuads;
 	}
 
-	public static boolean renderBlockCover(CCRenderState ccrs, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, CoverHoleRender.ITransformer[] hollowCover) {
-
+	public static boolean renderBlockCover(CCRenderState ccrs, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, CoverTransformer coverTransformer) {
 		EnumFacing face = EnumFacing.VALUES[side];
 
 		IBlockAccess coverAccess = CoverBlockAccess.getInstance(world, pos, face, state);
@@ -129,8 +134,8 @@ public class CoverRenderer {
 
 		List<CCQuad> quads = CCQuad.fromArray(bakedQuads);
 
-		if (hollowCover != null) {
-			quads = CoverHoleRender.holify(quads, side, hollowCover);
+		if (coverTransformer != null) {
+			quads = CoverHoleRender.holify(quads, side, coverTransformer);
 		}
 
 		quads = sliceQuads(quads, side, bounds);
@@ -139,7 +144,6 @@ public class CoverRenderer {
 			VertexLighterFlat lighter = setupLighter(ccrs, state, coverAccess, pos, model);
 			return renderBlockQuads(lighter, coverAccess, state, quads, pos);
 		}
-
 		return false;
 	}
 
@@ -177,13 +181,12 @@ public class CoverRenderer {
 
 		boolean flag, flag2;
 
-		float quadPos[][] = new float[4][3];
-		float vecPos[] = new float[3];
+		double quadPos[][] = new double[4][3];
 		boolean flat[] = new boolean[3];
 
 		TextureAtlasSprite icon = TDTextures.COVER_SIDE;
 
-		final int verticesPerFace = 4;
+		int verticesPerFace = 4;
 
 		List<CCQuad> finalQuads = new LinkedList<>();
 
@@ -194,20 +197,18 @@ public class CoverRenderer {
 				flat[i] = true;
 			}
 
+			Vector3 first = quad.vertices[0].vec;
+
 			for (int v = 0; v < 4; v++) {
-				quadPos[v][0] = (float) quad.vertices[v].vec.x;
-				quadPos[v][1] = (float) quad.vertices[v].vec.y;
-				quadPos[v][2] = (float) quad.vertices[v].vec.z;
+				quadPos[v] = quad.vertices[v].vec.toArrayD();
 
 				flag = flag || quadPos[v][sideOffsets[side]] != sideSoftBounds[side];
 				flag2 = flag2 || quadPos[v][sideOffsets[side]] != (1 - sideSoftBounds[side]);
 
-				if (v == 0) {
-					System.arraycopy(quadPos[v], 0, vecPos, 0, 3);
-				} else {
-					for (int vi = 0; vi < 3; vi++) {
-						flat[vi] = flat[vi] && quadPos[v][vi] == vecPos[vi];
-					}
+				if (v != 0) {
+					flat[0] = flat[0] && quad.vertices[v].vec.x == first.x;
+					flat[1] = flat[1] && quad.vertices[v].vec.y == first.y;
+					flat[2] = flat[2] && quad.vertices[v].vec.z == first.z;
 				}
 			}
 
@@ -240,7 +241,7 @@ public class CoverRenderer {
 				}
 
 				if (s != -1) {
-					float u, v;
+					double u, v;
 
 					if (s == 0) {
 						u = quadPos[k2][1];
@@ -271,10 +272,10 @@ public class CoverRenderer {
 
 	private final static int[][] sides = { { 4, 5 }, { 0, 1 }, { 2, 3 } };
 
-	private static float clampF(float x, Cuboid6 b, int j) {
+	private static double clampF(double x, Cuboid6 b, int j) {
 
-		float l = (float) b.getSide(sides[j][0]);
-		float u = (float) b.getSide(sides[j][1]);
+		double l = b.getSide(sides[j][0]);
+		double u = b.getSide(sides[j][1]);
 
 		if (x < l) {
 			return l - (l - x) * 0.001953125f;

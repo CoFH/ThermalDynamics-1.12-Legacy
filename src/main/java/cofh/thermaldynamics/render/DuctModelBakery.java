@@ -5,6 +5,8 @@ import codechicken.lib.model.bakery.generation.IItemBakery;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.buffer.BakingVertexBuffer;
 import codechicken.lib.util.TransformUtils;
+import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
 import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
@@ -16,17 +18,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-public class DuctItemModelBakery implements IItemBakery {
+public class DuctModelBakery implements IItemBakery {
 
-	public static final DuctItemModelBakery INSTANCE = new DuctItemModelBakery();
+	public static final DuctModelBakery INSTANCE = new DuctModelBakery();
 
 	@Override
 	public List<BakedQuad> bakeItemQuads(EnumFacing face, ItemStack stack) {
-
-		List<BakedQuad> quads = new LinkedList<>();
+		List<BakedQuad> quads = new ArrayList<>();
 		if (face == null) {
 			CCRenderState ccrs = CCRenderState.instance();
 			BakingVertexBuffer buffer = BakingVertexBuffer.create();
@@ -36,11 +37,10 @@ public class DuctItemModelBakery implements IItemBakery {
 
 			Block blockFromItem = Block.getBlockFromItem(stack.getItem());
 
-			Duct duct = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + stack.getItemDamage());
-			int metadata = duct.id;
+			Duct ductType = TDDucts.getDuct(((BlockDuct) blockFromItem).offset + stack.getItemDamage());
 
-			RenderDuct.INSTANCE.renderBase(ccrs, true, metadata, RenderDuct.INV_CONNECTIONS, 0, 0, 0, duct.getBaseTexture(stack));
-			RenderDuct.INSTANCE.renderWorldExtra(ccrs, true, metadata, RenderDuct.INV_CONNECTIONS, 0, 0 - RenderHelper.RENDER_OFFSET, 0);
+			RenderDuct.INSTANCE.renderBase(ccrs, true, ductType, RenderDuct.INV_CONNECTIONS, Translation.CENTER, ductType.getBaseTexture(stack));
+			RenderDuct.INSTANCE.renderWorldExtra(ccrs, true, ductType, RenderDuct.INV_CONNECTIONS, Vector3.center.copy().subtract(0, RenderHelper.RENDER_OFFSET, 0).translation());
 
 			buffer.finishDrawing();
 			quads.addAll(buffer.bake());
@@ -50,7 +50,6 @@ public class DuctItemModelBakery implements IItemBakery {
 
 	@Override
 	public PerspectiveProperties getModelProperties(ItemStack stack) {
-
 		return new PerspectiveProperties(TransformUtils.DEFAULT_BLOCK, true, false);
 	}
 }

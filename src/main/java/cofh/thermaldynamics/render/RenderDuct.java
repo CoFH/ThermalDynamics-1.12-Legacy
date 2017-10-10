@@ -86,7 +86,7 @@ public class RenderDuct implements ICCBlockRenderer {
 
 		modelCenter = CCModel.quadModel(48).generateBox(0, -3, -3, -3, 6, 6, 6, 0, 0, 32, 32, 16);
 
-		modelConnection[0][1] = CCModel.quadModel(48).generateBlock(0, (new Cuboid6(0.3125, 0.6875, 0.3125, 0.6875, 1, 0.6875)).expand(-1.0D / 1024.0D));
+		modelConnection[0][1] = CCModel.quadModel(48).generateBlock(0, new Cuboid6(0.3125, 0.6875, 0.3125, 0.6875, 1, 0.6875).expand(-1.0D / 1024.0D));
 		modelConnection[1][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4 - RenderHelper.RENDER_OFFSET, 8, 0, 0, 32, 32, 16).computeNormals();
 		modelConnection[2][1] = CCModel.quadModel(24).generateBox(0, -4, 4, -4, 8, 4 - RenderHelper.RENDER_OFFSET, 8, 0, 16, 32, 32, 16).computeNormals();
 
@@ -100,11 +100,11 @@ public class RenderDuct implements ICCBlockRenderer {
 		modelFluidTubes = ModelHelper.StandardTubes.genModels(0.1875F * TDProps.smallInnerModelScaling, false, false);
 		modelLargeTubes = ModelHelper.StandardTubes.genModels(0.21875f, true);
 
-		modelFrameConnection = (new ModelHelper.OctagonalTubeGen(0.375, 0.1812, true)).generateModels();
-		modelFrame = (new ModelHelper.OctagonalTubeGen(0.375 * TDProps.largeInnerModelScaling, 0.1812, false)).generateModels();
+		modelFrameConnection = new ModelHelper.OctagonalTubeGen(0.375, 0.1812, true).generateModels();
+		modelFrame = new ModelHelper.OctagonalTubeGen(0.375 * TDProps.largeInnerModelScaling, 0.1812, false).generateModels();
 
-		modelTransportConnection = (new ModelHelper.OctagonalTubeGen(0.5 * TDProps.largeInnerModelScaling, 0.1812, true)).generateModels();
-		modelTransport = (new ModelHelper.OctagonalTubeGen(0.5 * TDProps.largeInnerModelScaling * TDProps.largeInnerModelScaling, 0.1812, false)).generateModels();
+		modelTransportConnection = new ModelHelper.OctagonalTubeGen(0.5 * TDProps.largeInnerModelScaling, 0.1812, true).generateModels();
+		modelTransport = new ModelHelper.OctagonalTubeGen(0.5 * TDProps.largeInnerModelScaling * TDProps.largeInnerModelScaling, 0.1812, false).generateModels();
 
 		CCModel.generateBackface(modelCenter, 0, modelCenter, 24, 24);
 		CCModel.generateBackface(modelConnection[0][1], 0, modelConnection[0][1], 24, 24);
@@ -133,16 +133,9 @@ public class RenderDuct implements ICCBlockRenderer {
 
 	}
 
-	public boolean renderBase(CCRenderState ccrs, boolean invRender, int renderType, int[] connection, double x, double y, double z, TextureAtlasSprite iconBaseTexture) {
-
-		x += 0.5;
-		y += 0.5;
-		z += 0.5;
-
-		Translation trans = new Translation(x, y, z);
+	public boolean renderBase(CCRenderState ccrs, boolean invRender, Duct ductType, int[] connection, Translation trans, TextureAtlasSprite iconBaseTexture) {
 
 		int c = 0;
-		Duct ductType = TDDucts.ductList.get(renderType);
 		for (int s = 0; s < 6; s++) {
 			if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct()) {
 				IconTransformation icon;
@@ -177,24 +170,24 @@ public class RenderDuct implements ICCBlockRenderer {
 		}
 
 		if (ductType.iconFluidTexture != null && ductType.fluidTransparency == (byte) 255) {
-			modelFluidTubes[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFluidTexture));
+			modelFluidTubes[c].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFluidTexture));
 		}
 
 		if (ductType.frameType == 1) {
-			renderSideTubes(ccrs, 0, connection, x - 0.5, y - 0.5, z - 0.5, TDTextures.SIDE_DUCTS);
+			renderSideTubes(ccrs, 0, connection, trans, TDTextures.SIDE_DUCTS);
 		} else if (ductType.frameType == 2 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
-						modelFrameConnection[64 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
-						modelFrame[70 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
+						modelFrameConnection[64 + s].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
+						modelFrame[70 + s].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 					}
 				}
 			}
 			if (modelFrameConnection[c].verts.length != 0) {
-				modelFrameConnection[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
+				modelFrameConnection[c].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 			}
 		} else if (ductType.frameType == 3 && ductType.iconFrameTexture != null) {
 			c = 0;
@@ -205,25 +198,25 @@ public class RenderDuct implements ICCBlockRenderer {
 					}
 				}
 			}
-			modelLargeTubes[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
+			modelLargeTubes[c].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 		} else if (ductType.frameType == 4 && ductType.iconFrameTexture != null) {
 			c = 0;
 			for (int s = 0; s < 6; s++) {
 				if (BlockDuct.ConnectionType.values()[connection[s]].renderDuct() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal() && connection[s] != BlockDuct.ConnectionType.STRUCTURE_CLEAN.ordinal()) {
 					c = c | (1 << s);
 					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
-						modelTransportConnection[64 + s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
+						modelTransportConnection[64 + s].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameBandTexture));
 					}
 				}
 			}
 			if (modelTransportConnection[c].verts.length != 0) {
-				modelTransportConnection[c].render(ccrs, x, y, z, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
+				modelTransportConnection[c].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameTexture));
 			}
 		}
 		return true;
 	}
 
-	public boolean renderSideTubes(CCRenderState ccrs, int pass, int[] connections, double x, double y, double z, TextureAtlasSprite icon) {
+	public boolean renderSideTubes(CCRenderState ccrs, int pass, int[] connections, Translation trans, TextureAtlasSprite icon) {
 
 		CCModel[] models = pass == 0 ? ModelHelper.SideTubeGen.standardTubes : ModelHelper.SideTubeGen.standardTubesInner;
 		int c = 0;
@@ -232,7 +225,7 @@ public class RenderDuct implements ICCBlockRenderer {
 				c = c | (1 << i);
 
 				if (connections[i] != BlockDuct.ConnectionType.DUCT.ordinal()) {
-					models[64 + i].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(icon));
+					models[64 + i].render(ccrs, trans, RenderUtils.getIconTransformation(icon));
 				}
 			}
 		}
@@ -241,13 +234,12 @@ public class RenderDuct implements ICCBlockRenderer {
 			return false;
 		}
 
-		models[c].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(icon));
+		models[c].render(ccrs, trans, RenderUtils.getIconTransformation(icon));
 		return true;
 	}
 
-	public boolean renderWorldExtra(CCRenderState ccrs, boolean invRender, int renderType, int[] connection, double x, double y, double z) {
+	public boolean renderWorldExtra(CCRenderState ccrs, boolean invRender, Duct ductType, int[] connection, Translation trans) {
 
-		Duct ductType = TDDucts.ductList.get(renderType);
 		TextureAtlasSprite texture = ductType.iconFluidTexture;
 
 		boolean flag = false;
@@ -260,13 +252,13 @@ public class RenderDuct implements ICCBlockRenderer {
 					c = c | (1 << s);
 				}
 			}
-			modelFluidTubes[c].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(texture));
+			modelFluidTubes[c].render(ccrs, trans, RenderUtils.getIconTransformation(texture));
 
 			flag = true;
 		}
 
 		if (ductType.frameType == 1 && ductType.iconFrameFluidTexture != null) {
-			flag = renderSideTubes(ccrs, 1, connection, x, y, z, ductType.iconFrameFluidTexture) || flag;
+			flag = renderSideTubes(ccrs, 1, connection, trans, ductType.iconFrameFluidTexture) || flag;
 		}
 
 		if (ductType.frameType == 2 && ductType.iconFrameFluidTexture != null) {
@@ -276,13 +268,13 @@ public class RenderDuct implements ICCBlockRenderer {
 					c = c | (1 << s);
 
 					if (invRender || connection[s] != BlockDuct.ConnectionType.DUCT.ordinal()) {
-						modelFrame[70 + s].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
+						modelFrame[70 + s].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
 					}
 				}
 			}
 
 			if (modelFrame[c].verts.length != 0) {
-				modelFrame[c].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
+				modelFrame[c].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
 				flag = true;
 			}
 		}
@@ -296,7 +288,7 @@ public class RenderDuct implements ICCBlockRenderer {
 			}
 
 			if (modelTransport[c].verts.length != 0) {
-				modelTransport[c].render(ccrs, x + 0.5, y + 0.5, z + 0.5, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
+				modelTransport[c].render(ccrs, trans, RenderUtils.getIconTransformation(ductType.iconFrameFluidTexture));
 				flag = true;
 			}
 		}
@@ -360,9 +352,8 @@ public class RenderDuct implements ICCBlockRenderer {
 	@Override
 	public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer) {
 
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
+		Translation trans = new Translation(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+
 		CCRenderState ccrs = CCRenderState.instance();
 		ccrs.bind(buffer);
 		TileEntity tile = world.getTileEntity(pos);
@@ -388,13 +379,12 @@ public class RenderDuct implements ICCBlockRenderer {
 				}
 			}
 		}
-		int renderType = TDDucts.getDuct(((BlockDuct) state.getBlock()).offset + state.getBlock().getMetaFromState(state)).id;
 
 		if (layer == BlockRenderLayer.CUTOUT) {
-			renderBase(ccrs, false, renderType, connections, x, y, z, theTile.getBaseIcon());
+			renderBase(ccrs, false, theTile.getDuctType(), connections, trans, theTile.getBaseIcon());
 			flag = true;
 		} else if (layer == BlockRenderLayer.TRANSLUCENT) {
-			flag = renderWorldExtra(ccrs, false, renderType, connections, x, y, z) || flag;
+			flag = renderWorldExtra(ccrs, false, theTile.getDuctType(), connections, trans) || flag;
 		}
 
 		return flag;

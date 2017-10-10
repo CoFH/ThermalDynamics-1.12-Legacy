@@ -11,6 +11,7 @@ import cofh.core.util.RayTracer;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.attachments.cover.CoverRenderer;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
@@ -81,6 +82,7 @@ public class ProxyClient extends Proxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Super.Transparent.class, RenderDuctFluids.INSTANCE);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Hardened.Transparent.class, RenderDuctFluids.INSTANCE);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Energy.Transparent.class, RenderDuctFluids.INSTANCE);
+		CoverRenderer.init();
 	}
 
 	@Override

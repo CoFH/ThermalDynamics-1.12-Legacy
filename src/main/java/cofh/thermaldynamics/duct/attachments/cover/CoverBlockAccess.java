@@ -12,6 +12,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import team.chisel.ctm.api.IFacade;
 
 import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
 import static net.minecraft.util.EnumFacing.*;
@@ -51,14 +52,15 @@ public class CoverBlockAccess implements IBlockAccess {
 			return ORIGINAL;
 		}
 
-		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
-			return AIR;
-		}
+		//TODO wot..
+//		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
+//			return AIR;
+//		}
 
 		IBlockState worldState = world.getBlockState(pos);
 		Block worldBlock = worldState.getBlock();
 
-		if (worldBlock instanceof IBlockAppearance) {
+		if (worldBlock instanceof IBlockAppearance) {//TODO chisel's IFacade interface.
 			IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
 			if (blockAppearance.supportsVisualConnections()) {
 				return COVER;
@@ -69,20 +71,30 @@ public class CoverBlockAccess implements IBlockAccess {
 			} else {
 				return COVER;
 			}
+		//TODO wot..
+//		} else if (worldState.equals(state)) {
+//			return state.isNormalCube() ? BEDROCK : AIR;
 		} else {
-			if (worldState.equals(state)) {
-				return state.isNormalCube() ? BEDROCK : AIR;
-			} else {
-				return ORIGINAL;
-			}
+			return ORIGINAL;
 		}
 	}
 
 	@Override
 	public IBlockState getBlockState(BlockPos pos) {
-
+		IBlockState ret;
 		Result action = getAction(pos);
-		return action == ORIGINAL ? world.getBlockState(pos) : action == AIR ? Blocks.AIR.getDefaultState() : action == BEDROCK ? Blocks.BEDROCK.getDefaultState() : action == COVER ? ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side) : state;
+		if (action == ORIGINAL) {
+			ret = world.getBlockState(pos);
+		} else if (action == AIR) {
+			ret = Blocks.AIR.getDefaultState();
+		} else if (action == BEDROCK) {
+			ret = Blocks.BEDROCK.getDefaultState();
+		} else if (action == COVER) {
+			ret = ((IBlockAppearance) world.getBlockState(pos).getBlock()).getVisualState(world, pos, side);
+		} else {
+			ret = state;
+		}
+		return ret;
 	}
 
 	@Override
