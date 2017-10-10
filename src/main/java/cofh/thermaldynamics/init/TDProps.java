@@ -9,7 +9,6 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.item.ItemCover;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.gui.client;
 
-import cofh.core.gui.GuiCore;
+import cofh.core.gui.GuiContainerCore;
 import cofh.core.gui.element.ElementButton;
 import cofh.core.gui.element.tab.TabInfo;
 import cofh.core.gui.element.tab.TabRedstoneControl;
@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiDuctConnection extends GuiCore {
+public class GuiDuctConnection extends GuiContainerCore {
 
 	static final String TEX_PATH = "thermaldynamics:textures/gui/connection.png";
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);

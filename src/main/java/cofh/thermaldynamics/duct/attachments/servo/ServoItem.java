@@ -315,8 +315,6 @@ public class ServoItem extends ServoBase implements IItemHandler {
 			return null;
 		}
 		while (routes.hasNext()) {
-			System.out.println("in here");
-
 			Route<DuctUnitItem, GridItem> outputRoute = routes.next();
 			if (outputRoute.pathDirections.size() <= maxRange) {
 				int amountRemaining = outputRoute.endPoint.canRouteItem(item, outputRoute.getLastSide());
@@ -333,8 +331,6 @@ public class ServoItem extends ServoBase implements IItemHandler {
 				}
 			}
 		}
-		System.out.println("OH GOD WHYYY");
-
 		return null;
 	}
 
