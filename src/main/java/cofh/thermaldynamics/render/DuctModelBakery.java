@@ -27,6 +27,7 @@ public class DuctModelBakery implements IItemBakery {
 
 	@Override
 	public List<BakedQuad> bakeItemQuads(EnumFacing face, ItemStack stack) {
+
 		List<BakedQuad> quads = new ArrayList<>();
 		if (face == null) {
 			CCRenderState ccrs = CCRenderState.instance();
@@ -50,6 +51,7 @@ public class DuctModelBakery implements IItemBakery {
 
 	@Override
 	public PerspectiveProperties getModelProperties(ItemStack stack) {
+
 		return new PerspectiveProperties(TransformUtils.DEFAULT_BLOCK, true, false);
 	}
 }

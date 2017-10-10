@@ -12,7 +12,6 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import team.chisel.ctm.api.IFacade;
 
 import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
 import static net.minecraft.util.EnumFacing.*;
@@ -47,16 +46,9 @@ public class CoverBlockAccess implements IBlockAccess {
 		if (this.pos == pos) {
 			return BASE;
 		}
-
 		if (pos == this.pos.offset(side)) {
 			return ORIGINAL;
 		}
-
-		//TODO wot..
-//		if (((side == DOWN && pos.getY() > this.pos.getY()) || (side == UP && pos.getY() < this.pos.getY()) || (side == NORTH && pos.getZ() > this.pos.getZ()) || (side == SOUTH && pos.getZ() < this.pos.getZ()) || (side == WEST && pos.getX() > this.pos.getX()) || (side == EAST && pos.getX() < this.pos.getX()))) {
-//			return AIR;
-//		}
-
 		IBlockState worldState = world.getBlockState(pos);
 		Block worldBlock = worldState.getBlock();
 
@@ -71,9 +63,6 @@ public class CoverBlockAccess implements IBlockAccess {
 			} else {
 				return COVER;
 			}
-		//TODO wot..
-//		} else if (worldState.equals(state)) {
-//			return state.isNormalCube() ? BEDROCK : AIR;
 		} else {
 			return ORIGINAL;
 		}
@@ -81,6 +70,7 @@ public class CoverBlockAccess implements IBlockAccess {
 
 	@Override
 	public IBlockState getBlockState(BlockPos pos) {
+
 		IBlockState ret;
 		Result action = getAction(pos);
 		if (action == ORIGINAL) {

@@ -63,7 +63,8 @@ import team.chisel.ctm.api.IFacade;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-@Optional.Interface(iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
+
+@Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider, IFacade {
 
 	public static final PropertyInteger META = new PropertyInteger("meta", 15);
@@ -440,8 +441,9 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 
 	@Nonnull
 	@Override
-	@Optional.Method(modid = "ctm-api")
+	@Optional.Method (modid = "ctm-api")
 	public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
+
 		return getVisualState(world, pos, side);
 	}
 

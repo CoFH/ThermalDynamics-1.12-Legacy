@@ -51,6 +51,7 @@ public class CoverRenderer {
 	public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
 
 	public static void init() {
+
 		ResourceUtils.registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
 	}
 
@@ -107,6 +108,7 @@ public class CoverRenderer {
 	}
 
 	public static boolean renderBlockCover(CCRenderState ccrs, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, CoverTransformer coverTransformer) {
+
 		EnumFacing face = EnumFacing.VALUES[side];
 
 		IBlockAccess coverAccess = CoverBlockAccess.getInstance(world, pos, face, state);

@@ -133,6 +133,7 @@ public class CoverHoleRender {
 		}
 
 		public CCQuad bake() {
+
 			return quad;
 		}
 
@@ -254,10 +255,12 @@ public class CoverHoleRender {
 		private ITransformer[] transformers;
 
 		public CoverTransformer(ITransformer... transformers) {
+
 			this.transformers = transformers;
 		}
 
 		public ITransformer[] getTransformers() {
+
 			return transformers;
 		}
 	}
