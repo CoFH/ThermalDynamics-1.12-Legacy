@@ -35,7 +35,7 @@ public class ThermalDynamics {
 	public static final String MOD_ID = "thermaldynamics";
 	public static final String MOD_NAME = "Thermal Dynamics";
 
-	public static final String VERSION = "2.3.5";
+	public static final String VERSION = "2.3.6";
 	public static final String VERSION_MAX = "2.4.0";
 	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + VERSION_MAX + ");";
 	public static final String UPDATE_URL = "https://raw.github.com/cofh/version/master/" + MOD_ID + "_update.json";

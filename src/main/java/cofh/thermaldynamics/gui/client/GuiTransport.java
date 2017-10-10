@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.gui.client;
 
-import cofh.core.gui.GuiCore;
+import cofh.core.gui.GuiContainerCore;
 import cofh.core.gui.element.ElementButtonManaged;
 import cofh.core.gui.element.listbox.SliderVertical;
 import cofh.core.network.PacketHandler;
@@ -14,7 +14,7 @@ import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 
-public class GuiTransport extends GuiCore {
+public class GuiTransport extends GuiContainerCore {
 
 	final ContainerTransport container;
 

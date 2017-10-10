@@ -22,7 +22,7 @@ public class Duct implements IIconRegister, Comparable<Duct> {
 	public static final String SIDE_DUCTS = "sideDucts";
 
 	public enum Type {
-		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, CRAFTING
+		ENERGY, FLUID, ITEM, TRANSPORT, STRUCTURAL, ENDER, CRAFTING
 	}
 
 	public ItemStack itemStack = ItemStack.EMPTY;

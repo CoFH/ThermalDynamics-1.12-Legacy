@@ -17,7 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.registries.GameData;
 
-import static cofh.api.util.ThermalExpansionHelper.addPulverizerRecipe;
 import static cofh.core.util.helpers.RecipeHelper.*;
 
 public class TDCrafting {
@@ -55,8 +54,8 @@ public class TDCrafting {
 		addShapedRecipe(TDDucts.energySuperCondEmpty.itemStack, "IGI", "GEG", "IGI", 'I', "ingotElectrum", 'G', glassHardened, 'E', TDDucts.energyResonant.itemStack);
 
 		/* ENERGY - TE Integration */
-		addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(ItemMaterial.nuggetLead, 3));
-		addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(ItemMaterial.nuggetInvar, 3));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(ItemMaterial.nuggetLead, 3));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(ItemMaterial.nuggetInvar, 3));
 
 		addTransposerFill(800, TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforced.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
 		addTransposerFill(800, TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalum.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
@@ -80,8 +79,8 @@ public class TDCrafting {
 		addShapedRecipe(TDDucts.fluidSuperOpaque.itemStack, "IGI", "GEG", "IGI", 'I', "ingotBronze", 'G', glassHardened, 'E', TDDucts.fluidHardenedOpaque.itemStack);
 
 		/* FLUID - TE Integration */
-		addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3));
-		addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3), ItemHelper.cloneStack(ItemMaterial.nuggetLead));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasic.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3));
+		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.fluidBasicOpaque.itemStack, ItemHelper.cloneStack(ItemMaterial.nuggetCopper, 3), ItemHelper.cloneStack(ItemMaterial.nuggetLead));
 
 		/* ITEMS */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.itemBasic.itemStack, 6), "IGI", 'I', "ingotTin", 'G', glassHardened);
@@ -96,8 +95,8 @@ public class TDCrafting {
 		addShapelessRecipe(TDDucts.itemEnergyFast.itemStack, TDDucts.itemFast.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum");
 		addShapelessRecipe(TDDucts.itemEnergyFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, "nuggetSignalum", "nuggetSignalum", "nuggetSignalum", "nuggetElectrum", "nuggetElectrum", "nuggetElectrum");
 
-		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergy.itemStack, 3), TDDucts.itemBasic.itemStack, TDDucts.fluidHardened.itemStack, TDDucts.fluidHardened.itemStack, "ingotSignalum", "ingotElectrum");
-		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyOpaque.itemStack, 3), TDDucts.itemBasicOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, TDDucts.fluidHardenedOpaque.itemStack, "ingotSignalum", "ingotElectrum");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyFast.itemStack, 3), TDDucts.itemFast.itemStack, TDDucts.itemFast.itemStack, TDDucts.itemFast.itemStack, "ingotSignalum", "ingotElectrum");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyFastOpaque.itemStack, 3), TDDucts.itemFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, "ingotSignalum", "ingotElectrum");
 
 		//		TODO: Readd Omni/Warp Ducts
 		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 2), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
@@ -135,10 +134,7 @@ public class TDCrafting {
 		// addShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum"));
 
 		/* CONVERSIONS */
-		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque },
-				//				TODO: Readd Omni/Warp Ducts
-				//				{ TDDucts.itemOmni, TDDucts.itemOmniOpaque},
-				{ TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque } }) {
+		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque }, { TDDucts.fluidEnergy, TDDucts.fluidEnergyOpaque }, { TDDucts.fluidSuper, TDDucts.fluidSuperOpaque } }) {
 
 			final ItemStack t = duct[0].itemStack;
 			final ItemStack o = duct[1].itemStack;

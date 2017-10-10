@@ -5,7 +5,7 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
 
-public class TileDuctEnergy extends TileGridStructureBase implements IEnergyReceiver {
+public abstract class TileDuctEnergy extends TileGridStructureBase implements IEnergyReceiver {
 
 	public TileDuctEnergy(Duct duct) {
 

@@ -82,19 +82,5 @@ public class DuctUnitFluidSuper extends DuctUnitFluid {
 			}
 		});
 	}
-	//
-	//	@Override
-	//	@SideOnly (Side.CLIENT)
-	//	public CoverHoleRender.ITransformer[] getHollowMask(byte side) {
-	//
-	//		BlockDuct.ConnectionType connectionType = getRenderConnectionType(side);
-	//		if (connectionType == BlockDuct.ConnectionType.TILECONNECTION) {
-	//			return CoverHoleRender.hollowDuctTile;
-	//		} else if (connectionType == BlockDuct.ConnectionType.NONE) {
-	//			return null;
-	//		} else {
-	//			return CoverHoleRender.hollowDuctLarge;
-	//		}
-	//	}
 
 }
