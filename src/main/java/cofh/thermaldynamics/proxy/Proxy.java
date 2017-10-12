@@ -10,6 +10,7 @@ public class Proxy {
 	/* INIT */
 	public void preInit(FMLPreInitializationEvent event) {
 
+		// MinecraftForge.EVENT_BUS.register(EventHandler.INSTANCE);
 	}
 
 	public void initialize(FMLInitializationEvent event) {

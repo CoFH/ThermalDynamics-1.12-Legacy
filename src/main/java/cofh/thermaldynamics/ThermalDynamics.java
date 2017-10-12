@@ -107,7 +107,6 @@ public class ThermalDynamics {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, GUI_HANDLER);
 		MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
-		MinecraftForge.EVENT_BUS.register(proxy);
 
 		// PacketTDBase.initialize();
 	}
