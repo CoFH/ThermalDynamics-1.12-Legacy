@@ -34,8 +34,8 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	public DuctUnitEnergy(TileDuctEnergy parent, Duct duct) {
 
 		super(parent, duct);
-		transferLimit = GridEnergy.NODE_TRANSFER[duct.type];
-		capacity = GridEnergy.NODE_STORAGE[duct.type];
+		transferLimit = GridEnergy.XFER[duct.type];
+		capacity = GridEnergy.CAPACITY[duct.type];
 	}
 
 	@Override

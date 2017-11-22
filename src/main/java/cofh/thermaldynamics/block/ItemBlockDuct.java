@@ -121,7 +121,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 				tooltip.add(StringHelper.localize("info.thermaldynamics.duct.energy"));
 
 				if (duct != TDDucts.energySuperCond) {
-					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + GridEnergy.NODE_TRANSFER[duct.type] + StringHelper.LIGHT_GRAY + " RF/t.");
+					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + GridEnergy.XFER[duct.type] + StringHelper.LIGHT_GRAY + " RF/t.");
 				} else {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.BRIGHT_BLUE + StringHelper.localize("info.cofh.infinite") + StringHelper.LIGHT_GRAY + " RF/t.");
 					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.energySuper.info"));

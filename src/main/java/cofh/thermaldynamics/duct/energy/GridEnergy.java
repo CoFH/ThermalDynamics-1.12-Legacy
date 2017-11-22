@@ -1,6 +1,7 @@
 package cofh.thermaldynamics.duct.energy;
 
 import cofh.redstoneflux.impl.EnergyStorage;
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.multiblock.MultiBlockGridTracking;
@@ -8,14 +9,30 @@ import net.minecraft.world.World;
 
 public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 
-	public static int NODE_STORAGE[] = { 1000 * 5, 4000 * 5, 9000 * 5, 16000 * 5, 25000 * 5, 0 };
-	public static int NODE_TRANSFER[] = { 1000, 4000, 9000, 16000, 25000, 0 };
+	public static final int XFER_BASE = 1000;
+
+	public static int CAPACITY[] = { 1 * 5, 4 * 5, 9 * 5, 16 * 5, 25 * 5, 0 };
+	public static int XFER[] = { 1, 4, 9, 16, 25, 0 };
 	public final EnergyStorage myStorage;
 	private final int transferLimit;
 
 	private final int capacity;
 	private int currentEnergy = 0;
 	private int extraEnergy = 0;
+
+	public static void initialize() {
+
+		String category = "Duct.Energy";
+
+		int xfer = XFER_BASE;
+		String comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Leadstone Fluxduct. This base value will scale with duct level.";
+		xfer = ThermalDynamics.CONFIG.getConfiguration().getInt("BaseTransfer", category, xfer, xfer / 10, xfer * 10, comment);
+
+		for (int i = 0; i < CAPACITY.length; i++) {
+			CAPACITY[i] *= xfer;
+			XFER[i] *= xfer;
+		}
+	}
 
 	public GridEnergy(World world, int transferLimit, int capacity) {
 

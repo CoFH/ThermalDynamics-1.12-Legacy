@@ -3,6 +3,7 @@ package cofh.thermaldynamics.init;
 import cofh.core.util.core.IInitializer;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -33,6 +34,8 @@ public class TDBlocks {
 			init.initialize();
 		}
 		MinecraftForge.EVENT_BUS.register(INSTANCE);
+
+		GridEnergy.initialize();
 	}
 
 	/* EVENT HANDLING */

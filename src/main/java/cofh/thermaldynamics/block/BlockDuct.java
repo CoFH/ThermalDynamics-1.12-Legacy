@@ -438,7 +438,6 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 	}
 
 	/* IFacade */
-
 	@Nonnull
 	@Override
 	@Optional.Method (modid = "ctm-api")

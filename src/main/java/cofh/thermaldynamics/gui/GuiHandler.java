@@ -18,18 +18,15 @@ public class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-		BlockPos pos = new BlockPos(x, y, z);
-		TileEntity tile = world.getTileEntity(pos);
+		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 
 		switch (id) {
 			case TILE_ID:
-				tile = world.getTileEntity(pos);
 				if (tile instanceof TileCore) {
 					return ((TileCore) tile).getGuiClient(player.inventory);
 				}
 				return null;
 			case TILE_CONFIG:
-				tile = world.getTileEntity(pos);
 				if (tile instanceof TileGrid) {
 					return ((TileGrid) tile).getConfigGuiClient(player.inventory);
 				}
@@ -50,18 +47,15 @@ public class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-		BlockPos pos = new BlockPos(x, y, z);
-		TileEntity tile = world.getTileEntity(pos);
+		TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
 
 		switch (id) {
 			case TILE_ID:
-				tile = world.getTileEntity(pos);
 				if (tile instanceof TileCore) {
 					return ((TileCore) tile).getGuiServer(player.inventory);
 				}
 				return null;
 			case TILE_CONFIG:
-				tile = world.getTileEntity(pos);
 				if (tile instanceof TileGrid) {
 					return ((TileGrid) tile).getConfigGuiServer(player.inventory);
 				}
