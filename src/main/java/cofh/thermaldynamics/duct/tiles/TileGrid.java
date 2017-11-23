@@ -1054,10 +1054,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return null;
 	}
 
-	public Object getConfigGuiServer(InventoryPlayer inventory) {
+	@Override
+	public Object getConfigGuiClient(InventoryPlayer inventory) {
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
-			Object object = ductUnit.getConfigGuiServer(inventory);
+			Object object = ductUnit.getConfigGuiClient(inventory);
 			if (object != null) {
 				return object;
 			}
@@ -1065,10 +1066,11 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return null;
 	}
 
-	public Object getConfigGuiClient(InventoryPlayer inventory) {
+	@Override
+	public Object getConfigGuiServer(InventoryPlayer inventory) {
 
 		for (DuctUnit ductUnit : getDuctUnits()) {
-			Object object = ductUnit.getConfigGuiClient(inventory);
+			Object object = ductUnit.getConfigGuiServer(inventory);
 			if (object != null) {
 				return object;
 			}

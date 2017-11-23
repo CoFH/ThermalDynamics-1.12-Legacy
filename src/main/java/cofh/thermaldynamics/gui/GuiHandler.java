@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler {
 
 	public static final int TILE_ID = 0;
-	public static final int TILE_CONFIG = 1;
+	public static final int TILE_CONFIG_ID = 1;
 	public static final int TILE_ATTACHMENT_ID = 10;
 
 	@Override
@@ -26,9 +26,9 @@ public class GuiHandler implements IGuiHandler {
 					return ((TileCore) tile).getGuiClient(player.inventory);
 				}
 				return null;
-			case TILE_CONFIG:
-				if (tile instanceof TileGrid) {
-					return ((TileGrid) tile).getConfigGuiClient(player.inventory);
+			case TILE_CONFIG_ID:
+				if (tile instanceof TileCore) {
+					return ((TileCore) tile).getConfigGuiClient(player.inventory);
 				}
 				return null;
 			default:
@@ -55,9 +55,9 @@ public class GuiHandler implements IGuiHandler {
 					return ((TileCore) tile).getGuiServer(player.inventory);
 				}
 				return null;
-			case TILE_CONFIG:
-				if (tile instanceof TileGrid) {
-					return ((TileGrid) tile).getConfigGuiServer(player.inventory);
+			case TILE_CONFIG_ID:
+				if (tile instanceof TileCore) {
+					return ((TileCore) tile).getConfigGuiServer(player.inventory);
 				}
 				return null;
 			default:

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.api.block.IBlockConfigGui;
+import cofh.api.block.IConfigGui;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
@@ -31,7 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockConfigGui {
+public class DuctUnitTransport extends DuctUnitTransportBase implements IConfigGui {
 
 	public DuctUnitTransport(TileGrid parent, Duct duct) {
 
@@ -200,7 +200,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 			transport.setDirectory(entries);
 		} else if (type == NETWORK_CONFIG && isServer) {
 			PacketHandler.sendTo(parent.getTilePacket(), thePlayer);
-			thePlayer.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, world(), pos().getX(), pos().getY(), pos().getZ());
+			thePlayer.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG_ID, world(), pos().getX(), pos().getY(), pos().getZ());
 		}
 	}
 
@@ -313,13 +313,13 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IBlockCo
 	}
 
 	@Override
-	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+	public boolean openConfigGui(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
-		if (ServerHelper.isClientWorld(world())) {
+		if (ServerHelper.isClientWorld(world)) {
 			return true;
 		}
 		PacketHandler.sendTo(parent.getTilePacket(), player);
-		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG, world(), pos.getX(), pos.getY(), pos.getZ());
+		player.openGui(ThermalDynamics.instance, GuiHandler.TILE_CONFIG_ID, world, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 

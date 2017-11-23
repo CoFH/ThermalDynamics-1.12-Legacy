@@ -5,7 +5,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import cofh.api.block.IBlockConfigGui;
+import cofh.api.block.IConfigGui;
 import cofh.api.core.IPortableData;
 import cofh.core.network.PacketCoFHBase;
 import cofh.core.network.PacketHandler;
@@ -43,6 +43,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,7 +51,7 @@ import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Relay extends Attachment implements IBlockConfigGui, IPortableData {
+public class Relay extends Attachment implements IConfigGui, IPortableData {
 
 	public final DuctUnitStructural structureUnit;
 	public byte type = 0;
@@ -365,7 +366,7 @@ public class Relay extends Attachment implements IBlockConfigGui, IPortableData 
 	}
 
 	@Override
-	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+	public boolean openConfigGui(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
 		return true;
 	}

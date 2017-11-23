@@ -11,7 +11,7 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.render.particle.CustomParticleHandler;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
-import cofh.api.block.IBlockConfigGui;
+import cofh.api.block.IConfigGui;
 import cofh.core.init.CoreProps;
 import cofh.core.network.PacketHandler;
 import cofh.core.render.IBlockAppearance;
@@ -65,7 +65,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @Optional.Interface (iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
-public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockConfigGui, IModelRegister, IBakeryProvider, IFacade {
+public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigGui, IModelRegister, IBakeryProvider, IFacade {
 
 	public static final PropertyInteger META = new PropertyInteger("meta", 15);
 	public static final ThreadLocal<BlockPos> IGNORE_RAY_TRACE = new ThreadLocal<>();
@@ -446,14 +446,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 		return getVisualState(world, pos, side);
 	}
 
-	/* IBlockConfigGui */
+	/* IConfigGui */
 	@Override
-	public boolean openConfigGui(IBlockAccess world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+	public boolean openConfigGui(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
 		TileGrid tile = (TileGrid) world.getTileEntity(pos);
 
-		if (tile instanceof IBlockConfigGui) {
-			return ((IBlockConfigGui) tile).openConfigGui(world, pos, side, player);
+		if (tile instanceof IConfigGui) {
+			return ((IConfigGui) tile).openConfigGui(world, pos, side, player);
 		} else if (tile != null) {
 			int subHit = side.ordinal();
 
@@ -469,13 +469,13 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IBlockCo
 			if (subHit > 13 && subHit < 20) {
 				Attachment attachment = tile.getAttachment(subHit - 14);
 
-				if (attachment instanceof IBlockConfigGui) {
-					return ((IBlockConfigGui) attachment).openConfigGui(world, pos, side, player);
+				if (attachment instanceof IConfigGui) {
+					return ((IConfigGui) attachment).openConfigGui(world, pos, side, player);
 				}
 			}
 			for (DuctUnit ductUnit : tile.getDuctUnits()) {
-				if (ductUnit instanceof IBlockConfigGui) {
-					return ((IBlockConfigGui) ductUnit).openConfigGui(world, pos, side, player);
+				if (ductUnit instanceof IConfigGui) {
+					return ((IConfigGui) ductUnit).openConfigGui(world, pos, side, player);
 				}
 			}
 		}
