@@ -13,10 +13,13 @@ import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -182,7 +185,7 @@ public class DuctUnitFluidTemperate extends DuctUnitFluid {
 			} else if ("lava".equals(fluid.getName())) {
 				block = Blocks.FLOWING_LAVA;
 			}
-			if (!"water".equals(fluid.getName()) || !world().getBiome(pos()).getBiomeName().toLowerCase(Locale.US).equals("hell")) {
+			if (!"water".equals(fluid.getName()) || !BiomeDictionary.hasType(world().getBiome(pos()), Type.NETHER)) {
 				if (block == Blocks.FLOWING_WATER || block == Blocks.FLOWING_LAVA) {
 					IBlockState levelState = block.getDefaultState().withProperty(BlockLiquid.LEVEL, fullBucket ? 0 : (world().rand.nextInt(6) + 1));
 					world().setBlockState(pos(), levelState, 3);
