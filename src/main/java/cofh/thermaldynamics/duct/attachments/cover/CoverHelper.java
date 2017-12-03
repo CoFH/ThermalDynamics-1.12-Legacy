@@ -59,7 +59,7 @@ public class CoverHelper {
 		tag.setString("Block", ForgeRegistries.BLOCKS.getKey(block).toString());
 		tag.setByte("Meta", ((byte) meta));
 
-		ItemStack itemStack = new ItemStack(TDItems.itemCover, 1);
+		ItemStack itemStack = new ItemStack(TDItems.itemCover);
 		itemStack.setTagCompound(tag);
 		return itemStack;
 	}
