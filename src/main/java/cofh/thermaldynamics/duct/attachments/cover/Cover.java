@@ -56,6 +56,7 @@ public class Cover extends Attachment {
 	public Cover(TileGrid tile, byte side) {
 
 		super(tile, side);
+		this.state = Blocks.AIR.getDefaultState();
 	}
 
 	@Override
