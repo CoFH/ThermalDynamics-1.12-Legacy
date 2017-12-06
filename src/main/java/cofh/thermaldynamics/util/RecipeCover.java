@@ -82,4 +82,10 @@ public class RecipeCover extends IForgeRegistryEntry.Impl<IRecipe> implements IR
 		return new ItemStack(TDItems.itemCover, 6);
 	}
 
+	@Override
+	public boolean isDynamic() {
+
+		return true;
+	}
+
 }
