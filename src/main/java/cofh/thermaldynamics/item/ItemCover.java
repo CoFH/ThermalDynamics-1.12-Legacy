@@ -88,6 +88,7 @@ public class ItemCover extends ItemAttachment {
 
 	@Override
 	public boolean preInit() {
+		CoverHelper.preInit();
 
 		GameRegistry.register(this.setRegistryName("cover"));
 		return true;
