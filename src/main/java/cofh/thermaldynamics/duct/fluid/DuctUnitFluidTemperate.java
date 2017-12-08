@@ -17,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fluids.*;
@@ -164,9 +165,10 @@ public class DuctUnitFluidTemperate extends DuctUnitFluid {
 
 	public void breakAndSpill(FluidStack fluidStack) {
 
-		List<ItemStack> drops = parent.getBlockType().getDrops(world(), pos(), world().getBlockState(pos()), 0);
+		NonNullList<ItemStack> ret = NonNullList.create();
+		parent.getBlockType().getDrops(ret, world(), pos(), world().getBlockState(pos()), 0);
 
-		for (ItemStack stack : drops) {
+		for (ItemStack stack : ret) {
 			ItemUtils.dropItem(world(), pos(), stack, 0.3);
 		}
 		world().setBlockToAir(pos());
