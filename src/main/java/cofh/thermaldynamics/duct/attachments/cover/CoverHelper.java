@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct.attachments.cover;
 
+import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -7,10 +8,27 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CoverHelper {
+	public static final List<String> BLOCK_WHITELIST = new ArrayList<>();
+
+	public static boolean preInit() {
+		String[] whitelist = {"minecraft:glass", "thermalfoundation:glass:32767", "minecraft:stained_glass:32767"};
+		whitelist = ThermalDynamics.CONFIG.getConfiguration().get("Attachment.Cover", "BlockWhitelist", whitelist).getStringList();
+		if( whitelist != null ) {
+			Collections.addAll(BLOCK_WHITELIST, whitelist);
+		}
+
+		return true;
+	}
 
 	public static boolean isValid(ItemStack stack) {
 
@@ -34,7 +52,17 @@ public class CoverHelper {
 				return false;
 			}
 			IBlockState state = block.getStateFromMeta(meta);
-			return !(block.hasTileEntity(state) || block.hasTileEntity()) && state.isFullCube();
+			if( !(block.hasTileEntity(state) || block.hasTileEntity()) ) {
+				if( state.isFullCube() ) {
+					return true;
+				} else {
+					ResourceLocation wlKey = Block.REGISTRY.getNameForObject(block);
+					return BLOCK_WHITELIST.contains(wlKey.toString())
+								   || BLOCK_WHITELIST.contains(String.format("%s:%d", wlKey, meta))
+								   || BLOCK_WHITELIST.contains(String.format("%s:%d", wlKey, OreDictionary.WILDCARD_VALUE));
+				}
+			}
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
