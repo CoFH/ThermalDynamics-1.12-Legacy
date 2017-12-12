@@ -74,6 +74,22 @@ info.thermaldynamics.relay.threshold=Threshold >=
 info.thermaldynamics.relay.type.0=Redstone Input
 info.thermaldynamics.relay.type.1=Redstone Output
 info.thermaldynamics.relay.type.2=Comparator Input
+info.thermaldynamics.relay.color.0=Red
+info.thermaldynamics.relay.color.1=Green
+info.thermaldynamics.relay.color.2=Brown
+info.thermaldynamics.relay.color.3=Blue
+info.thermaldynamics.relay.color.4=Purple
+info.thermaldynamics.relay.color.5=Cyan
+info.thermaldynamics.relay.color.6=Light Gray
+info.thermaldynamics.relay.color.7=Gray
+info.thermaldynamics.relay.color.8=Pink
+info.thermaldynamics.relay.color.9=Lime
+info.thermaldynamics.relay.color.10=Yellow
+info.thermaldynamics.relay.color.11=Light Blue
+info.thermaldynamics.relay.color.12=Magenta
+info.thermaldynamics.relay.color.13=Orange
+info.thermaldynamics.relay.color.14=White
+info.thermaldynamics.relay.color.15=Black
 
 info.thermaldynamics.servo.decStackSize=Dec. Stack Size Extracted
 info.thermaldynamics.servo.extractRate=Extraction Rate

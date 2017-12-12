@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.duct;
 
+import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.multiblock.IGridTile;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
@@ -35,9 +36,8 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 
 	public void tickGrid() {
 
-		if (rs != null && rs.nextRedstoneLevel != -128) {
-			rs.redstoneLevel = rs.nextRedstoneLevel;
-			rs.nextRedstoneLevel = -128;
+		if (rs != null) {
+			rs.updateLevels();
 
 			ArrayList<Attachment> signallersOut = rs.relaysOut;
 			if (signallersOut != null) {
@@ -74,21 +74,23 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 				rs = null;
 				return;
 			} else {
-				rs.nextRedstoneLevel = 0;
+				rs.setNextLevels((byte)0);
 			}
 			return;
 		}
 
-		int powered = 0;
+		int[] powered = new int[16];
 		for (Relay signaller : rs.relaysIn) {
-			powered = Math.max(powered, signaller.getPowerLevel());
-			if (powered == 15) {
-				break;
+			int power = Math.max(powered[signaller.color], signaller.getPowerLevel());
+			if (power > 0) {
+				powered[signaller.color] = power;
 			}
 
 		}
 
-		rs.nextRedstoneLevel = (byte) powered;
+		for(int i = 0; i < 16; i++) {
+			rs.nextRedstoneLevel[i] = powered[i];
+		}
 
 	}
 
@@ -139,11 +141,15 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		if (rs != null) {
-			int r = rs.redstoneLevel;
-			if (rs.nextRedstoneLevel != -128) {
-				r = rs.nextRedstoneLevel;
+			for(int i = 0; i < 16; i++) {
+				int r = rs.redstoneLevels[i];
+				if (rs.nextRedstoneLevel[i] != -128) {
+					r = rs.nextRedstoneLevel[i];
+				}
+				if(r > 0) {
+					addInfo(info, "redstone", StringHelper.localize("info.thermaldynamics.relay.color." + i) + " - " + r);
+				}
 			}
-			addInfo(info, "redstone", r);
 		}
 		super.addInfo(info, player, debug);
 	}

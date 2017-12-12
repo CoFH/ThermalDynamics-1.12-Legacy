@@ -28,10 +28,10 @@ public class ContainerRelay extends ContainerAttachmentBase {
 
 		GridStructural grid = relay.structureUnit.getGrid();
 		if (grid != null && grid.rs != null) {
-			if (grid.rs.nextRedstoneLevel == -128) {
-				gridPower = grid.rs.redstoneLevel;
+			if (grid.rs.nextRedstoneLevel[relay.color] == -128) {
+				gridPower = grid.rs.redstoneLevels[relay.color];
 			} else {
-				gridPower = grid.rs.nextRedstoneLevel;
+				gridPower = grid.rs.nextRedstoneLevel[relay.color];
 			}
 		} else {
 			gridPower = 0;

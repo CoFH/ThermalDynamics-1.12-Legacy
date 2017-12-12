@@ -29,9 +29,13 @@ import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
 import cofh.thermaldynamics.init.TDTextures;
 import cofh.thermaldynamics.render.RenderDuct;
+import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -41,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -48,6 +53,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +62,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	public final DuctUnitStructural structureUnit;
 	public byte type = 0;
 	public int powerLevel;
+	public byte color;
 	public byte invert = 0;
 	public byte threshold = 0;
 
@@ -103,11 +110,6 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getNeighborType() {
-
-		return BlockDuct.ConnectionType.STRUCTURE_CONNECTION;
-	}
-
-	public BlockDuct.ConnectionType getRenderConnectionType() {
 
 		return BlockDuct.ConnectionType.DUCT;
 	}
@@ -214,12 +216,26 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 				IBlockState otherState = baseTile.getWorld().getBlockState(offset2);
 
 				if (otherState.hasComparatorInputOverride()) {
-					level = otherState.getComparatorInputOverride(baseTile.world(), offsetPos);
+					level = otherState.getComparatorInputOverride(baseTile.world(), offset2);
+				} else if(otherState.getMaterial() == Material.AIR) {
+					EntityItemFrame entityitemframe = this.findItemFrame(baseTile.world(), side, offset2);
+
+					if (entityitemframe != null)
+					{
+						level = entityitemframe.getAnalogOutput();
+					}
 				}
 			}
 		}
 
 		return level;
+	}
+
+	@Nullable
+	private EntityItemFrame findItemFrame(World worldIn, final EnumFacing facing, BlockPos pos)
+	{
+		List<EntityItemFrame> list = worldIn.getEntitiesWithinAABB(EntityItemFrame.class, new AxisAlignedBB((double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), (double)(pos.getX() + 1), (double)(pos.getY() + 1), (double)(pos.getZ() + 1)), (Predicate<Entity>) e -> e != null && e.getHorizontalFacing() == facing);
+		return list.size() == 1 ? list.get(0) : null;
 	}
 
 	public boolean isInput() {
@@ -280,7 +296,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 		if (grid == null || grid.rs == null) {
 			return;
 		}
-		setPowerLevel(grid.rs.redstoneLevel);
+		setPowerLevel(grid.rs.redstoneLevels[color]);
 	}
 
 	@Override
@@ -303,6 +319,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 		tag.setByte("type", type);
 		tag.setByte("invert", invert);
 		tag.setByte("threshold", threshold);
+		tag.setByte("color", color);
 		tag.setByte("power", (byte) powerLevel);
 	}
 
@@ -316,6 +333,9 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 		}
 		if (tag.hasKey("threshold", 1)) {
 			setThreshold(tag.getByte("threshold"));
+		}
+		if (tag.hasKey("color", 1)) {
+			setColor(tag.getByte("color"));
 		}
 		powerLevel = tag.getByte("power");
 	}
@@ -365,6 +385,11 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 		this.threshold = threshold;
 	}
 
+	public void setColor(byte color) {
+
+		this.color = color;
+	}
+
 	@Override
 	public boolean openConfigGui(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
 
@@ -394,6 +419,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 		pkt.addByte(type);
 		pkt.addByte(threshold);
 		pkt.addByte(invert);
+		pkt.addByte(color);
 		return pkt;
 	}
 
@@ -402,15 +428,17 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 
 		super.handleInfoPacket(payload, isServer, player);
 		byte prevType = type;
+		byte prevColor = color;
 		type = payload.getByte();
 		threshold = payload.getByte();
 		invert = payload.getByte();
+		color = payload.getByte();
 
 		if (isServer) {
 			baseTile.world().notifyNeighborsOfStateChange(baseTile.getPos(), baseTile.getBlockType(), false);
 			onNeighborChange();
 			GridStructural grid = structureUnit.getGrid();
-			if (type != prevType && grid != null) {
+			if ((type != prevType || color != prevColor) && grid != null) {
 				grid.resetRelays();
 			}
 
