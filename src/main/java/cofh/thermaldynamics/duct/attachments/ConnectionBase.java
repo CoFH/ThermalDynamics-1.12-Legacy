@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct.attachments;
 import codechicken.lib.vec.Cuboid6;
 import cofh.api.core.IPortableData;
 import cofh.api.tileentity.IRedstoneControl;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.BlockHelper;
@@ -167,21 +167,21 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	/* NETWORK METHODS */
 	@Override
-	public void addDescriptionToPacket(PacketCoFHBase packet) {
+	public void addDescriptionToPacket(PacketBase packet) {
 
 		packet.addBool(stuffed);
 		packet.addByte(type);
 	}
 
 	@Override
-	public void getDescriptionFromPacket(PacketCoFHBase packet) {
+	public void getDescriptionFromPacket(PacketBase packet) {
 
 		stuffed = packet.getBool();
 		type = packet.getByte();
 	}
 
 	@Override
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer player) {
+	public void handleInfoPacket(PacketBase payload, boolean isServer, EntityPlayer player) {
 
 		super.handleInfoPacket(payload, isServer, player);
 
@@ -196,7 +196,7 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 		return packet;
 	}
 
-	public void handleInfoPacketType(byte a, PacketCoFHBase payload, boolean isServer, EntityPlayer player) {
+	public void handleInfoPacketType(byte a, PacketBase payload, boolean isServer, EntityPlayer player) {
 
 		if (a == NETWORK_ID.RSCONTROL) {
 			if (canAlterRS()) {

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.duct.Duct;
@@ -161,7 +161,7 @@ public class DuctUnitItemWarp extends DuctUnitItem {
 	}
 
 	@Override
-	public void handlePacketType(PacketCoFHBase payload, int b) {
+	public void handlePacketType(PacketBase payload, int b) {
 
 		if (b == TileInfoPackets.ENDER_POWER) {
 			powered = payload.getBool();
@@ -181,7 +181,7 @@ public class DuctUnitItemWarp extends DuctUnitItem {
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase payload) {
+	public void writeToTilePacket(PacketBase payload) {
 
 		payload.addBool(isPowered());
 	}
@@ -193,7 +193,7 @@ public class DuctUnitItemWarp extends DuctUnitItem {
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		powered = payload.getBool();
 	}

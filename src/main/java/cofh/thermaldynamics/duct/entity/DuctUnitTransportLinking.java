@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.entity;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.util.helpers.BlockHelper;
 import cofh.core.util.helpers.ServerHelper;
 import cofh.thermaldynamics.block.BlockDuct;
@@ -264,7 +264,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase packet) {
+	public void writeToTilePacket(PacketBase packet) {
 
 		int rangeMask = 0;
 
@@ -278,7 +278,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		int rangeMask = payload.getInt();
 

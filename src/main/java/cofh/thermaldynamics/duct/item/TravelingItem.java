@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.helpers.BlockHelper;
 import cofh.thermaldynamics.block.BlockDuct;
@@ -104,7 +104,7 @@ public class TravelingItem {
 		}
 	}
 
-	public static TravelingItem fromPacket(PacketCoFHBase payload, DuctUnitItem homeTile) {
+	public static TravelingItem fromPacket(PacketBase payload, DuctUnitItem homeTile) {
 
 		return new TravelingItem(payload.getByte(), payload.getByte(), payload.getByte(), payload.getItemStack(), homeTile, payload.getByte());
 	}
@@ -287,7 +287,7 @@ public class TravelingItem {
 		}
 	}
 
-	public void writePacket(PacketCoFHBase myPayload) {
+	public void writePacket(PacketBase myPayload) {
 
 		myPayload.addByte(progress);
 		myPayload.addByte(direction);

@@ -3,7 +3,7 @@ package cofh.thermaldynamics.duct;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CoreUtils;
 import cofh.thermaldynamics.block.BlockDuct;
@@ -162,15 +162,15 @@ public abstract class Attachment {
 	}
 
 	/* NETWORK METHODS */
-	public void addDescriptionToPacket(PacketCoFHBase packet) {
+	public void addDescriptionToPacket(PacketBase packet) {
 
 	}
 
-	public void getDescriptionFromPacket(PacketCoFHBase packet) {
+	public void getDescriptionFromPacket(PacketBase packet) {
 
 	}
 
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer player) {
+	public void handleInfoPacket(PacketBase payload, boolean isServer, EntityPlayer player) {
 
 	}
 

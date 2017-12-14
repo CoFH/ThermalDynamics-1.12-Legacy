@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.gui.client;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.duct.entity.DuctUnitTransport;
@@ -22,7 +22,7 @@ public final class DirectoryEntry {
 		myPayload.addItemStack(endPoint.data.item);
 	}
 
-	public DirectoryEntry(PacketCoFHBase packet) {
+	public DirectoryEntry(PacketBase packet) {
 
 		this(packet.getString(), packet.getInt(), packet.getInt(), packet.getInt(), packet.getItemStack());
 	}

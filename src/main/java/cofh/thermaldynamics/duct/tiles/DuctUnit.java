@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.tiles;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketTileInfo;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.ConnectionType;
@@ -385,15 +385,15 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		return 0;
 	}
 
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleInfoPacket(PacketBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 	}
 
-	public void writeToTilePacket(PacketCoFHBase payload) {
+	public void writeToTilePacket(PacketBase payload) {
 
 	}
 
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 	}
 

@@ -4,7 +4,7 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.util.ItemUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.BlockHelper;
@@ -85,7 +85,7 @@ public class DuctUnitFluidTemperate extends DuctUnitFluid {
 	}
 
 	@Override
-	public void handleTileInfoPacketType(PacketCoFHBase payload, byte b) {
+	public void handleTileInfoPacketType(PacketBase payload, byte b) {
 
 		if (b == TileFluidPackets.TEMPERATURE) {
 			internalTemperature = payload.getInt();

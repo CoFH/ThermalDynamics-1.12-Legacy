@@ -4,7 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.util.helpers.RenderHelper;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Attachment;
@@ -148,7 +148,7 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public void addDescriptionToPacket(PacketCoFHBase packet) {
+	public void addDescriptionToPacket(PacketBase packet) {
 
 		packet.addShort(Block.getIdFromBlock(state.getBlock()));
 		packet.addByte(state.getBlock().getMetaFromState(state));
@@ -156,7 +156,7 @@ public class Cover extends Attachment {
 
 	@SuppressWarnings ("deprecation")
 	@Override
-	public void getDescriptionFromPacket(PacketCoFHBase packet) {
+	public void getDescriptionFromPacket(PacketBase packet) {
 
 		Block block = Block.getBlockById(packet.getShort());
 		int meta = packet.getByte();

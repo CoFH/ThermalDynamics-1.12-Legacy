@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.thermaldynamics.block.BlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
@@ -17,7 +17,7 @@ public class DuctUnitFluidOmni extends DuctUnitFluid {
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase payload) {
+	public void writeToTilePacket(PacketBase payload) {
 
 		super.writeToTilePacket(payload);
 
@@ -32,7 +32,7 @@ public class DuctUnitFluidOmni extends DuctUnitFluid {
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		super.handleTilePacket(payload);
 		this.fluidMask = payload.getByte();

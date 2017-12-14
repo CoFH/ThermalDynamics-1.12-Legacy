@@ -1,10 +1,10 @@
 package cofh.thermaldynamics.network;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketTDBase extends PacketCoFHBase {
+public class PacketTDBase extends PacketBase {
 
 	public static void initialize() {
 

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.item;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.CrashHelper;
@@ -525,7 +525,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	}
 
 	@Override
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleInfoPacket(PacketBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		int b = payload.getByte();
 		handlePacketType(payload, b);
@@ -541,7 +541,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	//		cache.cache3 = new IDeepStorageUnit[6];
 	//	}
 
-	public void handlePacketType(PacketCoFHBase payload, int b) {
+	public void handlePacketType(PacketBase payload, int b) {
 
 		if (b == TileInfoPackets.PULSE_LINE) {
 			int c = payload.getByte();
@@ -608,14 +608,14 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase payload) {
+	public void writeToTilePacket(PacketBase payload) {
 
 		payload.addByte(pathWeightType);
 	}
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		pathWeightType = payload.getByte();
 	}

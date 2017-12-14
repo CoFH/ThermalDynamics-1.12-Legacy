@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.fluid;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.util.helpers.BlockHelper;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.io.ByteArrayInputStream;
 
-public class PacketFluid extends PacketCoFHBase {
+public class PacketFluid extends PacketBase {
 
 	public ByteArrayInputStream stream;
 

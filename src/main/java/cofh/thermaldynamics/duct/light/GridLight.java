@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.light;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.util.ChunkCoord;
 import cofh.thermaldynamics.multiblock.IGridTile;
@@ -108,7 +108,7 @@ public class GridLight extends MultiBlockGrid<DuctUnitLight> {
 		}
 
 		if (worldGrid.worldObj instanceof WorldServer) {
-			PacketCoFHBase packet = new PacketLight(lit, this);
+			PacketBase packet = new PacketLight(lit, this);
 			WorldServer dimension = (WorldServer) worldGrid.worldObj;
 			PlayerChunkMap manger = dimension.getPlayerChunkMap();
 			for (EntityPlayer player : dimension.playerEntities) {

@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.light;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.util.helpers.ServerHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
@@ -135,14 +135,14 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, GridLight, Void> {
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase packet) {
+	public void writeToTilePacket(PacketBase packet) {
 
 		packet.addBool(lit || (grid != null && grid.lit));
 	}
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		super.handleTilePacket(payload);
 		boolean b = payload.getBool();

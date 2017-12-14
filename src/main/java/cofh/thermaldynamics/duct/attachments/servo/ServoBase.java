@@ -5,7 +5,7 @@ import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.api.tileentity.IRedstoneControl;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.util.helpers.StringHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
@@ -101,7 +101,7 @@ public abstract class ServoBase extends ConnectionBase {
 
 	/* NETWORK METHODS */
 	@Override
-	public void addDescriptionToPacket(PacketCoFHBase packet) {
+	public void addDescriptionToPacket(PacketBase packet) {
 
 		super.addDescriptionToPacket(packet);
 		packet.addBool(isPowered);
@@ -111,7 +111,7 @@ public abstract class ServoBase extends ConnectionBase {
 	}
 
 	@Override
-	public void getDescriptionFromPacket(PacketCoFHBase packet) {
+	public void getDescriptionFromPacket(PacketBase packet) {
 
 		super.getDescriptionFromPacket(packet);
 		isPowered = packet.getBool();

@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.entity;
 
 import cofh.api.block.IConfigGui;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.ServerHelper;
@@ -136,7 +136,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IConfigG
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase packet) {
+	public void writeToTilePacket(PacketBase packet) {
 
 		if (data != BLANK_NAME) {
 			packet.addBool(true);
@@ -148,7 +148,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IConfigG
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		super.handleTilePacket(payload);
 
@@ -168,7 +168,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IConfigG
 	public final static int NETWORK_CONFIG = 3;
 
 	@Override
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleInfoPacket(PacketBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		byte type = payload.getByte();
 
@@ -244,7 +244,7 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IConfigG
 		PacketHandler.sendToServer(myPayload);
 	}
 
-	public PacketCoFHBase getDirectoryPacket() {
+	public PacketBase getDirectoryPacket() {
 
 		PacketTileInfo myPayload = newPacketTileInfo();
 		myPayload.addByte(NETWORK_LIST);
@@ -462,19 +462,19 @@ public class DuctUnitTransport extends DuctUnitTransportBase implements IConfigG
 			return outputData;
 		}
 
-		public void addToPacket(PacketCoFHBase packet) {
+		public void addToPacket(PacketBase packet) {
 
 			packet.addString(name);
 			packet.addItemStack(item);
 		}
 
-		public void readPacket(PacketCoFHBase payload) {
+		public void readPacket(PacketBase payload) {
 
 			name = payload.getString();
 			item = payload.getItemStack();
 		}
 
-		public void loadConfigData(PacketCoFHBase payload) {
+		public void loadConfigData(PacketBase payload) {
 
 			String prevName = name;
 			ItemStack prevItem = item.copy();

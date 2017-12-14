@@ -1,7 +1,7 @@
 package cofh.thermaldynamics.duct.fluid;
 
 import codechicken.lib.raytracer.RayTracer;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.network.PacketHandler;
 import cofh.core.network.PacketTileInfo;
 import cofh.core.util.helpers.BlockHelper;
@@ -245,7 +245,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 	}
 
 	@Override
-	public void handleInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleInfoPacket(PacketBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		if (ServerHelper.isClientWorld(world())) {
 			byte b = payload.getByte();
@@ -253,7 +253,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 		}
 	}
 
-	public void handleTileInfoPacketType(PacketCoFHBase payload, byte b) {
+	public void handleTileInfoPacketType(PacketBase payload, byte b) {
 
 		if (b == TileFluidPackets.UPDATE_RENDER) {
 			myRenderFluid = payload.getFluidStack();
@@ -324,7 +324,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 	}
 
 	@Override
-	public void writeToTilePacket(PacketCoFHBase payload) {
+	public void writeToTilePacket(PacketBase payload) {
 
 		if (grid != null) {
 			payload.addFluidStack(grid.getRenderFluid());
@@ -335,7 +335,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		myRenderFluid = payload.getFluidStack();
 	}

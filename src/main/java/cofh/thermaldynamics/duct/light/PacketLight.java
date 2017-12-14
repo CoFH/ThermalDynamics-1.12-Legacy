@@ -1,6 +1,6 @@
 package cofh.thermaldynamics.duct.light;
 
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.multiblock.IGridTile;
@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 import java.io.ByteArrayInputStream;
 
-public class PacketLight extends PacketCoFHBase {
+public class PacketLight extends PacketBase {
 
 	public ByteArrayInputStream stream;
 

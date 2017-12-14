@@ -7,7 +7,7 @@ import cofh.api.tileentity.ITileInfo;
 import cofh.core.block.TileCore;
 import cofh.core.network.ITileInfoPacketHandler;
 import cofh.core.network.ITilePacketHandler;
-import cofh.core.network.PacketCoFHBase;
+import cofh.core.network.PacketBase;
 import cofh.core.render.hitbox.CustomHitBox;
 import cofh.core.render.hitbox.ICustomHitBox;
 import cofh.core.util.RayTracer;
@@ -622,9 +622,9 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	/* SERVER -> CLIENT */
 	@Override
-	public PacketCoFHBase getTilePacket() {
+	public PacketBase getTilePacket() {
 
-		PacketCoFHBase payload = super.getTilePacket();
+		PacketBase payload = super.getTilePacket();
 
 		for (int i = 0; i < 6; i++) {
 			payload.addByte(getVisualConnectionType(i).ordinal());
@@ -668,7 +668,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 
 	@Override
 	@SideOnly (Side.CLIENT)
-	public void handleTilePacket(PacketCoFHBase payload) {
+	public void handleTilePacket(PacketBase payload) {
 
 		if (clientConnections == null) {
 			clientConnections = new BlockDuct.ConnectionType[6];
@@ -945,7 +945,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	}
 
 	@Override
-	public void handleTileInfoPacket(PacketCoFHBase payload, boolean isServer, EntityPlayer thePlayer) {
+	public void handleTileInfoPacket(PacketBase payload, boolean isServer, EntityPlayer thePlayer) {
 
 		byte b = payload.getByte();
 
