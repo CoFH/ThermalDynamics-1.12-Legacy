@@ -13,8 +13,10 @@ import cofh.thermaldynamics.render.RenderDuct;
 import cofh.thermaldynamics.render.RenderDuctFluids;
 import cofh.thermaldynamics.render.RenderDuctItems;
 import cofh.thermaldynamics.render.item.RenderItemCover;
+import cofh.thermaldynamics.util.CoverBlacklistCommand;
 import cofh.thermaldynamics.util.TickHandlerClient;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -37,6 +39,7 @@ public class ProxyClient extends Proxy {
 
 		MinecraftForge.EVENT_BUS.register(EventHandlerClient.INSTANCE);
 		MinecraftForge.EVENT_BUS.register(TickHandlerClient.INSTANCE);
+		ClientCommandHandler.instance.registerCommand(new CoverBlacklistCommand());
 
 		ModelRegistryHelper.registerItemRenderer(TDItems.itemCover, RenderItemCover.INSTANCE);
 		RenderingRegistry.registerEntityRenderingHandler(EntityTransport.class, RenderTransport::new);

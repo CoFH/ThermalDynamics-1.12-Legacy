@@ -10,8 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -20,9 +18,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemCover extends ItemAttachment {
 
@@ -99,37 +97,12 @@ public class ItemCover extends ItemAttachment {
 		return true;
 	}
 
-	public static void createCoverList() {
-
-		coverList = new ArrayList<>();
-
-		NonNullList<ItemStack> stacks = NonNullList.create();
-
-		ArrayList<Item> data = new ArrayList<>();
-		for (Item item : ForgeRegistries.ITEMS) {
-			data.add(item);
-		}
-		data.sort(Comparator.comparingInt(Item.REGISTRY::getIDForObject));
-		for (Item anItem : data) {
-			if (anItem instanceof ItemBlock) {
-				anItem.getSubItems(CreativeTabs.SEARCH, stacks);
-			}
-		}
-		for (ItemStack stack : stacks) {
-			if (!(stack.getItem() instanceof ItemBlock)) {
-				continue;
-			}
-			if (!CoverHelper.isValid(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage()))) {
-				continue;
-			}
-			coverList.add(CoverHelper.getCoverStack(((ItemBlock) stack.getItem()).getBlock(), stack.getItem().getMetadata(stack.getItemDamage())));
-		}
-	}
-
 	public static List<ItemStack> getCoverList() {
 
 		if (coverList == null || coverList.size() <= 0) {
-			createCoverList();
+			coverList = CoverHelper.getStateLookup().values().stream()//
+					.map(CoverHelper::getCoverStack)//
+					.collect(Collectors.toCollection(LinkedList::new));
 		}
 		return coverList;
 	}

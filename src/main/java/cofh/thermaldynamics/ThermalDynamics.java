@@ -4,6 +4,7 @@ import codechicken.lib.CodeChickenLib;
 import cofh.CoFHCore;
 import cofh.core.init.CoreProps;
 import cofh.core.util.ConfigHandler;
+import cofh.thermaldynamics.duct.attachments.cover.CoverHelper;
 import cofh.thermaldynamics.gui.GuiHandler;
 import cofh.thermaldynamics.init.TDBlocks;
 import cofh.thermaldynamics.init.TDItems;
@@ -68,6 +69,7 @@ public class ThermalDynamics {
 
 		CONFIG.setConfiguration(new Configuration(new File(CoreProps.configDir, "/cofh/thermaldynamics/common.cfg"), true));
 		CONFIG_CLIENT.setConfiguration(new Configuration(new File(CoreProps.configDir, "cofh/thermaldynamics/client.cfg"), true));
+		CoverHelper.loadCoverBlacklist(new File(CoreProps.configDir, "cofh/thermaldynamics"));
 
 		TDProps.preInit();
 

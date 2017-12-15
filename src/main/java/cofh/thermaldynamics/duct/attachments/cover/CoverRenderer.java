@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -151,9 +152,20 @@ public class CoverRenderer {
 
 	public static void renderItemCover(CCRenderState ccrs, int side, IBlockState state, Cuboid6 bounds) {
 
-		RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-		ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
-		IBakedModel model = renderItem.getItemModelWithOverrides(stack, null, null);
+		Minecraft minecraft = Minecraft.getMinecraft();
+		RenderItem renderItem = minecraft.getRenderItem();
+		ItemStack renderStack = CoverHelper.lookupItemForm(state);//Lookup the item form.
+		if (renderStack.isEmpty()) {//Empty, Attempt alternate lookup.
+			Item item = Item.getItemFromBlock(state.getBlock());
+			if (item == state.getBlock().getItemDropped(state, minecraft.world.rand, 0)) {
+				//If the item dropped is the item block form, then use damageDropped.
+				renderStack = new ItemStack(item, 1, state.getBlock().damageDropped(state));
+			} else {
+				//Welp we tried, should be on the blacklist..
+				renderStack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+			}
+		}
+		IBakedModel model = renderItem.getItemModelWithOverrides(renderStack, null, null);
 
 		String cacheKey = state.getBlock().getRegistryName() + "|" + state.getBlock().getMetaFromState(state);
 
@@ -166,7 +178,7 @@ public class CoverRenderer {
 				quads.addAll(model.getQuads(null, face, 0));
 			}
 
-			renderQuads = applyItemTint(sliceQuads(CCQuad.fromArray(quads), side, bounds), stack);
+			renderQuads = applyItemTint(sliceQuads(CCQuad.fromArray(quads), side, bounds), renderStack);
 			itemQuadCache.put(cacheKey, renderQuads);
 		}
 
