@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
 public class CoverHelper {
 
 	private static final Logger logger = LogManager.getLogger("ThermalDynamics");
-	private static final boolean DEBUG_BLACKLIST = true;
+	private static final boolean DEBUG_BLACKLIST = false;
 
 	//Map for looking up the originating ItemStack for a cover.
 	private static Map<String, ItemStack> lookupMap;
