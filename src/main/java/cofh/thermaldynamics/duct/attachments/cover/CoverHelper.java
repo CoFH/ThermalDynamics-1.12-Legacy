@@ -38,6 +38,7 @@ public class CoverHelper {
 	private static Map<ResourceLocation, Integer> coverBlacklist = new HashMap<>();
 
 	public static void loadCoverBlacklist(File configFolder) {
+
 		File file = new File(configFolder, "cover_blacklist.json");
 		if (!file.exists() || DEBUG_BLACKLIST) {
 			if (!file.getParentFile().exists()) {

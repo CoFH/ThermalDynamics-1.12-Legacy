@@ -16,7 +16,7 @@ public class TileDuctEnergySuper extends TileGridSingle implements IEnergyProvid
 	@Override
 	public DuctUnit createDuctUnit(DuctToken token, Duct ductType) {
 
-		return new DuctUnitEnergySuper(this, ductType, 1000, 1000);
+		return new DuctUnitEnergySuper(this, ductType, 100, 100);
 	}
 
 }

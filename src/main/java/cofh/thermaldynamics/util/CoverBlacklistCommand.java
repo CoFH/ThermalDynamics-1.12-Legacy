@@ -28,16 +28,19 @@ public class CoverBlacklistCommand implements ICommand {
 
 	@Override
 	public String getName() {
+
 		return "td_blacklist_cover";
 	}
 
 	@Override
 	public String getUsage(ICommandSender sender) {
+
 		return "Gets the json object to blacklist the cover in hand.";
 	}
 
 	@Override//TODO localize
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+
 		boolean wild = false;
 		if (args.length >= 1) {
 			if (args[0].equalsIgnoreCase("true")) {
