@@ -5,6 +5,7 @@ import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.attachments.relay.Relay;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
+import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,22 +19,14 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
+
 public class ItemRelay extends ItemAttachment {
 
 	public ItemRelay() {
 
 		super();
 		this.setUnlocalizedName("thermaldynamics.relay");
-	}
-
-	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-
-		//		if (isInCreativeTab(tab)) {
-		//			for (int i = 0; i < 5; i++) {
-		//				items.add(new ItemStack(this, 1, i));
-		//			}
-		//		}
 	}
 
 	@Override
@@ -65,6 +58,14 @@ public class ItemRelay extends ItemAttachment {
 	@Override
 	public boolean register() {
 
+		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2),
+				"iGi",
+				"IRI",
+				'R', "dustRedstone",
+				'G', "gemQuartz",
+				'I', "ingotLead",
+				'i', "nuggetSignalum");
+
 		return true;
 	}
 
@@ -74,5 +75,4 @@ public class ItemRelay extends ItemAttachment {
 		ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
 		ModelLoader.setCustomModelResourceLocation(this, 0, location);
 	}
-
 }

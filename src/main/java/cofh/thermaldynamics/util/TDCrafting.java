@@ -7,6 +7,7 @@ import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
+import cofh.thermaldynamics.init.TDItems;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.item.ItemMaterial;
 import net.minecraft.init.Items;
@@ -128,10 +129,6 @@ public class TDCrafting {
 			RecipeCover.INSTANCE.setRegistryName("thermaldynamics:cover");
 			GameData.register_impl(RecipeCover.INSTANCE);
 		}
-
-		/* SIGNALLER */
-		// TODO: Readd.
-		// addShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum"));
 
 		/* CONVERSIONS */
 		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque }, { TDDucts.fluidEnergy, TDDucts.fluidEnergyOpaque }, { TDDucts.fluidSuper, TDDucts.fluidSuperOpaque } }) {

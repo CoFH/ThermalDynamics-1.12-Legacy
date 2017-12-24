@@ -18,6 +18,7 @@ public class GuiRelay extends GuiContainerCore {
 	static final ResourceLocation TEXTURE = new ResourceLocation(TEX_PATH);
 	private final Relay relay;
 	public ElementButton buttonType;
+	public ElementButton buttonColor;
 	public ElementSlider slider;
 	private ElementButton buttonInvert;
 	ContainerRelay container;
@@ -31,6 +32,7 @@ public class GuiRelay extends GuiContainerCore {
 		this.name = "item.thermaldynamics.relay.name";
 		this.container = (ContainerRelay) inventorySlots;
 		this.ySize = 74;
+		this.xSize = 202;
 	}
 
 	@Override
@@ -47,7 +49,10 @@ public class GuiRelay extends GuiContainerCore {
 		buttonInvert = new ElementButton(this, 34, 16, "ButtonInvert", 0, 204, 0, 224, 20, 20, TEX_PATH);
 		addElement(buttonInvert);
 
-		slider = new SliderHorizontal(this, 62, 16, 100, 20, 15) {
+		buttonColor = new ElementButton(this, 60, 16, "ButtonColor", 0, 164, 0, 184, 20, 20, TEX_PATH);
+		addElement(buttonColor);
+
+		slider = new SliderHorizontal(this, 88, 16, 100, 20, 15) {
 
 			@Override
 			public void onValueChanged(int value) {
@@ -88,6 +93,17 @@ public class GuiRelay extends GuiContainerCore {
 
 		buttonInvert.setToolTip("info.thermaldynamics.relay.invert." + relay.invert);
 
+		int colorX = relay.color * 20;
+		if(relay.color > 11)
+			colorX -= 100;
+
+		buttonColor.setSheetX(colorX);
+		buttonColor.setHoverX(colorX);
+		buttonColor.setSheetY(relay.color <= 11 ? 164 : 204);
+		buttonColor.setHoverY(relay.color <= 11 ? 184 : 224);
+
+		buttonColor.setToolTip("info.thermaldynamics.relay.color." + relay.color);
+
 	}
 
 	@Override
@@ -99,9 +115,15 @@ public class GuiRelay extends GuiContainerCore {
 		if ("ButtonInvert".equals(buttonName)) {
 			relay.invert = (byte) ((relay.invert + 4 + v) % 4);
 			relay.sendUpdatePacket();
+			playClickSound(v == 1 ? 0.5f : 0.8f);
 		} else if ("ButtonType".equals(buttonName)) {
 			relay.type = (byte) ((relay.type + 3 + v) % 3);
 			relay.sendUpdatePacket();
+			playClickSound(v == 1 ? 0.5f : 0.8f);
+		} else if ("ButtonColor".equals(buttonName)) {
+			relay.color = (byte) ((relay.color + 16 + v) % 16);
+			relay.sendUpdatePacket();
+			playClickSound(v == 1 ? 0.5f : 0.8f);
 		}
 		update();
 	}

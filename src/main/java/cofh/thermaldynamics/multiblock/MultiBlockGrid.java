@@ -214,10 +214,36 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 
 	public static class RedstoneControl {
 
-		public byte nextRedstoneLevel = -128;
+		public int[] nextRedstoneLevel = { -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128 };
 		public ArrayList<Relay> relaysIn;
 		public ArrayList<Attachment> relaysOut;
-		public int redstoneLevel;
+		public int[] redstoneLevels = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+		public void updateLevels() {
+
+			for(int i = 0; i < 16; i++) {
+				if(nextRedstoneLevel[i] != -128) {
+					redstoneLevels[i] = nextRedstoneLevel[i];
+					nextRedstoneLevel[i] = -128;
+				}
+			}
+		}
+
+		public void setNextLevels(int power) {
+
+			for(int i = 0; i < 16; i++) {
+				nextRedstoneLevel[i] = power;
+			}
+		}
+
+		public boolean shouldEmitLight() {
+
+			for(int i = 0; i < 16; i++) {
+				if(redstoneLevels[i] > 0)
+					return true;
+			}
+			return false;
+		}
 	}
 
 }
