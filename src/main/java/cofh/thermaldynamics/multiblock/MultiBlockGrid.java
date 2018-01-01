@@ -221,8 +221,8 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 
 		public void updateLevels() {
 
-			for(int i = 0; i < 16; i++) {
-				if(nextRedstoneLevel[i] != -128) {
+			for (int i = 0; i < 16; i++) {
+				if (nextRedstoneLevel[i] != -128) {
 					redstoneLevels[i] = nextRedstoneLevel[i];
 					nextRedstoneLevel[i] = -128;
 				}
@@ -231,16 +231,17 @@ public abstract class MultiBlockGrid<T extends IGridTile> {
 
 		public void setNextLevels(int power) {
 
-			for(int i = 0; i < 16; i++) {
+			for (int i = 0; i < 16; i++) {
 				nextRedstoneLevel[i] = power;
 			}
 		}
 
 		public boolean shouldEmitLight() {
 
-			for(int i = 0; i < 16; i++) {
-				if(redstoneLevels[i] > 0)
+			for (int i = 0; i < 16; i++) {
+				if (redstoneLevels[i] > 0) {
 					return true;
+				}
 			}
 			return false;
 		}

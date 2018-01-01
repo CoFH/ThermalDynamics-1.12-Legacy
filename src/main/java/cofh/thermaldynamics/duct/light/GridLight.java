@@ -62,8 +62,8 @@ public class GridLight extends MultiBlockGrid<DuctUnitLight> {
 
 		if (upToDate && worldGrid.worldObj.getTotalWorldTime() % 160 != 0) {
 			if (rs != null) {
-				for(int i = 0; i < 16; i++) {
-					if(rs.nextRedstoneLevel[i] != -128) {
+				for (int i = 0; i < 16; i++) {
+					if (rs.nextRedstoneLevel[i] != -128) {
 						upToDate = false;
 					}
 				}
@@ -71,14 +71,13 @@ public class GridLight extends MultiBlockGrid<DuctUnitLight> {
 			return;
 		}
 
-		if(rs != null) {
-			for(int i = 0; i < 16; i++) {
-				if(rs.nextRedstoneLevel[i] == -128) {
+		if (rs != null) {
+			for (int i = 0; i < 16; i++) {
+				if (rs.nextRedstoneLevel[i] == -128) {
 					upToDate = false;
 				}
 			}
-		}
-		else {
+		} else {
 			upToDate = true;
 		}
 

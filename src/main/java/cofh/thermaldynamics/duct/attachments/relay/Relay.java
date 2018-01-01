@@ -217,11 +217,10 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 
 				if (otherState.hasComparatorInputOverride()) {
 					level = otherState.getComparatorInputOverride(baseTile.world(), offset2);
-				} else if(otherState.getMaterial() == Material.AIR) {
+				} else if (otherState.getMaterial() == Material.AIR) {
 					EntityItemFrame entityitemframe = this.findItemFrame(baseTile.world(), side, offset2);
 
-					if (entityitemframe != null)
-					{
+					if (entityitemframe != null) {
 						level = entityitemframe.getAnalogOutput();
 					}
 				}
@@ -232,9 +231,9 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	}
 
 	@Nullable
-	private EntityItemFrame findItemFrame(World worldIn, final EnumFacing facing, BlockPos pos)
-	{
-		List<EntityItemFrame> list = worldIn.getEntitiesWithinAABB(EntityItemFrame.class, new AxisAlignedBB((double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), (double)(pos.getX() + 1), (double)(pos.getY() + 1), (double)(pos.getZ() + 1)), (Predicate<Entity>) e -> e != null && e.getHorizontalFacing() == facing);
+	private EntityItemFrame findItemFrame(World worldIn, final EnumFacing facing, BlockPos pos) {
+
+		List<EntityItemFrame> list = worldIn.getEntitiesWithinAABB(EntityItemFrame.class, new AxisAlignedBB((double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), (double) (pos.getX() + 1), (double) (pos.getY() + 1), (double) (pos.getZ() + 1)), (Predicate<Entity>) e -> e != null && e.getHorizontalFacing() == facing);
 		return list.size() == 1 ? list.get(0) : null;
 	}
 

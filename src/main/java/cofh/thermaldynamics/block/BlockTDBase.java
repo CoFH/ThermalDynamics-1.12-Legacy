@@ -152,14 +152,17 @@ public abstract class BlockTDBase extends BlockCoreTile {
 
 		TileEntity tile = world.getTileEntity(pos);
 		IBlockState state = world.getBlockState(pos);
-		int meta = getMetaFromState(state);
+		int meta = state.getBlock().getMetaFromState(state);
+		ArrayList<ItemStack> ret = new ArrayList<>();
 
+		if (state.getBlock() != this) {
+			return ret;
+		}
 		ItemStack dropBlock = tile instanceof TileGrid ? ((TileGrid) tile).getDrop() : new ItemStack(this, 1, meta);
 
 		if (nbt != null) {
 			dropBlock.setTagCompound(nbt);
 		}
-		ArrayList<ItemStack> ret = new ArrayList<>();
 		ret.add(dropBlock);
 
 		if (tile instanceof TileGrid) {

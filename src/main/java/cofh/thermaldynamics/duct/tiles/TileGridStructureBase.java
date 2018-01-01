@@ -78,7 +78,7 @@ public abstract class TileGridStructureBase extends TileGrid {
 
 		DuctUnitStructural ductUnit = (DuctUnitStructural) ducts.get(DuctToken.STRUCTURAL);
 		if (ductUnit != null && ductUnit.grid != null && ductUnit.grid.rs != null) {
-			for(int i = 0; i < 16; i++) {
+			for (int i = 0; i < 16; i++) {
 				if (ductUnit.grid.rs.redstoneLevels[i] > 0) {
 					return true;
 				}

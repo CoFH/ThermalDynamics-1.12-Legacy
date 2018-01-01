@@ -94,8 +94,9 @@ public class GuiRelay extends GuiContainerCore {
 		buttonInvert.setToolTip("info.thermaldynamics.relay.invert." + relay.invert);
 
 		int colorX = relay.color * 20;
-		if(relay.color > 11)
+		if (relay.color > 11) {
 			colorX -= 100;
+		}
 
 		buttonColor.setSheetX(colorX);
 		buttonColor.setHoverX(colorX);

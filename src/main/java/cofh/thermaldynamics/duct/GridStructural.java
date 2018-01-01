@@ -74,7 +74,7 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 				rs = null;
 				return;
 			} else {
-				rs.setNextLevels((byte)0);
+				rs.setNextLevels((byte) 0);
 			}
 			return;
 		}
@@ -88,7 +88,7 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 
 		}
 
-		for(int i = 0; i < 16; i++) {
+		for (int i = 0; i < 16; i++) {
 			rs.nextRedstoneLevel[i] = powered[i];
 		}
 
@@ -141,12 +141,12 @@ public class GridStructural extends MultiBlockGrid<DuctUnitStructural> {
 	public void addInfo(List<ITextComponent> info, EntityPlayer player, boolean debug) {
 
 		if (rs != null) {
-			for(int i = 0; i < 16; i++) {
+			for (int i = 0; i < 16; i++) {
 				int r = rs.redstoneLevels[i];
 				if (rs.nextRedstoneLevel[i] != -128) {
 					r = rs.nextRedstoneLevel[i];
 				}
-				if(r > 0) {
+				if (r > 0) {
 					addInfo(info, "redstone", StringHelper.localize("info.thermaldynamics.relay.color." + i) + " - " + r);
 				}
 			}

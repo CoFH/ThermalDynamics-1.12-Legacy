@@ -8,10 +8,8 @@ import cofh.thermaldynamics.duct.tiles.TileGrid;
 import cofh.thermaldynamics.init.TDItems;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -58,13 +56,7 @@ public class ItemRelay extends ItemAttachment {
 	@Override
 	public boolean register() {
 
-		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2),
-				"iGi",
-				"IRI",
-				'R', "dustRedstone",
-				'G', "gemQuartz",
-				'I', "ingotLead",
-				'i', "nuggetSignalum");
+		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum");
 
 		return true;
 	}
