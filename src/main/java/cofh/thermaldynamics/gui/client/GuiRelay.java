@@ -93,15 +93,13 @@ public class GuiRelay extends GuiContainerCore {
 
 		buttonInvert.setToolTip("info.thermaldynamics.relay.invert." + relay.invert);
 
-		int colorX = relay.color * 20;
-		if (relay.color > 11) {
-			colorX -= 100;
-		}
+		int colorX = (relay.color % 8) * 20;
+		int colorY = relay.color < 8 ? 124 : 164;
 
 		buttonColor.setSheetX(colorX);
 		buttonColor.setHoverX(colorX);
-		buttonColor.setSheetY(relay.color <= 11 ? 164 : 204);
-		buttonColor.setHoverY(relay.color <= 11 ? 184 : 224);
+		buttonColor.setSheetY(colorY);
+		buttonColor.setHoverY(colorY + 20);
 
 		buttonColor.setToolTip("info.thermaldynamics.relay.color." + relay.color);
 
@@ -116,15 +114,15 @@ public class GuiRelay extends GuiContainerCore {
 		if ("ButtonInvert".equals(buttonName)) {
 			relay.invert = (byte) ((relay.invert + 4 + v) % 4);
 			relay.sendUpdatePacket();
-			playClickSound(v == 1 ? 0.5f : 0.8f);
+			playClickSound(v == 1 ? 0.6f : 0.5f);
 		} else if ("ButtonType".equals(buttonName)) {
 			relay.type = (byte) ((relay.type + 3 + v) % 3);
 			relay.sendUpdatePacket();
-			playClickSound(v == 1 ? 0.5f : 0.8f);
+			playClickSound(v == 1 ? 0.6f : 0.5f);
 		} else if ("ButtonColor".equals(buttonName)) {
 			relay.color = (byte) ((relay.color + 16 + v) % 16);
 			relay.sendUpdatePacket();
-			playClickSound(v == 1 ? 0.5f : 0.8f);
+			playClickSound(v == 1 ? 0.6f : 0.5f);
 		}
 		update();
 	}

@@ -64,16 +64,6 @@ info.thermaldynamics.info.tracker.avg=5 Sec. Avg. Level
 info.thermaldynamics.info.tracker.avgInOut=5 Sec. Avg. In/Out
 info.thermaldynamics.info.tracker.cur=Current Level
 
-info.thermaldynamics.relay.gridRS=Duct Power
-info.thermaldynamics.relay.invert.0=Scaled
-info.thermaldynamics.relay.invert.1=Inverted Scaled
-info.thermaldynamics.relay.invert.2=Threshold
-info.thermaldynamics.relay.invert.3=Inverted Threshold
-info.thermaldynamics.relay.relayRS=Relay Power
-info.thermaldynamics.relay.threshold=Threshold >=
-info.thermaldynamics.relay.type.0=Redstone Input
-info.thermaldynamics.relay.type.1=Redstone Output
-info.thermaldynamics.relay.type.2=Comparator Input
 info.thermaldynamics.relay.color.0=Red
 info.thermaldynamics.relay.color.1=Green
 info.thermaldynamics.relay.color.2=Brown
@@ -90,6 +80,16 @@ info.thermaldynamics.relay.color.12=Magenta
 info.thermaldynamics.relay.color.13=Orange
 info.thermaldynamics.relay.color.14=White
 info.thermaldynamics.relay.color.15=Black
+info.thermaldynamics.relay.gridRS=Duct Power
+info.thermaldynamics.relay.invert.0=Scaled
+info.thermaldynamics.relay.invert.1=Inverted Scaled
+info.thermaldynamics.relay.invert.2=Threshold
+info.thermaldynamics.relay.invert.3=Inverted Threshold
+info.thermaldynamics.relay.relayRS=Relay Power
+info.thermaldynamics.relay.threshold=Threshold >=
+info.thermaldynamics.relay.type.0=Redstone Input
+info.thermaldynamics.relay.type.1=Redstone Output
+info.thermaldynamics.relay.type.2=Comparator Input
 
 info.thermaldynamics.servo.decStackSize=Dec. Stack Size Extracted
 info.thermaldynamics.servo.extractRate=Extraction Rate

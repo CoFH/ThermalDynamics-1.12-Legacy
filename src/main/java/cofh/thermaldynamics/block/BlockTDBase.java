@@ -38,7 +38,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 
 	protected BlockTDBase(Material material) {
 
-		super(material);
+		super(material, "thermaldynamics");
 		setSoundType(SoundType.STONE);
 		setCreativeTab(ThermalDynamics.tabCommon);
 	}
