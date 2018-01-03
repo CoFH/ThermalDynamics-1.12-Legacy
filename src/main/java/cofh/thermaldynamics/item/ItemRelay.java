@@ -56,7 +56,18 @@ public class ItemRelay extends ItemAttachment {
 	@Override
 	public boolean register() {
 
-		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2), "iGi", "IRI", 'R', "dustRedstone", 'G', "gemQuartz", 'I', "ingotLead", 'i', "nuggetSignalum");
+		// @formatter:off
+
+		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2),
+				"iGi",
+				"IRI",
+				'i', "nuggetSignalum",
+				'G', "gemQuartz",
+				'I', "ingotLead",
+				'R', "dustRedstone"
+		);
+
+		// @formatter:on
 
 		return true;
 	}
@@ -67,4 +78,5 @@ public class ItemRelay extends ItemAttachment {
 		ModelResourceLocation location = new ModelResourceLocation("thermaldynamics:attachment", "type=relay");
 		ModelLoader.setCustomModelResourceLocation(this, 0, location);
 	}
+
 }
