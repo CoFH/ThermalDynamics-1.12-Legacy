@@ -260,6 +260,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	}
 
 	@Override
+	public boolean getWeakChanges(IBlockAccess world, BlockPos pos) {
+
+		return true;
+	}
+
+	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 
 		float min = getSize(state);
