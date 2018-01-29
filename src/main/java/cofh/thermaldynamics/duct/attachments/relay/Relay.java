@@ -194,7 +194,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 			if (isBlockDuct(block)) {
 				TileGrid t = (TileGrid) baseTile.world().getTileEntity(offsetPos);
 				Attachment attachment = t.getAttachment(this.side ^ 1);
-				if (attachment != null) {
+				if (attachment != null && !(attachment instanceof Relay)) {
 					level = attachment.getRSOutput();
 				}
 
