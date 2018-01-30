@@ -14,10 +14,7 @@ import cofh.core.util.helpers.BlockHelper;
 import cofh.core.util.helpers.ServerHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.block.BlockDuct;
-import cofh.thermaldynamics.duct.Attachment;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.DuctUnitStructural;
-import cofh.thermaldynamics.duct.GridStructural;
+import cofh.thermaldynamics.duct.*;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender;
 import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender.CoverTransformer;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
@@ -194,7 +191,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 			if (isBlockDuct(block)) {
 				TileGrid t = (TileGrid) baseTile.world().getTileEntity(offsetPos);
 				Attachment attachment = t.getAttachment(this.side ^ 1);
-				if (attachment != null && !(attachment instanceof Relay)) {
+				if (attachment != null && !(attachment instanceof Relay && (t.getDuctType() == TDDucts.structure || t.getDuctType() == baseTile.getDuctType()))) {
 					level = attachment.getRSOutput();
 				}
 
