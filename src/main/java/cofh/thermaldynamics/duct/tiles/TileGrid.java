@@ -52,10 +52,7 @@ import org.apache.commons.lang3.Validate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static cofh.thermaldynamics.duct.ConnectionType.*;
 
@@ -242,22 +239,21 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			int dz = pos.getZ() - neighbor.getZ();
 			if (dz == 0) {
 				int dy = pos.getY() - neighbor.getY();
-				if (dy == 1) {
-					return EnumFacing.UP;
-				} else if (dy == -1) {
+				if (dy >= 1) {
 					return EnumFacing.DOWN;
+				} else {
+					return EnumFacing.UP;
 				}
-			} else if (dz == 1) {
-				return EnumFacing.SOUTH;
-			} else if (dz == -1) {
+			} else if (dz >= 1) {
 				return EnumFacing.NORTH;
+			} else {
+				return EnumFacing.SOUTH;
 			}
-		} else if (dx == 1) {
-			return EnumFacing.EAST;
-		} else if (dx == -1) {
+		} else if (dx >= 1) {
 			return EnumFacing.WEST;
+		} else {
+			return EnumFacing.EAST;
 		}
-		throw new IllegalStateException("Positions " + pos + " and " + neighbor + " are not adjacent");
 	}
 
 	private int getTileHash() {
