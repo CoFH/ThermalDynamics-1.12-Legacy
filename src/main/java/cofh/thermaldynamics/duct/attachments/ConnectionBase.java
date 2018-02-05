@@ -162,7 +162,10 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public void writeToNBT(NBTTagCompound tag) {
 
 		tag.setByte("type", (byte) type);
-		filter.writeToNBT(tag);
+
+		if (filter != null) {
+			filter.writeToNBT(tag);
+		}
 	}
 
 	/* NETWORK METHODS */
