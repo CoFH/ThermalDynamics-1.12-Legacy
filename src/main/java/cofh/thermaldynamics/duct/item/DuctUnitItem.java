@@ -624,12 +624,12 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	public void onPlaced(EntityLivingBase living, ItemStack stack) {
 
 		super.onPlaced(living, stack);
-		//		if (stack.hasTagCompound()) {
-		//			byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
-		//			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM) {
-		//				pathWeightType = b;
-		//			}
-		//		}
+		if (stack.hasTagCompound()) {
+			byte b = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
+			if (b == DuctItem.PATHWEIGHT_DENSE || b == DuctItem.PATHWEIGHT_VACUUM) {
+				pathWeightType = b;
+			}
+		}
 		ticksExisted = MAX_TICKS_EXISTED_BEFORE_DUMP;
 	}
 

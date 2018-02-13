@@ -6,6 +6,7 @@ import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.item.ItemMaterial;
@@ -148,15 +149,14 @@ public class TDCrafting {
 		}
 
 		/* DENSE / VACUUM - TE Integration */
-		//		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque,
-		//				//				TODO: Readd Omni/Warp Ducts
-		//				//				TDDucts.itemOmni, TDDucts.itemOmniOpaque,
-		//				TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }) {
-		//			addShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "dustLead"));
-		//			addShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "dustSilver"));
-		//			addShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
-		//			addShapelessRecipe(duct.itemStack, duct.getVacuumItemStack()));// , "dustCharcoal"));
-		//		}
+		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque,
+				TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy,
+				TDDucts.itemEnergyOpaque, TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }) {
+			addShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "nuggetLead", "nuggetLead", "nuggetLead");
+			addShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "nuggetSilver", "nuggetSilver", "nuggetSilver");
+			//addShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
+			//addShapelessRecipe(duct.itemStack, duct.getVacuumItemStack()));// , "dustCharcoal"));
+		}
 	}
 
 	/* HELPERS */
