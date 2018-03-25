@@ -307,11 +307,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 		if (ignore_pos != null && ignore_pos.equals(pos)) {
 			return null;
 		}
+		TileEntity tile = world.getTileEntity(pos);
 
-		TileGrid tile = (TileGrid) world.getTileEntity(pos);
-		if (tile != null) {
+		if (tile instanceof TileGrid) {
 			List<IndexedCuboid6> cuboids = new LinkedList<>();
-			tile.addTraceableCuboids(cuboids);
+			((TileGrid) tile).addTraceableCuboids(cuboids);
 			return RayTracer.rayTraceCuboidsClosest(start, end, pos, cuboids);
 		}
 		return null;
