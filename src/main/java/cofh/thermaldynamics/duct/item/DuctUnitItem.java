@@ -42,12 +42,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
-import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -745,89 +743,50 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		boolean routeItems = cache.filter.shouldIncRouteItems();
 		int maxStock = cache.filter.getMaxStock();
 
-		if (cache.dsuCache != null) { // IDeepStorage
-			ItemStack cacheStack = cache.dsuCache.getStoredItemType();
-
-			if (!cacheStack.isEmpty() && !ItemHelper.itemsIdentical(cacheStack, insertingItem)) {
-				return insertingItem;
-			}
-			int s = !cacheStack.isEmpty() ? cacheStack.getCount() : 0;
-			int m = Math.min(cache.dsuCache.getMaxStoredCount(), maxStock);
-
-			if (s >= m) {
-				return insertingItem;
-			}
-			if (routeItems) {
-				StackMap travelingItems = grid.travelingItems.get(pos().offset(face));
-				if (travelingItems != null && !travelingItems.isEmpty()) {
-					for (Iterator<ItemStack> iterator = travelingItems.getItems(); s < m && iterator.hasNext(); ) {
-						ItemStack travelingItem = iterator.next();
-						boolean equalsItem = ItemHelper.itemsIdentical(insertingItem, travelingItem);
-
-						if (cacheStack.isEmpty() && !equalsItem) {
-							return insertingItem;
-						}
-						if (equalsItem) {
-							s += travelingItem.getCount();
-						}
-					}
-					if (s >= m) {
-						return insertingItem;
-					}
-				}
-			}
-			insertingItem.shrink((m - s));
-
-			if (insertingItem.getCount() <= 0) {
-				return ItemStack.EMPTY;
-			}
-			return insertingItem;
-		} else {
-			IItemHandler itemHandler = cache.getItemHandler(side ^ 1);
-			if (!routeItems) {
-				return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
-			}
-			StackMap travelingItems = grid.travelingItems.get(pos().offset(face));
-
-			if (travelingItems == null || travelingItems.isEmpty()) {
-				return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
-			}
-			if (travelingItems.size() == 1) {
-				if (ItemHelper.itemsIdentical(insertingItem, travelingItems.getItems().next())) {
-					insertingItem.grow(travelingItems.getItems().next().getCount());
-					return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
-				}
-			} else {
-				int s = 0;
-				for (ItemStack travelingItem : travelingItems.getItems()) {
-					if (!ItemHelper.itemsIdentical(insertingItem, travelingItem)) {
-						s = -1;
-						break;
-					} else {
-						s += travelingItem.getCount();
-					}
-				}
-				if (s >= 0) {
-					insertingItem.grow(s);
-					return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
-				}
-			}
-			SimulatedInv simulatedInv = SimulatedInv.wrapHandler(itemHandler);
-
-			for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
-				iterator.advance();
-
-				StackMap.ItemEntry itemEntry = iterator.key();
-
-				if (itemEntry.side != side && (cache.areEquivalentHandlers(itemHandler, itemEntry.side))) {
-					continue;
-				}
-				if (!InventoryHelper.insertStackIntoInventory(simulatedInv, itemEntry.toItemStack(iterator.value()), false).isEmpty() && ItemHelper.itemsIdentical(insertingItem, itemEntry.toItemStack(iterator.value()))) {
-					return insertingItem;
-				}
-			}
-			return simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1, maxStock);
+		IItemHandler itemHandler = cache.getItemHandler(side ^ 1);
+		if (!routeItems) {
+			return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
 		}
+		StackMap travelingItems = grid.travelingItems.get(pos().offset(face));
+
+		if (travelingItems == null || travelingItems.isEmpty()) {
+			return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
+		}
+		if (travelingItems.size() == 1) {
+			if (ItemHelper.itemsIdentical(insertingItem, travelingItems.getItems().next())) {
+				insertingItem.grow(travelingItems.getItems().next().getCount());
+				return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
+			}
+		} else {
+			int s = 0;
+			for (ItemStack travelingItem : travelingItems.getItems()) {
+				if (!ItemHelper.itemsIdentical(insertingItem, travelingItem)) {
+					s = -1;
+					break;
+				} else {
+					s += travelingItem.getCount();
+				}
+			}
+			if (s >= 0) {
+				insertingItem.grow(s);
+				return simulateInsertItemStackIntoInventory(itemHandler, insertingItem, side ^ 1, maxStock);
+			}
+		}
+		SimulatedInv simulatedInv = SimulatedInv.wrapHandler(itemHandler);
+
+		for (TObjectIntIterator<StackMap.ItemEntry> iterator = travelingItems.iterator(); iterator.hasNext(); ) {
+			iterator.advance();
+
+			StackMap.ItemEntry itemEntry = iterator.key();
+
+			if (itemEntry.side != side && (cache.areEquivalentHandlers(itemHandler, itemEntry.side))) {
+				continue;
+			}
+			if (!InventoryHelper.insertStackIntoInventory(simulatedInv, itemEntry.toItemStack(iterator.value()), false).isEmpty() && ItemHelper.itemsIdentical(insertingItem, itemEntry.toItemStack(iterator.value()))) {
+				return insertingItem;
+			}
+		}
+		return simulateInsertItemStackIntoInventory(simulatedInv, insertingItem, side ^ 1, maxStock);
 	}
 
 	@Override
@@ -976,8 +935,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		public final TileEntity tile;
 		@Nonnull
 		public final IFilterItems filter;
-		@Nullable
-		public final IDeepStorageUnit dsuCache;
 
 		public Cache(@Nonnull TileEntity tile, @Nullable Attachment attachment) {
 
@@ -986,11 +943,6 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 				filter = ((IFilterAttachment) attachment).getItemFilter();
 			} else {
 				filter = IFilterItems.nullFilter;
-			}
-			if (tile instanceof IDeepStorageUnit) {
-				dsuCache = (IDeepStorageUnit) tile;
-			} else {
-				dsuCache = null;
 			}
 		}
 

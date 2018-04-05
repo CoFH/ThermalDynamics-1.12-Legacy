@@ -426,6 +426,9 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	@Override
 	public IBlockState getVisualState(IBlockAccess world, BlockPos pos, EnumFacing side) {
 
+		if (side == null) {
+			return world.getBlockState(pos);
+		}
 		TileEntity tileEntity = world.getTileEntity(pos);
 
 		if (tileEntity instanceof TileGrid) {
