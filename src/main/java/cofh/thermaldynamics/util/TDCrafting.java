@@ -7,12 +7,12 @@ import cofh.core.util.helpers.MathHelper;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
-import cofh.thermalfoundation.init.TFFluids;
 import cofh.thermalfoundation.item.ItemMaterial;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.registries.GameData;
@@ -30,6 +30,12 @@ public class TDCrafting {
 		enableCoverRecipes = ThermalDynamics.CONFIG.get("Attachment.Cover", "Recipe", true);
 		useTransposerRecipes = ThermalDynamics.CONFIG.get("Duct.Recipes", "UseFluidTransposer", true);
 		String glassHardened = useHardenedGlass ? "blockGlassHardened" : "blockGlass";
+
+		Fluid fluidRedstone = FluidRegistry.getFluid("redstone");
+		Fluid fluidGlowstone = FluidRegistry.getFluid("glowstone");
+		Fluid fluidEnder = FluidRegistry.getFluid("ender");
+		Fluid fluidCryotheum = FluidRegistry.getFluid("cryotheum");
+		Fluid fluidAerotheum = FluidRegistry.getFluid("aerotheum");
 
 		/* ENERGY */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.energyBasic.itemStack, 6), "RRR", "IGI", "RRR", 'I', "ingotLead", 'G', "blockGlass", 'R', "dustRedstone");
@@ -57,10 +63,10 @@ public class TDCrafting {
 		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyBasic.itemStack, new ItemStack(Items.REDSTONE), ItemHelper.cloneStack(ItemMaterial.nuggetLead, 3));
 		ThermalExpansionHelper.addPulverizerRecipe(1600, TDDucts.energyHardened.itemStack, new ItemStack(Items.REDSTONE, 2), ItemHelper.cloneStack(ItemMaterial.nuggetInvar, 3));
 
-		addTransposerFill(800, TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforced.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
-		addTransposerFill(800, TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalum.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
-		addTransposerFill(800, TDDucts.energyResonantEmpty.itemStack, TDDucts.energyResonant.itemStack, new FluidStack(TFFluids.fluidRedstone, 200), false);
-		addTransposerFill(4000, TDDucts.energySuperCondEmpty.itemStack, TDDucts.energySuperCond.itemStack, new FluidStack(TFFluids.fluidCryotheum, 500), false);
+		addTransposerFill(800, TDDucts.energyReinforcedEmpty.itemStack, TDDucts.energyReinforced.itemStack, new FluidStack(fluidRedstone, 200), false);
+		addTransposerFill(800, TDDucts.energySignalumEmpty.itemStack, TDDucts.energySignalum.itemStack, new FluidStack(fluidRedstone, 200), false);
+		addTransposerFill(800, TDDucts.energyResonantEmpty.itemStack, TDDucts.energyResonant.itemStack, new FluidStack(fluidRedstone, 200), false);
+		addTransposerFill(4000, TDDucts.energySuperCondEmpty.itemStack, TDDucts.energySuperCond.itemStack, new FluidStack(fluidCryotheum, 500), false);
 
 		/* FLUID */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.fluidBasic.itemStack, 6), "IGI", 'I', "ingotCopper", 'G', "blockGlass");
@@ -105,10 +111,10 @@ public class TDCrafting {
 		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 6), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "ingotEnderium"));
 
 		/* ITEMS - TE Integration */
-		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemFast.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
-		addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
-		addTransposerFill(800, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergyFast.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
-		addTransposerFill(800, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyFastOpaque.itemStack, new FluidStack(TFFluids.fluidGlowstone, 200), false);
+		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemFast.itemStack, new FluidStack(fluidGlowstone, 200), false);
+		addTransposerFill(800, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, new FluidStack(fluidGlowstone, 200), false);
+		addTransposerFill(800, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergyFast.itemStack, new FluidStack(fluidGlowstone, 200), false);
+		addTransposerFill(800, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyFastOpaque.itemStack, new FluidStack(fluidGlowstone, 200), false);
 
 		/* STRUCTURE */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead");
@@ -120,8 +126,8 @@ public class TDCrafting {
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.transportFrame.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotBronze", 'G', glassHardened);
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.transportLongRange.itemStack, 8), "IGI", "G G", "IGI", 'I', "ingotLead", 'G', glassHardened);
 
-		addTransposerFill(800, TDDucts.transportFrame.itemStack, TDDucts.transportBasic.itemStack, new FluidStack(TFFluids.fluidAerotheum, 100), false);
-		addTransposerFill(8000, TDDucts.transportBasic.itemStack, TDDucts.transportLinking.itemStack, new FluidStack(TFFluids.fluidEnder, 1000), false);
+		addTransposerFill(800, TDDucts.transportFrame.itemStack, TDDucts.transportBasic.itemStack, new FluidStack(fluidAerotheum, 100), false);
+		addTransposerFill(8000, TDDucts.transportBasic.itemStack, TDDucts.transportLinking.itemStack, new FluidStack(fluidEnder, 1000), false);
 
 		/* COVERS */
 		if (enableCoverRecipes) {

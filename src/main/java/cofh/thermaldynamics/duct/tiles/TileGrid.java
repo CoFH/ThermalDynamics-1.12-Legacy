@@ -25,6 +25,7 @@ import cofh.thermaldynamics.duct.attachments.cover.CoverHoleRender.CoverTransfor
 import cofh.thermaldynamics.init.TDProps;
 import cofh.thermaldynamics.multiblock.MultiBlockGrid;
 import cofh.thermaldynamics.util.TickHandler;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -819,6 +820,33 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public boolean isPowered() {
 
 		return world.isBlockPowered(pos);
+	}
+
+	/* REDSTONE LOGIC */
+	public int getRedstonePower(BlockPos pos, EnumFacing facing) {
+
+		if (!world.isBlockLoaded(pos)) {
+			return 0;
+		}
+		IBlockState state = world.getBlockState(pos);
+		return state.getBlock().shouldCheckWeakPower(state, world, pos, facing) ? world.getStrongPower(pos) : state.getWeakPower(world, pos, facing);
+	}
+
+	public boolean isBlockPowered(BlockPos pos) {
+
+		if (getRedstonePower(pos.down(), EnumFacing.DOWN) > 0) {
+			return true;
+		} else if (getRedstonePower(pos.up(), EnumFacing.UP) > 0) {
+			return true;
+		} else if (getRedstonePower(pos.north(), EnumFacing.NORTH) > 0) {
+			return true;
+		} else if (getRedstonePower(pos.south(), EnumFacing.SOUTH) > 0) {
+			return true;
+		} else if (getRedstonePower(pos.west(), EnumFacing.WEST) > 0) {
+			return true;
+		} else {
+			return getRedstonePower(pos.east(), EnumFacing.EAST) > 0;
+		}
 	}
 
 	@Override

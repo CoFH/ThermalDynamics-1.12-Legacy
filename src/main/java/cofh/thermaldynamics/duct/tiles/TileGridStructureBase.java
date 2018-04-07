@@ -84,7 +84,6 @@ public abstract class TileGridStructureBase extends TileGrid {
 				}
 			}
 		}
-
 		return super.isPowered();
 	}
 
