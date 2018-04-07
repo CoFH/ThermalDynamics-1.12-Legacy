@@ -1,4 +1,4 @@
-# ru_RU
+#ru_RU
 
 gui.thermaldynamics.transport.config=Конфигурация
 gui.thermaldynamics.transport.name=Транспортная труба
@@ -18,9 +18,9 @@ info.thermaldynamics.duct.item=Переносит предметы.
 info.thermaldynamics.duct.itemEnergy=Переносит предметы и Redstone Flux (RF).
 info.thermaldynamics.duct.light=Светится при подаче сигнала красного камня.
 info.thermaldynamics.duct.structure=Обеспечивает структуру.
-
-
-
+info.thermaldynamics.duct.transport=Переносит игроков. Свист.
+info.thermaldynamics.duct.transportCrossover=Конечные точки для дальних виадуков. Требуется.
+info.thermaldynamics.duct.transportLongRange=Быстрый транспорт между двумя конкретными местами.
 info.thermaldynamics.duct.vacuum=Значительно уменьшает длину пути.
 
 info.thermaldynamics.filter.antiSpam.0=Разрешить переполнение
@@ -30,9 +30,9 @@ info.thermaldynamics.filter.incRetainSize=Увелич. макс. кол-во п
 info.thermaldynamics.filter.metadata.off=Использовать метаданные
 info.thermaldynamics.filter.metadata.on=Игнорировать метаданные
 info.thermaldynamics.filter.metadata=Метаданные
-info.thermaldynamics.filter.modSorting.off=Использовать Mod Owner
-info.thermaldynamics.filter.modSorting.on=Игнорировать Mod Owner
-info.thermaldynamics.filter.modSorting=Mod Owner
+info.thermaldynamics.filter.modSorting.off=Использовать владельца мода
+info.thermaldynamics.filter.modSorting.on=Игнорировать владельца мода
+info.thermaldynamics.filter.modSorting=Владелец мода
 info.thermaldynamics.filter.nbt.off=Использовать NBT
 info.thermaldynamics.filter.nbt.on=Игнорировать NBT
 info.thermaldynamics.filter.nbt=NBT
@@ -49,11 +49,13 @@ info.thermaldynamics.filter.whiteList.on=Чёрный список
 info.thermaldynamics.filter.whiteList=Чёрный список
 info.thermaldynamics.filter.zeroRetainSize=Бесконечное
 
-info.thermaldynamics.info.attachment=-Attachment Info-
+info.thermaldynamics.info.attachment=-Вложенная информация-
 info.thermaldynamics.info.duct=-О трубе-
 info.thermaldynamics.info.energy=RF
 info.thermaldynamics.info.fluid=Жидкость
 info.thermaldynamics.info.fluidThroughput=Макс. пропускная способность
+info.thermaldynamics.info.invalid=Неправильный
+info.thermaldynamics.info.invalidCover=Поместите в сетку крафта, чтобы преобразовать в каменную крышку.
 info.thermaldynamics.info.items=Предметы
 info.thermaldynamics.info.redstone=Красный камень
 info.thermaldynamics.info.size=Размер
@@ -62,12 +64,28 @@ info.thermaldynamics.info.tracker.avg=5 Сек. Средн. Уровень
 info.thermaldynamics.info.tracker.avgInOut=5 Сек. Средн. Ввод/Вывод
 info.thermaldynamics.info.tracker.cur=Текущий уровень
 
-info.thermaldynamics.relay.gridRS=Duct Power
-info.thermaldynamics.relay.invert.0=Scaled
-info.thermaldynamics.relay.invert.1=Inverted Scaled
+info.thermaldynamics.relay.color.0=Красный
+info.thermaldynamics.relay.color.1=Зеленый
+info.thermaldynamics.relay.color.2=Коричневый
+info.thermaldynamics.relay.color.3=Синий
+info.thermaldynamics.relay.color.4=Фиолетовый
+info.thermaldynamics.relay.color.5=Голубой
+info.thermaldynamics.relay.color.6=Светло-серый
+info.thermaldynamics.relay.color.7=Серый
+info.thermaldynamics.relay.color.8=Розовый
+info.thermaldynamics.relay.color.9=Лаймовый
+info.thermaldynamics.relay.color.10=Желтый
+info.thermaldynamics.relay.color.11=Светло-синий
+info.thermaldynamics.relay.color.12=Пурпурный
+info.thermaldynamics.relay.color.13=Оранжевый
+info.thermaldynamics.relay.color.14=Белый
+info.thermaldynamics.relay.color.15=Черный
+info.thermaldynamics.relay.gridRS=Мощность труб
+info.thermaldynamics.relay.invert.0=Масштаб
+info.thermaldynamics.relay.invert.1=Инвертированный масштаб
 info.thermaldynamics.relay.invert.2=Предел
 info.thermaldynamics.relay.invert.3=Инвертированный предел
-info.thermaldynamics.relay.relayRS=Relay Power
+info.thermaldynamics.relay.relayRS=Релейная мощность
 info.thermaldynamics.relay.threshold=Предел >=
 info.thermaldynamics.relay.type.0=Красный вход
 info.thermaldynamics.relay.type.1=Красный выход
@@ -120,26 +138,26 @@ itemGroup.thermaldynamics.creativeTabCovers=Thermal Dynamics: Крышки
 
 recipe.thermaldynamics.covers=Создание крышек
 
-
-
-
-
-
-
+tab.thermaldynamics.conChange=Зажмите Shift и используйте кнопку мыши для точной настройки количества.
+tab.thermaldynamics.filterItem.0=Контролируйте какие элементы разрешены в прикрепленном инвентаре.
+tab.thermaldynamics.retrieverItem.0=Тянети предметы в прилагаемый инвентарь из других запасов в этой сети.
+tab.thermaldynamics.retrieverItem.1=Используйте параметры фильтра, чтобы контролировать, какие элементы извлекаются.
+tab.thermaldynamics.servoItem.0=Извлекайте предметы из прикрепленного инвентаря.
+tab.thermaldynamics.servoItem.1=Используйте параметры фильтра, чтобы управлять тем, какие элементы были извлечены.
 
 tile.thermaldynamics.duct.dense.name=Плотная %s
 
 tile.thermaldynamics.duct.energyBasic.name=Свинцовая флаксовая труба
 tile.thermaldynamics.duct.energyHardened.name=Усиленная флаксовая труба
 tile.thermaldynamics.duct.energyReinforced.name=Красная энергетическая флаксовая труба
-tile.thermaldynamics.duct.energyReinforcedEmpty.name=Красная энергетическая флаксовая труба (Пустая)
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Красная энергетическая флаксовая труба (пустая)
 tile.thermaldynamics.duct.energyResonant.name=Резонирующая флаксовая труба
-tile.thermaldynamics.duct.energyResonantEmpty.name=Резонирующая флаксовая труба (Пустая)
-
-
+tile.thermaldynamics.duct.energyResonantEmpty.name=Резонирующая флаксовая труба (пустая)
+tile.thermaldynamics.duct.energySignalum.name=Сигналовая флаксовая труба
+tile.thermaldynamics.duct.energySignalumEmpty.name=Сигналовая флаксовая труба (пустая)
 tile.thermaldynamics.duct.energySuper.info=Не имеет остаточной ёмкости.
 tile.thermaldynamics.duct.energySuper.name=Криостабилизированная флаксовая труба
-tile.thermaldynamics.duct.energySuperEmpty.name=Криостабилизированная флаксовая труба (Пустая)
+tile.thermaldynamics.duct.energySuperEmpty.name=Криостабилизированная флаксовая труба (пустая)
 
 tile.thermaldynamics.duct.fluidBasic.info=Сломается, если содержимое очень горячее или холодное.
 tile.thermaldynamics.duct.fluidBasic.name=Основная жидкостная труба
@@ -152,18 +170,18 @@ tile.thermaldynamics.duct.fluidSuper.name=Сверхпластичная жид�
 tile.thermaldynamics.duct.itemBasic.name=Предметная труба
 tile.thermaldynamics.duct.itemEnder.name=Искажающаяся предметная труба
 tile.thermaldynamics.duct.itemEnergy.name=Колеблющаяся предметная труба
-
+tile.thermaldynamics.duct.itemEnergyFast.name=Покрытая сигналовая импульсная предметная труба
 tile.thermaldynamics.duct.itemFast.info=Заполнена светящимся камнем. Предметы перемещаются быстрее.
 tile.thermaldynamics.duct.itemFast.name=Импульсная предметная труба
 
-tile.thermaldynamics.duct.opaque.name=%s (Непрозрачная)
+tile.thermaldynamics.duct.opaque.name=%s (непрозрачная)
 
 tile.thermaldynamics.duct.structure.info=Обеспечивает структуру.
 tile.thermaldynamics.duct.structure.opaque.name=Структурная труба
 tile.thermaldynamics.duct.structureLight.name=Светящаяся труба
 
 tile.thermaldynamics.duct.transportBasic.name=Виадук
-tile.thermaldynamics.duct.transportFrame.name=Виадук (Необработанный)
+tile.thermaldynamics.duct.transportFrame.name=Виадук (необработанный)
 tile.thermaldynamics.duct.transportLinking.name=Соединяющий виадук большой дальности
 tile.thermaldynamics.duct.transportLongRange.name=Виадук большой дальности
 
@@ -174,21 +192,21 @@ tile.thermaldynamics.duct=Труба
 # Custom Names
 
 tile.thermaldynamics.duct.itemBasic.dense.name=Плотная предметная труба
-tile.thermaldynamics.duct.itemBasic.opaque.dense.name=Плотная предметная труба (Непрозрачная)
-tile.thermaldynamics.duct.itemBasic.opaque.vacuum.name=Вакуумная предметная труба (Непрозрачная)
+tile.thermaldynamics.duct.itemBasic.opaque.dense.name=Плотная предметная труба (непрозрачная)
+tile.thermaldynamics.duct.itemBasic.opaque.vacuum.name=Вакуумная предметная труба (непрозрачная)
 tile.thermaldynamics.duct.itemBasic.vacuum.name=Вакуумная предметная труба
 
 tile.thermaldynamics.duct.itemEnder.dense.name=Плотная искажающаяся предметная труба
-tile.thermaldynamics.duct.itemEnder.opaque.dense.name=Плотная искажающаяся предметная труба (Непрозрачная)
-tile.thermaldynamics.duct.itemEnder.opaque.vacuum.name=Вакуумная искажающаяся предметная труба (Непрозрачная)
+tile.thermaldynamics.duct.itemEnder.opaque.dense.name=Плотная искажающаяся предметная труба (непрозрачная)
+tile.thermaldynamics.duct.itemEnder.opaque.vacuum.name=Вакуумная искажающаяся предметная труба (непрозрачная)
 tile.thermaldynamics.duct.itemEnder.vacuum.name=Вакуумная искажающаяся предметная труба
 
 tile.thermaldynamics.duct.itemFast.dense.name=Плотная импульсная предметная труба
-tile.thermaldynamics.duct.itemFast.opaque.dense.name=Плотная импульсная предметная труба (Непрозрачная)
-tile.thermaldynamics.duct.itemFast.opaque.vacuum.name=Вакуумная импульсная предметная труба (Непрозрачная)
+tile.thermaldynamics.duct.itemFast.opaque.dense.name=Плотная импульсная предметная труба (непрозрачная)
+tile.thermaldynamics.duct.itemFast.opaque.vacuum.name=Вакуумная импульсная предметная труба (непрозрачная)
 tile.thermaldynamics.duct.itemFast.vacuum.name=Вакуумная импульсная предметная труба
 
 tile.thermaldynamics.duct.itemEnergy.dense.name=Плотная колеблющаяся предметная труба
-tile.thermaldynamics.duct.itemEnergy.opaque.dense.name=Плотная колеблющаяся предметная труба (Непрозрачная)
-tile.thermaldynamics.duct.itemEnergy.opaque.vacuum.name=Вакуумная колеблющаяся предметная труба (Непрозрачная)
+tile.thermaldynamics.duct.itemEnergy.opaque.dense.name=Плотная колеблющаяся предметная труба (непрозрачная)
+tile.thermaldynamics.duct.itemEnergy.opaque.vacuum.name=Вакуумная колеблющаяся предметная труба (непрозрачная)
 tile.thermaldynamics.duct.itemEnergy.vacuum.name=Вакуумная колеблющаяся предметная труба
