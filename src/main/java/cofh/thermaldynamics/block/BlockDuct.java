@@ -450,7 +450,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	@Nonnull
 	@Override
 	@Optional.Method (modid = "ctm-api")
-	public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side, @Nonnull BlockPos connection) {
+	public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
 
 		return getVisualState(world, pos, side);
 	}
