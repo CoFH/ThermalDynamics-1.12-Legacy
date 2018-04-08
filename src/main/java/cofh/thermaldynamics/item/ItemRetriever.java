@@ -163,7 +163,6 @@ public class ItemRetriever extends ItemAttachment {
 	public boolean register() {
 
 		// @formatter:off
-
 		addShapedRecipe(retrieverBasic,
 				"iGi",
 				"IRI",
@@ -220,7 +219,6 @@ public class ItemRetriever extends ItemAttachment {
 		addShapelessRecipe(retrieverResonant, retrieverSignalum, "ingotEnderium");
 
 		// @formatter:on
-
 		return true;
 	}
 

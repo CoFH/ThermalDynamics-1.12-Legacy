@@ -57,7 +57,6 @@ public class ItemRelay extends ItemAttachment {
 	public boolean register() {
 
 		// @formatter:off
-
 		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2),
 				"iGi",
 				"IRI",
@@ -66,9 +65,7 @@ public class ItemRelay extends ItemAttachment {
 				'I', "ingotLead",
 				'R', "dustRedstone"
 		);
-
 		// @formatter:on
-
 		return true;
 	}
 

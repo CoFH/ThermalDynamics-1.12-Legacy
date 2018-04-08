@@ -2,7 +2,7 @@
 	{
 		"modid": "thermaldynamics",
 		"name": "Thermal Dynamics",
-		"description": "Thermal meets Dynamic - provides options for transporting items, fluids, and Redstone Flux!",
+		"description": "Thermal gets Dynamic! Adds ducts - blocks for transporting Items, Fluids, Redstone Flux, and even Players!",
 		"version": "${version}",
 		"credits": "Team CoFH",
 		"logoFile": "assets/thermaldynamics/textures/logo.png",

@@ -143,7 +143,6 @@ public class ItemFilter extends ItemAttachment {
 	public boolean register() {
 
 		// @formatter:off
-
 		addShapedRecipe(filterBasic,
 				"iGi",
 				"IRI",
@@ -200,7 +199,6 @@ public class ItemFilter extends ItemAttachment {
 		addShapelessRecipe(filterResonant, filterSignalum, "ingotEnderium");
 
 		// @formatter:on
-
 		return true;
 	}
 

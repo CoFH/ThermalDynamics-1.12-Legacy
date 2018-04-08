@@ -162,7 +162,6 @@ public class ItemServo extends ItemAttachment {
 	public boolean register() {
 
 		// @formatter:off
-
 		addShapedRecipe(servoBasic,
 				"iGi",
 				"IRI",
@@ -219,7 +218,6 @@ public class ItemServo extends ItemAttachment {
 		addShapelessRecipe(servoResonant, servoSignalum, "ingotEnderium");
 
 		// @formatter:on
-
 		return true;
 	}
 

@@ -14,17 +14,17 @@ import javax.annotation.Nullable;
  */
 public interface IFacade {
 
-    /**
-     * Gets the blockstate this facade appears as.
-     *
-     * @param world {@link World}
-     * @param pos   The Blocks position
-     * @param side  The side being rendered, NOT the side being connected from.
-     *              <p/>
-     *              This value can be null if no side is specified. Please handle this appropriately.
-     * @return The blockstate which your block appears as.
-     */
-    @Nonnull
-    IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side);
+	/**
+	 * Gets the blockstate this facade appears as.
+	 *
+	 * @param world {@link World}
+	 * @param pos   The Blocks position
+	 * @param side  The side being rendered, NOT the side being connected from.
+	 *              <p/>
+	 *              This value can be null if no side is specified. Please handle this appropriately.
+	 * @return The blockstate which your block appears as.
+	 */
+	@Nonnull
+	IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side);
 
 }
