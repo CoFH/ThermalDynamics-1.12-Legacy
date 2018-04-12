@@ -41,7 +41,7 @@ public class ThermalDynamics {
 	public static final String VERSION_GROUP = "required-after:" + MOD_ID + "@[" + VERSION + "," + VERSION_MAX + ");";
 	public static final String UPDATE_URL = "https://raw.github.com/cofh/version/master/" + MOD_ID + "_update.json";
 
-	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP + CodeChickenLib.MOD_VERSION_DEP;
+	public static final String DEPENDENCIES = CoFHCore.VERSION_GROUP + ThermalFoundation.VERSION_GROUP + CodeChickenLib.MOD_VERSION_DEP + "after:thermalexpansion";
 	public static final String MOD_GUI_FACTORY = "cofh.thermaldynamics.gui.GuiConfigTDFactory";
 
 	@Instance (MOD_ID)
@@ -55,7 +55,11 @@ public class ThermalDynamics {
 	public static final ConfigHandler CONFIG_CLIENT = new ConfigHandler(VERSION);
 	public static final GuiHandler GUI_HANDLER = new GuiHandler();
 
-	public static CreativeTabs tabCommon;
+	public static CreativeTabs tabCommon;       // Blocks and general stuff.
+	public static CreativeTabs tabItems;        // Non-usable items.
+	public static CreativeTabs tabUtils;        // Usable items, non-tiered.
+	public static CreativeTabs tabTools;        // Usable items, tiered.                (Unified Tabs Only)
+
 	public static CreativeTabs tabCovers;
 
 	public ThermalDynamics() {

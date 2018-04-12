@@ -3,6 +3,7 @@ package cofh.thermaldynamics.init;
 import cofh.core.util.core.IInitializer;
 import cofh.thermaldynamics.item.*;
 import cofh.thermaldynamics.util.TDCrafting;
+import cofh.thermalfoundation.init.TFProps;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -35,6 +36,8 @@ public class TDItems {
 		for (IInitializer init : initList) {
 			init.initialize();
 		}
+		TFProps.miscList.addAll(ItemCover.getCoverList());
+
 		MinecraftForge.EVENT_BUS.register(INSTANCE);
 	}
 

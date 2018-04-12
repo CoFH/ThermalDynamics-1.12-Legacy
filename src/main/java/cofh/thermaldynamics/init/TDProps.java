@@ -10,6 +10,8 @@ import cofh.thermaldynamics.block.ItemBlockDuct;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.item.ItemCover;
+import cofh.thermalfoundation.ThermalFoundation;
+import cofh.thermalfoundation.init.TFProps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
@@ -57,73 +59,31 @@ public class TDProps {
 
 		category = "Interface";
 
-		comment = "If TRUE, Thermal Dynamics Covers will have a Creative Tab.";
+		comment = "If TRUE, Thermal Dynamics Covers will have a Creative Tab. Does not work if \"Thermal Series\" Creative Tabs are in use.";
 		enableCoverCreativeTab = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("ItemsInCommonTab", category, enableCoverCreativeTab, comment);
 
 		comment = "If TRUE, Thermal Dynamics Covers will be shown in JEI.";
 		showCoversInJEI = ThermalDynamics.CONFIG_CLIENT.getConfiguration().getBoolean("CoversInJEI", category, showCoversInJEI, comment);
 
 		/* CREATIVE TABS */
-		ThermalDynamics.tabCommon = new CreativeTabCore("thermaldynamics") {
+		if (TFProps.useUnifiedTabs) {
+			ThermalDynamics.tabCommon = ThermalFoundation.tabCommon;
+			ThermalDynamics.tabItems = ThermalFoundation.tabItems;
+			ThermalDynamics.tabUtils = ThermalFoundation.tabUtils;
 
-			int iconIndex = 0;
-			TimeTracker iconTracker = new TimeTracker();
-
-			void updateIcon() {
-
-				World world = CoFHCore.proxy.getClientWorld();
-				if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
-					int next = MathHelper.RANDOM.nextInt(TDDucts.ductList.size() - 1);
-					iconIndex = next >= iconIndex ? next + 1 : next;
-					iconTracker.markTime(world);
-				}
-			}
-
-			@Override
-			@SideOnly (Side.CLIENT)
-			public ItemStack getIconItemStack() {
-
-				updateIcon();
-				return TDDucts.getDuct(iconIndex).itemStack;
-			}
-
-			@Override
-			@SideOnly (Side.CLIENT)
-			public void displayAllRelevantItems(NonNullList<ItemStack> list) {
-
-				NonNullList<ItemStack> stacks = NonNullList.create();
-
-				// TODO: Revisit this.
-				super.displayAllRelevantItems(stacks);
-
-				for (Duct d : TDDucts.getSortedDucts()) {
-					list.add(d.itemStack.copy());
-
-					//			if (d instanceof DuctItem) {
-					//				list.add(((DuctItem) d).getDenseItemStack());
-					//				list.add(((DuctItem) d).getVacuumItemStack());
-					//			}
-				}
-				for (ItemStack item : stacks) {
-					if (!(item.getItem() instanceof ItemBlockDuct)) {
-						list.add(item);
-					}
-				}
-			}
-
-		};
-
-		if (enableCoverCreativeTab) {
-			ThermalDynamics.tabCovers = new CreativeTabCore("thermaldynamics", "Covers") {
+			TFProps.initMiscTab();
+			ThermalDynamics.tabCovers = ThermalFoundation.tabMisc;
+		} else {
+			ThermalDynamics.tabCommon = new CreativeTabCore("thermaldynamics") {
 
 				int iconIndex = 0;
 				TimeTracker iconTracker = new TimeTracker();
 
-				void updateIcon() {
+				public void updateIcon() {
 
 					World world = CoFHCore.proxy.getClientWorld();
 					if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
-						int next = MathHelper.RANDOM.nextInt(ItemCover.getCoverList().size() - 1);
+						int next = MathHelper.RANDOM.nextInt(TDDucts.ductList.size() - 1);
 						iconIndex = next >= iconIndex ? next + 1 : next;
 						iconTracker.markTime(world);
 					}
@@ -131,14 +91,64 @@ public class TDProps {
 
 				@Override
 				@SideOnly (Side.CLIENT)
-				public ItemStack getIconItemStack() {
+				public ItemStack getTabIconItem() {
 
 					updateIcon();
-					return ItemCover.getCoverList().get(iconIndex);
+					return TDDucts.getDuct(iconIndex).itemStack;
 				}
 
+				@Override
+				@SideOnly (Side.CLIENT)
+				public void displayAllRelevantItems(NonNullList<ItemStack> list) {
+
+					NonNullList<ItemStack> stacks = NonNullList.create();
+
+					// TODO: Revisit this.
+					super.displayAllRelevantItems(stacks);
+
+					for (Duct d : TDDucts.getSortedDucts()) {
+						list.add(d.itemStack.copy());
+
+						//			if (d instanceof DuctItem) {
+						//				list.add(((DuctItem) d).getDenseItemStack());
+						//				list.add(((DuctItem) d).getVacuumItemStack());
+						//			}
+					}
+					for (ItemStack item : stacks) {
+						if (!(item.getItem() instanceof ItemBlockDuct)) {
+							list.add(item);
+						}
+					}
+				}
 			};
 
+			if (enableCoverCreativeTab) {
+				ThermalDynamics.tabCovers = new CreativeTabCore("thermaldynamics", "Covers") {
+
+					int iconIndex = 0;
+					TimeTracker iconTracker = new TimeTracker();
+
+					public void updateIcon() {
+
+						World world = CoFHCore.proxy.getClientWorld();
+						if (CoreUtils.isClient() && iconTracker.hasDelayPassed(world, 80)) {
+							int next = MathHelper.RANDOM.nextInt(ItemCover.getCoverList().size() - 1);
+							iconIndex = next >= iconIndex ? next + 1 : next;
+							iconTracker.markTime(world);
+						}
+					}
+
+					@Override
+					@SideOnly (Side.CLIENT)
+					public ItemStack getTabIconItem() {
+
+						updateIcon();
+						return ItemCover.getCoverList().get(iconIndex);
+					}
+				};
+			}
+			ThermalDynamics.tabUtils = ThermalDynamics.tabCommon;
+			ThermalDynamics.tabTools = ThermalDynamics.tabCommon;
 		}
 	}
 

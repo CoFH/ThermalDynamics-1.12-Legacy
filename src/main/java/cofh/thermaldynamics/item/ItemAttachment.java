@@ -26,7 +26,7 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 
 		super();
 		setHasSubtypes(true);
-		this.setCreativeTab(ThermalDynamics.tabCommon);
+		this.setCreativeTab(ThermalDynamics.tabUtils);
 	}
 
 	@Override
