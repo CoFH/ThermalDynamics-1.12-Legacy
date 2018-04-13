@@ -10,6 +10,8 @@ import net.minecraft.world.World;
 public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 	public static final int XFER_BASE = 1000;
+	public static final int XFER_MIN = 100;
+	public static final int XFER_MAX = 10000;
 
 	public static int CAPACITY[] = { 1 * 5, 4 * 5, 9 * 5, 16 * 5, 25 * 5, 0 };
 	public static int XFER[] = { 1, 4, 9, 16, 25, 0 };
@@ -26,7 +28,7 @@ public class GridEnergy extends MultiBlockGridTracking<DuctUnitEnergy> {
 
 		int xfer = XFER_BASE;
 		String comment = "Adjust this value to change the amount of Energy (in RF/t) that can be received by a Leadstone Fluxduct. This base value will scale with duct level.";
-		xfer = ThermalDynamics.CONFIG.getConfiguration().getInt("BaseTransfer", category, xfer, xfer / 10, xfer * 10, comment);
+		xfer = ThermalDynamics.CONFIG.getConfiguration().getInt("BaseTransfer", category, xfer, XFER_MIN, XFER_MAX, comment);
 
 		for (int i = 0; i < CAPACITY.length; i++) {
 			CAPACITY[i] *= xfer;
