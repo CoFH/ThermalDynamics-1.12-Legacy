@@ -141,7 +141,7 @@ public class ItemServo extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("servo"));
 		ThermalDynamics.proxy.addIModelRegister(this);
@@ -158,7 +158,7 @@ public class ItemServo extends ItemAttachment {
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		// @formatter:off
 		addShapedRecipe(servoBasic,

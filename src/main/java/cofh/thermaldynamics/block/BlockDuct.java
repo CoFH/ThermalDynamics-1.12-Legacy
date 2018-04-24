@@ -528,7 +528,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.BLOCKS.register(this.setRegistryName("duct_" + offset));
 		ForgeRegistries.ITEMS.register(new ItemBlockDuct(this).setRegistryName("duct_" + offset));
@@ -584,7 +584,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		if (offset != 0) {
 			return false;

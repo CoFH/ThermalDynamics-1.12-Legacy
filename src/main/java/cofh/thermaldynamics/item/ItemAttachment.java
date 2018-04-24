@@ -79,7 +79,7 @@ public abstract class ItemAttachment extends Item implements IInitializer, IMode
 	public abstract Attachment getAttachment(EnumFacing side, ItemStack stack, TileGrid tile);
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		return true;
 	}

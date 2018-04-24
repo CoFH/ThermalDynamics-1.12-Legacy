@@ -34,7 +34,7 @@ public class TDItems {
 		initList.add(itemCover);
 
 		for (IInitializer init : initList) {
-			init.initialize();
+			init.preInit();
 		}
 		TFProps.miscList.addAll(ItemCover.getCoverList());
 
@@ -46,7 +46,7 @@ public class TDItems {
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 
 		for (IInitializer init : initList) {
-			init.register();
+			init.initialize();
 		}
 		TDCrafting.loadRecipes();
 	}

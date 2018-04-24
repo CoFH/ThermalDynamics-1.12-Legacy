@@ -144,7 +144,7 @@ public class ItemRetriever extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("retriever"));
 		ThermalDynamics.proxy.addIModelRegister(this);
@@ -159,7 +159,7 @@ public class ItemRetriever extends ItemAttachment {
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		// @formatter:off
 		addShapedRecipe(retrieverBasic,

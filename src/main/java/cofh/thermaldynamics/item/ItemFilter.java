@@ -124,7 +124,7 @@ public class ItemFilter extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("filter"));
 		ThermalDynamics.proxy.addIModelRegister(this);
@@ -139,7 +139,7 @@ public class ItemFilter extends ItemAttachment {
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		// @formatter:off
 		addShapedRecipe(filterBasic,

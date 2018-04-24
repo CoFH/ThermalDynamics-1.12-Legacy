@@ -90,7 +90,7 @@ public class ItemCover extends ItemAttachment {
 	}
 
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(this.setRegistryName("cover"));
 

@@ -44,7 +44,7 @@ public class ItemRelay extends ItemAttachment {
 
 	/* IInitializer */
 	@Override
-	public boolean initialize() {
+	public boolean preInit() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("relay"));
 		ThermalDynamics.proxy.addIModelRegister(this);
@@ -53,7 +53,7 @@ public class ItemRelay extends ItemAttachment {
 	}
 
 	@Override
-	public boolean register() {
+	public boolean initialize() {
 
 		// @formatter:off
 		addShapedRecipe(new ItemStack(TDItems.itemRelay, 2),
