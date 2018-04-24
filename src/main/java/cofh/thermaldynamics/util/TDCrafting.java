@@ -155,13 +155,11 @@ public class TDCrafting {
 		}
 
 		/* DENSE / VACUUM - TE Integration */
-		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque,
-				TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy,
-				TDDucts.itemEnergyOpaque, TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }) {
+		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque, TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque, TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }) {
 			addShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "nuggetLead", "nuggetLead", "nuggetLead");
 			addShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "nuggetSilver", "nuggetSilver", "nuggetSilver");
-			//addShapelessRecipe(duct.itemStack, duct.getDenseItemStack()));// , "dustCharcoal"));
-			//addShapelessRecipe(duct.itemStack, duct.getVacuumItemStack()));// , "dustCharcoal"));
+			//			addShapelessRecipe(duct.itemStack, duct.getDenseItemStack(), "dustCharcoal");
+			//			addShapelessRecipe(duct.itemStack, duct.getVacuumItemStack(), "dustCharcoal");
 		}
 	}
 

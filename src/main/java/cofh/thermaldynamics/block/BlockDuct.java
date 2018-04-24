@@ -26,13 +26,9 @@ import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
-import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.DuctModelBakery;
-import com.google.common.collect.Iterators;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -103,7 +99,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(i + offset)) {
 				Duct duct = TDDucts.getDuct(i + offset);
-				if(duct instanceof DuctItem) {
+				if (duct instanceof DuctItem) {
 					items.add(((DuctItem) duct).getVacuumItemStack());
 					items.add(((DuctItem) duct).getDenseItemStack());
 				}
@@ -612,7 +608,7 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 
 	public static byte getWeight(ItemStack stack) {
 
-		if(!stack.hasTagCompound()) {
+		if (!stack.hasTagCompound()) {
 			return 0;
 		}
 		return stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
