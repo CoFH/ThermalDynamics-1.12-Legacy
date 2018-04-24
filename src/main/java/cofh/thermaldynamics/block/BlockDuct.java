@@ -5,6 +5,7 @@ import codechicken.lib.model.DummyBakedModel;
 import codechicken.lib.model.ModelRegistryHelper;
 import codechicken.lib.model.bakery.CCBakeryModel;
 import codechicken.lib.model.bakery.IBakeryProvider;
+import codechicken.lib.model.bakery.ModelBakery;
 import codechicken.lib.model.bakery.generation.IBakery;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
@@ -19,14 +20,19 @@ import cofh.core.render.IModelRegister;
 import cofh.thermaldynamics.ThermalDynamics;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
+import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.attachments.cover.Cover;
 import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.TransportHandler;
 import cofh.thermaldynamics.duct.fluid.PacketFluid;
+import cofh.thermaldynamics.duct.item.DuctUnitItem;
+import cofh.thermaldynamics.duct.item.TravelingItem;
 import cofh.thermaldynamics.duct.tiles.*;
 import cofh.thermaldynamics.proxy.ProxyClient;
 import cofh.thermaldynamics.render.DuctModelBakery;
+import com.google.common.collect.Iterators;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -40,6 +46,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -95,7 +102,12 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 
 		for (int i = 0; i < 16; i++) {
 			if (TDDucts.isValid(i + offset)) {
-				items.add(TDDucts.getDuct(i + offset).itemStack.copy());
+				Duct duct = TDDucts.getDuct(i + offset);
+				if(duct instanceof DuctItem) {
+					items.add(((DuctItem) duct).getVacuumItemStack());
+					items.add(((DuctItem) duct).getDenseItemStack());
+				}
+				items.add(duct.itemStack.copy());
 			}
 		}
 	}
@@ -503,6 +515,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 		//Actual model related stuffs.
 		ModelResourceLocation invLocation = new ModelResourceLocation(getRegistryName(), "inventory");
 		ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), stack -> invLocation);
+		ModelBakery.registerItemKeyGenerator(ItemBlock.getItemFromBlock(this), item -> {
+			StringBuilder builder = new StringBuilder(item.getItem().getRegistryName() + "|" + item.getItemDamage());
+			builder.append(",weight=").append(getWeight(item));
+			return builder.toString();
+		});
 		ModelRegistryHelper.register(invLocation, new CCBakeryModel());
 	}
 
@@ -591,6 +608,14 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	private void addRecipes() {
 
 		// TODO
+	}
+
+	public static byte getWeight(ItemStack stack) {
+
+		if(!stack.hasTagCompound()) {
+			return 0;
+		}
+		return stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);
 	}
 
 	public float getSize(IBlockState state) {
