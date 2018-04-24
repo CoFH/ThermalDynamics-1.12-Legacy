@@ -144,6 +144,7 @@ public class ItemServo extends ItemAttachment {
 	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("servo"));
+		ThermalDynamics.proxy.addIModelRegister(this);
 
 		servoBasic = new ItemStack(this, 1, 0);
 		servoHardened = new ItemStack(this, 1, 1);
@@ -152,8 +153,6 @@ public class ItemServo extends ItemAttachment {
 		servoResonant = new ItemStack(this, 1, 4);
 
 		ServoBase.initialize();
-
-		ThermalDynamics.proxy.addIModelRegister(this);
 
 		return true;
 	}

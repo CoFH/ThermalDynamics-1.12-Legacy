@@ -127,14 +127,13 @@ public class ItemFilter extends ItemAttachment {
 	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("filter"));
+		ThermalDynamics.proxy.addIModelRegister(this);
 
 		filterBasic = new ItemStack(this, 1, 0);
 		filterHardened = new ItemStack(this, 1, 1);
 		filterReinforced = new ItemStack(this, 1, 2);
 		filterSignalum = new ItemStack(this, 1, 3);
 		filterResonant = new ItemStack(this, 1, 4);
-
-		ThermalDynamics.proxy.addIModelRegister(this);
 
 		return true;
 	}

@@ -47,7 +47,6 @@ public class ItemRelay extends ItemAttachment {
 	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("relay"));
-
 		ThermalDynamics.proxy.addIModelRegister(this);
 
 		return true;

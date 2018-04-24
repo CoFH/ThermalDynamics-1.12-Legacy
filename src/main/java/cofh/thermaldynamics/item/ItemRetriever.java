@@ -147,14 +147,13 @@ public class ItemRetriever extends ItemAttachment {
 	public boolean initialize() {
 
 		ForgeRegistries.ITEMS.register(setRegistryName("retriever"));
+		ThermalDynamics.proxy.addIModelRegister(this);
 
 		retrieverBasic = new ItemStack(this, 1, 0);
 		retrieverHardened = new ItemStack(this, 1, 1);
 		retrieverReinforced = new ItemStack(this, 1, 2);
 		retrieverSignalum = new ItemStack(this, 1, 3);
 		retrieverResonant = new ItemStack(this, 1, 4);
-
-		ThermalDynamics.proxy.addIModelRegister(this);
 
 		return true;
 	}
