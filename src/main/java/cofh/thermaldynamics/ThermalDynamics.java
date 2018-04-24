@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod (modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, updateJSON = ThermalDynamics.UPDATE_URL)
+@Mod (modid = ThermalDynamics.MOD_ID, name = ThermalDynamics.MOD_NAME, version = ThermalDynamics.VERSION, dependencies = ThermalDynamics.DEPENDENCIES, updateJSON = ThermalDynamics.UPDATE_URL, certificateFingerprint = "8a6abf2cb9e141b866580d369ba6548732eff25f")
 public class ThermalDynamics {
 
 	public static final String MOD_ID = "thermaldynamics";
