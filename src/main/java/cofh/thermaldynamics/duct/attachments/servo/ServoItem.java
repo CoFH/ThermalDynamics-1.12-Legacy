@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -72,7 +73,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 	}
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.SERVO_ITEM;
 	}

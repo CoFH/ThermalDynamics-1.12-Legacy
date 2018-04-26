@@ -42,6 +42,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -93,7 +94,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	}
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.RELAY;
 	}

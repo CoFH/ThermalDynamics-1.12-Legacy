@@ -9,6 +9,7 @@ import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -20,7 +21,7 @@ public class ServoFluid extends ServoBase {
 	public DuctUnitFluid fluidDuct;
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.SERVO_FLUID;
 	}

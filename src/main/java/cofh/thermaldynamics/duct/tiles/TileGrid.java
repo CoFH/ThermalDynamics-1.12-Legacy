@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -562,7 +563,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (attachmentData == null) {
 				attachmentData = new AttachmentData();
 			}
-			int id = tag.getInteger("id");
+			ResourceLocation id = new ResourceLocation(tag.getString("id"));
 			Attachment attachment = AttachmentRegistry.createAttachment(this, side, id);
 			attachmentData.attachments[side] = attachment;
 
@@ -579,7 +580,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (attachment != null) {
 					NBTTagCompound tag = new NBTTagCompound();
 					tag.setInteger("side", i);
-					tag.setInteger("id", (byte) attachment.getId());
+					tag.setString("id", attachment.getId().toString());
 					attachment.writeToNBT(tag);
 					list.appendTag(tag);
 				}
@@ -647,7 +648,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		payload.addByte(attachmentMask);
 		for (byte i = 0; i < 6; i++) {
 			if (attachmentData.attachments[i] != null) {
-				payload.addByte(attachmentData.attachments[i].getId());
+				payload.addString(attachmentData.attachments[i].getId().toString());
 				attachmentData.attachments[i].addDescriptionToPacket(payload);
 			}
 		}
@@ -686,7 +687,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (attachmentData == null) {
 					attachmentData = new AttachmentData();
 				}
-				int id = payload.getByte();
+				ResourceLocation id = new ResourceLocation(payload.getString());
 				attachmentData.attachments[i] = AttachmentRegistry.createAttachment(this, i, id);
 				attachmentData.attachments[i].getDescriptionFromPacket(payload);
 			} else if (attachmentData != null) {

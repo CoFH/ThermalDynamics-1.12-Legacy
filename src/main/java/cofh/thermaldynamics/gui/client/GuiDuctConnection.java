@@ -55,22 +55,15 @@ public class GuiDuctConnection extends GuiContainerCore {
 		container = (ContainerDuctConnection) inventorySlots;
 		name = conBase.getName();
 		this.ySize = 204;
-		this.isItemServo = conBase.getId() == AttachmentRegistry.SERVO_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM;
-		this.isAdvItemFilter = (conBase.getId() == AttachmentRegistry.FILTER_ITEM || conBase.getId() == AttachmentRegistry.RETRIEVER_ITEM) && conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
+		this.isItemServo = conBase.getId().equals(AttachmentRegistry.SERVO_ITEM) || conBase.getId().equals(AttachmentRegistry.RETRIEVER_ITEM);
+		this.isAdvItemFilter = (conBase.getId().equals(AttachmentRegistry.FILTER_ITEM) || conBase.getId().equals(AttachmentRegistry.RETRIEVER_ITEM)) && conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
 
-		switch (conBase.getId()) {
-			case AttachmentRegistry.SERVO_ITEM:
-				generateInfo("tab.thermaldynamics.servoItem");
-				break;
-			case AttachmentRegistry.FILTER_ITEM:
-				generateInfo("tab.thermaldynamics.filterItem");
-				break;
-			case AttachmentRegistry.RETRIEVER_ITEM:
-				generateInfo("tab.thermaldynamics.retrieverItem");
-				break;
-			default:
-				break;
-		}
+		if (conBase.getId().equals(AttachmentRegistry.SERVO_ITEM))
+			generateInfo("tab.thermaldynamics.servoItem");
+		else if (conBase.getId().equals(AttachmentRegistry.FILTER_ITEM))
+			generateInfo("tab.thermaldynamics.filterItem");
+		else if (conBase.getId().equals(AttachmentRegistry.RETRIEVER_ITEM))
+			generateInfo("tab.thermaldynamics.retrieverItem");
 	}
 
 	@Override

@@ -90,7 +90,7 @@ public class DuctUnitStructural extends DuctUnit<DuctUnitStructural, GridStructu
 		if (parent.attachmentData != null && grid != null) {
 			for (Attachment attachment : parent.attachmentData.attachments) {
 				if (attachment != null) {
-					if (attachment.getId() == AttachmentRegistry.RELAY) {
+					if (attachment.getId().equals(AttachmentRegistry.RELAY)) {
 						Relay signaller = (Relay) attachment;
 						if (signaller.isInput()) {
 							grid.addSignalInput(signaller);
