@@ -7,6 +7,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -39,6 +40,16 @@ public class RetrieverItem extends ServoItem {
 	public RetrieverItem(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
+	}
+
+	@Override
+	public boolean canSend() {
+		return false;
+	}
+
+	@Override
+	public String getInfo() {
+		return "tab.thermaldynamics.retrieverItem";
 	}
 
 	@Override
@@ -83,7 +94,8 @@ public class RetrieverItem extends ServoItem {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (baseTile.getAttachment(side) == null || !baseTile.getAttachment(side).getId().equals(AttachmentRegistry.RETRIEVER_ITEM))) {
+			Attachment attachment = baseTile.getAttachment(side);
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || !(attachment instanceof  ConnectionBase) || ((ConnectionBase) attachment).canSend())) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
@@ -103,7 +115,7 @@ public class RetrieverItem extends ServoItem {
 			int i = route.getLastSide();
 
 			Attachment attachment = endPoint.parent.getAttachment(i);
-			if (attachment != null && attachment.getId().equals(AttachmentRegistry.RETRIEVER_ITEM)) {
+			if (attachment != null && attachment instanceof ConnectionBase && !((ConnectionBase) attachment).canSend()) {
 				continue;
 			}
 

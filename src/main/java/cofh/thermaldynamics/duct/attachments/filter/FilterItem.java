@@ -21,6 +21,11 @@ public class FilterItem extends FilterBase {
 		super(tile, side);
 	}
 
+	@Override
+	public String getInfo() {
+		return "tab.thermaldynamics.filterItem";
+	}
+
 	IItemHandler inventory;
 
 	@Override

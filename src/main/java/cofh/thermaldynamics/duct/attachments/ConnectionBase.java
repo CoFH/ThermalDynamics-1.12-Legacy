@@ -67,6 +67,29 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 
 	public abstract FilterLogic createFilterLogic();
 
+	/**
+	 * Enables maximum stack size and item routing in the gui
+	 */
+	public abstract boolean isServo();
+
+	/**
+	 * Enables over-sending in the gui
+	 */
+	public abstract boolean isFilter();
+
+	/**
+	 * Whether or not retrievers can pull from the attached inventory
+	 */
+	public abstract boolean canSend();
+
+	/**
+	 * Adds an info tab in the gui
+	 */
+	@SideOnly(Side.CLIENT)
+	public String getInfo() {
+		return null;
+	}
+
 	@Override
 	public boolean isNode() {
 

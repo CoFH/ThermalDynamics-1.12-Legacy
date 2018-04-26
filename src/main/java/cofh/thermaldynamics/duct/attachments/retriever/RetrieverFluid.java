@@ -6,6 +6,7 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.FluidTankGrid;
@@ -35,6 +36,11 @@ public class RetrieverFluid extends ServoFluid {
 	public RetrieverFluid(TileGrid tile, byte side, int type) {
 
 		super(tile, side, type);
+	}
+
+	@Override
+	public boolean canSend() {
+		return false;
 	}
 
 	@Override
@@ -72,7 +78,7 @@ public class RetrieverFluid extends ServoFluid {
 				}
 
 				Attachment attachment = fluidDuct.parent.getAttachment(side);
-				if (attachment != null && attachment.getId().equals(this.getId())) {
+				if (attachment != null && attachment instanceof ConnectionBase && !((ConnectionBase) attachment).canSend()) {
 					continue;
 				}
 

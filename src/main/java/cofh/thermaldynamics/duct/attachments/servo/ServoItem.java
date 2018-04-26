@@ -63,6 +63,11 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		itemDuct = tile.getDuct(DuctToken.ITEMS);
 	}
 
+	@Override
+	public String getInfo() {
+		return "tab.thermaldynamics.servoItem";
+	}
+
 	public static Stream<Route<DuctUnitItem, GridItem>> getRoutesWithDestinations(Collection<Route<DuctUnitItem, GridItem>> outputRoutes) {
 
 		return outputRoutes.stream().flatMap(route -> IntStream.range(0, 6).filter(i -> route.endPoint.isOutput(i) && route.endPoint.getConnectionType((byte) i).allowTransfer && route.endPoint.tileCache[i] != null).mapToObj(i -> {
