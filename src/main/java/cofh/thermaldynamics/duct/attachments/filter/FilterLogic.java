@@ -4,7 +4,6 @@ import cofh.api.item.ISpecialFilterFluid;
 import cofh.api.item.ISpecialFilterItem;
 import cofh.core.util.helpers.FluidHelper;
 import cofh.core.util.helpers.ItemHelper;
-import cofh.core.util.oredict.OreDictionaryArbiter;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
@@ -16,10 +15,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import static cofh.thermaldynamics.duct.attachments.servo.ServoItem.maxSize;
 
@@ -129,11 +128,11 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 							modNames.add(item.getItem().getRegistryName().getResourceDomain());
 						}
 						if (!flags[flagIgnoreOreDictionary]) {
-							ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
+							List<Integer> allOreIDs = ItemHelper.oreProxy.getAllOreIDs(item);
 							if (allOreIDs != null) {
-								for (Integer integer : allOreIDs) {
-									if (!oreIds.contains(integer)) {
-										oreIds.add(integer);
+								for (Integer oreID : allOreIDs) {
+									if (!oreIds.contains(oreID)) {
+										oreIds.add(oreID);
 									}
 								}
 							}
@@ -208,10 +207,10 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 			}
 		}
 		if (!flags[flagIgnoreOreDictionary] && !oreIds.isEmpty()) {
-			ArrayList<Integer> allOreIDs = OreDictionaryArbiter.getAllOreIDs(item);
+			List<Integer> allOreIDs = ItemHelper.oreProxy.getAllOreIDs(item);
 			if (allOreIDs != null) {
-				for (Integer integer : allOreIDs) {
-					if (oreIds.contains(integer)) {
+				for (Integer oreID : allOreIDs) {
+					if (oreIds.contains(oreID)) {
 						return returnValue;
 					}
 				}
