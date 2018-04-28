@@ -1105,18 +1105,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		return null;
 	}
 
-	@Override
-	public int getType() {
-
-		return getDuctType().type;
-	}
-
-	@Override
-	public String getTileName() {
-
-		return getDuctType().unlocalizedName;
-	}
-
 	/* IEnergyHandler */
 	public int getEnergyStored(EnumFacing from) {
 
