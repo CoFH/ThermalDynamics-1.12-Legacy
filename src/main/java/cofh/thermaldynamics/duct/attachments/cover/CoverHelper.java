@@ -183,8 +183,12 @@ public class CoverHelper {
 
 	public static ItemStack getCoverStack(Block block, int meta) {
 
+		ResourceLocation blockString = ForgeRegistries.BLOCKS.getKey(block);
+		if (blockString == null) {
+			return ItemStack.EMPTY;
+		}
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("Block", ForgeRegistries.BLOCKS.getKey(block).toString());
+		tag.setString("Block", blockString.toString());
 		tag.setByte("Meta", ((byte) meta));
 
 		ItemStack itemStack = new ItemStack(TDItems.itemCover);
