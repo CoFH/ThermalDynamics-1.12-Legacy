@@ -7,6 +7,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
+import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -19,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,7 +43,17 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
-	public int getId() {
+	public boolean canSend() {
+		return false;
+	}
+
+	@Override
+	public String getInfo() {
+		return "tab.thermaldynamics.retrieverItem";
+	}
+
+	@Override
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.RETRIEVER_ITEM;
 	}
@@ -82,7 +94,8 @@ public class RetrieverItem extends ServoItem {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (baseTile.getAttachment(side) == null || baseTile.getAttachment(side).getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+			Attachment attachment = baseTile.getAttachment(side);
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || !(attachment instanceof  ConnectionBase) || ((ConnectionBase) attachment).canSend())) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
@@ -102,7 +115,7 @@ public class RetrieverItem extends ServoItem {
 			int i = route.getLastSide();
 
 			Attachment attachment = endPoint.parent.getAttachment(i);
-			if (attachment != null && attachment.getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+			if (attachment != null && attachment instanceof ConnectionBase && !((ConnectionBase) attachment).canSend()) {
 				continue;
 			}
 

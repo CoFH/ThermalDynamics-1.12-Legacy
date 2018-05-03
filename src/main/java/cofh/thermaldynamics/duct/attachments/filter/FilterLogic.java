@@ -420,7 +420,7 @@ public class FilterLogic implements IFilterItems, IFilterFluid, IFilterConfig {
 
 		public boolean appliesTo(FilterLogic base) {
 
-			return base.transferType == ductType && (base.connection.getId() != AttachmentRegistry.FILTER_FLUID || filter) && (base.connection.getId() != AttachmentRegistry.FILTER_ITEM || filter) && (base.connection.getId() != AttachmentRegistry.SERVO_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.SERVO_FLUID || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_ITEM || servo) && (base.connection.getId() != AttachmentRegistry.RETRIEVER_FLUID || servo);
+			return base.transferType == ductType && ((base.connection.isFilter() && filter) || (base.connection.isServo() && servo));
 		}
 	}
 

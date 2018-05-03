@@ -54,6 +54,21 @@ public abstract class ServoBase extends ConnectionBase {
 	}
 
 	@Override
+	public boolean isServo() {
+		return true;
+	}
+
+	@Override
+	public boolean isFilter() {
+		return false;
+	}
+
+	@Override
+	public boolean canSend() {
+		return true;
+	}
+
+	@Override
 	public String getName() {
 
 		return "item.thermaldynamics.servo." + type + ".name";

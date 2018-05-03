@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -562,11 +563,44 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (attachmentData == null) {
 				attachmentData = new AttachmentData();
 			}
-			int id = tag.getInteger("id");
-			Attachment attachment = AttachmentRegistry.createAttachment(this, side, id);
-			attachmentData.attachments[side] = attachment;
-
-			attachment.readFromNBT(tag);
+			Attachment attachment = null;
+			if (tag.hasKey("id", Constants.NBT.TAG_INT)) {
+				switch (tag.getInteger("id")) {
+					case 0:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.FACADE);
+						break;
+					case 1:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.SERVO_FLUID);
+						break;
+					case 2:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.SERVO_ITEM);
+						break;
+					case 3:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.FILTER_FLUID);
+						break;
+					case 4:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.FILTER_ITEM);
+						break;
+					case 5:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.RETRIEVER_FLUID);
+						break;
+					case 6:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.RETRIEVER_ITEM);
+						break;
+					case 7:
+						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.RELAY);
+						break;
+					default:
+						break;
+				}
+			} else {
+				ResourceLocation id = new ResourceLocation(tag.getString("id"));
+				attachment = AttachmentRegistry.createAttachment(this, side, id);
+			}
+			if (attachment != null) {
+				attachmentData.attachments[side] = attachment;
+				attachment.readFromNBT(tag);
+			}
 		}
 	}
 
@@ -579,7 +613,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (attachment != null) {
 					NBTTagCompound tag = new NBTTagCompound();
 					tag.setInteger("side", i);
-					tag.setInteger("id", (byte) attachment.getId());
+					tag.setString("id", attachment.getId().toString());
 					attachment.writeToNBT(tag);
 					list.appendTag(tag);
 				}
@@ -647,7 +681,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		payload.addByte(attachmentMask);
 		for (byte i = 0; i < 6; i++) {
 			if (attachmentData.attachments[i] != null) {
-				payload.addByte(attachmentData.attachments[i].getId());
+				payload.addString(attachmentData.attachments[i].getId().toString());
 				attachmentData.attachments[i].addDescriptionToPacket(payload);
 			}
 		}
@@ -686,7 +720,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (attachmentData == null) {
 					attachmentData = new AttachmentData();
 				}
-				int id = payload.getByte();
+				ResourceLocation id = new ResourceLocation(payload.getString());
 				attachmentData.attachments[i] = AttachmentRegistry.createAttachment(this, i, id);
 				attachmentData.attachments[i].getDescriptionFromPacket(payload);
 			} else if (attachmentData != null) {

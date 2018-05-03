@@ -18,6 +18,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -41,7 +42,7 @@ public abstract class Attachment {
 
 	public abstract String getName();
 
-	public abstract int getId();
+	public abstract ResourceLocation getId();
 
 	public abstract boolean isNode();
 

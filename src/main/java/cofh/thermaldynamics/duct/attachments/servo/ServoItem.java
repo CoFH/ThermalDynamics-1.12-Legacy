@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -62,6 +63,11 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		itemDuct = tile.getDuct(DuctToken.ITEMS);
 	}
 
+	@Override
+	public String getInfo() {
+		return "tab.thermaldynamics.servoItem";
+	}
+
 	public static Stream<Route<DuctUnitItem, GridItem>> getRoutesWithDestinations(Collection<Route<DuctUnitItem, GridItem>> outputRoutes) {
 
 		return outputRoutes.stream().flatMap(route -> IntStream.range(0, 6).filter(i -> route.endPoint.isOutput(i) && route.endPoint.getConnectionType((byte) i).allowTransfer && route.endPoint.tileCache[i] != null).mapToObj(i -> {
@@ -72,7 +78,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 	}
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.SERVO_ITEM;
 	}

@@ -5,6 +5,7 @@ import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -18,6 +19,11 @@ public class FilterItem extends FilterBase {
 	public FilterItem(TileGrid tile, byte side) {
 
 		super(tile, side);
+	}
+
+	@Override
+	public String getInfo() {
+		return "tab.thermaldynamics.filterItem";
 	}
 
 	IItemHandler inventory;
@@ -41,7 +47,7 @@ public class FilterItem extends FilterBase {
 	}
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.FILTER_ITEM;
 	}
