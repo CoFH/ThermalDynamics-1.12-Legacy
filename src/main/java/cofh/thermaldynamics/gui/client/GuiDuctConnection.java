@@ -5,7 +5,6 @@ import cofh.core.gui.element.ElementButton;
 import cofh.core.gui.element.tab.TabInfo;
 import cofh.core.gui.element.tab.TabRedstoneControl;
 import cofh.core.util.helpers.StringHelper;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.filter.FilterLogic;
 import cofh.thermaldynamics.gui.container.ContainerDuctConnection;
@@ -59,8 +58,9 @@ public class GuiDuctConnection extends GuiContainerCore {
 		this.isAdvItemFilter = conBase.allowDuctConnection() && conBase.filter.canAlterFlag(FilterLogic.levelRetainSize);
 
 		String info = conBase.getInfo();
-		if (info != null)
+		if (info != null) {
 			generateInfo(info);
+		}
 	}
 
 	@Override

@@ -23,6 +23,7 @@ public class FilterItem extends FilterBase {
 
 	@Override
 	public String getInfo() {
+
 		return "tab.thermaldynamics.filterItem";
 	}
 

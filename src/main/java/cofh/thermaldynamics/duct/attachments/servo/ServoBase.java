@@ -55,16 +55,19 @@ public abstract class ServoBase extends ConnectionBase {
 
 	@Override
 	public boolean isServo() {
+
 		return true;
 	}
 
 	@Override
 	public boolean isFilter() {
+
 		return false;
 	}
 
 	@Override
 	public boolean canSend() {
+
 		return true;
 	}
 

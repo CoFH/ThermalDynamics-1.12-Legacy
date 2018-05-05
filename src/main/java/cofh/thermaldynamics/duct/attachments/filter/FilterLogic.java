@@ -4,7 +4,6 @@ import cofh.api.item.ISpecialFilterFluid;
 import cofh.api.item.ISpecialFilterItem;
 import cofh.core.util.helpers.FluidHelper;
 import cofh.core.util.helpers.ItemHelper;
-import cofh.thermaldynamics.duct.AttachmentRegistry;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import gnu.trove.list.array.TIntArrayList;

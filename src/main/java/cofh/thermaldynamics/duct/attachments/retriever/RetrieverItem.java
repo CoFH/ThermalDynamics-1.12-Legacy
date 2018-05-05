@@ -44,11 +44,13 @@ public class RetrieverItem extends ServoItem {
 
 	@Override
 	public boolean canSend() {
+
 		return false;
 	}
 
 	@Override
 	public String getInfo() {
+
 		return "tab.thermaldynamics.retrieverItem";
 	}
 
@@ -95,7 +97,7 @@ public class RetrieverItem extends ServoItem {
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
 			Attachment attachment = baseTile.getAttachment(side);
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || !(attachment instanceof  ConnectionBase) || ((ConnectionBase) attachment).canSend())) {
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || !(attachment instanceof ConnectionBase) || ((ConnectionBase) attachment).canSend())) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}

@@ -65,6 +65,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 
 	@Override
 	public String getInfo() {
+
 		return "tab.thermaldynamics.servoItem";
 	}
 

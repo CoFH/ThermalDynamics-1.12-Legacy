@@ -85,8 +85,9 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	/**
 	 * Adds an info tab in the gui
 	 */
-	@SideOnly(Side.CLIENT)
+	@SideOnly (Side.CLIENT)
 	public String getInfo() {
+
 		return null;
 	}
 

@@ -565,34 +565,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 			Attachment attachment = null;
 			if (tag.hasKey("id", Constants.NBT.TAG_INT)) {
-				switch (tag.getInteger("id")) {
-					case 0:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.FACADE);
-						break;
-					case 1:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.SERVO_FLUID);
-						break;
-					case 2:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.SERVO_ITEM);
-						break;
-					case 3:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.FILTER_FLUID);
-						break;
-					case 4:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.FILTER_ITEM);
-						break;
-					case 5:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.RETRIEVER_FLUID);
-						break;
-					case 6:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.RETRIEVER_ITEM);
-						break;
-					case 7:
-						attachment = AttachmentRegistry.createAttachment(this, side, AttachmentRegistry.RELAY);
-						break;
-					default:
-						break;
-				}
+				attachment = AttachmentRegistry.convertLegacyAttachment(this, side, tag.getInteger("id"));
 			} else {
 				ResourceLocation id = new ResourceLocation(tag.getString("id"));
 				attachment = AttachmentRegistry.createAttachment(this, side, id);
