@@ -1048,7 +1048,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			stack = ductUnit.addNBTToItemStackDrop(stack);
 		}
-
 		return stack;
 	}
 

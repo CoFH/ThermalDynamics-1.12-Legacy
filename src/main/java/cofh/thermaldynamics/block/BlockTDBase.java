@@ -160,7 +160,7 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		}
 		ItemStack dropBlock = tile instanceof TileGrid ? ((TileGrid) tile).getDrop() : new ItemStack(this, 1, meta);
 
-		if (nbt != null) {
+		if (nbt != null && !nbt.hasNoTags()) {
 			dropBlock.setTagCompound(nbt);
 		}
 		ret.add(dropBlock);
@@ -181,9 +181,6 @@ public abstract class BlockTDBase extends BlockCoreTile {
 				}
 			}
 			ductBase.dropAdditional(ret);
-		}
-		if (nbt != null) {
-			dropBlock.setTagCompound(nbt);
 		}
 		if (!simulate) {
 			if (tile instanceof TileCore) {
