@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.block;
 
+import cofh.core.block.BlockCore;
 import cofh.core.block.ItemBlockCore;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.StringHelper;
@@ -9,7 +10,6 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
 import cofh.thermaldynamics.duct.tiles.TileDuctItem;
-import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 
 	int offset;
 
-	public ItemBlockDuct(Block block) {
+	public ItemBlockDuct(BlockCore block) {
 
 		super(block);
 		this.offset = ((BlockDuct) block).offset;
