@@ -2,6 +2,7 @@ package cofh.thermaldynamics.block;
 
 import cofh.core.block.BlockCoreTile;
 import cofh.core.block.TileCore;
+import cofh.core.init.CoreProps;
 import cofh.core.util.CoreUtils;
 import cofh.core.util.RayTracer;
 import cofh.core.util.helpers.ServerHelper;
@@ -160,8 +161,13 @@ public abstract class BlockTDBase extends BlockCoreTile {
 		}
 		ItemStack dropBlock = tile instanceof TileGrid ? ((TileGrid) tile).getDrop() : new ItemStack(this, 1, meta);
 
-		if (nbt != null && !nbt.hasNoTags()) {
-			dropBlock.setTagCompound(nbt);
+		if (nbt != null) {
+			if (nbt.hasKey(CoreProps.ENERGY)) {
+				nbt.removeTag(CoreProps.ENERGY);
+			}
+			if (!nbt.hasNoTags()) {
+				dropBlock.setTagCompound(nbt);
+			}
 		}
 		ret.add(dropBlock);
 
