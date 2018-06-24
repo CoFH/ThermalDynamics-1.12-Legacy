@@ -12,30 +12,25 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import team.chisel.ctm.api.IFacade;
 
 import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
 import static net.minecraft.util.EnumFacing.*;
 
 public class CoverBlockAccess implements IBlockAccess {
 
-	IBlockAccess world;
 
-	public static ThreadLocal<CoverBlockAccess> instances = ThreadLocal.withInitial(CoverBlockAccess::new);
+    public final IBlockAccess world;
+    public final BlockPos pos;
+    public final EnumFacing side;
+    public final IBlockState state;
 
-	public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
-
-		CoverBlockAccess instance = instances.get();
-		instance.world = world;
-		instance.pos = pos;
-		instance.side = side;
-		instance.state = state;
-		return instance;
-	}
-
-	public BlockPos pos;
-	public EnumFacing side;
-
-	IBlockState state;
+    public CoverBlockAccess(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
+        this.world = world;
+        this.pos = pos;
+        this.side = side;
+        this.state = state;
+    }
 
 	public enum Result {
 		ORIGINAL, AIR, BASE, BEDROCK, COVER
@@ -52,7 +47,8 @@ public class CoverBlockAccess implements IBlockAccess {
 		IBlockState worldState = world.getBlockState(pos);
 		Block worldBlock = worldState.getBlock();
 
-		if (worldBlock instanceof IBlockAppearance) {//TODO chisel's IFacade interface.
+		//This really isn't needed..
+		if (worldBlock instanceof IBlockAppearance) {
 			IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
 			if (blockAppearance.supportsVisualConnections()) {
 				return COVER;
