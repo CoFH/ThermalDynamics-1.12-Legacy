@@ -1,0 +1,188 @@
+#en_US
+
+
+
+
+
+info.thermaldynamics.capacitance=Pojemność
+
+info.thermaldynamics.duct.cover=Połącz z blokiem, aby stworzyć osłonę.
+info.thermaldynamics.duct.crafting=Wytwarzanie przedmiotu.
+info.thermaldynamics.duct.dense=Drastycznie zwiększa drogę.
+info.thermaldynamics.duct.energy=Przewodzi Redstone Flux (RF).
+info.thermaldynamics.duct.fluid=Transportuje ciecze.
+info.thermaldynamics.duct.fluidEnergy=Transportuje ciecze i przewodzi Redstone Flux (RF).
+info.thermaldynamics.duct.item=Transportuje przedmioty.
+info.thermaldynamics.duct.itemEnergy=Transportuje przedmioty i przewodzi Redstone Flux (RF).
+info.thermaldynamics.duct.light=Emituje światło, kiedy aktywny jest sygnał redstone.
+info.thermaldynamics.duct.structure=Zapewnie strukturę.
+info.thermaldynamics.duct.transport=Transportuje graczy. Siuuu.
+info.thermaldynamics.duct.transportCrossover=Punkt końcowy dla Wiaduktów Dalekiego Zasięgu. Wymagany.
+info.thermaldynamics.duct.transportLongRange=Szybki transport pomiędzy dwoma punktami.
+info.thermaldynamics.duct.vacuum=Drastycznie zmniejsza drogę.
+
+info.thermaldynamics.filter.antiSpam.0=Zezwól na nadmiarowe wysyłanie.
+info.thermaldynamics.filter.antiSpam.1=Nie zezwalaj na nadmiarowe wysyłanie.
+info.thermaldynamics.filter.decRetainSize=Zmniejsz maks. liczbę przedmiotów w ekwipunku
+info.thermaldynamics.filter.incRetainSize=Zwiększ maks. liczbę przedmiotów w ekwipunku
+info.thermaldynamics.filter.metadata.off=Używaj Metadaty
+info.thermaldynamics.filter.metadata.on=Ignoruj Metadatę
+info.thermaldynamics.filter.metadata=Metadata
+info.thermaldynamics.filter.modSorting.off=Bierz pod uwagę autora modyfikacji
+info.thermaldynamics.filter.modSorting.on=Nie bierz pod uwagę autora modyfikacji
+info.thermaldynamics.filter.modSorting=Autor modyfikacji
+info.thermaldynamics.filter.nbt.off=Używaj NBT
+info.thermaldynamics.filter.nbt.on=Ignoruj NBT
+info.thermaldynamics.filter.nbt=NBT
+info.thermaldynamics.filter.options=Opcje filtrowania
+info.thermaldynamics.filter.oreDict.off=Używaj Ore Dictionary
+info.thermaldynamics.filter.oreDict.on=Ignoruj Ore Dictionary
+info.thermaldynamics.filter.oreDict=Ore Dictionary
+info.thermaldynamics.filter.routeType.0=Od najbliższego
+info.thermaldynamics.filter.routeType.1=Od najdalszego
+info.thermaldynamics.filter.routeType.2=Losowo
+info.thermaldynamics.filter.routeType.3=Okrężnie
+info.thermaldynamics.filter.whiteList.off=Biała lista
+info.thermaldynamics.filter.whiteList.on=Czarna lista
+info.thermaldynamics.filter.whiteList=Czarna lista
+info.thermaldynamics.filter.zeroRetainSize=Bez limitu
+
+info.thermaldynamics.info.attachment=-Załączone informacje-
+info.thermaldynamics.info.duct=-Informacje o rurze-
+info.thermaldynamics.info.energy=RF
+info.thermaldynamics.info.fluid=Ciecz
+info.thermaldynamics.info.fluidThroughput=Maksymalna przepustowość
+info.thermaldynamics.info.invalid=Niewłaściwe
+info.thermaldynamics.info.invalidCover=Umieść w polu wytwarzania, aby stworzayć Kamienną osłonę.
+info.thermaldynamics.info.items=Przedmioty
+info.thermaldynamics.info.redstone=Redstone
+info.thermaldynamics.info.size=Rozmiar
+info.thermaldynamics.info.tracker.activate=Rozpoczęcie śledznia
+info.thermaldynamics.info.tracker.avg=5 sek. śr. poziom
+info.thermaldynamics.info.tracker.avgInOut=5 sek. śr. wejście/wyjście
+info.thermaldynamics.info.tracker.cur=Obecny poziom
+
+info.thermaldynamics.relay.color.0=Czerwony
+info.thermaldynamics.relay.color.1=Zielny
+info.thermaldynamics.relay.color.2=Brązowy
+info.thermaldynamics.relay.color.3=Niebieski
+info.thermaldynamics.relay.color.4=Fioletowy
+info.thermaldynamics.relay.color.5=Błękitny
+info.thermaldynamics.relay.color.6=Jasnoszary
+info.thermaldynamics.relay.color.7=Szary
+info.thermaldynamics.relay.color.8=Różowy
+info.thermaldynamics.relay.color.9=Limonkowy
+info.thermaldynamics.relay.color.10=Żółty
+info.thermaldynamics.relay.color.11=Jasnoniebieski
+info.thermaldynamics.relay.color.12=Karmazynowy
+info.thermaldynamics.relay.color.13=Pomarańczowy
+info.thermaldynamics.relay.color.14=Biały
+info.thermaldynamics.relay.color.15=Czarny
+info.thermaldynamics.relay.gridRS=Moc rury
+info.thermaldynamics.relay.invert.0=Skalowany
+info.thermaldynamics.relay.invert.1=Odwrotnie skalowany
+info.thermaldynamics.relay.invert.2=Próg
+info.thermaldynamics.relay.invert.3=Odwrotny próg
+info.thermaldynamics.relay.relayRS=Moc przekaźnika
+info.thermaldynamics.relay.threshold=Próg >=
+info.thermaldynamics.relay.type.0=Wejśćie syganłu redstone
+info.thermaldynamics.relay.type.1=Wyjście sygnału redstone
+info.thermaldynamics.relay.type.2=Wejście komparatora
+
+info.thermaldynamics.servo.decStackSize=Zmniejsz ilość wyciąganych przedmiotów
+info.thermaldynamics.servo.extractRate=Szybkość wyciągania
+info.thermaldynamics.servo.incStackSize=Zwiększ ilość wyciąganych przedmiotów
+info.thermaldynamics.servo.maxStackSize=Maksymalna ilość przedmiotów
+info.thermaldynamics.servo.redstoneExt=Wymaga sygnału redstone
+info.thermaldynamics.servo.redstoneInt=Wewnętrzna kontrola sygnału redstone
+info.thermaldynamics.servo.slotMulti=Wyciągaj z kilku slotów.
+info.thermaldynamics.servo.slotSingle=Wyciągaj z jednego slotu.
+info.thermaldynamics.servo.speedBoost=Zwiększnie szybkości
+
+info.thermaldynamics.toggle=Kliknij PPM, aby zmienić tryb.
+
+info.thermaldynamics.transfer=Transfer
+info.thermaldynamics.transferConnection=Transfer jest zależny od ilości połączeń.
+info.thermaldynamics.transferFluid=Szybkość transferu zależy od cieczy.
+
+item.thermaldynamics.cover.name=%s jako osłona.
+
+item.thermaldynamics.filter.0.name=Filtr
+item.thermaldynamics.filter.1.name=Utwardzony filtr
+item.thermaldynamics.filter.2.name=Wzmocniony filtr
+item.thermaldynamics.filter.3.name=Signalumowy filtr
+item.thermaldynamics.filter.4.name=Rezonujący filtr
+item.thermaldynamics.filter.info=Ogranicza co może się przez niego przedostać.
+
+item.thermaldynamics.relay.info=Transmituje sygnał redstone.
+item.thermaldynamics.relay.name=Przekaźnik redstone
+
+item.thermaldynamics.retriever.0.name=Otrzymywacz
+item.thermaldynamics.retriever.1.name=Utwardzony Otrzymywacz
+item.thermaldynamics.retriever.2.name=Wzmocniony Otrzymywacz
+item.thermaldynamics.retriever.3.name=Signalumowy Otrzymywacz
+item.thermaldynamics.retriever.4.name=Rezonujący Otrzymywacz
+item.thermaldynamics.retriever.info=Przyciąga odległe przedmioty/ciecze do siebie.
+
+item.thermaldynamics.servo.0.name=Serwo
+item.thermaldynamics.servo.1.name=Utwardzone Serwo
+item.thermaldynamics.servo.2.name=Wzmocnione Serwo
+item.thermaldynamics.servo.3.name=Signalumowe Serwo
+item.thermaldynamics.servo.4.name=Rezonujące Serwo
+item.thermaldynamics.servo.info=Wyciąga przedmioty/ciecze z czegoś.
+
+itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+itemGroup.thermaldynamics.creativeTabCovers=Thermal Dynamics: Osłony
+
+recipe.thermaldynamics.covers=Wytwarzanie osłon
+
+tab.thermaldynamics.conChange=Przytrzymaj Shift i użyj dowolnego przycisku myszy, aby dostosować wielkości.
+tab.thermaldynamics.filterItem.0=Kontroluje jakie przedmioty są dozwolone w dołączonym ekwipunku.
+tab.thermaldynamics.retrieverItem.0=Przyciąga przedmioty do dołączonego ekwipunku z innych ekwipunków w sieci.
+tab.thermaldynamics.retrieverItem.1=Użyj opcji filtra, aby dostować jakie przedmioty są przyciągane.
+tab.thermaldynamics.servoItem.0=Wyciąga przedmioty z dołączonego ekwipunku.
+tab.thermaldynamics.servoItem.1=Użyj opcji filtra, aby dostować jakie przedmioty są wyciągane.
+
+tile.thermaldynamics.duct.dense.name=Zwarta %s
+
+tile.thermaldynamics.duct.energyBasic.name=Ołowiana rura energetyczna
+tile.thermaldynamics.duct.energyHardened.name=Utwardzona rura energetyczna
+tile.thermaldynamics.duct.energyReinforced.name=Redstone'owa rura energetyczna
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Redstone'owa rura energetyczna (Pusta)
+tile.thermaldynamics.duct.energyResonant.name=Rezonująca rura energetyczna
+tile.thermaldynamics.duct.energyResonantEmpty.name=Rezonująca rura energetyczna (Pusta)
+tile.thermaldynamics.duct.energySignalum.name=Signalumowa rura energetyczna
+tile.thermaldynamics.duct.energySignalumEmpty.name=Signalumowa rura energetyczna (Pusta)
+tile.thermaldynamics.duct.energySuper.info=Nie posiada granicy przewodzenia.
+tile.thermaldynamics.duct.energySuper.name=Krio-Stabilizowana rura energetyczna
+tile.thermaldynamics.duct.energySuperEmpty.name=Krio-Stabilizowana rura energetyczna (Pusta)
+
+tile.thermaldynamics.duct.fluidBasic.info=Pęknie, jeśli ciecz jest ekstremalnie gorąca lub zimna.
+tile.thermaldynamics.duct.fluidBasic.name=Rura
+tile.thermaldynamics.duct.fluidEnergy.name=Rura pokryta signalum
+tile.thermaldynamics.duct.fluidHardened.info=Ciecz może mieć dowolną temperaturę.
+tile.thermaldynamics.duct.fluidHardened.name=Utwardzona rura
+tile.thermaldynamics.duct.fluidSuper.info=Niekończona szybkość przesyłu, kiedy jest pod ciśnieniem.
+tile.thermaldynamics.duct.fluidSuper.name=Superlaminarna rura
+
+tile.thermaldynamics.duct.itemBasic.name=Rura transportowa
+tile.thermaldynamics.duct.itemEnder.name=Warpowa rura transportowa
+tile.thermaldynamics.duct.itemEnergy.name=Rura transportowa pokryta signalum
+tile.thermaldynamics.duct.itemEnergyFast.name=Impulsowa rura transportowa pokryta signalum
+tile.thermaldynamics.duct.itemFast.info=Przedmioty poruszają się szybciej.
+tile.thermaldynamics.duct.itemFast.name=Impulsowa rura transportowa
+
+tile.thermaldynamics.duct.opaque.name=%s (Matowa)
+
+tile.thermaldynamics.duct.structure.info=Zapewnia strukturę.
+tile.thermaldynamics.duct.structure.opaque.name=Wspornik
+tile.thermaldynamics.duct.structureLight.name=Światłowód
+
+tile.thermaldynamics.duct.transportBasic.name=Wiadukt
+tile.thermaldynamics.duct.transportFrame.name=Wiadukt (Rama)
+tile.thermaldynamics.duct.transportLinking.name=Łącznik wiaduktów
+tile.thermaldynamics.duct.transportLongRange.name=Wiadukt Dalekiego Zasięgu
+
+tile.thermaldynamics.duct.vacuum.name=Próżniowa %s
+
+tile.thermaldynamics.duct=Rura
