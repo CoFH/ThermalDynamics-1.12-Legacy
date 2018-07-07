@@ -1,7 +1,7 @@
 #ja_JP
 
 gui.thermaldynamics.transport.config=設定
-gui.thermaldynamics.transport.name=輸送ダクトネットワーク
+gui.thermaldynamics.transport.name=ヴィアダクトネットワーク
 gui.thermaldynamics.transport.noDest=目的地なし
 gui.thermaldynamics.transport.unnamed=名前なし
 gui.thermaldynamics.transport.waiting=情報取得中
@@ -180,10 +180,10 @@ tile.thermaldynamics.duct.structure.info=装飾用です。
 tile.thermaldynamics.duct.structure.opaque.name=構造用管材
 tile.thermaldynamics.duct.structureLight.name=発光管
 
-tile.thermaldynamics.duct.transportBasic.name=輸送ダクト
-tile.thermaldynamics.duct.transportFrame.name=輸送ダクト(未処理)
-tile.thermaldynamics.duct.transportLinking.name=長距離接続輸送ダクト
-tile.thermaldynamics.duct.transportLongRange.name=長距離輸送ダクト
+tile.thermaldynamics.duct.transportBasic.name=ヴィアダクト
+tile.thermaldynamics.duct.transportFrame.name=ヴィアダクト (未処理)
+tile.thermaldynamics.duct.transportLinking.name=長距離接続ヴィアダクト
+tile.thermaldynamics.duct.transportLongRange.name=長距離ヴィアダクト
 
 tile.thermaldynamics.duct.vacuum.name=減圧%s
 
