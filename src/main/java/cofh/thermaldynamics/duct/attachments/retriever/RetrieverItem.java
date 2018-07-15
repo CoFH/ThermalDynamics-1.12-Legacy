@@ -97,7 +97,7 @@ public class RetrieverItem extends ServoItem {
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
 			Attachment attachment = baseTile.getAttachment(side);
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || !(attachment instanceof ConnectionBase) || ((ConnectionBase) attachment).canSend())) {
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null  || attachment.canSend())) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
@@ -117,7 +117,7 @@ public class RetrieverItem extends ServoItem {
 			int i = route.getLastSide();
 
 			Attachment attachment = endPoint.parent.getAttachment(i);
-			if (attachment != null && attachment instanceof ConnectionBase && !((ConnectionBase) attachment).canSend()) {
+			if (attachment != null && !attachment.canSend()) {
 				continue;
 			}
 

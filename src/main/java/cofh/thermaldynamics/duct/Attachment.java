@@ -51,6 +51,11 @@ public abstract class Attachment {
 
 	public abstract Cuboid6 getCuboid();
 
+	/**
+	 * Whether or not retrievers can pull from the attached inventory
+	 */
+	public abstract boolean canSend();
+
 	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
 
 		Cuboid6 cuboid6 = getCuboid().add(baseTile.getPos());

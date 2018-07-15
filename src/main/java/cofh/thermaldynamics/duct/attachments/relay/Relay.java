@@ -105,6 +105,11 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 		return TileGrid.subSelection[side].copy();
 	}
 
+	@Override
+	public boolean canSend() {
+		return true;
+	}
+
 	@Nonnull
 	@Override
 	public BlockDuct.ConnectionType getNeighborType() {

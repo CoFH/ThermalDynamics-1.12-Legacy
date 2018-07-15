@@ -79,6 +79,11 @@ public class Cover extends Attachment {
 	}
 
 	@Override
+	public boolean canSend() {
+		return false;
+	}
+
+	@Override
 	public boolean onWrenched() {
 
 		baseTile.removeCover(side);

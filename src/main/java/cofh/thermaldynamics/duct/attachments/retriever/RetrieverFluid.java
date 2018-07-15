@@ -79,7 +79,7 @@ public class RetrieverFluid extends ServoFluid {
 				}
 
 				Attachment attachment = fluidDuct.parent.getAttachment(side);
-				if (attachment != null && attachment instanceof ConnectionBase && !((ConnectionBase) attachment).canSend()) {
+				if (attachment != null && !attachment.canSend()) {
 					continue;
 				}
 
