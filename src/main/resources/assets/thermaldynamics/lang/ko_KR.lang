@@ -112,7 +112,7 @@ item.thermaldynamics.cover.name=%s 덮개
 item.thermaldynamics.filter.0.name=필터
 item.thermaldynamics.filter.1.name=경화 필터
 item.thermaldynamics.filter.2.name=강화 필터
-item.thermaldynamics.filter.3.name=시그날룸 필터
+item.thermaldynamics.filter.3.name=시그날륨 필터
 item.thermaldynamics.filter.4.name=공진 필터
 item.thermaldynamics.filter.info=덕트의 운송제한을 설정합니다.
 
@@ -129,7 +129,7 @@ item.thermaldynamics.retriever.info=연결된 곳에서 아이템 또는 액체�
 item.thermaldynamics.servo.0.name=서보
 item.thermaldynamics.servo.1.name=경화 서보
 item.thermaldynamics.servo.2.name=강화 서보
-item.thermaldynamics.servo.3.name=시그날룸 서보
+item.thermaldynamics.servo.3.name=시그날륨 서보
 item.thermaldynamics.servo.4.name=공진 서보
 item.thermaldynamics.servo.info=아이템 또는 액체를 추출합니다.
 
