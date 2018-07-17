@@ -46,7 +46,7 @@ info.thermaldynamics.filter.routeType.2=무작위
 info.thermaldynamics.filter.routeType.3=균등 분배
 info.thermaldynamics.filter.whiteList.off=허용 항목
 info.thermaldynamics.filter.whiteList.on=금지 항목
-info.thermaldynamics.filter.whiteList=금지 항목
+info.thermaldynamics.filter.whiteList=허용 항목
 info.thermaldynamics.filter.zeroRetainSize=무제한
 
 info.thermaldynamics.info.attachment=-첨부 정보-
@@ -122,7 +122,7 @@ item.thermaldynamics.relay.name=레드스톤 전달기
 item.thermaldynamics.retriever.0.name=리트리버
 item.thermaldynamics.retriever.1.name=경화 리트리버
 item.thermaldynamics.retriever.2.name=강화 리트리버
-item.thermaldynamics.retriever.3.name=시그날룸 리트리버
+item.thermaldynamics.retriever.3.name=시그날륨 리트리버
 item.thermaldynamics.retriever.4.name=공진 리트리버
 item.thermaldynamics.retriever.info=연결된 곳에서 아이템 또는 액체를 가져옵니다.
 
@@ -153,7 +153,7 @@ tile.thermaldynamics.duct.energyReinforced.name=레드스톤 플럭스덕트
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=빈 레드스톤 플럭스덕트
 tile.thermaldynamics.duct.energyResonant.name=공진 플럭스덕트
 tile.thermaldynamics.duct.energyResonantEmpty.name=빈 공진 플럭스덕트
-tile.thermaldynamics.duct.energySignalum.name=시그날룸 플럭스덕트
+tile.thermaldynamics.duct.energySignalum.name=시그날륨 플럭스덕트
 tile.thermaldynamics.duct.energySignalumEmpty.name=빈 시그날룸 플럭스덕트
 tile.thermaldynamics.duct.energySuper.info=여유 운송량이 없습니다.
 tile.thermaldynamics.duct.energySuper.name=초냉각 플럭스덕트
