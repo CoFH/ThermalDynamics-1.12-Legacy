@@ -1,10 +1,10 @@
 #ko_KR
 
-gui.thermaldynamics.transport.config=Config
-gui.thermaldynamics.transport.name=Transport Duct
-gui.thermaldynamics.transport.nodest=No destinations
-gui.thermaldynamics.transport.unnamed=Unnamed
-gui.thermaldynamics.transport.waiting=Waiting for Info
+gui.thermaldynamics.transport.config=환경 설정
+gui.thermaldynamics.transport.name=운송 덕트
+gui.thermaldynamics.transport.nodest=도착지 없음
+gui.thermaldynamics.transport.unnamed=무명
+gui.thermaldynamics.transport.waiting=주의 사항
 
 info.thermaldynamics.capacitance=용량
 
@@ -49,29 +49,29 @@ info.thermaldynamics.filter.whiteList.on=금지 항목
 info.thermaldynamics.filter.whiteList=금지 항목
 info.thermaldynamics.filter.zeroRetainSize=무제한
 
-info.thermaldynamics.info.attachment=-Attachment Info-
-info.thermaldynamics.info.duct=-Duct Info-
+info.thermaldynamics.info.attachment=-첨부 정보-
+info.thermaldynamics.info.duct=-덕트 정보-
 info.thermaldynamics.info.energy=RF
-info.thermaldynamics.info.fluid=Fluid
-info.thermaldynamics.info.fluidThroughput=Max Fluid Throughput
-info.thermaldynamics.info.items=Items
-info.thermaldynamics.info.redstone=Redstone
-info.thermaldynamics.info.size=Size
-info.thermaldynamics.info.tracker.activate=Starting tracking
-info.thermaldynamics.info.tracker.avg=5 Sec. Avg. Level
-info.thermaldynamics.info.tracker.avgInOut=5 Sec. Avg. In/Out
-info.thermaldynamics.info.tracker.cur=Current Level
+info.thermaldynamics.info.fluid=액체
+info.thermaldynamics.info.fluidThroughput=최대 액체 처리량
+info.thermaldynamics.info.items=아이템
+info.thermaldynamics.info.redstone=레드스톤
+info.thermaldynamics.info.size=규모
+info.thermaldynamics.info.tracker.activate=추적 시작
+info.thermaldynamics.info.tracker.avg=5 초. 평군. 레벨
+info.thermaldynamics.info.tracker.avgInOut=5 초. 평균. In/Out
+info.thermaldynamics.info.tracker.cur=현재 레벨
 
-info.thermaldynamics.relay.gridRS=Duct Power
-info.thermaldynamics.relay.invert.0=Scaled
-info.thermaldynamics.relay.invert.1=Inverted Scaled
-info.thermaldynamics.relay.invert.2=Threshold
-info.thermaldynamics.relay.invert.3=Inverted Threshold
-info.thermaldynamics.relay.relayRS=Relay Power
-info.thermaldynamics.relay.threshold=Threshold >=
-info.thermaldynamics.relay.type.0=Redstone Input
-info.thermaldynamics.relay.type.1=Redstone Output
-info.thermaldynamics.relay.type.2=Comparator Input
+info.thermaldynamics.relay.gridRS=덕트력
+info.thermaldynamics.relay.invert.0=축적
+info.thermaldynamics.relay.invert.1=역축적
+info.thermaldynamics.relay.invert.2=한계
+info.thermaldynamics.relay.invert.3=역한계
+info.thermaldynamics.relay.relayRS=중계력
+info.thermaldynamics.relay.threshold=한계 >=
+info.thermaldynamics.relay.type.0=레드스톤 입력
+info.thermaldynamics.relay.type.1=레드스톤 출력
+info.thermaldynamics.relay.type.2=비교기 입력
 
 info.thermaldynamics.servo.decStackSize=중첩 갯수 감소
 info.thermaldynamics.servo.extractRate=추출 비율
@@ -116,7 +116,7 @@ item.thermaldynamics.servo.4.name=공진 서보
 item.thermaldynamics.servo.info=아이템 또는 액체를 추출합니다.
 
 itemGroup.thermaldynamics.creativeTab=써멀 다이나믹스
-itemGroup.thermaldynamics.creativeTabCovers=써멀 다이나믹스: 덮개
+itemGroup.thermaldynamics.creativeTabCovers=써멀 다이나믹스(덮개)
 
 recipe.thermaldynamics.covers=덮개 제작에 사용됩니다.
 
@@ -162,10 +162,10 @@ tile.thermaldynamics.duct.structure.info=건축에 사용됩니다.
 tile.thermaldynamics.duct.structure.opaque.name=구조용 덕트
 tile.thermaldynamics.duct.structureLight.name=조명 덕트
 
-tile.thermaldynamics.duct.transportBasic.name=Transport Duct
-tile.thermaldynamics.duct.transportFrame.name=Transport Duct (Untreated)
-tile.thermaldynamics.duct.transportLinking.name=Accelerating Transport Duct
-tile.thermaldynamics.duct.transportLongRange.name=Ranged Transport Duct
+tile.thermaldynamics.duct.transportBasic.name=운송 덕트
+tile.thermaldynamics.duct.transportFrame.name=운송 덕트 (미처리)
+tile.thermaldynamics.duct.transportLinking.name=가속 운송 덕트
+tile.thermaldynamics.duct.transportLongRange.name=범위 운송 덕트
 
 tile.thermaldynamics.duct.vacuum.name=단축 %s
 
