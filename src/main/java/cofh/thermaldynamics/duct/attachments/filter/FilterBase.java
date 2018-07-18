@@ -64,7 +64,7 @@ public abstract class FilterBase extends ConnectionBase {
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 

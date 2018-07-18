@@ -134,7 +134,7 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 

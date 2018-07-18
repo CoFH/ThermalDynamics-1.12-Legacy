@@ -121,7 +121,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 
