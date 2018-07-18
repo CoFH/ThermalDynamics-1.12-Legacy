@@ -78,11 +78,6 @@ public abstract class ConnectionBase extends Attachment implements IStuffable, I
 	public abstract boolean isFilter();
 
 	/**
-	 * Whether or not retrievers can pull from the attached inventory
-	 */
-	public abstract boolean canSend();
-
-	/**
 	 * Adds an info tab in the gui
 	 */
 	@SideOnly (Side.CLIENT)
