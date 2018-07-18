@@ -1,10 +1,10 @@
 #ko_KR
 
-gui.thermaldynamics.transport.config=Config
-gui.thermaldynamics.transport.name=Transport Duct
-gui.thermaldynamics.transport.nodest=No destinations
-gui.thermaldynamics.transport.unnamed=Unnamed
-gui.thermaldynamics.transport.waiting=Waiting for Info
+gui.thermaldynamics.transport.config=환경 설정
+gui.thermaldynamics.transport.name=운송 덕트
+gui.thermaldynamics.transport.noDest=도착지 없음
+gui.thermaldynamics.transport.unnamed=무명
+gui.thermaldynamics.transport.waiting=주의 사항
 
 info.thermaldynamics.capacitance=용량
 
@@ -13,15 +13,15 @@ info.thermaldynamics.duct.crafting=조합용 재료입니다.
 info.thermaldynamics.duct.dense=일반 덕트보다 우선 순위가 낮습니다.
 info.thermaldynamics.duct.energy=RF를 운송합니다.
 info.thermaldynamics.duct.fluid=액체를 운송합니다.
+info.thermaldynamics.duct.fluidEnergy=액체와 RF를 운송합니다.
 info.thermaldynamics.duct.item=아이템을 운송합니다.
+info.thermaldynamics.duct.itemEnergy=아이템과 RF를 운송합니다.
 info.thermaldynamics.duct.light=레드스톤 신호를 받으면 빛이 납니다.
 info.thermaldynamics.duct.structure=건축에 사용됩니다.
+info.thermaldynamics.duct.transport=플레이어를 운송합니다.
+info.thermaldynamics.duct.transportCrossover=장범위 운송 덕트의 끝점을 요구합니다.
+info.thermaldynamics.duct.transportLongRange=두 특정 장소 사이를 빠르게 운송합니다.
 info.thermaldynamics.duct.vacuum=일반 덕트보다 우선 순위가 높습니다.
-
-
-
-
-
 
 info.thermaldynamics.filter.antiSpam.0=초과 운송 허용
 info.thermaldynamics.filter.antiSpam.1=초과 운송 금지
@@ -46,32 +46,50 @@ info.thermaldynamics.filter.routeType.2=무작위
 info.thermaldynamics.filter.routeType.3=균등 분배
 info.thermaldynamics.filter.whiteList.off=허용 항목
 info.thermaldynamics.filter.whiteList.on=금지 항목
-info.thermaldynamics.filter.whiteList=금지 항목
+info.thermaldynamics.filter.whiteList=허용 항목
 info.thermaldynamics.filter.zeroRetainSize=무제한
 
-info.thermaldynamics.info.attachment=-Attachment Info-
-info.thermaldynamics.info.duct=-Duct Info-
+info.thermaldynamics.info.attachment=-첨부 정보-
+info.thermaldynamics.info.duct=-덕트 정보-
 info.thermaldynamics.info.energy=RF
-info.thermaldynamics.info.fluid=Fluid
-info.thermaldynamics.info.fluidThroughput=Max Fluid Throughput
-info.thermaldynamics.info.items=Items
-info.thermaldynamics.info.redstone=Redstone
-info.thermaldynamics.info.size=Size
-info.thermaldynamics.info.tracker.activate=Starting tracking
-info.thermaldynamics.info.tracker.avg=5 Sec. Avg. Level
-info.thermaldynamics.info.tracker.avgInOut=5 Sec. Avg. In/Out
-info.thermaldynamics.info.tracker.cur=Current Level
+info.thermaldynamics.info.fluid=액체
+info.thermaldynamics.info.fluidThroughput=최대 액체 처리량
+info.thermaldynamics.info.invalid=무효
+info.thermaldynamics.info.invalidCover=돌 덮개로 변환하도록 조합대를 설치합니다.
+info.thermaldynamics.info.items=아이템
+info.thermaldynamics.info.redstone=레드스톤
+info.thermaldynamics.info.size=규모
+info.thermaldynamics.info.tracker.activate=추적 시작
+info.thermaldynamics.info.tracker.avg=5 초. 평군. 레벨
+info.thermaldynamics.info.tracker.avgInOut=5 초. 평균. In/Out
+info.thermaldynamics.info.tracker.cur=현재 레벨
 
-info.thermaldynamics.relay.gridRS=Duct Power
-info.thermaldynamics.relay.invert.0=Scaled
-info.thermaldynamics.relay.invert.1=Inverted Scaled
-info.thermaldynamics.relay.invert.2=Threshold
-info.thermaldynamics.relay.invert.3=Inverted Threshold
-info.thermaldynamics.relay.relayRS=Relay Power
-info.thermaldynamics.relay.threshold=Threshold >=
-info.thermaldynamics.relay.type.0=Redstone Input
-info.thermaldynamics.relay.type.1=Redstone Output
-info.thermaldynamics.relay.type.2=Comparator Input
+info.thermaldynamics.relay.color.0=빨간색
+info.thermaldynamics.relay.color.1=초록색
+info.thermaldynamics.relay.color.2=갈색
+info.thermaldynamics.relay.color.3=파란색
+info.thermaldynamics.relay.color.4=보라색
+info.thermaldynamics.relay.color.5=청록색
+info.thermaldynamics.relay.color.6=밝은 회색
+info.thermaldynamics.relay.color.7=회색
+info.thermaldynamics.relay.color.8=분홍색
+info.thermaldynamics.relay.color.9=연두색
+info.thermaldynamics.relay.color.10=노란색
+info.thermaldynamics.relay.color.11=하늘색
+info.thermaldynamics.relay.color.12=자홍색
+info.thermaldynamics.relay.color.13=주황색
+info.thermaldynamics.relay.color.14=흰색
+info.thermaldynamics.relay.color.15=검은색
+info.thermaldynamics.relay.gridRS=덕트력
+info.thermaldynamics.relay.invert.0=축적
+info.thermaldynamics.relay.invert.1=역축적
+info.thermaldynamics.relay.invert.2=한계
+info.thermaldynamics.relay.invert.3=역한계
+info.thermaldynamics.relay.relayRS=중계력
+info.thermaldynamics.relay.threshold=한계 >=
+info.thermaldynamics.relay.type.0=레드스톤 입력
+info.thermaldynamics.relay.type.1=레드스톤 출력
+info.thermaldynamics.relay.type.2=비교기 입력
 
 info.thermaldynamics.servo.decStackSize=중첩 갯수 감소
 info.thermaldynamics.servo.extractRate=추출 비율
@@ -94,38 +112,38 @@ item.thermaldynamics.cover.name=%s 덮개
 item.thermaldynamics.filter.0.name=필터
 item.thermaldynamics.filter.1.name=경화 필터
 item.thermaldynamics.filter.2.name=강화 필터
-item.thermaldynamics.filter.3.name=시그날룸 필터
+item.thermaldynamics.filter.3.name=시그날륨 필터
 item.thermaldynamics.filter.4.name=공진 필터
 item.thermaldynamics.filter.info=덕트의 운송제한을 설정합니다.
 
-item.thermaldynamics.relay.info=레드스톤 신호를 방출합니다.
-item.thermaldynamics.relay.name=레드스톤 릴레이
+item.thermaldynamics.relay.info=레드스톤 신호를 전달합니다.
+item.thermaldynamics.relay.name=레드스톤 전달기
 
 item.thermaldynamics.retriever.0.name=리트리버
 item.thermaldynamics.retriever.1.name=경화 리트리버
 item.thermaldynamics.retriever.2.name=강화 리트리버
-item.thermaldynamics.retriever.3.name=시그날룸 리트리버
+item.thermaldynamics.retriever.3.name=시그날륨 리트리버
 item.thermaldynamics.retriever.4.name=공진 리트리버
 item.thermaldynamics.retriever.info=연결된 곳에서 아이템 또는 액체를 가져옵니다.
 
 item.thermaldynamics.servo.0.name=서보
 item.thermaldynamics.servo.1.name=경화 서보
 item.thermaldynamics.servo.2.name=강화 서보
-item.thermaldynamics.servo.3.name=시그날룸 서보
+item.thermaldynamics.servo.3.name=시그날륨 서보
 item.thermaldynamics.servo.4.name=공진 서보
 item.thermaldynamics.servo.info=아이템 또는 액체를 추출합니다.
 
 itemGroup.thermaldynamics.creativeTab=써멀 다이나믹스
-itemGroup.thermaldynamics.creativeTabCovers=써멀 다이나믹스: 덮개
+itemGroup.thermaldynamics.creativeTabCovers=써멀 다이나믹스(덮개)
 
 recipe.thermaldynamics.covers=덮개 제작에 사용됩니다.
 
-
-
-
-
-
-
+tab.thermaldynamics.conChange=Shift키를 누른 채로 마우스 버튼 중 하나를 사용하여 수량을 미세하게 조정합니다.
+tab.thermaldynamics.filterItem.0=연결된 인벤토리에서 허용되는 아이템을 제어합니다.
+tab.thermaldynamics.retrieverItem.0=이 네트워크의 다른 인벤토리에서 연결된 인벤토리로 항목을 가져옵니다.
+tab.thermaldynamics.retrieverItem.1=필터 옵션을 사용하여 검색되는 아이템을 제어합니다.
+tab.thermaldynamics.servoItem.0=첨부된 인벤토리에서 아이템을 추출합니다.
+tab.thermaldynamics.servoItem.1=추출되는 아이템을 제어하기 위해 필터 옵션을 사용합니다.
 
 tile.thermaldynamics.duct.dense.name=압축 %s
 
@@ -133,10 +151,10 @@ tile.thermaldynamics.duct.energyBasic.name=납 플럭스덕트
 tile.thermaldynamics.duct.energyHardened.name=경화 플럭스덕트
 tile.thermaldynamics.duct.energyReinforced.name=레드스톤 플럭스덕트
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=빈 레드스톤 플럭스덕트
-tile.thermaldynamics.duct.energyResonant.name=공진 플럭스 덕트
-tile.thermaldynamics.duct.energyResonantEmpty.name=빈공진 플럭스덕트
-
-
+tile.thermaldynamics.duct.energyResonant.name=공진 플럭스덕트
+tile.thermaldynamics.duct.energyResonantEmpty.name=빈 공진 플럭스덕트
+tile.thermaldynamics.duct.energySignalum.name=시그날륨 플럭스덕트
+tile.thermaldynamics.duct.energySignalumEmpty.name=빈 시그날룸 플럭스덕트
 tile.thermaldynamics.duct.energySuper.info=여유 운송량이 없습니다.
 tile.thermaldynamics.duct.energySuper.name=초냉각 플럭스덕트
 tile.thermaldynamics.duct.energySuperEmpty.name=빈 초냉각 플럭스덕트
@@ -151,8 +169,8 @@ tile.thermaldynamics.duct.fluidSuper.name=초층류 플루이덕트
 
 tile.thermaldynamics.duct.itemBasic.name=아이템덕트
 tile.thermaldynamics.duct.itemEnder.name=워프 아이템덕트
-tile.thermaldynamics.duct.itemEnergy.name=전도-아이템덕트
-
+tile.thermaldynamics.duct.itemEnergy.name=전도 아이템덕트
+tile.thermaldynamics.duct.itemEnergyFast.name=전도가속 아이템덕트
 tile.thermaldynamics.duct.itemFast.info=발광석이 주입되었습니다. 아이템이 좀 더 빠르게 운송됩니다.
 tile.thermaldynamics.duct.itemFast.name=가속 아이템덕트
 
@@ -162,10 +180,10 @@ tile.thermaldynamics.duct.structure.info=건축에 사용됩니다.
 tile.thermaldynamics.duct.structure.opaque.name=구조용 덕트
 tile.thermaldynamics.duct.structureLight.name=조명 덕트
 
-tile.thermaldynamics.duct.transportBasic.name=Transport Duct
-tile.thermaldynamics.duct.transportFrame.name=Transport Duct (Untreated)
-tile.thermaldynamics.duct.transportLinking.name=Accelerating Transport Duct
-tile.thermaldynamics.duct.transportLongRange.name=Ranged Transport Duct
+tile.thermaldynamics.duct.transportBasic.name=운송 덕트
+tile.thermaldynamics.duct.transportFrame.name=미처리된 운송 덕트
+tile.thermaldynamics.duct.transportLinking.name=가속 운송 덕트
+tile.thermaldynamics.duct.transportLongRange.name=범위 운송 덕트
 
 tile.thermaldynamics.duct.vacuum.name=단축 %s
 
