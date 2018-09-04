@@ -33,4 +33,5 @@ public class TileStructuralDuct extends TileGrid {
 
 		return TDDucts.structure;
 	}
+
 }

@@ -15,4 +15,5 @@ public class DuctTransport extends Duct {
 		super.registerIcons(textureMap);
 		frameType = 4;
 	}
+
 }
