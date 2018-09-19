@@ -6,7 +6,6 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.FluidTankGrid;

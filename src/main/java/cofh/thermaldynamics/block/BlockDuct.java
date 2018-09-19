@@ -127,9 +127,10 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 		return state.getValue(META);
 	}
 
-	/* ITileEntityProvider */
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, IBlockState state) {
+
+		int metadata = state.getBlock().getMetaFromState(state);
 
 		Duct duct = TDDucts.getType(metadata + offset);
 

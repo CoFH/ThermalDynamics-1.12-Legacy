@@ -107,6 +107,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 
 	@Override
 	public boolean canSend() {
+
 		return true;
 	}
 

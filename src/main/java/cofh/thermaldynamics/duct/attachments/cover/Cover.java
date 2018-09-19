@@ -80,6 +80,7 @@ public class Cover extends Attachment {
 
 	@Override
 	public boolean canSend() {
+
 		return false;
 	}
 

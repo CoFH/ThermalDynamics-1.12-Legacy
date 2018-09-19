@@ -12,25 +12,24 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import team.chisel.ctm.api.IFacade;
 
 import static cofh.thermaldynamics.duct.attachments.cover.CoverBlockAccess.Result.*;
 import static net.minecraft.util.EnumFacing.*;
 
 public class CoverBlockAccess implements IBlockAccess {
 
+	public final IBlockAccess world;
+	public final BlockPos pos;
+	public final EnumFacing side;
+	public final IBlockState state;
 
-    public final IBlockAccess world;
-    public final BlockPos pos;
-    public final EnumFacing side;
-    public final IBlockState state;
+	public CoverBlockAccess(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
 
-    public CoverBlockAccess(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
-        this.world = world;
-        this.pos = pos;
-        this.side = side;
-        this.state = state;
-    }
+		this.world = world;
+		this.pos = pos;
+		this.side = side;
+		this.state = state;
+	}
 
 	public enum Result {
 		ORIGINAL, AIR, BASE, BEDROCK, COVER

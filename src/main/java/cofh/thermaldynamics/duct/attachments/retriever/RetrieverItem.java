@@ -7,7 +7,6 @@ import codechicken.lib.vec.uv.IconTransformation;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.AttachmentRegistry;
-import cofh.thermaldynamics.duct.attachments.ConnectionBase;
 import cofh.thermaldynamics.duct.attachments.servo.ServoItem;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
 import cofh.thermaldynamics.duct.item.TravelingItem;
@@ -97,7 +96,7 @@ public class RetrieverItem extends ServoItem {
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
 			Attachment attachment = baseTile.getAttachment(side);
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null  || attachment.canSend())) {
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || attachment.canSend())) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
