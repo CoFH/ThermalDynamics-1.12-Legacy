@@ -241,12 +241,10 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		if (getCachedInv() != EmptyHandler.INSTANCE) {
 			for (int slot = 0; slot < getCachedInv().getSlots(); slot++) {
 				ItemStack itemStack = getCachedInv().getStackInSlot(slot);
-
 				if (itemStack.isEmpty()) {
 					continue;
 				}
-				itemStack = limitOutput(itemStack.copy(), getCachedInv(), slot, side);
-
+				itemStack = limitOutput(itemStack.copy());
 				if (itemStack.isEmpty() || itemStack.getCount() == 0) {
 					continue;
 				}
@@ -254,22 +252,21 @@ public class ServoItem extends ServoBase implements IItemHandler {
 					continue;
 				}
 				TravelingItem travelingItem = getRouteForItem(itemStack);
-
 				if (travelingItem == null) {
 					continue;
 				}
-				int totalSendSize = travelingItem.stack.getCount();
+				int maxStackSize = getMaxSend();
 				travelingItem.stack = getCachedInv().extractItem(slot, travelingItem.stack.getCount(), false);
 
 				if (travelingItem.stack.isEmpty() || travelingItem.stack.getCount() <= 0) {
 					continue;
 				}
 				if (multiStack[type]) {
-					if (travelingItem.stack.getCount() < totalSendSize) {
-						for (slot++; slot < getCachedInv().getSlots() && travelingItem.stack.getCount() < totalSendSize; slot++) {
+					if (travelingItem.stack.getCount() < maxStackSize) {
+						for (slot++; slot < getCachedInv().getSlots() && travelingItem.stack.getCount() < maxStackSize; slot++) {
 							itemStack = getCachedInv().getStackInSlot(slot);
 							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-								itemStack = getCachedInv().extractItem(slot, totalSendSize - travelingItem.stack.getCount(), false);
+								itemStack = getCachedInv().extractItem(slot, maxStackSize - travelingItem.stack.getCount(), false);
 								if (!itemStack.isEmpty()) {
 									travelingItem.stack.grow(itemStack.getCount());
 								}
@@ -346,9 +343,14 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		return range[type];
 	}
 
-	public ItemStack limitOutput(ItemStack itemStack, IItemHandler cachedInv, int slot, byte side) {
+	public int getMaxSend() {
 
-		itemStack.setCount(Math.min(itemStack.getCount(), filter.getLevel(FilterLogic.levelStackSize)));
+		return filter.getLevel(FilterLogic.levelStackSize);
+	}
+
+	public ItemStack limitOutput(ItemStack itemStack) {
+
+		itemStack.setCount(Math.min(itemStack.getCount(), getMaxSend()));
 		return itemStack;
 	}
 
@@ -397,7 +399,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		if (!filter.matchesFilter(item)) {
 			return item;
 		}
-		ItemStack sending = limitOutput(item.copy(), null, -1, (byte) 0);
+		ItemStack sending = limitOutput(item.copy());
 		TravelingItem routeForItem = getRouteForItem(sending);
 
 		if (routeForItem == null) {

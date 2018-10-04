@@ -137,36 +137,29 @@ public class RetrieverItem extends ServoItem {
 					if (item.isEmpty()) {
 						continue;
 					}
-
-					item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()), simulatedInv, slot, side);
+					item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()));
 					if (item.isEmpty() || item.getCount() == 0) {
 						continue;
 					}
-
 					if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
 						continue;
 					}
-
 					ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
-
 					if (!remainder.isEmpty()) {
 						item.shrink(remainder.getCount());
 					}
 					if (item.getCount() <= 0) {
 						continue;
 					}
-
 					Route route1 = endPoint.getRoute(itemDuct);
 					if (route1 == null) {
 						continue;
 					}
-
-					int maxStackSize = item.getCount();
+					int maxStackSize = getMaxSend();
 					item = inv.extractItem(slot, maxStackSize, false);
 					if (item.isEmpty() || item.getCount() == 0) {
 						continue;
 					}
-
 					// No turning back now
 					route1 = route1.copy();
 					route1.pathDirections.add(side);
