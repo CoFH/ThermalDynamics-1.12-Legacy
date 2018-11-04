@@ -44,7 +44,7 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, GridLight, Void> {
 	@Override
 	public boolean isInputTile(@Nullable TileEntity tile, byte side) {
 
-		BlockPos offset = pos().offset(EnumFacing.values()[side]);
+		BlockPos offset = pos().offset(EnumFacing.VALUES[side]);
 		return world().isBlockLoaded(offset) && world().getBlockState(offset).canProvidePower();
 	}
 

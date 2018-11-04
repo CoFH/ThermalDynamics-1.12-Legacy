@@ -138,7 +138,7 @@ public class RetrieverItem extends ServoItem {
 						continue;
 					}
 					item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()));
-					if (item.isEmpty() || item.getCount() == 0) {
+					if (item.isEmpty()) {
 						continue;
 					}
 					if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
@@ -155,9 +155,9 @@ public class RetrieverItem extends ServoItem {
 					if (route1 == null) {
 						continue;
 					}
-					int maxStackSize = getMaxSend();
+					int maxStackSize = item.getCount();
 					item = inv.extractItem(slot, maxStackSize, false);
-					if (item.isEmpty() || item.getCount() == 0) {
+					if (item.isEmpty()) {
 						continue;
 					}
 					// No turning back now

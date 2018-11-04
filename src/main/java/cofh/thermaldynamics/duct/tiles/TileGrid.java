@@ -93,6 +93,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@Nullable
 	private ConnectionType connectionTypes[];
 
+	private AxisAlignedBB boundingBox;
+
 	public static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
 
 		subSelection[i] = new Cuboid6(min2, 0.0, min2, max2, min, max2);
@@ -513,7 +515,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			byte[] connections = nbt.getByteArray("Connections");
 			boolean flag = false;
 			for (int i = 0; i < 6; i++) {
-				ConnectionType connectionType = ConnectionType.values()[connections[i]];
+				ConnectionType connectionType = ConnectionType.VALUES[connections[i]];
 				if (connectionType != NORMAL) {
 					flag = true;
 				}
@@ -681,7 +683,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			clientConnections = new BlockDuct.ConnectionType[6];
 		}
 		for (int i = 0; i < 6; i++) {
-			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.values()[payload.getByte()];
+			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.VALUES[payload.getByte()];
 			clientConnections[i] = connectionType;
 		}
 		for (DuctUnit ductUnit : getDuctUnits()) {
@@ -790,7 +792,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@SideOnly (Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
 
-		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+		if (boundingBox == null) {
+			boundingBox = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+		}
+		return boundingBox;
 	}
 
 	public abstract Duct getDuctType();

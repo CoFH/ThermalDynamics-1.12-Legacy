@@ -24,7 +24,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
@@ -240,35 +239,35 @@ public class ServoItem extends ServoBase implements IItemHandler {
 
 		if (getCachedInv() != EmptyHandler.INSTANCE) {
 			for (int slot = 0; slot < getCachedInv().getSlots(); slot++) {
-				ItemStack itemStack = getCachedInv().getStackInSlot(slot);
-				if (itemStack.isEmpty()) {
+				ItemStack item = getCachedInv().getStackInSlot(slot);
+				if (item.isEmpty()) {
 					continue;
 				}
-				itemStack = limitOutput(itemStack.copy());
-				if (itemStack.isEmpty() || itemStack.getCount() == 0) {
+				item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()));
+				if (item.isEmpty()) {
 					continue;
 				}
-				if (!filter.matchesFilter(itemStack)) {
+				if (!filter.matchesFilter(item)) {
 					continue;
 				}
-				TravelingItem travelingItem = getRouteForItem(itemStack);
+				TravelingItem travelingItem = getRouteForItem(item);
 				if (travelingItem == null) {
 					continue;
 				}
-				int maxStackSize = getMaxSend();
+				int totalSendSize = travelingItem.stack.getCount();
 				travelingItem.stack = getCachedInv().extractItem(slot, travelingItem.stack.getCount(), false);
 
-				if (travelingItem.stack.isEmpty() || travelingItem.stack.getCount() <= 0) {
+				if (travelingItem.stack.isEmpty()) {
 					continue;
 				}
 				if (multiStack[type]) {
-					if (travelingItem.stack.getCount() < maxStackSize) {
-						for (slot++; slot < getCachedInv().getSlots() && travelingItem.stack.getCount() < maxStackSize; slot++) {
-							itemStack = getCachedInv().getStackInSlot(slot);
-							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, itemStack, true)) {
-								itemStack = getCachedInv().extractItem(slot, maxStackSize - travelingItem.stack.getCount(), false);
-								if (!itemStack.isEmpty()) {
-									travelingItem.stack.grow(itemStack.getCount());
+					if (travelingItem.stack.getCount() < totalSendSize) {
+						for (slot++; slot < getCachedInv().getSlots() && travelingItem.stack.getCount() < totalSendSize; slot++) {
+							item = getCachedInv().getStackInSlot(slot);
+							if (ItemHelper.itemsEqualWithMetadata(travelingItem.stack, item, true)) {
+								item = getCachedInv().extractItem(slot, totalSendSize - travelingItem.stack.getCount(), false);
+								if (!item.isEmpty()) {
+									travelingItem.stack.grow(item.getCount());
 								}
 							}
 						}
@@ -399,7 +398,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 		if (!filter.matchesFilter(item)) {
 			return item;
 		}
-		ItemStack sending = limitOutput(item.copy());
+		ItemStack sending = limitOutput(ItemHelper.cloneStack(item));
 		TravelingItem routeForItem = getRouteForItem(sending);
 
 		if (routeForItem == null) {
@@ -409,7 +408,7 @@ public class ServoItem extends ServoBase implements IItemHandler {
 			itemDuct.insertNewItem(routeForItem);
 			routesWithInsertSideList.advanceCursor();
 		}
-		return ItemHandlerHelper.copyStackWithSize(item, item.getCount() - routeForItem.stack.getCount());
+		return ItemHelper.cloneStack(item, item.getCount() - routeForItem.stack.getCount());
 	}
 
 	public TravelingItem getRouteForItem(ItemStack item) {

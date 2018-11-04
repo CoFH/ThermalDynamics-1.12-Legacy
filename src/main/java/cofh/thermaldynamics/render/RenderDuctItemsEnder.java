@@ -83,7 +83,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 			ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
+				if (BlockDuct.ConnectionType.VALUES[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
 					models[s].render(ccrs, x, y, z, RenderUtils.getIconTransformation(TextureUtils.getBlockTexture(TFFluids.fluidEnder.getStill())));
 				}
 			}
@@ -93,7 +93,7 @@ public class RenderDuctItemsEnder extends RenderDuctItems {
 		} else {
 
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
+				if (BlockDuct.ConnectionType.VALUES[connections[s]].renderDuct() && connections[s] != BlockDuct.ConnectionType.STRUCTURE_CONNECTION.ordinal()) {
 					ShaderStarfield.alpha = getAlphaLevel(alphaSub[s], frame) / 255F;
 					ShaderHelper.useShader(ShaderStarfield.starfieldShader, ShaderStarfield.callback);
 					ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);

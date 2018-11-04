@@ -634,6 +634,8 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 
 		private final boolean renderDuct;
 
+		public static final ConnectionType[] VALUES = values();
+
 		ConnectionType() {
 
 			this(true);

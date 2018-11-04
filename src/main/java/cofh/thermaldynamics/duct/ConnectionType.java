@@ -4,6 +4,8 @@ public enum ConnectionType {
 
 	NORMAL(true, true), BLOCKED(false, false), ENERGY(false, true), FORCED(true, true);
 
+	public static final ConnectionType[] VALUES = values();
+
 	ConnectionType(boolean allowTransfer, boolean allowEnergy) {
 
 		this.allowTransfer = allowTransfer;

@@ -146,7 +146,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 			return 0;
 		}
 
-		EnumFacing facing = EnumFacing.values()[bSide ^ 1];
+		EnumFacing facing = EnumFacing.VALUES[bSide ^ 1];
 		if (!cache.tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) {
 			return 0;
 		}
@@ -295,7 +295,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 	@Override
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
 
-		if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.values()[side ^ 1])) {
+		if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.VALUES[side ^ 1])) {
 			Attachment attachment = parent.getAttachment(side);
 			IFilterFluid filter;
 			if (attachment instanceof IFilterAttachment) {
@@ -424,7 +424,7 @@ public class DuctUnitFluid extends DuctUnit<DuctUnitFluid, GridFluid, DuctUnitFl
 				}
 			}
 		}
-		for (EnumFacing facing : EnumFacing.values()) {
+		for (EnumFacing facing : EnumFacing.VALUES) {
 			TileEntity tileEntity = world().getTileEntity(pos().offset(facing));
 			DuctUnitFluid fluids = IDuctHolder.getTokenFromTile(tileEntity, DuctToken.FLUID);
 
