@@ -4,13 +4,12 @@ import cofh.redstoneflux.api.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
+import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluid;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidSuper;
 import cofh.thermaldynamics.duct.fluid.DuctUnitFluidTemperate;
 
 public abstract class TileDuctFluid extends TileGridStructureBase {
-
-	public static final int NODE_TRANSFER = 4000;
 
 	public TileDuctFluid(Duct duct) {
 
@@ -84,7 +83,7 @@ public abstract class TileDuctFluid extends TileGridStructureBase {
 		public Energy(Duct duct) {
 
 			super(duct);
-			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, NODE_TRANSFER, NODE_TRANSFER * 5));
+			addDuctUnits(DuctToken.ENERGY, new DuctUnitEnergy(this, duct, GridEnergy.XFER[1], GridEnergy.XFER[1] * 5));
 		}
 
 		public static class Transparent extends Energy {
