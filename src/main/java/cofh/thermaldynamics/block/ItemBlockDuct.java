@@ -160,6 +160,14 @@ public class ItemBlockDuct extends ItemBlockCore {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.itemEnergy"));
 					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctItem.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
 					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
+				} else if (duct.type == 4) {
+					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.itemFluidEnergy"));
+					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctItem.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
+				} else if (duct.type == 5) {
+					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.itemEnergy"));
+					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctItem.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemEnder.info"));
 				}
 				if (stack.hasTagCompound()) {
 					byte pathWeight = stack.getTagCompound().getByte(DuctItem.PATHWEIGHT_NBT);

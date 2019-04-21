@@ -16,6 +16,7 @@ info.thermaldynamics.duct.fluid=Transfers Fluids.
 info.thermaldynamics.duct.fluidEnergy=Transfers Fluids and Redstone Flux (RF).
 info.thermaldynamics.duct.item=Transfers Items.
 info.thermaldynamics.duct.itemEnergy=Transfers Items and Redstone Flux (RF).
+info.thermaldynamics.duct.itemFluidEnergy=Transfers Items, Fluids and Redstone Flux (RF).
 info.thermaldynamics.duct.light=Emits light when given a Redstone signal.
 info.thermaldynamics.duct.structure=Provides Structure.
 info.thermaldynamics.duct.transport=Transfers Players. Whoosh.
@@ -169,10 +170,12 @@ tile.thermaldynamics.duct.fluidSuper.name=Super-Laminar Fluiduct
 
 tile.thermaldynamics.duct.itemBasic.name=Itemduct
 tile.thermaldynamics.duct.itemEnder.name=Warp Itemduct
+tile.thermaldynamics.duct.itemEnder.info=Items travel instantly when energized.
 tile.thermaldynamics.duct.itemEnergy.name=Signalum-Plated Itemduct
 tile.thermaldynamics.duct.itemEnergyFast.name=Signalum-Plated Impulse Itemduct
 tile.thermaldynamics.duct.itemFast.info=Items travel more rapidly.
 tile.thermaldynamics.duct.itemFast.name=Impulse Itemduct
+tile.thermaldynamics.duct.itemOmni.name=Omniduct
 
 tile.thermaldynamics.duct.opaque.name=%s (Opaque)
 

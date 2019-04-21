@@ -57,45 +57,13 @@ public class GridLight extends MultiBlockGrid<DuctUnitLight> {
 
 		super.tickGrid();
 
-		// TODO: Fix
-		RedstoneControl rs = null;
+		boolean shouldBeLit = false;
 
-		if (upToDate && worldGrid.worldObj.getTotalWorldTime() % 160 != 0) {
-			if (rs != null) {
-				for (int i = 0; i < 16; i++) {
-					if (rs.nextRedstoneLevel[i] != -128) {
-						upToDate = false;
-					}
-				}
-			}
-			return;
-		}
-
-		if (rs != null) {
-			for (int i = 0; i < 16; i++) {
-				if (rs.nextRedstoneLevel[i] == -128) {
-					upToDate = false;
-				}
-			}
-		} else {
-			upToDate = true;
-		}
-
-		boolean shouldBeLit;
-
-		if (rs != null) {
-			shouldBeLit = rs.shouldEmitLight();
-		} else {
-			shouldBeLit = false;
-		}
-
-		if (!shouldBeLit) {
-			for (Object object : Iterables.concat(nodeSet, idleSet)) {
-				DuctUnitLight lamp = (DuctUnitLight) object;
-				if (lamp.lit) {
-					shouldBeLit = true;
-					break;
-				}
+		for (Object object : Iterables.concat(nodeSet, idleSet)) {
+			DuctUnitLight lamp = (DuctUnitLight) object;
+			if (lamp.lit) {
+				shouldBeLit = true;
+				break;
 			}
 		}
 
@@ -106,7 +74,6 @@ public class GridLight extends MultiBlockGrid<DuctUnitLight> {
 
 	boolean lit = false;
 
-	@SuppressWarnings ("SuspiciousMethodCalls")
 	public void setLight(boolean lit) {
 
 		this.lit = lit;

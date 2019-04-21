@@ -3,3 +3,7 @@
 
 tile.thermaldynamics.duct.energySuper.name=Cryo-Stabilised Fluxduct
 tile.thermaldynamics.duct.energySuperEmpty.name=Cryo-Stabilised Fluxduct (Empty)
+
+tile.thermaldynamics.duct.fluidSuper.info=Limitless transfer rate when pressurised.
+
+tile.thermaldynamics.duct.itemEnder.info=Items travel instantly when energised.

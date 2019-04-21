@@ -170,7 +170,7 @@ public class TDDucts {
 		addItemDucts();
 		addSupportDucts();
 		addTransportDucts();
-		// addEnderDucts();
+		addEnderDucts();
 	}
 
 	static void addEnergyDucts() {
@@ -238,14 +238,6 @@ public class TDDucts {
 		itemEnergyFast = addDuctItem(OFFSET_ITEM + 6, false, 1, 3, "itemEnergyFast", Type.ITEM, (duct, worldObj) -> new TileDuctItem.EnergyFast.Transparent(), "tin_signalum", "tin", GLOWSTONE_STILL, 80, null, null, 0);
 		itemEnergyFastOpaque = addDuctItem(OFFSET_ITEM + 7, true, 1, 3, "itemEnergyFast", Type.ITEM, (duct, worldObj) -> new TileDuctItem.EnergyFast.Opaque(), "tin_alt_signalum", "tin", null, 0, null, null, 0);
 
-		//		TODO: Readd Omni/Warp Ducts
-		//		itemEnder = addDuctItem(OFFSET_ITEM + 4, false, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Warp.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
-		//		itemEnderOpaque = addDuctItem(OFFSET_ITEM + 5, true, 0, 2, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Warp.Opaque(), "enderium", "enderium", null, 48, null, null, 0);
-
-		//		TODO: Readd Omni/Warp Ducts
-		//		itemOmni = addDuctItem(OFFSET_ITEM + 8, false, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "enderium", "enderium", null, 48, "enderium_trans_large", null, 0);
-		//		itemOmniOpaque = addDuctItem(OFFSET_ITEM + 9, true, 0, 0, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "enderium", "enderium", null, 48, "enderium_large", null, 0);
-
 		itemFast.setRarity(1);
 		itemFastOpaque.setRarity(1);
 
@@ -254,16 +246,20 @@ public class TDDucts {
 
 		itemEnergyFast.setRarity(1);
 		itemEnergyFastOpaque.setRarity(1);
-
-		//		TODO: Readd Omni/Warp Ducts
-		//		itemOmni.setRarity(2);
-		//		itemOmniOpaque.setRarity(2);
 	}
 
 	static void addEnderDucts() {
+		itemOmni = addDuctItem(OFFSET_ENDER + 0, false, 0, 4, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Transparent(), "enderium", "enderium", null, 48, "enderium_trans_large", null, 0);
+		itemOmniOpaque = addDuctItem(OFFSET_ENDER + 1, true, 0, 4, "itemOmni", Type.ITEM, (duct, worldObj) -> new TileDuctOmni.Opaque(), "enderium", "enderium", null, 48, "enderium_large", null, 0);
 
-		ender = addDuctItem(OFFSET_ENDER + 0, false, 1, 0, "itemBasic", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Basic.Transparent(), "tin", "tin", null, 0, null, null, 0);
-		enderOpaque = addDuctItem(OFFSET_ENDER + 1, true, 1, 0, "itemBasic", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Basic.Opaque(), "tin", "tin", null, 0, null, null, 0);
+		itemOmni.setRarity(2);
+		itemOmniOpaque.setRarity(2);
+
+		ender = addDuctItem(OFFSET_ENDER + 2, false, 0, 5, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Warp.Transparent(), "enderium", "enderium", null, 48, null, null, 0);
+		enderOpaque = addDuctItem(OFFSET_ENDER + 3, true, 0, 5, "itemEnder", Type.ITEM, (duct, worldObj) -> new TileDuctItem.Warp.Opaque(), "enderium", "enderium", null, 48, null, null, 0);
+
+		ender.setRarity(2);
+		enderOpaque.setRarity(2);
 	}
 
 	static void addTransportDucts() {
@@ -282,8 +278,7 @@ public class TDDucts {
 	static void addSupportDucts() {
 
 		structure = addDuct(OFFSET_STRUCTURE, true, 1, -1, "structure", Type.STRUCTURAL, STRUCTURAL, "structure", null, null, 0, null, null, 0);
-
-		// lightDuct = registerDuct(new DuctLight(OFFSET_STRUCTURE + 1, 0, "structureLight", Type.STRUCTURAL, (duct, worldObj) -> new TileDuctLight(), "lumium", "lumium", null, 0));
+		lightDuct = registerDuct(new DuctLight(OFFSET_STRUCTURE + 1, 0, "structureLight", Type.STRUCTURAL, (duct, worldObj) -> new TileDuctLight(), "lumium", "lumium", null, 0));
 	}
 
 }

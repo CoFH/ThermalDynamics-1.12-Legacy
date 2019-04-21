@@ -6,6 +6,7 @@ import cofh.thermaldynamics.duct.Attachment;
 import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.tiles.DuctToken;
 import cofh.thermaldynamics.duct.tiles.DuctUnit;
+import cofh.thermaldynamics.duct.tiles.IDuctHolder;
 import cofh.thermaldynamics.duct.tiles.TileGrid;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
@@ -111,9 +112,9 @@ public class DuctUnitLight extends DuctUnit<DuctUnitLight, GridLight, Void> {
 	}
 
 	@Override
-	public void onNeighborBlockChange() {
+	public void updateAllSides(TileEntity[] tiles, IDuctHolder[] holders) {
 
-		super.onNeighborBlockChange();
+		super.updateAllSides(tiles, holders);
 
 		if (ServerHelper.isClientWorld(world())) {
 			return;

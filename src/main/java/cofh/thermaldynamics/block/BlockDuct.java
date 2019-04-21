@@ -566,13 +566,13 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 		GameRegistry.registerTileEntity(TileDuctItem.EnergyFast.Transparent.class, "thermaldynamics:duct_item_energy_fast_transparent");
 		GameRegistry.registerTileEntity(TileDuctItem.EnergyFast.Opaque.class, "thermaldynamics:duct_item_energy_fast_opaque");
 
-		//		GameRegistry.registerTileEntity(TileDuctItem.Warp.Transparent.class, "thermaldynamics:duct_item_warp.transparent");
-		//		GameRegistry.registerTileEntity(TileDuctItem.Warp.Opaque.class, "thermaldynamics:duct_item_warp.opaque");
-		//		GameRegistry.registerTileEntity(TileDuctOmni.Transparent.class, "thermaldynamics:duct_item_ender.transparent");
-		//	    GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics:duct_item_ender.opaque");
+		GameRegistry.registerTileEntity(TileDuctItem.Warp.Transparent.class, "thermaldynamics:duct_item_warp.transparent");
+		GameRegistry.registerTileEntity(TileDuctItem.Warp.Opaque.class, "thermaldynamics:duct_item_warp.opaque");
+		GameRegistry.registerTileEntity(TileDuctOmni.Transparent.class, "thermaldynamics:duct_item_ender.transparent");
+		GameRegistry.registerTileEntity(TileDuctOmni.Opaque.class, "thermaldynamics:duct_item_ender.opaque");
 
 		GameRegistry.registerTileEntity(TileStructuralDuct.class, "thermaldynamics:duct_structure");
-		//      GameRegistry.registerTileEntity(TileDuctLight.class, "thermaldynamics:duct_structure_light");
+		GameRegistry.registerTileEntity(TileDuctLight.class, "thermaldynamics:duct_structure_light");
 
 		GameRegistry.registerTileEntity(TileTransportDuct.class, "thermaldynamics:duct_transport_basic");
 		GameRegistry.registerTileEntity(TileTransportDuct.LongRange.class, "thermaldynamics:duct_transport_long_range");

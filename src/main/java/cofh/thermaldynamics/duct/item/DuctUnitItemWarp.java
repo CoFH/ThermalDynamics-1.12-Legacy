@@ -124,7 +124,7 @@ public class DuctUnitItemWarp extends DuctUnitItem {
 					return;
 				}
 			} else if (duct.isOutput(travelingItem.direction)) {
-				travelingItem.stack.setCount(duct.insertIntoInventory(travelingItem.stack, travelingItem.direction));
+				travelingItem.stack.setCount(duct.insertIntoInventory(travelingItem.stack.copy(), travelingItem.direction));
 
 				if (travelingItem.stack.getCount() > 0) {
 					travelingItem.reRoute = true;

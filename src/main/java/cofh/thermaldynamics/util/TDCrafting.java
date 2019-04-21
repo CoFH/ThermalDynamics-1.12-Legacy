@@ -105,11 +105,19 @@ public class TDCrafting {
 		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyFast.itemStack, 3), TDDucts.itemFast.itemStack, TDDucts.itemFast.itemStack, TDDucts.itemFast.itemStack, "ingotSignalum", "ingotElectrum");
 		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemEnergyFastOpaque.itemStack, 3), TDDucts.itemFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, TDDucts.itemFastOpaque.itemStack, "ingotSignalum", "ingotElectrum");
 
-		//		TODO: Readd Omni/Warp Ducts
-		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 2), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
-		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 2), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium"));
-		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 6), TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, TDDucts.itemBasic.itemStack, "ingotEnderium"));
-		//		GameRegistry.addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 6), TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, TDDucts.itemBasicOpaque.itemStack, "ingotEnderium"));
+		// Warp Itemduct
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.ender.itemStack, 2), TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.enderOpaque.itemStack, 2), TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium");
+
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.ender.itemStack, 6), TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, "ingotEnderium");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.enderOpaque.itemStack, 6), TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, "ingotEnderium");
+
+		// Omniduct
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 2), TDDucts.itemEnergy.itemStack, TDDucts.fluidEnergy.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 2), TDDucts.itemEnergyOpaque.itemStack, TDDucts.fluidEnergyOpaque.itemStack, "nuggetEnderium", "nuggetEnderium", "nuggetEnderium");
+
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmni.itemStack, 6), TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, TDDucts.itemEnergy.itemStack, TDDucts.fluidEnergy.itemStack, TDDucts.fluidEnergy.itemStack, TDDucts.fluidEnergy.itemStack, "ingotEnderium");
+		addShapelessRecipe(ItemHelper.cloneStack(TDDucts.itemOmniOpaque.itemStack, 6), TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, TDDucts.itemEnergyOpaque.itemStack, TDDucts.fluidEnergyOpaque.itemStack, TDDucts.fluidEnergyOpaque.itemStack, TDDucts.fluidEnergyOpaque.itemStack, "ingotEnderium");
 
 		/* ITEMS - TE Integration */
 		addTransposerFill(800, TDDucts.itemBasic.itemStack, TDDucts.itemFast.itemStack, new FluidStack(fluidGlowstone, 200), false);
@@ -119,9 +127,7 @@ public class TDCrafting {
 
 		/* STRUCTURE */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.structure.itemStack, 6), "iIi", 'i', "nuggetIron", 'I', "ingotLead");
-
-		// TODO: Readd.
-		// addShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead");
+		addShapedRecipe(ItemHelper.cloneStack(TDDucts.lightDuct.itemStack, 6), "LIL", 'L', "ingotLumium", 'I', "ingotLead");
 
 		/* TRANSPORT */
 		addShapedRecipe(ItemHelper.cloneStack(TDDucts.transportFrame.itemStack, 4), "IGI", "G G", "IGI", 'I', "ingotBronze", 'G', glassHardened);
@@ -137,7 +143,7 @@ public class TDCrafting {
 		}
 
 		/* CONVERSIONS */
-		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque }, { TDDucts.fluidEnergy, TDDucts.fluidEnergyOpaque }, { TDDucts.fluidSuper, TDDucts.fluidSuperOpaque } }) {
+		for (Duct[] duct : new Duct[][] { { TDDucts.itemBasic, TDDucts.itemBasicOpaque }, { TDDucts.itemFast, TDDucts.itemFastOpaque }, { TDDucts.itemEnergy, TDDucts.itemEnergyOpaque }, { TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }, { TDDucts.fluidHardened, TDDucts.fluidHardenedOpaque }, { TDDucts.fluidEnergy, TDDucts.fluidEnergyOpaque }, { TDDucts.fluidSuper, TDDucts.fluidSuperOpaque }, { TDDucts.itemOmni, TDDucts.itemOmniOpaque }, { TDDucts.ender, TDDucts.enderOpaque } }) {
 
 			final ItemStack t = duct[0].itemStack;
 			final ItemStack o = duct[1].itemStack;
@@ -155,7 +161,7 @@ public class TDCrafting {
 		}
 
 		/* DENSE / VACUUM - TE Integration */
-		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque, TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque, TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque }) {
+		for (DuctItem duct : new DuctItem[] { TDDucts.itemBasic, TDDucts.itemBasicOpaque, TDDucts.itemFast, TDDucts.itemFastOpaque, TDDucts.itemEnergy, TDDucts.itemEnergyOpaque, TDDucts.itemEnergyFast, TDDucts.itemEnergyFastOpaque, TDDucts.itemOmni, TDDucts.itemOmniOpaque, TDDucts.ender, TDDucts.enderOpaque }) {
 			addShapelessRecipe(duct.getDenseItemStack(), duct.itemStack, "nuggetLead", "nuggetLead", "nuggetLead");
 			addShapelessRecipe(duct.getVacuumItemStack(), duct.itemStack, "nuggetSilver", "nuggetSilver", "nuggetSilver");
 			//			addShapelessRecipe(duct.itemStack, duct.getDenseItemStack(), "dustCharcoal");

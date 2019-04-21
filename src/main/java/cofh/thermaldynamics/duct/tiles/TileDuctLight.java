@@ -1,20 +1,17 @@
 package cofh.thermaldynamics.duct.tiles;
 
-import cofh.thermaldynamics.duct.Duct;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.light.DuctUnitLight;
 
-public class TileDuctLight extends TileGridSingle {
+public class TileDuctLight extends TileGridStructureBase {
 
 	public TileDuctLight() {
-
-		super(DuctToken.LIGHT, TDDucts.lightDuct);
+		addDuctUnits(DuctToken.LIGHT, new DuctUnitLight(this, TDDucts.lightDuct));
 	}
 
 	@Override
-	protected DuctUnit createDuctUnit(DuctToken token, Duct ductType) {
-
-		return new DuctUnitLight(this, ductType);
+	protected DuctToken getPrimaryDuctToken() {
+		return DuctToken.LIGHT;
 	}
 
 }

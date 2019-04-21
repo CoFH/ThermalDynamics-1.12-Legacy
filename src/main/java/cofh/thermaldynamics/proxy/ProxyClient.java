@@ -8,10 +8,9 @@ import cofh.thermaldynamics.duct.entity.EntityTransport;
 import cofh.thermaldynamics.duct.entity.RenderTransport;
 import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
 import cofh.thermaldynamics.duct.tiles.TileDuctItem;
+import cofh.thermaldynamics.duct.tiles.TileDuctOmni;
 import cofh.thermaldynamics.init.TDItems;
-import cofh.thermaldynamics.render.RenderDuct;
-import cofh.thermaldynamics.render.RenderDuctFluids;
-import cofh.thermaldynamics.render.RenderDuctItems;
+import cofh.thermaldynamics.render.*;
 import cofh.thermaldynamics.render.item.RenderItemCover;
 import cofh.thermaldynamics.util.CoverBlacklistCommand;
 import cofh.thermaldynamics.util.TickHandlerClient;
@@ -58,8 +57,8 @@ public class ProxyClient extends Proxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Fast.Transparent.class, RenderDuctItems.INSTANCE);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Energy.Transparent.class, RenderDuctItems.INSTANCE);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.EnergyFast.Transparent.class, RenderDuctItems.INSTANCE);
-		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Warp.Transparent.class, RenderDuctItemsEnder.INSTANCE);
-		//		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctItem.Warp.Transparent.class, RenderDuctItemsEnder.INSTANCE);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctOmni.Transparent.class, RenderDuctOmni.INSTANCE);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Basic.Transparent.class, RenderDuctFluids.INSTANCE);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileDuctFluid.Super.Transparent.class, RenderDuctFluids.INSTANCE);
