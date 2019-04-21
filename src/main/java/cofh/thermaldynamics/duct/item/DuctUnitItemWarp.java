@@ -81,7 +81,6 @@ public class DuctUnitItemWarp extends DuctUnitItem {
 		if (hasChanged) {
 			grid.shouldRepoll = true;
 		}
-
 		updateRender();
 	}
 

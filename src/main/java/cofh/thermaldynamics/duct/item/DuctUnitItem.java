@@ -240,7 +240,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		if (attachment != null && !attachment.allowDuctConnection()) {
 			return null;
 		}
-		if (InventoryHelper.hasItemHandlerCap(tile, EnumFacing.values()[side ^ 1])) {
+		if (InventoryHelper.hasItemHandlerCap(tile, EnumFacing.VALUES[side ^ 1])) {
 			return new Cache(tile, attachment);
 		}
 		return null;
@@ -461,7 +461,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 		if (!simulate) {
 			insertNewItem(routeForItem);
 		}
-		return ItemHandlerHelper.copyStackWithSize(item, item.getCount() - routeForItem.stack.getCount());
+		return ItemHelper.cloneStack(item, item.getCount() - routeForItem.stack.getCount());
 	}
 
 	@Override
@@ -579,7 +579,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 	//		cache.handlerCache[side] = capability;
 	//
 	//		if (capability != null) {
-	//			for (EnumFacing facing : EnumFacing.values()) {
+	//			for (EnumFacing facing : EnumFacing.VALUES) {
 	//				if (facing == oppositeSide) {
 	//					continue;
 	//				}
@@ -948,7 +948,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 
 		public IItemHandler getItemHandler(int face) {
 
-			return getItemHandler(EnumFacing.values()[face]);
+			return getItemHandler(EnumFacing.VALUES[face]);
 		}
 
 		public IItemHandler getItemHandler(EnumFacing face) {
@@ -964,7 +964,7 @@ public class DuctUnitItem extends DuctUnit<DuctUnitItem, GridItem, DuctUnitItem.
 
 		public boolean areEquivalentHandlers(@Nonnull IItemHandler itemHandler, int side) {
 
-			EnumFacing facing = EnumFacing.values()[side];
+			EnumFacing facing = EnumFacing.VALUES[side];
 			return InventoryHelper.hasItemHandlerCap(tile, facing) && itemHandler.equals(InventoryHelper.getItemHandlerCap(tile, facing));
 		}
 	}

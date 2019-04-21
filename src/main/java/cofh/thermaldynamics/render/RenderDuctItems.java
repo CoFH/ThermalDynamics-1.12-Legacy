@@ -106,7 +106,7 @@ public class RenderDuctItems extends TileEntitySpecialRenderer<TileGrid> {
 			int[] connections = RenderDuct.INSTANCE.getDuctConnections(tile);
 			ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 			for (int s = 0; s < 6; s++) {
-				if (BlockDuct.ConnectionType.values()[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
+				if (BlockDuct.ConnectionType.VALUES[connections[s]].renderDuct() && duct.centerLineSub[s] != 0) {
 					ccrs.alphaOverride = getAlphaLevel(duct.centerLineSub[s], partialTicks);
 					RenderDuct.modelLine[s].render(ccrs, trans, RenderUtils.getIconTransformation(RenderDuct.textureCenterLine));
 				} else {

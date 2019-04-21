@@ -20,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -66,7 +67,7 @@ public class Cover extends Attachment {
 	}
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.FACADE;
 	}
@@ -75,6 +76,12 @@ public class Cover extends Attachment {
 	public Cuboid6 getCuboid() {
 
 		return bounds[side].copy();
+	}
+
+	@Override
+	public boolean canSend() {
+
+		return false;
 	}
 
 	@Override

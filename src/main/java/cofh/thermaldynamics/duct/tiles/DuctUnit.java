@@ -56,7 +56,7 @@ public abstract class DuctUnit<T extends DuctUnit<T, G, C>, G extends MultiBlock
 		StringBuilder builder = new StringBuilder("[");
 		for (int i = 0; i < 6; i++) {
 			if (array[i] != null) {
-				builder.append(EnumFacing.values()[i].toString().substring(0, 1));
+				builder.append(EnumFacing.VALUES[i].toString().substring(0, 1));
 			}
 		}
 		builder.append("]");

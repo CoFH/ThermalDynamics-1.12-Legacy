@@ -112,7 +112,7 @@ public class CoverRenderer {
 
 		EnumFacing face = EnumFacing.VALUES[side];
 
-		IBlockAccess coverAccess = CoverBlockAccess.getInstance(world, pos, face, state);
+		IBlockAccess coverAccess = new CoverBlockAccess(world, pos, face, state);
 		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
 		try {

@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -91,6 +92,8 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	public BlockDuct.ConnectionType[] clientConnections;
 	@Nullable
 	private ConnectionType connectionTypes[];
+
+	private AxisAlignedBB boundingBox;
 
 	public static void genSelectionBoxes(Cuboid6[] subSelection, int i, double min, double min2, double max2) {
 
@@ -512,7 +515,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			byte[] connections = nbt.getByteArray("Connections");
 			boolean flag = false;
 			for (int i = 0; i < 6; i++) {
-				ConnectionType connectionType = ConnectionType.values()[connections[i]];
+				ConnectionType connectionType = ConnectionType.VALUES[connections[i]];
 				if (connectionType != NORMAL) {
 					flag = true;
 				}
@@ -562,11 +565,17 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			if (attachmentData == null) {
 				attachmentData = new AttachmentData();
 			}
-			int id = tag.getInteger("id");
-			Attachment attachment = AttachmentRegistry.createAttachment(this, side, id);
-			attachmentData.attachments[side] = attachment;
-
-			attachment.readFromNBT(tag);
+			Attachment attachment = null;
+			if (tag.hasKey("id", Constants.NBT.TAG_INT)) {
+				attachment = AttachmentRegistry.convertLegacyAttachment(this, side, tag.getInteger("id"));
+			} else {
+				ResourceLocation id = new ResourceLocation(tag.getString("id"));
+				attachment = AttachmentRegistry.createAttachment(this, side, id);
+			}
+			if (attachment != null) {
+				attachmentData.attachments[side] = attachment;
+				attachment.readFromNBT(tag);
+			}
 		}
 	}
 
@@ -579,7 +588,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (attachment != null) {
 					NBTTagCompound tag = new NBTTagCompound();
 					tag.setInteger("side", i);
-					tag.setInteger("id", (byte) attachment.getId());
+					tag.setString("id", attachment.getId().toString());
 					attachment.writeToNBT(tag);
 					list.appendTag(tag);
 				}
@@ -647,7 +656,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		payload.addByte(attachmentMask);
 		for (byte i = 0; i < 6; i++) {
 			if (attachmentData.attachments[i] != null) {
-				payload.addByte(attachmentData.attachments[i].getId());
+				payload.addString(attachmentData.attachments[i].getId().toString());
 				attachmentData.attachments[i].addDescriptionToPacket(payload);
 			}
 		}
@@ -674,7 +683,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			clientConnections = new BlockDuct.ConnectionType[6];
 		}
 		for (int i = 0; i < 6; i++) {
-			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.values()[payload.getByte()];
+			BlockDuct.ConnectionType connectionType = BlockDuct.ConnectionType.VALUES[payload.getByte()];
 			clientConnections[i] = connectionType;
 		}
 		for (DuctUnit ductUnit : getDuctUnits()) {
@@ -686,7 +695,7 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 				if (attachmentData == null) {
 					attachmentData = new AttachmentData();
 				}
-				int id = payload.getByte();
+				ResourceLocation id = new ResourceLocation(payload.getString());
 				attachmentData.attachments[i] = AttachmentRegistry.createAttachment(this, i, id);
 				attachmentData.attachments[i].getDescriptionFromPacket(payload);
 			} else if (attachmentData != null) {
@@ -783,7 +792,10 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 	@SideOnly (Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
 
-		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+		if (boundingBox == null) {
+			boundingBox = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+		}
+		return boundingBox;
 	}
 
 	public abstract Duct getDuctType();
@@ -1041,7 +1053,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 		for (DuctUnit ductUnit : getDuctUnits()) {
 			stack = ductUnit.addNBTToItemStackDrop(stack);
 		}
-
 		return stack;
 	}
 
@@ -1103,18 +1114,6 @@ public abstract class TileGrid extends TileCore implements IDuctHolder, IPortabl
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public int getType() {
-
-		return getDuctType().type;
-	}
-
-	@Override
-	public String getTileName() {
-
-		return getDuctType().unlocalizedName;
 	}
 
 	/* IEnergyHandler */

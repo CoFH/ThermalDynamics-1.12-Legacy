@@ -18,24 +18,18 @@ import static net.minecraft.util.EnumFacing.*;
 
 public class CoverBlockAccess implements IBlockAccess {
 
-	IBlockAccess world;
+	public final IBlockAccess world;
+	public final BlockPos pos;
+	public final EnumFacing side;
+	public final IBlockState state;
 
-	public static ThreadLocal<CoverBlockAccess> instances = ThreadLocal.withInitial(CoverBlockAccess::new);
+	public CoverBlockAccess(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
 
-	public static CoverBlockAccess getInstance(IBlockAccess world, BlockPos pos, EnumFacing side, IBlockState state) {
-
-		CoverBlockAccess instance = instances.get();
-		instance.world = world;
-		instance.pos = pos;
-		instance.side = side;
-		instance.state = state;
-		return instance;
+		this.world = world;
+		this.pos = pos;
+		this.side = side;
+		this.state = state;
 	}
-
-	public BlockPos pos;
-	public EnumFacing side;
-
-	IBlockState state;
 
 	public enum Result {
 		ORIGINAL, AIR, BASE, BEDROCK, COVER
@@ -52,7 +46,8 @@ public class CoverBlockAccess implements IBlockAccess {
 		IBlockState worldState = world.getBlockState(pos);
 		Block worldBlock = worldState.getBlock();
 
-		if (worldBlock instanceof IBlockAppearance) {//TODO chisel's IFacade interface.
+		//This really isn't needed..
+		if (worldBlock instanceof IBlockAppearance) {
 			IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
 			if (blockAppearance.supportsVisualConnections()) {
 				return COVER;

@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -37,7 +38,13 @@ public class RetrieverFluid extends ServoFluid {
 	}
 
 	@Override
-	public int getId() {
+	public boolean canSend() {
+
+		return false;
+	}
+
+	@Override
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.RETRIEVER_FLUID;
 	}
@@ -71,7 +78,7 @@ public class RetrieverFluid extends ServoFluid {
 				}
 
 				Attachment attachment = fluidDuct.parent.getAttachment(side);
-				if (attachment != null && attachment.getId() == this.getId()) {
+				if (attachment != null && !attachment.canSend()) {
 					continue;
 				}
 
@@ -126,7 +133,7 @@ public class RetrieverFluid extends ServoFluid {
 	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 

@@ -31,6 +31,24 @@ public abstract class FilterBase extends ConnectionBase {
 	}
 
 	@Override
+	public boolean isFilter() {
+
+		return true;
+	}
+
+	@Override
+	public boolean isServo() {
+
+		return false;
+	}
+
+	@Override
+	public boolean canSend() {
+
+		return true;
+	}
+
+	@Override
 	public String getName() {
 
 		return "item.thermaldynamics.filter." + type + ".name";
@@ -46,7 +64,7 @@ public abstract class FilterBase extends ConnectionBase {
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 

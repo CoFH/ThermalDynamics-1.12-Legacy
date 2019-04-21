@@ -38,7 +38,7 @@ public class TravelingItem {
 	public StackMap.ItemEntry stackItemEntry;
 
 	public boolean shouldDie = false;
-	public int step = 1;
+	public int step;
 
 	public TravelingItem(ItemStack theItem, IGridTile<DuctUnitItem, GridItem> start, Route itemPath, byte oldDirection, byte speed) {
 

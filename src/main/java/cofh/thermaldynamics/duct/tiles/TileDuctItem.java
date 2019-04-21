@@ -2,13 +2,9 @@ package cofh.thermaldynamics.duct.tiles;
 
 import cofh.redstoneflux.api.IEnergyReceiver;
 import cofh.thermaldynamics.duct.Duct;
-import cofh.thermaldynamics.duct.DuctItem;
 import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.DuctUnitEnergy;
-import cofh.thermaldynamics.duct.energy.DuctUnitEnergyStorage;
-import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.item.DuctUnitItem;
-import cofh.thermaldynamics.duct.item.DuctUnitItemWarp;
 
 public abstract class TileDuctItem extends TileGridStructureBase {
 
@@ -123,38 +119,36 @@ public abstract class TileDuctItem extends TileGridStructureBase {
 		}
 	}
 
-	public static class Warp extends TileDuctItem implements IEnergyReceiver {
-
-		public Warp(DuctItem duct) {
-			super(duct);
-
-			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, duct, 400, 1000) {
-
-				@Override
-				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
-
-					return super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
-				}
-			};
-			addDuctUnits(DuctToken.ENERGY, energyStorage);
-			addDuctUnits(DuctToken.ITEMS, new DuctUnitItemWarp(this, duct, energyStorage));
-		}
-
-		public static class Transparent extends Warp {
-
-			public Transparent() {
-
-				super(TDDucts.ender);
-			}
-		}
-
-		public static class Opaque extends Warp {
-
-			public Opaque() {
-
-				super(TDDucts.enderOpaque);
-			}
-		}
-	}
-
+	//	public static class Warp extends TileDuctItem implements IEnergyReceiver {
+	//
+	//		public Warp(DuctItem duct) {
+	//
+	//			DuctUnitEnergyStorage energyStorage = new DuctUnitEnergyStorage(this, duct, 400, 1000) {
+	//
+	//				@Override
+	//				public boolean canConnectToOtherDuct(DuctUnit<DuctUnitEnergy, GridEnergy, IEnergyReceiver> adjDuct, byte side, byte oppositeSide) {
+	//
+	//					return super.canConnectToOtherDuct(adjDuct, side, oppositeSide);
+	//				}
+	//			};
+	//			addDuctUnits(DuctToken.ENERGY, energyStorage);
+	//			addDuctUnits(DuctToken.ITEMS, new DuctUnitItemWarp(this, duct, energyStorage));
+	//		}
+	//
+	//		public static class Transparent extends Warp {
+	//
+	//			public Transparent() {
+	//
+	//				super(TDDucts.itemEnder);
+	//			}
+	//		}
+	//
+	//		public static class Opaque extends Warp {
+	//
+	//			public Opaque() {
+	//
+	//				super(TDDucts.itemEnderOpaque);
+	//			}
+	//		}
+	//	}
 }

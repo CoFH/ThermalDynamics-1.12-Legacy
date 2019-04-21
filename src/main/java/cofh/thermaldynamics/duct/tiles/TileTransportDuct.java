@@ -53,7 +53,7 @@ public class TileTransportDuct extends TileGrid {
 	@Override
 	public Duct getDuctType() {
 
-		return TDDucts.transportBasic;
+		return transport.getDuctType();
 	}
 
 	@Override
@@ -95,4 +95,5 @@ public class TileTransportDuct extends TileGrid {
 			return new DuctUnitTransportLongRange(this, duct);
 		}
 	}
+
 }

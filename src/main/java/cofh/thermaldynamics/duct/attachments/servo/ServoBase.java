@@ -54,6 +54,24 @@ public abstract class ServoBase extends ConnectionBase {
 	}
 
 	@Override
+	public boolean isServo() {
+
+		return true;
+	}
+
+	@Override
+	public boolean isFilter() {
+
+		return false;
+	}
+
+	@Override
+	public boolean canSend() {
+
+		return true;
+	}
+
+	@Override
 	public String getName() {
 
 		return "item.thermaldynamics.servo." + type + ".name";
@@ -125,7 +143,7 @@ public abstract class ServoBase extends ConnectionBase {
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 		Translation trans = Vector3.fromTileCenter(baseTile).translation();

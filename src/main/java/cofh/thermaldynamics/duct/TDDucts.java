@@ -83,7 +83,6 @@ public class TDDucts {
 
 	/* HELPERS - NOT REAL */
 	public static Duct structureInvis = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, STRUCTURAL, "structure", null, null, 0, null, null, 0);
-	public static Duct placeholder = new Duct(-1, false, 1, -1, "structure", Type.STRUCTURAL, STRUCTURAL, "structure", null, null, 0, null, null, 0);
 
 	private TDDucts() {
 
@@ -267,7 +266,7 @@ public class TDDucts {
 		transportBasic = addDuctTransport(OFFSET_TRANSPORT, false, 1, 0, "transportBasic", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct(), null, null, null, 255, "copper", GREEN_GLASS, 96);
 		transportLongRange = addDuctTransport(OFFSET_TRANSPORT + 1, false, 1, 1, "transportLongRange", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct.LongRange(), null, null, null, 255, "lead", GREEN_GLASS, 80);
 		transportLinking = addDuctTransport(OFFSET_TRANSPORT + 2, false, 1, 2, "transportLinking", Type.TRANSPORT, (duct, worldObj) -> new TileTransportDuct.Linking(), null, null, null, 255, "enderium", GREEN_GLASS, 128);
-		transportFrame = addDuctTransport(OFFSET_TRANSPORT + 3, false, 1, -1, "transportFrame", Type.CRAFTING, STRUCTURAL, null, null, null, 255, "copper", null, 128);
+		transportFrame = addDuctTransport(OFFSET_TRANSPORT + 3, false, 1, 0, "transportFrame", Type.TRANSPORT, STRUCTURAL, null, null, null, 255, "copper", null, 128);
 
 		transportBasic.setRarity(1);
 		transportLongRange.setRarity(1);

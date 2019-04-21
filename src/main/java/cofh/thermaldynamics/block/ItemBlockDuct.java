@@ -1,5 +1,6 @@
 package cofh.thermaldynamics.block;
 
+import cofh.core.block.BlockCore;
 import cofh.core.block.ItemBlockCore;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.StringHelper;
@@ -9,7 +10,6 @@ import cofh.thermaldynamics.duct.TDDucts;
 import cofh.thermaldynamics.duct.energy.GridEnergy;
 import cofh.thermaldynamics.duct.tiles.TileDuctFluid;
 import cofh.thermaldynamics.duct.tiles.TileDuctItem;
-import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 
 	int offset;
 
-	public ItemBlockDuct(Block block) {
+	public ItemBlockDuct(BlockCore block) {
 
 		super(block);
 		this.offset = ((BlockDuct) block).offset;
@@ -137,7 +137,7 @@ public class ItemBlockDuct extends ItemBlockCore {
 					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
 				} else if (duct.type == 2) {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.fluidEnergy"));
-					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctFluid.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + GridEnergy.XFER[1] + StringHelper.LIGHT_GRAY + " RF/t.");
 					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.fluidHardened.info"));
 				} else if (duct.type == 3) {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.fluid"));
@@ -155,10 +155,10 @@ public class ItemBlockDuct extends ItemBlockCore {
 					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
 				} else if (duct.type == 2) {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.itemEnergy"));
-					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctItem.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + GridEnergy.XFER[1] + StringHelper.LIGHT_GRAY + " RF/t.");
 				} else if (duct.type == 3) {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.itemEnergy"));
-					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + TileDuctItem.NODE_TRANSFER + StringHelper.LIGHT_GRAY + " RF/t.");
+					tooltip.add(StringHelper.localize("info.thermaldynamics.transfer") + ": " + StringHelper.YELLOW + GridEnergy.XFER[1] + StringHelper.LIGHT_GRAY + " RF/t.");
 					tooltip.add(StringHelper.getInfoText("tile.thermaldynamics.duct.itemFast.info"));
 				} else if (duct.type == 4) {
 					tooltip.add(StringHelper.localize("info.thermaldynamics.duct.itemFluidEnergy"));

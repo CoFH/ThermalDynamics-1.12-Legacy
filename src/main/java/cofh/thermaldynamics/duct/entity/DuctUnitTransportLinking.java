@@ -394,7 +394,7 @@ public class DuctUnitTransportLinking extends DuctUnitTransportBase {
 
 		public SidedBlockPos(NBTTagCompound tag) {
 
-			this(new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")), EnumFacing.values()[tag.getInteger("s")]);
+			this(new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")), EnumFacing.VALUES[tag.getInteger("s")]);
 		}
 
 		public void writeToNBT(NBTTagCompound tag) {

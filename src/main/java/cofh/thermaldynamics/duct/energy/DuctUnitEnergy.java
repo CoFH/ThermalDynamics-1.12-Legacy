@@ -98,7 +98,7 @@ public class DuctUnitEnergy extends DuctUnit<DuctUnitEnergy, GridEnergy, IEnergy
 	@Nullable
 	public Cache cacheTile(@Nonnull TileEntity tile, byte side) {
 
-		EnumFacing facing = EnumFacing.values()[side ^ 1];
+		EnumFacing facing = EnumFacing.VALUES[side ^ 1];
 
 		if (tile instanceof IEnergyReceiver) {
 			IEnergyReceiver receiver = (IEnergyReceiver) tile;

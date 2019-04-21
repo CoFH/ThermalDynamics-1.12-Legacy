@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,7 +42,19 @@ public class RetrieverItem extends ServoItem {
 	}
 
 	@Override
-	public int getId() {
+	public boolean canSend() {
+
+		return false;
+	}
+
+	@Override
+	public String getInfo() {
+
+		return "tab.thermaldynamics.retrieverItem";
+	}
+
+	@Override
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.RETRIEVER_ITEM;
 	}
@@ -68,7 +81,7 @@ public class RetrieverItem extends ServoItem {
 	@SideOnly (Side.CLIENT)
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 
@@ -82,7 +95,8 @@ public class RetrieverItem extends ServoItem {
 
 		baseTileHasOtherOutputs = false;
 		for (int i = 0; i < 6; i++) {
-			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (baseTile.getAttachment(side) == null || baseTile.getAttachment(side).getId() != AttachmentRegistry.RETRIEVER_ITEM)) {
+			Attachment attachment = baseTile.getAttachment(side);
+			if ((itemDuct.isOutput(side) || itemDuct.isInput(side)) && (attachment == null || attachment.canSend())) {
 				baseTileHasOtherOutputs = true;
 				break;
 			}
@@ -102,7 +116,7 @@ public class RetrieverItem extends ServoItem {
 			int i = route.getLastSide();
 
 			Attachment attachment = endPoint.parent.getAttachment(i);
-			if (attachment != null && attachment.getId() == AttachmentRegistry.RETRIEVER_ITEM) {
+			if (attachment != null && !attachment.canSend()) {
 				continue;
 			}
 
@@ -123,36 +137,29 @@ public class RetrieverItem extends ServoItem {
 					if (item.isEmpty()) {
 						continue;
 					}
-
-					item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()), simulatedInv, slot, side);
-					if (item.isEmpty() || item.getCount() == 0) {
+					item = limitOutput(ItemHelper.cloneStack(item, multiStack[type] ? item.getMaxStackSize() : item.getCount()));
+					if (item.isEmpty()) {
 						continue;
 					}
-
 					if (!filter.matchesFilter(item) || !cache.filter.matchesFilter(item)) {
 						continue;
 					}
-
 					ItemStack remainder = DuctUnitItem.simulateInsertItemStackIntoInventory(simulatedInv, item.copy(), side ^ 1, filter.getMaxStock());
-
 					if (!remainder.isEmpty()) {
 						item.shrink(remainder.getCount());
 					}
 					if (item.getCount() <= 0) {
 						continue;
 					}
-
 					Route route1 = endPoint.getRoute(itemDuct);
 					if (route1 == null) {
 						continue;
 					}
-
 					int maxStackSize = item.getCount();
 					item = inv.extractItem(slot, maxStackSize, false);
-					if (item.isEmpty() || item.getCount() == 0) {
+					if (item.isEmpty()) {
 						continue;
 					}
-
 					// No turning back now
 					route1 = route1.copy();
 					route1.pathDirections.add(side);

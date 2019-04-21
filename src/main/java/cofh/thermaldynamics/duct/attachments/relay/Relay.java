@@ -42,6 +42,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -93,7 +94,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	}
 
 	@Override
-	public int getId() {
+	public ResourceLocation getId() {
 
 		return AttachmentRegistry.RELAY;
 	}
@@ -102,6 +103,12 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	public Cuboid6 getCuboid() {
 
 		return TileGrid.subSelection[side].copy();
+	}
+
+	@Override
+	public boolean canSend() {
+
+		return true;
 	}
 
 	@Nonnull
@@ -120,7 +127,7 @@ public class Relay extends Attachment implements IConfigGui, IPortableData {
 	@Override
 	public boolean render(IBlockAccess world, BlockRenderLayer layer, CCRenderState ccRenderState) {
 
-		if (layer != BlockRenderLayer.SOLID) {
+		if (layer != BlockRenderLayer.CUTOUT) {
 			return false;
 		}
 

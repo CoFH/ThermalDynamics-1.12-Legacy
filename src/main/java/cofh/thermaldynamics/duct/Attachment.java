@@ -18,6 +18,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -41,7 +42,7 @@ public abstract class Attachment {
 
 	public abstract String getName();
 
-	public abstract int getId();
+	public abstract ResourceLocation getId();
 
 	public abstract boolean isNode();
 
@@ -49,6 +50,11 @@ public abstract class Attachment {
 	public abstract BlockDuct.ConnectionType getNeighborType();
 
 	public abstract Cuboid6 getCuboid();
+
+	/**
+	 * Whether or not retrievers can pull from the attached inventory
+	 */
+	public abstract boolean canSend();
 
 	public void addCollisionBoxesToList(AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
 

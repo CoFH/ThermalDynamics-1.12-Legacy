@@ -23,6 +23,16 @@ public class FluidTankGrid extends FluidTankCore {
 	}
 
 	@Override
+	public void setCapacity(int capacity) {
+
+		this.capacity = capacity;
+
+		if (fluid != null) {
+			fluid.amount = Math.min(fluid.amount, capacity);
+		}
+	}
+
+	@Override
 	public void setFluid(FluidStack fluid) {
 
 		if (fluid != null) {

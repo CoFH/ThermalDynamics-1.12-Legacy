@@ -3,6 +3,8 @@ package cofh.thermaldynamics.duct.attachments.cover;
 import cofh.thermaldynamics.init.TDItems;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -35,7 +37,7 @@ public class CoverHelper {
 
 	//Map for looking up the originating ItemStack for a cover.
 	private static Map<String, ItemStack> lookupMap;
-	private static Map<ResourceLocation, Integer> coverBlacklist = new HashMap<>();
+	private static Map<ResourceLocation, IntSet> coverBlacklist = new HashMap<>();
 
 	public static void loadCoverBlacklist(File configFolder) {
 
@@ -84,7 +86,7 @@ public class CoverHelper {
 				} else {
 					meta = p.getAsInt();
 				}
-				coverBlacklist.put(loc, meta);
+				coverBlacklist.computeIfAbsent(loc, l -> new IntArraySet()).add(meta);
 			}
 		} catch (JsonParseException | IOException e) {
 			//TODO, do we gracefully handle this?
@@ -155,8 +157,8 @@ public class CoverHelper {
 			}
 
 			if (coverBlacklist.containsKey(block.getRegistryName())) {
-				int m = coverBlacklist.get(block.getRegistryName());
-				if (m == -1 || m == meta) {
+				IntSet l = coverBlacklist.get(block.getRegistryName());
+				if (l.contains(-1) || l.contains(meta)) {
 					return false;
 				}
 			}
@@ -183,8 +185,12 @@ public class CoverHelper {
 
 	public static ItemStack getCoverStack(Block block, int meta) {
 
+		ResourceLocation blockString = ForgeRegistries.BLOCKS.getKey(block);
+		if (blockString == null) {
+			return ItemStack.EMPTY;
+		}
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("Block", ForgeRegistries.BLOCKS.getKey(block).toString());
+		tag.setString("Block", blockString.toString());
 		tag.setByte("Meta", ((byte) meta));
 
 		ItemStack itemStack = new ItemStack(TDItems.itemCover);
