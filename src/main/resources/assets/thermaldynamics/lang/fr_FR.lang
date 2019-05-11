@@ -1,124 +1,190 @@
 #fr_FR
 
-
-
-
-
-
+gui.thermaldynamics.transport.config=Configuration
+gui.thermaldynamics.transport.name=Réseau de viaduct
+gui.thermaldynamics.transport.noDest=Aucune destination
+gui.thermaldynamics.transport.unnamed=Sans nom
+gui.thermaldynamics.transport.waiting=En attente d'information
 
 info.thermaldynamics.capacitance=Capacitance
 
-info.thermaldynamics.duct.cover=Combiner avec des blocs pour créer des couvertures.
-info.thermaldynamics.duct.crafting=Crafting Item.
-info.thermaldynamics.duct.dense=Augmente fortement la longueur du chemin.
-info.thermaldynamics.duct.energy=Transfère du Flux de Redstone (RF).
+info.thermaldynamics.duct.cover=Combiner avec un bloc pour créer une couverture.
+info.thermaldynamics.duct.crafting=Permet de fabriquer un cable.
+info.thermaldynamics.duct.dense=Augmente drastiquement la distance de chemin.
+info.thermaldynamics.duct.energy=Transfère du Redstone Flux (RF).
 info.thermaldynamics.duct.fluid=Transfère des fluides.
+info.thermaldynamics.duct.fluidEnergy=Transfère des fluides et du Redstone Flux (RF).
 info.thermaldynamics.duct.item=Transfère des objets.
-info.thermaldynamics.duct.structure=Permet de créer des structures.
-info.thermaldynamics.duct.vacuum=Diminue fortement la longueur du chemin.
+info.thermaldynamics.duct.itemEnergy=Transfère des objets et du Redstone Flux (RF).
+info.thermaldynamics.duct.light=Émet de la lumière lorsqu'il reçoit un signal redstone.
+info.thermaldynamics.duct.structure=Fournit la structure.
+info.thermaldynamics.duct.transport=Transfère les joueurs. Whoosh.
+info.thermaldynamics.duct.transportCrossover=Point d'arrêt des viaducts longue portée. Requis.
+info.thermaldynamics.duct.transportLongRange=Transport rapide entre deux positions précises.
+info.thermaldynamics.duct.vacuum=Réduit drastiquement la durée de chemin.
 
-info.thermaldynamics.filter.antiSpam.0=Autoriser la Surcharge
-info.thermaldynamics.filter.antiSpam.1=Éviter la Surcharge
-info.thermaldynamics.filter.decRetainSize=Diminuer le nb d'objets max
-info.thermaldynamics.filter.incRetainSize=Augmenter le nb d'objets max
-info.thermaldynamics.filter.metadata.off=Prendre en compte les Meta-données
-info.thermaldynamics.filter.metadata.on=Ignorer les Meta-données
-info.thermaldynamics.filter.metadata=Meta-données
-info.thermaldynamics.filter.modSorting.off=Prendre en compte le Mod Propriétaire
-info.thermaldynamics.filter.modSorting.on=Ignorer le Mod Propriétaire
-info.thermaldynamics.filter.modSorting=Mod propriétaire
-info.thermaldynamics.filter.nbt.off=Prendre en compte les étiquettes NBT
-info.thermaldynamics.filter.nbt.on=Ignorer les étiquettes NBT
+info.thermaldynamics.filter.antiSpam.0=Permet le sur-envoi
+info.thermaldynamics.filter.antiSpam.1=Empêchhe le sur-envoi
+info.thermaldynamics.filter.decRetainSize=Réduit le nombre total d'objets dans l'inventaire
+info.thermaldynamics.filter.incRetainSize=Augm. le nombre total d'objets dans l'inventaire
+info.thermaldynamics.filter.metadata.off=Utiliser les metadatas
+info.thermaldynamics.filter.metadata.on=Ignorer les metadatas
+info.thermaldynamics.filter.metadata=Metadata
+info.thermaldynamics.filter.modSorting.off=Utiliser le propriétaire de mod
+info.thermaldynamics.filter.modSorting.on=Ignorer le propriétaire de mod
+info.thermaldynamics.filter.modSorting=Propriétaire de mod
+info.thermaldynamics.filter.nbt.off=Utiliser les NBT
+info.thermaldynamics.filter.nbt.on=Ignorer les NBT
 info.thermaldynamics.filter.nbt=NBT
-info.thermaldynamics.filter.oreDict.off=Prendre en compte la Minéropédie
-info.thermaldynamics.filter.oreDict.on=Ignorer la Minéropédie
-info.thermaldynamics.filter.oreDict=Minéropédie
-info.thermaldynamics.filter.routeType.0=Au plus proche
-info.thermaldynamics.filter.routeType.1=Au plus loin
+info.thermaldynamics.filter.options=Options de filtre :
+info.thermaldynamics.filter.oreDict.off=Utiliser le dictionnaire de minerais
+info.thermaldynamics.filter.oreDict.on=Ignorer le dictionnaire de minerais
+info.thermaldynamics.filter.oreDict=Dictionnaire de minerais
+info.thermaldynamics.filter.routeType.0=Le plus proche en premier
+info.thermaldynamics.filter.routeType.1=Le plus loin en premier
 info.thermaldynamics.filter.routeType.2=Aléatoire
-info.thermaldynamics.filter.routeType.3=Tour à tour
-info.thermaldynamics.filter.whiteList.off=Liste Blanche
-info.thermaldynamics.filter.whiteList.on=Liste Noire
-info.thermaldynamics.filter.whiteList=Liste-noire
+info.thermaldynamics.filter.routeType.3=Round Robin
+info.thermaldynamics.filter.whiteList.off=Liste blanche
+info.thermaldynamics.filter.whiteList.on=Liste noire
+info.thermaldynamics.filter.whiteList=Liste noire
 info.thermaldynamics.filter.zeroRetainSize=Infini
 
-info.thermaldynamics.servo.decStackSize=Augmenter le nb d'objets extraits
-info.thermaldynamics.servo.extractRate=Taux d'extraction
-info.thermaldynamics.servo.incStackSize=Augmenter le nb d'objets extraits
-info.thermaldynamics.servo.maxStackSize=Taille de pile maximale
-info.thermaldynamics.servo.redstoneExt=Nécéssite un Signal de Redstone
-info.thermaldynamics.servo.redstoneInt=Contrôle Redstone intégré
+info.thermaldynamics.info.attachment=-Information de la fixation-
+info.thermaldynamics.info.duct=-Information du cable-
+info.thermaldynamics.info.energy=RF
+info.thermaldynamics.info.fluid=Fluide
+info.thermaldynamics.info.fluidThroughput=Débit maximum de fluide
+info.thermaldynamics.info.invalid=Invalide
+info.thermaldynamics.info.invalidCover=Placer dans un établi pour convertir en une couverture en roche.
+info.thermaldynamics.info.items=Objets
+info.thermaldynamics.info.redstone=Redstone
+info.thermaldynamics.info.size=Taille
+info.thermaldynamics.info.tracker.activate=Début du suivi
+info.thermaldynamics.info.tracker.avg=5 Sec. Env. Niveau
+info.thermaldynamics.info.tracker.avgInOut=5 Sec. Env. Entrée/Sortie
+info.thermaldynamics.info.tracker.cur=Niveau actuel
+
+info.thermaldynamics.relay.color.0=Rouge
+info.thermaldynamics.relay.color.1=Vert
+info.thermaldynamics.relay.color.2=Marron
+info.thermaldynamics.relay.color.3=Bleu
+info.thermaldynamics.relay.color.4=Violet
+info.thermaldynamics.relay.color.5=Cyan
+info.thermaldynamics.relay.color.6=Gris clair
+info.thermaldynamics.relay.color.7=Gris
+info.thermaldynamics.relay.color.8=Rose
+info.thermaldynamics.relay.color.9=Vert clair
+info.thermaldynamics.relay.color.10=Jaune
+info.thermaldynamics.relay.color.11=Bleu claire
+info.thermaldynamics.relay.color.12=Magenta
+info.thermaldynamics.relay.color.13=Orange
+info.thermaldynamics.relay.color.14=Blanc
+info.thermaldynamics.relay.color.15=Noir
+info.thermaldynamics.relay.gridRS=Puissance du cable
+info.thermaldynamics.relay.invert.0=Échelle
+info.thermaldynamics.relay.invert.1=Inversé à l'échelle
+info.thermaldynamics.relay.invert.2=Seuil
+info.thermaldynamics.relay.invert.3=Seuil inversé
+info.thermaldynamics.relay.relayRS=Puissance de relais
+info.thermaldynamics.relay.threshold=Seuil >=
+info.thermaldynamics.relay.type.0=Entrée redstone
+info.thermaldynamics.relay.type.1=Sortie redstone
+info.thermaldynamics.relay.type.2=Entrée comparateur
+
+info.thermaldynamics.servo.decStackSize=Dec. Stack Size Extracted
+info.thermaldynamics.servo.extractRate=Taux d'extraction 
+info.thermaldynamics.servo.incStackSize=Inc. Stack Size Extracted
+info.thermaldynamics.servo.maxStackSize=Taille maximum par stack 
+info.thermaldynamics.servo.redstoneExt=Requiert un signal redstone
+info.thermaldynamics.servo.redstoneInt=Contrôle redstone interne
 info.thermaldynamics.servo.slotMulti=Extrait de plusieurs emplacements.
 info.thermaldynamics.servo.slotSingle=Extrait d'un seul emplacement.
-info.thermaldynamics.servo.speedBoost=Boost de Vitesse
+info.thermaldynamics.servo.speedBoost=Boost de vitesse
 
-info.thermaldynamics.transfer=Transfert
-info.thermaldynamics.transferConnection=La quantité transferée est exprimée par connexion.
-info.thermaldynamics.transferFluid=Le Taux de transfert diffère selon le fluide.
+info.thermaldynamics.toggle=Clic-droit pour changer de mode.
 
-item.thermaldynamics.cover.name=%s Couverture
+info.thermaldynamics.transfer=Transfert 
+info.thermaldynamics.transferConnection=Le nombre de transfert est par connexion.
+info.thermaldynamics.transferFluid=Le taux de transfert varie par fluide.
+
+item.thermaldynamics.cover.name=Couverture %s
 
 item.thermaldynamics.filter.0.name=Filtre
-item.thermaldynamics.filter.1.name=Filtre Trempé
-item.thermaldynamics.filter.2.name=Filtre Renforcé
-item.thermaldynamics.filter.3.name=Filter de Signalum
-item.thermaldynamics.filter.4.name=Filtre Résonant
-item.thermaldynamics.filter.info=Restreint ce qui passe en lui.
+item.thermaldynamics.filter.1.name=Filtre endurci
+item.thermaldynamics.filter.2.name=Filtre renforcé
+item.thermaldynamics.filter.3.name=Filtre signalum
+item.thermaldynamics.filter.4.name=Filtre résonant
+item.thermaldynamics.filter.info=Restreint ce qui peut passer à travers.
 
-item.thermaldynamics.retriever.0.name=Récupérateur
-item.thermaldynamics.retriever.1.name=Récupérateur Trempé
-item.thermaldynamics.retriever.2.name=Récupérateur Renforcé
-item.thermaldynamics.retriever.3.name=Récupérateur de Signalum
-item.thermaldynamics.retriever.4.name=Récupérateur Résonant
-item.thermaldynamics.retriever.info=Amène des objets/fluides à lui.
+item.thermaldynamics.relay.info=Transmet les signaux redstone.
+item.thermaldynamics.relay.name=Relai redstone
 
-item.thermaldynamics.servo.0.name=Servo-mécanisme
-item.thermaldynamics.servo.1.name=Servo-mécanisme Trempé
-item.thermaldynamics.servo.2.name=Servo-mécanisme Renforcé
-item.thermaldynamics.servo.3.name=Servo-mécanisme de Signalum
-item.thermaldynamics.servo.4.name=Servo-mécanisme Résonant
-item.thermaldynamics.servo.info=Extraits des objets/fluides.
+item.thermaldynamics.retriever.0.name=Chien d'arrêt
+item.thermaldynamics.retriever.1.name=Chien d'arrêt endurci
+item.thermaldynamics.retriever.2.name=Chien d'arrêt renforcé
+item.thermaldynamics.retriever.3.name=Chien d'arrêt signalum
+item.thermaldynamics.retriever.4.name=Chien d'arrêt résonant
+item.thermaldynamics.retriever.info=Attire les objets/fluides distants.
+
+item.thermaldynamics.servo.0.name=Servomoteur
+item.thermaldynamics.servo.1.name=Servomoteur endurci
+item.thermaldynamics.servo.2.name=Servomoteur renforcé
+item.thermaldynamics.servo.3.name=Servomoteur signalum
+item.thermaldynamics.servo.4.name=Servomoteur résonant
+item.thermaldynamics.servo.info=Extrait les objets/fluides de quelque chose.
 
 itemGroup.thermaldynamics.creativeTab=Thermal Dynamics
+itemGroup.thermaldynamics.creativeTabCovers=Thermal Dynamics : Couvertures
 
+recipe.thermaldynamics.covers=Fabrication de couverture
 
-recipe.thermaldynamics.covers=Fabrcation des Couvertures
+tab.thermaldynamics.conChange=Maintenir Shift et n'importe quel bouton de la souris pour affiner les quantités.
+tab.thermaldynamics.filterItem.0=Contrôle quels items sont autorisés dans l'inventaire rattaché.
+tab.thermaldynamics.retrieverItem.0=Tracte les objets dans leur inventaire rattaché depuis d'autres inventaires de ce réseau.
+tab.thermaldynamics.retrieverItem.1=Utiliser les options de filtre pour contrôler quels objets sont récupérés.
+tab.thermaldynamics.servoItem.0=Extrait les objets de l'inventaire rattaché.
+tab.thermaldynamics.servoItem.1=Utiliser les options pour contrôler quels objets sont extraits.
 
-tile.thermaldynamics.duct.dense.name=Dense %s
+tile.thermaldynamics.duct.dense.name=%s dense
 
-tile.thermaldynamics.duct.energyBasic.name=Fluxiducte en Plomberoche
-tile.thermaldynamics.duct.energyHardened.name=Fluxiducte Trempé
-tile.thermaldynamics.duct.energyReinforced.name=Fluxiducte à Énergie Redstone
-tile.thermaldynamics.duct.energyReinforcedEmpty.name=Fluxiducte à Énergie Redstone (vide)
-tile.thermaldynamics.duct.energyResonant.name=Fluxiducte Résonant
-tile.thermaldynamics.duct.energyResonantEmpty.name=Fluxiducte Résonant (vide)
+tile.thermaldynamics.duct.energyBasic.name=Cable en plomb fluxé
+tile.thermaldynamics.duct.energyHardened.name=Cable fluxé endurci
+tile.thermaldynamics.duct.energyReinforced.name=Cable fluxé d'énergie redstone
+tile.thermaldynamics.duct.energyReinforcedEmpty.name=Cable fluxé d'énergie redstone (Vide)
+tile.thermaldynamics.duct.energyResonant.name=Cable fluxé résonant
+tile.thermaldynamics.duct.energyResonantEmpty.name=Cable fluxé résonant (Vide)
+tile.thermaldynamics.duct.energySignalum.name=Cable fluxé signalum
+tile.thermaldynamics.duct.energySignalumEmpty.name=Cable fluxé signalum (Vide)
+tile.thermaldynamics.duct.energySuper.info=N'a pas de capacitance résiduelle.
+tile.thermaldynamics.duct.energySuper.name=Cable fluxé cryo-stabilisé
+tile.thermaldynamics.duct.energySuperEmpty.name=Cable fluxé cryo-stabilisé (Vide)
 
+tile.thermaldynamics.duct.fluidBasic.info=Cassera si le contenu est extrêmement chaud ou froid.
+tile.thermaldynamics.duct.fluidBasic.name=Cable à fluide
+tile.thermaldynamics.duct.fluidEnergy.name=Cable à fluide plaqué de signalum
+tile.thermaldynamics.duct.fluidHardened.info=Le cable peut supporter n'importe quelle température.
+tile.thermaldynamics.duct.fluidHardened.name=Cable à fluide endurci
+tile.thermaldynamics.duct.fluidSuper.info=Transferts sans limite lors pressurisé.
+tile.thermaldynamics.duct.fluidSuper.name=Cable à fluide super laminaire
 
-tile.thermaldynamics.duct.energySuper.info=N'a pas de capacitance structurelle.
-tile.thermaldynamics.duct.energySuper.name=Fluxiducte Cryo-Stabilisé
-tile.thermaldynamics.duct.energySuperEmpty.name=Fluxiducte Cryo-Stabilisé (vide)
-
-tile.thermaldynamics.duct.fluidBasic.info=Brisera si les contenus sont trop chauds ou froids.
-tile.thermaldynamics.duct.fluidBasic.name=Fluiducte Tempéré
-tile.thermaldynamics.duct.fluidEnergy.info=Transfère des fluides et du Flux de Redstone (RF).
-tile.thermaldynamics.duct.fluidEnergy.name=Fluiducte Flux-Blindé
-tile.thermaldynamics.duct.fluidHardened.info=La température des contenus n'importe pas.
-tile.thermaldynamics.duct.fluidHardened.name=Fluiducte Trempé
-
-tile.thermaldynamics.duct.itemBasic.info=Transfère des objets
-tile.thermaldynamics.duct.itemBasic.name=Itemducte
-tile.thermaldynamics.duct.itemEnder.info=Utilise du Flux de Redstone (RF) pour déplacer des objets instantanément.
-tile.thermaldynamics.duct.itemEnder.name=Itemducte Déformateur
-tile.thermaldynamics.duct.itemFast.info=Empli de Pierre Lumineuse. Les objets transitent plus vite.
-tile.thermaldynamics.duct.itemFast.name=Itemducte à Impulsion
-tile.thermaldynamics.duct.itemEnergy.info=Transfère des objets et du Flux de Redstone (RF).
-tile.thermaldynamics.duct.itemEnergy.name=Itemducte Fluctuant
+tile.thermaldynamics.duct.itemBasic.name=Cable à objets
+tile.thermaldynamics.duct.itemEnder.name=Cable à objets warp
+tile.thermaldynamics.duct.itemEnergy.name=Cable à objets plaqué de signalum
+tile.thermaldynamics.duct.itemEnergyFast.name=Cable à objets plaqué de signalum à impulsion
+tile.thermaldynamics.duct.itemFast.info=Les objets voyagent bien plus rapidement.
+tile.thermaldynamics.duct.itemFast.name=Cable à objets à impulsion
 
 tile.thermaldynamics.duct.opaque.name=%s (Opaque)
 
-tile.thermaldynamics.duct.structure.info=Permet de créer des structures
-tile.thermaldynamics.duct.structure.opaque.name=Structureducte
+tile.thermaldynamics.duct.structure.info=Fournit la structure.
+tile.thermaldynamics.duct.structure.opaque.name=Cable structurel
+tile.thermaldynamics.duct.structureLight.name=Cable luxé
 
-tile.thermaldynamics.duct.vacuum.name=A Vide %s
+tile.thermaldynamics.duct.transportBasic.name=Viaduct
+tile.thermaldynamics.duct.transportFrame.name=Viaduct (Non-traité)
+tile.thermaldynamics.duct.transportLinking.name=Viaduct de raccordement à longue distance
+tile.thermaldynamics.duct.transportLongRange.name=Viaduct à longue portée
 
-tile.thermaldynamics.duct=Ducte
+tile.thermaldynamics.duct.vacuum.name=%s vide
+
+tile.thermaldynamics.duct=Cable
