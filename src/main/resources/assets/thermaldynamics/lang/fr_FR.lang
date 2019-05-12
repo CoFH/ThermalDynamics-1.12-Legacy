@@ -176,7 +176,7 @@ tile.thermaldynamics.duct.itemFast.name=Cable à objets à impulsion
 
 tile.thermaldynamics.duct.opaque.name=%s (Opaque)
 
-tile.thermaldynamics.duct.structure.info=Fournit la structure.
+tile.thermaldynamics.duct.structure.info=Permet de construire des structures.
 tile.thermaldynamics.duct.structure.opaque.name=Cable structurel
 tile.thermaldynamics.duct.structureLight.name=Cable luxé
 
