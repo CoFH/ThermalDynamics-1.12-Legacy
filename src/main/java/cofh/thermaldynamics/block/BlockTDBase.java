@@ -145,7 +145,44 @@ public abstract class BlockTDBase extends BlockCoreTile {
 	@Override
 	public ArrayList<ItemStack> dropDelegate(NBTTagCompound nbt, IBlockAccess world, BlockPos pos, int fortune) {
 
-		return dismantleDelegate(nbt, (World) world, pos, null, false, true);
+		TileEntity tile = world.getTileEntity(pos);
+		IBlockState state = world.getBlockState(pos);
+		int meta = state.getBlock().getMetaFromState(state);
+		ArrayList<ItemStack> ret = new ArrayList<>();
+
+		if (state.getBlock() != this) {
+			return ret;
+		}
+		ItemStack dropBlock = tile instanceof TileGrid ? ((TileGrid) tile).getDrop() : new ItemStack(this, 1, meta);
+
+		if (nbt != null) {
+			if (nbt.hasKey(CoreProps.ENERGY)) {
+				nbt.removeTag(CoreProps.ENERGY);
+			}
+			if (!nbt.hasNoTags()) {
+				dropBlock.setTagCompound(nbt);
+			}
+		}
+		ret.add(dropBlock);
+
+		if (tile instanceof TileGrid) {
+			TileGrid ductBase = (TileGrid) tile;
+			TileGrid.AttachmentData attachmentData = ductBase.attachmentData;
+			if (attachmentData != null) {
+				for (Attachment attachment : attachmentData.attachments) {
+					if (attachment != null) {
+						ret.addAll(attachment.getDrops());
+					}
+				}
+				for (Cover cover : attachmentData.covers) {
+					if (cover != null) {
+						ret.addAll(cover.getDrops());
+					}
+				}
+			}
+			ductBase.dropAdditional(ret);
+		}
+		return ret;
 	}
 
 	@Override
