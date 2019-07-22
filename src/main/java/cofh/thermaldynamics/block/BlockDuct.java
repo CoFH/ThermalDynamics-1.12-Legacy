@@ -149,7 +149,13 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 
 		AxisAlignedBB bb = new AxisAlignedBB(min, min, min, max, max, max);
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
-		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
+		TileGrid theTile;
+		TileEntity theTileEntity = world.getTileEntity(pos);
+		if (theTileEntity instanceof TileGrid) {
+			theTile = (TileGrid) theTileEntity;
+		} else {
+			return;
+		}
 
 		if (theTile != null) {
 			for (byte i = 0; i < 6; i++) {
