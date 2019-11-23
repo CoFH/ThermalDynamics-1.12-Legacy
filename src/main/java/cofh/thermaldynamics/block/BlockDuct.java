@@ -221,7 +221,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 		} else {
 			s = 4;
 		}
-		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
+		TileEntity tile = world.getTileEntity(pos);
+		if (!(tile instanceof TileGrid)) {
+			return false;
+		}
+		TileGrid theTile = (TileGrid) tile;
 		return theTile != null && theTile.getAttachment(s ^ 1) != null && theTile.getAttachment(s ^ 1).shouldRSConnect();
 	}
 
@@ -252,7 +256,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 
-		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
+		TileEntity tile = world.getTileEntity(pos);
+		if (!(tile instanceof TileGrid)) {
+			return false;
+		}
+		TileGrid theTile = (TileGrid) tile;
 		return (theTile != null && (theTile.getCover(side.ordinal()) != null || theTile.getAttachment(side.ordinal()) != null && theTile.getAttachment(side.ordinal()).makesSideSolid())) || super.isSideSolid(base_state, world, pos, side);
 	}
 
@@ -265,7 +273,11 @@ public class BlockDuct extends BlockTDBase implements IBlockAppearance, IConfigG
 	@Override
 	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
 
-		TileGrid theTile = (TileGrid) world.getTileEntity(pos);
+		TileEntity tile = world.getTileEntity(pos);
+		if (!(tile instanceof TileGrid)) {
+			return 0;
+		}
+		TileGrid theTile = (TileGrid) tile;
 		if (theTile != null && theTile.getAttachment(side.ordinal() ^ 1) != null) {
 			return theTile.getAttachment(side.ordinal() ^ 1).getRSOutput();
 		}
