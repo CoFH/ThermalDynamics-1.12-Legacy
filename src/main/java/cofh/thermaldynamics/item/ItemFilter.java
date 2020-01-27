@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.core.util.helpers.ItemHelper.cloneStack;
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 import static cofh.core.util.helpers.RecipeHelper.addShapelessRecipe;
 
@@ -142,7 +143,7 @@ public class ItemFilter extends ItemAttachment {
 	public boolean initialize() {
 
 		// @formatter:off
-		addShapedRecipe(filterBasic,
+		addShapedRecipe(cloneStack(filterBasic, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -151,7 +152,7 @@ public class ItemFilter extends ItemAttachment {
 				'R', Items.PAPER
 		);
 
-		addShapedRecipe(filterHardened,
+		addShapedRecipe(cloneStack(filterHardened, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -161,7 +162,7 @@ public class ItemFilter extends ItemAttachment {
 		);
 		addShapelessRecipe(filterHardened, filterBasic, "ingotInvar");
 
-		addShapedRecipe(filterReinforced,
+		addShapedRecipe(cloneStack(filterReinforced, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -172,7 +173,7 @@ public class ItemFilter extends ItemAttachment {
 		addShapelessRecipe(filterReinforced, filterBasic, "ingotElectrum");
 		addShapelessRecipe(filterReinforced, filterHardened, "ingotElectrum");
 
-		addShapedRecipe(filterSignalum,
+		addShapedRecipe(cloneStack(filterSignalum, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -184,7 +185,7 @@ public class ItemFilter extends ItemAttachment {
 		addShapelessRecipe(filterSignalum, filterHardened, "ingotSignalum");
 		addShapelessRecipe(filterSignalum, filterReinforced, "ingotSignalum");
 
-		addShapedRecipe(filterResonant,
+		addShapedRecipe(cloneStack(filterResonant, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",

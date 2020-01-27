@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.core.util.helpers.ItemHelper.cloneStack;
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 import static cofh.core.util.helpers.RecipeHelper.addShapelessRecipe;
 
@@ -161,7 +162,7 @@ public class ItemServo extends ItemAttachment {
 	public boolean initialize() {
 
 		// @formatter:off
-		addShapedRecipe(servoBasic,
+		addShapedRecipe(cloneStack(servoBasic, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -170,7 +171,7 @@ public class ItemServo extends ItemAttachment {
 				'R', "dustRedstone"
 		);
 
-		addShapedRecipe(servoHardened,
+		addShapedRecipe(cloneStack(servoHardened, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -180,7 +181,7 @@ public class ItemServo extends ItemAttachment {
 		);
 		addShapelessRecipe(servoHardened, servoBasic, "ingotInvar");
 
-		addShapedRecipe(servoReinforced,
+		addShapedRecipe(cloneStack(servoReinforced, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -191,7 +192,7 @@ public class ItemServo extends ItemAttachment {
 		addShapelessRecipe(servoReinforced, servoBasic, "ingotElectrum");
 		addShapelessRecipe(servoReinforced, servoHardened, "ingotElectrum");
 
-		addShapedRecipe(servoSignalum,
+		addShapedRecipe(cloneStack(servoSignalum, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -203,7 +204,7 @@ public class ItemServo extends ItemAttachment {
 		addShapelessRecipe(servoSignalum, servoHardened, "ingotSignalum");
 		addShapelessRecipe(servoSignalum, servoReinforced, "ingotSignalum");
 
-		addShapedRecipe(servoResonant,
+		addShapedRecipe(cloneStack(servoResonant, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",

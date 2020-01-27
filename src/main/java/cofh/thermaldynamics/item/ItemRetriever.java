@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static cofh.core.util.helpers.ItemHelper.cloneStack;
 import static cofh.core.util.helpers.RecipeHelper.addShapedRecipe;
 import static cofh.core.util.helpers.RecipeHelper.addShapelessRecipe;
 
@@ -162,7 +163,7 @@ public class ItemRetriever extends ItemAttachment {
 	public boolean initialize() {
 
 		// @formatter:off
-		addShapedRecipe(retrieverBasic,
+		addShapedRecipe(cloneStack(retrieverBasic, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -171,7 +172,7 @@ public class ItemRetriever extends ItemAttachment {
 				'R', Items.ENDER_EYE
 		);
 
-		addShapedRecipe(retrieverHardened,
+		addShapedRecipe(cloneStack(retrieverHardened, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -181,7 +182,7 @@ public class ItemRetriever extends ItemAttachment {
 		);
 		addShapelessRecipe(retrieverHardened, retrieverBasic, "ingotInvar");
 
-		addShapedRecipe(retrieverReinforced,
+		addShapedRecipe(cloneStack(retrieverReinforced, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -192,7 +193,7 @@ public class ItemRetriever extends ItemAttachment {
 		addShapelessRecipe(retrieverReinforced, retrieverBasic, "ingotElectrum");
 		addShapelessRecipe(retrieverReinforced, retrieverHardened, "ingotElectrum");
 
-		addShapedRecipe(retrieverSignalum,
+		addShapedRecipe(cloneStack(retrieverSignalum, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
@@ -204,7 +205,7 @@ public class ItemRetriever extends ItemAttachment {
 		addShapelessRecipe(retrieverSignalum, retrieverHardened, "ingotSignalum");
 		addShapelessRecipe(retrieverSignalum, retrieverReinforced, "ingotSignalum");
 
-		addShapedRecipe(retrieverResonant,
+		addShapedRecipe(cloneStack(retrieverResonant, 2),
 				"iGi",
 				"IRI",
 				'i', "nuggetIron",
