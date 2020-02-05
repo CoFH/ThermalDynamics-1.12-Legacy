@@ -112,7 +112,7 @@ item.thermaldynamics.cover.name=%sのカバー
 item.thermaldynamics.filter.0.name=フィルター
 item.thermaldynamics.filter.1.name=ハーデンドフィルター
 item.thermaldynamics.filter.2.name=レインフォースドフィルター
-item.thermaldynamics.filter.3.name=シグナルムフィルター
+item.thermaldynamics.filter.3.name=シグナラムフィルター
 item.thermaldynamics.filter.4.name=レゾナントフィルター
 item.thermaldynamics.filter.info=流れる量を制限します。
 
@@ -122,14 +122,14 @@ item.thermaldynamics.relay.name=レッドストーンリレー
 item.thermaldynamics.retriever.0.name=レトリーバー
 item.thermaldynamics.retriever.1.name=ハーデンドレトリーバー
 item.thermaldynamics.retriever.2.name=レインフォースドレトリーバー
-item.thermaldynamics.retriever.3.name=シグナルムレトリーバー
+item.thermaldynamics.retriever.3.name=シグナラムレトリーバー
 item.thermaldynamics.retriever.4.name=レゾナントレトリーバー
 item.thermaldynamics.retriever.info=他の場所のアイテムや液体を自分のところへ引き込みます。
 
 item.thermaldynamics.servo.0.name=サーボ
 item.thermaldynamics.servo.1.name=ハーデンドサーボ
 item.thermaldynamics.servo.2.name=レインフォースドサーボ
-item.thermaldynamics.servo.3.name=シグナルムサーボ
+item.thermaldynamics.servo.3.name=シグナラムサーボ
 item.thermaldynamics.servo.4.name=レゾナントサーボ
 item.thermaldynamics.servo.info=他方へアイテムや液体を搬出します。
 
@@ -153,15 +153,15 @@ tile.thermaldynamics.duct.energyReinforced.name=レインフォースドフラ�
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=レインフォースドフラックスダクト(空)
 tile.thermaldynamics.duct.energyResonant.name=レゾナントフラックスダクト
 tile.thermaldynamics.duct.energyResonantEmpty.name=レゾナントフラックスダクト(空)
-tile.thermaldynamics.duct.energySignalum.name=シグナルムフラックスダクト
-tile.thermaldynamics.duct.energySignalumEmpty.name=シグナルムフラックスダクト(空)
+tile.thermaldynamics.duct.energySignalum.name=シグナラムフラックスダクト
+tile.thermaldynamics.duct.energySignalumEmpty.name=シグナラムフラックスダクト(空)
 tile.thermaldynamics.duct.energySuper.info=このダクトはRFを溜め込みません
 tile.thermaldynamics.duct.energySuper.name=冷温安定化フラックスダクト
 tile.thermaldynamics.duct.energySuperEmpty.name=冷温安定化フラックスダクト(空)
 
 tile.thermaldynamics.duct.fluidBasic.info=極端に熱いもしくは冷たい液体を通すと破損する恐れがあります。
 tile.thermaldynamics.duct.fluidBasic.name=流体ダクト
-tile.thermaldynamics.duct.fluidEnergy.name=シグナルムメッキ流体ダクト
+tile.thermaldynamics.duct.fluidEnergy.name=シグナラムメッキ流体ダクト
 tile.thermaldynamics.duct.fluidHardened.info=どんな温度の液体も流すことができます。
 tile.thermaldynamics.duct.fluidHardened.name=ハーデンド流体ダクト
 tile.thermaldynamics.duct.fluidSuper.info=加圧されている液体を制限なく流すことができます。
@@ -169,8 +169,8 @@ tile.thermaldynamics.duct.fluidSuper.name=超層流体ダクト
 
 tile.thermaldynamics.duct.itemBasic.name=アイテムダクト
 tile.thermaldynamics.duct.itemEnder.name=ワープアイテムダクト
-tile.thermaldynamics.duct.itemEnergy.name=シグナルムメッキアイテムダクト
-tile.thermaldynamics.duct.itemEnergyFast.name=シグナルムメッキ加速アイテムダクト
+tile.thermaldynamics.duct.itemEnergy.name=シグナラムメッキアイテムダクト
+tile.thermaldynamics.duct.itemEnergyFast.name=シグナラムメッキ加速アイテムダクト
 tile.thermaldynamics.duct.itemFast.info=アイテムを高速で移送します。
 tile.thermaldynamics.duct.itemFast.name=加速アイテムダクト
 
