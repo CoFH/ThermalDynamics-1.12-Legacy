@@ -147,7 +147,7 @@ tab.thermaldynamics.servoItem.1=フィルタによって搬出するアイテム
 
 tile.thermaldynamics.duct.dense.name=加圧%s
 
-tile.thermaldynamics.duct.energyBasic.name=鉛石フラックスダクト
+tile.thermaldynamics.duct.energyBasic.name=ベーシックフラックスダクト
 tile.thermaldynamics.duct.energyHardened.name=ハーデンドフラックスダクト
 tile.thermaldynamics.duct.energyReinforced.name=レインフォースドフラックスダクト
 tile.thermaldynamics.duct.energyReinforcedEmpty.name=レインフォースドフラックスダクト(空)
